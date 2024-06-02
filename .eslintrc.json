@@ -1,0 +1,13 @@
+{
+    "plugins": ["import"],
+    "rules": {
+      "sort-imports": ["error", {
+        "ignoreDeclarationSort": true
+      }],
+      "import/order": ["error", {
+        "groups": [["builtin", "external", "internal"]],
+        "newlines-between": "always"
+      }]
+    }
+  }
+  
