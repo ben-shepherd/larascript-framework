@@ -1,9 +1,14 @@
-import { IModel } from "../../../interfaces/IModel";
-import BaseModel from "../../../models/BaseModel";
-import { User } from "../types/types.t";
+import { IModel } from '../../../interfaces/IModel';
+import BaseModel from '../../../models/BaseModel';
+import { User } from '../types/types.t';
 
 export default class UserModel extends BaseModel implements IModel {
     collection = "users";
+
+    guarded: string[] = [
+        'hashedPassword',
+        'roles',
+    ]
 
     constructor(data: User | null) {
         super(data);

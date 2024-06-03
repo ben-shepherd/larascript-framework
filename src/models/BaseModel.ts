@@ -1,11 +1,12 @@
 import IData from "../interfaces/IData";
-import { IModel } from "../interfaces/IModel";
+import { GetDataOptions, IModel } from "../interfaces/IModel";
 import MongoDB from "../services/MongoDB";
 
 export default class BaseModel implements IModel {
     primaryKey: string = '_id';
     data: IData | null;
     collection!: string;
+    guarded: string[] = [];
 
     constructor(data: IData | null) {
         this.data = data;
@@ -25,8 +26,14 @@ export default class BaseModel implements IModel {
         }
     }
 
-    getData(): object | null {
-        return this.data;
+    getData(options: GetDataOptions): object | null {
+        let data = this.data;
+
+        if(options.excludeGuarded) {
+            data = Object.fromEntries(Object.entries(data ?? {}).filter(([key]) => !this.guarded.includes(key)))
+        }
+        
+        return data;
     }
 
     async refresh(): Promise<IData | null> {

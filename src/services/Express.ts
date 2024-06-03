@@ -10,8 +10,7 @@ export default class Express {
         this.init()
     }
 
-    init()
-    {
+    init() {
         // Apply middleware
         this.app.use(express.json());
     
@@ -34,18 +33,21 @@ export default class Express {
     private initRoutes (): void {
         const app = this.app
         Object.values(routes).forEach(route => {
+            const middlewares = route?.middlewares ?? []
+            const handlers = [...middlewares, route?.handler]
+
             switch (route.method) {
                 case 'get':
-                    app.get(route.path, route.handler);
+                    app.get(route.path, handlers);
                     break;
                 case 'post':
-                    app.post(route.path, route.handler);
+                    app.post(route.path, handlers);
                     break;
                 case 'put':
-                    app.put(route.path, route.handler);
+                    app.put(route.path, handlers);
                     break;
                 case 'delete':
-                    app.delete(route.path, route.handler);
+                    app.delete(route.path, handlers);
                     break;
                 default:
                     throw new Error(`Unsupported method ${route.method} for path ${route.path}`);

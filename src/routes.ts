@@ -1,4 +1,8 @@
+import { authorize } from './http/middleware/authorize';
 import { IRoute } from './interfaces/IRoute';
+import create from './routes/api/auth/create';
+import login from './routes/api/auth/login';
+import user from './routes/api/auth/user';
 import health from './routes/api/health';
 
 const routes: { [key: string]: IRoute } = {
@@ -8,13 +12,30 @@ const routes: { [key: string]: IRoute } = {
         path: '/api/example',
         handler: (req, res) => {
             res.send({ message: 'Hello, world!' });
-        }
+        },
+        middlewares: [authorize]
     },
     */
-    hello: {
+    health: {
         method: 'get',
-        path: '/api/hello',
+        path: '/api/health',
         handler: health
+    },
+    authLogin: {
+        method: 'post',
+        path: '/api/auth/login',
+        handler: login
+    },
+    authCreate: {
+        method: 'post',
+        path: '/api/auth/create',
+        handler: create
+    },
+    user: {
+        method: 'get',
+        path: '/api/auth/user',
+        handler: user,
+        middlewares: [authorize]
     }
 };
 
