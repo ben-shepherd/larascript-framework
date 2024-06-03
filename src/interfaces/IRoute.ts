@@ -1,8 +1,9 @@
-import { Request, Response } from 'express';
-
+import { Middleware } from './Middleware.t';
+import { RouteHandler } from './RouteHandler.t';
 
 export interface IRoute {
     path: string;
     method: 'get' | 'post' | 'put' | 'delete';
-    handler: (req: Request, res: Response) => void;
+    handler: RouteHandler;
+    middlewares?: Middleware[]
 }
