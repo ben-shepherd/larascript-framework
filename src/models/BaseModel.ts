@@ -48,10 +48,7 @@ export default class BaseModel implements IModel {
     }
     
     async save(): Promise<void> {
-        console.log('SAVE EVENT', this.collection, {hasId: this.getId()})
-
         if(this.data && !this.getId()) {
-            console.log('saving')
             await MongoDB.getInstance().getDatabase().collection(this.collection).insertOne(this.data)
             await this.refresh()
             return;
