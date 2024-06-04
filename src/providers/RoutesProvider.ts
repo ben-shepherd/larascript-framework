@@ -7,10 +7,11 @@ import Express from "../services/Express";
 export default class RoutesProvider extends BaseProvider
 {
     protected config!: IRoutesConfig;
-    configPath = 'config/routes.js';
+    configPath = 'src/config/http/routes';
 
     constructor() {
         super()
+        this.init()
     }
 
     public async register(): Promise<void> {

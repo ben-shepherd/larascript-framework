@@ -36,6 +36,11 @@ export default abstract class Provider implements IProvider {
     }
 
     protected log(message: string, ...args: any[]): void {
-        console.log(`[Provider] ${message}`, args);
+        const str = `[Provider] ${message}`;
+        if(args.length > 0) {
+            console.log(str, ...args);
+            return;
+        }
+        console.log(`[Provider] ${message}`);
     }
 }

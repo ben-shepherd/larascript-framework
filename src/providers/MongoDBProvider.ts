@@ -14,7 +14,7 @@ export default class MongoDBProvider extends BaseProvider
 
     public async register(): Promise<void>
     {
-        this.log('Registering MongoDBProvider', this.config, this.configPath);
+        this.log('Registering MongoDBProvider');
         
         MongoDB.getInstance(this.config);
     }

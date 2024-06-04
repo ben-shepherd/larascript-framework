@@ -14,7 +14,7 @@ export default class ExpressProvider extends BaseProvider
 
     public async register(): Promise<void> 
     {
-        this.log('Registering ExpressProvider', this.config);
+        this.log('Registering ExpressProvider');
 
         Express.getInstance(this.config).init();
     }

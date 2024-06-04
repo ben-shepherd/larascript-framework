@@ -1,11 +1,9 @@
-import { IRoutesConfig } from "../../interfaces/IRoutesConfig";
-
-
-const parseBooleanFromString = (value: string | undefined, defaultValue: 'true' | 'false'): boolean => (value ?? defaultValue) === 'true';
+import { IRoutesConfig } from '../../interfaces/IRoutesConfig';
+import parseBooleanFromString from '../../util/parseBooleanFromString';
 
 const config: IRoutesConfig = {
-    authRoutes: parseBooleanFromString(process.env.APP_AUTH_ROUTES, 'true'),
-    authCreateAllowed: parseBooleanFromString(process.env.APP_AUTH_ROUTES, 'true'),
+    authRoutes: parseBooleanFromString(process.env.AUTH_ROUTES, 'true'),
+    authCreateAllowed: parseBooleanFromString(process.env.AUTH_ROUTES_ALLOW_CREATE, 'true'),
 }
 
 export default config;

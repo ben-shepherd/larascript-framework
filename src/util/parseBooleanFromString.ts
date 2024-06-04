@@ -1,0 +1,1 @@
+export default (value: string | undefined, defaultValue: 'true' | 'false'): boolean => (value ?? defaultValue) === 'true';
