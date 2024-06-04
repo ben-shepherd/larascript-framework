@@ -1,23 +1,24 @@
 import { MongoClient, Db } from 'mongodb';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const connectionString: string = process.env.MONGO_CONNECTION_STRING as string;
+import IMongoDbConfig from '../interfaces/IMongoDbConfig';
 
 export default class MongoDB {
     private static instance: MongoDB;
     private client: MongoClient;
     private db!: Db;
 
-    private constructor() {
-        this.client = new MongoClient(connectionString);
+    private constructor({ uri, options }: IMongoDbConfig) {
+        this.client = new MongoClient(uri, options);
     }
 
-    public static getInstance(): MongoDB {
-        if (!MongoDB.instance) {
-            MongoDB.instance = new MongoDB();
+    public static getInstance(config: IMongoDbConfig | null = null): MongoDB {
+        if (!MongoDB.instance && config) {
+            MongoDB.instance = new MongoDB(config);
         }
+
+        if (!MongoDB.instance) {
+            throw new Error('MongoDB instance not created');
+        }
+
         return MongoDB.instance;
     }
 

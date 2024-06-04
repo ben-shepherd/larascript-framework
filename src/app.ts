@@ -1,16 +1,11 @@
-import 'dotenv/config';
-import MongoDB from './services/MongoDB';
-import Express from './services/Express';
+import Kernel from './kernel';
 
+require('dotenv').config();
 
 (async () => {
     try {
-        // Connect to database
-        await MongoDB.getInstance().connect();
-        console.log('Database connected successfully');
-
-        // Setup Express
-        Express.getApp();
+        await Kernel.boot();
+        console.log('App started successfully');
 
     } catch (error) {
         console.error('Failed to start app', error);
