@@ -1,8 +1,8 @@
 import { IRepository } from "../../../interfaces/IRepository";
-import BaseRepository from "../../../repositories/BaseRepository";
+import Repository from "../../../base/Repository";
 import UserModel from "../models/UserModel";
 
-export default class UserRepository extends BaseRepository<UserModel> implements IRepository {
+export default class UserRepository extends Repository<UserModel> implements IRepository {
 
     constructor() {
         super('users', UserModel);

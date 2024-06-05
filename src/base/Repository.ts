@@ -7,7 +7,7 @@ import MongoDB from '../services/MongoDB';
 
 type Constructor<T> = new (...args: any[]) => T
 
-class BaseRepository<T extends IModel> implements IRepository {
+class Repository<T extends IModel> implements IRepository {
     private ctor: Constructor<T>;
     private collectionName!: string;
 
@@ -32,4 +32,4 @@ class BaseRepository<T extends IModel> implements IRepository {
     }
 }
 
-export default BaseRepository
+export default Repository

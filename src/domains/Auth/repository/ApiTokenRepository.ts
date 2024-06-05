@@ -1,8 +1,8 @@
 import { IRepository } from "../../../interfaces/IRepository";
-import BaseRepository from "../../../repositories/BaseRepository";
+import Repository from "../../../base/Repository";
 import ApiTokenModel from "../models/ApiTokenModel";
 
-export default class ApiTokenRepository extends BaseRepository<ApiTokenModel> implements IRepository {
+export default class ApiTokenRepository extends Repository<ApiTokenModel> implements IRepository {
 
     constructor() {
         super('apiTokens', ApiTokenModel);
