@@ -14,6 +14,6 @@ export default class ExpressListenerProvider extends Provider
 
         await Express.getInstance().listen();
 
-        this.log('Express successfully listening on port ' + this.config.port);
+        this.log('Express successfully listening on port ' + Express.getInstance().getConfig()?.port);
     }
 }

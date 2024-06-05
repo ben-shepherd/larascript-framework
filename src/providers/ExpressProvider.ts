@@ -16,11 +16,13 @@ export default class ExpressProvider extends Provider
     {
         this.log('Registering ExpressProvider');
 
-        Express.getInstance(this.config).init();
+        Express.getInstance(this.config);
     }
 
     public async boot(): Promise<void>
     {
         this.log('Booting ExpressProvider');
+
+        Express.getInstance().init();
     }
 }

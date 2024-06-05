@@ -12,10 +12,6 @@ export default class Express extends Singleton<IExpressConfig> {
         super(config)
         this.config = config
         this.app = express()
-
-        if(this.config) {
-        this.init()
-        }
     }
 
     public init() {
