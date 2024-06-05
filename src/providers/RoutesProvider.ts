@@ -1,6 +1,6 @@
 import { IRoutesConfig } from "../interfaces/IRoutesConfig";
 import BaseProvider from "../base/Provider";
-import authRoutes from '../routes/auth';
+import authRoutes from '../domains/Auth/routes/auth'
 import apiRoutes from '../routes/api';
 import Provider from "../services/Express";
 

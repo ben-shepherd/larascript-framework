@@ -1,6 +1,6 @@
-import create from '../actions/actions/auth/create';
-import login from '../actions/actions/auth/login';
-import { IRoute } from '../interfaces/IRoute';
+import create from "../../../actions/actions/auth/create";
+import login from "../../../actions/actions/auth/login";
+import { IRoute } from "../../../interfaces/IRoute";
 
 const routes: IRoute[] = [
     {
