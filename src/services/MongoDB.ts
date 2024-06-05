@@ -16,7 +16,7 @@ export default class MongoDB extends Singleton<IMongoDbConfig> {
         this.db = this.client.db(); // This will use the database specified in the connection string
     }
 
-    public getDatabase(): Db {
-        return this.db;
+    public getClient(): MongoClient {
+        return this.client;
     }
 }
