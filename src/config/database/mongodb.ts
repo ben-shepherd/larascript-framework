@@ -1,5 +1,6 @@
 import { MongoClientOptions } from "mongodb";
-import IMongoDbConfig from "../../interfaces/IMongoDbConfig";
+import IMongoDbConfig from "../../core/interfaces/IMongoDbConfig";
+
 const options: MongoClientOptions = {}
 
 const config: IMongoDbConfig = {

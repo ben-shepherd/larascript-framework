@@ -1,6 +1,6 @@
 import express from 'express';
 
-import IExpressConfig from "../../interfaces/IExpressConfig";
+import IExpressConfig from '../../core/interfaces/IExpressConfig';
 
 const config: IExpressConfig = {
     port: parseInt(process.env.PORT ?? '3000'),

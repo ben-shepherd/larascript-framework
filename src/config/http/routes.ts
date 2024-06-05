@@ -1,5 +1,5 @@
-import { IRoutesConfig } from '../../interfaces/IRoutesConfig';
-import parseBooleanFromString from '../../util/parseBooleanFromString';
+import { IRoutesConfig } from '../../core/interfaces/IRoutesConfig';
+import parseBooleanFromString from '../../core/util/parseBooleanFromString';
 
 const config: IRoutesConfig = {
     authRoutes: parseBooleanFromString(process.env.AUTH_ROUTES, 'true'),

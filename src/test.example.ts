@@ -1,4 +1,4 @@
-import MongoDB from "./services/MongoDB";
+import MongoDB from "./core/services/MongoDB";
 
 (async() => {
     require('dotenv').config();
