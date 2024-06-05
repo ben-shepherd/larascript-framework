@@ -1,25 +1,14 @@
 import { MongoClient, Db } from 'mongodb';
 import IMongoDbConfig from '../interfaces/IMongoDbConfig';
+import Singleton from '../base/Singleton';
 
-export default class MongoDB {
-    private static instance: MongoDB;
+export default class MongoDB extends Singleton<IMongoDbConfig> {
     private client: MongoClient;
     private db!: Db;
 
-    private constructor({ uri, options }: IMongoDbConfig) {
+    constructor({ uri, options }: IMongoDbConfig) {
+        super({ uri, options });
         this.client = new MongoClient(uri, options);
-    }
-
-    public static getInstance(config: IMongoDbConfig | null = null): MongoDB {
-        if (!MongoDB.instance && config) {
-            MongoDB.instance = new MongoDB(config);
-        }
-
-        if (!MongoDB.instance) {
-            throw new Error('MongoDB instance not created');
-        }
-
-        return MongoDB.instance;
     }
 
     public async connect(): Promise<void> {

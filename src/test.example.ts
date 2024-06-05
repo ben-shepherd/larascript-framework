@@ -1,10 +1,9 @@
 import MongoDB from "./services/MongoDB";
 
-require('dotenv').config();
-
 (async() => {
-    await MongoDB.getInstance().connect();
+    require('dotenv').config();
+    await MongoDB.getInstance(require('./config/database/mongodb').default).connect();
     // add your tests here below
 
-    
+
 })();

@@ -2,27 +2,31 @@ import express from 'express';
 
 import { IRoute } from '../interfaces/IRoute';
 import IExpressConfig from '../interfaces/IExpressConfig';
+import Singleton from '../base/Singleton';
 
-export default class Express {
-    private static instance: Express;
-    private config!: IExpressConfig;
+export default class Express extends Singleton<IExpressConfig> {
+    protected config!: IExpressConfig | null;
     private app: express.Express
     
-    private constructor(config: IExpressConfig) {
+    constructor(config: IExpressConfig | null = null) {
+        super(config)
         this.config = config
         this.app = express()
+
+        if(this.config) {
         this.init()
+        }
     }
 
     public init() {
-        for(const middleware of this.config.globalMiddlewares ?? []) {
+        for(const middleware of this.config?.globalMiddlewares ?? []) {
             this.app.use(middleware)
         }
     }
 
     public async listen(): Promise<void>
-    {
-        const port =  this.config.port
+    {   
+        const port =  this.config?.port
         
         return new Promise(resolve => {
             this.app.listen(port, () => resolve())
@@ -51,22 +55,5 @@ export default class Express {
                     throw new Error(`Unsupported method ${route.method} for path ${route.path}`);
             }
         })
-    }
-
-    public static getApp(): express.Express
-    {
-        return this.getInstance().app
-    }
-
-    public static getInstance(config: IExpressConfig | null = null): Express {
-        if (!Express.instance && config) {
-            Express.instance = new Express(config);
-        }
-
-        if (!Express.instance) {
-            throw new Error('Express instance not created');
-        }
-
-        return Express.instance;
     }
 }

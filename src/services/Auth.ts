@@ -10,22 +10,16 @@ import createJwt from '../domains/Auth/utils/createJwt';
 import decodeJwt from '../domains/Auth/utils/decodeJwt';
 import UnauthorizedError from '../exceptions/UnauthorizedError';
 import { IAuth } from '../interfaces/IAuth';
+import Singleton from '../base/Singleton';
 
-export default class Auth implements IAuth {
-    private static instance: Auth;
+export default class Auth extends Singleton<any> implements IAuth {
     private userRepository: UserRepository;
     private apiTokenRepository: ApiTokenRepository;
 
-    private constructor() {
+    constructor() {
+        super()
         this.userRepository = new UserRepository();
         this.apiTokenRepository = new ApiTokenRepository();
-    }
-
-    public static getInstance(): Auth {
-        if (!Auth.instance) {
-            Auth.instance = new Auth();
-        }
-        return Auth.instance;
     }
 
     async createToken(user: UserModel): Promise<string> {
