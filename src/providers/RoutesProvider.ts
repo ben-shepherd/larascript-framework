@@ -1,8 +1,8 @@
 import { IRoutesConfig } from "../interfaces/IRoutesConfig";
-import BaseProvider from "./BaseProvider";
+import BaseProvider from "../base/Provider";
 import authRoutes from '../routes/auth';
 import apiRoutes from '../routes/api';
-import Express from "../services/Express";
+import Provider from "../services/Express";
 
 export default class RoutesProvider extends BaseProvider
 {
@@ -26,7 +26,7 @@ export default class RoutesProvider extends BaseProvider
     }
 
     private registerApiRoutes(): void {
-        Express.getInstance().bindRoutes(apiRoutes);
+        Provider.getInstance().bindRoutes(apiRoutes);
     }
 
     private registerAuthRoutes(): void {
@@ -42,6 +42,6 @@ export default class RoutesProvider extends BaseProvider
             ]
         }
 
-        Express.getInstance().bindRoutes(authRoutesArray);
+        Provider.getInstance().bindRoutes(authRoutesArray);
     }
 }

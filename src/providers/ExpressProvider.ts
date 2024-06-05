@@ -1,8 +1,8 @@
 import IExpressConfig from "../interfaces/IExpressConfig";
 import Express from "../services/Express";
-import BaseProvider from "./BaseProvider";
+import Provider from "../base/Provider";
 
-export default class ExpressProvider extends BaseProvider
+export default class ExpressProvider extends Provider
 {
     protected configPath: string = 'src/config/http/express';
     protected config!: IExpressConfig;

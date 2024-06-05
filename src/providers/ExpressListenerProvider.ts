@@ -1,7 +1,7 @@
 import Express from "../services/Express";
-import BaseProvider from "./BaseProvider";
+import Provider from "../base/Provider";
 
-export default class ExpressListenerProvider extends BaseProvider
+export default class ExpressListenerProvider extends Provider
 {
     public async register(): Promise<void> 
     {
