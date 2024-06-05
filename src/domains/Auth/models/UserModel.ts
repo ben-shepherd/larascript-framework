@@ -1,8 +1,8 @@
 import { IModel } from '../../../interfaces/IModel';
-import BaseModel from '../../../models/BaseModel';
+import Model from '../../../base/Model';
 import { User } from '../types/types.t';
 
-export default class UserModel extends BaseModel implements IModel {
+export default class UserModel extends Model implements IModel {
     collection = "users";
 
     guarded: string[] = [

@@ -2,7 +2,7 @@ import IData from "../interfaces/IData";
 import { GetDataOptions, IModel } from "../interfaces/IModel";
 import MongoDB from "../services/MongoDB";
 
-export default class BaseModel implements IModel {
+export default class Model implements IModel {
     primaryKey: string = '_id';
     data: IData | null;
     collection!: string;
