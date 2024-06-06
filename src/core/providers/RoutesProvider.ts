@@ -17,6 +17,8 @@ export default class RoutesProvider extends BaseProvider
     public async register(): Promise<void> {
         this.log('Registering RoutesProvider');
 
+        // todo: throw an error if Express has not been initialized
+
         this.registerApiRoutes();
         this.registerAuthRoutes();
     }

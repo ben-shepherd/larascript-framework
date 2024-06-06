@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
-import UnauthorizedError from '../../../../exceptions/UnauthorizedError';
-import Auth from '../../../../services/Auth';
-import ResponseError from '../../../../http/requests/ResponseError';
+
+import UnauthorizedError from '../../../exceptions/UnauthorizedError';
+import ResponseError from '../../../http/requests/ResponseError';
+import Auth from '../../../services/Auth';
 
 export default async (req: Request, res: Response): Promise<void> => {
     try {
-        const { email, password } = req.body;
+        const { email, password } = req?.body ?? {};
         let token;
 
         token = await Auth.getInstance().login(email, password);
@@ -14,7 +15,7 @@ export default async (req: Request, res: Response): Promise<void> => {
     }
     catch (error) {
         if(error instanceof UnauthorizedError) {
-            ResponseError(req, res, error, 401)
+            res.status(401).send({ error: error.message },)
             return;
         }
 

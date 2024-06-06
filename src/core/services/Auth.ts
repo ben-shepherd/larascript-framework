@@ -1,16 +1,16 @@
+import Singleton from '../base/Singleton';
 import apiTokenFactory from '../domains/Auth/factory/apiTokenFactory';
 import jwtTokenFactory from '../domains/Auth/factory/jwtTokenFactory';
 import ApiTokenModel from '../domains/Auth/models/ApiTokenModel';
 import UserModel from '../domains/Auth/models/UserModel';
 import ApiTokenRepository from '../domains/Auth/repository/ApiTokenRepository';
 import UserRepository from '../domains/Auth/repository/UserRepository';
+import { JWTToken } from '../domains/Auth/types/types.t';
+import comparePassword from '../domains/Auth/utils/comparePassword';
+import createJwt from '../domains/Auth/utils/createJwt';
+import decodeJwt from '../domains/Auth/utils/decodeJwt';
 import UnauthorizedError from '../exceptions/UnauthorizedError';
 import { IAuth } from '../interfaces/IAuth';
-import Singleton from '../base/Singleton';
-import comparePassword from '../domains/Auth/utils/comparePassword';
-import decodeJwt from '../domains/Auth/utils/decodeJwt';
-import createJwt from '../domains/Auth/utils/createJwt';
-import { JWTToken } from '../domains/Auth/types/types.t';
 
 export default class Auth extends Singleton<any> implements IAuth {
     private userRepository: UserRepository;

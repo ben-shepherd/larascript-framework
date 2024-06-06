@@ -15,8 +15,12 @@ export default class Express extends Singleton<IExpressConfig> {
     }
 
     public init() {
-        for(const middleware of this.config?.globalMiddlewares ?? []) {
-            this.app.use(middleware)
+        if (!this.config) {
+            throw new Error('Config not provided');
+        }
+        for (const middleware of this.config?.globalMiddlewares ?? []) {
+            console.log('Express loaded middleware', middleware);
+            this.app.use(middleware);
         }
     }
 
@@ -51,5 +55,9 @@ export default class Express extends Singleton<IExpressConfig> {
                     throw new Error(`Unsupported method ${route.method} for path ${route.path}`);
             }
         })
+    }
+
+    public getApp(): express.Express {
+        return this.app
     }
 }
