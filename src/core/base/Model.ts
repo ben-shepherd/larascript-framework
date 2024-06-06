@@ -2,13 +2,15 @@ import IData from "../interfaces/IData";
 import { GetDataOptions, IModel } from "../interfaces/IModel";
 import MongoDB from "../services/MongoDB";
 
-export default class Model implements IModel {
+export default class Model<TModelData extends IData> implements IModel {
     primaryKey: string = '_id';
-    data: IData | null;
+    data: TModelData | null;
     collection!: string;
+
+    fields: string[] = [];
     guarded: string[] = [];
 
-    constructor(data: IData | null) {
+    constructor(data: TModelData | null) {
         this.data = data;
     }
 
@@ -16,21 +18,24 @@ export default class Model implements IModel {
         return this.getAttribute(this.primaryKey) ?? null
     }
 
-    getAttribute<K extends keyof IData>(key: K): IData[K] | null {
+    getAttribute<K extends keyof TModelData>(key: K): TModelData[K] | null {
         return this.data?.[key] ?? null;
     }
     
-    setAttribute<K extends keyof IData>(key: K, value: IData[K]): void {
+    setAttribute<K extends keyof TModelData>(key: K, value: TModelData[K]): void {
+        if(!this.fields.includes(key as string)) {
+            throw new Error(`Attribute ${key as string} not found in model ${this.collection}`);
+        }
         if(this.data) {
             this.data[key] = value;
         }
     }
 
-    getData(options: GetDataOptions): object | null {
+    getData(options: GetDataOptions): TModelData | null {
         let data = this.data;
 
         if(options.excludeGuarded) {
-            data = Object.fromEntries(Object.entries(data ?? {}).filter(([key]) => !this.guarded.includes(key)))
+            data = Object.fromEntries(Object.entries(data ?? {}).filter(([key]) => !this.guarded.includes(key))) as TModelData
         }
         
         return data;
@@ -38,19 +43,29 @@ export default class Model implements IModel {
 
     async refresh(): Promise<IData | null> {
         if(!this.data) return null;
-        this.data = await MongoDB.getInstance().getDb().collection(this.collection).findOne({ [this.primaryKey]: this.getId() }) as IData ?? null;
+        this.data = await MongoDB
+            .getInstance()
+            .getDb()
+            .collection(this.collection)
+            .findOne({ [this.primaryKey]: this.getId() }) as TModelData | null ?? null;
         return this.data
     }
 
     async update(): Promise<void> {
         if(!this.getId()) return;
-        await MongoDB.getInstance().getDb().collection(this.collection).updateOne({ [this.primaryKey]: this.getId() }, { $set: this.data as IData })
+        await MongoDB.getInstance()
+        .getDb()
+        .collection(this.collection)
+        .updateOne({ [this.primaryKey]: this.getId() }, { $set: this.data as IData });
     }
     
     async save(): Promise<void> {
         if(this.data && !this.getId()) {
-            await MongoDB.getInstance().getDb().collection(this.collection).insertOne(this.data)
-            await this.refresh()
+            await MongoDB.getInstance()
+            .getDb()
+            .collection(this.collection)
+            .insertOne(this.data);
+            await this.refresh();
             return;
         }
 

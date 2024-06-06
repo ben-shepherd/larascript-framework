@@ -1,7 +1,7 @@
 import { Request } from 'express';
 
-import UserModel from '../domains/Auth/models/UserModel';
+import BaseUserModel from '../domains/Auth/models/BaseUserModel';
 
 export default interface IAuthorizedRequest extends Request {
-    user?: UserModel | null;
+    user?: BaseUserModel | null;
 }

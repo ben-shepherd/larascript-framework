@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import ValidationError from '../../../exceptions/ValidationError';
-import UserRepository from '../repository/UserRepository';
+import BaseUserRepository from '../repository/BaseUserRepository';
 import userFactory from '../factory/userFactory';
 import Auth from '../../../services/Auth';
 
@@ -17,7 +17,7 @@ export default async (req: Request, res: Response): Promise<void> => {
             throw new ValidationError('Password must be at least 6 characters long');
         }
 
-        const repository = new UserRepository();
+        const repository = new BaseUserRepository();
         const existingUser = await repository.findByEmail(email);
 
         if(existingUser) {
