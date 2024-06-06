@@ -9,10 +9,10 @@ const appConfig: IAppConfig = {
     environment: (process.env.APP_ENV as EnvironmentType) ?? 'development',
     
     providers: [
+        new MongoDBProvider(),
         new ExpressProvider(),
         new RoutesProvider(),
         new ExpressListenerProvider(),
-        new MongoDBProvider(),
     ],
 };
 

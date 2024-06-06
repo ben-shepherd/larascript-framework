@@ -5,9 +5,9 @@ require('dotenv').config();
 (async () => {
     try {
         await Kernel.boot();
-        console.log('App started successfully');
+        console.log('[App]: Started successfully');
 
     } catch (error) {
-        console.error('Failed to start app', error);
+        console.error('[App]: Failed to start', error);
     }
 })();

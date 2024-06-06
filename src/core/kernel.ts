@@ -31,7 +31,7 @@ export default class Kernel extends Singleton<null> {
         }
     }
 
-    public static isReady(providerName: string): boolean {
+    public static isProviderReady(providerName: string): boolean {
         return this.getInstance().readyProviders.includes(providerName);
     }
 }

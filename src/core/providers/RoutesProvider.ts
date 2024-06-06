@@ -21,12 +21,12 @@ export default class RoutesProvider extends BaseProvider
     }
 
     public async boot(): Promise<void> {
-        this.log('Booting RoutesProvider');
-
-        if(!Kernel.isReady(ExpressProvider.name)) {
+        if(!Kernel.isProviderReady(ExpressProvider.name)) {
             throw new Error('ExpressProvider must be loaded before RoutesProvider');
         }
 
+        this.log('Booting RoutesProvider');
+        
         this.registerApiRoutes();
         this.registerAuthRoutes();
     }
