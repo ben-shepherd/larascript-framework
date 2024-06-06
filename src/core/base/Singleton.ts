@@ -18,6 +18,11 @@ export default class Singleton<TConfig extends Record<any,any> | null> implement
         return Singleton.instances.get(className) as TService;
     }
 
+    public static isInitialized<TService extends Singleton<any>>(this: new (config: any) => TService): boolean {
+        const className = this.name
+        return Singleton.instances.has(className);
+    }
+
     public getConfig(): TConfig | null {
         return this.config;
     }

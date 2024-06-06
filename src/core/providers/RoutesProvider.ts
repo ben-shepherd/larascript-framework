@@ -3,6 +3,8 @@ import BaseProvider from "../base/Provider";
 import authRoutes from '../domains/Auth/routes/auth'
 import apiRoutes from '../routes/api';
 import Provider from "../services/Express";
+import ExpressProvider from "./ExpressProvider";
+import Kernel from "../kernel";
 
 export default class RoutesProvider extends BaseProvider
 {
@@ -16,15 +18,17 @@ export default class RoutesProvider extends BaseProvider
 
     public async register(): Promise<void> {
         this.log('Registering RoutesProvider');
-
-        // todo: throw an error if Express has not been initialized
-
-        this.registerApiRoutes();
-        this.registerAuthRoutes();
     }
 
     public async boot(): Promise<void> {
         this.log('Booting RoutesProvider');
+
+        if(!Kernel.isReady(ExpressProvider.name)) {
+            throw new Error('ExpressProvider must be loaded before RoutesProvider');
+        }
+
+        this.registerApiRoutes();
+        this.registerAuthRoutes();
     }
 
     private registerApiRoutes(): void {
