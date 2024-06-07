@@ -29,7 +29,10 @@ export default class Auth extends Singleton<any> implements IAuth {
     }
 
     private jwt(apiToken: ApiTokenModel): string {
-        const payload = jwtTokenFactory(apiToken.data?.userId, apiToken.data?.token);
+        if(!apiToken?.data?.userId) {
+            throw new Error('Invalid token');
+        }
+        const payload = jwtTokenFactory(apiToken.data?.userId?.toString(), apiToken.data?.token);
         return createJwt(payload, '1d');
     }
 
@@ -67,7 +70,7 @@ export default class Auth extends Singleton<any> implements IAuth {
             throw new UnauthorizedError('Unauthorized (Error code: 1)')
         }
 
-        if(!comparePassword(password, user.data?.hashedPassword)) {
+        if(user?.data?.hashedPassword && !comparePassword(password, user.data?.hashedPassword)) {
             throw new UnauthorizedError('Unauthorized (Error code: 2)')
         }
 

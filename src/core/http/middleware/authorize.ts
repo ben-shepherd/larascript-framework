@@ -2,17 +2,21 @@ import { NextFunction, Response } from 'express';
 
 import IAuthorizedRequest from '../../interfaces/IAuthorizedRequest';
 import Auth from '../../services/Auth';
-import BaseUserRepository from '../../domains/Auth/repository/BaseUserRepository';
 import UnauthorizedError from '../../exceptions/UnauthorizedError';
 import ResponseError from '../requests/ResponseError';
+import User from '../../../app/models/User';
+import UserRepository from '../../../app/repositories/UserRepository';
 
-export const authorize = async (req: IAuthorizedRequest, res: Response, next: NextFunction): Promise<void> => {
+export const authorize = (repository: new () => UserRepository) => async (req: IAuthorizedRequest<User>, res: Response, next: NextFunction): Promise<void> => {
     try {
         const authorization = (req.headers.authorization ?? '').replace('Bearer ', '');
 
         const apiToken = await Auth.getInstance().authenticateToken(authorization)
-        const userRepository = new BaseUserRepository();
-        const user = await userRepository.findById(apiToken?.data?.userId);
+        const userRepository = new repository();
+
+        const userId = apiToken?.data?.userId;
+
+        const user = userId && await userRepository.findById(userId?.toString());
 
         req.user = user;
         next();

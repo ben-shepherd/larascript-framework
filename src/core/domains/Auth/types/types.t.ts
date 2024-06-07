@@ -2,15 +2,15 @@ import { ObjectId} from 'mongodb'
 import IData from '../../../interfaces/IData';
 
 export interface BaseUserData extends IData {
-    _id?: ObjectId | undefined
+    _id?: ObjectId
     email: string
     hashedPassword: string
     roles: string[]
 }
 
-export interface ApiToken extends IData {
-    _id?: ObjectId | undefined
-    userId: BaseUserData
+export interface ApiTokenData extends IData {
+    _id?: ObjectId
+    userId: ObjectId
     token: string
     revokedAt: Date | null;
 }

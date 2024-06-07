@@ -3,9 +3,10 @@ import { IRepository } from '../../../interfaces/IRepository';
 import BaseUserModel from '../models/BaseUserModel';
 import { BaseUserData } from '../types/types.t';
 
-export default class BaseUserRepositor<M extends BaseUserModel, D extends BaseUserData> extends Repository<BaseUserModel> implements IRepository {
+export default class BaseUserRepositor<M extends BaseUserModel = BaseUserModel, D extends BaseUserData = BaseUserData> extends Repository<BaseUserModel> implements IRepository {
 
-    constructor(model: new (data: D) => M) {
+    // Set BaseUserModel as the default model parameter
+    constructor(model: new (data: D) => M = BaseUserModel as new (data: D) => M) {
         super('users', model);
     }
 

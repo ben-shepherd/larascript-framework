@@ -1,11 +1,11 @@
 import Model from "../../../base/Model";
 import { IModel } from "../../../interfaces/IModel";
-import { ApiToken } from "../types/types.t";
+import { ApiTokenData } from "../types/types.t";
 
-export default class ApiTokenModel extends Model implements IModel {
+export default class ApiTokenModel extends Model<ApiTokenData> implements IModel {
     collection = "apiTokens";
 
-    constructor(data: ApiToken | null) {
+    constructor(data: ApiTokenData | null) {
         super(data);
     }
 }
