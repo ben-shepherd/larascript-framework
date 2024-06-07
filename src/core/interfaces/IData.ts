@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 
 export default interface IData {
-    id?: ObjectId | null;
+    _id?: ObjectId | undefined;
     [key: string]: any;
 }

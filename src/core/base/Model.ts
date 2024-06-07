@@ -1,8 +1,9 @@
+import { ObjectId } from "mongodb";
 import IData from "../interfaces/IData";
 import { GetDataOptions, IModel } from "../interfaces/IModel";
 import MongoDB from "../services/MongoDB";
 
-export default class Model<TModelData extends IData> implements IModel {
+export default class Model<TModelData extends Record<any,any>> implements IModel {
     primaryKey: string = '_id';
     data: TModelData | null;
     collection!: string;
@@ -14,15 +15,15 @@ export default class Model<TModelData extends IData> implements IModel {
         this.data = data;
     }
 
-    getId(): number | null {
-        return this.getAttribute(this.primaryKey) ?? null
+    getId(): ObjectId | undefined {
+        return this.getAttribute(this.primaryKey) ?? undefined
     }
 
     getAttribute<K extends keyof TModelData>(key: K): TModelData[K] | null {
         return this.data?.[key] ?? null;
     }
     
-    setAttribute<K extends keyof TModelData>(key: K, value: TModelData[K]): void {
+    setAttribute<K extends keyof TModelData>(key: K, value: any): void {
         if(!this.fields.includes(key as string)) {
             throw new Error(`Attribute ${key as string} not found in model ${this.collection}`);
         }
