@@ -21,8 +21,8 @@ class Repository<M extends IModel> implements IRepository {
         return data ? new this.ctor(data) : null;
     }
 
-    async find(query: object = {}): Promise<M | null> {
-        const data = await MongoDB.getInstance().getDb().collection(this.collectionName).findOne(query) as IData | null;
+    async findOne(query: object = {}): Promise<M | null> {
+        const data = await MongoDB.getInstance().getDb().collection(this.collectionName).findOne(query) as M | null;
         return data ? new this.ctor(data) : null;
     }
 

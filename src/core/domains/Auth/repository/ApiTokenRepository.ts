@@ -9,11 +9,11 @@ export default class ApiTokenRepository extends Repository<ApiTokenModel> implem
     }
 
     async findByToken(token: string): Promise<ApiTokenModel | null> {
-        return await this.find({ token })
+        return await this.findOne({ token })
     }
 
     
     async findByUnrevokedToken(token: string): Promise<ApiTokenModel | null> {
-        return await this.find({ token, revokedAt: null })
+        return await this.findOne({ token, revokedAt: null })
     }
 }
