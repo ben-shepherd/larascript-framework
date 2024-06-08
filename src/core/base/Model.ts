@@ -1,9 +1,18 @@
-import { ObjectId } from "mongodb";
-import IData from "../interfaces/IData";
-import { GetDataOptions, IModel } from "../interfaces/IModel";
-import MongoDB from "../services/MongoDB";
+import { ObjectId } from 'mongodb';
 
-export default class Model<TModelData extends Record<any,any>> implements IModel {
+import BelongsTo from '../domains/Database/Relationships/belongsTo';
+import IData from '../interfaces/IData';
+import { GetDataOptions, IModel } from '../interfaces/IModel';
+import MongoDB from '../services/MongoDB';
+
+export interface BaseModelData {
+    _id?: ObjectId | undefined
+    createdAt?: Date,
+    updatedAt?: Date,
+    [key: string]: any
+}
+
+export default class Model<TModelData extends BaseModelData> implements IModel {
     primaryKey: string = '_id';
     data: TModelData | null;
     collection!: string;
@@ -79,4 +88,23 @@ export default class Model<TModelData extends Record<any,any>> implements IModel
         await MongoDB.getInstance().getDb().collection(this.collection).deleteOne({ [this.primaryKey]: this.getId() })
         this.data = null
     }
-}
+
+    async belongsTo<
+        LocalData extends BaseModelData,
+        LocalModel extends Model<LocalData>,
+        ForeignData extends BaseModelData,
+        ForeignModel extends Model<ForeignData>
+    > (
+        model: LocalModel,
+        localKey: keyof LocalData,
+        foreignModelCtor: new (...any: any[]) => ForeignModel,
+        foreignKey: keyof ForeignData,
+    ): Promise<ForeignModel | null> 
+    {
+        const data = await new BelongsTo<LocalData, LocalModel, ForeignData>().handle(model, new foreignModelCtor().collection, foreignKey, localKey)
+
+        if(!data) return null
+
+        return new foreignModelCtor(data)
+    }
+} 

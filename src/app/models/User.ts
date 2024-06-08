@@ -18,7 +18,7 @@ export default class User extends BaseUserModel<UserData> {
         'lastName'
     ]
 
-    constructor(data: UserData | null) {
+    constructor(data: UserData | null = null) {
         super(data);
     }
 }

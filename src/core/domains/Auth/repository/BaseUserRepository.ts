@@ -5,7 +5,6 @@ import { BaseUserData } from '../types/types.t';
 
 export default class BaseUserRepositor<M extends BaseUserModel = BaseUserModel, D extends BaseUserData = BaseUserData> extends Repository<BaseUserModel> implements IRepository {
 
-    // Set BaseUserModel as the default model parameter
     constructor(model: new (data: D) => M = BaseUserModel as new (data: D) => M) {
         super('users', model);
     }
