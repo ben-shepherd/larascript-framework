@@ -1,19 +1,19 @@
-import appConfig from "../config/app";
 import Singleton from "./base/Singleton";
 import IAppConfig from "./interfaces/IAppConfig";
 
-export default class Kernel extends Singleton<null> {
+export default class Kernel<C extends IAppConfig> extends Singleton<C> {
     private appConfig: IAppConfig;
     public readyProviders: string[]
 
-    constructor() {
-        super(null)
+    constructor(appConfig: C) {
+        super(appConfig)
         this.readyProviders = []
         this.appConfig = appConfig;
     }
 
-    public static async boot(): Promise<void> {
-        const kernel = Kernel.getInstance();
+    public static async boot<C extends IAppConfig>(config: C): Promise<void> {
+        const kernel = Kernel.getInstance(config);
+
 
         if(kernel.readyProviders.length > 0) {
             throw new Error('Kernel is already booted');
