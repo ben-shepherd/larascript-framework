@@ -1,9 +1,16 @@
-import MongoDB from "./core/services/MongoDB";
+import Kernel from "./core/kernel";
+import MongoDBProvider from "./core/providers/MongoDBProvider";
 
 (async() => {
     require('dotenv').config();
-    await MongoDB.getInstance(require('./config/database/mongodb').default).connect();
-    // add your tests here below
 
+    await Kernel.boot({
+        environment: 'testing',
+        providers: [
+            new MongoDBProvider()
+        ]
+    })
+
+    // add your tests here below
 
 })();
