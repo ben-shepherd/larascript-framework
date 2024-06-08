@@ -14,15 +14,6 @@ export default class BelongsTo<
             localKey = localKey.toString()
         }
 
-        console.log('HasMany handle',{
-            params: {
-                localModel,
-                foreignCollection,
-                foreignKey,
-                localKey
-            }
-        })
-
         return await MongoDB.getInstance()
             .getDb()
             ?.collection(foreignCollection)

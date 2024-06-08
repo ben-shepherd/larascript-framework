@@ -33,9 +33,7 @@ export default class MongoDB<TConnection extends string = 'default'> extends Sin
         return this.connections[connection];
     }
 
-    public async connect(): Promise<void> {
-        console.log('MongoDB connect', this.connections)
-
+    public async connectAll(): Promise<void> {
         for(const conn of Object.keys(this.connections)) {
             await this.connections[conn].connect();
             console.log('[Database][Connection: ' + conn + '] Connected successfully');

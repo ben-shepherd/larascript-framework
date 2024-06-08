@@ -14,6 +14,7 @@ export interface BaseModelData {
 }
 
 export default class Model<TModelData extends BaseModelData> implements IModel {
+    // The database connection
     public connection: string = 'default';
 
     // Primary identifier

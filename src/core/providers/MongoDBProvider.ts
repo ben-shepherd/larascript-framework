@@ -21,7 +21,7 @@ export default class MongoDBProvider extends Provider
     {
         this.log('Booting MongoDBProvider');
 
-        await MongoDB.getInstance(this.config).connect();
+        await MongoDB.getInstance(this.config).connectAll();
         
         this.log('Database connected successfully');
     }
