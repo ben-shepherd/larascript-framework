@@ -7,7 +7,7 @@ import { GetDataOptions, IModel } from '../interfaces/IModel';
 import MongoDB from '../services/MongoDB';
 
 export interface BaseModelData {
-    _id?: ObjectId | undefined
+    _id?: ObjectId
     createdAt?: Date,
     updatedAt?: Date,
     [key: string]: any
