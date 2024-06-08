@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb';
 
-import BelongsTo from '../domains/Database/Relationships/belongsTo';
+import BelongsTo from '../domains/Database/Relationships/BelongsTo';
+import HasMany from '../domains/Database/Relationships/HasMany';
 import IData from '../interfaces/IData';
 import { GetDataOptions, IModel } from '../interfaces/IModel';
 import MongoDB from '../services/MongoDB';
@@ -14,20 +15,20 @@ export interface BaseModelData {
 
 export default class Model<TModelData extends BaseModelData> implements IModel {
     // Primary identifier
-    primaryKey: string = '_id';
+    public primaryKey: string = '_id';
 
     // The MongoDB document
-    data: TModelData | null;
+    public data: TModelData | null;
 
     // The MongoDB collection
-    collection!: string;
+    public collection!: string;
 
     // Describe the fields and guarded attributes of the model
     // Fields that are allowed to be set on the model
-    fields: string[] = [];
+    public fields: string[] = [];
 
     // Fields that excluded when retrieving data when excludeGuarded is set to true
-    guarded: string[] = [];
+    public guarded: string[] = [];
 
     /**
      * Constructs a new instance of the Model class.
@@ -189,6 +190,10 @@ export default class Model<TModelData extends BaseModelData> implements IModel {
         foreignKey: keyof ForeignData,
     ): Promise<ForeignModel[]> 
     {
-        return []
+        const results = await new HasMany<LocalData, LocalModel, ForeignData>().handle(model, new foreignModelCtor().collection, foreignKey, localKey)
+
+        if(!results) return []
+
+        return results.map((result) => new foreignModelCtor(result))
     }
 } 
