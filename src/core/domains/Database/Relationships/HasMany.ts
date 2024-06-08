@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import Model, { BaseModelData } from "../../../base/Model";
-import MongoDB from "../../../services/MongoDB";
+import MongoDB from "../Services/MongoDB";
 
 export default class BelongsTo<
     LocalData extends BaseModelData,
@@ -25,7 +25,7 @@ export default class BelongsTo<
 
         return await MongoDB.getInstance()
             .getDb()
-            .collection(foreignCollection)
+            ?.collection(foreignCollection)
             .find({ [foreignKey]: localModel.getAttribute(localKey) })
             .toArray() as ForeignData[] | null
     }

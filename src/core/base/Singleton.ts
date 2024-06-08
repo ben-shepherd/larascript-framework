@@ -8,7 +8,12 @@ export default class Singleton<TConfig extends Record<any,any> | null> implement
         this.config = config
     }
 
-    public static getInstance<TService extends Singleton<any>, TConfig extends Record<any,any> | null>(this: new (config: any) => TService, config: TConfig | null = null): TService {
+    public static getInstance<
+        TService extends Singleton<any>,
+        TConfig extends Record<any,any> | null
+    >
+    (this: new (config: any) => TService, config: TConfig | null = null): TService 
+    {
         const className = this.name
 
         if(!Singleton.instances.has(className)) {

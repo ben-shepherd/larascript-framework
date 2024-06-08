@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import Model, { BaseModelData } from "../../../base/Model";
-import MongoDB from "../../../services/MongoDB";
+import MongoDB from "../Services/MongoDB";
 
 export default class BelongsTo<
     LocalData extends BaseModelData,

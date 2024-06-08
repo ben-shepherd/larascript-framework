@@ -5,6 +5,7 @@ export type GetDataOptions = {
 }
 
 export interface IModel {
+    connection: string;
     primaryKey: string;
     collection: string;
     guarded: string[];

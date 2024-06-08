@@ -1,12 +1,13 @@
-import { MongoClient, Db } from 'mongodb';
-import IMongoDbConfig from '../interfaces/IMongoDbConfig';
-import Singleton from '../base/Singleton';
+import { Db, MongoClient } from 'mongodb';
 
-export default class MongoDB extends Singleton<IMongoDbConfig> {
+import BaseService from '../../../base/Service';
+import { Connection } from '../../../interfaces/IMongoDbConfig';
+
+export default class MongoDBConnection extends BaseService<Connection> {
     private client: MongoClient;
     private db!: Db;
 
-    constructor({ uri, options }: IMongoDbConfig) {
+    constructor({ uri, options }: Connection) {
         super({ uri, options });
         this.client = new MongoClient(uri, options);
     }
@@ -14,6 +15,10 @@ export default class MongoDB extends Singleton<IMongoDbConfig> {
     public async connect(): Promise<void> {
         await this.client.connect();
         this.db = this.client.db();
+    }
+
+    public async isConnected(): Promise<boolean> {
+        return this.db instanceof Db;
     }
 
     public getClient(): MongoClient {

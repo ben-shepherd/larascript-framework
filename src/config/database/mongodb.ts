@@ -4,8 +4,17 @@ import IMongoDbConfig from "../../core/interfaces/IMongoDbConfig";
 const options: MongoClientOptions = {}
 
 const config: IMongoDbConfig = {
-    uri: process.env.MONGODB_URI as string,
-    options
+    connection: 'default',
+    connections: {
+        default: {
+            uri: process.env.MONGODB_URI as string,
+            options
+        },
+        other: {
+            uri: process.env.MONGODB_URI_OTHER as string,
+            options
+        }
+    }
 };
 
 export default config

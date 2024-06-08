@@ -17,7 +17,7 @@ export default class BaseUserModel<D extends BaseUserData = BaseUserData> extend
     ]
 
     constructor(data: D | null) {
-        super(data);
+        super(data ?? {} as D);
     }
 
     public hasRole(role: string) {

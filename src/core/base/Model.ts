@@ -1,10 +1,10 @@
-import { ObjectId } from 'mongodb';
+import { Db, ObjectId } from 'mongodb';
 
 import BelongsTo from '../domains/Database/Relationships/BelongsTo';
 import HasMany from '../domains/Database/Relationships/HasMany';
 import IData from '../interfaces/IData';
 import { GetDataOptions, IModel } from '../interfaces/IModel';
-import MongoDB from '../services/MongoDB';
+import MongoDB from '../domains/Database/Services/MongoDB';
 
 export interface BaseModelData {
     _id?: ObjectId
@@ -14,6 +14,8 @@ export interface BaseModelData {
 }
 
 export default class Model<TModelData extends BaseModelData> implements IModel {
+    public connection: string = 'default';
+
     // Primary identifier
     public primaryKey: string = '_id';
 
@@ -37,6 +39,10 @@ export default class Model<TModelData extends BaseModelData> implements IModel {
      */
     constructor(data: TModelData | null) {
         this.data = data;
+    }
+
+    protected getDb(): Db {
+        return MongoDB.getInstance().getDb(this.connection);
     }
 
     /**
@@ -97,11 +103,10 @@ export default class Model<TModelData extends BaseModelData> implements IModel {
      */
     async refresh(): Promise<IData | null> {
         if(!this.data) return null;
-        this.data = await MongoDB
-            .getInstance()
-            .getDb()
-            .collection(this.collection)
+
+        this.data = await this.getDb().collection(this.collection)
             .findOne({ [this.primaryKey]: this.getId() }) as TModelData | null ?? null;
+
         return this.data
     }
 
@@ -113,10 +118,10 @@ export default class Model<TModelData extends BaseModelData> implements IModel {
      */
     async update(): Promise<void> {
         if(!this.getId()) return;
-        await MongoDB.getInstance()
-        .getDb()
-        .collection(this.collection)
-        .updateOne({ [this.primaryKey]: this.getId() }, { $set: this.data as IData });
+
+        await this.getDb()
+            .collection(this.collection)
+            .updateOne({ [this.primaryKey]: this.getId() }, { $set: this.data as IData });
     }
     
     /**
@@ -127,10 +132,9 @@ export default class Model<TModelData extends BaseModelData> implements IModel {
      */
     async save(): Promise<void> {
         if(this.data && !this.getId()) {
-            await MongoDB.getInstance()
-            .getDb()
-            .collection(this.collection)
-            .insertOne(this.data);
+            await this.getDb()
+                .collection(this.collection)
+                .insertOne(this.data);
             await this.refresh();
             return;
         }
@@ -146,7 +150,7 @@ export default class Model<TModelData extends BaseModelData> implements IModel {
      */
     async delete(): Promise<void> {
         if(!this.data) return;
-        await MongoDB.getInstance().getDb().collection(this.collection).deleteOne({ [this.primaryKey]: this.getId() })
+        await this.getDb().collection(this.collection).deleteOne({ [this.primaryKey]: this.getId() })
         this.data = null
     }
 

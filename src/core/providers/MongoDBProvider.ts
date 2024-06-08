@@ -1,5 +1,5 @@
 import IMongoDbConfig from "../interfaces/IMongoDbConfig";
-import MongoDB from "../services/MongoDB";
+import MongoDB from "../domains/Database/Services/MongoDB";
 import Provider from "../base/Provider";
 
 export default class MongoDBProvider extends Provider
