@@ -1,6 +1,5 @@
 export interface IAuthConfig {
-    userRepository: new (...args: any[]) => any;
-    apiTokenRepository: new (...args: any[]) => any;
+    authService: new (config: IAuthConfig) => any;
     authRoutes: boolean;
     authCreateAllowed: boolean;
 }

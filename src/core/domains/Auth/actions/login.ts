@@ -9,7 +9,7 @@ export default async (req: Request, res: Response): Promise<void> => {
         const { email, password } = req?.body ?? {};
         let token;
 
-        token = await Auth.getInstance().login(email, password);
+        token = await Auth.getInstance().attemptCredentials(email, password);
 
         const user = await Auth.getInstance().userRepository.findByEmail(email);
 

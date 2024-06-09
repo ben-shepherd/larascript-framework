@@ -1,83 +1,57 @@
-import Singleton from '../../../base/Singleton';
-import UnauthorizedError from '../../../exceptions/UnauthorizedError';
+import ApiTokenRepository from '../../../../app/repositories/ApiTokenRepository';
+import UserRepository from '../../../../app/repositories/UserRepository';
 import { IAuth } from '../../../interfaces/IAuth';
 import { IAuthConfig } from '../../../interfaces/IAuthConfig';
-import apiTokenFactory from '../factory/apiTokenFactory';
-import jwtTokenFactory from '../factory/jwtTokenFactory';
-import BaseApiTokenModel from '../models/BaseApiTokenModel';
-import BaseUserModel from '../models/BaseUserModel';
-import BaseApiTokenRepository from '../repository/BaseApiTokenRepository';
-import BaseUserRepository from '../repository/BaseUserRepository';
-import { JWTToken } from '../types/types.t';
-import comparePassword from '../utils/comparePassword';
-import createJwt from '../utils/createJwt';
-import decodeJwt from '../utils/decodeJwt';
 
-export default class Auth extends Singleton<IAuthConfig> implements IAuth {
-    public userRepository: BaseUserRepository;
-    public apiTokenRepository: BaseApiTokenRepository;
 
-    constructor(config: IAuthConfig) {
-        super(config)
-        this.userRepository = new config.userRepository();
-        this.apiTokenRepository = new config.apiTokenRepository();
+export default class Auth<Service extends IAuth> implements IAuth {
+    public config!: IAuthConfig;
+    public service!: Service;
+    public userRepository!: UserRepository;
+    public apiTokenRepository!: ApiTokenRepository;
+
+    private static instances: Map<string, Auth<any>> = new Map();
+
+    constructor(serviceCtor: new (config: IAuthConfig) => Service) {
+        this.service = new serviceCtor(this.config)
     }
 
-    async createToken(user: BaseUserModel): Promise<string> {
-        const apiToken = apiTokenFactory(user, this.apiTokenRepository.model);
-        await apiToken.save();
-        return this.jwt(apiToken)
+    attemptAuthenticateToken (token: string): Promise<any> {
+        return this.service.attemptAuthenticateToken(token)
     }
 
-    private jwt(apiToken: BaseApiTokenModel): string {
-        if(!apiToken?.data?.userId) {
-            throw new Error('Invalid token');
-        }
-        const payload = jwtTokenFactory(apiToken.data?.userId?.toString(), apiToken.data?.token);
-        return createJwt(payload, '1d');
+    createToken (user: InstanceType<typeof this.service.userRepository.model>): Promise<string> {
+        return this.service.createToken(user)  
+    }
+    
+    revokeToken (apiToken: InstanceType<typeof this.service.apiTokenRepository.model>): Promise<void> {
+        return this.service.revokeToken(apiToken)
     }
 
-    async revokeToken(apiToken: BaseApiTokenModel): Promise<void> {
-        if(apiToken?.data?.revokedAt) {
-            return;
-        }
-
-        apiToken.setAttribute('revokedAt', new Date());
-        await apiToken.save();
+    attemptCredentials (email: string, password: string): Promise<string> {
+        return this.service.attemptCredentials(email, password)
     }
 
-    async authenticateToken(token: string): Promise<BaseApiTokenModel | null> {
-        const decoded = decodeJwt(token) as JWTToken;
-
-        const apiToken = await this.apiTokenRepository.findByUnrevokedToken(decoded.token)
-
-        if(!apiToken) {
-            throw new UnauthorizedError('Unauthorized (Error code: 1)')
+    public static getInstance<Service extends IAuth>(
+        serviceCtor?: new (config: IAuthConfig) => Service
+    ): Auth<Service> {
+        if(serviceCtor) {
+            const key = serviceCtor.name;
+            
+            if(!Auth.instances.has(key)) {
+                Auth.instances.set(key, new Auth(serviceCtor));
+            }
+    
+            return Auth.instances.get(key) as Auth<Service>;
         }
+        else {
+            const firstEntry = Auth.instances.values().next().value;
 
-        const user = await this.userRepository.findById(decoded.uid)
-
-        if(!user) {
-            throw new UnauthorizedError('Unauthorized (Error code: 2)')
+            if(!firstEntry) {
+                throw new Error('Auth has not been configured')
+            }
+            
+            return firstEntry
         }
-
-        return apiToken
-    }
-
-    async login(email: string, password: string): Promise<string> {
-        const user = await this.userRepository.findByEmail(email);
-
-        if(!user) {
-            throw new UnauthorizedError('Unauthorized (Error code: 1)')
-        }
-
-        if(user?.data?.hashedPassword && !comparePassword(password, user.data?.hashedPassword)) {
-            throw new UnauthorizedError('Unauthorized (Error code: 2)')
-        }
-
-        const apiToken = apiTokenFactory(user, this.apiTokenRepository.model);
-        await apiToken.save();
-
-        return this.jwt(apiToken);
     }
 }
