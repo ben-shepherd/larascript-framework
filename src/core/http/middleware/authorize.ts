@@ -1,11 +1,11 @@
 import { NextFunction, Response } from 'express';
 
 import IAuthorizedRequest from '../../interfaces/IAuthorizedRequest';
-import Auth from '../../services/Auth';
 import UnauthorizedError from '../../exceptions/UnauthorizedError';
 import ResponseError from '../requests/ResponseError';
 import User from '../../../app/models/User';
 import UserRepository from '../../../app/repositories/UserRepository';
+import Auth from '../../domains/auth/services/Auth';
 
 export const authorize = (repository: new () => UserRepository) => async (req: IAuthorizedRequest<User>, res: Response, next: NextFunction): Promise<void> => {
     try {

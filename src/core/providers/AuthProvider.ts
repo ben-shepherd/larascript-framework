@@ -1,11 +1,11 @@
 
 import BaseProvider from "../base/Provider";
-import authRoutes from '../domains/Auth/routes/auth'
+import authRoutes from '../domains/auth/routes/auth'
 import Provider from "../services/Express";
 import { IAuthConfig } from "../interfaces/IAuthConfig";
-import Auth from "../services/Auth";
 import Kernel from "../kernel";
 import ExpressProvider from "./ExpressProvider";
+import Auth from "../domains/auth/services/Auth";
 
 export default class AuthProvider extends BaseProvider
 {

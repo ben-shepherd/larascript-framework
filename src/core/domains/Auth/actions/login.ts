@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 
 import UnauthorizedError from '../../../exceptions/UnauthorizedError';
 import ResponseError from '../../../http/requests/ResponseError';
-import Auth from '../../../services/Auth';
+import Auth from '../services/Auth';
 
 export default async (req: Request, res: Response): Promise<void> => {
     try {

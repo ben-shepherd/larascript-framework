@@ -2,8 +2,7 @@ import { Request, Response } from 'express';
 import ValidationError from '../../../exceptions/ValidationError';
 import BaseUserRepository from '../repository/BaseUserRepository';
 import userFactory from '../factory/userFactory';
-import Auth from '../../../services/Auth';
-
+import Auth from '../services/Auth';
 
 export default async (req: Request, res: Response): Promise<void> => {
 

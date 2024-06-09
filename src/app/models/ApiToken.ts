@@ -1,5 +1,5 @@
-import BaseApiTokenModel from '../../core/domains/Auth/models/BaseApiTokenModel';
-import { BaseApiTokenData } from '../../core/domains/Auth/types/types.t';
+import BaseApiTokenModel from '../../core/domains/auth/models/BaseApiTokenModel';
+import { BaseApiTokenData } from '../../core/domains/auth/types/types.t';
 
 export default class ApiToken extends BaseApiTokenModel {
 

@@ -1,17 +1,17 @@
-import Singleton from '../base/Singleton';
-import apiTokenFactory from '../domains/Auth/factory/apiTokenFactory';
-import jwtTokenFactory from '../domains/Auth/factory/jwtTokenFactory';
-import BaseApiTokenModel from '../domains/Auth/models/BaseApiTokenModel';
-import BaseUserModel from '../domains/Auth/models/BaseUserModel';
-import BaseApiTokenRepository from '../domains/Auth/repository/BaseApiTokenRepository';
-import BaseUserRepository from '../domains/Auth/repository/BaseUserRepository';
-import { JWTToken } from '../domains/Auth/types/types.t';
-import comparePassword from '../domains/Auth/utils/comparePassword';
-import createJwt from '../domains/Auth/utils/createJwt';
-import decodeJwt from '../domains/Auth/utils/decodeJwt';
-import UnauthorizedError from '../exceptions/UnauthorizedError';
-import { IAuth } from '../interfaces/IAuth';
-import { IAuthConfig } from '../interfaces/IAuthConfig';
+import Singleton from '../../../base/Singleton';
+import UnauthorizedError from '../../../exceptions/UnauthorizedError';
+import { IAuth } from '../../../interfaces/IAuth';
+import { IAuthConfig } from '../../../interfaces/IAuthConfig';
+import apiTokenFactory from '../factory/apiTokenFactory';
+import jwtTokenFactory from '../factory/jwtTokenFactory';
+import BaseApiTokenModel from '../models/BaseApiTokenModel';
+import BaseUserModel from '../models/BaseUserModel';
+import BaseApiTokenRepository from '../repository/BaseApiTokenRepository';
+import BaseUserRepository from '../repository/BaseUserRepository';
+import { JWTToken } from '../types/types.t';
+import comparePassword from '../utils/comparePassword';
+import createJwt from '../utils/createJwt';
+import decodeJwt from '../utils/decodeJwt';
 
 export default class Auth extends Singleton<IAuthConfig> implements IAuth {
     public userRepository: BaseUserRepository;

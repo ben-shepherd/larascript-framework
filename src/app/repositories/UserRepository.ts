@@ -1,4 +1,4 @@
-import BaseUserRepository from "../../core/domains/Auth/repository/BaseUserRepository";
+import BaseUserRepository from "../../core/domains/auth/repository/BaseUserRepository";
 import { UserData } from "../interfaces/UserData";
 import User from "../models/User";
 

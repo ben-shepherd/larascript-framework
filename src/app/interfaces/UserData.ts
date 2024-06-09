@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 
-import { BaseUserData } from '../../core/domains/Auth/types/types.t';
+import { BaseUserData } from '../../core/domains/auth/types/types.t';
 
 export interface UserData extends BaseUserData {
     _id?: ObjectId | undefined
