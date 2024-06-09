@@ -23,15 +23,11 @@ export default class AuthProvider extends BaseProvider
 
     public async boot(): Promise<void> {
 
-        if(!Kernel.isProviderReady(ExpressProvider.name)) {
-            throw new Error('ExpressProvider must be loaded before AuthProvider');
-        }
-
         this.log('Booting AuthProvider');
         
         this.setupAuthService()
 
-        if(this.config.authRoutes) {
+        if(Kernel.isProviderReady(ExpressProvider.name) &&this.config.authRoutes) {
             this.registerAuthRoutes();
         }
     }
