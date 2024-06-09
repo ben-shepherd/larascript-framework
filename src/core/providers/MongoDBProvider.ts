@@ -1,5 +1,5 @@
 import IMongoDbConfig from "../interfaces/IMongoDbConfig";
-import MongoDB from "../domains/Database/Services/MongoDB";
+import MongoDB from "../domains/database/services/MongoDB";
 import Provider from "../base/Provider";
 
 export default class MongoDBProvider extends Provider
@@ -21,8 +21,7 @@ export default class MongoDBProvider extends Provider
     {
         this.log('Booting MongoDBProvider');
 
-        await MongoDB.getInstance(this.config).connectAll();
-        
-        this.log('Database connected successfully');
+        await MongoDB.getInstance(this.config).connectDefaultConnection();
+        await MongoDB.getInstance().connectKeepAlive()
     }
 }

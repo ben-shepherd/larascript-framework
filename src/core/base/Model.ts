@@ -1,10 +1,10 @@
 import { Db, ObjectId } from 'mongodb';
 
-import BelongsTo from '../domains/Database/Relationships/BelongsTo';
-import HasMany from '../domains/Database/Relationships/HasMany';
+import HasMany from '../domains/database/relationships/HasMany';
 import IData from '../interfaces/IData';
 import { GetDataOptions, IModel } from '../interfaces/IModel';
-import MongoDB from '../domains/Database/Services/MongoDB';
+import MongoDB from '../domains/database/services/MongoDB';
+import BelongsTo from '../domains/database/relationships/BelongsTo';
 
 export interface BaseModelData {
     _id?: ObjectId

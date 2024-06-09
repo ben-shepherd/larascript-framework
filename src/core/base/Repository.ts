@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import IData from '../interfaces/IData';
 import { IModel } from '../interfaces/IModel';
 import { IRepository } from '../interfaces/IRepository';
-import MongoDB from '../domains/Database/Services/MongoDB';
+import MongoDB from '../domains/database/services/MongoDB';
 
 type Constructor<M extends IModel> = new (...args: any[]) => M
 

@@ -13,11 +13,15 @@ export default class MongoDBConnection extends BaseService<Connection> {
     }
 
     public async connect(): Promise<void> {
+        if(this.isConnected()) {
+            return;
+        }
+        
         await this.client.connect();
         this.db = this.client.db();
     }
 
-    public async isConnected(): Promise<boolean> {
+    public isConnected(): boolean {
         return this.db instanceof Db;
     }
 
