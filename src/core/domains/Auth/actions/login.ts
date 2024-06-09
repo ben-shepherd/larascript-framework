@@ -2,16 +2,16 @@ import { Request, Response } from 'express';
 
 import UnauthorizedError from '../../../exceptions/UnauthorizedError';
 import ResponseError from '../../../http/requests/ResponseError';
-import Auth from '../services/Auth';
+import BaseAuth from '../services/Auth';
 
 export default async (req: Request, res: Response): Promise<void> => {
     try {
         const { email, password } = req?.body ?? {};
         let token;
 
-        token = await Auth.getInstance().attemptCredentials(email, password);
+        token = await BaseAuth.getInstance().attemptCredentials(email, password);
 
-        const user = await Auth.getInstance().userRepository.findByEmail(email);
+        const user = await BaseAuth.getInstance().userRepository.findByEmail(email);
 
         res.send({ 
             success: true,

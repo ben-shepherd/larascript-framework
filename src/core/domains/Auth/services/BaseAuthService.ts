@@ -1,3 +1,4 @@
+import ApiToken from '../../../../app/models/ApiToken';
 import ApiTokenRepository from '../../../../app/repositories/ApiTokenRepository';
 import UserRepository from '../../../../app/repositories/UserRepository';
 import BaseService from '../../../base/Service';
@@ -13,9 +14,7 @@ import comparePassword from '../utils/comparePassword';
 import createJwt from '../utils/createJwt';
 import decodeJwt from '../utils/decodeJwt';
 
-export default class AuthService<
-    TUser extends BaseUserModel,
-    TApiToken extends BaseApiTokenModel
+export default class BaseAuthService<TUser extends BaseUserModel, TApiToken extends ApiToken
 >extends BaseService<IAuthConfig> implements IAuth {
     public userRepository: UserRepository
     public apiTokenRepository: ApiTokenRepository;
@@ -49,7 +48,7 @@ export default class AuthService<
         await apiToken.save();
     }
 
-    async attemptAuthenticateToken(token: string): Promise<BaseApiTokenModel | null> {
+    async attemptAuthenticateToken(token: string): Promise<TApiToken | null> {
         const decoded = decodeJwt(token) as JWTToken;
 
         const apiToken = await this.apiTokenRepository.findByUnrevokedToken(decoded.token)
@@ -64,7 +63,7 @@ export default class AuthService<
             throw new UnauthorizedError('Unauthorized (Error code: 2)')
         }
 
-        return apiToken
+        return apiToken as TApiToken
     }
 
     async attemptCredentials(email: string, password: string): Promise<string> {

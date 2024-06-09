@@ -1,7 +1,7 @@
 
 import BaseProvider from "../base/Provider";
 import authRoutes from '../domains/auth/routes/auth';
-import Auth from "../domains/auth/services/Auth";
+import BaseAuth from "../domains/auth/services/Auth";
 import { IAuthConfig } from "../interfaces/IAuthConfig";
 import Kernel from "../kernel";
 import Provider from "../services/Express";
@@ -33,7 +33,7 @@ export default class AuthProvider extends BaseProvider
     }
 
     private setupAuthService(): void {
-        Auth.getInstance(this.config.authService)
+        BaseAuth.getInstance(this.config.authService)
     }
 
     private registerAuthRoutes(): void {

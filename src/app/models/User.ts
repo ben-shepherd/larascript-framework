@@ -1,5 +1,7 @@
-import BaseUserModel from '../../core/domains/auth/models/BaseUserModel'
+import BaseUserModel from '../../core/domains/auth/models/BaseUserModel';
+import { ApiTokenData } from '../interfaces/ApiTokenData';
 import { UserData } from '../interfaces/UserData';
+import ApiToken from './ApiToken';
 
 export default class User extends BaseUserModel<UserData> {
 
@@ -20,5 +22,9 @@ export default class User extends BaseUserModel<UserData> {
 
     constructor(data: UserData | null = null) {
         super(data);
+    }
+
+    public async tokens(): Promise<ApiToken[]> {
+        return await this.hasMany<UserData, User, ApiTokenData, ApiToken>(this, '_id', ApiToken, new ApiToken().USER_ID);
     }
 }

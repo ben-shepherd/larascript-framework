@@ -1,8 +1,8 @@
 import BaseApiTokenRepository from "../../core/domains/auth/repository/BaseApiTokenRepository";
-import { BaseApiTokenData } from "../../core/domains/auth/types/types.t";
+import { ApiTokenData } from "../interfaces/ApiTokenData";
 import ApiToken from "../models/ApiToken";
 
-export default class ApiTokenRepository extends BaseApiTokenRepository<ApiToken, BaseApiTokenData> {
+export default class ApiTokenRepository extends BaseApiTokenRepository<ApiToken, ApiTokenData> {
 
     constructor() {
         super(ApiToken);
