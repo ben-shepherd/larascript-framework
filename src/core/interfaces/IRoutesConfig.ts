@@ -1,4 +1,1 @@
-export interface IRoutesConfig {
-    authRoutes: boolean;
-    authCreateAllowed: boolean;
-}
+export interface IRoutesConfig {}

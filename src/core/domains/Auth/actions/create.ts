@@ -28,8 +28,12 @@ export default async (req: Request, res: Response): Promise<void> => {
         await user.save();
         
         const token = await Auth.getInstance().createToken(user);
-
-        res.send({ success: true, token })
+        
+        res.send({ 
+            success: true,
+            token,
+            user: user.getData({ excludeGuarded: true })
+        })
     }
     catch (error) {
         if(error instanceof ValidationError) {

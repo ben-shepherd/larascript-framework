@@ -11,7 +11,13 @@ export default async (req: Request, res: Response): Promise<void> => {
 
         token = await Auth.getInstance().login(email, password);
 
-        res.send({ success: true, token })
+        const user = await Auth.getInstance().userRepository.findByEmail(email);
+
+        res.send({ 
+            success: true,
+            token,
+            user: user?.getData({ excludeGuarded: true })
+         })
     }
     catch (error) {
         if(error instanceof UnauthorizedError) {

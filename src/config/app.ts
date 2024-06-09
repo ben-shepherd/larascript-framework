@@ -1,5 +1,6 @@
 import { EnvironmentType } from '../core/consts/Environment';
 import IAppConfig from '../core/interfaces/IAppConfig';
+import AuthProvider from '../core/providers/AuthProvider';
 import ExpressListenerProvider from '../core/providers/ExpressListenerProvider';
 import ExpressProvider from '../core/providers/ExpressProvider';
 import MongoDBProvider from '../core/providers/MongoDBProvider';
@@ -12,6 +13,7 @@ const appConfig: IAppConfig = {
         new MongoDBProvider(),
         new ExpressProvider(),
         new RoutesProvider(),
+        new AuthProvider(),
         new ExpressListenerProvider(),
     ],
 };

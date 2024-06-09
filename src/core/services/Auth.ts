@@ -1,9 +1,9 @@
 import Singleton from '../base/Singleton';
 import apiTokenFactory from '../domains/Auth/factory/apiTokenFactory';
 import jwtTokenFactory from '../domains/Auth/factory/jwtTokenFactory';
-import ApiTokenModel from '../domains/Auth/models/ApiTokenModel';
+import BaseApiTokenModel from '../domains/Auth/models/BaseApiTokenModel';
 import BaseUserModel from '../domains/Auth/models/BaseUserModel';
-import ApiTokenRepository from '../domains/Auth/repository/ApiTokenRepository';
+import BaseApiTokenRepository from '../domains/Auth/repository/BaseApiTokenRepository';
 import BaseUserRepository from '../domains/Auth/repository/BaseUserRepository';
 import { JWTToken } from '../domains/Auth/types/types.t';
 import comparePassword from '../domains/Auth/utils/comparePassword';
@@ -11,24 +11,25 @@ import createJwt from '../domains/Auth/utils/createJwt';
 import decodeJwt from '../domains/Auth/utils/decodeJwt';
 import UnauthorizedError from '../exceptions/UnauthorizedError';
 import { IAuth } from '../interfaces/IAuth';
+import { IAuthConfig } from '../interfaces/IAuthConfig';
 
-export default class Auth extends Singleton<any> implements IAuth {
-    private userRepository: BaseUserRepository;
-    private apiTokenRepository: ApiTokenRepository;
+export default class Auth extends Singleton<IAuthConfig> implements IAuth {
+    public userRepository: BaseUserRepository;
+    public apiTokenRepository: BaseApiTokenRepository;
 
-    constructor() {
-        super()
-        this.userRepository = new BaseUserRepository();
-        this.apiTokenRepository = new ApiTokenRepository();
+    constructor(config: IAuthConfig) {
+        super(config)
+        this.userRepository = new config.userRepository();
+        this.apiTokenRepository = new config.apiTokenRepository();
     }
 
     async createToken(user: BaseUserModel): Promise<string> {
-        const apiToken = apiTokenFactory(user);
+        const apiToken = apiTokenFactory(user, this.apiTokenRepository.model);
         await apiToken.save();
         return this.jwt(apiToken)
     }
 
-    private jwt(apiToken: ApiTokenModel): string {
+    private jwt(apiToken: BaseApiTokenModel): string {
         if(!apiToken?.data?.userId) {
             throw new Error('Invalid token');
         }
@@ -36,7 +37,7 @@ export default class Auth extends Singleton<any> implements IAuth {
         return createJwt(payload, '1d');
     }
 
-    async revokeToken(apiToken: ApiTokenModel): Promise<void> {
+    async revokeToken(apiToken: BaseApiTokenModel): Promise<void> {
         if(apiToken?.data?.revokedAt) {
             return;
         }
@@ -45,7 +46,7 @@ export default class Auth extends Singleton<any> implements IAuth {
         await apiToken.save();
     }
 
-    async authenticateToken(token: string): Promise<ApiTokenModel | null> {
+    async authenticateToken(token: string): Promise<BaseApiTokenModel | null> {
         const decoded = decodeJwt(token) as JWTToken;
 
         const apiToken = await this.apiTokenRepository.findByUnrevokedToken(decoded.token)
@@ -74,7 +75,7 @@ export default class Auth extends Singleton<any> implements IAuth {
             throw new UnauthorizedError('Unauthorized (Error code: 2)')
         }
 
-        const apiToken = apiTokenFactory(user);
+        const apiToken = apiTokenFactory(user, this.apiTokenRepository.model);
         await apiToken.save();
 
         return this.jwt(apiToken);
