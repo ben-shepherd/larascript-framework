@@ -8,7 +8,9 @@ export default class User extends BaseUserModel<UserData> {
     /**
      * Protected fields
      */
-    guarded: string[] = [];
+    guarded: string[] = [
+        ...this.guarded
+    ];
 
     /**
      * Define your user fields that can be set
