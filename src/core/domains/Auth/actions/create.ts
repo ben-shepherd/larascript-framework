@@ -3,7 +3,7 @@ import User from '../../../../app/models/User';
 import ValidationError from '../../../exceptions/ValidationError';
 import userFactory from '../factory/userFactory';
 import BaseUserRepository from '../repository/BaseUserRepository';
-import BaseAuth from '../services/Auth';
+import Auth from '../services/Auth';
 
 export default async (req: Request, res: Response): Promise<void> => {
 
@@ -27,7 +27,7 @@ export default async (req: Request, res: Response): Promise<void> => {
         const user = userFactory<User>(email, password);
         await user.save();
         
-        const token = await BaseAuth.getInstance().createToken(user);
+        const token = await Auth.getInstance().createToken(user);
         
         res.send({ 
             success: true,

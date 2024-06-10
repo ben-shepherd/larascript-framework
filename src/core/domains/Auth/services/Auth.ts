@@ -5,16 +5,18 @@ import { IAuth } from '../../../interfaces/IAuth';
 import { IAuthConfig } from '../../../interfaces/IAuthConfig';
 
 
-export default class BaseAuth<Service extends IAuth> implements IAuth {
+export default class Auth<Service extends IAuth> implements IAuth {
     public config!: IAuthConfig;
     public service!: Service;
     public userRepository!: UserRepository;
     public apiTokenRepository!: ApiTokenRepository;
 
-    private static instances: Map<string, BaseAuth<any>> = new Map();
+    private static instances: Map<string, Auth<any>> = new Map();
 
-    constructor(serviceCtor: new (config: IAuthConfig) => Service) {
-        this.service = new serviceCtor(this.config)
+    constructor(serviceCtor: new (config: IAuthConfig) => Service, config: IAuthConfig) {
+        this.service = new serviceCtor(config)
+        this.userRepository = new config.userRepository()
+        this.apiTokenRepository = new config.apiTokenRepository()
     }
 
     attemptAuthenticateToken (token: string): Promise<ApiToken | null> {
@@ -33,18 +35,18 @@ export default class BaseAuth<Service extends IAuth> implements IAuth {
         return this.service.attemptCredentials(email, password)
     }
 
-    public static getInstance<Service extends IAuth>(serviceCtor?: new (config: IAuthConfig) => Service): BaseAuth<Service> {
-        if(serviceCtor) {
+    public static getInstance<Service extends IAuth>(serviceCtor?: new (config: IAuthConfig) => Service, config?: IAuthConfig): Auth<Service> {
+        if(serviceCtor && config) {
             const key = serviceCtor.name;
             
-            if(!BaseAuth.instances.has(key)) {
-                BaseAuth.instances.set(key, new BaseAuth(serviceCtor));
+            if(!Auth.instances.has(key)) {
+                Auth.instances.set(key, new Auth(serviceCtor, config));
             }
     
-            return BaseAuth.instances.get(key) as BaseAuth<Service>;
+            return Auth.instances.get(key) as Auth<Service>;
         }
         else {
-            const firstEntry = BaseAuth.instances.values().next().value;
+            const firstEntry = Auth.instances.values().next().value;
 
             if(!firstEntry) {
                 throw new Error('Auth has not been configured')

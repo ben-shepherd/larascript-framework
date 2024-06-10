@@ -14,8 +14,7 @@ import comparePassword from '../utils/comparePassword';
 import createJwt from '../utils/createJwt';
 import decodeJwt from '../utils/decodeJwt';
 
-export default class BaseAuthService<TUser extends BaseUserModel, TApiToken extends ApiToken
->extends BaseService<IAuthConfig> implements IAuth {
+export default class BaseAuthService<TApiToken extends ApiToken> extends BaseService<IAuthConfig> implements IAuth {
     public userRepository: UserRepository
     public apiTokenRepository: ApiTokenRepository;
 
