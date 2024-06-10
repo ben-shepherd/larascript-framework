@@ -1,16 +1,16 @@
 
 import BaseProvider from "../base/Provider";
-import authRoutes from '../domains/auth/routes/auth'
-import Provider from "../services/Express";
+import authRoutes from '../domains/auth/routes/auth';
+import Auth from "../domains/auth/services/Auth";
 import { IAuthConfig } from "../interfaces/IAuthConfig";
 import Kernel from "../kernel";
+import Provider from "../services/Express";
 import ExpressProvider from "./ExpressProvider";
-import Auth from "../domains/auth/services/Auth";
 
 export default class AuthProvider extends BaseProvider
 {
     protected config!: IAuthConfig;
-    configPath = 'src/config/auth/auth';
+    configPath = '@config/auth/auth';
 
     constructor() {
         super()
@@ -33,7 +33,7 @@ export default class AuthProvider extends BaseProvider
     }
 
     private setupAuthService(): void {
-        Auth.getInstance(this.config)
+        Auth.getInstance(this.config.authService, this.config)
     }
 
     private registerAuthRoutes(): void {

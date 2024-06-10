@@ -1,10 +1,14 @@
-import ApiTokenModel from "../core/domains/Auth/models/ApiTokenModel"
-import UserModel from "../core/domains/Auth/models/UserModel"
+import ApiToken from "../../app/models/auth/ApiToken"
+import User from "../../app/models/auth/User"
+import ApiTokenRepository from "../../app/repositories/ApiTokenRepository"
+import UserRepository from "../../app/repositories/UserRepository"
 
 export interface IAuth {
-    authenticateToken: (token: string) => Promise<ApiTokenModel | null>
-    createToken: (user: UserModel) => Promise<string>
-    revokeToken: (apiToken: ApiTokenModel) => Promise<void>
-    login: (email: string, password: string) => Promise<string>
+    userRepository: UserRepository,
+    apiTokenRepository: ApiTokenRepository,
+    attemptAuthenticateToken: (token: string) => Promise<ApiToken | null>
+    createToken: (user: User) => Promise<string>
+    revokeToken: (apiToken: ApiToken) => Promise<void>
+    attemptCredentials: (email: string, password: string) => Promise<string>
 }
 

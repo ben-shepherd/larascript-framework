@@ -1,10 +1,10 @@
 import { Db, ObjectId } from 'mongodb';
 
+import BelongsTo from '../domains/database/relationships/BelongsTo';
 import HasMany from '../domains/database/relationships/HasMany';
+import MongoDB from '../domains/database/services/MongoDB';
 import IData from '../interfaces/IData';
 import { GetDataOptions, IModel } from '../interfaces/IModel';
-import MongoDB from '../domains/database/services/MongoDB';
-import BelongsTo from '../domains/database/relationships/BelongsTo';
 
 export interface BaseModelData {
     _id?: ObjectId
@@ -177,7 +177,7 @@ export default class Model<TModelData extends BaseModelData> implements IModel {
     ): Promise<ForeignModel | null> 
     {
         const data = await new BelongsTo<LocalData, LocalModel, ForeignData>().handle(model, new foreignModelCtor().collection, foreignKey, localKey)
-
+        
         if(!data) return null
 
         return new foreignModelCtor(data)

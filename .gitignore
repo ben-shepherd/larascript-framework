@@ -2,7 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=node
 
 ### Custom ###
-todo.me
+#todo.md
 test.ts
 
 ### Node ###

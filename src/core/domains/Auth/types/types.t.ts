@@ -1,4 +1,4 @@
-import { ObjectId} from 'mongodb'
+import { ObjectId } from 'mongodb';
 import IData from '../../../interfaces/IData';
 
 export interface BaseUserData extends IData {

@@ -1,14 +1,14 @@
-import { IRoutesConfig } from "../interfaces/IRoutesConfig";
 import BaseProvider from "../base/Provider";
+import { IRoutesConfig } from "../interfaces/IRoutesConfig";
+import Kernel from "../kernel";
 import apiRoutes from '../routes/api';
 import Provider from "../services/Express";
 import ExpressProvider from "./ExpressProvider";
-import Kernel from "../kernel";
 
 export default class RoutesProvider extends BaseProvider
 {
     protected config!: IRoutesConfig;
-    configPath = 'src/config/http/routes';
+    configPath = '@config/http/routes';
 
     constructor() {
         super()

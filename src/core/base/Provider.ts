@@ -1,10 +1,10 @@
+import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
-import dotenv from 'dotenv';
 
 import { IProvider } from '../interfaces/IProvider';
 
-export default abstract class Provider implements IProvider {
+export default abstract class BaseProvider implements IProvider {
     protected config: any = {};
     protected configPath: string | null = null;
 
@@ -18,7 +18,8 @@ export default abstract class Provider implements IProvider {
             if(!this.configPath) return;
 
             // Ensure config file ends in .ts
-            const parsedConfigPath = this.configPath?.replace(/\.?(js|ts)?$/, '.ts');
+            const parsedConfigPath = this.configPath?.replace(/\.?(js|ts)?$/, '.ts')
+                .replace('@config', 'src/config');
 
             const fullPath = path.resolve(parsedConfigPath);
             if (fs.existsSync(fullPath)) {

@@ -1,3 +1,4 @@
+import 'tsconfig-paths/register';
 import appConfig from './config/app';
 import Kernel from './core/kernel';
 

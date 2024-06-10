@@ -1,10 +1,10 @@
-import IMongoDbConfig from "../interfaces/IMongoDbConfig";
+import BaseProvider from "../base/Provider";
 import MongoDB from "../domains/database/services/MongoDB";
-import Provider from "../base/Provider";
+import IMongoDbConfig from "../interfaces/IMongoDbConfig";
 
-export default class MongoDBProvider extends Provider
+export default class MongoDBProvider extends BaseProvider
 {
-    protected configPath: string = 'src/config/database/mongodb';
+    protected configPath: string = '@config/database/mongodb';
     protected config!: IMongoDbConfig;
 
     constructor() {

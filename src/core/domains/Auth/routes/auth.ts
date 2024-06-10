@@ -1,4 +1,3 @@
-import UserRepository from "../../../../app/repositories/UserRepository";
 import { authorize } from "../../../http/middleware/authorize";
 import { IRoute } from "../../../interfaces/IRoute";
 import create from "../actions/create";
@@ -25,7 +24,7 @@ const routes: IRoute[] = [
         method: 'get',
         path: '/api/auth/user',
         action: user,
-        middlewares: [authorize(UserRepository)]
+        middlewares: [authorize()]
     }
 ]
 
