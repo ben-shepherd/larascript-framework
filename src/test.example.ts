@@ -1,3 +1,5 @@
+import 'tsconfig-paths/register';
+
 import Kernel from "./core/kernel";
 import MongoDBProvider from "./core/providers/MongoDBProvider";
 
