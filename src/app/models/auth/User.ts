@@ -1,6 +1,6 @@
-import BaseUserModel from '../../core/domains/auth/models/BaseUserModel';
-import { ApiTokenData } from '../interfaces/ApiTokenData';
-import { UserData } from '../interfaces/UserData';
+import BaseUserModel from '../../../core/domains/auth/models/BaseUserModel';
+import { ApiTokenData } from '../../interfaces/ApiTokenData';
+import { UserData } from '../../interfaces/UserData';
 import ApiToken from './ApiToken';
 
 export default class User extends BaseUserModel<UserData> {

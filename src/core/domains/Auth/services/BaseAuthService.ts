@@ -1,6 +1,6 @@
-import ApiToken from '../../../../app/models/ApiToken';
-import ApiTokenRepository from '../../../../app/repositories/ApiTokenRepository';
-import UserRepository from '../../../../app/repositories/UserRepository';
+import ApiTokenRepository from '@src/app/repositories/auth/ApiTokenRepository';
+import UserRepository from '@src/app/repositories/auth/UserRepository';
+import ApiToken from '../../../../app/models/auth/ApiToken';
 import BaseService from '../../../base/Service';
 import UnauthorizedError from '../../../exceptions/UnauthorizedError';
 import { IAuth } from '../../../interfaces/IAuth';

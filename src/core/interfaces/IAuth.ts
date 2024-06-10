@@ -1,5 +1,5 @@
-import ApiToken from "../../app/models/ApiToken"
-import User from "../../app/models/User"
+import ApiToken from "../../app/models/auth/ApiToken"
+import User from "../../app/models/auth/User"
 import ApiTokenRepository from "../../app/repositories/ApiTokenRepository"
 import UserRepository from "../../app/repositories/UserRepository"
 

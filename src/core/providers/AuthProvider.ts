@@ -10,7 +10,7 @@ import ExpressProvider from "./ExpressProvider";
 export default class AuthProvider extends BaseProvider
 {
     protected config!: IAuthConfig;
-    configPath = 'src/config/auth/auth';
+    configPath = '@config/auth/auth';
 
     constructor() {
         super()

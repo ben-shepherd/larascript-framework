@@ -1,5 +1,10 @@
 {
   "compilerOptions": {
+    "baseUrl": ".", // This sets the base directory to the root of the project
+    "paths": {
+      "@src/*": ["src/*"], // This creates an alias '@src' that maps to the 'src' directory
+      "@config/*": ["src/config/*"] // Another example for the 'components' directory
+    },
     "target": "ES2020",
     "module": "commonjs",
     "strict": true,

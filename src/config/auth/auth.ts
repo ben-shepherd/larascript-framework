@@ -1,5 +1,5 @@
-import ApiTokenRepository from '../../app/repositories/ApiTokenRepository';
-import UserRepository from '../../app/repositories/UserRepository';
+import ApiTokenRepository from '@src/app/repositories/auth/ApiTokenRepository';
+import UserRepository from '@src/app/repositories/auth/UserRepository';
 import { AppAuthService } from '../../app/services/AppAuthService';
 import { IAuthConfig } from '../../core/interfaces/IAuthConfig';
 import parseBooleanFromString from '../../core/util/parseBooleanFromString';

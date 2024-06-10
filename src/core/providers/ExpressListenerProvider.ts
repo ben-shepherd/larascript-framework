@@ -1,10 +1,10 @@
-import Express from "../services/Express";
-import Provider from "../base/Provider";
+import BaseProvider from "../base/Provider";
 import Kernel from "../kernel";
-import RoutesProvider from "./RoutesProvider";
+import Express from "../services/Express";
 import ExpressProvider from "./ExpressProvider";
+import RoutesProvider from "./RoutesProvider";
 
-export default class ExpressListenerProvider extends Provider
+export default class ExpressListenerProvider extends BaseProvider
 {
     public async register(): Promise<void> 
     {
