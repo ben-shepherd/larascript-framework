@@ -4,7 +4,7 @@ import authRoutes from '../domains/auth/routes/auth';
 import Auth from "../domains/auth/services/Auth";
 import { IAuthConfig } from "../interfaces/IAuthConfig";
 import Kernel from "../kernel";
-import Provider from "../services/Express";
+import Express from "../services/Express";
 import ExpressProvider from "./ExpressProvider";
 
 export default class AuthProvider extends BaseProvider
@@ -45,6 +45,6 @@ export default class AuthProvider extends BaseProvider
             ]
         }
 
-        Provider.getInstance().bindRoutes(authRoutesArray);
+        Express.getInstance().bindRoutes(authRoutesArray);
     }
 }
