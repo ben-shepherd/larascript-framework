@@ -13,6 +13,10 @@ export default abstract class BaseProvider implements IProvider {
     abstract register(): Promise<void>;
     abstract boot(): Promise<void>;
 
+    constructor() {
+        this.init()
+    }
+
     protected init(): void {
         try {
             dotenv.config()

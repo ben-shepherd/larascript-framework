@@ -1,5 +1,6 @@
 import { ContainersTypeHelpers } from "@src/config/app";
 import Singleton from "./base/Singleton";
+import UninitializedContainerError from "./exceptions/UninitializedContainerError";
 import IAppConfig from "./interfaces/IAppConfig";
 
 export type Containers = {
@@ -20,7 +21,7 @@ export default class Kernel<Config extends IAppConfig> extends Singleton<Config>
     }
 
     private booted(): boolean {
-        return this.readyProviders.length > 0;
+        return this.readyProviders.length === this.appConfig.providers.length
     }
 
     public static async boot<C extends IAppConfig>(config: C): Promise<void> {
@@ -64,7 +65,10 @@ export default class Kernel<Config extends IAppConfig> extends Singleton<Config>
         kernel.containers.set(name, container);
     }
 
-    public getContainer<Name extends keyof ContainersTypeHelpers>(name: Name): ContainersTypeHelpers[Name] {
+    public getContainer<Name extends keyof ContainersTypeHelpers = keyof ContainersTypeHelpers>(name: Name): ContainersTypeHelpers[Name] {
+        if(!Kernel.getInstance().containers.has(name)) {
+            throw new UninitializedContainerError(name as string)
+        }
         return Kernel.getInstance().containers.get(name);
     }
 }

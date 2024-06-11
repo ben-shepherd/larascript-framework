@@ -13,6 +13,8 @@ export default async (req: Request, res: Response): Promise<void> => {
 
         const user = await Auth.getInstance().userRepository.findByEmail(email);
 
+        // LoginEvent.dispatch({ user: user })
+
         res.send({ 
             success: true,
             token,

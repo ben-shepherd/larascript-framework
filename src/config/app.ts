@@ -1,5 +1,7 @@
 import { AppAuthService } from '@src/app/services/AppAuthService';
 import MongoDBConnection from '@src/core/domains/database/services/MongoDBConnection';
+import EventDispatcher from '@src/core/events/EventDispatcher';
+import EventProvider from '@src/core/providers/EventProvider';
 import { EnvironmentType } from '../core/consts/Environment';
 import IAppConfig from '../core/interfaces/IAppConfig';
 import AuthProvider from '../core/providers/AuthProvider';
@@ -9,7 +11,7 @@ import MongoDBProvider from '../core/providers/MongoDBProvider';
 import RoutesProvider from '../core/providers/RoutesProvider';
 
 /**
- * ContainersTypeHelpers allows you to access the services stored in the containers with type hinting.
+ * ContainersTypeHelpers allows you to access the services stored in the containers by providing type hinting.
  * 
  * In your provider, set a container by utilising the Kernel.setContainer(name: string, container: any) method 
  * Example:
@@ -21,8 +23,18 @@ import RoutesProvider from '../core/providers/RoutesProvider';
  */
 export interface ContainersTypeHelpers {
     [key: string]: any,
+    /**
+     * Auth service
+     */
     auth: AppAuthService,
+    /**
+     * MongoDB for the default connection
+     */
     mongodb: MongoDBConnection
+    /**
+     * Dispatch events
+     */
+    events: EventDispatcher,
 }
 
 /**
@@ -38,6 +50,7 @@ const appConfig: IAppConfig = {
      * Service providers
      */
     providers: [
+        new EventProvider(),
         new MongoDBProvider(),
         new ExpressProvider(),
         new RoutesProvider(),

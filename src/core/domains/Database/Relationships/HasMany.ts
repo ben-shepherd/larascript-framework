@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import Model, { BaseModelData } from "../../../base/Model";
 import MongoDB from "../services/MongoDB";
 
-export default class BelongsTo<
+export default class HasMany<
     LocalData extends BaseModelData,
     LocalModel extends Model<LocalData>,
     ForeignData extends BaseModelData
