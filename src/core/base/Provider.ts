@@ -5,6 +5,8 @@ import path from 'path';
 import { IProvider } from '../interfaces/IProvider';
 
 export default abstract class BaseProvider implements IProvider {
+
+    protected providerName: string | null = null;
     protected config: any = {};
     protected configPath: string | null = null;
 
@@ -43,5 +45,9 @@ export default abstract class BaseProvider implements IProvider {
             return;
         }
         console.log(`[Provider] ${message}`);
+    }
+
+    public getProviderName(): string | null {
+        return this.providerName;
     }
 }

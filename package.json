@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "nodemon --watch src --ext ts --exec ts-node ./src/app.ts",
-    "test": "ts-node ./src/test.ts"
+    "test": "nodemon --watch src --ext ts --exec ts-node ./src/test.ts"
   },
   "dependencies": {
     "@types/express": "^4.17.21",

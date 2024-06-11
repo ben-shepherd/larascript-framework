@@ -19,6 +19,8 @@ export default class AuthProvider extends BaseProvider
 
     public async register(): Promise<void> {
         this.log('Registering AuthProvider');
+
+        Kernel.getInstance().setContainer('auth', new this.config.authService(this.config));
     }
 
     public async boot(): Promise<void> {

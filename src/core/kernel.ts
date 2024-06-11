@@ -1,37 +1,70 @@
+import { ContainersTypeHelpers } from "@src/config/app";
 import Singleton from "./base/Singleton";
 import IAppConfig from "./interfaces/IAppConfig";
 
-export default class Kernel<C extends IAppConfig> extends Singleton<C> {
-    private appConfig: IAppConfig;
-    public readyProviders: string[]
+export type Containers = {
+    [key: string]: any
+}
 
-    constructor(appConfig: C) {
-        super(appConfig)
-        this.readyProviders = []
+export default class Kernel<Config extends IAppConfig> extends Singleton<Config> {
+    private appConfig: IAppConfig;
+    public containers: Map<keyof Containers, Containers[keyof Containers]> = new Map();
+
+    public preparedProviders: string[];
+    public readyProviders: string[];
+
+    constructor(appConfig: Config) {
+        super(appConfig);
+        this.readyProviders = this.preparedProviders = [];
         this.appConfig = appConfig;
+    }
+
+    private booted(): boolean {
+        return this.readyProviders.length > 0;
     }
 
     public static async boot<C extends IAppConfig>(config: C): Promise<void> {
         const kernel = Kernel.getInstance(config);
 
-
-        if(kernel.readyProviders.length > 0) {
+        if (kernel.booted()) {
             throw new Error('Kernel is already booted');
         }
 
-        const { appConfig } = kernel
+        const { appConfig } = kernel;
 
-        for(const provider of appConfig.providers) {
+        for (const provider of appConfig.providers) {
             await provider.register();
         }
 
-        for(const provider of appConfig.providers) {
+        for (const provider of appConfig.providers) {
             await provider.boot();
-            kernel.readyProviders.push(provider.constructor.name);
+            kernel.preparedProviders.push(provider.constructor.name);
         }
+
+        Kernel.getInstance().readyProviders = [...kernel.preparedProviders];
     }
 
     public static isProviderReady(providerName: string): boolean {
-        return this.getInstance().readyProviders.includes(providerName);
+        return this.getInstance().preparedProviders.includes(providerName) || this.getInstance().readyProviders.includes(providerName);
+    }
+
+    public setContainer<Name extends keyof ContainersTypeHelpers & string>(name: Name, container: ContainersTypeHelpers[Name]) {
+        const kernel = Kernel.getInstance();
+
+        if (kernel.booted()) {
+            throw new Error('Kernel is already booted');
+        }
+        if (!name) {
+            throw new Error('Container name cannot be empty');
+        }
+        if (kernel.containers.has(name)) {
+            throw new Error('Container already exists');
+        }
+
+        kernel.containers.set(name, container);
+    }
+
+    public getContainer<Name extends keyof ContainersTypeHelpers>(name: Name): ContainersTypeHelpers[Name] {
+        return Kernel.getInstance().containers.get(name);
     }
 }
