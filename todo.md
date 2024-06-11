@@ -1,5 +1,11 @@
 ## What to work on next?
-- database connections (so models can handle different data sources )
+
+
+### Queable Workers
+- Generic
+- Should process events 
+  - Implementaton: TODO
+- Should process ordinary classes (must be serializeable, storable in json)
 
 ## Errors
 -

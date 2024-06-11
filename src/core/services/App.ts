@@ -1,4 +1,4 @@
-import { ContainersTypeHelpers } from "@src/config/app";
+import { ContainersTypeHelpers } from '@src/config/ContainersTypeHelpers';
 import Singleton from "../base/Singleton";
 import IAppConfig from "../interfaces/IAppConfig";
 import Kernel from "../kernel";
