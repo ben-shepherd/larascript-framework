@@ -2,7 +2,7 @@ import Model from '../../../base/Model';
 import { IModel } from '../../../interfaces/IModel';
 import { BaseUserData } from '../types/types.t';
 
-export default class BaseUserModel<D extends BaseUserData = BaseUserData> extends Model<D> implements IModel {
+export default class BaseUserModel<UserData extends BaseUserData = BaseUserData> extends Model<UserData> implements IModel {
     collection = "users";
 
     fields: string[] = [
@@ -23,8 +23,8 @@ export default class BaseUserModel<D extends BaseUserData = BaseUserData> extend
         'roles',
     ]
 
-    constructor(data: D | null) {
-        super(data ?? {} as D);
+    constructor(data: UserData | null) {
+        super(data ?? {} as UserData);
     }
 
     public hasRole(role: string) {

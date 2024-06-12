@@ -1,3 +1,4 @@
+import ExampleProvider from '@src/app/providers/ExampleProvider';
 import EventProvider from '@src/core/providers/EventProvider';
 import { EnvironmentType } from '../core/consts/Environment';
 import IAppConfig from '../core/interfaces/IAppConfig';
@@ -20,12 +21,19 @@ const appConfig: IAppConfig = {
      * Service providers
      */
     providers: [
+        /**
+         * Core providers
+         */
         new EventProvider(),
         new MongoDBProvider(),
         new ExpressProvider(),
         new RoutesProvider(),
         new AuthProvider(),
         new ExpressListenerProvider(),
+        /**
+         * Add your providers below
+         */
+        new ExampleProvider()
     ],
 };
 

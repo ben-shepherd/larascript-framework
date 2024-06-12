@@ -4,15 +4,17 @@ import EventDispatcher from '@src/core/events/EventDispatcher';
 import { Express } from 'express';
 
 /**
- * ContainersTypeHelpers allows you to access the services stored in the containers by providing type hinting.
+ * ContainersTypeHelpers provides type hinting when accessing a container. 
  *
- * In your provider, set a container by utilising the Kernel.setContainer(name: string, container: any) method
- * Example:
- * Kernel.setContainer('auth', new AppAuthService())
+ * [How to set a container]
+ *   In your provider, set a container by utilising the Kernel.setContainer(name: string, container: any) method
+ *   Example:
+ *   Kernel.setContainer('auth', new AppAuthService())
  *
- * Retrieving the container using App global helper
- * Example:
- * const token = await App.contantainer('auth').createToken(user)
+ * [Retrieving a container]
+ *   Retrieving the container using App global helper
+ *   Example:
+ *   const token = await App.contantainer('auth').createToken(user)
  */
 
 export interface ContainersTypeHelpers {

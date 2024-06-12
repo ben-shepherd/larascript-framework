@@ -9,8 +9,6 @@ export default class ExpressListenerProvider extends BaseProvider
     public async register(): Promise<void> 
     {
         this.log('Registering ExpressListenerProvider');
-
-        Kernel.getInstance().setContainer('express', Express.getInstance().getApp())
     }
 
     public async boot(): Promise<void>

@@ -7,7 +7,6 @@ export default class EventProvider extends BaseProvider
 {
     public async register(): Promise<void> {
         this.log('Registering EventProvider');
-
         Kernel.getInstance().setContainer('events', EventDispatcher.getInstance());
     }
 
