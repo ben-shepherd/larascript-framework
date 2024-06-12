@@ -1,6 +1,6 @@
 import IService from '../interfaces/IService';
 
-export default class BaseService<TConfig extends Record<any,any> | null> implements IService {
+export default abstract class BaseService<TConfig extends Record<any,any> | null> implements IService {
     protected config!: TConfig | null;
 
     constructor(config: TConfig | null = null) {

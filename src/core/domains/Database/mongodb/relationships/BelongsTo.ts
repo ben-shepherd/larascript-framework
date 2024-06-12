@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import Model, { BaseModelData } from "../../../base/Model";
+import Model, { BaseModelData } from "../../../../base/Model";
 import MongoDB from "../services/MongoDB";
 
 export default class BelongsTo<

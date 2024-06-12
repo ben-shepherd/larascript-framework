@@ -1,5 +1,5 @@
 import { AppAuthService } from '@src/app/services/AppAuthService';
-import MongoDBConnection from '@src/core/domains/database/services/MongoDBConnection';
+import MongoDBConnection from '@src/core/domains/database/mongodb/services/MongoDBConnection';
 import EventDispatcher from '@src/core/events/EventDispatcher';
 import { Express } from 'express';
 

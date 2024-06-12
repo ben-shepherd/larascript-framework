@@ -1,7 +1,7 @@
 import { Db, MongoClient } from 'mongodb';
 
-import Singleton from '../../../base/Singleton';
-import IMongoDbConfig from '../../../interfaces/IMongoDbConfig';
+import Singleton from '../../../../base/Singleton';
+import IMongoDbConfig from '../../../../interfaces/IMongoDbConfig';
 import InvalidDatabaseConnection from '../exceptions/InvalidDatabaseConnection';
 import MongoDBConnection from './MongoDBConnection';
 

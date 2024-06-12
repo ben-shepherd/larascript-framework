@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import MongoDB from '../domains/database/services/MongoDB';
+import MongoDB from '../domains/database/mongodb/services/MongoDB';
 
 export default (req: Request, res: Response) => {
 

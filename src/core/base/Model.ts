@@ -1,8 +1,8 @@
 import { Db, ObjectId } from 'mongodb';
 
-import BelongsTo from '../domains/database/relationships/BelongsTo';
-import HasMany from '../domains/database/relationships/HasMany';
-import MongoDB from '../domains/database/services/MongoDB';
+import BelongsTo from '../domains/database/mongodb/relationships/BelongsTo';
+import HasMany from '../domains/database/mongodb/relationships/HasMany';
+import MongoDB from '../domains/database/mongodb/services/MongoDB';
 import IData from '../interfaces/IData';
 import { Dates, GetDataOptions, IModel } from '../interfaces/IModel';
 
@@ -13,7 +13,7 @@ export interface BaseModelData {
     [key: string]: any
 }
 
-export default class Model<Data extends BaseModelData> implements IModel {
+export default abstract class Model<Data extends BaseModelData> implements IModel {
     // The database connection
     public connection: string = 'default';
 

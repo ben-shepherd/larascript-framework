@@ -1,6 +1,6 @@
 import IService from '../interfaces/IService';
 
-export default class Singleton<TConfig extends Record<any,any> | null = null> implements IService {
+export default abstract class Singleton<TConfig extends Record<any,any> | null = null> implements IService {
     private static instances: Map<string, Singleton<any>> = new Map();
     protected config!: TConfig | null;
 

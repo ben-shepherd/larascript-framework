@@ -1,13 +1,13 @@
 import { ObjectId } from 'mongodb';
 
+import MongoDB from '../domains/database/mongodb/services/MongoDB';
 import IData from '../interfaces/IData';
 import { IModel } from '../interfaces/IModel';
 import { IRepository } from '../interfaces/IRepository';
-import MongoDB from '../domains/database/services/MongoDB';
 
 type Constructor<M extends IModel> = new (...args: any[]) => M
 
-class Repository<M extends IModel> implements IRepository {
+export default abstract class Repository<M extends IModel> implements IRepository {
     public model: Constructor<M>;
     private collectionName!: string;
     private connection!: string;
@@ -33,5 +33,3 @@ class Repository<M extends IModel> implements IRepository {
         return dataArray.map(data => new this.model(data));
     }
 }
-
-export default Repository

@@ -1,7 +1,7 @@
 import { Db, MongoClient } from 'mongodb';
 
-import BaseService from '../../../base/Service';
-import { Connection } from '../../../interfaces/IMongoDbConfig';
+import BaseService from '../../../../base/Service';
+import { Connection } from '../../../../interfaces/IMongoDbConfig';
 
 export default class MongoDBConnection extends BaseService<Connection> {
     private client: MongoClient;

@@ -1,5 +1,5 @@
 import BaseProvider from "../base/Provider";
-import MongoDB from "../domains/database/services/MongoDB";
+import MongoDB from "../domains/database/mongodb/services/MongoDB";
 import IMongoDbConfig from "../interfaces/IMongoDbConfig";
 import Kernel from "../kernel";
 
