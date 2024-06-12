@@ -1,11 +1,11 @@
 import health from '../actions/health';
-import { IRoute } from '../interfaces/IRoute';
+import { Route } from '../interfaces/IRoute';
 
-const routes: IRoute[] = [
+const routes: Route[] = [
     {
         name: 'health',
         method: 'get',
-        path: '/api/health',
+        path: '/health',
         action: health
     }
 ]

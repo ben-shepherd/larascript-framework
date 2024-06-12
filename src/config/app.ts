@@ -1,4 +1,5 @@
-import ExampleProvider from '@src/app/providers/ExampleProvider';
+import AppProvider from '@src/app/providers/AppProvider';
+import AppRouteProvider from '@src/app/providers/AppRouteProvider';
 import EventProvider from '@src/core/providers/EventProvider';
 import { EnvironmentType } from '../core/consts/Environment';
 import IAppConfig from '../core/interfaces/IAppConfig';
@@ -6,7 +7,7 @@ import AuthProvider from '../core/providers/AuthProvider';
 import ExpressListenerProvider from '../core/providers/ExpressListenerProvider';
 import ExpressProvider from '../core/providers/ExpressProvider';
 import MongoDBProvider from '../core/providers/MongoDBProvider';
-import RoutesProvider from '../core/providers/RoutesProvider';
+import { default as CoreRoutesProvider } from '../core/providers/RoutesProvider';
 
 /**
  * Available app configuration
@@ -27,13 +28,14 @@ const appConfig: IAppConfig = {
         new EventProvider(),
         new MongoDBProvider(),
         new ExpressProvider(),
-        new RoutesProvider(),
+        new CoreRoutesProvider(),
         new AuthProvider(),
         new ExpressListenerProvider(),
         /**
          * Add your providers below
          */
-        new ExampleProvider()
+        new AppProvider(),
+        new AppRouteProvider()
     ],
 };
 

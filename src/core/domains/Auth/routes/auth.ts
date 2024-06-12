@@ -1,11 +1,11 @@
 import { authorize } from "../../../http/middleware/authorize";
-import { IRoute } from "../../../interfaces/IRoute";
+import { Route } from "../../../interfaces/IRoute";
 import create from "../actions/create";
 import login from "../actions/login";
 import user from "../actions/user";
 import authConsts from "../consts/authConsts";
 
-const routes: IRoute[] = [
+const routes: Route[] = [
     {
         name: authConsts.routes.authLogin,
         method: 'post',

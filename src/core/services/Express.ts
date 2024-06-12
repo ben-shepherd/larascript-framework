@@ -1,8 +1,8 @@
 import express from 'express';
 
-import { IRoute } from '../interfaces/IRoute';
-import IExpressConfig from '../interfaces/IExpressConfig';
 import Singleton from '../base/Singleton';
+import IExpressConfig from '../interfaces/IExpressConfig';
+import { Route } from '../interfaces/IRoute';
 
 export default class Express extends Singleton<IExpressConfig> {
     protected config!: IExpressConfig | null;
@@ -33,11 +33,13 @@ export default class Express extends Singleton<IExpressConfig> {
         })
     }
 
-    public bindRoutes(routes: IRoute[]): void {
+    public bindRoutes(routes: Route[]): void {
         routes.forEach(route => {
             const middlewares = route?.middlewares ?? []
             const handlers = [...middlewares, route?.action]
 
+
+            console.log(`[Express] binding route ${route.method.toUpperCase()}: '${route.path}' as '${route.name}'`)
             switch (route.method) {
                 case 'get':
                     this.app.get(route.path, handlers);

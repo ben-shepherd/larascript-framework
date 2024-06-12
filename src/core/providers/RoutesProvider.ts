@@ -1,7 +1,8 @@
+import apiRoutes from '@src/app/routes/api';
+import healthRoute from '@src/core/routes/health';
 import BaseProvider from "../base/Provider";
 import { IRoutesConfig } from "../interfaces/IRoutesConfig";
 import Kernel from "../kernel";
-import apiRoutes from '../routes/api';
 import Provider from "../services/Express";
 import ExpressProvider from "./ExpressProvider";
 
@@ -26,10 +27,22 @@ export default class RoutesProvider extends BaseProvider
 
         this.log('Booting RoutesProvider');
         
+        /**
+         * Register routes in @src/app/routes/api
+         */
         this.registerApiRoutes();
+
+        /**
+         * Register routes in @src/core/routes/health
+         */
+        this.registerHealthRoute();
     }
 
     private registerApiRoutes(): void {
         Provider.getInstance().bindRoutes(apiRoutes);
+    }
+
+    private registerHealthRoute(): void {
+        Provider.getInstance().bindRoutes(healthRoute);
     }
 }
