@@ -4,7 +4,7 @@ import BelongsTo from '../domains/database/relationships/BelongsTo';
 import HasMany from '../domains/database/relationships/HasMany';
 import MongoDB from '../domains/database/services/MongoDB';
 import IData from '../interfaces/IData';
-import { GetDataOptions, IModel } from '../interfaces/IModel';
+import { Dates, GetDataOptions, IModel } from '../interfaces/IModel';
 
 export interface BaseModelData {
     _id?: ObjectId
@@ -32,6 +32,10 @@ export default class Model<Data extends BaseModelData> implements IModel {
 
     // Fields that excluded when retrieving data when excludeGuarded is set to true
     public guarded: string[] = [];
+
+    // Automatically update timestamps (createdAt, updatedAt)
+    public dates: Dates = ['createdAt', 'updatedAt']
+    public timestamps: boolean = true;
 
     /**
      * Constructs a new instance of the Model class.
@@ -133,6 +137,8 @@ export default class Model<Data extends BaseModelData> implements IModel {
      */
     async save(): Promise<void> {
         if(this.data && !this.getId()) {
+            this.setTimestamps('createdAt')
+            this.setTimestamps('updatedAt')
             await this.getDb()
                 .collection(this.collection)
                 .insertOne(this.data);
@@ -140,6 +146,7 @@ export default class Model<Data extends BaseModelData> implements IModel {
             return;
         }
 
+        this.setTimestamps('updatedAt')
         await this.update()
         await this.refresh()
     }
@@ -200,5 +207,12 @@ export default class Model<Data extends BaseModelData> implements IModel {
         if(!results) return []
 
         return results.map((result) => new foreignModelCtor(result))
+    }
+
+    protected setTimestamps(dateTimeField: string, value: Date = new Date()) {
+        if(!this.timestamps || !this.dates.includes(dateTimeField)) {
+            return;
+        }
+        this.setAttribute(dateTimeField, value)
     }
 } 

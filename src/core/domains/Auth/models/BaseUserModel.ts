@@ -9,6 +9,13 @@ export default class BaseUserModel<D extends BaseUserData = BaseUserData> extend
         'email',
         'hashedPassword',
         'roles',
+        'createdAt',
+        'updatedAt'
+    ]
+
+    dates = [
+        'updatedAt',
+        'createdAt'
     ]
 
     guarded: string[] = [
