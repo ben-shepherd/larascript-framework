@@ -19,7 +19,7 @@ export default class ExpressProvider extends BaseProvider
 
         Express.getInstance(this.config).init();
         
-        App.setContainer('express', Express.getInstance().getApp())
+        App.setContainer('express', Express.getInstance())
     }
 
     public async boot(): Promise<void>

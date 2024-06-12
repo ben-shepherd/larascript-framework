@@ -1,7 +1,7 @@
 import { AppAuthService } from '@src/app/services/AppAuthService';
 import MongoDBConnection from '@src/core/domains/database/mongodb/services/MongoDBConnection';
 import EventDispatcher from '@src/core/events/EventDispatcher';
-import { Express } from 'express';
+import Express from '@src/core/services/Express';
 
 /**
  * ContainersTypeHelpers provides type hinting when accessing a container. 

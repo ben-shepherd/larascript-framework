@@ -40,9 +40,9 @@ export default routes
 **Example** > Adding another routing file
 
 - We will create a new routing file in `@src/app/routes/weather.ts` and create 
-your routes using the example above.
+define endpoints using the example above.
 
-- Your new routing file needs to be registed in a provider.
+- Once created, your new routing file needs to be registed in a provider.
 
 - Navigate to `@src/app/providers/AppProvider.ts`
 
@@ -53,11 +53,23 @@ import weatherRoutes '@src/app/routes/weather'
 
 Add them to your boot method
 ```ts
-public async boot(): Promise<void> {
-    this.log('Booting RouteProvider');
+import { App } from '@src/core/services/App';
+import BaseProvider from '@src/core/base/Provider';
+import { IAuthConfig } from '@src/core/interfaces/IAuthConfig';
+import weatherRoutes '@src/app/routes/weather'
 
-    Express.getInstance().bindRoutes(weatherRoutes)
+export default class AppRouteProvider extends BaseProvider {
+
+    // ...
+
+    public async boot(): Promise<void> {
+        this.log('Booting RouteProvider');
+
+        App.container('express').bindRoutes(weatherRoutes)
+    }
 }
+
+
 ```
 
 
