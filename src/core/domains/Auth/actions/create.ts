@@ -1,9 +1,8 @@
+import { App } from '@src/core/services/App';
 import { Request, Response } from 'express';
 import User from '../../../../app/models/auth/User';
 import ValidationError from '../../../exceptions/ValidationError';
 import userFactory from '../factory/userFactory';
-import BaseUserRepository from '../repository/BaseUserRepository';
-import Auth from '../services/Auth';
 
 export default async (req: Request, res: Response): Promise<void> => {
 
@@ -17,7 +16,7 @@ export default async (req: Request, res: Response): Promise<void> => {
             throw new ValidationError('Password must be at least 6 characters long');
         }
 
-        const repository = new BaseUserRepository();
+        const repository = App.container('auth').userRepository;
         const existingUser = await repository.findByEmail(email);
 
         if(existingUser) {
@@ -27,7 +26,7 @@ export default async (req: Request, res: Response): Promise<void> => {
         const user = userFactory<User>(email, password);
         await user.save();
         
-        const token = await Auth.getInstance().createToken(user);
+        const token = await App.container('auth').createToken(user);
         
         res.send({ 
             success: true,

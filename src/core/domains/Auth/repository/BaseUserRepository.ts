@@ -5,7 +5,7 @@ import { BaseUserData } from '../types/types.t';
 
 type Constructor<M,D> = new (data: D) => M
 
-export default class BaseUserRepository<
+export default abstract class BaseUserRepository<
     M extends BaseUserModel = BaseUserModel,
     D extends BaseUserData = BaseUserData
 > extends Repository<M> implements IRepository 

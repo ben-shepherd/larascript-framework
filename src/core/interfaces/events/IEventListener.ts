@@ -1,4 +1,4 @@
 
 export interface IEventListener {
-    handle: () => void;
+    handle: (payload: any) => any;
 }

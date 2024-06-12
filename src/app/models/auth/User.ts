@@ -19,7 +19,8 @@ export default class User extends BaseUserModel<UserData> {
         ...this.fields,
         /** Define your user fields below */
         'firstName',
-        'lastName'
+        'lastName',
+        'lastLoginAt'
     ]
 
     constructor(data: UserData | null = null) {

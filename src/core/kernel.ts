@@ -1,4 +1,4 @@
-import { ContainersTypeHelpers } from '@src/config/ContainersTypeHelpers';
+import { ContainersTypeHelpers } from '@src/config/containers';
 import Singleton from "./base/Singleton";
 import UninitializedContainerError from "./exceptions/UninitializedContainerError";
 import IAppConfig from "./interfaces/IAppConfig";

@@ -13,7 +13,7 @@ export interface BaseModelData {
     [key: string]: any
 }
 
-export default class Model<TModelData extends BaseModelData> implements IModel {
+export default class Model<Data extends BaseModelData> implements IModel {
     // The database connection
     public connection: string = 'default';
 
@@ -21,7 +21,7 @@ export default class Model<TModelData extends BaseModelData> implements IModel {
     public primaryKey: string = '_id';
 
     // The MongoDB document
-    public data: TModelData | null;
+    public data: Data | null;
 
     // The MongoDB collection
     public collection!: string;
@@ -36,9 +36,9 @@ export default class Model<TModelData extends BaseModelData> implements IModel {
     /**
      * Constructs a new instance of the Model class.
      *
-     * @param {TModelData | null} data - The data to initialize the model with.
+     * @param {Data | null} data - The data to initialize the model with.
      */
-    constructor(data: TModelData | null) {
+    constructor(data: Data | null) {
         this.data = data;
     }
 
@@ -60,7 +60,7 @@ export default class Model<TModelData extends BaseModelData> implements IModel {
      *
      * @return {ObjectId | undefined} The ObjectId associated with the primary key, or undefined if the primary key is not set.
      */
-    getAttribute<K extends keyof TModelData>(key: K): TModelData[K] | null {
+    getAttribute<K extends keyof Data = keyof Data>(key: K): Data[K] | null {
         return this.data?.[key] ?? null;
     }
     
@@ -72,7 +72,7 @@ export default class Model<TModelData extends BaseModelData> implements IModel {
      * @throws {Error} If the attribute is not found in the model.
      * @return {void}
      */
-    setAttribute<K extends keyof TModelData>(key: K, value: any): void {
+    setAttribute<K extends keyof Data = keyof Data>(key: K, value: any): void {
         if(!this.fields.includes(key as string)) {
             throw new Error(`Attribute ${key as string} not found in model ${this.collection}`);
         }
@@ -85,13 +85,13 @@ export default class Model<TModelData extends BaseModelData> implements IModel {
      * Retrieves the data from the model.
      *
      * @param {GetDataOptions} options - The options for retrieving the data.
-     * @return {TModelData | null} The retrieved data or null if no data is available.
+     * @return {Data | null} The retrieved data or null if no data is available.
      */
-    getData(options: GetDataOptions): TModelData | null {
+    getData(options: GetDataOptions): Data | null {
         let data = this.data;
 
         if(options.excludeGuarded) {
-            data = Object.fromEntries(Object.entries(data ?? {}).filter(([key]) => !this.guarded.includes(key))) as TModelData
+            data = Object.fromEntries(Object.entries(data ?? {}).filter(([key]) => !this.guarded.includes(key))) as Data
         }
         
         return data;
@@ -106,7 +106,7 @@ export default class Model<TModelData extends BaseModelData> implements IModel {
         if(!this.data) return null;
 
         this.data = await this.getDb().collection(this.collection)
-            .findOne({ [this.primaryKey]: this.getId() }) as TModelData | null ?? null;
+            .findOne({ [this.primaryKey]: this.getId() }) as Data | null ?? null;
 
         return this.data
     }

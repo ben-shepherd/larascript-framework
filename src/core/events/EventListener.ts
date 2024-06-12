@@ -1,8 +1,5 @@
 import { IEventListener } from "../interfaces/events/IEventListener";
 
-export default class EventListener implements IEventListener {
- 
-    public handle() {
-        console.log('[EventListner] 123')
-    }
+export default abstract class EventListener implements IEventListener {
+    handle!: (payload: any) => any;
 }
