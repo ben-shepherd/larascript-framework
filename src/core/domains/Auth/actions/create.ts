@@ -1,8 +1,9 @@
 import { App } from '@src/core/services/App';
 import { Request, Response } from 'express';
-import User from '../../../../app/models/auth/User';
 import ValidationError from '../../../exceptions/ValidationError';
-import userFactory from '../factory/userFactory';
+import Roles from '../enums/RolesEnum';
+import UserFactory from '../factory/userFactory';
+import hashPassword from '../utils/hashPassword';
 
 export default async (req: Request, res: Response): Promise<void> => {
 
@@ -23,7 +24,12 @@ export default async (req: Request, res: Response): Promise<void> => {
             throw new ValidationError('User already exists');
         }
 
-        const user = userFactory<User>(email, password);
+        const user = new UserFactory().create({
+            email,
+            hashedPassword: hashPassword(password),
+            roles: [Roles.USER]
+        });
+        
         await user.save();
         
         const token = await App.container('auth').createToken(user);

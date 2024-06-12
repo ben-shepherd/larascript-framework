@@ -1,11 +1,9 @@
-import Roles from '../enums/RolesEnum'
-import BaseUserModel from '../models/BaseUserModel'
-import hashPassword from '../utils/hashPassword'
+import { UserData } from '@src/app/interfaces/UserData';
+import User from '@src/app/models/auth/User';
+import Factory from '@src/core/base/Factory';
 
-export default <U extends BaseUserModel = BaseUserModel>(email: string, password: string, roles: string[] = [Roles.USER]): U => {
-    return new BaseUserModel({
-        email,
-        hashedPassword: hashPassword(password),
-        roles
-    }) as U
+export default class UserFactory extends Factory<User, UserData> {
+   constructor() {
+      super(User)
+   }
 }
