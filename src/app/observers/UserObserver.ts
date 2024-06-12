@@ -23,6 +23,7 @@ export default class UserObserver extends Observer<UserData>
      * @returns 
      */
     onPasswordChanged = (data: UserData): UserData => {
+        console.log(`[UserObserver] ${data.email} changed their password`)
         return data
     }
 }

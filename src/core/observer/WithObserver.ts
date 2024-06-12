@@ -1,33 +1,28 @@
 import IWithObserve, { IObserveWithCtor } from "../interfaces/observer/IObservable";
 import { IObserver, IObserverEvent } from "../interfaces/observer/IObserver";
 
-export abstract class WithObserver<Data> implements IWithObserve<Data> {
+export abstract class WithObserver<ReturnType> implements IWithObserve<ReturnType> {
 
-    // Observer for life cycle events 
-    public observer?: IObserver<Data>;
+    public observer?: IObserver<ReturnType>;
 
-    /**
-     * 
-     * @param observedBy 
-     */
-    observeWith (observedBy: IObserveWithCtor<Data>): void {
+    observeWith (observedBy: IObserveWithCtor<ReturnType>): void {
         if(this.observer) {
             throw new Error('Observer is already defined')
         }
         this.observer = new observedBy();
     }
 
-    /**
-     * 
-     * @param name 
-     * @param data 
-     * @returns 
-     */
-    observeData (name: IObserverEvent, data: Data): Data {
+    observeData (name: IObserverEvent, data: any): ReturnType {
         if(!this.observer) {
             return data
         }
         return this.observer.on(name, data)
     }
 
+    observeDataCustom<Observer extends IObserver = IObserver>(customName: keyof Observer, data: any): ReturnType {
+        if(!this.observer) {
+            return data
+        }
+        return this.observer.onCustom(customName as string, data)
+    }
 }
