@@ -1,13 +1,13 @@
 
 import BaseProvider from "../base/Provider";
 import EventDispatcher from "../events/EventDispatcher";
-import Kernel from "../kernel";
+import { App } from "../services/App";
 
 export default class EventProvider extends BaseProvider
 {
     public async register(): Promise<void> {
         this.log('Registering EventProvider');
-        Kernel.getInstance().setContainer('events', EventDispatcher.getInstance());
+        App.setContainer('events', EventDispatcher.getInstance());
     }
 
     public async boot(): Promise<void> {

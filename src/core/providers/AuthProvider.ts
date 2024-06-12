@@ -4,6 +4,7 @@ import authRoutes from '../domains/auth/routes/auth';
 import Auth from "../domains/auth/services/Auth";
 import { IAuthConfig } from "../interfaces/IAuthConfig";
 import Kernel from "../kernel";
+import { App } from "../services/App";
 import Express from "../services/Express";
 import ExpressProvider from "./ExpressProvider";
 
@@ -20,7 +21,7 @@ export default class AuthProvider extends BaseProvider
     public async register(): Promise<void> {
         this.log('Registering AuthProvider');
 
-        Kernel.getInstance().setContainer('auth', new this.config.authService(this.config));
+        App.setContainer('auth', new this.config.authService(this.config));
     }
 
     public async boot(): Promise<void> {

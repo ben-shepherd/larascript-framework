@@ -1,7 +1,7 @@
 import BaseProvider from "../base/Provider";
 import MongoDB from "../domains/database/mongodb/services/MongoDB";
 import IMongoDbConfig from "../interfaces/IMongoDbConfig";
-import Kernel from "../kernel";
+import { App } from "../services/App";
 
 export default class MongoDBProvider extends BaseProvider
 {
@@ -24,6 +24,6 @@ export default class MongoDBProvider extends BaseProvider
 
         await MongoDB.getInstance(this.config).connectDefaultConnection();
         await MongoDB.getInstance().connectKeepAlive()
-        Kernel.getInstance().setContainer('mongodb', MongoDB.getInstance().getConnection())
+        App.setContainer('mongodb', MongoDB.getInstance().getConnection())
     }
 }

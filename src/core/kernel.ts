@@ -1,6 +1,4 @@
-import { ContainersTypeHelpers } from '@src/config/containers';
 import Singleton from "./base/Singleton";
-import UninitializedContainerError from "./exceptions/UninitializedContainerError";
 import IAppConfig from "./interfaces/IAppConfig";
 
 export type Containers = {
@@ -20,7 +18,7 @@ export default class Kernel<Config extends IAppConfig> extends Singleton<Config>
         this.appConfig = appConfig;
     }
 
-    private booted(): boolean {
+    public booted(): boolean {
         return this.readyProviders.length === this.appConfig.providers.length
     }
 
@@ -47,28 +45,5 @@ export default class Kernel<Config extends IAppConfig> extends Singleton<Config>
 
     public static isProviderReady(providerName: string): boolean {
         return this.getInstance().preparedProviders.includes(providerName) || this.getInstance().readyProviders.includes(providerName);
-    }
-
-    public setContainer<Name extends keyof ContainersTypeHelpers & string>(name: Name, container: ContainersTypeHelpers[Name]) {
-        const kernel = Kernel.getInstance();
-
-        if (kernel.booted()) {
-            throw new Error('Kernel is already booted');
-        }
-        if (!name) {
-            throw new Error('Container name cannot be empty');
-        }
-        if (kernel.containers.has(name)) {
-            throw new Error('Container already exists');
-        }
-
-        kernel.containers.set(name, container);
-    }
-
-    public getContainer<Name extends keyof ContainersTypeHelpers = keyof ContainersTypeHelpers>(name: Name): ContainersTypeHelpers[Name] {
-        if(!Kernel.getInstance().containers.has(name)) {
-            throw new UninitializedContainerError(name as string)
-        }
-        return Kernel.getInstance().containers.get(name);
     }
 }
