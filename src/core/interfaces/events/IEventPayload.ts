@@ -1,4 +1,5 @@
+import { ISerializableTypes } from "../ISerializableTypes";
 
 export interface IEventPayload {
-    [key: string]: any
+    [key: string | number | symbol]: ISerializableTypes
 }

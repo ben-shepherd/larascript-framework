@@ -1,9 +1,9 @@
-import { LoginListener } from "@src/app/events/listeners/LoginListener";
+import { ExapleListener } from "@src/app/events/listeners/ExampleListener";
 import { IEventConfig } from "@src/core/interfaces/IEventConfig";
 
 const eventsConfig: IEventConfig = {
-    'OnLogin': [
-        new LoginListener()
+    'OnExample': [
+        new ExapleListener()
     ]   
 }
 

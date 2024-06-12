@@ -17,7 +17,7 @@ export class EventHandler<
         const { payload } = this.event
         console.log(`[EventHandler] dispatching ${dispatcherName}`, payload)
 
-        const listeners = eventsConfig[dispatcherName]
+        const listeners = eventsConfig[dispatcherName] ?? []
 
         for(const listener of listeners) {
             // console.log('[EventHandler] listener ', this.payload)
