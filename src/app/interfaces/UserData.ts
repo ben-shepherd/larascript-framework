@@ -6,6 +6,5 @@ export interface UserData extends BaseUserData {
     _id?: ObjectId
     email: string
     hashedPassword: string
-    roles: string[],
-    lastLoginAt?: Date
+    roles: string[]
 }

@@ -5,7 +5,6 @@ import HasMany from '../domains/database/mongodb/relationships/HasMany';
 import MongoDB from '../domains/database/mongodb/services/MongoDB';
 import IData from '../interfaces/IData';
 import { Dates, GetDataOptions, IModel } from '../interfaces/IModel';
-import IWithObserve from '../interfaces/observer/IObservable';
 import { WithObserver } from '../observer/WithObserver';
 
 export interface BaseModelData {
@@ -15,7 +14,7 @@ export interface BaseModelData {
     [key: string]: any
 }
 
-export default abstract class Model<Data extends BaseModelData> extends WithObserver<Data> implements IModel, IWithObserve {
+export default abstract class Model<Data extends BaseModelData> extends WithObserver<Data> implements IModel {
     // The database connection
     public connection: string = 'default';
 

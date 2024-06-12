@@ -22,7 +22,6 @@ export default class User extends BaseUserModel<UserData> {
         /** Define your user fields below */
         'firstName',
         'lastName',
-        'lastLoginAt',
     ]
 
     constructor(data: UserData | null = null) {

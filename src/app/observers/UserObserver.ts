@@ -17,8 +17,9 @@ export default class UserObserver extends Observer<UserData>
     
     /**
      * An example of a custom function 
+     * The data can be modified here
      * [Usage]
-     *      [class extends IWithObserve].observer.onCustom(customName as string, data)
+     *      [class extends IWithObserve].observer.onCustom('onPasswordChange', data)
      * @param data 
      * @returns 
      */
