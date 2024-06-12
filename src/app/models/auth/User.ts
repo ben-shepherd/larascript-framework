@@ -35,12 +35,10 @@ export default class User extends BaseUserModel<UserData> {
     }
 
     setAttribute<K extends keyof UserData = keyof UserData>(key: K, value: any): void {
-        console.log('[User:setAttribute]', {key, value})
-
         super.setAttribute(key, value)
 
-        if(key === 'email') {
-            this.data = this.observeDataCustom<UserObserver>('onEmailChange', this.data)
+        if(key === 'hashedPassword') {
+            this.data = this.observeDataCustom<UserObserver>('onPasswordChanged', this.data)
         }
     }
 }

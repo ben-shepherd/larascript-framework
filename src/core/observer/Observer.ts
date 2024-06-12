@@ -12,23 +12,20 @@ export default abstract class Observer<ReturnType = any> implements IObserver<Re
     deleted?: (...args: any[]) => ReturnType;
 
     onCustom(customName: string, data: ReturnType): ReturnType {
-        console.log('[Observer:custom:1]', {customName, data})
-        const customNameIndex = customName as keyof IObserver<ReturnType>;
-        if(this[customNameIndex]) {
-            const fn = this[customNameIndex] as (...args: any[]) => ReturnType
-            console.log('[Observer:custom:2]', fn)
+        const i = customName as keyof IObserver<ReturnType>;
+        if(this[i]) {
+
+            const fn = this[i] as (...args: any[]) => ReturnType
             return fn(data)
         }
         return data
     }
 
     on(name: keyof IObserver, data: ReturnType): ReturnType {
-        console.log('[Observer:on]', {name, data})
 
         if(!this[name]) {
             return data
         }
-
         if(this.creating && name === 'creating') {
             return this.creating(data)
         }
