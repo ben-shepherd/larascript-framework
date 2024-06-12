@@ -1,18 +1,14 @@
 import 'tsconfig-paths/register';
 
+import appConfig from './config/app';
 import Kernel from "./core/kernel";
-import MongoDBProvider from "./core/providers/MongoDBProvider";
 
 (async() => {
     require('dotenv').config();
 
-    await Kernel.boot({
-        environment: 'testing',
-        providers: [
-            new MongoDBProvider()
-        ]
-    })
+    await Kernel.boot(appConfig)
 
     // add your tests here below
+
 
 })();
