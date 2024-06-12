@@ -5,6 +5,8 @@ import HasMany from '../domains/database/mongodb/relationships/HasMany';
 import MongoDB from '../domains/database/mongodb/services/MongoDB';
 import IData from '../interfaces/IData';
 import { Dates, GetDataOptions, IModel } from '../interfaces/IModel';
+import IWithObserve, { IObserveWithCtor } from '../interfaces/observer/IObservable';
+import { IObserver, IObserverEvent } from '../interfaces/observer/IObserver';
 
 export interface BaseModelData {
     _id?: ObjectId
@@ -13,7 +15,7 @@ export interface BaseModelData {
     [key: string]: any
 }
 
-export default abstract class Model<Data extends BaseModelData> implements IModel {
+export default abstract class Model<Data extends BaseModelData> implements IModel, IWithObserve {
     // The database connection
     public connection: string = 'default';
 
@@ -38,12 +40,47 @@ export default abstract class Model<Data extends BaseModelData> implements IMode
     public timestamps: boolean = true;
 
     /**
+     * Observe life cycle events (create, update, save and deleted events)
+     */
+    observer?: IObserver<Data>
+
+    /**
      * Constructs a new instance of the Model class.
      *
      * @param {Data | null} data - The data to initialize the model with.
      */
     constructor(data: Data | null) {
         this.data = data;
+    }
+
+    /**
+     * Optionally assign an observer to this model
+     * @param observedBy 
+     */
+    observeWith (observedBy: IObserveWithCtor<Data>) {
+        this.observer = new observedBy()
+    }
+
+    /**
+     * On a life cycle event (e.g saving), we pass the data
+     * to the observer, which may modify the data, and return it
+     * The data is returned in it's original state if no observer present
+     * @param name 
+     * @param data 
+     * @returns 
+     */
+    observeData (name: IObserverEvent, data: any): Data {
+        if(!this.observer) {
+            return data
+        }
+        return this.observer.on(name, data)
+    }
+
+    observeDataCustom<Observer extends IObserver = IObserver, K extends keyof Observer = keyof Observer>(customName: K, data: any) {
+        if(!this.observer) {
+            return data
+        }
+        return this.observer.onCustom(customName as string, data)
     }
 
     protected getDb(): Db {
@@ -136,19 +173,27 @@ export default abstract class Model<Data extends BaseModelData> implements IMode
      * @return {Promise<void>} A promise that resolves when the save operation is complete.
      */
     async save(): Promise<void> {
+        
         if(this.data && !this.getId()) {
+            
+            this.data = this.observeData('creating', this.data)
             this.setTimestamps('createdAt')
             this.setTimestamps('updatedAt')
+
             await this.getDb()
                 .collection(this.collection)
                 .insertOne(this.data);
             await this.refresh();
+
+            this.data = this.observeData('created', this.data)
             return;
         }
 
+        this.data = this.observeData('updating', this.data)
         this.setTimestamps('updatedAt')
         await this.update()
         await this.refresh()
+        this.data = this.observeData('updated', this.data)
     }
 
     /**
@@ -158,8 +203,10 @@ export default abstract class Model<Data extends BaseModelData> implements IMode
      */
     async delete(): Promise<void> {
         if(!this.data) return;
+        this.data = this.observeData('deleting', this.data)
         await this.getDb().collection(this.collection).deleteOne({ [this.primaryKey]: this.getId() })
         this.data = null
+        this.observeData('deleting', this.data)
     }
 
         /**

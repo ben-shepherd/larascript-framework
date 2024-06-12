@@ -1,3 +1,5 @@
+import UserObserver from '@src/app/observers/UserObserver';
+
 import BaseUserModel from '../../../core/domains/auth/models/BaseUserModel';
 import { ApiTokenData } from '../../interfaces/ApiTokenData';
 import { UserData } from '../../interfaces/UserData';
@@ -20,14 +22,25 @@ export default class User extends BaseUserModel<UserData> {
         /** Define your user fields below */
         'firstName',
         'lastName',
-        'lastLoginAt'
+        'lastLoginAt',
     ]
 
     constructor(data: UserData | null = null) {
         super(data);
+        this.observeWith(UserObserver)
     }
 
     public async tokens(): Promise<ApiToken[]> {
         return await this.hasMany<UserData, User, ApiTokenData, ApiToken>(this, '_id', ApiToken, new ApiToken().USER_ID);
+    }
+
+    setAttribute<K extends keyof UserData = keyof UserData>(key: K, value: any): void {
+        console.log('[User:setAttribute]', {key, value})
+
+        super.setAttribute(key, value)
+
+        if(key === 'email') {
+            this.data = this.observeDataCustom<UserObserver>('onEmailChange', this.data)
+        }
     }
 }
