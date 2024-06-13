@@ -1,9 +1,9 @@
-import { authorize } from "../../../http/middleware/authorize";
-import { Route } from "../../../interfaces/IRoute";
-import create from "../actions/create";
-import login from "../actions/login";
-import user from "../actions/user";
-import authConsts from "../consts/authConsts";
+import {authorize} from "@src/core/http/middleware/authorize";
+import {Route} from "@src/core/interfaces/IRoute";
+import create from "@src/core/domains/auth/actions/create";
+import login from "@src/core/domains/auth/actions/login";
+import user from "@src/core/domains/auth/actions/user";
+import authConsts from "@src/core/domains/auth/consts/authConsts";
 
 const routes: Route[] = [
     {

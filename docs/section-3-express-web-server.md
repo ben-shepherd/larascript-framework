@@ -9,22 +9,22 @@ The express app is set up automatically for you in the following providers:
 The express app can be accessed by can calling the container express
 
 ```ts
-import { App } from '@src/core/services/App';
-import { Express } from 'express'
+import {App} from '@src/core/services/App';
+import {Express} from 'express'
 
 const express: Express = App.container('express').getApp()
 ```
 
-
 #### [3.1] Defining Routes
+
 Adding routes can be achieved by updating your `@src/app/routes/api.ts` routing file
 
 *Note:* It is recommended to create seperate files in `@src/app/actions` for your endpoint logic to keep
 your project organized.
 
 ```ts
-import { Route } from "@src/core/interfaces/IRoute"
-import { Request, Response } from "express"
+import {Route} from "@src/core/interfaces/IRoute"
+import {Request, Response} from "express"
 
 const routes: Route[] = [
     {
@@ -49,8 +49,11 @@ export default routes
 - Navigate to `@src/app/providers/AppProvider.ts`
 
 - Import your new routes
+
 ```ts
-import weatherRoutes '@src/app/routes/weather'
+import weatherRoutes
+
+'@src/app/routes/weather'
 ```
 
 You can use the `App.container('express')` module to bind them to Express. *(References `@src/core/services/Express`)*
@@ -58,10 +61,12 @@ You can use the `App.container('express')` module to bind them to Express. *(Ref
 Add your routing file
 
 ```ts
-import { App } from '@src/core/services/App';
+import {App} from '@src/core/services/App';
 import BaseProvider from '@src/core/base/Provider';
-import { IAuthConfig } from '@src/core/interfaces/IAuthConfig';
-import weatherRoutes '@src/app/routes/weather';
+import {IAuthConfig} from '@src/core/interfaces/IAuthConfig';
+import weatherRoutes
+
+'@src/app/routes/weather';
 
 export default class AppRouteProvider extends BaseProvider {
 
@@ -74,5 +79,36 @@ export default class AppRouteProvider extends BaseProvider {
     }
 }
 
+
+```
+
+### [3.3] Protected Routes
+
+**Middleware**
+
+`@src/core/http/middleware/authorize`
+
+Routes that require authorization should use the authorize middleware
+
+**Example**
+
+`@src/app/routes/user.ts`
+
+```ts
+import {authorize} from "@src/core/http/middleware/authorize";
+import {Route} from "@src/core/interfaces/IRoute";
+import updateUser from "@src/app/actions/updateUser";
+
+const routes: Route[] = [
+    {
+        name: '',
+        method: 'get',
+        path: '/api/auth/update-user',
+        action: updateUser,
+        middlewares: [authorize()]
+    }
+]
+
+export default routes;
 
 ```

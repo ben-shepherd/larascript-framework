@@ -29,8 +29,9 @@ A TypeScript Node.js framework built with Express and MongoDB.
 
 - [[Section 3] - Express Web Server](docs/section-3-express-web-server.md)
   - [2.1] - Singletons
-  - [3.1] Defining routes
-  - [3.2] Adding another routing file
+  - [3.1] - Defining routes
+  - [3.2] - Adding another routing file
+  - [3.3] - Middleware
 
 ---
 
@@ -44,9 +45,9 @@ A TypeScript Node.js framework built with Express and MongoDB.
 ---
 
 - [[Section 5] - MongoDB](docs/section-5-mongodb.md)
-    - [5.1] MongoDB Service
-    - [5.3] Database configuration
-    - [5.3] Connections
+    - [5.1] - MongoDB Service
+    - [5.3] - Database configuration
+    - [5.3] - Connections
 
 ---
 
@@ -63,6 +64,6 @@ A TypeScript Node.js framework built with Express and MongoDB.
 ---
 
 - [[Section 8] - Observers](docs/section-8-observers.md)
-    - [8.1] Creating an observer
-    - [8.2] Model Observers
-    - [8.3] Custom Observers
+    - [8.1] - Creating an observer
+    - [8.2] - Model Observers
+    - [8.3] - Custom Observers
