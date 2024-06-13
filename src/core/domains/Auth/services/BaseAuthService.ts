@@ -14,7 +14,7 @@ import comparePassword from '../utils/comparePassword';
 import createJwt from '../utils/createJwt';
 import decodeJwt from '../utils/decodeJwt';
 
-export default class BaseAuthService<TApiToken extends ApiToken> extends Service<IAuthConfig> implements IAuth {
+export default class BaseAuthService<ApiTokenType extends ApiToken> extends Service<IAuthConfig> implements IAuth {
     public userRepository: UserRepository
     public apiTokenRepository: ApiTokenRepository;
 
@@ -30,7 +30,7 @@ export default class BaseAuthService<TApiToken extends ApiToken> extends Service
         return this.jwt(apiToken)
     }
 
-    private jwt(apiToken: BaseApiTokenModel): string {
+    jwt(apiToken: BaseApiTokenModel): string {
         if(!apiToken?.data?.userId) {
             throw new Error('Invalid token');
         }
@@ -47,7 +47,7 @@ export default class BaseAuthService<TApiToken extends ApiToken> extends Service
         await apiToken.save();
     }
 
-    async attemptAuthenticateToken(token: string): Promise<TApiToken | null> {
+    async attemptAuthenticateToken(token: string): Promise<ApiTokenType | null> {
         const decoded = decodeJwt(token) as JWTToken;
 
         const apiToken = await this.apiTokenRepository.findByUnrevokedToken(decoded.token)
@@ -62,13 +62,13 @@ export default class BaseAuthService<TApiToken extends ApiToken> extends Service
             throw new UnauthorizedError('Unauthorized (Error code: 2)')
         }
 
-        return apiToken as TApiToken
+        return apiToken as ApiTokenType
     }
 
     async attemptCredentials(email: string, password: string): Promise<string> {
         const user = await this.userRepository.findByEmail(email);
 
-        if(!user) {
+        if(!user?.data?._id) {
             throw new UnauthorizedError('Unauthorized (Error code: 1)')
         }
 
@@ -76,9 +76,6 @@ export default class BaseAuthService<TApiToken extends ApiToken> extends Service
             throw new UnauthorizedError('Unauthorized (Error code: 2)')
         }
 
-        const apiToken = apiTokenFactory(user, this.apiTokenRepository.model);
-        await apiToken.save();
-
-        return this.jwt(apiToken);
+        return this.createToken(user)
     }
 }

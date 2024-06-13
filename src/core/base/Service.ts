@@ -1,6 +1,6 @@
 import IService from '../interfaces/IService';
 
-export default abstract class Service<ConfigType extends Record<any,any> | null> implements IService {
+export default abstract class Service<ConfigType> implements IService {
     protected config!: ConfigType | null;
 
     constructor(config: ConfigType | null = null) {

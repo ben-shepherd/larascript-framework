@@ -1,8 +1,8 @@
 import UserObserver from '@src/app/observers/UserObserver';
 
-import BaseUserModel from '../../../core/domains/auth/models/BaseUserModel';
-import { ApiTokenData } from '../../interfaces/ApiTokenData';
-import { UserData } from '../../interfaces/UserData';
+import { ApiTokenData } from '@src/app/interfaces/auth/ApiTokenData';
+import { UserData } from '@src/app/interfaces/auth/UserData';
+import BaseUserModel from '@src/core/domains/auth/models/BaseUserModel';
 import ApiToken from './ApiToken';
 
 export default class User extends BaseUserModel<UserData> {
@@ -30,7 +30,7 @@ export default class User extends BaseUserModel<UserData> {
     }
 
     public async tokens(): Promise<ApiToken[]> {
-        return await this.hasMany<UserData, User, ApiTokenData, ApiToken>(this, '_id', ApiToken, new ApiToken().USER_ID);
+        return await this.hasMany<UserData, User, ApiTokenData, ApiToken>(this, this.primaryKey, ApiToken, 'userId');
     }
 
     setAttribute<K extends keyof UserData = keyof UserData>(key: K, value: any): void {

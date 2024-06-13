@@ -1,14 +1,15 @@
 import ApiTokenRepository from '@src/app/repositories/auth/ApiTokenRepository';
 import UserRepository from '@src/app/repositories/auth/UserRepository';
-import { AppAuthService } from '../../app/services/AppAuthService';
-import { IAuthConfig } from '../../core/interfaces/IAuthConfig';
-import parseBooleanFromString from '../../core/util/parseBooleanFromString';
+import { AppAuthService } from '@src/app/services/AppAuthService';
+import { IAuthConfig } from '@src/core/interfaces/IAuthConfig';
+import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
 
 const config: IAuthConfig = {
     /**
      * Expandable auth service class
+     * Accessible with App.cotnainer('auth)
      */
-    authService: AppAuthService,
+    container: AppAuthService,
     /**
      * User repository for accessing user data
      */

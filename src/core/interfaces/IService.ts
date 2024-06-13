@@ -1,5 +1,5 @@
 interface IService {
-    getConfig(): Record<any, any> | null;
+    getConfig(...args: any[]): any;
 }
 
 export default IService

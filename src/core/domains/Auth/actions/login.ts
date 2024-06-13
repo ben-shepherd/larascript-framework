@@ -1,19 +1,17 @@
 import { Request, Response } from 'express';
 
-import UnauthorizedError from '../../../exceptions/UnauthorizedError';
-import ResponseError from '../../../http/requests/ResponseError';
-import Auth from '../services/Auth';
+import UnauthorizedError from '@src/core/exceptions/UnauthorizedError';
+import ResponseError from '@src/core/http/requests/ResponseError';
+import { App } from '@src/core/services/App';
 
 export default async (req: Request, res: Response): Promise<void> => {
     try {
         const { email, password } = req?.body ?? {};
         let token;
 
-        token = await Auth.getInstance().attemptCredentials(email, password);
+        token = await App.container('auth').attemptCredentials(email, password);
 
-        const user = await Auth.getInstance().userRepository.findByEmail(email);
-
-        // LoginEvent.dispatch({ user: user })
+        const user = await App.container('auth').userRepository.findByEmail(email);
 
         res.send({ 
             success: true,

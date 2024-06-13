@@ -29,12 +29,26 @@ A TypeScript Node.js framework built with Express and MongoDB.
     - [3.2] Adding another routing file
 
 - [Section 4] - Authentication
+    - [4.1] - Configuration
+    - [4.2] - Extending Authentication
+    - [4.3] - Auth Service
+    - [4.4] - ApiToken Model
+    - [4.5] - User Model
 
 - [Section 5] - MongoDB 
+    - [5.1] MongoDB Service
+    - [5.3] Database configuration
+    - [5.3] Connections
 
-- [Section 6] - Models
-    - [Section 6.1] - Models
-    - [Section 6.2] - Observers
+- [Section 6] - Repositories
+    - [6.1] - Models
+
+- [Section 7] - Events
+    - [7.1] - Create an dispatchable event
+    - [7.2] - Add event listeners
+
+- [Section 8] - Observers
+    - [8.1] placeholder
 
 ## [Section 1] -  Providers & Containers
 
@@ -70,7 +84,7 @@ export default class WeatherProvider extends BaseProvider
         this.log('Registering WeatherProvider');
 
         // Setup the container
-        App.container('weather', new Weather(config)) // @ref [Section 1.3] Setting up a new container
+        App.container('weather', new Weather(config)) // @ref [Section 1.4] Setting up a new container
     }
 
     public async boot(): Promise<void> {
@@ -100,6 +114,8 @@ export default config
 
 A container is simply a globally accessed variable that can be `any`.
 
+The container name is unique, and will throw an error if a non-unique name is provided.
+
 Let's say you have a new service you'd like to have globally accessible; you may set up a container that provide it, whether it's an object, a single number or an instance of a class.
 
 **Available methods**
@@ -122,9 +138,9 @@ This it typically placed in the `register` or `boot` method of your provider.
 
 ```ts
 import { App } from '@src/core/services/App';
-import MyService from 'path/to/MyService'
+import Weather from '@src/app/services/Weather';
 
-App.container('myContainer', new MyService())
+App.container('weather', new Weather())
 ```
 
 *(Optional)* You may provide your application with type hinting by updating the interface defined in `@src/containers`
@@ -132,14 +148,14 @@ App.container('myContainer', new MyService())
 **Example**
 
 ```ts
-import MyService from 'path/to/MyService'
+import Weather from '@src/app/services/Weather';
 
 export interface ContainersTypeHelpers {
     [key: string]: any;
 
-    // ... rest of containers
+    // ...other container types
 
-    myContainer: MyService
+    weather: Weather,
 }
 
 ```
@@ -151,15 +167,24 @@ Using `App`, you can retrieve the contents of a container.
 **Example**
 
 ```ts
-    const myServiceInstance = App.container('myService');
+    const weatherInstance = App.container('weather');
     
-    myServiceInstance.someMethod()
+    weatherInstance.getRegion() // United Kingdom
+    weatherInstance.getTemperature() // Cold!
 ```
 
 
 ## [Section 2] - Services
 
 Your own services can utilise the in built `@src/core/base/Service` or `@src/core/base/Singleton` modules 
+
+**Constructor Signature** 
+
+Services can be provided optional config.
+
+`constructor: (config: any | null)`
+
+**Recommended Usage**
 
 It is recommended to register your services in a provider and use container methods to access it across your project.
 
@@ -185,7 +210,7 @@ export class Weather extends Service<WeatherConfig> {
     }
 
     getTemperature(): string {
-        return 'Hot!'
+        return 'Cold!'
     }
 }
 ```
@@ -195,7 +220,7 @@ export class Weather extends Service<WeatherConfig> {
 ```ts
 import Weather from '@src/app/services/Weather'
 
-(new Weather()).getTemperature() // Hot!
+(new Weather({ region: 'United Kingdom' })).getTemperature() // Cold!
 ```
 
 *(Optional type hinting)* The type parameter for Service can be left blank if no type hinting is required. Example  `extends Service<WeatherConfig>` becomes `extends Service`
@@ -220,7 +245,7 @@ export class Weather extends Singleton<WeatherConfig> {
     }
 
     getTemperature(): string {
-        return 'Hot!'
+        return 'Cold!'
     }
 }
 ```
@@ -228,7 +253,7 @@ export class Weather extends Singleton<WeatherConfig> {
 Use the `getInstance` method to access your instance
 
 ```ts
-Weather.getInstance().getTemperature() // Hot!
+Weather.getInstance().getTemperature() // Cold!
 ```
 
 ## [Section 3] - Express Web Server
@@ -249,7 +274,7 @@ const express: Express = App.container('express').getApp()
 ```
 
 
-#### [Section 3.1] Defining Routes
+#### [3.1] Defining Routes
 Adding routes can be achieved by updating your `@src/app/routes/api.ts` routing file
 
 *Note:* It is recommended to create seperate files in `@src/app/actions` for your endpoint logic to keep 
@@ -273,10 +298,9 @@ const routes: Route[] = [
 export default routes
 ```
 
-### [Section 3.1] Adding another routing file
+### [3.2] Adding another routing file
 
-- We will create a new routing file in `@src/app/routes/weather.ts` and create 
-define endpoints using the example above.
+- We will create a new routing file in `@src/app/routes/weather.ts` and create endpoints using the example above.
 
 - Once created, your new routing file needs to be registed in a provider.
 
@@ -311,7 +335,139 @@ export default class AppRouteProvider extends BaseProvider {
 
 ```
 
+## [Section 4] - Authentication
 
+### [4.1] Configuration
+
+Navigate to `@src/config/auth/auth.ts`
+
+**Properties**
+
+`authService`: Provies type hinting as the default service that is bound to the container `App.container('auth')`
+
+`userRepository`: The default user repository
+
+`apiToken`: The default apiToken repository
+
+`authRoutes`: When Enabled the auth routes are added to Express
+
+`authCreateAllowed`: When Enabled, the route `/api/auth/create` is added to Express
+
+**Example config**
+
+```ts
+import ApiTokenRepository from '@src/app/repositories/auth/ApiTokenRepository';
+import UserRepository from '@src/app/repositories/auth/UserRepository';
+import { AppAuthService } from '@src/app/services/AppAuthService';
+import { IAuthConfig } from '@src/core/interfaces/IAuthConfig';
+import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
+
+const config: IAuthConfig = {
+    /**
+     * Expandable auth service class
+     * Accessible with App.cotnainer('auth)
+     */
+    container: AppAuthService,
+    /**
+     * User repository for accessing user data
+     */
+    userRepository: UserRepository,
+    /**
+     * Api token repository for accessing api tokens
+     */
+    apiTokenRepository: ApiTokenRepository,
+    /**
+     * Enable or disable auth routes
+     */
+    authRoutes: parseBooleanFromString(process.env.AUTH_ROUTES, 'true'),
+    /**
+     * Enable or disable create a new user endpoint
+     */
+    authCreateAllowed: parseBooleanFromString(process.env.AUTH_ROUTES_ALLOW_CREATE, 'true'),
+}
+
+export default config;
+```
+
+### [4.2] - Extending Authentication
+
+If you wish to expand on Authentication, see the file `@src/app/services/AppAuthService.ts`
+
+You can create an entirely different authentication file, replacing the property `container` in the config.
+This will provide type hinting when accessing your service with `App.container('auth')`.
+
+### [4.3] Auth Service
+
+A look into the available methods and properties for `App.container('auth')`
+
+**Terminology**
+
+*authentication token*: The value of the property stored on the MongoDB collection `apiToken.token`. 
+
+*repository*: A repository is class that handles queries to retrieve data models
+
+*jwt*: A signed JSON Web Token that contains the payload `{userId: string: string token, ...}`
+
+**Properties**
+
+`userRepository: Repository` : The default user repository
+
+`apiTokenRepository: Repository` The default apiToken repository
+
+
+**Methods**
+
+`jwt(apiToken: BaseApiTokenModel): string` : Generate a signed JSON Web Token
+
+`createToken(user: BaseUserModel): Promise<string>` : Create an *authentication token*
+
+`revokeToken(apiToken: BaseApiTokenModel): Promise<void>` : Revoke an *authentication token*
+
+`attemptAuthenticateToken(token: string): Promise<ApiToken | null>` : Attempt to authorize an *authentication token*
+
+`attemptCredentials(email: string, password: string): Promise<string>` : Attempt a login with credentials. Returns an *authentication token*
+
+**Note**: Your JSON Web Token is the token that should be supplied to the `Authorization` header in order to authenticate requests.
+
+### [4.4] ApiToken Model
+
+**Extendable Repository** `@src/app/repositories/auth/ApiTokenRepository.ts`
+
+**Extendable Model** `@src/app/models/auth/ApiToken.ts`
+
+**Extendable Interface** `@src/app/interfaces/auth/ApiTokenData.ts`
+```ts
+interface ApiTokenData extends BaseApiTokenData {
+    _id?: ObjectId
+    userId: ObjectId
+    token: string
+    revokedAt: Date | null;
+}
+```
+
+**Methods**
+
+`user(): Promise<User | null>`: Returns the associated user
+
+### [4.5] User Model
+
+**Extendable Repository** `@srcapp/repositories/auth/UserRepository.ts`
+
+**Extendable Model** `@src/app/models/auth/User.ts`
+
+**Extendable Interface** `@src/app/interfaces/auth/UserData.ts`
+```ts
+interface UserData extends BaseUserData {
+    _id?: ObjectId
+    email: string
+    hashedPassword: string
+    roles: string[]
+}
+```
+
+**Methods**
+
+`tokens(): Promise<ApiToken[]>`: Returns an array of ApiToken models
 
 ## MongoDB
 [placeholder]
@@ -319,8 +475,6 @@ export default class AppRouteProvider extends BaseProvider {
 ## Models
 [placeholder]
 
-## Authentication
-[placeholder]
 
 ## Events
 [placeholder]

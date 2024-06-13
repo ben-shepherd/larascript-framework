@@ -1,5 +1,5 @@
+import { UserData } from "@src/app/interfaces/auth/UserData";
 import Observer from "@src/core/observer/Observer";
-import { UserData } from "../interfaces/UserData";
 
 export default class UserObserver extends Observer<UserData>
 {  

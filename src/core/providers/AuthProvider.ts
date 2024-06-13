@@ -1,7 +1,6 @@
 
 import BaseProvider from "../base/Provider";
 import authRoutes from '../domains/auth/routes/auth';
-import Auth from "../domains/auth/services/Auth";
 import { IAuthConfig } from "../interfaces/IAuthConfig";
 import Kernel from "../kernel";
 import { App } from "../services/App";
@@ -21,22 +20,16 @@ export default class AuthProvider extends BaseProvider
     public async register(): Promise<void> {
         this.log('Registering AuthProvider');
 
-        App.setContainer('auth', new this.config.authService(this.config));
+        App.setContainer('auth', new this.config.container(this.config));
     }
 
     public async boot(): Promise<void> {
 
         this.log('Booting AuthProvider');
-        
-        this.setupAuthService()
 
         if(Kernel.isProviderReady(ExpressProvider.name) &&this.config.authRoutes) {
             this.registerAuthRoutes();
         }
-    }
-
-    private setupAuthService(): void {
-        Auth.getInstance(this.config.authService, this.config)
     }
 
     private registerAuthRoutes(): void {

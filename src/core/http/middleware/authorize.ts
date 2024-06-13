@@ -1,7 +1,7 @@
 import { NextFunction, Response } from 'express';
 
+import { App } from '@src/core/services/App';
 import User from '../../../app/models/auth/User';
-import Auth from '../../domains/auth/services/Auth';
 import UnauthorizedError from '../../exceptions/UnauthorizedError';
 import IAuthorizedRequest from '../../interfaces/IAuthorizedRequest';
 import ResponseError from '../requests/ResponseError';
@@ -10,11 +10,11 @@ export const authorize = () => async (req: IAuthorizedRequest<User>, res: Respon
     try {
         const authorization = (req.headers.authorization ?? '').replace('Bearer ', '');
 
-        const apiToken = await Auth.getInstance().attemptAuthenticateToken(authorization)
+        const apiToken = await App.container('auth').attemptAuthenticateToken(authorization)
 
         const userId = apiToken?.data?.userId;
 
-        const user = userId && await Auth.getInstance().userRepository.findById(userId?.toString());
+        const user = userId && await App.container('auth').userRepository.findById(userId?.toString());
 
         req.user = user;
         next();
