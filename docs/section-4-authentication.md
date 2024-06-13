@@ -2,14 +2,11 @@
 
 **Terminology**
 
-*authentication token*
-; The value of the property stored on the MongoDB collection `apiToken.token`.
+*authentication token*: The value of the property stored on the MongoDB collection `apiToken.token`.
 
-*repository*
-; A repository is class that handles queries to retrieve data models
+*repository* : A repository is class that handles queries to retrieve data models
 
-*jwt*
-; A signed JSON Web Token that contains the payload `{userId: string: string token, ...}`
+*jwt* : A signed JSON Web Token that contains the payload `{userId: string: string token, ...}`
 
 ### [4.1] Configuration
 
