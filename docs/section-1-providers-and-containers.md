@@ -1,7 +1,8 @@
-test## [Section 1] -  Providers & Containers
+## [Section 1] - Providers & Containers
 
 ### [1.1] - Registering a provider
-Providers are used to boot up your application by initalizing configurable services
+
+Providers are used to boot up your application by initializing configurable services
 
 **Example** Register a new provider
 
@@ -15,8 +16,7 @@ interface WeatherConfig {
     region: 'United Kingdom'
 }
 
-export default class WeatherProvider extends BaseProvider
-{
+export default class WeatherProvider extends BaseProvider {
     // Optional property, by default config is an empty object.
     protected config!: WeatherConfig;
 
@@ -41,10 +41,10 @@ export default class WeatherProvider extends BaseProvider
 }
 ```
 
-
-
 ### [Section 1.2] - *(Optional)* Type hinting config
-Notice how we've created a new interface for `WeatherConfig`, this provides type hinting when accessing `this.config.region; // Outputs 'United Kingdom'`
+
+Notice how we've created a new interface for `WeatherConfig`, this provides type hinting when
+accessing `this.config.region; // Outputs 'United Kingdom'`
 
 We will need to add a config file in `@src/config/weather.ts` and import the `WeatherConfig` interface
 
@@ -64,17 +64,18 @@ A container is simply a globally accessed variable that can be `any`.
 
 The container name is unique, and will throw an error if a non-unique name is provided.
 
-Let's say you have a new service you'd like to have globally accessible; you may set up a container that provide it, whether it's an object, a single number or an instance of a class.
+Let's say you have a new service you'd like to have globally accessible; you may set up a container that provide it,
+whether it's an object, a single number or an instance of a class.
 
 **Available methods**
 
 ```ts
-import { App } from '@src/core/services/App';
-
-App.setContainer(container: string, data: any): void
-
-App.container(name: string): any
+import {App} from '@src/core/services/App'
 ```
+
+`App.setContainer(container: string, data:any): void`
+
+`App.container(name:string): any`
 
 ### [Section 1.4] - Setting up a new container
 
@@ -85,7 +86,7 @@ This it typically placed in the `register` or `boot` method of your provider.
 **Example**
 
 ```ts
-import { App } from '@src/core/services/App';
+import {App} from '@src/core/services/App';
 import Weather from '@src/app/services/Weather';
 
 App.container('weather', new Weather())
@@ -116,7 +117,7 @@ Using `App`, you can retrieve the contents of a container.
 
 ```ts
     const weatherInstance = App.container('weather');
-    
-    weatherInstance.getRegion() // United Kingdom
-    weatherInstance.getTemperature() // Cold!
+
+weatherInstance.getRegion() // United Kingdom
+weatherInstance.getTemperature() // Cold!
 ```
