@@ -1,7 +1,7 @@
 import ApiTokenRepository from '@src/app/repositories/auth/ApiTokenRepository';
 import UserRepository from '@src/app/repositories/auth/UserRepository';
 import ApiToken from '../../../../app/models/auth/ApiToken';
-import BaseService from '../../../base/Service';
+import Service from '../../../base/Service';
 import UnauthorizedError from '../../../exceptions/UnauthorizedError';
 import { IAuth } from '../../../interfaces/IAuth';
 import { IAuthConfig } from '../../../interfaces/IAuthConfig';
@@ -14,7 +14,7 @@ import comparePassword from '../utils/comparePassword';
 import createJwt from '../utils/createJwt';
 import decodeJwt from '../utils/decodeJwt';
 
-export default class BaseAuthService<TApiToken extends ApiToken> extends BaseService<IAuthConfig> implements IAuth {
+export default class BaseAuthService<TApiToken extends ApiToken> extends Service<IAuthConfig> implements IAuth {
     public userRepository: UserRepository
     public apiTokenRepository: ApiTokenRepository;
 
