@@ -1,5 +1,16 @@
 ## [Section 4] - Authentication
 
+**Terminology**
+
+*authentication token*
+; The value of the property stored on the MongoDB collection `apiToken.token`.
+
+*repository*
+; A repository is class that handles queries to retrieve data models
+
+*jwt*
+; A signed JSON Web Token that contains the payload `{userId: string: string token, ...}`
+
 ### [4.1] Configuration
 
 Navigate to `@src/config/auth/auth.ts`
@@ -62,14 +73,6 @@ This will provide type hinting when accessing your service with `App.container('
 ### [4.3] Auth Service
 
 A look into the available methods and properties for `App.container('auth')`
-
-**Terminology**
-
-*authentication token*: The value of the property stored on the MongoDB collection `apiToken.token`.
-
-*repository*: A repository is class that handles queries to retrieve data models
-
-*jwt*: A signed JSON Web Token that contains the payload `{userId: string: string token, ...}`
 
 **Properties**
 
