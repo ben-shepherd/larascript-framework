@@ -22,7 +22,7 @@ A TypeScript Node.js framework built with Express and MongoDB.
 
 ---
 
-- [[Section 2] - Services](docs/section-1-services.md)
+- [[Section 2] - Services](docs/section-2-services.md)
     - [2.1] - Singletons
 
 - ---
