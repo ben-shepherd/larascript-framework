@@ -1,4 +1,4 @@
-import { UserData } from '@src/app/interfaces/UserData';
+import { UserData } from '@src/app/interfaces/auth/UserData';
 import User from '@src/app/models/auth/User';
 import Factory from '@src/core/base/Factory';
 

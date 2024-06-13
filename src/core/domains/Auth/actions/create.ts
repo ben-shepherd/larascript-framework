@@ -4,6 +4,7 @@ import ValidationError from '../../../exceptions/ValidationError';
 import Roles from '../enums/RolesEnum';
 import UserFactory from '../factory/userFactory';
 import hashPassword from '../utils/hashPassword';
+import responseError from "@src/core/http/requests/ResponseError";
 
 export default async (req: Request, res: Response): Promise<void> => {
 
@@ -45,8 +46,10 @@ export default async (req: Request, res: Response): Promise<void> => {
             res.status(400).send({ error: error.message })
             return;
         }
-        
-        res.status(500).send({ error: 'Internal server error' })
+
+        if(error instanceof Error) {
+            responseError(req, res, error)
+        }
     }
 
 }

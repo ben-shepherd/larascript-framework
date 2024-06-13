@@ -4,7 +4,7 @@ import IExpressConfig from '../../core/interfaces/IExpressConfig';
 import bodyParser from 'body-parser';
 
 const config: IExpressConfig = {
-    port: parseInt(process.env.PORT ?? '3000'),
+    port: parseInt(process.env.APP_PORT ?? '3000'),
     
     globalMiddlewares: [
         express.json(),

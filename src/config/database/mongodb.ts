@@ -21,10 +21,6 @@ const config: IMongoDbConfig = {
         default: {
             uri: process.env.MONGODB_URI as string,
             options
-        },
-        other: {
-            uri: process.env.MONGODB_URI_OTHER as string,
-            options
         }
     }
 };
