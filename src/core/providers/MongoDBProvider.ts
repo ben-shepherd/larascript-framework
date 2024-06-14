@@ -1,6 +1,6 @@
 import BaseProvider from "../base/Provider";
+import IMongoDbConfig from "../domains/database/mongodb/interfaces/IMongoDbConfig";
 import MongoDB from "../domains/database/mongodb/services/MongoDB";
-import IMongoDbConfig from "../interfaces/IMongoDbConfig";
 import { App } from "../services/App";
 
 export default class MongoDBProvider extends BaseProvider

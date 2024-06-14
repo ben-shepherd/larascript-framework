@@ -1,5 +1,5 @@
 import { AppAuthService } from '@src/app/services/AppAuthService';
-import MongoDBConnection from '@src/core/domains/database/mongodb/services/MongoDBConnection';
+import { IMongoDB } from '@src/core/domains/database/mongodb/interfaces/IMongoDB';
 import EventDispatcher from '@src/core/events/EventDispatcher';
 import Express from '@src/core/services/Express';
 
@@ -30,7 +30,7 @@ export interface ContainersTypeHelpers {
     /**
      * MongoDB for the default connection
      */
-    mongodb: MongoDBConnection;
+    mongodb: IMongoDB;
     /**
      * Express web server
      */

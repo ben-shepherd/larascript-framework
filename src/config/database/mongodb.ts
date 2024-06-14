@@ -1,26 +1,24 @@
-import { MongoClientOptions } from "mongodb";
-import IMongoDbConfig from "../../core/interfaces/IMongoDbConfig";
-
-const options: MongoClientOptions = {}
+import IMongoDbConfig from "@src/core/domains/database/mongodb/interfaces/IMongoDbConfig";
 
 const config: IMongoDbConfig = {
     /**
      * The default connection when accessing database
-     * Default: 'default'
      */
-    connection: 'default',
+    connection: (process.env.MONGODB_CONNECTION as string) ?? 'default',
     /**
-     * The additional connections when accessing database
-     * Example: ['other]
+     * The additional connections to keep-alive.
+     * 
+     * Value must be your connection name commma seperated.
+     * Example: secondary,externalDb
      */
-    keepAliveConnections: [],
+    keepAliveConnections: (process.env.MONGO_CONNECTIONS_KEEP_ALIVE as string) ?? '',
     /**
      * Configure your connections
      */
     connections: {
         default: {
             uri: process.env.MONGODB_URI as string,
-            options
+            options: {}
         }
     }
 };
