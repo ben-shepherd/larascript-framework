@@ -53,9 +53,11 @@ Update `keepAliveConnections` with your `connection` name in order to connect to
 
 ### [5.3] MongoDB service
 
-Available methods for the `MongoDB` singleton 
+Retrieve the `MongoDB` service from the container
 
-**Methods**
+    App.container('mongodb')
+
+**Available Methods**
 
 
 Get the [MongoClient](https://mongodb.github.io/node-mongodb-native/6.7/classes/MongoClient.html)
@@ -75,7 +77,7 @@ Query a collection
 *Example*
 
 ```ts
-const results = App('mongodb')
+const results = App.container('mongodb')
     .getDb()
     .collection('movies')
     .find({author: 'Christopher Nolan'}).
@@ -86,7 +88,7 @@ Accessing a collection on another database by providing the `connection` name
 *Example*
 
 ```ts
-const results = App('mongodb')
+const results = App.container('mongodb')
     .getConnection('secondary') // Added this method
     .getDb()
     .collection('movies')
