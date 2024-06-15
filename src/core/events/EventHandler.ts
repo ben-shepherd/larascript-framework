@@ -1,5 +1,5 @@
-import { IEventConfig } from "../interfaces/IEventConfig";
 import { IEvent } from "../interfaces/events/IEvent";
+import { IEventConfig } from "../interfaces/events/IEventConfig";
 
 export class EventHandler<
     Event extends IEvent = IEvent,

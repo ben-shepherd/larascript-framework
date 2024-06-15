@@ -1,11 +1,5 @@
-import IDispatchable from "../IDispatchable";
-import { IEventConfig } from "../IEventConfig";
+import IDispatchable from "./IDispatchable";
 
-export interface IEventDispatcher<
-    Config extends IEventConfig = IEventConfig
->extends IDispatchable {
-
-    name: keyof Config
-    payload: any;
+export interface IEventDispatcher extends IDispatchable {
     dispatch: (...args: any[]) => any;
 }

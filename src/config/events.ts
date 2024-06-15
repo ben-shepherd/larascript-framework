@@ -1,5 +1,5 @@
 import { ExampleListener } from "@src/app/events/listeners/ExampleListener";
-import { IEventConfig } from "@src/core/interfaces/IEventConfig";
+import { IEventConfig } from "@src/core/interfaces/events/IEventConfig";
 
 const eventsConfig: IEventConfig = {
     'OnExample': [

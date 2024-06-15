@@ -1,6 +1,6 @@
 import Singleton from "../base/Singleton";
-import { IEventConfig } from "../interfaces/IEventConfig";
 import { IEvent } from "../interfaces/events/IEvent";
+import { IEventConfig } from "../interfaces/events/IEventConfig";
 import { IEventDispatcher } from "../interfaces/events/IEventDispatcher";
 import { IEventPayload } from "../interfaces/events/IEventPayload";
 import { EventHandler } from "./EventHandler";
@@ -10,7 +10,7 @@ export default class EventDispatcher<
     Payload extends IEventPayload = IEventPayload,
     Config extends IEventConfig = IEventConfig,
     Name extends keyof Config = keyof Config
-> extends Singleton<Config> implements IEventDispatcher<Config> {
+> extends Singleton<Config> implements IEventDispatcher {
 
     protected config: Config
     public name!: Name
