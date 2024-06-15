@@ -11,7 +11,7 @@ export default async (req: Request, res: Response): Promise<void> => {
 
         token = await App.container('auth').attemptCredentials(email, password);
 
-        const user = await App.container('auth').userRepository.findByEmail(email);
+        const user = await App.container('auth').userRepository.findOneByEmail(email);
 
         res.send({ 
             success: true,

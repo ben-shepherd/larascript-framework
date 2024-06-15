@@ -8,16 +8,27 @@ export default class HasMany<
     ForeignData extends BaseModelData
 > 
 { 
-    public async handle(localModel: LocalModel, foreignCollection: string, foreignKey: keyof ForeignData, localKey: keyof LocalData): Promise<ForeignData[] | null>
+    public async handle(
+        localModel: LocalModel,
+        foreignCollection: string,
+        foreignKey: keyof ForeignData,
+        localKey: keyof LocalData,
+        filters: object = {}
+    ): Promise<ForeignData[] | null>
     {
         if(localKey instanceof ObjectId) {
             localKey = localKey.toString()
         }
 
+        const schema = {
+            ...filters,
+            [foreignKey]: localModel.getAttribute(localKey)
+        }
+
         return await MongoDB.getInstance()
             .getDb()
             ?.collection(foreignCollection)
-            .find({ [foreignKey]: localModel.getAttribute(localKey) })
+            .find(schema)
             .toArray() as ForeignData[] | null
     }
 }   

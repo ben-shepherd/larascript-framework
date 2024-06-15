@@ -1,10 +1,10 @@
+import responseError from "@src/core/http/requests/ResponseError";
 import { App } from '@src/core/services/App';
 import { Request, Response } from 'express';
 import ValidationError from '../../../exceptions/ValidationError';
 import Roles from '../enums/RolesEnum';
 import UserFactory from '../factory/userFactory';
 import hashPassword from '../utils/hashPassword';
-import responseError from "@src/core/http/requests/ResponseError";
 
 export default async (req: Request, res: Response): Promise<void> => {
 
@@ -19,7 +19,7 @@ export default async (req: Request, res: Response): Promise<void> => {
         }
 
         const repository = App.container('auth').userRepository;
-        const existingUser = await repository.findByEmail(email);
+        const existingUser = await repository.findOneByEmail(email);
 
         if(existingUser) {
             throw new ValidationError('User already exists');
@@ -33,7 +33,7 @@ export default async (req: Request, res: Response): Promise<void> => {
         
         await user.save();
         
-        const token = await App.container('auth').createToken(user);
+        const token = await App.container('auth').createJwtFromUser(user);
         
         res.send({ 
             success: true,

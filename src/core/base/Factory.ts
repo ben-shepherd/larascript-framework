@@ -1,6 +1,6 @@
 import IFactory from "../interfaces/IFactory";
 
-type ModelConstructor<M> = new (data: any) => M
+type ModelConstructor<Model> = new (data: any) => Model
 
 export default abstract class Factory<Model, Data> implements IFactory {
     protected modelCtor: ModelConstructor<Model>;

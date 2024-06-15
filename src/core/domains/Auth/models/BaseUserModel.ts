@@ -1,7 +1,16 @@
 import Model from '@src/core/base/Model';
-import { BaseUserData } from '../types/types.t';
+import IUserModel from '../interfaces/IUserModel';
+import { BaseApiTokenData, BaseUserData } from '../types/types.t';
+import BaseApiTokenModel from './BaseApiTokenModel';
 
-export default class BaseUserModel<UserData extends BaseUserData = BaseUserData> extends Model<UserData> {
+interface TokensOptions {
+    activeOnly: boolean
+}
+const TokenOptionsDefault = {
+    activeOnly: false
+}
+
+export default class BaseUserModel<UserData extends BaseUserData = BaseUserData> extends Model<UserData> implements IUserModel{
     collection = "users";
 
     fields: string[] = [
@@ -33,5 +42,25 @@ export default class BaseUserModel<UserData extends BaseUserData = BaseUserData>
         if(!user) return;
 
         return user.roles.includes(role);
+    }
+
+    /**
+     * Tokens associated to the user
+     * @returns 
+     */
+    async tokens({ activeOnly }: TokensOptions = TokenOptionsDefault): Promise<BaseApiTokenModel[]> {
+        const filters: {revokedAt?: null} = {}
+
+        if(activeOnly) {
+            filters.revokedAt = null
+        }
+
+        return this.hasMany<BaseUserData, BaseUserModel, BaseApiTokenData, BaseApiTokenModel>(
+            this,
+            this.primaryKey,
+            BaseApiTokenModel,
+            'userId',
+            filters
+        )
     }
 }

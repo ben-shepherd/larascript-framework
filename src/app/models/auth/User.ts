@@ -1,9 +1,7 @@
 import UserObserver from '@src/app/observers/UserObserver';
 
-import { ApiTokenData } from '@src/app/interfaces/auth/ApiTokenData';
 import { UserData } from '@src/app/interfaces/auth/UserData';
 import BaseUserModel from '@src/core/domains/auth/models/BaseUserModel';
-import ApiToken from './ApiToken';
 
 export default class User extends BaseUserModel<UserData> {
 
@@ -29,9 +27,6 @@ export default class User extends BaseUserModel<UserData> {
         this.observeWith(UserObserver)
     }
 
-    public async tokens(): Promise<ApiToken[]> {
-        return await this.hasMany<UserData, User, ApiTokenData, ApiToken>(this, this.primaryKey, ApiToken, 'userId');
-    }
 
     /**
      * todo: delete, only example for custom observers

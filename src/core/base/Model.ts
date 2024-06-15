@@ -193,9 +193,16 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
         localKey: keyof LocalData,
         foreignModelCtor: new (...any: any[]) => ForeignModel,
         foreignKey: keyof ForeignData,
+        filters: object = {}
     ): Promise<ForeignModel | null> 
     {
-        const data = await new BelongsTo<LocalData, LocalModel, ForeignData>().handle(model, new foreignModelCtor().collection, foreignKey, localKey)
+        const data = await new BelongsTo<LocalData, LocalModel, ForeignData>().handle(
+            model,
+            new foreignModelCtor().collection,
+            foreignKey,
+            localKey,
+            filters
+        )
         
         if(!data) return null
 
@@ -212,9 +219,16 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
         localKey: keyof LocalData,
         foreignModelCtor: new (...any: any[]) => ForeignModel,
         foreignKey: keyof ForeignData,
+        filters: object = {}
     ): Promise<ForeignModel[]> 
     {
-        const results = await new HasMany<LocalData, LocalModel, ForeignData>().handle(model, new foreignModelCtor().collection, foreignKey, localKey)
+        const results = await new HasMany<LocalData, LocalModel, ForeignData>().handle(
+            model,
+            new foreignModelCtor().collection,
+            foreignKey,
+            localKey,
+            filters
+        )
 
         if(!results) return []
 

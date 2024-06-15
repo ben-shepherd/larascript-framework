@@ -1,5 +1,5 @@
+import IData from '@src/core/interfaces/IData';
 import { ObjectId } from 'mongodb';
-import IData from '../../../interfaces/IData';
 
 export interface BaseUserData extends IData {
     _id?: ObjectId

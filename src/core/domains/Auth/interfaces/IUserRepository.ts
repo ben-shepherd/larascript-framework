@@ -2,7 +2,7 @@ import { IModel } from "@src/core/interfaces/IModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
 import BaseUserModel from "../models/BaseUserModel";
 
-export default interface IUserRepository<M extends IModel = BaseUserModel> extends IRepository<M> 
+export default interface IUserRepository<Model extends IModel = BaseUserModel> extends IRepository<Model> 
 {
-    findByEmail(email: string): Promise<M | null>
+    findOneByEmail(email: string): Promise<Model | null>
 }

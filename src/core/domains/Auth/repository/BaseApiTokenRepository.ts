@@ -10,11 +10,21 @@ export default abstract class BaseApiTokenRepository<Model extends BaseApiTokenM
         super(collectionName, modelConstructor)
     }
 
-    async findByToken(token: string): Promise<Model | null> {
+    /**
+     * Finds one token
+     * @param token 
+     * @returns 
+     */
+    async findOneToken(token: string): Promise<Model | null> {
         return await this.findOne({ token }) as Model
     }
 
-    async findByUnrevokedToken(token: string): Promise<Model | null> {
+    /**
+     * Finds one token that is not currently revoked
+     * @param token 
+     * @returns 
+     */
+    async findOneActiveToken(token: string): Promise<Model | null> {
         return await this.findOne({ token, revokedAt: null }) as Model
     }
 }

@@ -1,4 +1,3 @@
-import IData from "./IData";
 import { IModel, ModelConstructor } from "./IModel";
 
 export type RepositoryConstructor<
@@ -6,9 +5,13 @@ export type RepositoryConstructor<
     Repository extends IRepository<Model>
 > = new (collectionName?: string, modelCtor?: ModelConstructor) => Repository;
 
-export interface IRepository<M extends IModel> {
-    model: ModelConstructor<M>;
-    findById: (id: string) => Promise<IData | null>
-    findOne: (query: object) => Promise<IData | null>
-    findMany(query: object): Promise<IData[]>
+export interface IRepository<
+    Model extends IModel
+> {
+    collectionName: string;
+    connection: string;
+    model: ModelConstructor<Model>;
+    findById: (id: string) => Promise<Model | null>
+    findOne: (query: object) => Promise<Model | null>
+    findMany(query: object): Promise<Model[]>
 }
