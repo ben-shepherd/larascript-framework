@@ -16,6 +16,10 @@ export interface AppConfig {}
  * [Providing type hinting]
  *      Add your type(s) to `@src/config/containers`
  *      in order to provide type hinting when retrieving containers
+ *      Example: 
+ *          interface ContainersTypeHelpers {
+ *              example: { hello: 'world' }
+ *          }
  */
 export default class AppProvider extends BaseProvider
 {

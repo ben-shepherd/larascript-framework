@@ -12,37 +12,50 @@
 
 Navigate to `@src/config/auth/auth.ts`
 
-**Properties**
+This config provides all the services, repositories and models the auth service will use when handling with authentication logic.
 
-`authService`: Provies type hinting as the default service that is bound to the container `App.container('auth')`
-
-`userRepository`: The default user repository
-
-`apiToken`: The default apiToken repository
-
-`authRoutes`: When Enabled the auth routes are added to Express
-
-`authCreateAllowed`: When Enabled, the route `/api/auth/create` is added to Express
+You can replace these with your own, or extend the modules with your own authentication.
 
 **Example config**
 
 ```ts
+import ApiToken from '@src/app/models/auth/ApiToken';
+import User from '@src/app/models/auth/User';
 import ApiTokenRepository from '@src/app/repositories/auth/ApiTokenRepository';
 import UserRepository from '@src/app/repositories/auth/UserRepository';
 import { AppAuthService } from '@src/app/services/AppAuthService';
-import { IAuthConfig } from '@src/core/interfaces/IAuthConfig';
+import { IAuthConfig } from '@src/core/domains/auth/interfaces/IAuthConfig';
 import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
+
+/**
+ * Provides type hinting across the application
+ * Don't forget to update these properties to match what is provided to the config.
+ */
+export interface AuthConfigTypeHelpers {
+    authService: AppAuthService,
+    userModel: User,
+    userRepository: UserRepository,
+    apiTokenModel: ApiToken
+    apiTokenRepository: ApiTokenRepository,
+}
 
 const config: IAuthConfig = {
     /**
-     * Expandable auth service class
-     * Accessible with App.cotnainer('auth)
+     * Auth class that can be extended on or replaced
      */
-    container: AppAuthService,
+    authService: AppAuthService,
+    /**
+     * User model
+     */
+    userModel: User,
     /**
      * User repository for accessing user data
      */
     userRepository: UserRepository,
+    /**
+     * Api Token model
+     */
+    apiTokenModel: ApiToken,
     /**
      * Api token repository for accessing api tokens
      */
@@ -60,12 +73,23 @@ const config: IAuthConfig = {
 export default config;
 ```
 
-### [4.2] - Extending Authentication
+### [4.2] - Container
 
-If you wish to expand on Authentication, see the file `@src/app/services/AppAuthService.ts`
+The auth service can be retrieved with the `auth` container.
 
-You can create an entirely different authentication file, replacing the property `container` in the config.
-This will provide type hinting when accessing your service with `App.container('auth')`.
+**Example**
+
+```ts
+    const auth = App.container('auth');
+
+    const user = await auth.userRepository.findOne({})
+
+    if(!user) {
+        throw new Error('No user found');
+    }
+
+    const jwt = await auth.createJwtFromUser(user);
+```
 
 ### [4.3] Auth Service
 
@@ -73,61 +97,97 @@ A look into the available methods and properties for `App.container('auth')`
 
 **Properties**
 
-`userRepository: Repository` : The default user repository
+The default user repository
+```ts
+userRepository: Repository
+```
 
-`apiTokenRepository: Repository` The default apiToken repository
+The default apiToken repository
+```ts
+apiTokenRepository: Repository
+```
 
 
 **Methods**
 
-`jwt(apiToken: BaseApiTokenModel): string` : Generate a signed JSON Web Token
+Attempt to authorize an *authentication token*
 
-`createToken(user: BaseUserModel): Promise<string>` : Create an *authentication token*
+```ts
+attemptAuthenticateToken(token: string): Promise<ApiTokenModel | null>
+```
 
-`revokeToken(apiToken: BaseApiTokenModel): Promise<void>` : Revoke an *authentication token*
+Create a *JSON Web Token* from the User
 
-`attemptAuthenticateToken(token: string): Promise<ApiToken | null>` : Attempt to authorize an *authentication token*
+```ts
+createJwtFromUser(user: UserModel): Promise<string>
+```
 
-`attemptCredentials(email: string, password: string): Promise<string>` : Attempt a login with credentials. Returns an *authentication token*
+Create an ApiTokenModel from the User
 
-**Note**: Your JSON Web Token is the token that should be supplied to the `Authorization` header in order to authenticate requests.
+```ts
+createApiTokenFromUser(user: UserModel): Promise<ApiTokenModel>>
+```
+
+Revoke a token
+
+```ts
+revokeToken(apiToken: ApiTokenModel): Promise<void>
+```
+
+Attempt a login with credentials. Returns an *authentication token*
+
+```ts
+attemptCredentials(email: string, password: string): Promise<string>
+```
+
+Generate a signed JSON Web Token
+
+    jwt(apiToken: ApiTokenModel): string
+
+**Note**: Your JWT value should be supplied to the `Authorization` header in order to authenticate requests.
+
+    {
+        "Authorization": "Bearer eyJhbG..."
+    }
 
 ### [4.4] ApiToken Model
 
-**Extendable Repository** `@src/app/repositories/auth/ApiTokenRepository.ts`
+**ApiToken Methods**
 
-**Extendable Model** `@src/app/models/auth/ApiToken.ts`
+Return the associated User
 
-**Extendable Interface** `@src/app/interfaces/auth/ApiTokenData.ts`
 ```ts
-interface ApiTokenData extends BaseApiTokenData {
-    _id?: ObjectId
-    userId: ObjectId
-    token: string
-    revokedAt: Date | null;
-}
+user(): Promise<User | null>
 ```
 
-**Methods**
+**Extendable Classes**
 
-`user(): Promise<User | null>`: Returns the associated user
+**Repository** `@src/app/repositories/auth/ApiTokenRepository.ts`
+
+**Model** `@src/app/models/auth/ApiToken.ts`
+
+**Interface** `@src/app/interfaces/auth/ApiTokenData.ts`
+
+
+
+---
 
 ### [4.5] User Model
 
-**Extendable Repository** `@srcapp/repositories/auth/UserRepository.ts`
+**User Methods**
 
-**Extendable Model** `@src/app/models/auth/User.ts`
-
-**Extendable Interface** `@src/app/interfaces/auth/UserData.ts`
 ```ts
-interface UserData extends BaseUserData {
-    _id?: ObjectId
-    email: string
-    hashedPassword: string
-    roles: string[]
+const TokenOptionsDefault = {
+    activeOnly: false
 }
+
+async tokens(options = TokenOptionsDefault): Promise<BaseApiTokenModel[]>
 ```
 
-**Methods**
+**Extendable Classes**
 
-`tokens(): Promise<ApiToken[]>`: Returns an array of ApiToken models
+**Repository** `@srcapp/repositories/auth/UserRepository.ts`
+
+**Model** `@src/app/models/auth/User.ts`
+
+**Interface** `@src/app/interfaces/auth/UserData.ts`

@@ -37,7 +37,7 @@ A TypeScript Node.js framework built with Express and MongoDB.
 
 - [[Section 4] - Authentication](docs/section-4-authentication.md)
     - [4.1] - Configuration
-    - [4.2] - Extending Authentication
+    - [4.2] - Container
     - [4.3] - Auth Service
     - [4.4] - ApiToken Model
     - [4.5] - User Model

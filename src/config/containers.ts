@@ -1,5 +1,5 @@
 import { IMongoDB } from '@src/core/domains/database/mongodb/interfaces/IMongoDB';
-import EventDispatcher from '@src/core/events/EventDispatcher';
+import { IEventDispatcher } from '@src/core/interfaces/events/IEventDispatcher';
 import IExpress from '@src/core/interfaces/http/IExpress';
 import { AuthConfigTypeHelpers } from './auth/auth';
 
@@ -20,19 +20,23 @@ import { AuthConfigTypeHelpers } from './auth/auth';
 export interface ContainersTypeHelpers {
     [key: string]: any;
     /**
-     * Dispatch events
+     * Event Dispatcher Service
+     * Provided by '@src/core/providers/EventProvider'
      */
-    events: EventDispatcher;
+    events: IEventDispatcher;
     /**
      * Auth service
+     * Provided by '@src/core/providers/AuthProvider'
      */
     auth: AuthConfigTypeHelpers['authService'];
     /**
-     * MongoDB for the default connection
+     * MongoDB Service
+     * Provided by '@src/core/providers/MongoDBProvider'
      */
     mongodb: IMongoDB;
     /**
-     * Express web server
+     * Express web server Service
+     * Provided by '@src/core/providers/ExpressProvider'
      */
     express: IExpress;
 }
