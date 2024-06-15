@@ -34,7 +34,7 @@ export default class AuthProvider extends BaseProvider
         this.log('Booting AuthProvider');
 
         /**
-         * Register the authentication
+         * Register the authentication routes
          */
         if(Kernel.isProviderReady(ExpressProvider.name) &&this.config.authRoutes) {
             this.registerAuthRoutes();

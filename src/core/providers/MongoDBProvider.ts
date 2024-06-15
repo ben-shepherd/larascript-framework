@@ -16,14 +16,17 @@ export default class MongoDBProvider extends BaseProvider
     public async register(): Promise<void>
     {
         this.log('Registering MongoDBProvider');
+
+        MongoDB.getInstance(this.config)
     }
 
     public async boot(): Promise<void>
     {
         this.log('Booting MongoDBProvider');
 
-        await MongoDB.getInstance(this.config).connectDefaultConnection();
-        await MongoDB.getInstance().connectKeepAlive()
-        App.setContainer('mongodb', MongoDB.getInstance().getConnection())
+        const mongodb = MongoDB.getInstance()
+        await mongodb.connectDefaultConnection();
+        await mongodb.connectKeepAlive()
+        App.setContainer('mongodb', mongodb)
     }
 }

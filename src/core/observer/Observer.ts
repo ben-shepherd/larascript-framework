@@ -2,6 +2,9 @@ import { IObserver } from "../interfaces/observer/IObserver";
 
 export default abstract class Observer<ReturnType = any> implements IObserver<ReturnType>
 {
+    /**
+     * Defined methods
+     */
     creating?: (...args: any[]) => ReturnType;
     created?: (...args: any[]) => ReturnType;
     updating?: (...args: any[]) => ReturnType;
@@ -11,16 +14,17 @@ export default abstract class Observer<ReturnType = any> implements IObserver<Re
     deleting?: (...args: any[]) => ReturnType;
     deleted?: (...args: any[]) => ReturnType;
 
-    onCustom(customName: string, data: ReturnType): ReturnType {
-        const i = customName as keyof IObserver<ReturnType>;
-        if(this[i]) {
-
-            const fn = this[i] as (...args: any[]) => ReturnType
-            return fn(data)
-        }
-        return data
-    }
-
+    /**
+     * Data has changed
+     * Pass it through the appropriate method, return the data
+     * 
+     * Example
+     *      this data = this.observer.on('updating', data)
+     * 
+     * @param name 
+     * @param data 
+     * @returns 
+     */
     on(name: keyof IObserver, data: ReturnType): ReturnType {
 
         if(!this[name]) {
@@ -53,6 +57,25 @@ export default abstract class Observer<ReturnType = any> implements IObserver<Re
 
 
         return data
+    }
 
+    /**
+     * Same 'on' logic but for custom methods not clearly defined
+     * 
+     * Example
+     *      this.data = this.observer.onCustom('onPasswordChange', data)
+     * 
+     * @param customName name of the method
+     * @param data data to be modified
+     * @returns 
+     */
+    onCustom(customName: string, data: ReturnType): ReturnType {
+        const i = customName as keyof IObserver<ReturnType>;
+        if(this[i]) {
+
+            const fn = this[i] as (...args: any[]) => ReturnType
+            return fn(data)
+        }
+        return data
     }
 }
