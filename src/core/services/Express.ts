@@ -1,19 +1,27 @@
 import express from 'express';
 
 import Singleton from '../base/Singleton';
-import IExpressConfig from '../interfaces/IExpressConfig';
-import { Route } from '../interfaces/IRoute';
+import IExpress from '../interfaces/http/IExpress';
+import IExpressConfig from '../interfaces/http/IExpressConfig';
+import { IRoute } from '../interfaces/http/IRoute';
 
-export default class Express extends Singleton<IExpressConfig> {
+export default class Express extends Singleton<IExpressConfig> implements IExpress {
     protected config!: IExpressConfig | null;
     private app: express.Express
     
+    /**
+     * Config defined in @src/config/http/express.ts
+     * @param config 
+     */
     constructor(config: IExpressConfig | null = null) {
         super(config)
-        this.config = config
         this.app = express()
     }
 
+    /**
+     * init
+     * Apply global middleware 
+     */
     public init() {
         if (!this.config) {
             throw new Error('Config not provided');
@@ -24,6 +32,9 @@ export default class Express extends Singleton<IExpressConfig> {
         }
     }
 
+    /**
+     * Start listening for connections
+     */
     public async listen(): Promise<void>
     {   
         const port =  this.config?.port
@@ -33,13 +44,16 @@ export default class Express extends Singleton<IExpressConfig> {
         })
     }
 
-    public bindRoutes(routes: Route[]): void {
+    /**
+     * Bind routes
+     */
+    public bindRoutes(routes: IRoute[]): void {
         routes.forEach(route => {
             const middlewares = route?.middlewares ?? []
             const handlers = [...middlewares, route?.action]
 
-
             console.log(`[Express] binding route ${route.method.toUpperCase()}: '${route.path}' as '${route.name}'`)
+
             switch (route.method) {
                 case 'get':
                     this.app.get(route.path, handlers);
@@ -59,6 +73,9 @@ export default class Express extends Singleton<IExpressConfig> {
         })
     }
 
+    /**
+     * Get the express instance
+     */
     public getApp(): express.Express {
         return this.app
     }

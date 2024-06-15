@@ -1,16 +1,12 @@
 import apiRoutes from '@src/app/routes/api';
 import healthRoute from '@src/core/routes/health';
 import BaseProvider from "../base/Provider";
-import { IRoutesConfig } from "../interfaces/IRoutesConfig";
 import Kernel from "../kernel";
 import Provider from "../services/Express";
 import ExpressProvider from "./ExpressProvider";
 
 export default class RoutesProvider extends BaseProvider
 {
-    protected config!: IRoutesConfig;
-    configPath = '@config/http/routes';
-
     constructor() {
         super()
         this.init()

@@ -4,7 +4,6 @@ import EventProvider from '@src/core/providers/EventProvider';
 import { EnvironmentType } from '../core/consts/Environment';
 import IAppConfig from '../core/interfaces/IAppConfig';
 import AuthProvider from '../core/providers/AuthProvider';
-import ExpressListenerProvider from '../core/providers/ExpressListenerProvider';
 import ExpressProvider from '../core/providers/ExpressProvider';
 import MongoDBProvider from '../core/providers/MongoDBProvider';
 import { default as CoreRoutesProvider } from '../core/providers/RoutesProvider';
@@ -30,7 +29,7 @@ const appConfig: IAppConfig = {
         new ExpressProvider(),
         new CoreRoutesProvider(),
         new AuthProvider(),
-        new ExpressListenerProvider(),
+        // new ExpressListenerProvider(),
         /**
          * Add your providers below
          */

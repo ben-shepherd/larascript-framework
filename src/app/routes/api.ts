@@ -1,7 +1,7 @@
-import { Route } from "@src/core/interfaces/IRoute"
+import { IRoute } from "@src/core/interfaces/http/IRoute"
 import { Request, Response } from "express"
 
-const routes: Route[] = [
+const routes: IRoute[] = [
     {
         name: 'index',
         method: 'get',

@@ -1,6 +1,6 @@
 import express from 'express';
 
-import IExpressConfig from '../../core/interfaces/IExpressConfig';
+import IExpressConfig from '@src/core/interfaces/http/IExpressConfig';
 import bodyParser from 'body-parser';
 
 const config: IExpressConfig = {

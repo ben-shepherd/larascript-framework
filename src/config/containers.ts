@@ -1,7 +1,7 @@
 import { AppAuthService } from '@src/app/services/AppAuthService';
 import { IMongoDB } from '@src/core/domains/database/mongodb/interfaces/IMongoDB';
 import EventDispatcher from '@src/core/events/EventDispatcher';
-import Express from '@src/core/services/Express';
+import IExpress from '@src/core/interfaces/http/IExpress';
 
 /**
  * ContainersTypeHelpers provides type hinting when accessing a container. 
@@ -34,5 +34,5 @@ export interface ContainersTypeHelpers {
     /**
      * Express web server
      */
-    express: Express;
+    express: IExpress;
 }

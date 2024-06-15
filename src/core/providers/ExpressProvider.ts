@@ -1,5 +1,5 @@
 import BaseProvider from "../base/Provider";
-import IExpressConfig from "../interfaces/IExpressConfig";
+import IExpressConfig from "../interfaces/http/IExpressConfig";
 import { App } from "../services/App";
 import Express from "../services/Express";
 
@@ -18,6 +18,10 @@ export default class ExpressProvider extends BaseProvider
         this.log('Registering ExpressProvider');
 
         Express.getInstance(this.config).init();
+
+        await Express.getInstance().listen();
+
+        this.log('Express successfully listening on port ' + Express.getInstance().getConfig()?.port);
         
         App.setContainer('express', Express.getInstance())
     }

@@ -1,6 +1,6 @@
-import Repository from "../../../base/Repository";
-import { IRepository } from "../../../interfaces/IRepository";
-import BaseApiTokenModel from "../models/BaseApiTokenModel";
+import Repository from "@src/core/base/Repository";
+import BaseApiTokenModel from "@src/core/domains/auth/models/BaseApiTokenModel";
+import { IRepository } from "@src/core/interfaces/IRepository";
 import { BaseApiTokenData } from "../types/types.t";
 
 type Constructor<M,D> = new (data: D) => M

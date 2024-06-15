@@ -1,7 +1,7 @@
 import health from '../actions/health';
-import { Route } from '../interfaces/IRoute';
+import { IRoute } from '../interfaces/http/IRoute';
 
-const routes: Route[] = [
+const routes: IRoute[] = [
     {
         name: 'health',
         method: 'get',
