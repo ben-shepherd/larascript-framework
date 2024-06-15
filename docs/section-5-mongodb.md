@@ -13,6 +13,7 @@ const config: IMongoDbConfig = {
      * The default connection when accessing database
      */
     connection: (process.env.MONGODB_CONNECTION as string) ?? 'default',
+    
     /**
      * The additional connections to keep-alive.
      * 
@@ -20,6 +21,7 @@ const config: IMongoDbConfig = {
      * Example: secondary,externalDb
      */
     keepAliveConnections: (process.env.MONGO_CONNECTIONS_KEEP_ALIVE as string) ?? '',
+    
     /**
      * Configure your connections
      */
@@ -36,22 +38,11 @@ export default config
 
 **Environment variables**
 
-> MONGODB_URI=mongodb://username:SuperSecretPwd@localhost:37017/app?authSource=admin
+> MONGODB_URI=mongodb://username:SuperSecretPwd@localhost:27017/app?authSource=admin
 
 ---
 
-### [5.2] Handling Multiple Connections
-
-On app launch, only the default `connection` is connected. 
-
-Update `keepAliveConnections` with your `connection` name in order to connect to multiple databases.
-
-**Example**
-
-    MONGO_CONNECTIONS_KEEP_ALIVE=connectionTwo,connectionThree
-
-
-### [5.3] MongoDB service
+### [5.2] MongoDB Container
 
 Retrieve the `MongoDB` service from the container
 
@@ -62,19 +53,24 @@ Retrieve the `MongoDB` service from the container
 
 Get the [MongoClient](https://mongodb.github.io/node-mongodb-native/6.7/classes/MongoClient.html)
 
-    App.container('mongodb').getClient(): MongoClient
+```ts
+App.container('mongodb').getClient(): MongoClient
+```
 
 Get the [Db](https://mongodb.github.io/node-mongodb-native/6.7/classes/Db.html)
 
-    App.container('mongodb').getDb(): Db
+```ts
+App.container('mongodb').getDb(): Db
+```
 
 Attempt connecting by connection name
 
-    App.container('mongodb').connect(connectionName: string): void
+```ts
+App.container('mongodb').connect(connectionName: string): void
+```
 
 Query a collection
 
-*Example*
 
 ```ts
 const results = App.container('mongodb')
@@ -85,7 +81,6 @@ const results = App.container('mongodb')
 
 Accessing a collection on another database by providing the `connection` name
 
-*Example*
 
 ```ts
 const results = App.container('mongodb')
@@ -94,6 +89,20 @@ const results = App.container('mongodb')
     .collection('movies')
     .find({author: 'Christopher Nolan'}).
 ```
+
+---
+
+### [5.3] Handling Multiple Connections
+
+On app launch, only the default `connection` is connected. 
+
+Update `keepAliveConnections` with your `connection` name in order to connect to multiple databases.
+
+**Example**
+
+    MONGO_CONNECTIONS_KEEP_ALIVE=connectionTwo,connectionThree
+
+---
 
 ### [5.4] Change connection on a Model
 

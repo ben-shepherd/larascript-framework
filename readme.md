@@ -46,8 +46,8 @@ A TypeScript Node.js framework built with Express and MongoDB.
 
 - [[Section 5] - MongoDB](docs/section-5-mongodb.md)
     - [5.1] - Database configuration
-    - [5.2] - Handling Multiple Connections
-    - [5.3] - MongoDB service
+    - [5.2] - MongoDB Container
+    - [5.3] - Handling Multiple Connections
     - [5.4] - Change connection on a Model
 
 ---

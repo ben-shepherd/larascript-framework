@@ -5,6 +5,7 @@ const config: IMongoDbConfig = {
      * The default connection when accessing database
      */
     connection: (process.env.MONGODB_CONNECTION as string) ?? 'default',
+    
     /**
      * The additional connections to keep-alive.
      * 
@@ -12,6 +13,7 @@ const config: IMongoDbConfig = {
      * Example: secondary,externalDb
      */
     keepAliveConnections: (process.env.MONGO_CONNECTIONS_KEEP_ALIVE as string) ?? '',
+
     /**
      * Configure your connections
      */
