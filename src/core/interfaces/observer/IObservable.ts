@@ -1,6 +1,6 @@
 import { IObserver, IObserverEvent } from "./IObserver";
 
-export type IObserveWithCtor<ReturnType> = new () => IObserver<ReturnType>
+export type ObserveConstructor<ReturnType> = new () => IObserver<ReturnType>
 
 export default interface IWithObserve<ReturnType = any, ObserverType = IObserver<ReturnType>> {
     /**
@@ -12,7 +12,7 @@ export default interface IWithObserve<ReturnType = any, ObserverType = IObserver
      * [usage]
      *      [class extends IWithObserve].observeWith(MyObserver)
      */
-    observeWith?: (observedBy: IObserveWithCtor<ReturnType>) => any;
+    observeWith?: (observedBy: ObserveConstructor<ReturnType>) => any;
     /**
      * Call an observer event method
      * [usage]

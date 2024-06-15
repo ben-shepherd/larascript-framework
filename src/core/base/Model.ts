@@ -4,7 +4,7 @@ import BelongsTo from '../domains/database/mongodb/relationships/BelongsTo';
 import HasMany from '../domains/database/mongodb/relationships/HasMany';
 import MongoDB from '../domains/database/mongodb/services/MongoDB';
 import IData from '../interfaces/IData';
-import { Dates, GetDataOptions, IModel } from '../interfaces/IModel';
+import { Dates, GetDataOptions, IModel, ModelConstructor } from '../interfaces/IModel';
 import { WithObserver } from '../observer/WithObserver';
 
 export interface BaseModelData {
@@ -109,9 +109,9 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
     /**
      * Refreshes the data of the model by querying the MongoDB collection.
      *
-     * @return {Promise<IData | null>} The updated data of the model or null if no data is available.
+     * @return {Promise<Data | null>} The updated data of the model or null if no data is available.
      */
-    async refresh(): Promise<IData | null> {
+    async refresh(): Promise<Data | null> {
         if(!this.data) return null;
 
         this.data = await this.getDb().collection(this.collection)
@@ -177,13 +177,14 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
         this.observeData('deleting', this.data)
     }
 
-        /**
+    /**
      * Asynchronously retrieves a related model instance based on the provided local model, local key, foreign model constructor, and foreign key.
      *
      * @param {LocalModel} model - The local model instance.
      * @param {keyof LocalData} localKey - The key of the local model's attribute used to establish the relationship.
      * @param {new (...any: any[]) => ForeignModel} foreignModelCtor - The constructor function for the foreign model.
      * @param {keyof ForeignData} foreignKey - The key of the foreign model's attribute used to establish the relationship.
+     * @param {object} foreignKey - Optional filter
      * @return {Promise<ForeignModel | null>} A Promise that resolves to the related foreign model instance, or null if no related model is found.
      */
     async belongsTo<
@@ -194,7 +195,7 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
     > (
         model: LocalModel,
         localKey: keyof LocalData,
-        foreignModelCtor: new (...any: any[]) => ForeignModel,
+        foreignModelCtor: ModelConstructor<ForeignModel>,
         foreignKey: keyof ForeignData,
         filters: object = {}
     ): Promise<ForeignModel | null> 
@@ -212,6 +213,16 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
         return new foreignModelCtor(data)
     }
 
+    /**
+     * Asynchronously retrieves a related model instances based on the provided local model, local key, foreign model constructor, and foreign key.
+     *
+     * @param {LocalModel} model - The local model instance.
+     * @param {keyof LocalData} localKey - The key of the local model's attribute used to establish the relationship.
+     * @param {new (...any: any[]) => ForeignModel} foreignModelCtor - The constructor function for the foreign model.
+     * @param {keyof ForeignData} foreignKey - The key of the foreign model's attribute used to establish the relationship.
+     * @param {object} foreignKey - Optional filter
+     * @return {Promise<ForeignModel | null>} A Promise that resolves to the related foreign model instance, or null if no related model is found.
+     */
     async hasMany<
         LocalData extends BaseModelData,
         LocalModel extends Model<LocalData>,
@@ -220,7 +231,7 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
     > (
         model: LocalModel,
         localKey: keyof LocalData,
-        foreignModelCtor: new (...any: any[]) => ForeignModel,
+        foreignModelCtor: ModelConstructor<ForeignModel>,
         foreignKey: keyof ForeignData,
         filters: object = {}
     ): Promise<ForeignModel[]> 

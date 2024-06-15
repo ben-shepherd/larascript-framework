@@ -1,4 +1,4 @@
-import IWithObserve, { IObserveWithCtor } from "../interfaces/observer/IObservable";
+import IWithObserve, { ObserveConstructor } from "../interfaces/observer/IObservable";
 import { IObserver, IObserverEvent } from "../interfaces/observer/IObserver";
 
 export abstract class WithObserver<ReturnType> implements IWithObserve<ReturnType> {
@@ -9,7 +9,7 @@ export abstract class WithObserver<ReturnType> implements IWithObserve<ReturnTyp
      * Attatch the Observer to this instance
      * @param observedBy 
      */
-    observeWith (observedBy: IObserveWithCtor<ReturnType>): void {
+    observeWith (observedBy: ObserveConstructor<ReturnType>): void {
         if(this.observer) {
             throw new Error('Observer is already defined')
         }
@@ -18,7 +18,11 @@ export abstract class WithObserver<ReturnType> implements IWithObserve<ReturnTyp
 
     /**
      * Data has changed
-     * Pass it through to the Observer, then return it 
+     * Pass it through the appropriate method, return the data
+     * 
+     * Example
+     *      this data = this.observer.on('updating', data)
+     * 
      * @param name 
      * @param data 
      * @returns 
@@ -32,8 +36,10 @@ export abstract class WithObserver<ReturnType> implements IWithObserve<ReturnTyp
 
     /**
      * A custom observer method
-     *      Example: 
-     *          this.data = this.observeDataCustom<UserObserver>('onPasswordChanged', this.data)
+     * 
+     * Example: 
+     *      this.data = this.observeDataCustom<UserObserver>('onPasswordChanged', this.data)
+     * 
      * @param customName 
      * @param data 
      * @returns 
