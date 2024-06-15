@@ -1,36 +1,45 @@
-import ApiTokenRepository from '@src/app/repositories/auth/ApiTokenRepository';
-import UserRepository from '@src/app/repositories/auth/UserRepository';
-import ApiToken from '../../../../app/models/auth/ApiToken';
-import Service from '../../../base/Service';
-import UnauthorizedError from '../../../exceptions/UnauthorizedError';
-import { IAuth } from '../../../interfaces/IAuth';
-import { IAuthConfig } from '../../../interfaces/IAuthConfig';
+import { AuthConfigTypeHelpers } from '@src/config/auth/auth';
+import Service from '@src/core/base/Service';
+import UnauthorizedError from '../exceptions/UnauthorizedError';
 import apiTokenFactory from '../factory/apiTokenFactory';
 import jwtTokenFactory from '../factory/jwtTokenFactory';
-import BaseApiTokenModel from '../models/BaseApiTokenModel';
-import BaseUserModel from '../models/BaseUserModel';
+import { IAuthConfig } from '../interfaces/IAuthConfig';
+import { IAuthService } from '../interfaces/IAuthService';
 import { JWTToken } from '../types/types.t';
 import comparePassword from '../utils/comparePassword';
 import createJwt from '../utils/createJwt';
 import decodeJwt from '../utils/decodeJwt';
 
-export default class BaseAuthService<ApiTokenType extends ApiToken> extends Service<IAuthConfig> implements IAuth {
-    public userRepository: UserRepository
-    public apiTokenRepository: ApiTokenRepository;
+export default class BaseAuthService extends Service<IAuthConfig> implements IAuthService {
+    /**
+     * Repository for accessing user data
+     */
+    public userRepository: AuthConfigTypeHelpers['userRepository'];
+    /**
+     * Repository for accessing api tokens
+     */
+    public apiTokenRepository: AuthConfigTypeHelpers['apiTokenRepository'];
 
-    constructor(config: IAuthConfig) {
+    constructor(
+        config: IAuthConfig,
+    ) {
         super(config)
-        this.userRepository = new UserRepository()
-        this.apiTokenRepository = new ApiTokenRepository()
+        this.userRepository = new config.userRepository;
+        this.apiTokenRepository = new config.apiTokenRepository;
     }
 
-    async createToken(user: BaseUserModel): Promise<string> {
-        const apiToken = apiTokenFactory(user, this.apiTokenRepository.model);
+    /**
+     * Creates a JWT from a user model
+     * @param user 
+     * @returns 
+     */
+    async createToken(user: AuthConfigTypeHelpers['userModel']): Promise<string> {
+        const apiToken = apiTokenFactory<AuthConfigTypeHelpers['apiTokenModel']>(user, this.apiTokenRepository.model);
         await apiToken.save();
         return this.jwt(apiToken)
     }
 
-    jwt(apiToken: BaseApiTokenModel): string {
+    jwt(apiToken: AuthConfigTypeHelpers['apiTokenModel']): string {
         if(!apiToken?.data?.userId) {
             throw new Error('Invalid token');
         }
@@ -38,7 +47,12 @@ export default class BaseAuthService<ApiTokenType extends ApiToken> extends Serv
         return createJwt(payload, '1d');
     }
 
-    async revokeToken(apiToken: BaseApiTokenModel): Promise<void> {
+    /**
+     * Revokes a token
+     * @param apiToken 
+     * @returns 
+     */
+    async revokeToken(apiToken: AuthConfigTypeHelpers['apiTokenModel']): Promise<void> {
         if(apiToken?.data?.revokedAt) {
             return;
         }
@@ -47,7 +61,12 @@ export default class BaseAuthService<ApiTokenType extends ApiToken> extends Serv
         await apiToken.save();
     }
 
-    async attemptAuthenticateToken(token: string): Promise<ApiTokenType | null> {
+    /**
+     * Attempt authentication against a JWT
+     * @param token 
+     * @returns 
+     */
+    async attemptAuthenticateToken(token: string): Promise<AuthConfigTypeHelpers['apiTokenModel'] | null> {
         const decoded = decodeJwt(token) as JWTToken;
 
         const apiToken = await this.apiTokenRepository.findByUnrevokedToken(decoded.token)
@@ -62,9 +81,15 @@ export default class BaseAuthService<ApiTokenType extends ApiToken> extends Serv
             throw new UnauthorizedError('Unauthorized (Error code: 2)')
         }
 
-        return apiToken as ApiTokenType
+        return apiToken
     }
 
+    /**
+     * Attempt login with credentials
+     * @param email 
+     * @param password 
+     * @returns 
+     */
     async attemptCredentials(email: string, password: string): Promise<string> {
         const user = await this.userRepository.findByEmail(email);
 

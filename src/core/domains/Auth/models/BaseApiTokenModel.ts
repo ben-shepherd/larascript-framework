@@ -1,8 +1,8 @@
-import Model from "../../../base/Model";
-import { IModel } from "../../../interfaces/IModel";
+import Model from "@src/core/base/Model";
+import { IModel } from "@src/core/interfaces/IModel";
 import { BaseApiTokenData } from "../types/types.t";
 
-export default class BaseApiTokenModel<D extends BaseApiTokenData = BaseApiTokenData> extends Model<D> implements IModel {
+export default class BaseApiTokenModel<Data extends BaseApiTokenData = BaseApiTokenData> extends Model<Data> implements IModel {
     collection = "apiTokens";
 
     timestamps = false
@@ -12,8 +12,4 @@ export default class BaseApiTokenModel<D extends BaseApiTokenData = BaseApiToken
         'token',
         'revokedAt',
     ]
-
-    constructor(data: D | null) {
-        super(data);
-    }
 }

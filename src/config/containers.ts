@@ -1,7 +1,7 @@
-import { AppAuthService } from '@src/app/services/AppAuthService';
 import { IMongoDB } from '@src/core/domains/database/mongodb/interfaces/IMongoDB';
 import EventDispatcher from '@src/core/events/EventDispatcher';
 import IExpress from '@src/core/interfaces/http/IExpress';
+import { AuthConfigTypeHelpers } from './auth/auth';
 
 /**
  * ContainersTypeHelpers provides type hinting when accessing a container. 
@@ -26,7 +26,7 @@ export interface ContainersTypeHelpers {
     /**
      * Auth service
      */
-    auth: AppAuthService;
+    auth: AuthConfigTypeHelpers['authService'];
     /**
      * MongoDB for the default connection
      */

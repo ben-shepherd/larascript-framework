@@ -1,19 +1,40 @@
+import ApiToken from '@src/app/models/auth/ApiToken';
+import User from '@src/app/models/auth/User';
 import ApiTokenRepository from '@src/app/repositories/auth/ApiTokenRepository';
 import UserRepository from '@src/app/repositories/auth/UserRepository';
 import { AppAuthService } from '@src/app/services/AppAuthService';
-import { IAuthConfig } from '@src/core/interfaces/IAuthConfig';
+import { IAuthConfig } from '@src/core/domains/auth/interfaces/IAuthConfig';
 import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
+
+/**
+ * Provides type hinting across the application
+ * Don't forget to update these properties to match what is provided to the config.
+ */
+export interface AuthConfigTypeHelpers {
+    authService: AppAuthService,
+    userModel: User,
+    userRepository: UserRepository,
+    apiTokenModel: ApiToken
+    apiTokenRepository: ApiTokenRepository,
+}
 
 const config: IAuthConfig = {
     /**
-     * Expandable auth service class
-     * Accessible with App.cotnainer('auth)
+     * Auth class that can be extended on or replaced
      */
-    container: AppAuthService,
+    authService: AppAuthService,
+    /**
+     * User model
+     */
+    userModel: User,
     /**
      * User repository for accessing user data
      */
     userRepository: UserRepository,
+    /**
+     * Api Token model
+     */
+    apiTokenModel: ApiToken,
     /**
      * Api token repository for accessing api tokens
      */

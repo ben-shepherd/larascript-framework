@@ -33,6 +33,9 @@ export default class User extends BaseUserModel<UserData> {
         return await this.hasMany<UserData, User, ApiTokenData, ApiToken>(this, this.primaryKey, ApiToken, 'userId');
     }
 
+    /**
+     * todo: delete, only example for custom observers
+     */
     setAttribute<K extends keyof UserData = keyof UserData>(key: K, value: any): void {
         super.setAttribute(key, value)
 

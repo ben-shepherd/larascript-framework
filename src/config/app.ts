@@ -1,5 +1,4 @@
 import AppProvider from '@src/app/providers/AppProvider';
-import AppRouteProvider from '@src/app/providers/AppRouteProvider';
 import EventProvider from '@src/core/providers/EventProvider';
 import { EnvironmentType } from '../core/consts/Environment';
 import IAppConfig from '../core/interfaces/IAppConfig';
@@ -29,12 +28,10 @@ const appConfig: IAppConfig = {
         new ExpressProvider(),
         new CoreRoutesProvider(),
         new AuthProvider(),
-        // new ExpressListenerProvider(),
         /**
          * Add your providers below
          */
         new AppProvider(),
-        new AppRouteProvider()
     ],
 };
 

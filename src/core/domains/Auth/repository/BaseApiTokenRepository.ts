@@ -1,25 +1,20 @@
 import Repository from "@src/core/base/Repository";
 import BaseApiTokenModel from "@src/core/domains/auth/models/BaseApiTokenModel";
-import { IRepository } from "@src/core/interfaces/IRepository";
-import { BaseApiTokenData } from "../types/types.t";
+import { ModelConstructor } from "@src/core/interfaces/IModel";
+import IApiTokenRepository from "../interfaces/IApiTokenRepository";
 
-type Constructor<M,D> = new (data: D) => M
 
-export default class BaseApiTokenRepository<
-    M extends BaseApiTokenModel = BaseApiTokenModel,
-    D extends BaseApiTokenData = BaseApiTokenData
-> extends Repository<M> implements IRepository {
+export default abstract class BaseApiTokenRepository<Model extends BaseApiTokenModel = BaseApiTokenModel> extends Repository<Model> implements IApiTokenRepository<Model> {
 
-    constructor(model: Constructor<M,D> = BaseApiTokenModel as Constructor<M,D>) {
-        super('apiTokens', model);
+    constructor(collectionName: string = 'apiTokens', modelConstructor: ModelConstructor<Model>) {
+        super(collectionName, modelConstructor)
     }
 
-    async findByToken(token: string): Promise<M | null> {
-        return await this.findOne({ token }) as M
+    async findByToken(token: string): Promise<Model | null> {
+        return await this.findOne({ token }) as Model
     }
 
-    
-    async findByUnrevokedToken(token: string): Promise<M | null> {
-        return await this.findOne({ token, revokedAt: null }) as M
+    async findByUnrevokedToken(token: string): Promise<Model | null> {
+        return await this.findOne({ token, revokedAt: null }) as Model
     }
 }

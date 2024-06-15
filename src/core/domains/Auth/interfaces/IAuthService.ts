@@ -1,10 +1,9 @@
-import ApiTokenRepository from "@src/app/repositories/auth/ApiTokenRepository"
-import UserRepository from "@src/app/repositories/auth/UserRepository"
+import IService from "@src/core/interfaces/IService"
 
 
-export interface IAuth {
-    userRepository: UserRepository,
-    apiTokenRepository: ApiTokenRepository,
+export interface IAuthService extends IService {
+    userRepository: any,
+    apiTokenRepository: any,
     attemptAuthenticateToken: (...args: any[]) => Promise<any>
     createToken: (...args: any[]) => Promise<any>
     revokeToken: (...args: any[]) => Promise<any>

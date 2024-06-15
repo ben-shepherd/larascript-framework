@@ -1,9 +1,9 @@
 import { NextFunction, Response } from 'express';
 
+import User from '@src/app/models/auth/User';
+import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
+import IAuthorizedRequest from '@src/core/domains/auth/interfaces/IAuthorizedRequest';
 import { App } from '@src/core/services/App';
-import User from '../../../app/models/auth/User';
-import UnauthorizedError from '../../exceptions/UnauthorizedError';
-import IAuthorizedRequest from '../../interfaces/IAuthorizedRequest';
 import ResponseError from '../requests/ResponseError';
 
 export const authorize = () => async (req: IAuthorizedRequest<User>, res: Response, next: NextFunction): Promise<void> => {

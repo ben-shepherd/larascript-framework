@@ -1,21 +1,19 @@
 import { ObjectId } from 'mongodb';
 
+import { IRepository } from '@src/core/interfaces/IRepository';
 import MongoDB from '../domains/database/mongodb/services/MongoDB';
 import IData from '../interfaces/IData';
-import { IModel } from '../interfaces/IModel';
-import { IRepository } from '../interfaces/IRepository';
+import { IModel, ModelConstructor } from '../interfaces/IModel';
 
-type Constructor<M extends IModel> = new (...args: any[]) => M
-
-export default abstract class Repository<M extends IModel> implements IRepository {
-    public model: Constructor<M>;
+export default abstract class Repository<M extends IModel> implements IRepository<M> {
+    public model: ModelConstructor<M>;
     private collectionName!: string;
     private connection!: string;
 
-    constructor(collectionName: string, ctor: Constructor<M>) {
+    constructor(collectionName: string, modelConstructor: ModelConstructor<M>) {
         this.collectionName = collectionName;
-        this.connection = new ctor().connection
-        this.model = ctor;
+        this.connection = new modelConstructor().connection
+        this.model = modelConstructor;
     }
 
     async findById(_id: string): Promise<M | null> {

@@ -1,25 +1,26 @@
 import BaseProvider from "../../core/base/Provider";
-import { IAuthConfig } from "../../core/interfaces/IAuthConfig";
 
-    /**
-     * @example AppProvider
-     * 
-     * Provide some data to the container
-     * 
-     * [Set container]
-     *      App.setContainer('example', { hello: 'world '})
-     * 
-     * [Retrieve container]
-     *      console.log('Example conatainer contents', App.container('example')) // Outputs: { hello: 'world ' }
-     * 
-     * [Typehinting]
-     *      Add your type to @src/config/containers in order to provide type hinting
-     *      when retrieving containers
-     */
+export interface AppConfig {}
+
+/**
+ * @example AppProvider
+ * 
+ * Provide some data to the container
+ * 
+ * [Set container]
+ *      App.setContainer('example', { hello: 'world '})
+ * 
+ * [Retrieve container]
+ *      console.log('Example conatainer contents', App.container('example')) // Outputs: { hello: 'world ' }
+ * 
+ * [Providing type hinting]
+ *      Add your type(s) to `@src/config/containers`
+ *      in order to provide type hinting when retrieving containers
+ */
 export default class AppProvider extends BaseProvider
 {
-    protected config!: IAuthConfig;
-    configPath = '@config/example/fileName';
+    protected config!: AppConfig;
+    //configPath = '@config/example/fileName';
 
     constructor() {
         super()
@@ -27,7 +28,7 @@ export default class AppProvider extends BaseProvider
     }
 
     public async register(): Promise<void> {
-        this.log('Registering ExampleProvider');
+        this.log('Registering AppProvider');
     }
 
     public async boot(): Promise<void> {

@@ -1,21 +1,15 @@
-import Repository from '../../../base/Repository';
-import { IRepository } from '../../../interfaces/IRepository';
+import Repository from '@src/core/base/Repository';
+import { ModelConstructor } from '@src/core/interfaces/IModel';
+import IUserRepository from '../interfaces/IUserRepository';
 import BaseUserModel from '../models/BaseUserModel';
-import { BaseUserData } from '../types/types.t';
 
-type Constructor<M,D> = new (data: D) => M
-
-export default abstract class BaseUserRepository<
-    M extends BaseUserModel = BaseUserModel,
-    D extends BaseUserData = BaseUserData
-> extends Repository<M> implements IRepository 
+export default abstract class BaseUserRepository<Model extends BaseUserModel = BaseUserModel> extends Repository<Model> implements IUserRepository 
 {
-
-    constructor(model: Constructor<M,D> = BaseUserModel as Constructor<M,D>) {
-        super('users', model);
+    constructor(collectionName: string = 'users', ctor: ModelConstructor<Model>) {
+        super(collectionName, ctor)    
     }
 
-    async findByEmail(email: string): Promise<M | null> {
-        return await this.findOne({ email }) as M
+    async findByEmail(email: string): Promise<Model | null> {
+        return await this.findOne({ email }) as Model
     }
 }

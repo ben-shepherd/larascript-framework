@@ -1,10 +1,10 @@
 import IData from "./IData";
 
-export type GetDataOptions = {
-    excludeGuarded: boolean
-}
+export type GetDataOptions = {excludeGuarded: boolean}
 
 export type Dates = string[]
+
+export type ModelConstructor<M extends IModel = IModel> = new (...args: any[]) => M
 
 export interface IModel {
     connection: string;
@@ -12,7 +12,7 @@ export interface IModel {
     collection: string;
     guarded: string[];
     data: IData | null;
-    dates: string[];
+    dates: Dates;
     timestamps: boolean;
     setAttribute(key: string, value: any): void;
     getAttribute(key: string): any;
