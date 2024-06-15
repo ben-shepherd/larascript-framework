@@ -1,12 +1,13 @@
-import { ObjectId } from 'mongodb';
+import { Collection, ObjectId } from 'mongodb';
 
 import { IRepository } from '@src/core/interfaces/IRepository';
 import MongoDB from '../domains/database/mongodb/services/MongoDB';
 import ModelNotFound from '../exceptions/ModelNotFound';
 import IData from '../interfaces/IData';
 import { IModel, ModelConstructor } from '../interfaces/IModel';
+import { App } from '../services/App';
 
-export default abstract class Repository<Model extends IModel> implements IRepository<Model> {
+export default class Repository<Model extends IModel> implements IRepository<Model> {
     public model: ModelConstructor<Model>;
     public collectionName!: string;
     public connection!: string;
@@ -18,7 +19,14 @@ export default abstract class Repository<Model extends IModel> implements IRepos
     }
 
     /**
-     * Find or fail if record not found
+     * Get the MongoDB Collection
+     */
+    async collection(): Promise<Collection> {
+        return App.container('mongodb').getDb().collection(this.collectionName)
+    }
+    
+    /**
+     * Find or fail if no document found
      * @param _id 
      * @returns 
      * @throws ModelNotFound
@@ -33,16 +41,31 @@ export default abstract class Repository<Model extends IModel> implements IRepos
         return model
     }
 
+    /**
+     * Find document by _id
+     * @param _id 
+     * @returns 
+     */
     async findById(_id: string): Promise<Model | null> {
         const data = await MongoDB.getInstance().getDb(this.connection).collection(this.collectionName).findOne({ _id: new ObjectId(_id) }) as IData | null;
         return data ? new this.model(data) : null;
     }
 
+    /**
+     * Find a single document
+     * @param filter 
+     * @returns 
+     */
     async findOne(filter: object = {}): Promise<Model | null> {
         const data = await MongoDB.getInstance().getDb(this.connection).collection(this.collectionName).findOne(filter) as Model | null;
         return data ? new this.model(data) : null;
     }
 
+    /**
+     * Find multiple documents
+     * @param query 
+     * @returns 
+     */
     async findMany(query: object = {}): Promise<Model[]> {
         const dataArray = await MongoDB.getInstance().getDb(this.connection).collection(this.collectionName).find(query).toArray() as IData[];
         return dataArray.map(data => new this.model(data));
