@@ -11,7 +11,9 @@ export interface IRepository<
     collectionName: string;
     connection: string;
     model: ModelConstructor<Model>;
+    
+    findOrFail: (filter: object) => Promise<Model>
     findById: (id: string) => Promise<Model | null>
     findOne: (query: object) => Promise<Model | null>
-    findMany(query: object): Promise<Model[]>
+    findMany: (query: object) => Promise<Model[]>
 }

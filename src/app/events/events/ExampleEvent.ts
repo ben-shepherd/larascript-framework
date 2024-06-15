@@ -1,14 +1,14 @@
-import EventDispatcher from "@src/core/events/EventDispatcher";
+import Event from "@src/core/events/Event";
 
-export default class ExampleEvent extends EventDispatcher<{ userId: string }> {
+type Payload = {
+    userId: string;
+}
+
+export default class ExampleEvent extends Event<Payload> {
 
     name = 'OnExample'
 
-    constructor(userId: string) {
-        super()
-
-        this.payload = {
-            userId
-        }
+    constructor(payload: Payload) {
+        super(payload)
     }
 }

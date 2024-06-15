@@ -1,5 +1,5 @@
-import { IEventListener } from "./events/IEventListener";
+import { EventListenerConstructor, IEventListener } from "./events/IEventListener";
 
 export interface IEventConfig {
-    [key: string]: Array<IEventListener>
+    [key: string]: Array<EventListenerConstructor<IEventListener>>
 }

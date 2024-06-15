@@ -58,7 +58,10 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
      * @return {ObjectId | undefined} The ObjectId associated with the primary key, or undefined if the primary key is not set.
      */
     getId(): ObjectId | undefined {
-        return this.getAttribute(this.primaryKey) ?? undefined
+        if(!(this.data?._id instanceof ObjectId)) {
+            return undefined
+        }
+        return this.data?._id
     }
 
     /**

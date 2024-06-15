@@ -1,27 +1,31 @@
-import eventsConfig from "@src/config/events";
 import { IEventConfig } from "../interfaces/IEventConfig";
-import { IEventDispatcher } from "../interfaces/events/IEventDispatcher";
+import { IEvent } from "../interfaces/events/IEvent";
 
 export class EventHandler<
-    Event extends IEventDispatcher = IEventDispatcher,
-    Name extends keyof IEventConfig = keyof IEventConfig,
+    Event extends IEvent = IEvent,
+    Config extends IEventConfig = IEventConfig,
+    Name extends keyof Config = keyof Config,
 > {
-    protected event: IEventDispatcher;
+    protected config: IEventConfig;
+    protected event: IEvent;
 
-    constructor(event: Event) {
+    constructor(config: Config, event: Event) {
+        this.config = config;
         this.event = event;
-    }
+    }   
 
     runEventListeners() {
         const dispatcherName = this.event.name as Name
         const { payload } = this.event
-        console.log(`[EventHandler] dispatching ${dispatcherName}`, payload)
+        console.log(`[EventHandler] dispatching ${dispatcherName as string}`, payload)
 
-        const listeners = eventsConfig[dispatcherName] ?? []
+        const listeners = this.config[dispatcherName as string] ?? []
 
-        for(const listener of listeners) {
-            // console.log('[EventHandler] listener ', this.payload)
-            listener.handle(payload);
+        for(const listenerCtor of listeners) {
+        console.log('[EventHandler] listener ', this.event)
+
+            const listener = new listenerCtor();
+            listener.handle(this.event.payload);
         }
     }
 }

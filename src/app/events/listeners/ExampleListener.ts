@@ -1,8 +1,8 @@
 import EventListener from "@src/core/events/EventListener";
  
-export class ExapleListener extends EventListener {
+export class ExampleListener extends EventListener<{userId: string}> {
 
-    handle = async (payload: { userId: string }) => {
-        console.log('[ExampleListener]', payload.userId)
+    handle = (payload: { userId: string}) => {
+        console.log('[ExampleListener]', payload)
     }
 }
