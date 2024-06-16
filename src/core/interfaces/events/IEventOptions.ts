@@ -1,1 +1,0 @@
-export type TSerializableTypes = number | string | boolean | undefined;

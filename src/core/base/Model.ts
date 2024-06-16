@@ -85,6 +85,9 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
         if(!this.fields.includes(key as string)) {
             throw new Error(`Attribute ${key as string} not found in model ${this.collection}`);
         }
+        if(this.dates.includes(key as string) && value instanceof Date === false) {
+            throw new Error(`Attribute '${key as string}' is a date and can be only set with the Date interface`);
+        }
         if(this.data) {
             this.data[key] = value;
         }

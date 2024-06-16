@@ -1,5 +1,5 @@
 import { IMongoDB } from '@src/core/domains/database/mongodb/interfaces/IMongoDB';
-import { IEventDispatcher } from '@src/core/interfaces/events/IEventDispatcher';
+import { IEventDispatcher } from '@src/core/domains/events/interfaces/IEventDispatcher';
 import IExpress from '@src/core/interfaces/http/IExpress';
 import { AuthConfigTypeHelpers } from './auth/auth';
 

@@ -1,5 +1,5 @@
-import { IEventListener } from "../interfaces/events/IEventListener";
-import { IEventPayload } from "../interfaces/events/IEventPayload";
+import { IEventListener } from "../interfaces/IEventListener";
+import { IEventPayload } from "../interfaces/IEventPayload";
 
 export default abstract class EventListener<
     Payload extends IEventPayload = IEventPayload

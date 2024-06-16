@@ -1,4 +1,4 @@
-import Event from "@src/core/events/Event";
+import Event from "@src/core/domains/events/services/Event";
 
 type Payload = {
     userId: string;
@@ -6,9 +6,7 @@ type Payload = {
 
 export default class ExampleEvent extends Event<Payload> {
 
-    name = 'OnExample'
-
     constructor(payload: Payload) {
-        super(payload)
+        super('OnExample', 'queue', payload)
     }
 }
