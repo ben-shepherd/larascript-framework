@@ -186,7 +186,7 @@ async tokens(options = TokenOptionsDefault): Promise<BaseApiTokenModel[]>
 
 **Extendable Classes**
 
-**Repository** `@srcapp/repositories/auth/UserRepository.ts`
+**Repository** `@src/app/repositories/auth/UserRepository.ts`
 
 **Model** `@src/app/models/auth/User.ts`
 
