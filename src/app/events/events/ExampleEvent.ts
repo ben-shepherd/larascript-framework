@@ -5,7 +5,7 @@ type Payload = {
 }
 
 export default class ExampleEvent extends Event<Payload> {
-
+    
     constructor(payload: Payload) {
         super('OnExample', 'queue', payload)
     }
