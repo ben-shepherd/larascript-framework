@@ -1,5 +1,5 @@
 import AppProvider from '@src/app/providers/AppProvider';
-import EventProvider from '@src/core/providers/EventProvider';
+import EventProvider from '@src/core/domains/events/providers/EventProvider';
 import { EnvironmentType } from '../core/consts/Environment';
 import IAppConfig from '../core/interfaces/IAppConfig';
 import AuthProvider from '../core/providers/AuthProvider';

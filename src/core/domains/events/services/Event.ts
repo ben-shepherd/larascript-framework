@@ -2,7 +2,7 @@ import { IEvent } from "../interfaces/IEvent";
 import { IEventDrivers, IEventWatcher } from '../interfaces/IEventConfig';
 import { IEventPayload } from "../interfaces/IEventPayload";
 
-export default abstract class Event<
+export default class Event<
     Payload extends IEventPayload,
     Watchters extends IEventWatcher = IEventWatcher,
     Drivers extends IEventDrivers = IEventDrivers

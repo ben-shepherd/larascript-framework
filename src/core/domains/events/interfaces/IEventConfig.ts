@@ -1,7 +1,7 @@
 import { eventDrivers, eventWatchers } from "@src/config/events";
 import DriverOptions from "../services/QueueDriverOptions";
 import { IEventDriverConstructor } from './IEventDriver';
-import { EventListenerConstructor, IEventListener } from "./IEventListener";
+import { EventListenerConstructor } from "./IEventListener";
 
 export interface IEventDriverOptions {
     driver: IEventDriverConstructor
@@ -13,7 +13,7 @@ export type IEventDrivers = {
 }
 
 export type IEventWatcher = {
-    [key: string]: Array<EventListenerConstructor<IEventListener>>
+    [key: string]: Array<EventListenerConstructor>
 }
 
 export interface IEventConfig<

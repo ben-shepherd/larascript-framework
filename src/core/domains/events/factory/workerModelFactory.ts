@@ -7,12 +7,12 @@ type Params = {
 }
 export default class WorkerModelFactory {
     create(collection: string, { eventName, payload, retries }: Params): WorkerModel {
-        return new WorkerModel(collection, {
+        return new WorkerModel({
             ...initialWorkerModalData,
             eventName,
             payload,
             retries,
             createdAt: new Date()
-        })
+        }, collection)
     }
 }

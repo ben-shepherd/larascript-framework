@@ -1,8 +1,8 @@
 
 import eventsConfig from "@src/config/events";
-import BaseProvider from "../base/Provider";
-import EventDispatcher from "../domains/events/services/EventDispatcher";
-import { App } from "../services/App";
+import BaseProvider from "../../../base/Provider";
+import { App } from "../../../services/App";
+import EventDispatcher from "../services/EventDispatcher";
 
 export default class EventProvider extends BaseProvider
 {

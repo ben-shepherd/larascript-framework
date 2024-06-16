@@ -86,7 +86,7 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
             throw new Error(`Attribute ${key as string} not found in model ${this.collection}`);
         }
         if(this.dates.includes(key as string) && value instanceof Date === false) {
-            throw new Error(`Attribute '${key as string}' is a date and can be only set with the Date interface`);
+            throw new Error(`Attribute '${key as string}' is a date and can be only set with the Date not found in model ${this.collection}`);
         }
         if(this.data) {
             this.data[key] = value;
@@ -148,8 +148,8 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
         if(this.data && !this.getId()) {
             
             this.data = this.observeData('creating', this.data)
-            this.setTimestamps('createdAt')
-            this.setTimestamps('updatedAt')
+            this.setTimestamp('createdAt')
+            this.setTimestamp('updatedAt')
 
             await this.getDb()
                 .collection(this.collection)
@@ -161,7 +161,7 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
         }
 
         this.data = this.observeData('updating', this.data)
-        this.setTimestamps('updatedAt')
+        this.setTimestamp('updatedAt')
         await this.update()
         await this.refresh()
         this.data = this.observeData('updated', this.data)
@@ -252,7 +252,13 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
         return results.map((result) => new foreignModelCtor(result))
     }
 
-    protected setTimestamps(dateTimeField: string, value: Date = new Date()) {
+    /**
+     * Set a timestamp on a Date field
+     * @param dateTimeField 
+     * @param value 
+     * @returns 
+     */
+    protected setTimestamp(dateTimeField: string, value: Date = new Date()) {
         if(!this.timestamps || !this.dates.includes(dateTimeField)) {
             return;
         }

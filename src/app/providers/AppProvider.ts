@@ -36,6 +36,6 @@ export default class AppProvider extends BaseProvider
     }
 
     public async boot(): Promise<void> {
-        this.log('Booting ExampleProvider');
+        this.log('Booting AppProvider');
     }
 }

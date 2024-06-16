@@ -1,5 +1,5 @@
 import { ExampleListener } from "@src/app/events/listeners/ExampleListener";
-import QueueDriver from "@src/core/domains/events/drivers/QueueDriver";
+import QueueDriver, { QueueDriverOptions } from "@src/core/domains/events/drivers/QueueDriver";
 import SynchronousDriver from "@src/core/domains/events/drivers/SynchronousDriver";
 import { IEventConfig, IEventDrivers, IEventWatcher } from "@src/core/domains/events/interfaces/IEventConfig";
 import DriverOptions from "@src/core/domains/events/services/QueueDriverOptions";
@@ -16,17 +16,16 @@ import DriverOptions from "@src/core/domains/events/services/QueueDriverOptions"
  *      }
  */
 export const eventDrivers: IEventDrivers = {
-
     sync: {
         driver: SynchronousDriver
     },
-    
     queue: {
         driver: QueueDriver,
-        options: new DriverOptions({
+        options: new DriverOptions<QueueDriverOptions>({
             retries: 3,
             collection: 'workers',
-            failedCollection: 'failedWorkers'
+            failedCollection: 'failedWorkers',
+            runAfterSeconds: 10
         })
     }
     
@@ -59,7 +58,7 @@ const eventsConfig: IEventConfig<typeof eventDrivers, typeof eventWatchers> = {
     /**
      * Default Driver
      */
-    defaultDriver: 'asdas',
+    defaultDriver: 'sync',
 
     /**
      * Event Drivers

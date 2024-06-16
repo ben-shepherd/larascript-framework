@@ -24,13 +24,24 @@ export default class WorkerModel extends Model<WorkerModelData>
 
     fields = [
         'eventName',
+        'payload',
         'attempt',
         'retries',
         'createdAt'
     ]
 
-    constructor(collection: string, data: WorkerModelData) {
+    constructor(data: WorkerModelData, collection: string) {
         super(data);
         this.collection = collection; 
+    }
+
+    public getPayload(): any | null {
+        try {
+            const payload = this.getAttribute('payload');
+            return JSON.parse(payload)
+        }
+        catch (err) {
+            return null
+        }
     }
 }

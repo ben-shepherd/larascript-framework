@@ -1,5 +1,5 @@
-import { ISerializableTypes } from "../ISerializableTypes";
+export type TSerializableTypes = number | string | boolean | undefined;
 
 export interface IEventPayload {
-    [key: string | number | symbol]: ISerializableTypes
+    [key: string | number | symbol]: TSerializableTypes
 }

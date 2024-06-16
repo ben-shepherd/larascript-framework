@@ -10,15 +10,9 @@ export default class SynchronousDriver implements IEventDriver
      */
     async handle(event: IEvent) {
         const eventName = event.name
-        const { payload } = event
-        
-        console.log(`[SynchronousDriver:runEventListeners] ${eventName as string}`, payload)
-
         const listeners = eventsConfig.eventWatcher[eventName as string] ?? []
 
         for(const listenerCtor of listeners) {
-        console.log('[SynchronousDriver:listener] ', listenerCtor, { payload: event.payload })
-
             const listener = new listenerCtor();
             await listener.handle(event.payload);
         }

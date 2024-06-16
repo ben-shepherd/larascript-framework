@@ -1,4 +1,4 @@
-import { Collection, ObjectId } from 'mongodb';
+import { Collection, FindOptions, ObjectId } from 'mongodb';
 
 import { IRepository } from '@src/core/interfaces/IRepository';
 import MongoDB from '../domains/database/mongodb/services/MongoDB';
@@ -66,8 +66,8 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @param query 
      * @returns 
      */
-    async findMany(query: object = {}): Promise<Model[]> {
-        const dataArray = await MongoDB.getInstance().getDb(this.connection).collection(this.collectionName).find(query).toArray() as IData[];
+    async findMany(query: object = {}, options?: FindOptions): Promise<Model[]> {
+        const dataArray = await MongoDB.getInstance().getDb(this.connection).collection(this.collectionName).find(query, options).toArray() as IData[];
         return dataArray.map(data => new this.model(data));
     }
 }

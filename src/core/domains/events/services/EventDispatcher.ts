@@ -11,15 +11,15 @@ export default class EventDispatcher extends Singleton<typeof eventsConfig> impl
      * Handle the dispatched event
      * @param event 
      */
-    public dispatch<Payload extends IEventPayload>(event: IEvent<Payload>) 
+    public async dispatch<Payload extends IEventPayload>(event: IEvent<Payload>) 
     {
-        console.log('[EventDispatcher:dispatch]', event)
+        console.log(`[EventDispatcher:dispatch] Event '${event.name}' with driver '${event.driver}'`)
 
         const driverOptions = this.getDriverOptionsFromEvent(event)
         const driverCtor = driverOptions.driver
         
         const instance = new driverCtor();
-        instance.handle(event, driverOptions.options?.getOptions());
+        await instance.handle(event, driverOptions.options?.getOptions());
     }
 
     /**

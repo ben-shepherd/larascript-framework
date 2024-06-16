@@ -3,14 +3,16 @@ import { ObjectId } from "mongodb";
 
 export interface FailedWorkerModelData {
     _id?: ObjectId;
-    name: string;
-    error: string;
+    eventName: string;
+    payload: any;
+    error: any;
     failedAt: Date
 }
 
 export const initialFailedWorkerModalData = {
-    name: '',
-    error: '',
+    eventName: '',
+    payload: null,
+    error: null,
     failedAt: new Date()
 }
 
@@ -18,11 +20,13 @@ export default class FailedWorkerModel extends Model<FailedWorkerModelData> {
     dates = ['failedAt']
 
     fields = [
-        'name',
-        'error'
+        'eventName',
+        'payload',
+        'error',
+        'failedAt'
     ]
 
-    constructor(collection: string, data: FailedWorkerModelData) {
+    constructor(data: FailedWorkerModelData, collection: string) {
         super(data)
         this.collection = collection
     }

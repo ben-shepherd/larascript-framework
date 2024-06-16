@@ -2,11 +2,12 @@ import WorkerModelFactory from '../factory/workerModelFactory';
 import { IEvent } from '../interfaces/IEvent';
 import IEventDriver from '../interfaces/IEventDriver';
 
-type QueueDriverOptions = {
-    eventName: string,
+export type QueueDriverOptions = {
+    eventName?: string,
     retries: number,
     collection: string,
-    failedCollection: string
+    failedCollection: string,
+    runAfterSeconds: number;
 }
 
 export default class QueueDriver implements IEventDriver

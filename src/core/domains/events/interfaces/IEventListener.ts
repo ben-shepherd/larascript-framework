@@ -1,4 +1,4 @@
-export type EventListenerConstructor<EventListener> = new (...args: any[]) => EventListener;
+export type EventListenerConstructor<EventListener extends IEventListener = IEventListener> = new (...args: any[]) => EventListener;
 
 export interface IEventListener {
     handle: (...args: any[]) => any;
