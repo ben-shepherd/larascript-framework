@@ -4,41 +4,47 @@ import Singleton from "@src/core/base/Singleton";
 import { App } from "@src/core/services/App";
 import { ObjectId } from "mongodb";
 import { QueueDriverOptions } from "../drivers/QueueDriver";
+import EventDriverException from "../exceptions/EventDriverException";
 import FailedWorkerModelFactory from "../factory/failedWorkerModelFactory";
+import { IEventPayload } from "../interfaces/IEventPayload";
 import WorkerModel from "../models/WorkerModel";
 import Event from "./Event";
 import DriverOptions from "./QueueDriverOptions";
 
 export default class Worker extends Singleton 
 {
-    public options: QueueDriverOptions;
-    
-    private driver: string = 'queue';
+    /**
+     * Queue driver options
+     */
+    public options!: QueueDriverOptions;
 
+    /**
+     * Sync driver for running events
+     */
     private syncDriver: string = 'sync';
     
-    constructor() {
-        super()
-        this.options = this.getOptions()
-    }
-
-    protected log(message: string) {
-        console.log('[Worker]: ', message)
+    setDriver(driver: string) {
+        this.options = this.getOptions(driver)
+        this.log(`Driver set to '${driver}'`)
     }
 
     /**
      * Work the worker
      */
     async work() {
+        if(!this.options) {
+            throw new EventDriverException(`Driver not defined. Did you forget to call 'setDriver'?`)
+        }
+
         // Worker service
         const worker = Worker.getInstance();
         let model: WorkerModel; 
 
         
         // Fetch the current list of workers
-        const workerResults: WorkerModel[] = await worker.getWorkerReslts()
+        const workerResults: WorkerModel[] = await worker.getWorkerReslts(this.options.queueName)
     
-        this.log(workerResults.length + ' queued items')
+        this.log(`${workerResults.length} queued items with queue name '${this.options.queueName}'`)
     
         for(const workerModel of workerResults) {
             model = workerModel
@@ -58,21 +64,27 @@ export default class Worker extends Singleton
     }
     
     /**
-     * 
+     * Get the driver options based on the driver provided
      * @returns 
      */
-    getOptions(): QueueDriverOptions {
-        return (eventDrivers[this.driver].options as DriverOptions<QueueDriverOptions>).getOptions()
+    getOptions(driver: string): QueueDriverOptions {
+        if(!eventDrivers[driver]) {
+            throw new EventDriverException(`Driver '${driver}' not found`)
+        }
+
+        return (eventDrivers[driver].options as DriverOptions<QueueDriverOptions>).getOptions()
     }
 
     /**
      * Get the worker results from oldest to newest
      * @returns 
      */
-    async getWorkerReslts() {
+    async getWorkerReslts(queueName: string) {
         const workerRepository = new Repository<WorkerModel>(this.options.collection, WorkerModel)
 
-        return await workerRepository.findMany({}, {
+        return await workerRepository.findMany({
+            queueName
+        }, {
             sort: {
                 createdAt: 'descending'
             }
@@ -98,7 +110,7 @@ export default class Worker extends Singleton
     {
         model.collection = this.options.collection
         const eventName = model.getAttribute('eventName')
-        const payload = model.getPayload()
+        const payload = model.getPayload() as IEventPayload
 
         // Use the sync driver
         const event = new Event(eventName as string, this.syncDriver, payload)
@@ -164,5 +176,9 @@ export default class Worker extends Singleton
 
         await failedWorkerModel.save()
         await this.deleteModel(model)
+    }
+
+    protected log(message: string) {
+        console.log('[Worker]: ', message)
     }
 }

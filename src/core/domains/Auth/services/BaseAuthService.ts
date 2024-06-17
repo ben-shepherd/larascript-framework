@@ -1,6 +1,6 @@
 import { AuthConfigTypeHelpers } from '@src/config/auth/auth';
 import Service from '@src/core/base/Service';
-import UnauthorizedError from '../exceptions/UnauthorizedError';
+import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
 import apiTokenFactory from '../factory/apiTokenFactory';
 import jwtTokenFactory from '../factory/jwtTokenFactory';
 import { IAuthConfig } from '../interfaces/IAuthConfig';

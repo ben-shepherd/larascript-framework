@@ -22,6 +22,17 @@ export const eventDrivers: IEventDrivers = {
     queue: {
         driver: QueueDriver,
         options: new DriverOptions<QueueDriverOptions>({
+            queueName: 'default',
+            retries: 3,
+            collection: 'workers',
+            failedCollection: 'failedWorkers',
+            runAfterSeconds: 10
+        })
+    },
+    queueOther: {
+        driver: QueueDriver,
+        options: new DriverOptions<QueueDriverOptions>({
+            queueName: 'other',
             retries: 3,
             collection: 'workers',
             failedCollection: 'failedWorkers',

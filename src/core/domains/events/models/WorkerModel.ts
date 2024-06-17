@@ -3,6 +3,7 @@ import { ObjectId } from "mongodb";
 
 export interface WorkerModelData {
     _id?: ObjectId,
+    queueName: string;
     eventName: string;
     payload: any;
     attempt: number;
@@ -11,6 +12,7 @@ export interface WorkerModelData {
 }
 
 export const initialWorkerModalData = {
+    queueName: '',
     eventName: '',
     payload: null,
     attempt: 0,
@@ -23,6 +25,7 @@ export default class WorkerModel extends Model<WorkerModelData>
     dates = ['createdAt']
 
     fields = [
+        'queueName',
         'eventName',
         'payload',
         'attempt',
@@ -35,7 +38,7 @@ export default class WorkerModel extends Model<WorkerModelData>
         this.collection = collection; 
     }
 
-    public getPayload(): any | null {
+    public getPayload(): unknown {
         try {
             const payload = this.getAttribute('payload');
             return JSON.parse(payload)

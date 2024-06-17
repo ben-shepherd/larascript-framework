@@ -28,7 +28,6 @@ A TypeScript Node.js framework built with Express and MongoDB.
 - ---
 
 - [[Section 3] - Express Web Server](docs/section-3-express-web-server.md)
-    - [2.1] - Singletons
     - [3.1] - Defining routes
     - [3.2] - Adding another routing file
     - [3.3] - Protected routes

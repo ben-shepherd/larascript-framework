@@ -3,6 +3,7 @@ import { IEvent } from '../interfaces/IEvent';
 import IEventDriver from '../interfaces/IEventDriver';
 
 export type QueueDriverOptions = {
+    queueName: string;
     eventName?: string,
     retries: number,
     collection: string,
@@ -18,9 +19,10 @@ export default class QueueDriver implements IEventDriver
      * @param event
      * @param options 
      */
-    async handle(event: IEvent, options: QueueDriverOptions) {
-
+    async handle(event: IEvent, options: QueueDriverOptions) 
+    {
         const workerModel = (new WorkerModelFactory).create(options.collection, {
+            queueName: options.queueName,
             eventName: event.name,
             payload: JSON.stringify(event.payload),
             retries: options.retries

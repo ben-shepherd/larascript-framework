@@ -18,13 +18,14 @@ import Worker from './core/domains/events/services/Worker';
         ]
     })
 
+    const driver = process.env.QUEUE_DRIVER ?? 'queue';
     const worker = Worker.getInstance()
-    const seconds = worker.options.runAfterSeconds
+    worker.setDriver(driver)
 
-    worker.work()
+    await worker.work()
     
     setInterval(async () => {
         worker.work()
-        console.log('Running worker again in ' + seconds.toString() + ' seconds')
-    }, seconds * 1000)
+        console.log('Running worker again in ' + worker.options.runAfterSeconds.toString() + ' seconds')
+    }, worker.options.runAfterSeconds * 1000)
 })();   
