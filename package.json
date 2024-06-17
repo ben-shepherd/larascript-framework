@@ -2,6 +2,7 @@
   "scripts": {
     "start": "nodemon --watch src --ext ts --exec ts-node ./src/app.ts",
     "worker": "nodemon --watch src --ext ts --exec ts-node ./src/worker.ts",
+    "console": "nodemon --watch src --ext ts --exec ts-node ./src/console.ts",
     "test": "nodemon --watch src --ext ts --exec ts-node ./src/test.ts"
   },
   "dependencies": {

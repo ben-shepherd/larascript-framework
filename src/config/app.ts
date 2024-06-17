@@ -1,3 +1,4 @@
+import TestCommand from '@src/app/commands/TestCommand';
 import AppProvider from '@src/app/providers/AppProvider';
 import EventProvider from '@src/core/domains/events/providers/EventProvider';
 import { EnvironmentType } from '../core/consts/Environment';
@@ -33,6 +34,13 @@ const appConfig: IAppConfig = {
          */
         new AppProvider(),
     ],
+
+    /**
+     * Commands
+     */
+    commands: [
+        TestCommand,
+    ]
 };
 
 export default appConfig;

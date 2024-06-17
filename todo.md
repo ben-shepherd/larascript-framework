@@ -15,3 +15,10 @@
 - Documentation
 - Test suite
 - Retry db connection attempts
+
+
+
+### Commmands TODO
+- We have a way to register commands, we need a command reader that parses the input, executes the appropriate command
+- We want to introduce a new domain called 'make' responsible for making new files
+- A help command to list all possible commands

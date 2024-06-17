@@ -1,3 +1,4 @@
+import ICommandService from '@src/core/domains/console/interfaces/ICommandService';
 import { IMongoDB } from '@src/core/domains/database/mongodb/interfaces/IMongoDB';
 import { IEventDispatcher } from '@src/core/domains/events/interfaces/IEventDispatcher';
 import IExpress from '@src/core/interfaces/http/IExpress';
@@ -39,4 +40,9 @@ export interface ContainersTypeHelpers {
      * Provided by '@src/core/providers/ExpressProvider'
      */
     express: IExpress;
+    /**
+     * Console service
+     * Provided by '@src/core/domains/console/providers/ConsoleProvider'
+     */
+    console: ICommandService
 }
