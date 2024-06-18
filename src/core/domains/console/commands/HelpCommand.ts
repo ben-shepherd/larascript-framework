@@ -1,10 +1,13 @@
-import { ICommand } from "@src/core/domains/console/interfaces/ICommand";
+import BaseCommand from "../base/BaseCommand";
 
-export default class HelpCommand implements ICommand {
+export default class HelpCommand extends BaseCommand {
 
     signature: string = 'help';
-
-    async execute() {
-        console.log('HelpCommand')
+    
+    execute = () => {
+        console.log('HelpCommand', {
+            one: this.getArguementByKey('arg2'),
+            two: this.getArguementByKey('arg1'),
+        } )
     }
 }

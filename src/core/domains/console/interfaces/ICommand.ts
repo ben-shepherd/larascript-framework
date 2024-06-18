@@ -1,7 +1,10 @@
+import { ParsedArgumentsArray } from "../parsers/CommandArgumentParser";
+
 export type ICommandConstructor<Command extends ICommand = ICommand> = new (...args: any[]) => Command
 
 export interface ICommand {
     signature: string;
     description?: string;
-    execute(...args: any[]): Promise<any>
+    setParsedArguments: (parsedArgumenets: ParsedArgumentsArray) => void;
+    execute(...args: any[]): any;
 }

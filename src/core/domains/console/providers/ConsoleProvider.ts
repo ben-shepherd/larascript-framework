@@ -1,9 +1,9 @@
 import appConfig from "@src/config/app";
 import BaseProvider from "@src/core/base/Provider";
 import { App } from "@src/core/services/App";
-import CommandRegister from "../CommandRegister";
 import HelpCommand from "../commands/HelpCommand";
-import CommandService from "../service/CommandService";
+import CommandRegister from "../service/CommandRegister";
+import ConsoleService from "../service/ConsoleService";
 
 export default class ConsoleProvider extends BaseProvider
 {
@@ -11,31 +11,29 @@ export default class ConsoleProvider extends BaseProvider
     {
         console.log('Registering ConsoleProvider')
 
-        App.setContainer('console', new CommandService())
-    }
-
-    async boot(): Promise<void> 
-    {
-        console.log('Booting ConsoleProvider')
-
-        const register = CommandRegister.getInstance()
+        const cnsl = new ConsoleService();
+        const register = cnsl.register()
 
         /**
          * Register system provided commands
          */
-        register.registerAll(
-            CommandRegister.buildRegisterParams([
-                HelpCommand
-            ])
-        )
+        register.registerAll([
+            HelpCommand
+        ])
 
         /**
          * Register commands from @src/config/app
          */
-        register.registerAll(
-            CommandRegister.buildRegisterParams(appConfig.commands)
-        )
+        register.registerAll(appConfig.commands)
 
+        /**
+         * Add the console service to the container
+         */
+        App.setContainer('console', cnsl)
+    }
+
+    async boot(): Promise<void> 
+    {
         console.log('[ConsoleProvider]: Registered commands', CommandRegister.getInstance().getRegistered())
     }
 
