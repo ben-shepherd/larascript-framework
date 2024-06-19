@@ -49,5 +49,5 @@ constructor(collectionName: string, modelConstructor: ModelConstructor<Model>)
 The `Repository` base class accepts a type parameter of your Model class. This is for the purpose of making TypeScript aware of the type of Model and provide type hinting when interacting with the repository.
 
 ```ts
-interface IRepository<Model extends IModel>
+class Repository<Model extends IModel> implements IRepository<Model>
 ```

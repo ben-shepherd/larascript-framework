@@ -36,7 +36,7 @@ export default class Movie extends Model<MovieData> {
 
 ---
 
-#### Properties
+### [6.1] Properties 
 
 **connection**
 
@@ -64,7 +64,7 @@ The timestamps boolean allows you to toggle on or off the automatic setting of `
 
 ---
 
-#### Methods
+### [6.2] Methods
 
 Set an attribute on your model
 
@@ -117,7 +117,7 @@ console.log(movieData)
 
 ```
 
-### CRUD Operations
+### [6.3] CRUD Operations
 
 Save the model 
 
@@ -142,7 +142,8 @@ Delete the record
 delete(): Promise<void>
 ```
 
-### Relationships
+### [6.4] Relationships
+
 
 **BelongsTo**
 
