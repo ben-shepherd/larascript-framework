@@ -1,7 +1,9 @@
 import { Db, ObjectId } from 'mongodb';
 
+
 import BelongsTo from '../domains/database/mongodb/relationships/BelongsTo';
 import HasMany from '../domains/database/mongodb/relationships/HasMany';
+import HasOne from '../domains/database/mongodb/relationships/HasOne';
 import MongoDB from '../domains/database/mongodb/services/MongoDB';
 import IData from '../interfaces/IData';
 import { Dates, GetDataOptions, IModel, ModelConstructor } from '../interfaces/IModel';
@@ -191,10 +193,8 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
      * @return {Promise<ForeignModel | null>} A Promise that resolves to the related foreign model instance, or null if no related model is found.
      */
     async belongsTo<
-        LocalData extends BaseModelData,
-        LocalModel extends Model<LocalData>,
-        ForeignData extends BaseModelData,
-        ForeignModel extends Model<ForeignData>
+        LocalData extends BaseModelData, LocalModel extends Model<LocalData>,
+        ForeignData extends BaseModelData, ForeignModel extends Model<ForeignData>
     > (
         model: LocalModel,
         localKey: keyof LocalData,
@@ -217,7 +217,7 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
     }
 
     /**
-     * Asynchronously retrieves a related model instances based on the provided local model, local key, foreign model constructor, and foreign key.
+     * Asynchronously retrieves an array of related model instances based on the provided local model, local key, foreign model constructor, and foreign key.
      *
      * @param {LocalModel} model - The local model instance.
      * @param {keyof LocalData} localKey - The key of the local model's attribute used to establish the relationship.
@@ -227,10 +227,8 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
      * @return {Promise<ForeignModel | null>} A Promise that resolves to the related foreign model instance, or null if no related model is found.
      */
     async hasMany<
-        LocalData extends BaseModelData,
-        LocalModel extends Model<LocalData>,
-        ForeignData extends BaseModelData,
-        ForeignModel extends Model<ForeignData>
+        LocalData extends BaseModelData, LocalModel extends Model<LocalData>,
+        ForeignData extends BaseModelData, ForeignModel extends Model<ForeignData>
     > (
         model: LocalModel,
         localKey: keyof LocalData,
@@ -250,6 +248,40 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
         if(!results) return []
 
         return results.map((result) => new foreignModelCtor(result))
+    }
+
+    /**
+     * Asynchronously retrieves a related model instance based on the provided local model, local key, foreign model constructor, and foreign key.
+     *
+     * @param {LocalModel} model - The local model instance.
+     * @param {keyof LocalData} localKey - The key of the local model's attribute used to establish the relationship.
+     * @param {new (...any: any[]) => ForeignModel} foreignModelCtor - The constructor function for the foreign model.
+     * @param {keyof ForeignData} foreignKey - The key of the foreign model's attribute used to establish the relationship.
+     * @param {object} foreignKey - Optional filter
+     * @return {Promise<ForeignModel | null>} A Promise that resolves to the related foreign model instance, or null if no related model is found.
+     */
+    async hasOne<
+        LocalData extends BaseModelData, LocalModel extends Model<LocalData>,
+        ForeignData extends BaseModelData, ForeignModel extends Model<ForeignData>
+    > (
+        model: LocalModel,
+        localKey: keyof LocalData,
+        foreignModelCtor: ModelConstructor<ForeignModel>,
+        foreignKey: keyof ForeignData,
+        filters: object = {}
+    ): Promise<ForeignModel | null> 
+    {
+        const document = await new HasOne<LocalData, LocalModel, ForeignData>().handle(
+            model,
+            new foreignModelCtor().collection,
+            foreignKey,
+            localKey,
+            filters
+        )
+
+        if(!document) return null
+
+        return new foreignModelCtor(document)
     }
 
     /**

@@ -18,6 +18,7 @@ export interface IModel {
     getAttribute(key: string): any;
     getData(options: GetDataOptions): object | null;
     refresh(): Promise<IData | null>;
+    update(): Promise<void>;
     save(): Promise<void>;
     delete(): Promise<void>;
 }

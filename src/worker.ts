@@ -20,6 +20,7 @@ import Worker from './core/domains/events/services/Worker';
 
     const driver = process.env.QUEUE_DRIVER ?? 'queue';
     const worker = Worker.getInstance()
+    
     worker.setDriver(driver)
 
     await worker.work()

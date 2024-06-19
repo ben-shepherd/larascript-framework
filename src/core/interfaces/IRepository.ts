@@ -3,7 +3,7 @@ import { IModel, ModelConstructor } from "./IModel";
 
 export type RepositoryConstructor<
     Model extends IModel,
-    Repository extends IRepository<Model>
+    Repository extends IRepository<Model> = IRepository<Model>
 > = new (collectionName?: string, modelCtor?: ModelConstructor) => Repository;
 
 export interface IRepository<Model extends IModel> {

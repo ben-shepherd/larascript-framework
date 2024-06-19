@@ -51,19 +51,27 @@ A TypeScript Node.js framework built with Express and MongoDB.
 
 ---
 
-- [[Section 6] - Repositories](docs/section-6-repositories.md)
-    - [6.1] - Models
+- [[Section 7] - Models](docs/section-6-models.md)
 
 ---
 
-- [[Section 7] - Events](docs/section-7-events.md)
+- [[Section 7] - Repositories](docs/section-7-repositories.md)
+
+---
+
+- [[Section 7] - Events](docs/section-8-events.md)
     - [7.1] - Creating an event
     - [7.2] - Add event listeners
     - [7.3] - Dispatching events
+    - [7.4] - Workers
 
 ---
 
-- [[Section 8] - Observers](docs/section-8-observers.md)
+- [[Section 8] - Observers](docs/section-9-observers.md)
     - [8.1] - Creating an observer
     - [8.2] - Model Observers
     - [8.3] - Custom Observers
+
+---
+
+- [[Section 8] - Console commands](docs/section-10-console.md)
