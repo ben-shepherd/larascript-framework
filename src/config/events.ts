@@ -1,19 +1,24 @@
 import { ExampleListener } from "@src/app/events/listeners/ExampleListener";
 import QueueDriver, { QueueDriverOptions } from "@src/core/domains/events/drivers/QueueDriver";
 import SynchronousDriver from "@src/core/domains/events/drivers/SynchronousDriver";
-import { IEventConfig, IEventDrivers, IEventWatcher } from "@src/core/domains/events/interfaces/IEventConfig";
+import { IEventDrivers, ISubscribers } from "@src/core/domains/events/interfaces/IEventConfig";
 import DriverOptions from "@src/core/domains/events/services/QueueDriverOptions";
+
+/**
+ * The default event driver will be used when no driver is defined in the Event
+ */
+export const defaultEventDriver: string = process.env.APP_EVENT_DRIVER ?? 'sync';
 
 /**
  * Event Drivers
  * 
- * Example:
- *      const eventDrivers: IEventDrivers = {
- *          [key: string]: {
- *              driver: [class extends IEventDriver],
- *              options?: new DriverOptions({ retries: 3 })
+ *      Example:
+ *          const eventDrivers: IEventDrivers = {
+ *              [key: string]: {
+ *                  driver: [class extends IEventDriver],
+ *                  options?: new DriverOptions({ retries: 3 })
+ *              }
  *          }
- *      }
  */
 export const eventDrivers: IEventDrivers = {
     sync: {
@@ -43,45 +48,20 @@ export const eventDrivers: IEventDrivers = {
  } as const;
 
 /**
- * Event watchers
+ * Event Subscribers
  * 
  *      Key: Name of the event 
  *      value: Array<Listener>
  * 
  *      Example:
- *      const eventWatchers: IEventWatcher = {
- *         'OnExample': [
- *           ExampleListener
- *         ]   
- *      }
+ *        const eventSubscribers: ISubscribers = {
+ *             'OnExample': [
+ *               ExampleListener
+ *          ]   
+ *        }
  */
-export const eventWatchers: IEventWatcher = {
+export const eventSubscribers: ISubscribers = {
     'OnExample': [
         ExampleListener
     ]   
 }
-
-/**
- * Event config
- */
-const eventsConfig: IEventConfig<typeof eventDrivers, typeof eventWatchers> = {
-
-    /**
-     * Default Driver
-     */
-    defaultDriver: 'sync',
-
-    /**
-     * Event Drivers
-     */
-    drivers: eventDrivers,
-
-    /**
-     * Watch events
-     *      [key]: [class extends EventListener]
-     */
-    eventWatcher: eventWatchers
-
-} as const;
-
-export default eventsConfig;

@@ -64,10 +64,11 @@ A TypeScript Node.js framework built with Express and MongoDB.
 ---
 
 - [[Section 8] - Events](docs/section-8-events.md)
-    - [8.1] - Creating an event
-    - [8.2] - Add event listeners
-    - [8.3] - Dispatching events
-    - [8.4] - Workers
+    - [8.1] - Configuration
+    - [8.2] - Subscribers and listeners
+    - [8.3] - Event Drivers
+    - [8.4] - Worker
+    - [8.5] - Creating your own Event Driver
 
 ---
 

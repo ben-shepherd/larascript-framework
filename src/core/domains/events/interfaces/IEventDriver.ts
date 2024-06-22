@@ -1,7 +1,7 @@
 import { IEvent } from "./IEvent";
 import { IEventPayload } from "./IEventPayload";
 
-export type IEventDriverConstructor<
+export type IDriverConstructor<
 Payload extends IEventPayload = IEventPayload,
 Options extends object = object,
 Driver extends IEventDriver = IEventDriver<Payload, Options>

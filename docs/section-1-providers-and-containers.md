@@ -116,7 +116,7 @@ Using `App`, you can retrieve the contents of a container.
 **Example**
 
 ```ts
-    const weatherInstance = App.container('weather');
+const weatherInstance = App.container('weather');
 
 weatherInstance.getRegion() // United Kingdom
 weatherInstance.getTemperature() // Cold!

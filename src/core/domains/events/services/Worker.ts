@@ -8,7 +8,7 @@ import EventDriverException from "../exceptions/EventDriverException";
 import FailedWorkerModelFactory from "../factory/failedWorkerModelFactory";
 import { IEventPayload } from "../interfaces/IEventPayload";
 import WorkerModel from "../models/WorkerModel";
-import Event from "./Event";
+import EventSubscriber from "./EventSubscriber";
 import DriverOptions from "./QueueDriverOptions";
 
 export default class Worker extends Singleton 
@@ -113,10 +113,10 @@ export default class Worker extends Singleton
         const payload = model.getPayload() as IEventPayload
 
         // Use the sync driver
-        const event = new Event(eventName as string, this.syncDriver, payload)
+        const event = new EventSubscriber(eventName as string, this.syncDriver, payload)
 
         // Dispatch the event
-        await App.container('events').dispatch(event)
+        App.container('events').dispatch(event)
 
         // Delete record as it was a success
         await this.deleteModel(model)

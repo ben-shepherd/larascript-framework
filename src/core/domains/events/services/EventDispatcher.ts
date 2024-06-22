@@ -1,11 +1,12 @@
-import eventsConfig from "@src/config/events";
+import { App } from "@src/core/services/App";
 import Singleton from "../../../base/Singleton";
 import { IEvent } from "../interfaces/IEvent";
-import { IEventDriverOptions } from "../interfaces/IEventConfig";
+import { IDriverConfig } from "../interfaces/IEventConfig";
 import { IEventDispatcher } from "../interfaces/IEventDispatcher";
 import { IEventPayload } from "../interfaces/IEventPayload";
 
-export default class EventDispatcher extends Singleton<typeof eventsConfig> implements IEventDispatcher {
+
+export default class EventDispatcher extends Singleton implements IEventDispatcher {
 
     /**
      * Handle the dispatched event
@@ -27,9 +28,9 @@ export default class EventDispatcher extends Singleton<typeof eventsConfig> impl
      * @param IEvent event
      * @returns 
      */
-    protected getDriverOptionsFromEvent(event: IEvent): IEventDriverOptions
+    protected getDriverOptionsFromEvent(event: IEvent): IDriverConfig
     {
-        const driver = eventsConfig.drivers[event.driver]
+        const driver = App.container('events').config.drivers[event.driver]
 
         if(!driver) {
             throw new Error('Driver not found \'' + event.driver + '\'')

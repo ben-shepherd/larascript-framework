@@ -1,6 +1,6 @@
 import ICommandService from '@src/core/domains/console/interfaces/ICommandService';
 import { IMongoDB } from '@src/core/domains/database/mongodb/interfaces/IMongoDB';
-import { IEventDispatcher } from '@src/core/domains/events/interfaces/IEventDispatcher';
+import { IEventService } from '@src/core/domains/events/interfaces/IEventService';
 import IExpress from '@src/core/interfaces/http/IExpress';
 import { AuthConfigTypeHelpers } from './auth/auth';
 
@@ -24,7 +24,7 @@ export interface ContainersTypeHelpers {
      * Event Dispatcher Service
      * Provided by '@src/core/providers/EventProvider'
      */
-    events: IEventDispatcher;
+    events: IEventService;
     /**
      * Auth service
      * Provided by '@src/core/providers/AuthProvider'
