@@ -1,10 +1,8 @@
 ## [Section 3] - Express Web Server
 
-The express app is set up automatically for you in the following providers:
+The express app is set up automatically for you in the following provider:
 
 `@src\core\providers\ExpressProvider.ts`
-
-`@src\core\providers\ExpressListenerProvider.ts`
 
 The express app can be accessed by can calling the container express
 
@@ -51,9 +49,7 @@ export default routes
 - Import your new routes
 
 ```ts
-import weatherRoutes
-
-'@src/app/routes/weather'
+import weatherRoutes from '@src/app/routes/weather'
 ```
 
 You can use the `App.container('express')` module to bind them to Express. *(References `@src/core/services/Express`)*
@@ -64,9 +60,7 @@ Add your routing file
 import {App} from '@src/core/services/App';
 import BaseProvider from '@src/core/base/Provider';
 import {IAuthConfig} from '@src/core/interfaces/IAuthConfig';
-import weatherRoutes
-
-'@src/app/routes/weather';
+import weatherRoutes from '@src/app/routes/weather';
 
 export default class AppRouteProvider extends BaseProvider {
 

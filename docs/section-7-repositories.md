@@ -16,7 +16,7 @@ import Repository from "@src/core/base/Repository";
 export default class MovieRepository extends Repository<MovieModel>
 {
     constructor() {
-        super('movies', Movie)
+        super('movies', MovieModel)
     }
 
     findByAuthor(author: string) {

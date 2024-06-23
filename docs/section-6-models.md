@@ -101,7 +101,6 @@ getData(options: GetDataOptions): Data | null
 Example
 
 ```ts
-
 const movie = await (new Repository<Movie>('movies', Movie)).findOne({ author: 'Christopher Nolan' })
 
 const movieData = movie.getData({ exlcudeGuarded: true })
@@ -137,6 +136,8 @@ update(): Promise<void>
 ```
 
 Delete the record
+
+*No action will happen if there is no `_id` in the document.*
 
 ```ts
 delete(): Promise<void>

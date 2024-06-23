@@ -2,7 +2,9 @@
 
 ### [1.1] - Registering a provider
 
-Providers are used to boot up your application by initializing configurable services
+Providers are what's used to launch and configure your services while it is in boot up.
+
+A config file path can be provided which is automatically parsed and bound to the Provider.
 
 **Example** Register a new provider
 
@@ -12,6 +14,7 @@ We will create a new provider in `@src/app/providers/WeatherProvider.ts`
 import BaseProvider from "@src/core/base/Provider";
 import Weather from '@src/app/services/Weather'; // @ref [Section 2] - Services
 
+// Type hint our config shape
 interface WeatherConfig {
     region: 'United Kingdom'
 }
@@ -46,13 +49,16 @@ export default class WeatherProvider extends BaseProvider {
 Notice how we've created a new interface for `WeatherConfig`, this provides type hinting when
 accessing `this.config.region; // Outputs 'United Kingdom'`
 
-We will need to add a config file in `@src/config/weather.ts` and import the `WeatherConfig` interface
+We will need to add a config file in `@src/config/weather.ts` and import the `WeatherConfig` interface.
+
+Typing hinting your config will provide strict data types which will prevent bugs further down the line.
+
 
 ```ts
 import WeatherConfig from '@src/app/providers/WeatherProvider'
 
 const config: WeatherConfig = {
-    region: 'United Kingdom'
+    region: process.env.REGION ?? 'United Kingdom'
 };
 
 export default config
@@ -72,10 +78,11 @@ whether it's an object, a single number or an instance of a class.
 ```ts
 import {App} from '@src/core/services/App'
 ```
+```ts
+App.setContainer(container: string, data:any): void
 
-`App.setContainer(container: string, data:any): void`
-
-`App.container(name:string): any`
+App.container(name:string): any
+```
 
 ### [Section 1.4] - Setting up a new container
 
@@ -92,7 +99,7 @@ import Weather from '@src/app/services/Weather';
 App.container('weather', new Weather())
 ```
 
-*(Optional)* You may provide your application with type hinting by updating the interface defined in `@src/containers`
+*(Optional)* You may provide your application with type hinting by updating the `ContainersTypeHelpers` interface defined in `@src/containers`
 
 **Example**
 

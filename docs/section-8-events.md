@@ -12,6 +12,10 @@ Here is where you can define your event subscribers and listeners, as well as de
 
 A typical subscriber has an `eventName`, a `driver` and a `payload`. 
 
+**Subscriber Example**
+
+`@src/app/events/subscribers/ExampleSubscriber.ts`
+
 ```ts
 import EventSubscriber from "@src/core/domains/events/services/Event";
 
@@ -26,6 +30,21 @@ export default class ExampleSubscriber extends EventSubscriber<Payload> {
         const driver = 'queue';
 
         super(eventName, driver, payload)
+    }
+}
+```
+
+**Listener Example**
+
+`@src/app/events/listeners/ExampleListener.ts`
+
+```ts
+import EventListener from "@src/core/domains/events/services/EventListener";
+ 
+export class ExampleListener extends EventListener<{userId: string}> {
+    
+    handle = async (payload: { userId: string}) => {
+        console.log('[ExampleListener]', payload.userId)
     }
 }
 ```
