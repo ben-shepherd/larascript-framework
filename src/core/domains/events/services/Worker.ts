@@ -40,13 +40,14 @@ export default class Worker extends Singleton
         const worker = Worker.getInstance();
         let model: WorkerModel; 
 
-        
-        // Fetch the current list of workers
-        const workerResults: WorkerModel[] = await worker.getWorkerReslts(this.options.queueName)
+        // Fetch the current list of queued results
+        const workerResults: WorkerModel[] = await worker.getWorkerResults(this.options.queueName)
     
         this.log(`${workerResults.length} queued items with queue name '${this.options.queueName}'`)
     
         for(const workerModel of workerResults) {
+            // We set the model here to pass it to the failedWorkerModel method,
+            // but allowing the worker to continue processing
             model = workerModel
 
             try {
@@ -79,7 +80,7 @@ export default class Worker extends Singleton
      * Get the worker results from oldest to newest
      * @returns 
      */
-    async getWorkerReslts(queueName: string) {
+    async getWorkerResults(queueName: string) {
         const workerRepository = new Repository<WorkerModel>(this.options.collection, WorkerModel)
 
         return await workerRepository.findMany({
