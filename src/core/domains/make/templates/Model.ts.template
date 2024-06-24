@@ -1,0 +1,18 @@
+
+import Model from '@src/core/base/Model';
+import { ObjectId } from 'mongodb';
+
+interface #name#Data {
+    _id: ObjectId;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export default class #name# extends Model<#name#Data> {
+
+    public collection: string = '#collection#';
+
+    fields: string[] = [
+        ...this.fields,
+    ]
+}

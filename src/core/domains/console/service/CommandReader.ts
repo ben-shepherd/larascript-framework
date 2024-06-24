@@ -15,6 +15,7 @@ export default class CommandReader implements ICommandReader {
      * @param argv 
      */
     constructor(argv: string[]) {
+        console.log('[CommandReader:ctor]', argv)
         this.argv = argv;   
     }
 

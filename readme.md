@@ -3,7 +3,7 @@
 
 A TypeScript Node.js framework built with Express and MongoDB.
 
-- Express & Routing
+- Express & Routing 
 - Authentication (JWTs)
 - MongoDB
 - Models
