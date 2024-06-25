@@ -1,48 +1,65 @@
 import CommandExecutionException from "../../console/exceptions/CommandExecutionException";
-import BaseMakeCommand, { targetDirectories } from "./BaseMakeCommand";
+import BaseMakeCommand from "./BaseMakeCommand";
 
 export default class GenericMakeFileCommand extends BaseMakeCommand
 {
+    protected args!: string[];
+
     /**
      * Allows generic usage of creating a make file command
      * @param signature Example: make:model
      * @param description Example: Create a new model
      * @param key Example: Model
      */
-    constructor(signature: string, description: string, key: string) {
+    constructor(signature: string, description: string, key: string, args: string[] = []) {
         super()
         this.signature = signature;
         this.description = description;
         this.key = key;
+        this.args = args;
     }
 
     /**
-     * Handle the command
+     * Base logic for making a new file
      */
-    execute = async () =>
+    public execute = async () => 
     {
-        const name = this.getArguementByKey('name')?.value;
+        const template = await this.getTemplateWithInjectedArguments();
+        const name = this.getArguementByKey('name')?.value;   
 
         if(!name) {
             throw new CommandExecutionException('--name argument not specified');
         }
 
-        if(this.existsInTargetDirectory(this.key, name)) {
-            throw new CommandExecutionException(`The ${this.key} for '${name}' already exists`);
-        }
+        this.writeContent(this.key, name, template);
 
-        const collection = this.getArguementByKey('collection')?.value;
+        console.log(`Created ${this.key} as ${name}`);
+    }
+    
+    /**
+     * Get template contents with injected argument values
+     */
+    getTemplateWithInjectedArguments = async (): Promise<string> =>
+    {
+        for(const arg of this.args) {
+            const value = this.getArguementByKey(arg)?.value;
 
-        if(!collection) {
-            throw new CommandExecutionException('--collection argument not specified');
+            if(!value) {
+                throw new CommandExecutionException(`--${arg} argument not specified`);
+            }
         }
 
         let contents = (await this.getContents(this.key))
-        contents = contents.replace(/#name#/g, name)
-        contents = contents.replace(/#collection#/g, collection);
 
-        this.writeContent(this.key, name, contents);
+        for(const arg of this.args) {
+            const value = this.getArguementByKey(arg)?.value as string;
+            const pattern = new RegExp('#' + arg + '#', 'g');
 
-        console.log(`${this.key} '${name}' created successfully in '${targetDirectories[this.key]}'`)
+            contents = contents.replace(pattern, value);
+        }
+
+        return contents
     }
+
+
 }

@@ -1,12 +1,13 @@
 import CommandExecutionException from "../exceptions/CommandExecutionException";
 import { ICommand } from "../interfaces/ICommand";
-import { KeyPairArguementType, OnlyArguement, ParsedArguement, ParsedArgumentsArray } from "../parsers/CommandArgumentParser";
+import { KeyPair, KeyPairArguementType, OnlyArguement, ParsedArguement, ParsedArgumentsArray } from "../parsers/CommandArgumentParser";
 
 export default class BaseCommand implements ICommand {
     public signature!: string;
     public description?: string;
     public execute!: (...args: any[]) => any;
     protected parsedArgumenets: ParsedArgumentsArray = [];
+    protected overwriteArgs: Record<string, string> = {};
 
     /**
      * Set the parsed arguements
@@ -41,6 +42,14 @@ export default class BaseCommand implements ICommand {
      * @returns 
      */
     getArguementByKey = (key: string): KeyPairArguementType | null => {
+        if(this.overwriteArgs[key]) {
+            return {
+                type: KeyPair,
+                key,
+                value: this.overwriteArgs[key]
+            }
+        }
+        
         return this.parsedArgumenets.find((arguement) => {
 
             // We can ignore any arguements that are missing a key.
@@ -50,5 +59,14 @@ export default class BaseCommand implements ICommand {
 
             return arguement.key === key
         }) as KeyPairArguementType ?? null
+    }
+
+    /**
+     * 
+     * @param key 
+     * @param value 
+     */
+    setOverwriteArg(key: string, value: string) {
+        this.overwriteArgs[key] = value
     }
 }

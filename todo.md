@@ -2,7 +2,12 @@
 - Make production ready commands
 
 ### Future ideas
-- Add "make" commands to help with making Models, Repositories, Events, Listeners etc
+- Add "make" commands
+-- events subscribers, listeners
+-- providers
+-- routes
+-- commands
+
 - Test suite
 - Retry db connection attempts
 - Views (Look into express-handlebars

@@ -1,0 +1,15 @@
+import EventSubscriber from "@src/core/domains/events/services/EventSubscriber";
+
+export type Payload = {
+
+}
+
+export default class #name#Subscriber extends EventSubscriber<Payload> {
+    
+    constructor(payload: Payload) {
+        const eventName = '#name#'
+        const driver = 'snyc';
+
+        super(eventName, driver, payload)
+    }
+}

@@ -5,11 +5,15 @@ import BaseCommand from "../../console/base/BaseCommand";
 export const targetDirectories: Record<string,string> = {
     Repository: '@src/app/repositories',
     Model: '@src/app/models',
+    Listener: '@src/app/events/listeners',
+    Subscriber: '@src/app/events/subscribers',
 } as const;
 
 export const templates: Record<string, string> = {
     Repository: '@src/core/domains/make/templates/Repository.ts.template',
     Model: '@src/core/domains/make/templates/Model.ts.template',
+    Listener: '@src/core/domains/make/templates/Listener.ts.template',
+    Subscriber: '@src/core/domains/make/templates/Subscriber.ts.template',
 } as const;
 
 export default abstract class BaseMakeCommand extends BaseCommand
@@ -97,4 +101,5 @@ export default abstract class BaseMakeCommand extends BaseCommand
     makeFutureFilename(templateName: string, name: string, ext: string = '.ts'): string {
         return `${name}${templateName}${ext}`;
     }
+
 }

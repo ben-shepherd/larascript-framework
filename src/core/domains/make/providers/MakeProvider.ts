@@ -1,7 +1,9 @@
 import BaseProvider from "@src/core/base/Provider";
 import { App } from "@src/core/services/App";
+import MakeListenerCommand from "../commands/MakeListenerCommand";
 import MakeModelCommand from "../commands/MakeModelCommand";
 import MakeRepositoryCommand from "../commands/MakeRepositoryCommand";
+import MakeSubscriberCommand from "../commands/MakeSubscriberCommand";
 
 export default class MakeProvider extends BaseProvider
 {
@@ -11,7 +13,9 @@ export default class MakeProvider extends BaseProvider
 
         App.container('console').register().registerAll([
             MakeModelCommand,
-            MakeRepositoryCommand
+            MakeRepositoryCommand,
+            MakeListenerCommand,
+            MakeSubscriberCommand
         ])
     }
 
