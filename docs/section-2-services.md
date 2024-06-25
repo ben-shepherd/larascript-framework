@@ -2,6 +2,11 @@
 
 Your own services can utilise the in built `@src/core/base/Service` or `@src/core/base/Singleton` modules
 
+You can also run the following commands to automatically create these files for you:
+
+    npm run console -- make:service --name=MyService
+    npm run console -- make:singleton --name=MySingleton
+
 **Constructor Signature**
 
 Services can be provided optional config.
@@ -14,7 +19,7 @@ It is recommended to register your services in a provider and use container meth
 
 **Example** Creating a new Service
 
-We will create a new file in `@src/app/services/Weather.ts`
+We will create a new file here: `@src/app/services/Weather.ts`
 
 ```ts
 import Service from "@src/core/base/Service";

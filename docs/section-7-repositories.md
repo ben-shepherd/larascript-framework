@@ -6,9 +6,14 @@ Making use of this pattern makes your code easier to read, predictable and ensur
 
 Aditionally, repositories query methods return an instance of your model, giving you access to your custom methods, methods to perform CRUD operations and a way to set and retrieve your data using the methods provided.
 
+
 ### Example
 
-`@src/app/repositories/MovieRepository.ts`
+You can run the following command to automatically create the Repository for you:
+
+    npm run console -- make:repository --name=MovieRepository
+
+We will create our file here: `@src/app/repositories/MovieRepository.ts`
 ```ts
 import MovieModel from "@src/app/models/Movie";
 import Repository from "@src/core/base/Repository";

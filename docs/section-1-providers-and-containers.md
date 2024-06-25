@@ -1,14 +1,16 @@
 ## [Section 1] - Providers & Containers
 
-### [1.1] - Registering a provider
-
 Providers are what's used to launch and configure your services while it is in boot up.
 
 A config file path can be provided which is automatically parsed and bound to the Provider.
 
+### [1.1] - Registering a provider
+
 **Example** Register a new provider
 
 We will create a new provider in `@src/app/providers/WeatherProvider.ts`
+
+You can also run `npm run console -- make:provider --name=WeatherProvider` to automatically create the file.
 
 ```ts
 import BaseProvider from "@src/core/base/Provider";

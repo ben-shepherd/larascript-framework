@@ -11,6 +11,7 @@ export const targetDirectories: Record<string,string> = {
     Singleton: '@src/app/services',
     Command: '@src/app/commands',
     Observer: '@src/app/observers',
+    Provider: '@src/app/providers',
 } as const;
 
 export const templates: Record<string, string> = {
@@ -22,6 +23,7 @@ export const templates: Record<string, string> = {
     Singleton: '@src/core/domains/make/templates/Singleton.ts.template',
     Command: '@src/core/domains/make/templates/Command.ts.template',
     Observer: '@src/core/domains/make/templates/Observer.ts.template',
+    Provider: '@src/core/domains/make/templates/Provider.ts.template',
 } as const;
 
 export default abstract class BaseMakeCommand extends BaseCommand

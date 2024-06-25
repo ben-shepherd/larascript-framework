@@ -69,7 +69,6 @@ A TypeScript Node.js framework built with Express and MongoDB.
     - [8.2] - Subscribers and listeners
     - [8.3] - Event Drivers
     - [8.4] - Worker
-    - [8.5] - Creating your own Event Driver
 
 ---
 

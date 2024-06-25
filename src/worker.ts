@@ -18,7 +18,7 @@ import Worker from './core/domains/events/services/Worker';
         ]
     })
 
-    const driver = process.env.QUEUE_DRIVER ?? 'queue';
+    const driver = process.env.APP_WORKER_DRIVER ?? 'queue';
     const worker = Worker.getInstance()
     
     worker.setDriver(driver)

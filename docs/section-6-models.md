@@ -4,6 +4,12 @@ Models are essential components in your application and provide a standard way o
 
 ### Example
 
+You can run the following command to make a model file automatically:
+
+    npm run console -- make:model --name=Movie
+
+We will create our model file here: 
+`@src/app/models/MovieModel.ts`
 ```ts
 import Model from '@src/core/base/Model';
 import { ObjectId } from 'mongodb';

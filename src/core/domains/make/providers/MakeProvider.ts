@@ -4,6 +4,7 @@ import MakeCmdCommand from "../commands/MakeCmdCommand";
 import MakeListenerCommand from "../commands/MakeListenerCommand";
 import MakeModelCommand from "../commands/MakeModelCommand";
 import MakeObserverCommand from "../commands/MakeObserverCommand";
+import MakeProviderCommand from "../commands/MakeProviderCommand";
 import MakeRepositoryCommand from "../commands/MakeRepositoryCommand";
 import MakeServiceCommand from "../commands/MakeServiceCommand";
 import MakeSingletonCommand from "../commands/MakeSingletonCommand";
@@ -23,7 +24,8 @@ export default class MakeProvider extends BaseProvider
             MakeRepositoryCommand,
             MakeServiceCommand,
             MakeSingletonCommand,
-            MakeSubscriberCommand
+            MakeSubscriberCommand,
+            MakeProviderCommand
         ])
     }
 

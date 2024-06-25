@@ -1,6 +1,6 @@
 ## [Section 8] - Events
 
-Events provde you the ability to subscribe to certain events and have the listeners perform the work in a seperate location, depending on the driver for that Event.
+Events provide you the ability to subscribe to certain events and have the listeners perform the work in a seperate location, depending on the driver for that Event.
 
 ### [8.1] - Configuration
 
@@ -14,7 +14,11 @@ A typical subscriber has an `eventName`, a `driver` and a `payload`.
 
 **Subscriber Example**
 
-`@src/app/events/subscribers/ExampleSubscriber.ts`
+You can also run the following to automatically create a Subscriber file for you:
+
+    npm run console -- make:subscriber --name=ExampleSubscriber
+
+We will create our file here: `@src/app/events/subscribers/ExampleSubscriber.ts`
 
 ```ts
 import EventSubscriber from "@src/core/domains/events/services/Event";
@@ -36,7 +40,11 @@ export default class ExampleSubscriber extends EventSubscriber<Payload> {
 
 **Listener Example**
 
-`@src/app/events/listeners/ExampleListener.ts`
+You can also run the following to automatically create a Subscriber file for you:
+
+    npm run console -- make:listener --name=ExampleSubscriber
+
+We will create our file here: `@src/app/events/listeners/ExampleListener.ts`
 
 ```ts
 import EventListener from "@src/core/domains/events/services/EventListener";
@@ -137,8 +145,14 @@ export const eventDrivers: IEventDrivers = {
 
 ### [8.4] - Worker
 
-(placeholder)
+A worker is a seperate process that processes your queued events. These workers can process different items based on the queue name. 
 
-### [8.5] - Creating your own Event Driver
+Configuring a queue name is as simple as creating a new event driver in `@src/config/events.ts` and changing the `queueName` property.
 
-(placeholder)
+Then in your environment changing `APP_WORKER_DRIVER` to the desired driver which will only process those queued items when the worker is running.
+ 
+This will allow you to have multiple processes of the worker in seperate environments to split out resources used for processing.
+
+#### Running the worker
+
+    npm run worker

@@ -1,0 +1,22 @@
+import BaseProvider from "@src/core/base/Provider";
+
+export interface #name#Config {}
+
+export default class #name# extends BaseProvider
+{
+    protected config!: #name#Config;
+    configPath = '@config/#name#';
+
+    constructor() {
+        super()
+        this.init()
+    }
+
+    public async register(): Promise<void> {
+        this.log('Registering #name#');
+    }
+
+    public async boot(): Promise<void> {
+        this.log('Booting #name#');
+    }
+}
