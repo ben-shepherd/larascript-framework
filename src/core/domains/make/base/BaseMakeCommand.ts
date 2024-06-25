@@ -7,6 +7,10 @@ export const targetDirectories: Record<string,string> = {
     Model: '@src/app/models',
     Listener: '@src/app/events/listeners',
     Subscriber: '@src/app/events/subscribers',
+    Service: '@src/app/services',
+    Singleton: '@src/app/services',
+    Command: '@src/app/commands',
+    Observer: '@src/app/observers',
 } as const;
 
 export const templates: Record<string, string> = {
@@ -14,6 +18,10 @@ export const templates: Record<string, string> = {
     Model: '@src/core/domains/make/templates/Model.ts.template',
     Listener: '@src/core/domains/make/templates/Listener.ts.template',
     Subscriber: '@src/core/domains/make/templates/Subscriber.ts.template',
+    Service: '@src/core/domains/make/templates/Service.ts.template',
+    Singleton: '@src/core/domains/make/templates/Singleton.ts.template',
+    Command: '@src/core/domains/make/templates/Command.ts.template',
+    Observer: '@src/core/domains/make/templates/Observer.ts.template',
 } as const;
 
 export default abstract class BaseMakeCommand extends BaseCommand
@@ -33,18 +41,18 @@ export default abstract class BaseMakeCommand extends BaseCommand
     {
         const filePath = targetDirectories[key]
         const fullPath = this.replaceSrcDir(filePath);
-        const futureFileName = this.makeFutureFilename(key, name);
+        const futureFileName = this.makeFutureFilename(name);
         const futureFilePath = path.resolve(fullPath, futureFileName)
 
         return fs.existsSync(futureFilePath)
     }
-    
+
     /**
      * Get contents
      * @param key 
      * @returns 
      */
-    async getContents(key: keyof typeof templates): Promise<string>
+    async getTemplateContents(key: keyof typeof templates): Promise<string>
     {
         const filePath = templates[key]
         const fullPath = this.replaceSrcDir(filePath);
@@ -64,7 +72,7 @@ export default abstract class BaseMakeCommand extends BaseCommand
      */
     async writeContent(key: keyof typeof targetDirectories, name: string, contents: string): Promise<void>
     {
-        const futureFileName = this.makeFutureFilename(key, name);        
+        const futureFileName = this.makeFutureFilename(name);        
         const targetDir = targetDirectories[key]
         const targetDirFullPath = path.resolve(this.replaceSrcDir(targetDir), futureFileName)
 
@@ -98,8 +106,8 @@ export default abstract class BaseMakeCommand extends BaseCommand
      * @param ext 
      * @returns 
      */
-    makeFutureFilename(templateName: string, name: string, ext: string = '.ts'): string {
-        return `${name}${templateName}${ext}`;
+    makeFutureFilename(name: string, ext: string = '.ts'): string {
+        return `${name}${ext}`;
     }
 
 }

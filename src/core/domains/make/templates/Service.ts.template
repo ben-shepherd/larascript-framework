@@ -1,0 +1,12 @@
+import Service from "@src/core/base/Service";
+
+type #name#Config = {
+
+}
+
+export class #name# extends Service<#name#Config> {
+
+    constructor(config: #name#Config) {
+        super(config)
+    }
+}

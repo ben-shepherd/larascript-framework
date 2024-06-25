@@ -1,0 +1,12 @@
+import Singleton from "@src/core/base/Singleton";
+
+type #name#Config = {
+
+}
+
+export class #name# extends Singleton<#name#Config> {
+
+    constructor(config: #name#Config) {
+        super(config)
+    }
+}
