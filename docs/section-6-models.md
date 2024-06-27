@@ -6,7 +6,7 @@ Models are essential components in your application and provide a standard way o
 
 You can run the following command to make a model file automatically:
 
-    npm run console -- make:model --name=Movie
+    npm run dev:console -- make:model --name=Movie
 
 We will create our model file here: 
 `@src/app/models/MovieModel.ts`

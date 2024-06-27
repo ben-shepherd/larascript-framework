@@ -7,11 +7,11 @@
 -- providers
 -- routes
 -- commands
-
 - Test suite
 - Retry db connection attempts
 - Views (Look into express-handlebars
 - A way to automatically generate CRUD endpoints for models (get, patch, delete, get all)
+- Docker for web server to run in
 
 ### names
 larascript-node??

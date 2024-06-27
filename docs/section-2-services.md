@@ -4,8 +4,8 @@ Your own services can utilise the in built `@src/core/base/Service` or `@src/cor
 
 You can also run the following commands to automatically create these files for you:
 
-    npm run console -- make:service --name=MyService
-    npm run console -- make:singleton --name=MySingleton
+    npm run dev:console -- make:service --name=MyService
+    npm run dev:console -- make:singleton --name=MySingleton
 
 **Constructor Signature**
 

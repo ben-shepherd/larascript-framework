@@ -16,7 +16,7 @@ A typical subscriber has an `eventName`, a `driver` and a `payload`.
 
 You can also run the following to automatically create a Subscriber file for you:
 
-    npm run console -- make:subscriber --name=ExampleSubscriber
+    npm run dev:console -- make:subscriber --name=ExampleSubscriber
 
 We will create our file here: `@src/app/events/subscribers/ExampleSubscriber.ts`
 
@@ -42,7 +42,7 @@ export default class ExampleSubscriber extends EventSubscriber<Payload> {
 
 You can also run the following to automatically create a Subscriber file for you:
 
-    npm run console -- make:listener --name=ExampleSubscriber
+    npm run dev:console -- make:listener --name=ExampleSubscriber
 
 We will create our file here: `@src/app/events/listeners/ExampleListener.ts`
 

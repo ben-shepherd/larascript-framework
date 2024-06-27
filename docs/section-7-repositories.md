@@ -11,7 +11,7 @@ Aditionally, repositories query methods return an instance of your model, giving
 
 You can run the following command to automatically create the Repository for you:
 
-    npm run console -- make:repository --name=MovieRepository
+    npm run dev:console -- make:repository --name=MovieRepository
 
 We will create our file here: `@src/app/repositories/MovieRepository.ts`
 ```ts

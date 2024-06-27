@@ -10,7 +10,7 @@ A config file path can be provided which is automatically parsed and bound to th
 
 We will create a new provider in `@src/app/providers/WeatherProvider.ts`
 
-You can also run `npm run console -- make:provider --name=WeatherProvider` to automatically create the file.
+You can also run `npm run dev:console -- make:provider --name=WeatherProvider` to automatically create the file.
 
 ```ts
 import BaseProvider from "@src/core/base/Provider";
