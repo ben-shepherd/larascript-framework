@@ -1,18 +1,24 @@
 {
   "compilerOptions": {
-    "baseUrl": ".", // This sets the base directory to the root of the project
+    "baseUrl": "./",
     "paths": {
-      "@src/*": ["src/*"], // This creates an alias '@src' that maps to the 'src' directory
-      "@config/*": ["src/config/*"] // Another example for the 'components' directory
+      "@src/*": [
+        "src/*"
+      ],
+      "@config/*": [
+        "src/config/*"
+      ]
     },
-    "target": "ES2020",
     "module": "commonjs",
-    "strict": true,
+    "target": "es2020",
+    "moduleResolution": "node",
+    "outDir": "./dist",
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist"
+    "strict": true,
+    "noImplicitAny": false
   },
-  "include": ["./src/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
