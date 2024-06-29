@@ -37,11 +37,7 @@ export default class CommandReader implements ICommandReader {
             throw new CommandEmptyArgument();
         }
 
-        const signature = this.argv[0] ?? null;
-
-        if(!signature) {
-            throw new CommandNotFoundException(`Invalid signature: ${signature}`);
-        }
+        const signature = this.argv[0];
 
         console.log('[CommandReader:handle]', this.argv)
 

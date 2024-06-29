@@ -12,8 +12,6 @@ import MongoDBConnection from './MongoDBConnection';
  * MongoDB service
  */
 export default class MongoDB extends Service<IMongoDbConfig> implements IMongoDB {
-    public className: string = 'MongoDB';
-    
     /**
      * Default connection
      */

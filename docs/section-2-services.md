@@ -63,8 +63,8 @@ type WeatherConfig = {
     region: string;
 }
 
-export class Weather extends Singleton<WeatherConfig> {
-
+export class Weather extends Singleton<WeatherConfig> 
+{
     constructor(config: WeatherConfig) {
         super(config)
     }

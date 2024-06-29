@@ -1,10 +1,8 @@
 import IService from '../interfaces/IService';
-import ISingleton from '../interfaces/ISingleton';
 
-export default abstract class Singleton<ConfigType extends Record<any,any> | null = null> implements IService, ISingleton {
+export default abstract class Singleton<ConfigType extends Record<any,any> | null = null> implements IService {
     private static instances: Map<string, Singleton<any>> = new Map();
     protected config!: ConfigType | null;
-    public className!: string;
 
     constructor(config: ConfigType | null = null) {
         this.config = config
@@ -16,7 +14,7 @@ export default abstract class Singleton<ConfigType extends Record<any,any> | nul
     >
     (this: new (config: any) => TService, config: TConfig | null = null): TService 
     {
-        const className = new this(null).className
+        const className = this.name
 
         if(!className) {
             console.warn('[Singleton] Error Context', this)

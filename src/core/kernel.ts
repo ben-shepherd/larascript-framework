@@ -9,7 +9,6 @@ export type KernelOptions = {
 }
 
 export default class Kernel<Config extends IAppConfig> extends Singleton<Config> {
-    public className: string = 'Kernel';
     private appConfig!: IAppConfig;
     public containers: Map<keyof Containers, Containers[keyof Containers]> = new Map();
 

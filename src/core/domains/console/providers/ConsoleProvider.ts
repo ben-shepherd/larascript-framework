@@ -3,7 +3,6 @@ import BaseProvider from "@src/core/base/Provider";
 import { App } from "@src/core/services/App";
 import HelpCommand from "../commands/HelpCommand";
 import WorkerCommand from "../commands/WorkerCommand";
-import CommandRegister from "../service/CommandRegister";
 import ConsoleService from "../service/ConsoleService";
 
 export default class ConsoleProvider extends BaseProvider
@@ -34,9 +33,6 @@ export default class ConsoleProvider extends BaseProvider
         App.setContainer('console', cnsl)
     }
 
-    async boot(): Promise<void> 
-    {
-        console.log('[ConsoleProvider]: Registered commands', CommandRegister.getInstance().getRegistered())
-    }
+    async boot(): Promise<void> {}
 
 }

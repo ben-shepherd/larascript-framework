@@ -5,9 +5,6 @@ import { ICommandRegister, Registered } from "../interfaces/ICommandRegister";
 
 export default class CommandRegister extends Singleton implements ICommandRegister
 {
-    public className: string = 'CommandRegister';
-
-    
     /**
      * Registered commands
      */

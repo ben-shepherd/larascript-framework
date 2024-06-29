@@ -19,9 +19,6 @@ export default class EventProvider extends BaseProvider
         App.setContainer('events', new EventService(config));
     }
 
-    public async boot(): Promise<void> 
-    {
-        this.log('Booting EventProvider');
-    }
+    public async boot(): Promise<void> {}
 
 }

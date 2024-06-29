@@ -5,8 +5,6 @@ import IAppConfig from "../interfaces/IAppConfig";
 import Kernel from "../kernel";
 
 export class App extends Singleton<IAppConfig> {
-    public className: string = 'App';
-
     public static setContainer<Name extends keyof ContainersTypeHelpers & string>(name: Name, container: ContainersTypeHelpers[Name]) {
         const kernel = Kernel.getInstance();
 

@@ -13,8 +13,6 @@ import DriverOptions from "./QueueDriverOptions";
 
 export default class Worker extends Singleton 
 {
-    public className: string = 'Worker';
-    
     /**
      * Queue driver options
      */
