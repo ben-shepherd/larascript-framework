@@ -4,10 +4,10 @@ import { Db, ObjectId } from 'mongodb';
 import BelongsTo from '../domains/database/mongodb/relationships/BelongsTo';
 import HasMany from '../domains/database/mongodb/relationships/HasMany';
 import HasOne from '../domains/database/mongodb/relationships/HasOne';
-import MongoDB from '../domains/database/mongodb/services/MongoDB';
 import IData from '../interfaces/IData';
 import { Dates, GetDataOptions, IModel, ModelConstructor } from '../interfaces/IModel';
 import { WithObserver } from '../observer/WithObserver';
+import { App } from '../services/App';
 
 export interface BaseModelData {
     _id?: ObjectId
@@ -51,7 +51,7 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
     }
 
     protected getDb(): Db {
-        return MongoDB.getInstance().getDb(this.connection);
+        return App.container('mongodb').getDb(this.connection);
     }
 
     /**

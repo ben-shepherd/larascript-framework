@@ -23,13 +23,7 @@ export interface AppConfig {}
  */
 export default class AppProvider extends BaseProvider
 {
-    protected config!: AppConfig;
-    //configPath = '@config/example/fileName';
-
-    constructor() {
-        super()
-        this.init()
-    }
+    protected config: AppConfig = {};
 
     public async register(): Promise<void> {
         this.log('Registering AppProvider');

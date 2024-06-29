@@ -1,24 +1,24 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
-    "paths": {
-      "@src/*": [
-        "src/*"
-      ],
-      "@config/*": [
-        "src/config/*"
-      ]
-    },
-    "module": "commonjs",
-    "target": "es2020",
-    "moduleResolution": "node",
-    "outDir": "./dist",
-    "esModuleInterop": true,
-    "strict": true,
-    "noImplicitAny": false
+      "baseUrl": "./",
+      "paths": {
+          "@src/*": [
+              "src/*"
+          ],
+          "@config/*": [
+              "src/config/*"
+          ]
+      },
+      "module": "CommonJS",
+      "target": "es2020",
+      "moduleResolution": "node",
+      "outDir": "./dist",
+      "esModuleInterop": true,
+      "strict": true,
+      "noImplicitAny": false
   },
   "exclude": [
-    "node_modules",
-    "dist"
+      "node_modules",
+      "dist"
   ]
 }

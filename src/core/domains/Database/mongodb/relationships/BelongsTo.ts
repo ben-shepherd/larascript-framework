@@ -1,6 +1,6 @@
+import { App } from "@src/core/services/App";
 import { ObjectId } from "mongodb";
 import Model, { BaseModelData } from "../../../../base/Model";
-import MongoDB from "../services/MongoDB";
 
 export default class BelongsTo<
     LocalData extends BaseModelData,
@@ -25,7 +25,7 @@ export default class BelongsTo<
             [foreignKey]: localModel.getAttribute(localKey),
          }
 
-        return await MongoDB.getInstance()
+        return await App.container('mongodb')
             .getDb()
             .collection(foreignCollection)
             .findOne(schema) as ForeignData | null

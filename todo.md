@@ -1,5 +1,6 @@
 ## What to work on next?
 - Make production ready commands
+-- Remove Singletons and replace with App.container (typescript does not preserve function.name strings, duplicated)
 
 ### Future ideas
 - Add "make" commands
@@ -18,3 +19,5 @@ larascript-node??
 
 ### website ideas
 https://tailwindui.com/templates?ref=sidebar 
+
+## docs update

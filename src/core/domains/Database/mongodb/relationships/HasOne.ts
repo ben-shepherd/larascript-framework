@@ -1,4 +1,4 @@
-import MongoDB from "@src/core/domains/database/mongodb/services/MongoDB";
+import { App } from "@src/core/services/App";
 import { ObjectId } from "mongodb";
 import Model, { BaseModelData } from "../../../../base/Model";
 
@@ -25,7 +25,7 @@ export default class HasOne<
             [foreignKey]: localModel.getAttribute(localKey)
         }
 
-        const document = await MongoDB.getInstance()
+        const document = await App.container('mongodb')
             .getDb()
             ?.collection(foreignCollection)
             .findOne(schema)

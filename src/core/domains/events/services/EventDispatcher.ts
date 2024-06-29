@@ -8,6 +8,8 @@ import { IEventPayload } from "../interfaces/IEventPayload";
 
 export default class EventDispatcher extends Singleton implements IEventDispatcher {
 
+    public className: string = 'EventDispatcher';
+    
     /**
      * Handle the dispatched event
      * @param event 

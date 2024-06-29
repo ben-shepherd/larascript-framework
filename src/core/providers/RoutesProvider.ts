@@ -2,16 +2,11 @@ import apiRoutes from '@src/app/routes/api';
 import healthRoute from '@src/core/routes/health';
 import BaseProvider from "../base/Provider";
 import Kernel from "../kernel";
-import Provider from "../services/Express";
+import { App } from '../services/App';
 import ExpressProvider from "./ExpressProvider";
 
 export default class RoutesProvider extends BaseProvider
 {
-    constructor() {
-        super()
-        this.init()
-    }
-
     public async register(): Promise<void> {
         this.log('Registering RoutesProvider');
     }
@@ -35,10 +30,10 @@ export default class RoutesProvider extends BaseProvider
     }
 
     private registerApiRoutes(): void {
-        Provider.getInstance().bindRoutes(apiRoutes);
+        App.container('express').bindRoutes(apiRoutes);
     }
 
     private registerHealthRoute(): void {
-        Provider.getInstance().bindRoutes(healthRoute);
+        App.container('express').bindRoutes(healthRoute);
     }
 }

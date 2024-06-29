@@ -3,6 +3,7 @@ import IService from '../interfaces/IService';
 export default abstract class Singleton<ConfigType extends Record<any,any> | null = null> implements IService {
     private static instances: Map<string, Singleton<any>> = new Map();
     protected config!: ConfigType | null;
+    public className!: string;
 
     constructor(config: ConfigType | null = null) {
         this.config = config
@@ -14,7 +15,7 @@ export default abstract class Singleton<ConfigType extends Record<any,any> | nul
     >
     (this: new (config: any) => TService, config: TConfig | null = null): TService 
     {
-        const className = this.name
+        const className = new this(null).className
 
         if(!Singleton.instances.has(className)) {
             Singleton.instances.set(className, new this(config));
@@ -29,6 +30,6 @@ export default abstract class Singleton<ConfigType extends Record<any,any> | nul
     }
 
     public getConfig(): ConfigType | null {
-        return this.config;
+        return this.config; 
     }
 }

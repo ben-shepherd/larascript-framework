@@ -6,16 +6,20 @@ export type Containers = {
 }
 
 export default class Kernel<Config extends IAppConfig> extends Singleton<Config> {
-    private appConfig: IAppConfig;
+    public className: string = 'Kernel';
+    private appConfig!: IAppConfig;
     public containers: Map<keyof Containers, Containers[keyof Containers]> = new Map();
 
     public preparedProviders: string[];
     public readyProviders: string[];
 
-    constructor(appConfig: Config) {
+    constructor(appConfig: Config | null) {
         super(appConfig);
         this.readyProviders = this.preparedProviders = [];
-        this.appConfig = appConfig;
+
+        if(appConfig) {
+            this.appConfig = appConfig;
+        }
     }
 
     public booted(): boolean {

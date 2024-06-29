@@ -1,10 +1,11 @@
 import { ContainersTypeHelpers } from '@src/config/containers';
-import Singleton from "../base/Singleton";
+import Singleton from '../base/Singleton';
 import UninitializedContainerError from '../exceptions/UninitializedContainerError';
 import IAppConfig from "../interfaces/IAppConfig";
 import Kernel from "../kernel";
 
 export class App extends Singleton<IAppConfig> {
+    public className: string = 'App';
 
     public static setContainer<Name extends keyof ContainersTypeHelpers & string>(name: Name, container: ContainersTypeHelpers[Name]) {
         const kernel = Kernel.getInstance();
@@ -32,7 +33,7 @@ export class App extends Singleton<IAppConfig> {
 
     }
 
-    public env(): string | undefined {
-        return this.getConfig()?.environment;
+    public static env(): string | undefined {
+        return process.env.APP_ENV
     }
 }

@@ -21,7 +21,7 @@ export default class EventService extends Singleton<EventServiceConfig>  impleme
      * @returns 
      */
     dispatch<Payload extends IEventPayload>(event: IEvent<Payload>) {
-        return EventDispatcher.getInstance().dispatch(event);
+        return (new EventDispatcher).dispatch(event);
     }
 
     /**

@@ -1,6 +1,6 @@
 import { Db, MongoClient } from 'mongodb';
 
-import Singleton from '@src/core/base/Singleton';
+import Service from '@src/core/base/Service';
 import InvalidDatabaseConnection from '../exceptions/InvalidDatabaseConnection';
 import { IConnections } from '../interfaces/IConnections';
 import { IMongoDB } from '../interfaces/IMongoDB';
@@ -11,7 +11,9 @@ import MongoDBConnection from './MongoDBConnection';
 /**
  * MongoDB service
  */
-export default class MongoDB extends Singleton<IMongoDbConfig> implements IMongoDB {
+export default class MongoDB extends Service<IMongoDbConfig> implements IMongoDB {
+    public className: string = 'MongoDB';
+    
     /**
      * Default connection
      */
@@ -21,17 +23,23 @@ export default class MongoDB extends Singleton<IMongoDbConfig> implements IMongo
      */
     private connections: IConnections = {} as IConnections;
 
-    constructor(config: IMongoDbConfig) {
+    constructor(config: IMongoDbConfig | null) {
         super(config);
-        this.__connnection = config.connection;
-        this.init();
+        
+        if(config) {
+            this.__connnection = config.connection;
+        }
     }
 
     /**
      * Init
      * Define MongoDBConnection instances for every connection available
      */
-    protected init(): void {
+    public init(): void {
+        if(Object.keys(this.connections).length) {
+            throw new Error('MongoDB has already been initialised')
+        }
+
         const config = this.getConfig();
 
         for (const conn of Object.keys(config?.connections ?? {})) {

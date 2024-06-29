@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import MongoDB from '../domains/database/mongodb/services/MongoDB';
+import { App } from '../services/App';
 
 export default async (req: Request, res: Response) => {
 
     try {
-        await MongoDB.getInstance().getDb().stats()
+        await App.container('mongodb').getDb().stats()
     }
     catch (error) {
         res.status(500).send({ error: 'Database connection failed' })

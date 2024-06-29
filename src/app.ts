@@ -1,4 +1,5 @@
-import 'tsconfig-paths/register';
+import 'dotenv/config';
+
 import appConfig from './config/app';
 import Kernel from './core/kernel';
 

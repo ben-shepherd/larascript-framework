@@ -1,13 +1,14 @@
 import express from 'express';
 
-import Singleton from '../base/Singleton';
+import Service from '../base/Service';
 import IExpress from '../interfaces/http/IExpress';
 import IExpressConfig from '../interfaces/http/IExpressConfig';
 import { IRoute } from '../interfaces/http/IRoute';
 
-export default class Express extends Singleton<IExpressConfig> implements IExpress {
+export default class Express extends Service<IExpressConfig> implements IExpress {
     protected config!: IExpressConfig | null;
     private app: express.Express
+    className: string = 'Express';
     
     /**
      * Config defined in @src/config/http/express.ts

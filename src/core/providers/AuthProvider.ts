@@ -1,21 +1,15 @@
 
+import authConfig from '@config/auth/auth';
 import BaseProvider from "../base/Provider";
 import { IAuthConfig } from "../domains/auth/interfaces/IAuthConfig";
 import authRoutes from '../domains/auth/routes/auth';
 import Kernel from "../kernel";
 import { App } from "../services/App";
-import Express from "../services/Express";
 import ExpressProvider from "./ExpressProvider";
 
 export default class AuthProvider extends BaseProvider
 {
-    protected config!: IAuthConfig;
-    configPath = '@config/auth/auth';
-
-    constructor() {
-        super()
-        this.init()
-    }
+    protected config: IAuthConfig = authConfig;
 
     public async register(): Promise<void> {
 
@@ -50,6 +44,6 @@ export default class AuthProvider extends BaseProvider
             ]
         }
 
-        Express.getInstance().bindRoutes(authRoutesArray);
+        App.container('express').bindRoutes(authRoutesArray);
     }
 }
