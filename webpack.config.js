@@ -1,15 +1,16 @@
 const path = require('path');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
-  mode: 'production',  // or 'development' depending on your needs
-  target: 'node',  // Ensures that Webpack compiles code for use in a Node.js environment
-  entry: './src/app.ts',  // Adjust this if your entry file is different
+  mode: 'production',
+  target: 'node',
+  entry: './src/app.ts',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'app.js'
   },
   resolve: {
-    extensions: ['.ts', '.js'],  // Resolves these extensions
+    extensions: ['.ts', '.js'],
     alias: {
       '@src': path.resolve(__dirname, 'src/'),
       '@config': path.resolve(__dirname, 'src/config/')
@@ -26,6 +27,10 @@ module.exports = {
           }
         },
         exclude: /node_modules/
+      },
+      {
+        test: /example\.ts$/,
+        exclude: /example\.ts$/
       }
     ]
   },
@@ -35,4 +40,14 @@ module.exports = {
   ignoreWarnings: [(warning) => {
     return warning.message.includes("Critical dependency: the request of a dependency is an expression");
   }],
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          keep_fnames: true  // This option preserves function names
+        }
+      })
+    ]
+  }
 };

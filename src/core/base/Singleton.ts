@@ -1,6 +1,7 @@
 import IService from '../interfaces/IService';
+import ISingleton from '../interfaces/ISingleton';
 
-export default abstract class Singleton<ConfigType extends Record<any,any> | null = null> implements IService {
+export default abstract class Singleton<ConfigType extends Record<any,any> | null = null> implements IService, ISingleton {
     private static instances: Map<string, Singleton<any>> = new Map();
     protected config!: ConfigType | null;
     public className!: string;
@@ -16,6 +17,11 @@ export default abstract class Singleton<ConfigType extends Record<any,any> | nul
     (this: new (config: any) => TService, config: TConfig | null = null): TService 
     {
         const className = new this(null).className
+
+        if(!className) {
+            console.warn('[Singleton] Error Context', this)
+            throw new Error('Invalid singleton. Missing property className')
+        }
 
         if(!Singleton.instances.has(className)) {
             Singleton.instances.set(className, new this(config));

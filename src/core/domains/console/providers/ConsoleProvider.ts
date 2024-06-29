@@ -2,6 +2,7 @@ import appConfig from "@src/config/app";
 import BaseProvider from "@src/core/base/Provider";
 import { App } from "@src/core/services/App";
 import HelpCommand from "../commands/HelpCommand";
+import WorkerCommand from "../commands/WorkerCommand";
 import CommandRegister from "../service/CommandRegister";
 import ConsoleService from "../service/ConsoleService";
 
@@ -18,7 +19,8 @@ export default class ConsoleProvider extends BaseProvider
          * Register system provided commands
          */
         register.registerAll([
-            HelpCommand
+            HelpCommand,
+            WorkerCommand
         ])
 
         /**

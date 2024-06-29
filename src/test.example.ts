@@ -7,7 +7,7 @@ import { App } from './core/services/App';
 (async() => {
     require('dotenv').config();
 
-    await Kernel.boot(appConfig)
+    await Kernel.boot(appConfig, {})
 
     const auth = App.container('auth');
     const mongodb = App.container('mongodb');

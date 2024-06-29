@@ -1,3 +1,4 @@
+import CommandEmptyArgument from "../exceptions/CommandEmptyArgument";
 import CommandNotFoundException from "../exceptions/CommandNotFoundException";
 import { ICommandReader } from "../interfaces/ICommandReader";
 import CommandArguementParser, { ParsedArgumentsArray } from "../parsers/CommandArgumentParser";
@@ -32,6 +33,10 @@ export default class CommandReader implements ICommandReader {
      * Read and execute command
      */
     handle() {
+        if(!this.argv.length) {
+            throw new CommandEmptyArgument();
+        }
+
         const signature = this.argv[0] ?? null;
 
         if(!signature) {

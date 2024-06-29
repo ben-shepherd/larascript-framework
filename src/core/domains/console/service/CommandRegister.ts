@@ -5,6 +5,9 @@ import { ICommandRegister, Registered } from "../interfaces/ICommandRegister";
 
 export default class CommandRegister extends Singleton implements ICommandRegister
 {
+    public className: string = 'CommandRegister';
+
+    
     /**
      * Registered commands
      */
@@ -28,7 +31,7 @@ export default class CommandRegister extends Singleton implements ICommandRegist
         const signature = (new cmdCtor).signature
 
         if(this.commands.has(signature)) {
-            throw new CommandRegisterException(`Command '${signature}' already registered`);
+            throw new CommandRegisterException(signature);
         }
 
         this.commands.set(signature, cmdCtor);
