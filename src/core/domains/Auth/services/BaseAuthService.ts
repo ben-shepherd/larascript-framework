@@ -1,3 +1,5 @@
+import ApiToken from '@src/app/models/auth/ApiToken';
+import ApiTokenRepository from '@src/app/repositories/auth/ApiTokenRepository';
 import { AuthConfigTypeHelpers } from '@src/config/auth/auth';
 import Service from '@src/core/base/Service';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
@@ -5,6 +7,7 @@ import apiTokenFactory from '../factory/apiTokenFactory';
 import jwtTokenFactory from '../factory/jwtTokenFactory';
 import { IAuthConfig } from '../interfaces/IAuthConfig';
 import { IAuthService } from '../interfaces/IAuthService';
+import BaseApiTokenRepository from '../repository/BaseApiTokenRepository';
 import { JWTToken } from '../types/types.t';
 import comparePassword from '../utils/comparePassword';
 import createJwt from '../utils/createJwt';
@@ -12,8 +15,6 @@ import decodeJwt from '../utils/decodeJwt';
 
 type UserModel = AuthConfigTypeHelpers['userModel']
 type UserRepository = AuthConfigTypeHelpers['userRepository']
-type ApiToken = AuthConfigTypeHelpers['apiTokenModel']
-type ApiTokenRepository = AuthConfigTypeHelpers['apiTokenRepository'];
 
 export default class BaseAuthService extends Service<IAuthConfig> implements IAuthService {
     public config: IAuthConfig | null;
@@ -25,7 +26,7 @@ export default class BaseAuthService extends Service<IAuthConfig> implements IAu
     /**
      * Repository for accessing api tokens
      */
-    public apiTokenRepository: ApiTokenRepository;
+    public apiTokenRepository: BaseApiTokenRepository;
 
     constructor(
         config: IAuthConfig,
@@ -33,7 +34,7 @@ export default class BaseAuthService extends Service<IAuthConfig> implements IAu
         super()
         this.config = config;
         this.userRepository = new config.userRepository;
-        this.apiTokenRepository = new config.apiTokenRepository;
+        this.apiTokenRepository = new ApiTokenRepository();
     }
 
     /**

@@ -1,9 +1,7 @@
-import ApiToken from '@src/app/models/auth/ApiToken';
 import User from '@src/app/models/auth/User';
-import ApiTokenRepository from '@src/app/repositories/auth/ApiTokenRepository';
 import UserRepository from '@src/app/repositories/auth/UserRepository';
-import { AppAuthService } from '@src/app/services/AppAuthService';
 import { IAuthConfig } from '@src/core/domains/auth/interfaces/IAuthConfig';
+import BaseAuthService from '@src/core/domains/auth/services/BaseAuthService';
 import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
 
 /**
@@ -11,18 +9,16 @@ import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
  * Don't forget to update these properties to match what is provided to the config.
  */
 export interface AuthConfigTypeHelpers {
-    authService: AppAuthService,
+    authService: BaseAuthService,
     userModel: User,
-    userRepository: UserRepository,
-    apiTokenModel: ApiToken
-    apiTokenRepository: ApiTokenRepository,
+    userRepository: UserRepository
 }
 
 const config: IAuthConfig = {
     /**
      * Auth class that can be extended on or replaced
      */
-    authService: AppAuthService,
+    authService: BaseAuthService,
     /**
      * User model
      */
@@ -31,14 +27,6 @@ const config: IAuthConfig = {
      * User repository for accessing user data
      */
     userRepository: UserRepository,
-    /**
-     * Api Token model
-     */
-    apiTokenModel: ApiToken,
-    /**
-     * Api token repository for accessing api tokens
-     */
-    apiTokenRepository: ApiTokenRepository,
     /**
      * Enable or disable auth routes
      */

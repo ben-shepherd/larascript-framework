@@ -7,7 +7,7 @@ const routes: IRoute[] = [
         method: 'get',
         path: '/',
         action: (req: Request, res: Response) => {
-            res.send('hello world')
+            res.send('OK')
         }
     }
 ]
