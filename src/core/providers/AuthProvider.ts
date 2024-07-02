@@ -1,5 +1,6 @@
 
 import authConfig from '@config/auth/auth';
+import expressConfig from '@config/http/express';
 import BaseProvider from "../base/Provider";
 import { IAuthConfig } from "../domains/auth/interfaces/IAuthConfig";
 import authRoutes from '../domains/auth/routes/auth';
@@ -30,7 +31,7 @@ export default class AuthProvider extends BaseProvider
         /**
          * Register the authentication routes
          */
-        if(Kernel.isProviderReady(ExpressProvider.name) &&this.config.authRoutes) {
+        if(expressConfig.enabled && this.config.authRoutes && Kernel.isProviderReady(ExpressProvider.name)) {
             this.registerAuthRoutes();
         }
     }

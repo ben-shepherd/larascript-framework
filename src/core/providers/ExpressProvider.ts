@@ -10,6 +10,10 @@ export default class ExpressProvider extends BaseProvider
 
     public async register(): Promise<void> 
     {
+        if(!this.config.enabled) {
+            return;
+        }
+
         this.log('Registering ExpressProvider');
 
         App.setContainer('express', new Express(this.config));
@@ -17,6 +21,10 @@ export default class ExpressProvider extends BaseProvider
 
     public async boot(): Promise<void>
     {
+        if(!this.config.enabled) {
+            return;
+        }
+        
         this.log('Booting ExpressProvider');
 
         const express = App.container('express');
