@@ -6,6 +6,7 @@ import HasMany from '../domains/database/mongodb/relationships/HasMany';
 import HasOne from '../domains/database/mongodb/relationships/HasOne';
 import IData from '../interfaces/IData';
 import { Dates, GetDataOptions, IModel, ModelConstructor } from '../interfaces/IModel';
+import { IObserver } from '../interfaces/observer/IObserver';
 import { WithObserver } from '../observer/WithObserver';
 import { App } from '../services/App';
 
@@ -39,6 +40,11 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
     // Automatically update timestamps (createdAt, updatedAt)
     public dates: Dates = ['createdAt', 'updatedAt']
     public timestamps: boolean = true;
+
+    // Observe proeprties with custom methods
+    // Key: property name
+    // Value: custom method
+    public observeProperties: Record<string, string> = {};
 
     /**
      * Constructs a new instance of the Model class.
@@ -92,6 +98,13 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
         }
         if(this.data) {
             this.data[key] = value;
+        }
+
+        /**
+         * Observe properties changed with custom methods
+         */
+        if(Object.keys(this.observeProperties).includes(key as string)) {
+            this.data = this.observeDataCustom(this.observeProperties[key as string] as keyof IObserver<any>, this.data)
         }
     }
 
