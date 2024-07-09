@@ -9,7 +9,7 @@ export default class WorkerCommand extends BaseCommand {
         (async() => {
             const driver = process.env.APP_WORKER_DRIVER ?? 'queue';
             const worker = Worker.getInstance()
-            console.log('WORKER', worker)
+
             worker.setDriver(driver)
         
             await worker.work()

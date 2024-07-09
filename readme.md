@@ -80,3 +80,6 @@ A TypeScript Node.js framework built with Express and MongoDB.
 ---
 
 - [[Section 8] - Console commands](docs/section-10-console.md)
+    - [9.1] - Worker Command
+    - [9.2] - Maker Commands
+    - [9.3] - Add custom commands
