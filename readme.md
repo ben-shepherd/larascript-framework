@@ -1,7 +1,8 @@
 
-# Larascript Node (Work in progress)
+## LarascriptNode
 
 A TypeScript Node.js framework built with Express and MongoDB.
+
 
 - Express & Routing 
 - Authentication (JWTs)
@@ -14,72 +15,14 @@ A TypeScript Node.js framework built with Express and MongoDB.
 
 ## Documentation
 
-- [[Section 1] - Providers & Containers](docs/section-1-providers-and-containers.md)
-    - [1.1] - Registering a provider
-    - [1.2] - Type hinting config structure
-    - [1.3] - What is a container?
-    - [1.4] - Setting up a new container
-    - [1.5] - Retrieving from the container
+View the entire documentation on the official Larascript Node website:
 
----
+https://larascriptnode.com/
 
-- [[Section 2] - Services](docs/section-2-services.md)
-    - [2.1] - Singletons
+## Author
 
-- ---
+![ben-shepherd's Stats](https://github-readme-stats.vercel.app/api?username=ben-shepherd&theme=dracula&show_icons=true&hide_border=false&count_private=true)
 
-- [[Section 3] - Express Web Server](docs/section-3-express-web-server.md)
-    - [3.1] - Defining routes
-    - [3.2] - Adding another routing file
-    - [3.3] - Protected routes
+![ben-shepherd's Streak](https://github-readme-streak-stats.herokuapp.com/?user=ben-shepherd&theme=dracula&hide_border=false)
 
----
-
-- [[Section 4] - Authentication](docs/section-4-authentication.md)
-    - [4.1] - Configuration
-    - [4.2] - Container
-    - [4.3] - Auth Service
-    - [4.4] - ApiToken Model
-    - [4.5] - User Model
-
----
-
-- [[Section 5] - MongoDB](docs/section-5-mongodb.md)
-    - [5.1] - Database configuration
-    - [5.2] - MongoDB Container
-    - [5.3] - Handling Multiple Connections
-    - [5.4] - Change connection on a Model
-
----
-
-- [[Section 6] - Models](docs/section-6-models.md)
-    - [6.1] - Properties
-    - [6.2] - Models
-    - [6.3] - CRUD Operations
-    - [6.4] - Relationships
-
----
-
-- [[Section 7] - Repositories](docs/section-7-repositories.md)
-
----
-
-- [[Section 8] - Events](docs/section-8-events.md)
-    - [8.1] - Configuration
-    - [8.2] - Subscribers and listeners
-    - [8.3] - Event Drivers
-    - [8.4] - Worker
-
----
-
-- [[Section 9] - Observers](docs/section-9-observers.md)
-    - [9.1] - Creating an observer
-    - [9.2] - Model Observers
-    - [9.3] - Custom Observers
-
----
-
-- [[Section 8] - Console commands](docs/section-10-console.md)
-    - [9.1] - Worker Command
-    - [9.2] - Maker Commands
-    - [9.3] - Add custom commands
+![ben-shepherd's Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=ben-shepherd&theme=dracula&show_icons=true&hide_border=false&layout=compact)
