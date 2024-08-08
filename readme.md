@@ -1,5 +1,5 @@
 
-![Larascript Node Banner](https://raw.githubusercontent.com/ben-shepherd/larascript-node/master/assets/banner_skinny.png)
+![Larascript Node Banner](https://raw.githubusercontent.com/ben-shepherd/larascript-node/master/assets/banner.png)
 
 ## LarascriptNode
 
