@@ -16,6 +16,10 @@ require('dotenv').config();
             options.withoutProvider = ['ExpressProvider', 'RoutesProvider']
         }
 
+        if(args.includes('--no-db')) {
+            options.withoutProvider?.push('MongoDBProvider');
+        }
+
         await Kernel.boot(appConfig, options);
 
         console.log('[App]: Started successfully');
