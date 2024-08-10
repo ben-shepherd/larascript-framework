@@ -1,7 +1,7 @@
 import User from '@src/app/models/auth/User';
 import UserRepository from '@src/app/repositories/auth/UserRepository';
-import { IAuthConfig } from '@src/core/domains/auth/interfaces/IAuthConfig';
-import BaseAuthService from '@src/core/domains/auth/services/BaseAuthService';
+import { IAuthConfig } from '@src/core/domains/Auth/interfaces/IAuthConfig';
+import BaseAuthService from '@src/core/domains/Auth/services/BaseAuthService';
 import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
 
 /**

@@ -2,8 +2,8 @@
 import authConfig from '@config/auth/auth';
 import expressConfig from '@config/http/express';
 import BaseProvider from "../base/Provider";
-import { IAuthConfig } from "../domains/auth/interfaces/IAuthConfig";
-import authRoutes from '../domains/auth/routes/auth';
+import { IAuthConfig } from "../domains/Auth/interfaces/IAuthConfig";
+import authRoutes from '../domains/Auth/routes/auth';
 import Kernel from "../kernel";
 import { App } from "../services/App";
 import ExpressProvider from "./ExpressProvider";

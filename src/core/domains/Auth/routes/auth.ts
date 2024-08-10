@@ -1,7 +1,7 @@
-import create from "@src/core/domains/auth/actions/create";
-import login from "@src/core/domains/auth/actions/login";
-import user from "@src/core/domains/auth/actions/user";
-import authConsts from "@src/core/domains/auth/consts/authConsts";
+import create from "@src/core/domains/Auth/actions/create";
+import login from "@src/core/domains/Auth/actions/login";
+import user from "@src/core/domains/Auth/actions/user";
+import authConsts from "@src/core/domains/Auth/consts/authConsts";
 import { authorize } from "@src/core/http/middleware/authorize";
 import { IRoute } from "@src/core/interfaces/http/IRoute";
 

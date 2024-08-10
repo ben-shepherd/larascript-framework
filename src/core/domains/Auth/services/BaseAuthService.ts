@@ -2,16 +2,16 @@ import ApiToken from '@src/app/models/auth/ApiToken';
 import ApiTokenRepository from '@src/app/repositories/auth/ApiTokenRepository';
 import { AuthConfigTypeHelpers } from '@src/config/auth/auth';
 import Service from '@src/core/base/Service';
-import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
-import apiTokenFactory from '../factory/apiTokenFactory';
-import jwtTokenFactory from '../factory/jwtTokenFactory';
-import { IAuthConfig } from '../interfaces/IAuthConfig';
-import { IAuthService } from '../interfaces/IAuthService';
-import BaseApiTokenRepository from '../repository/BaseApiTokenRepository';
-import { JWTToken } from '../types/types.t';
-import comparePassword from '../utils/comparePassword';
-import createJwt from '../utils/createJwt';
-import decodeJwt from '../utils/decodeJwt';
+import UnauthorizedError from '@src/core/domains/Auth/exceptions/UnauthorizedError';
+import apiTokenFactory from '@src/core/domains/Auth/factory/apiTokenFactory';
+import jwtTokenFactory from '@src/core/domains/Auth/factory/jwtTokenFactory';
+import { IAuthConfig } from '@src/core/domains/Auth/interfaces/IAuthConfig';
+import { IAuthService } from '@src/core/domains/Auth/interfaces/IAuthService';
+import BaseApiTokenRepository from '@src/core/domains/Auth/repository/BaseApiTokenRepository';
+import { JWTToken } from '@src/core/domains/Auth/types/types.t';
+import comparePassword from '@src/core/domains/Auth/utils/comparePassword';
+import createJwt from '@src/core/domains/Auth/utils/createJwt';
+import decodeJwt from '@src/core/domains/Auth/utils/decodeJwt';
 
 type UserModel = AuthConfigTypeHelpers['userModel']
 type UserRepository = AuthConfigTypeHelpers['userRepository']

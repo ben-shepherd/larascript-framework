@@ -1,8 +1,8 @@
 import { NextFunction, Response } from 'express';
 
 import User from '@src/app/models/auth/User';
-import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
-import IAuthorizedRequest from '@src/core/domains/auth/interfaces/IAuthorizedRequest';
+import UnauthorizedError from '@src/core/domains/Auth/exceptions/UnauthorizedError';
+import IAuthorizedRequest from '@src/core/domains/Auth/interfaces/IAuthorizedRequest';
 import { App } from '@src/core/services/App';
 import ResponseError from '../requests/ResponseError';
 
