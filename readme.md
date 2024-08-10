@@ -1,10 +1,19 @@
 
 ![Larascript Node Banner](https://raw.githubusercontent.com/ben-shepherd/larascript-node/master/assets/banner2.png)
 
-## LarascriptNode
+## Larascript Node
 
 A TypeScript Node.js framework built with Express and MongoDB.
 
+## 🚧 Alpha Status 🚧
+
+Please note that this project is currently in Alpha. As such:
+
+- Some features may be removed or changed without notice.
+- Certain functionalities might not work as expected.
+- We appreciate your patience as we continue to update and test.
+
+## Core Features
 
 - Express & Routing 
 - Authentication (JWTs)
