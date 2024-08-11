@@ -1,7 +1,7 @@
 import { Db, ObjectId } from 'mongodb';
 
 
-import BelongsTo from '../domains/database/mongodb/relationships/BelongsTo';
+import BelongsTo, { BelongsToOptions } from '../domains/database/mongodb/relationships/BelongsTo';
 import HasMany from '../domains/database/mongodb/relationships/HasMany';
 import HasOne from '../domains/database/mongodb/relationships/HasOne';
 import IData from '../interfaces/IData';
@@ -196,37 +196,20 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
     }
 
     /**
-     * Asynchronously retrieves a related model instance based on the provided local model, local key, foreign model constructor, and foreign key.
+     * Retrieves a related model instance based on the provided options.
      *
-     * @param {LocalModel} model - The local model instance.
-     * @param {keyof LocalData} localKey - The key of the local model's attribute used to establish the relationship.
-     * @param {new (...any: any[]) => ForeignModel} foreignModelCtor - The constructor function for the foreign model.
-     * @param {keyof ForeignData} foreignKey - The key of the foreign model's attribute used to establish the relationship.
-     * @param {object} foreignKey - Optional filter
+     * @param {BelongsToOptions} options - Options for the belongsTo relationship.
      * @return {Promise<ForeignModel | null>} A Promise that resolves to the related foreign model instance, or null if no related model is found.
      */
-    async belongsTo<
-        LocalData extends BaseModelData, LocalModel extends Model<LocalData>,
-        ForeignData extends BaseModelData, ForeignModel extends Model<ForeignData>
-    > (
-        model: LocalModel,
-        localKey: keyof LocalData,
-        foreignModelCtor: ModelConstructor<ForeignModel>,
-        foreignKey: keyof ForeignData,
-        filters: object = {}
-    ): Promise<ForeignModel | null> 
+    async belongsTo<ForeignModel extends Model<any> = Model<any>>(options: BelongsToOptions): Promise<ForeignModel | null>
     {
-        const data = await new BelongsTo<LocalData, LocalModel, ForeignData>().handle(
-            model,
-            new foreignModelCtor().collection,
-            foreignKey,
-            localKey,
-            filters
-        )
-        
-        if(!data) return null
+        const data = await new BelongsTo().handle(options);
 
-        return new foreignModelCtor(data)
+        if(!data) {
+            return null
+        }
+
+        return new options['foreignModelCtor'](data) as ForeignModel
     }
 
     /**
