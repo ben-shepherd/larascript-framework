@@ -3,7 +3,7 @@ import Repository from "@src/core/base/Repository";
 import Singleton from "@src/core/base/Singleton";
 import { QueueDriverOptions } from "@src/core/domains/events/drivers/QueueDriver";
 import EventDriverException from "@src/core/domains/events/exceptions/EventDriverException";
-import FailedWorkerModelFactory from "@src/core/domains/events/factory/failedWorkerModelFactory";
+import FailedWorkerModelFactory from "@src/core/domains/events/factory/FailedWorkerModelFactory";
 import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
 import WorkerModel from "@src/core/domains/events/models/WorkerModel";
 import EventSubscriber from "@src/core/domains/events/services/EventSubscriber";

@@ -1,6 +1,6 @@
 import UserObserver from '@src/app/observers/UserObserver';
 import BaseUserModel from '@src/core/domains/auth/models/BaseUserModel';
-import { BaseUserData } from '@src/core/domains/auth/types/types.t';
+import { BaseUserData } from '@src/core/domains/auth/types/Types.t';
 import { ObjectId } from 'mongodb';
 
 export interface UserData extends BaseUserData {

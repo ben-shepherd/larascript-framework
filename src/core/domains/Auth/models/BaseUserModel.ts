@@ -1,7 +1,7 @@
 import Model from '@src/core/base/Model';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import BaseApiTokenModel from '@src/core/domains/auth/models/BaseApiTokenModel';
-import { BaseApiTokenData, BaseUserData } from '@src/core/domains/auth/types/types.t';
+import { BaseApiTokenData, BaseUserData } from '@src/core/domains/auth/types/Types.t';
 
 interface TokensOptions {
     activeOnly: boolean

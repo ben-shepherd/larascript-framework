@@ -1,7 +1,7 @@
 import { Response } from 'express';
 
-import ResponseError from '../../../http/requests/ResponseError';
-import IAuthorizedRequest from '../interfaces/IAuthorizedRequest';
+import IAuthorizedRequest from '@src/core/domains/auth/interfaces/IAuthorizedRequest';
+import responseError from '@src/core/http/requests/responseError';
 
 export default (req: IAuthorizedRequest, res: Response) => {
     try {
@@ -9,7 +9,7 @@ export default (req: IAuthorizedRequest, res: Response) => {
     }
     catch (error) {
         if(error instanceof Error) {
-            ResponseError(req, res, error)   
+            responseError(req, res, error)   
         }
     }
 }

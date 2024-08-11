@@ -1,4 +1,4 @@
-import WorkerModelFactory from '@src/core/domains/events/factory/workerModelFactory';
+import WorkerModelFactory from '@src/core/domains/events/factory/WorkerModelFactory';
 import { IEvent } from '@src/core/domains/events/interfaces/IEvent';
 import IEventDriver from '@src/core/domains/events/interfaces/IEventDriver';
 

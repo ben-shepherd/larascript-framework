@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
-import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
-import ResponseError from '@src/core/http/requests/ResponseError';
+import unauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
+import responseError from '@src/core/http/requests/responseError';
 import { App } from '@src/core/services/App';
 
 export default async (req: Request, res: Response): Promise<void> => {
@@ -20,13 +20,13 @@ export default async (req: Request, res: Response): Promise<void> => {
          })
     }
     catch (error) {
-        if(error instanceof UnauthorizedError) {
+        if(error instanceof unauthorizedError) {
             res.status(401).send({ error: error.message },)
             return;
         }
 
         if(error instanceof Error) {
-            ResponseError(req, res, error)
+            responseError(req, res, error)
         }
     }
 }

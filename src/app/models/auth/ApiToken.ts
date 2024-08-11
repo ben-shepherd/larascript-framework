@@ -1,5 +1,5 @@
 import BaseApiTokenModel from '@src/core/domains/auth/models/BaseApiTokenModel';
-import { BaseApiTokenData } from '@src/core/domains/auth/types/types.t';
+import { BaseApiTokenData } from '@src/core/domains/auth/types/Types.t';
 import { ObjectId } from 'mongodb';
 import User, { UserData } from './User';
 

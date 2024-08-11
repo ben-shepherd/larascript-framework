@@ -1,11 +1,11 @@
 import expressConfig from '@config/http/express';
 import apiRoutes from '@src/app/routes/api';
+import BaseProvider from "@src/core/base/Provider";
+import IExpressConfig from '@src/core/interfaces/http/IExpressConfig';
+import Kernel from "@src/core/Kernel";
+import ExpressProvider from "@src/core/providers/ExpressProvider";
 import healthRoute from '@src/core/routes/health';
-import BaseProvider from "../base/Provider";
-import IExpressConfig from '../interfaces/http/IExpressConfig';
-import Kernel from "../kernel";
-import { App } from '../services/App';
-import ExpressProvider from "./ExpressProvider";
+import { App } from '@src/core/services/App';
 
 export default class RoutesProvider extends BaseProvider
 {

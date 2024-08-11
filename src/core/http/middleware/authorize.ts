@@ -1,10 +1,10 @@
 import { NextFunction, Response } from 'express';
 
 import User from '@src/app/models/auth/User';
-import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
+import unauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
 import IAuthorizedRequest from '@src/core/domains/auth/interfaces/IAuthorizedRequest';
+import responseError from '@src/core/http/requests/responseError';
 import { App } from '@src/core/services/App';
-import ResponseError from '../requests/ResponseError';
 
 export const authorize = () => async (req: IAuthorizedRequest<User>, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -20,13 +20,13 @@ export const authorize = () => async (req: IAuthorizedRequest<User>, res: Respon
         next();
     }
     catch (error) {
-        if(error instanceof UnauthorizedError) {
-            ResponseError(req, res, error, 401)
+        if(error instanceof unauthorizedError) {
+            responseError(req, res, error, 401)
             return;
         }
 
         if(error instanceof Error) {
-            ResponseError(req, res, error)
+            responseError(req, res, error)
         }
     }
 };

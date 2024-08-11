@@ -8,7 +8,7 @@ import jwtTokenFactory from '@src/core/domains/auth/factory/jwtTokenFactory';
 import { IAuthConfig } from '@src/core/domains/auth/interfaces/IAuthConfig';
 import { IAuthService } from '@src/core/domains/auth/interfaces/IAuthService';
 import BaseApiTokenRepository from '@src/core/domains/auth/repository/BaseApiTokenRepository';
-import { JWTToken } from '@src/core/domains/auth/types/types.t';
+import { JWTToken } from '@src/core/domains/auth/types/Types.t';
 import comparePassword from '@src/core/domains/auth/utils/comparePassword';
 import createJwt from '@src/core/domains/auth/utils/createJwt';
 import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';

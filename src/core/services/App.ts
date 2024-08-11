@@ -1,8 +1,8 @@
 import { ContainersTypeHelpers } from '@src/config/containers';
-import Singleton from '../base/Singleton';
-import UninitializedContainerError from '../exceptions/UninitializedContainerError';
-import IAppConfig from "../interfaces/IAppConfig";
-import Kernel from "../kernel";
+import Singleton from '@src/core/base/Singleton';
+import UninitializedContainerError from '@src/core/exceptions/UninitializedContainerError';
+import IAppConfig from "@src/core/interfaces/IAppConfig";
+import Kernel from "@src/core/Kernel";
 
 export class App extends Singleton<IAppConfig> {
     public static setContainer<Name extends keyof ContainersTypeHelpers & string>(name: Name, container: ContainersTypeHelpers[Name]) {

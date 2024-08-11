@@ -1,5 +1,5 @@
-import Singleton from "./base/Singleton";
-import IAppConfig from "./interfaces/IAppConfig";
+import Singleton from "@src/core/base/Singleton";
+import IAppConfig from "@src/core/interfaces/IAppConfig";
 
 export type Containers = {
     [key: string]: any

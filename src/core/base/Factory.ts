@@ -1,4 +1,4 @@
-import IFactory from "../interfaces/IFactory";
+import IFactory from "@src/core/interfaces/IFactory";
 
 type ModelConstructor<Model> = new (data: any) => Model
 

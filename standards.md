@@ -1,37 +1,90 @@
 # Coding Standards
 
 ### Naming Convetion Casing
-- **Preferred casing:** camelCase
+- **Preferred casing for methods, variables:** camelCase
+- **Preferred casing for classes, interfaces and types, objects**: PascalCase
 
-### File and Folder Naming
 
-- All folders and files should be lowercase. Example: myService.ts
-    - Exception: Interfaces should start with a capital "i". Example: IMyServiceInterface.ts
+### Domains
 
-- Classes, Interfaces, Method and variables should follow camelCasing
+- Features ideally should be self contained in app/domains or core/domains.
 
-- Type files should be suffixed with ".t.ts" Example: types.t.ts
+- More generic utility functions and helpers can sit outside of a domain.
 
-- New features ideally should be self contained in app/domains or core/domains
+- Interfaces should be used when interacting with classes and methods outside of it's self contained domain.
 
-    - More generic utility functions and helpers can sit outside of a domain
+### Classes, Types and Interfaces, Objects
 
-    - Interfaces should be used when interacting with classes and methods outside of it's self contained folder
+- Classes, Interfaces, Types should be PascalCase. Example: `MyService.ts`
+
+- Interfaces should start with a capital "i". Example: `IMyServiceInterface.ts`
+
+- Type files should be suffixed with ".t.ts" Example: `Types.t.ts`
+
+- Files that export Objects should follow PascelCase. Example: `MyObject.ts`
+
+**Service/Interface Example:**
+
+Filename: `MyService.ts`
+
+```ts
+class MyService implements IMyService
+{
+    public function myServiceMethod({ data }: MyServiceMethodArgs): array
+}
+
+```
+
+**Type Example:**
+
+Filename: `MyServiceTypes.t.ts`
+
+```ts
+export MyServiceMethodArgs = {
+    data: array;
+}
+```
+
+### Methods and variables
+
+- Method file names should follow camelCasing.
+
+- Method and variables should follow camelCasing.
+
+Example:
+
+Filename: `myServiceMethod.ts`
+
+```ts
+
+const myServiceMethod = () { /* logic */ }
+
+export default myServiceMethod
+```
+
+```ts
+import myServiceMethod from 'myServiceMethod'
+
+const resultArray = myServiceMethod()
+```
+
+
 
 ## Import Standards
-- All imports should be absolute.
+- All internal imports should use absolute pathing and one of available prefixes.
 
 - Prefixes available:
-    - @src -> `/src`
-    - @core -> `/src/core`
-    - @app -> `/src/app`
+    - `@src` -> `/src`
+    - `@core` -> `/src/core`
+    - `@app` -> `/src/app`
 
 Example
 ```ts
 import MyService from '@app/domains/MyFeature/services/myService';
+import MongoDB from '@core/database/mongodb/services/MongoDB.ts';
 ```
 
-## Example
+## Example Folder Structure
 
 ```
 ├── app/
@@ -42,20 +95,34 @@ import MyService from '@app/domains/MyFeature/services/myService';
 │   ├── providers/
 │   ├── repositories/
 │   ├── routes/
+│   ├── utils/
+│   │   ├── formatString.ts
+│   │   └── formatNumber.ts
 │   └── domains/
 │       ├── user/
 │       │   ├── factory/
+│       │   │   └── UserFactory.ts
 │       │   ├── repository/
+│       │   │   └── UserRepository.ts
 │       │   ├── models/
+│       │   │   └── User.ts
 │       │   ├── services/
+│       │   │   └── UserService.ts
 │       │   └── types/
+│       │       └── user.t.ts
 │       └── movie/
 │           ├── factory/
+│           │   └── MovieFactory.ts
 │           ├── repository/
+│           │   └── MovieRepository.ts
 │           ├── exceptions/
+│           │   └── fetchMovieException.ts
 │           ├── interfaces/
+│           │   └── IMovie.ts
 │           ├── services/
+│           │   └── MovieDescriptionService.ts
 │           └── types/
+│               └── MovieTypes.t.ts
 ├── core/
 │   ├── domains/
 │   │   └── database/
