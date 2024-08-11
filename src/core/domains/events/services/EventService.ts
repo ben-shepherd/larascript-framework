@@ -1,11 +1,11 @@
 import Singleton from "@src/core/base/Singleton";
-import EventDriverException from "../exceptions/EventDriverException";
-import { IEvent } from "../interfaces/IEvent";
-import { IDriverConfig } from "../interfaces/IEventConfig";
-import { EventListenerConstructor } from "../interfaces/IEventListener";
-import { IEventPayload } from "../interfaces/IEventPayload";
-import { EventServiceConfig, IEventService } from "../interfaces/IEventService";
-import EventDispatcher from "./EventDispatcher";
+import EventDriverException from "@src/core/domains/Events/exceptions/EventDriverException";
+import { IEvent } from "@src/core/domains/Events/interfaces/IEvent";
+import { IDriverConfig } from "@src/core/domains/Events/interfaces/IEventConfig";
+import { EventListenerConstructor } from "@src/core/domains/Events/interfaces/IEventListener";
+import { IEventPayload } from "@src/core/domains/Events/interfaces/IEventPayload";
+import { EventServiceConfig, IEventService } from "@src/core/domains/Events/interfaces/IEventService";
+import EventDispatcher from "@src/core/domains/Events/services/EventDispatcher";
 
 export default class EventService extends Singleton<EventServiceConfig>  implements IEventService
 {

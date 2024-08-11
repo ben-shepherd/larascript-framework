@@ -1,6 +1,6 @@
-import WorkerModelFactory from '../factory/workerModelFactory';
-import { IEvent } from '../interfaces/IEvent';
-import IEventDriver from '../interfaces/IEventDriver';
+import WorkerModelFactory from '@src/core/domains/Events/factory/workerModelFactory';
+import { IEvent } from '@src/core/domains/Events/interfaces/IEvent';
+import IEventDriver from '@src/core/domains/Events/interfaces/IEventDriver';
 
 export type QueueDriverOptions = {
     queueName: string;

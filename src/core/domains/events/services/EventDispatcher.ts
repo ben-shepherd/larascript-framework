@@ -1,9 +1,9 @@
+import Singleton from "@src/core/base/Singleton";
+import { IEvent } from "@src/core/domains/Events/interfaces/IEvent";
+import { IDriverConfig } from "@src/core/domains/Events/interfaces/IEventConfig";
+import { IEventDispatcher } from "@src/core/domains/Events/interfaces/IEventDispatcher";
+import { IEventPayload } from "@src/core/domains/Events/interfaces/IEventPayload";
 import { App } from "@src/core/services/App";
-import Singleton from "../../../base/Singleton";
-import { IEvent } from "../interfaces/IEvent";
-import { IDriverConfig } from "../interfaces/IEventConfig";
-import { IEventDispatcher } from "../interfaces/IEventDispatcher";
-import { IEventPayload } from "../interfaces/IEventPayload";
 
 
 export default class EventDispatcher extends Singleton implements IEventDispatcher {

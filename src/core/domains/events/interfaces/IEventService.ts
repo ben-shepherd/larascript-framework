@@ -1,7 +1,7 @@
-import { IEvent } from "./IEvent";
-import { IDriverConfig, IEventDrivers, ISubscribers } from "./IEventConfig";
-import { EventListenerConstructor } from "./IEventListener";
-import { IEventPayload } from "./IEventPayload";
+import { IEvent } from "@src/core/domains/Events/interfaces/IEvent";
+import { IDriverConfig, IEventDrivers, ISubscribers } from "@src/core/domains/Events/interfaces/IEventConfig";
+import { EventListenerConstructor } from "@src/core/domains/Events/interfaces/IEventListener";
+import { IEventPayload } from "@src/core/domains/Events/interfaces/IEventPayload";
 
 export interface EventServiceConfig {
     defaultDriver: string;

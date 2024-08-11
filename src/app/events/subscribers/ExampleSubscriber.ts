@@ -1,4 +1,4 @@
-import EventSubscriber from "@src/core/domains/events/services/EventSubscriber";
+import EventSubscriber from "@src/core/domains/Events/services/EventSubscriber";
 
 type Payload = {
     userId: string;

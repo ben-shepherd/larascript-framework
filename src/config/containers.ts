@@ -1,6 +1,6 @@
 import ICommandService from '@src/core/domains/Console/interfaces/ICommandService';
 import { IMongoDB } from '@src/core/domains/Database/mongodb/interfaces/IMongoDB';
-import { IEventService } from '@src/core/domains/events/interfaces/IEventService';
+import { IEventService } from '@src/core/domains/Events/interfaces/IEventService';
 import IExpress from '@src/core/interfaces/http/IExpress';
 import { AuthConfigTypeHelpers } from './auth/auth';
 

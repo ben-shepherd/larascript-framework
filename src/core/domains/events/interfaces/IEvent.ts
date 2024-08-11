@@ -1,6 +1,6 @@
 import { eventSubscribers } from "@src/config/events";
-import { IEventDrivers, ISubscribers } from "./IEventConfig";
-import { IEventPayload } from "./IEventPayload";
+import { IEventDrivers, ISubscribers } from "@src/core/domains/Events/interfaces/IEventConfig";
+import { IEventPayload } from "@src/core/domains/Events/interfaces/IEventPayload";
 
 export interface IEvent<
     Payload extends IEventPayload = IEventPayload,
