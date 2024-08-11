@@ -1,6 +1,6 @@
+import BaseCommand from "@src/core/domains/Console/base/BaseCommand";
 import fs from 'fs';
 import path from 'path';
-import BaseCommand from "../../Console/base/BaseCommand";
 
 export const targetDirectories: Record<string,string> = {
     Repository: '@src/app/repositories',

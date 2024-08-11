@@ -1,5 +1,5 @@
-import CommandExecutionException from "../../Console/exceptions/CommandExecutionException";
-import BaseMakeCommand from "./BaseMakeCommand";
+import CommandExecutionException from "@src/core/domains/Console/exceptions/CommandExecutionException";
+import BaseMakeCommand from "@src/core/domains/Make/base/BaseMakeCommand";
 
 export interface GenericMakeFileOptions {
     endsWith?: string

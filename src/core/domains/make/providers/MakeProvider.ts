@@ -1,14 +1,14 @@
 import BaseProvider from "@src/core/base/Provider";
+import MakeCmdCommand from "@src/core/domains/Make/commands/MakeCmdCommand";
+import MakeListenerCommand from "@src/core/domains/Make/commands/MakeListenerCommand";
+import MakeModelCommand from "@src/core/domains/Make/commands/MakeModelCommand";
+import MakeObserverCommand from "@src/core/domains/Make/commands/MakeObserverCommand";
+import MakeProviderCommand from "@src/core/domains/Make/commands/MakeProviderCommand";
+import MakeRepositoryCommand from "@src/core/domains/Make/commands/MakeRepositoryCommand";
+import MakeServiceCommand from "@src/core/domains/Make/commands/MakeServiceCommand";
+import MakeSingletonCommand from "@src/core/domains/Make/commands/MakeSingletonCommand";
+import MakeSubscriberCommand from "@src/core/domains/Make/commands/MakeSubscriberCommand";
 import { App } from "@src/core/services/App";
-import MakeCmdCommand from "../commands/MakeCmdCommand";
-import MakeListenerCommand from "../commands/MakeListenerCommand";
-import MakeModelCommand from "../commands/MakeModelCommand";
-import MakeObserverCommand from "../commands/MakeObserverCommand";
-import MakeProviderCommand from "../commands/MakeProviderCommand";
-import MakeRepositoryCommand from "../commands/MakeRepositoryCommand";
-import MakeServiceCommand from "../commands/MakeServiceCommand";
-import MakeSingletonCommand from "../commands/MakeSingletonCommand";
-import MakeSubscriberCommand from "../commands/MakeSubscriberCommand";
 
 export default class MakeProvider extends BaseProvider
 {
