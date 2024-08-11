@@ -1,6 +1,6 @@
-import { EnvironmentType } from "../consts/Environment";
-import { ICommandConstructor } from "../domains/console/interfaces/ICommand";
-import { IProvider } from "./IProvider";
+import { EnvironmentType } from "@src/core/consts/Environment";
+import { ICommandConstructor } from "@src/core/domains/console/interfaces/ICommand";
+import { IProvider } from "@src/core/interfaces/IProvider";
 
 export default interface IAppConfig {
     environment: EnvironmentType

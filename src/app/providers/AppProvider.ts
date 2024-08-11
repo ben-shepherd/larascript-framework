@@ -1,4 +1,4 @@
-import BaseProvider from "../../core/base/Provider";
+import BaseProvider from "@src/core/base/Provider";
 
 export interface AppConfig {}
 

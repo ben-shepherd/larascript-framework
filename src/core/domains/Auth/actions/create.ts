@@ -1,10 +1,10 @@
-import responseError from "@src/core/http/requests/ResponseError";
+import Roles from '@src/core/domains/auth/enums/RolesEnum';
+import UserFactory from '@src/core/domains/auth/factory/UserFactory';
+import hashPassword from '@src/core/domains/auth/utils/hashPassword';
+import ValidationError from '@src/core/exceptions/ValidationError';
+import responseError from "@src/core/http/requests/responseError";
 import { App } from '@src/core/services/App';
 import { Request, Response } from 'express';
-import ValidationError from '../../../exceptions/ValidationError';
-import Roles from '../enums/RolesEnum';
-import UserFactory from '../factory/userFactory';
-import hashPassword from '../utils/hashPassword';
 
 export default async (req: Request, res: Response): Promise<void> => {
 

@@ -1,4 +1,4 @@
-import GenericMakeFileCommand from "../base/GenericMakeFileCommand";
+import GenericMakeFileCommand from "@src/core/domains/make/base/GenericMakeFileCommand";
 
 export default class MakeProviderCommand extends GenericMakeFileCommand
 {

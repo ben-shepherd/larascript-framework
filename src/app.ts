@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 import appConfig from './config/app';
 import CommandEmptyArgument from './core/domains/console/exceptions/CommandEmptyArgument';
-import Kernel, { KernelOptions } from './core/kernel';
+import Kernel, { KernelOptions } from './core/Kernel';
 import { App } from './core/services/App';
 
 require('dotenv').config();
@@ -14,6 +14,10 @@ require('dotenv').config();
 
         if(args.length) {
             options.withoutProvider = ['ExpressProvider', 'RoutesProvider']
+        }
+
+        if(args.includes('--no-db')) {
+            options.withoutProvider?.push('MongoDBProvider');
         }
 
         await Kernel.boot(appConfig, options);

@@ -15,7 +15,7 @@ import { AuthConfigTypeHelpers } from './auth/auth';
  * [Retrieving a container]
  *   Retrieving the container using App global helper
  *   Example:
- *   const token = await App.contantainer('auth').createToken(user)
+ *   const token = await App.container('auth').createToken(user)
  */
 
 export interface ContainersTypeHelpers {

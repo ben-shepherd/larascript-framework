@@ -1,4 +1,4 @@
-import WorkerModel, { initialWorkerModalData } from "../models/WorkerModel";
+import WorkerModel, { initialWorkerModalData } from "@src/core/domains/events/models/WorkerModel";
 
 type Params = {
     queueName: string;

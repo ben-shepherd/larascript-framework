@@ -1,12 +1,11 @@
 import { Db, MongoClient } from 'mongodb';
 
 import Service from '@src/core/base/Service';
-import InvalidDatabaseConnection from '../exceptions/InvalidDatabaseConnection';
-import { IConnections } from '../interfaces/IConnections';
-import { IMongoDB } from '../interfaces/IMongoDB';
-import IMongoDbConfig from '../interfaces/IMongoDbConfig';
-import MongoDBConnection from './MongoDBConnection';
-
+import InvalidDatabaseConnection from '@src/core/domains/database/mongodb/exceptions/InvalidDatabaseConnection';
+import { IConnections } from '@src/core/domains/database/mongodb/interfaces/IConnections';
+import { IMongoDB } from '@src/core/domains/database/mongodb/interfaces/IMongoDB';
+import IMongoDbConfig from '@src/core/domains/database/mongodb/interfaces/IMongoDbConfig';
+import MongoDBConnection from '@src/core/domains/database/mongodb/services/MongoDBConnection';
 
 /**
  * MongoDB service
@@ -44,6 +43,11 @@ export default class MongoDB extends Service<IMongoDbConfig> implements IMongoDB
             if (!config?.connections[conn]) {
                 continue;
             }
+
+            if(!config?.connections[conn]?.uri) {
+                throw new InvalidDatabaseConnection('MongoDB URI is empty or not present');
+            }
+
             this.connections[conn] = new MongoDBConnection(config.connections[conn]);
         }
     }

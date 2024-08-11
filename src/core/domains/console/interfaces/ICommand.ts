@@ -1,4 +1,4 @@
-import { ParsedArgumentsArray } from "../parsers/CommandArgumentParser";
+import { ParsedArgumentsArray } from "@src/core/domains/console/parsers/CommandArgumentParser";
 
 export type ICommandConstructor<Command extends ICommand = ICommand> = new (...args: any[]) => Command
 

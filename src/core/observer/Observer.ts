@@ -1,4 +1,4 @@
-import { IObserver } from "../interfaces/observer/IObserver";
+import { IObserver } from "@src/core/interfaces/observer/IObserver";
 
 export default abstract class Observer<ReturnType = any> implements IObserver<ReturnType>
 {

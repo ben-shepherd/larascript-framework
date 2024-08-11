@@ -1,15 +1,15 @@
 import { eventDrivers } from "@src/config/events";
 import Repository from "@src/core/base/Repository";
 import Singleton from "@src/core/base/Singleton";
+import { QueueDriverOptions } from "@src/core/domains/events/drivers/QueueDriver";
+import EventDriverException from "@src/core/domains/events/exceptions/EventDriverException";
+import FailedWorkerModelFactory from "@src/core/domains/events/factory/FailedWorkerModelFactory";
+import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
+import WorkerModel from "@src/core/domains/events/models/WorkerModel";
+import EventSubscriber from "@src/core/domains/events/services/EventSubscriber";
+import DriverOptions from "@src/core/domains/events/services/QueueDriverOptions";
 import { App } from "@src/core/services/App";
 import { ObjectId } from "mongodb";
-import { QueueDriverOptions } from "../drivers/QueueDriver";
-import EventDriverException from "../exceptions/EventDriverException";
-import FailedWorkerModelFactory from "../factory/failedWorkerModelFactory";
-import { IEventPayload } from "../interfaces/IEventPayload";
-import WorkerModel from "../models/WorkerModel";
-import EventSubscriber from "./EventSubscriber";
-import DriverOptions from "./QueueDriverOptions";
 
 export default class Worker extends Singleton 
 {

@@ -1,6 +1,6 @@
+import Model, { BaseModelData } from "@src/core/base/Model";
 import { App } from "@src/core/services/App";
 import { ObjectId } from "mongodb";
-import Model, { BaseModelData } from "../../../../base/Model";
 
 export default class HasOne<
     LocalData extends BaseModelData,

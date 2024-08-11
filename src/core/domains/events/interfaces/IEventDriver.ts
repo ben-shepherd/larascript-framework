@@ -1,5 +1,5 @@
-import { IEvent } from "./IEvent";
-import { IEventPayload } from "./IEventPayload";
+import { IEvent } from "@src/core/domains/events/interfaces/IEvent";
+import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
 
 export type IDriverConstructor<
 Payload extends IEventPayload = IEventPayload,

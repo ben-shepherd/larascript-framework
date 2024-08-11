@@ -1,7 +1,7 @@
 import Singleton from "@src/core/base/Singleton";
-import CommandRegisterException from "../exceptions/CommandRegisterException";
-import { ICommandConstructor } from "../interfaces/ICommand";
-import { ICommandRegister, Registered } from "../interfaces/ICommandRegister";
+import CommandRegisterException from "@src/core/domains/console/exceptions/CommandRegisterException";
+import { ICommandConstructor } from "@src/core/domains/console/interfaces/ICommand";
+import { ICommandRegister, Registered } from "@src/core/domains/console/interfaces/ICommandRegister";
 
 export default class CommandRegister extends Singleton implements ICommandRegister
 {

@@ -1,8 +1,8 @@
 import expressConfig from '@config/http/express';
-import BaseProvider from "../base/Provider";
-import IExpressConfig from "../interfaces/http/IExpressConfig";
-import { App } from "../services/App";
-import Express from "../services/Express";
+import BaseProvider from "@src/core/base/Provider";
+import IExpressConfig from "@src/core/interfaces/http/IExpressConfig";
+import { App } from "@src/core/services/App";
+import Express from "@src/core/services/Express";
 
 export default class ExpressProvider extends BaseProvider
 {

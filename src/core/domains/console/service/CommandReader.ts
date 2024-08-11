@@ -1,12 +1,12 @@
-import CommandEmptyArgument from "../exceptions/CommandEmptyArgument";
-import CommandNotFoundException from "../exceptions/CommandNotFoundException";
-import { ICommandReader } from "../interfaces/ICommandReader";
-import CommandArguementParser, { ParsedArgumentsArray } from "../parsers/CommandArgumentParser";
-import CommandRegister from "./CommandRegister";
+import CommandEmptyArgument from "@src/core/domains/console/exceptions/CommandEmptyArgument";
+import CommandNotFoundException from "@src/core/domains/console/exceptions/CommandNotFoundException";
+import { ICommandReader } from "@src/core/domains/console/interfaces/ICommandReader";
+import CommandArguementParser, { ParsedArgumentsArray } from "@src/core/domains/console/parsers/CommandArgumentParser";
+import CommandRegister from "@src/core/domains/console/service/CommandRegister";
 
 export default class CommandReader implements ICommandReader {
     private argv: string[] = [];
-    private parsedArgs: ParsedArgumentsArray = [];
+
     /**
      * Command signature
      * 
@@ -16,7 +16,6 @@ export default class CommandReader implements ICommandReader {
      * @param argv 
      */
     constructor(argv: string[]) {
-        console.log('[CommandReader:ctor]', argv)
         this.argv = argv;   
     }
 
@@ -39,15 +38,11 @@ export default class CommandReader implements ICommandReader {
 
         const signature = this.argv[0];
 
-        console.log('[CommandReader:handle]', this.argv)
-
         const commandCtor = CommandRegister.getInstance().getBySignature(signature);
 
         if(!commandCtor) {
             throw new CommandNotFoundException()
         }
-
-        console.log('[CommandReader:handle] executing', commandCtor, this.parsedArgs)
 
         const cmd = new commandCtor()
         cmd.setParsedArguments(this.runParser())

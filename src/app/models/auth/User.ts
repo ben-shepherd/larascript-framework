@@ -1,6 +1,6 @@
 import UserObserver from '@src/app/observers/UserObserver';
 import BaseUserModel from '@src/core/domains/auth/models/BaseUserModel';
-import { BaseUserData } from '@src/core/domains/auth/types/types.t';
+import { BaseUserData } from '@src/core/domains/auth/types/Types.t';
 import { ObjectId } from 'mongodb';
 
 export interface UserData extends BaseUserData {
@@ -32,17 +32,5 @@ export default class User extends BaseUserModel<UserData> {
     constructor(data: UserData | null = null) {
         super(data);
         this.observeWith(UserObserver)
-    }
-
-
-    /**
-     * todo: delete, only example for custom observers
-     */
-    setAttribute<K extends keyof UserData = keyof UserData>(key: K, value: any): void {
-        super.setAttribute(key, value)
-
-        if(key === 'hashedPassword') {
-            this.data = this.observeDataCustom<UserObserver>('onPasswordChanged', this.data)
-        }
     }
 }
