@@ -1,4 +1,4 @@
-import { ICommandConstructor } from "./ICommand";
+import { ICommandConstructor } from "@src/core/domains/Console/interfaces/ICommand";
 
 export type Registered = Map<string, ICommandConstructor>
 

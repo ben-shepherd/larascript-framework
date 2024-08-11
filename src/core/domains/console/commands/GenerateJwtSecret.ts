@@ -1,4 +1,4 @@
-import BaseCommand from "@src/core/domains/console/base/BaseCommand";
+import BaseCommand from "@src/core/domains/Console/base/BaseCommand";
 import fs from "fs";
 import path from "path";
 

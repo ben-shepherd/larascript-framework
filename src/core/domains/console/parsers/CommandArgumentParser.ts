@@ -1,4 +1,4 @@
-import CommandArguementParserException from "../exceptions/CommandArguementParserException"
+import CommandArguementParserException from "@src/core/domains/Console/exceptions/CommandArguementParserException"
 
 export const KeyPair = 'KeyPair'
 export type KeyPairArguementType = {type: typeof KeyPair, key: string, value: string}

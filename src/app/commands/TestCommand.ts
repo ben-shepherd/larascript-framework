@@ -1,10 +1,10 @@
-import BaseCommand from "@src/core/domains/console/base/BaseCommand";
+import BaseCommand from "@src/core/domains/Console/base/BaseCommand";
 
 export default class TestCommand extends BaseCommand {
 
-    signature: string = 'test:command';
+    signature: string = 'app:test';
 
     execute = () => {
-        console.log('TestCommand')
+        console.log('Hello world!')
     }
 }
