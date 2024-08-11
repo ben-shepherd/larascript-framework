@@ -1,7 +1,7 @@
 import TestCommand from '@src/app/commands/TestCommand';
 import AppProvider from '@src/app/providers/AppProvider';
-import ConsoleProvider from '@src/core/domains/Console/providers/ConsoleProvider';
-import EventProvider from '@src/core/domains/Events/providers/EventProvider';
+import ConsoleProvider from '@src/core/domains/console/providers/ConsoleProvider';
+import EventProvider from '@src/core/domains/events/providers/EventProvider';
 import { EnvironmentType } from '../core/consts/Environment';
 import IAppConfig from '../core/interfaces/IAppConfig';
 import AuthProvider from '../core/providers/AuthProvider';

@@ -1,4 +1,4 @@
-import IMongoDbConfig from "@src/core/domains/Database/mongodb/interfaces/IMongoDbConfig";
+import IMongoDbConfig from "@src/core/domains/database/mongodb/interfaces/IMongoDbConfig";
 
 const config: IMongoDbConfig = {
     /**

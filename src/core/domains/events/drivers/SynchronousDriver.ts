@@ -1,5 +1,5 @@
-import { IEvent } from '@src/core/domains/Events/interfaces/IEvent';
-import IEventDriver from '@src/core/domains/Events/interfaces/IEventDriver';
+import { IEvent } from '@src/core/domains/events/interfaces/IEvent';
+import IEventDriver from '@src/core/domains/events/interfaces/IEventDriver';
 import { App } from '@src/core/services/App';
 
 export default class SynchronousDriver implements IEventDriver

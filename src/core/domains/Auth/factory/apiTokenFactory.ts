@@ -1,6 +1,6 @@
-import BaseApiToken from '@src/core/domains/Auth/models/BaseApiTokenModel'
-import BaseUserModel from '@src/core/domains/Auth/models/BaseUserModel'
-import tokenFactory from '@src/core/domains/Auth/utils/generateToken'
+import BaseApiToken from '@src/core/domains/auth/models/BaseApiTokenModel'
+import BaseUserModel from '@src/core/domains/auth/models/BaseUserModel'
+import tokenFactory from '@src/core/domains/auth/utils/generateToken'
 import { ModelConstructor } from '@src/core/interfaces/IModel'
 
 export default <

@@ -1,7 +1,7 @@
-import EventSubscriberException from "@src/core/domains/Events/exceptions/EventSubscriberException";
-import { IEvent } from "@src/core/domains/Events/interfaces/IEvent";
-import { IEventDrivers, ISubscribers } from '@src/core/domains/Events/interfaces/IEventConfig';
-import { IEventPayload } from "@src/core/domains/Events/interfaces/IEventPayload";
+import EventSubscriberException from "@src/core/domains/events/exceptions/EventSubscriberException";
+import { IEvent } from "@src/core/domains/events/interfaces/IEvent";
+import { IEventDrivers, ISubscribers } from '@src/core/domains/events/interfaces/IEventConfig';
+import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
 
 export default class EventSubscriber<
     Payload extends IEventPayload,

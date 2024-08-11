@@ -1,4 +1,4 @@
-import EventListener from "@src/core/domains/Events/services/EventListener";
+import EventListener from "@src/core/domains/events/services/EventListener";
  
 export class ExampleListener extends EventListener<{userId: string}> {
     

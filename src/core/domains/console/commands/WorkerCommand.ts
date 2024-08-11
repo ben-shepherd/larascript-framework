@@ -1,5 +1,5 @@
-import BaseCommand from "@src/core/domains/Console/base/BaseCommand";
-import Worker from "../../Events/services/Worker";
+import BaseCommand from "@src/core/domains/console/base/BaseCommand";
+import Worker from "../../events/services/Worker";
 
 export default class WorkerCommand extends BaseCommand {
 

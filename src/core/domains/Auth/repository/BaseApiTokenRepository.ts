@@ -1,6 +1,6 @@
 import Repository from "@src/core/base/Repository";
-import IApiTokenRepository from "@src/core/domains/Auth/interfaces/IApiTokenRepository";
-import BaseApiTokenModel from "@src/core/domains/Auth/models/BaseApiTokenModel";
+import IApiTokenRepository from "@src/core/domains/auth/interfaces/IApiTokenRepository";
+import BaseApiTokenModel from "@src/core/domains/auth/models/BaseApiTokenModel";
 import { ModelConstructor } from "@src/core/interfaces/IModel";
 
 

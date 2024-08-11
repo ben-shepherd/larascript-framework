@@ -1,4 +1,4 @@
-import { IConnections } from '@src/core/domains/Database/mongodb/interfaces/IConnections';
+import { IConnections } from '@src/core/domains/database/mongodb/interfaces/IConnections';
 import { Db, MongoClient } from 'mongodb';
 
 export interface IMongoDB {

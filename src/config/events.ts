@@ -1,8 +1,8 @@
 import { ExampleListener } from "@src/app/events/listeners/ExampleListener";
-import QueueDriver, { QueueDriverOptions } from "@src/core/domains/Events/drivers/QueueDriver";
-import SynchronousDriver from "@src/core/domains/Events/drivers/SynchronousDriver";
-import { IEventDrivers, ISubscribers } from "@src/core/domains/Events/interfaces/IEventConfig";
-import DriverOptions from "@src/core/domains/Events/services/QueueDriverOptions";
+import QueueDriver, { QueueDriverOptions } from "@src/core/domains/events/drivers/QueueDriver";
+import SynchronousDriver from "@src/core/domains/events/drivers/SynchronousDriver";
+import { IEventDrivers, ISubscribers } from "@src/core/domains/events/interfaces/IEventConfig";
+import DriverOptions from "@src/core/domains/events/services/QueueDriverOptions";
 
 /**
  * The default event driver will be used when no driver is defined in the Event

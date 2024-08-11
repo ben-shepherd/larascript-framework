@@ -1,6 +1,6 @@
-import { IDriverConstructor } from '@src/core/domains/Events/interfaces/IEventDriver';
-import { EventListenerConstructor } from "@src/core/domains/Events/interfaces/IEventListener";
-import DriverOptions from "@src/core/domains/Events/services/QueueDriverOptions";
+import { IDriverConstructor } from '@src/core/domains/events/interfaces/IEventDriver';
+import { EventListenerConstructor } from "@src/core/domains/events/interfaces/IEventListener";
+import DriverOptions from "@src/core/domains/events/services/QueueDriverOptions";
 
 export interface IDriverConfig {
     driver: IDriverConstructor

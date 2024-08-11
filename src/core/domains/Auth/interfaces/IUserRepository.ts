@@ -1,4 +1,4 @@
-import BaseUserModel from "@src/core/domains/Auth/models/BaseUserModel";
+import BaseUserModel from "@src/core/domains/auth/models/BaseUserModel";
 import { IModel } from "@src/core/interfaces/IModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
 

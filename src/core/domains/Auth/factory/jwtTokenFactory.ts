@@ -1,4 +1,4 @@
-import { JWTToken } from "@src/core/domains/Auth/types/types.t";
+import { JWTToken } from "@src/core/domains/auth/types/types.t";
 
 export default (userId: string, token: string): JWTToken => {
     return {

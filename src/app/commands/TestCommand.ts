@@ -1,4 +1,4 @@
-import BaseCommand from "@src/core/domains/Console/base/BaseCommand";
+import BaseCommand from "@src/core/domains/console/base/BaseCommand";
 
 export default class TestCommand extends BaseCommand {
 

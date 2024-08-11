@@ -1,5 +1,5 @@
 import ApiToken from "@src/app/models/auth/ApiToken";
-import BaseApiTokenRepository from "@src/core/domains/Auth/repository/BaseApiTokenRepository";
+import BaseApiTokenRepository from "@src/core/domains/auth/repository/BaseApiTokenRepository";
 
 
 export default class ApiTokenRepository extends BaseApiTokenRepository<ApiToken> 

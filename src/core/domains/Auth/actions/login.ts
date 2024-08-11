@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import UnauthorizedError from '@src/core/domains/Auth/exceptions/UnauthorizedError';
+import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
 import ResponseError from '@src/core/http/requests/ResponseError';
 import { App } from '@src/core/services/App';
 

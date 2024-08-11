@@ -1,5 +1,5 @@
-import CommandExecutionException from "@src/core/domains/Console/exceptions/CommandExecutionException";
-import { ICommand } from "@src/core/domains/Console/interfaces/ICommand";
+import CommandExecutionException from "@src/core/domains/console/exceptions/CommandExecutionException";
+import { ICommand } from "@src/core/domains/console/interfaces/ICommand";
 import { KeyPair, KeyPairArguementType, OnlyArguement, ParsedArguement, ParsedArgumentsArray } from "../parsers/CommandArgumentParser";
 
 export default class BaseCommand implements ICommand {

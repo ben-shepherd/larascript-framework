@@ -1,8 +1,8 @@
 import Singleton from "@src/core/base/Singleton";
-import { IEvent } from "@src/core/domains/Events/interfaces/IEvent";
-import { IDriverConfig } from "@src/core/domains/Events/interfaces/IEventConfig";
-import { IEventDispatcher } from "@src/core/domains/Events/interfaces/IEventDispatcher";
-import { IEventPayload } from "@src/core/domains/Events/interfaces/IEventPayload";
+import { IEvent } from "@src/core/domains/events/interfaces/IEvent";
+import { IDriverConfig } from "@src/core/domains/events/interfaces/IEventConfig";
+import { IEventDispatcher } from "@src/core/domains/events/interfaces/IEventDispatcher";
+import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
 import { App } from "@src/core/services/App";
 
 

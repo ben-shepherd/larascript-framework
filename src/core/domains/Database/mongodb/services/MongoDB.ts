@@ -1,11 +1,11 @@
 import { Db, MongoClient } from 'mongodb';
 
 import Service from '@src/core/base/Service';
-import InvalidDatabaseConnection from '@src/core/domains/Database/mongodb/exceptions/InvalidDatabaseConnection';
-import { IConnections } from '@src/core/domains/Database/mongodb/interfaces/IConnections';
-import { IMongoDB } from '@src/core/domains/Database/mongodb/interfaces/IMongoDB';
-import IMongoDbConfig from '@src/core/domains/Database/mongodb/interfaces/IMongoDbConfig';
-import MongoDBConnection from '@src/core/domains/Database/mongodb/services/MongoDBConnection';
+import InvalidDatabaseConnection from '@src/core/domains/database/mongodb/exceptions/InvalidDatabaseConnection';
+import { IConnections } from '@src/core/domains/database/mongodb/interfaces/IConnections';
+import { IMongoDB } from '@src/core/domains/database/mongodb/interfaces/IMongoDB';
+import IMongoDbConfig from '@src/core/domains/database/mongodb/interfaces/IMongoDbConfig';
+import MongoDBConnection from '@src/core/domains/database/mongodb/services/MongoDBConnection';
 
 /**
  * MongoDB service

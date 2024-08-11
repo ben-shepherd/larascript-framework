@@ -1,12 +1,12 @@
-import CommandEmptyArgument from "@src/core/domains/Console/exceptions/CommandEmptyArgument";
-import CommandNotFoundException from "@src/core/domains/Console/exceptions/CommandNotFoundException";
-import { ICommandReader } from "@src/core/domains/Console/interfaces/ICommandReader";
-import CommandArguementParser, { ParsedArgumentsArray } from "@src/core/domains/Console/parsers/CommandArgumentParser";
-import CommandRegister from "@src/core/domains/Console/service/CommandRegister";
+import CommandEmptyArgument from "@src/core/domains/console/exceptions/CommandEmptyArgument";
+import CommandNotFoundException from "@src/core/domains/console/exceptions/CommandNotFoundException";
+import { ICommandReader } from "@src/core/domains/console/interfaces/ICommandReader";
+import CommandArguementParser, { ParsedArgumentsArray } from "@src/core/domains/console/parsers/CommandArgumentParser";
+import CommandRegister from "@src/core/domains/console/service/CommandRegister";
 
 export default class CommandReader implements ICommandReader {
     private argv: string[] = [];
-    private parsedArgs: ParsedArgumentsArray = [];
+
     /**
      * Command signature
      * 

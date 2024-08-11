@@ -1,6 +1,6 @@
-import Roles from '@src/core/domains/Auth/enums/RolesEnum';
-import UserFactory from '@src/core/domains/Auth/factory/userFactory';
-import hashPassword from '@src/core/domains/Auth/utils/hashPassword';
+import Roles from '@src/core/domains/auth/enums/RolesEnum';
+import UserFactory from '@src/core/domains/auth/factory/userFactory';
+import hashPassword from '@src/core/domains/auth/utils/hashPassword';
 import responseError from "@src/core/http/requests/ResponseError";
 import { App } from '@src/core/services/App';
 import { Request, Response } from 'express';
