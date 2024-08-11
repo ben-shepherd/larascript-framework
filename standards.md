@@ -80,7 +80,7 @@ const resultArray = myServiceMethod()
 
 Example
 ```ts
-import MyService from '@app/domains/MyFeature/services/myService';
+import MyService from '@app/domains/MyFeature/services/MyService';
 import MongoDB from '@core/database/mongodb/services/MongoDB.ts';
 ```
 
