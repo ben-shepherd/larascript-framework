@@ -5,22 +5,23 @@ import Kernel from '@src/core/Kernel';
 import MongoDBProvider from '@src/core/providers/MongoDBProvider';
 import { App } from '@src/core/services/App';
 
-describe('dbConnection module', () => {
-  test('success db connection', async () => {
-    
+describe('attempt to connect to MongoDB database', () => {
+
+  test('kernal boot', async () => {
     await Kernel.boot({
-        ...testAppConfig,
-        providers: [
-            new MongoDBProvider()
-        ]
+      ...testAppConfig,
+      providers: [
+        new MongoDBProvider()
+      ]
     }, {})
+  })
+
+  test('mongodb connection attempt', async () => {
 
     const mongodb = App.container('mongodb');
-
     expect(mongodb).toBeInstanceOf(MongoDB);
 
     mongodb.connectDefaultConnection();
-
     expect(mongodb.getDb()).toBeTruthy();
   });
 });

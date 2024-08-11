@@ -6,19 +6,19 @@ import { App } from '@src/core/services/App';
 import Express from '@src/core/services/Express';
 
 describe('expressListener module', () => {
-  test('express listening for connections', async () => {
-    
+  
+  test('kernel boot', async () => {
     await Kernel.boot({
-        ...testAppConfig,
-        providers: [
-            new ExpressProvider()
-        ]
-    }, {})
+      ...testAppConfig,
+      providers: [
+          new ExpressProvider()
+      ]
+  }, {})
+  })
 
+  test('express listening for connections', async () => {
     const express = App.container('express');
-
     expect(express).toBeInstanceOf(Express);
-
     expect(true).toBeTruthy();
   });
 });
