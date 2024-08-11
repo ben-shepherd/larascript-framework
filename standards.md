@@ -31,6 +31,9 @@ Filename: `MyService.ts`
 class MyService implements IMyService
 {
     public function myServiceMethod({ data }: MyServiceMethodArgs): array
+    {
+        /* logic */    
+    }
 }
 
 ```
@@ -40,7 +43,7 @@ class MyService implements IMyService
 Filename: `MyServiceTypes.t.ts`
 
 ```ts
-export MyServiceMethodArgs = {
+export type MyServiceMethodArgs = {
     data: array;
 }
 ```
@@ -57,7 +60,9 @@ Filename: `myServiceMethod.ts`
 
 ```ts
 
-const myServiceMethod = () { /* logic */ }
+const myServiceMethod = () => { 
+    /* logic */
+}
 
 export default myServiceMethod
 ```
@@ -81,7 +86,7 @@ const resultArray = myServiceMethod()
 Example
 ```ts
 import MyService from '@app/domains/MyFeature/services/MyService';
-import MongoDB from '@core/database/mongodb/services/MongoDB.ts';
+import MongoDB from '@core/database/mongodb/services/MongoDB';
 ```
 
 ## Example Folder Structure
