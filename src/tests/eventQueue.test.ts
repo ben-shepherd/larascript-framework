@@ -6,14 +6,14 @@ import MongoDBProvider from '@src/core/providers/MongoDBProvider';
 import { App } from '@src/core/services/App';
 import 'dotenv/config';
 import TestQueueSubscriber from './events/subscribers/TestQueueSubscriber';
-import { MovieModel } from './models/models/Movie';
+import { TestMovieModel } from './models/models/TestMovie';
 import TestWorkerModel from './models/models/TestWorkerModel';
 import TestConsoleProvider from './providers/TestConsoleProvider';
 import TestEventProvider from './providers/TestEventProvider';
 
 describe('mock event service', () => {
   const movieName = 'testMovie';
-  let movie: MovieModel | null;
+  let movie: TestMovieModel | null;
 
   beforeAll(async () => {
     await Kernel.boot({
@@ -31,7 +31,7 @@ describe('mock event service', () => {
   });
 
   afterAll(async () => {
-    const repository = new Repository<MovieModel>('tests', MovieModel);
+    const repository = new Repository<TestMovieModel>('tests', TestMovieModel);
     movie = await repository.findOne({ name: movieName });
     expect(movie?.getId()).toBeTruthy();
     expect(movie?.getAttribute('name')).toBe(movieName);

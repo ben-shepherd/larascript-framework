@@ -1,12 +1,12 @@
 import Model from "@src/core/base/Model";
-import { AuthorModel } from "@src/tests/models/models/Author";
+import { TestAuthorModel } from "@src/tests/models/models/TestAuthor";
 
-export type MovieModelData = {
+export type TestMovieModelData = {
     authorId?: string;
     name?: string;
     yearReleased?: string;
 }
-export class MovieModel extends Model<MovieModelData> {
+export class TestMovieModel extends Model<TestMovieModelData> {
     public collection: string = 'tests';
 
     public fields: string[] = [
@@ -17,21 +17,21 @@ export class MovieModel extends Model<MovieModelData> {
         'updatedAt'
     ]
 
-    public async author(): Promise<AuthorModel | null> {
+    public async author(): Promise<TestAuthorModel | null> {
         return this.belongsTo({
             localKey: 'authorId',
             localModel: this,
             foreignKey: '_id',
-            foreignModelCtor: AuthorModel
+            foreignModelCtor: TestAuthorModel
         })
     }
 
-    public async authorByName(name: string): Promise<AuthorModel | null> {
+    public async authorByName(name: string): Promise<TestAuthorModel | null> {
         return this.belongsTo({
             localKey: 'authorId',
             localModel: this,
             foreignKey: '_id',
-            foreignModelCtor: AuthorModel,
+            foreignModelCtor: TestAuthorModel,
             filters: {
                 name
             }

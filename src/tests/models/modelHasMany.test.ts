@@ -2,8 +2,8 @@ import { describe, expect, test } from '@jest/globals';
 import testAppConfig from '@src/config/test';
 import Kernel from '@src/core/Kernel';
 import MongoDBProvider from '@src/core/providers/MongoDBProvider';
-import { AuthorModel } from '@src/tests/models/models/Author';
-import { MovieModel } from '@src/tests/models/models/Movie';
+import { TestAuthorModel } from '@src/tests/models/models/TestAuthor';
+import { TestMovieModel } from '@src/tests/models/models/TestMovie';
 
 describe('test hasMany by movies from an author', () => {
     test('kernel boot', async () => {
@@ -15,12 +15,12 @@ describe('test hasMany by movies from an author', () => {
         }, {})
     })
 
-    let authorModel: AuthorModel;
-    let movieModelOne: MovieModel;
-    let movieModelTwo: MovieModel;
+    let authorModel: TestAuthorModel;
+    let movieModelOne: TestMovieModel;
+    let movieModelTwo: TestMovieModel;
 
     test('create author model', async () => {
-        authorModel = new AuthorModel({
+        authorModel = new TestAuthorModel({
             name: 'authorName'
         })
         await authorModel.save();
@@ -29,7 +29,7 @@ describe('test hasMany by movies from an author', () => {
 
 
     test('create movie model', async () => {
-        movieModelOne = new MovieModel({
+        movieModelOne = new TestMovieModel({
             authorId: authorModel.getId()?.toString() as string,
             name: 'Movie One',
             yearReleased: '1970'
@@ -37,7 +37,7 @@ describe('test hasMany by movies from an author', () => {
         await movieModelOne.save();
         expect(movieModelOne.getId()).toBeTruthy();
 
-        movieModelTwo = new MovieModel({
+        movieModelTwo = new TestMovieModel({
             authorId: authorModel.getId()?.toString() as string,
             name: 'Movie Two',
             yearReleased: '1980'
