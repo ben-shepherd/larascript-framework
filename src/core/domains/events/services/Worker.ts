@@ -1,4 +1,3 @@
-import { eventDrivers } from "@src/config/events";
 import Repository from "@src/core/base/Repository";
 import Singleton from "@src/core/base/Singleton";
 import { QueueDriverOptions } from "@src/core/domains/events/drivers/QueueDriver";
@@ -38,11 +37,12 @@ export default class Worker extends Singleton
 
         // Worker service
         const worker = Worker.getInstance();
-        let model: WorkerModel; 
+        let model: WorkerModel;
 
         // Fetch the current list of queued results
         const workerResults: WorkerModel[] = await worker.getWorkerResults(this.options.queueName)
     
+        this.log('collection: ' + new this.options.workerModelCtor().collection)
         this.log(`${workerResults.length} queued items with queue name '${this.options.queueName}'`)
     
         for(const workerModel of workerResults) {
@@ -69,11 +69,13 @@ export default class Worker extends Singleton
      * @returns 
      */
     getOptions(driver: string): QueueDriverOptions {
-        if(!eventDrivers[driver]) {
+        const eventDriver = App.container('events').getDriver(driver)
+
+        if(!eventDriver) {
             throw new EventDriverException(`Driver '${driver}' not found`)
         }
 
-        return (eventDrivers[driver].options as DriverOptions<QueueDriverOptions>).getOptions()
+        return (eventDriver.options as DriverOptions<QueueDriverOptions>).getOptions()
     }
 
     /**
@@ -81,7 +83,7 @@ export default class Worker extends Singleton
      * @returns 
      */
     async getWorkerResults(queueName: string) {
-        const workerRepository = new Repository<WorkerModel>(this.options.collection, WorkerModel)
+        const workerRepository = new Repository<WorkerModel>(new this.options.workerModelCtor().collection, this.options.workerModelCtor)
 
         return await workerRepository.findMany({
             queueName
@@ -99,7 +101,7 @@ export default class Worker extends Singleton
     private async deleteModel(model: WorkerModel) {
         await App.container('mongodb')
             .getDb()
-            .collection(this.options.collection)
+            .collection(new this.options.workerModelCtor().collection)
             .deleteOne({ _id: model.getId() as ObjectId })
     }
 
@@ -109,7 +111,7 @@ export default class Worker extends Singleton
      */
     async processWorkerModel(model: WorkerModel) 
     {
-        model.collection = this.options.collection
+        model.collection = new this.options.workerModelCtor().collection
         const eventName = model.getAttribute('eventName')
         const payload = model.getPayload() as IEventPayload
 
@@ -133,7 +135,7 @@ export default class Worker extends Singleton
      */
     async failedWorkerModel(model: WorkerModel, err: Error)
     {
-        model.collection = this.options.collection;
+        model.collection = new this.options.workerModelCtor().collection;
 
         // Get attempts and max retreis
         const { retries } = this.options

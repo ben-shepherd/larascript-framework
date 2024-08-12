@@ -6,6 +6,8 @@ export type Dates = string[]
 
 export type ModelConstructor<M extends IModel = IModel> = new (...args: any[]) => M
 
+export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>
+
 export interface IModel {
     connection: string;
     primaryKey: string;

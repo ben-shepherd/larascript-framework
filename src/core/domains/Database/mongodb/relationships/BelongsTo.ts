@@ -1,33 +1,40 @@
 import Model, { BaseModelData } from "@src/core/base/Model";
+import { ModelConstructor } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { ObjectId } from "mongodb";
 
-export default class BelongsTo<
-    LocalData extends BaseModelData,
-    LocalModel extends Model<LocalData>,
-    ForeignData extends BaseModelData
-> 
+export type BelongsToOptions = {
+    localModel: Model<BaseModelData>;
+    localKey: keyof BaseModelData;
+    foreignModelCtor: ModelConstructor<Model<BaseModelData>>,
+    foreignKey: keyof BaseModelData;
+    filters?: object;
+}
+
+export default class BelongsTo 
 { 
-    public async handle(
-        localModel: LocalModel,
-        foreignCollection: string,
-        foreignKey: keyof ForeignData,
-        localKey: keyof LocalData,
-        filters: object = {}
-    ): Promise<ForeignData | null>
+    public async handle({
+        localModel,
+        localKey,
+        foreignModelCtor,
+        foreignKey,
+        filters = {}
+    }: BelongsToOptions)
     {
-        if(localKey instanceof ObjectId) {
-            localKey = localKey.toString()
+        let localKeyValue = localModel.getAttribute(localKey);
+
+        if(typeof localKeyValue === 'string' && ObjectId.isValid(localKeyValue)) {
+            localKeyValue = new ObjectId(localKeyValue);
         }
 
         const schema = { 
             ...filters,
-            [foreignKey]: localModel.getAttribute(localKey),
+            [foreignKey]: localKeyValue
          }
 
         return await App.container('mongodb')
             .getDb()
-            .collection(foreignCollection)
-            .findOne(schema) as ForeignData | null
+            .collection(new foreignModelCtor().collection)
+            .findOne(schema);
     }
 }   

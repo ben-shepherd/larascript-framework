@@ -31,7 +31,7 @@ export default class CommandReader implements ICommandReader {
     /**
      * Read and execute command
      */
-    handle() {
+    async handle() {
         if(!this.argv.length) {
             throw new CommandEmptyArgument();
         }
@@ -46,6 +46,6 @@ export default class CommandReader implements ICommandReader {
 
         const cmd = new commandCtor()
         cmd.setParsedArguments(this.runParser())
-        cmd.execute()
+        await cmd.execute()
     }
 }

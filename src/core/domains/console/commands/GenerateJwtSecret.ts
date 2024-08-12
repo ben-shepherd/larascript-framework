@@ -10,7 +10,7 @@ export default class GenerateJwtSecret extends BaseCommand {
 
     envExamplePath = path.resolve('@src/../', '.env.example')
 
-    execute = () => {
+    execute = async () => {
         try {
             // Generate a secret
             const secret = require('crypto').randomBytes(64).toString('hex');

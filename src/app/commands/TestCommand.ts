@@ -4,7 +4,7 @@ export default class TestCommand extends BaseCommand {
 
     signature: string = 'app:test';
 
-    execute = () => {
+    execute = async () => {
         console.log('Hello world!')
     }
 }
