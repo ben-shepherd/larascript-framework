@@ -1,43 +1,9 @@
 import { describe, expect, test } from '@jest/globals';
 import testAppConfig from '@src/config/test';
-import Model from '@src/core/base/Model';
 import Kernel from '@src/core/Kernel';
 import MongoDBProvider from '@src/core/providers/MongoDBProvider';
-
-type MovieModelData = {
-    authorId: string;
-}
-class MovieModel extends Model<MovieModelData> {
-    public collection: string = 'tests';
-
-    public fields: string[] = [
-        'authorId',
-        'createdAt',
-        'updatedAt'
-    ]
-
-    public async author(): Promise<AuthorModel | null> {
-        return this.belongsTo({
-            localKey: 'authorId',
-            localModel: this,
-            foreignKey: '_id',
-            foreignModelCtor: AuthorModel
-        })
-    }
-}
-
-type AuthorModelData = {
-    name: string
-}
-class AuthorModel extends Model<AuthorModelData> {
-    public collection: string = 'tests';
-
-    public fields: string[] = [
-        'createdAt',
-        'updatedAt'
-    ]
-}
-
+import { AuthorModel } from '@src/tests/models/Author';
+import { MovieModel } from '@src/tests/models/Movie';
 
 describe('test belongsTo by fetching an author from a movie', () => {
     test('kernal boot', async () => {
@@ -63,7 +29,8 @@ describe('test belongsTo by fetching an author from a movie', () => {
 
     test('create movie model', async () => {
         movieModel = new MovieModel({
-            authorId: authorModel.getId()?.toString() as string
+            authorId: authorModel.getId()?.toString() as string,
+            name: 'Movie One'
         })
         await movieModel.save();
         expect(movieModel.getId()).toBeTruthy();
@@ -73,7 +40,12 @@ describe('test belongsTo by fetching an author from a movie', () => {
         const relatedAuthor = await movieModel.author();
         expect(relatedAuthor).toBeInstanceOf(AuthorModel);
         expect(relatedAuthor?.getId()).toEqual(authorModel.getId());
+    })
 
+    test('get related author from movie with additional filters', async () => {
+        const relatedAuthor = await movieModel.authorByName('authorName');
+        expect(relatedAuthor).toBeInstanceOf(AuthorModel);
+        expect(relatedAuthor?.getId()).toEqual(authorModel.getId());
     })
 
     test('clean up created cecords', async () => {

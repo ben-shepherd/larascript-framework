@@ -2,10 +2,9 @@ import { Db, ObjectId } from 'mongodb';
 
 
 import BelongsTo, { BelongsToOptions } from '../domains/database/mongodb/relationships/BelongsTo';
-import HasMany from '../domains/database/mongodb/relationships/HasMany';
-import HasOne from '../domains/database/mongodb/relationships/HasOne';
+import HasMany, { HasManyOptions } from '../domains/database/mongodb/relationships/HasMany';
 import IData from '../interfaces/IData';
-import { Dates, GetDataOptions, IModel, ModelConstructor } from '../interfaces/IModel';
+import { Dates, GetDataOptions, IModel } from '../interfaces/IModel';
 import { IObserver } from '../interfaces/observer/IObserver';
 import { WithObserver } from '../observer/WithObserver';
 import { App } from '../services/App';
@@ -66,7 +65,7 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
      * @return {ObjectId | undefined} The ObjectId associated with the primary key, or undefined if the primary key is not set.
      */
     getId(): ObjectId | undefined {
-        if(!(this.data?._id instanceof ObjectId)) {
+        if (!(this.data?._id instanceof ObjectId)) {
             return undefined
         }
         return this.data?._id
@@ -80,7 +79,7 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
     getAttribute<K extends keyof Data = keyof Data>(key: K): Data[K] | null {
         return this.data?.[key] ?? null;
     }
-    
+
     /**
      * Sets the value of a specific attribute in the model's data object.
      *
@@ -90,22 +89,35 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
      * @return {void}
      */
     setAttribute<K extends keyof Data = keyof Data>(key: K, value: any): void {
-        if(!this.fields.includes(key as string)) {
+        if (!this.fields.includes(key as string)) {
             throw new Error(`Attribute ${key as string} not found in model ${this.collection}`);
         }
-        if(this.dates.includes(key as string) && value instanceof Date === false) {
+        if (this.dates.includes(key as string) && value instanceof Date === false) {
             throw new Error(`Attribute '${key as string}' is a date and can be only set with the Date not found in model ${this.collection}`);
         }
-        if(this.data) {
+        if (this.data) {
             this.data[key] = value;
         }
 
         /**
          * Observe properties changed with custom methods
          */
-        if(Object.keys(this.observeProperties).includes(key as string)) {
+        if (Object.keys(this.observeProperties).includes(key as string)) {
             this.data = this.observeDataCustom(this.observeProperties[key as string] as keyof IObserver<any>, this.data)
         }
+    }
+
+    /**
+     * Set a timestamp on a Date field
+     * @param dateTimeField 
+     * @param value 
+     * @returns 
+     */
+    protected setTimestamp(dateTimeField: string, value: Date = new Date()) {
+        if (!this.timestamps || !this.dates.includes(dateTimeField)) {
+            return;
+        }
+        this.setAttribute(dateTimeField, value)
     }
 
     /**
@@ -117,10 +129,10 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
     getData(options: GetDataOptions): Data | null {
         let data = this.data;
 
-        if(options.excludeGuarded) {
+        if (options.excludeGuarded) {
             data = Object.fromEntries(Object.entries(data ?? {}).filter(([key]) => !this.guarded.includes(key))) as Data
         }
-        
+
         return data;
     }
 
@@ -130,7 +142,7 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
      * @return {Promise<Data | null>} The updated data of the model or null if no data is available.
      */
     async refresh(): Promise<Data | null> {
-        if(!this.data) return null;
+        if (!this.data) return null;
 
         this.data = await this.getDb().collection(this.collection)
             .findOne({ [this.primaryKey]: this.getId() }) as Data | null ?? null;
@@ -145,13 +157,13 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
      * @throws {Error} If the document ID is not found.
      */
     async update(): Promise<void> {
-        if(!this.getId()) return;
+        if (!this.getId()) return;
 
         await this.getDb()
             .collection(this.collection)
             .updateOne({ [this.primaryKey]: this.getId() }, { $set: this.data as IData });
     }
-    
+
     /**
      * Saves the model's data to the MongoDB collection. If the model has no ID, it inserts the data and refreshes the model.
      * If the model has an ID, it updates the existing document with the new data and refreshes the model.
@@ -159,9 +171,9 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
      * @return {Promise<void>} A promise that resolves when the save operation is complete.
      */
     async save(): Promise<void> {
-        
-        if(this.data && !this.getId()) {
-            
+
+        if (this.data && !this.getId()) {
+
             this.data = this.observeData('creating', this.data)
             this.setTimestamp('createdAt')
             this.setTimestamp('updatedAt')
@@ -188,7 +200,7 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
      * @return {Promise<void>} A promise that resolves when the deletion is complete.
      */
     async delete(): Promise<void> {
-        if(!this.data) return;
+        if (!this.data) return;
         this.data = this.observeData('deleting', this.data)
         await this.getDb().collection(this.collection).deleteOne({ [this.primaryKey]: this.getId() })
         this.data = null
@@ -201,11 +213,10 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
      * @param {BelongsToOptions} options - Options for the belongsTo relationship.
      * @return {Promise<ForeignModel | null>} A Promise that resolves to the related foreign model instance, or null if no related model is found.
      */
-    async belongsTo<ForeignModel extends Model<any> = Model<any>>(options: BelongsToOptions): Promise<ForeignModel | null>
-    {
+    async belongsTo<ForeignModel extends Model<any> = Model<any>>(options: BelongsToOptions): Promise<ForeignModel | null> {
         const data = await new BelongsTo().handle(options);
 
-        if(!data) {
+        if (!data) {
             return null
         }
 
@@ -213,83 +224,18 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
     }
 
     /**
-     * Asynchronously retrieves an array of related model instances based on the provided local model, local key, foreign model constructor, and foreign key.
+     * Retrieves an array of related model instances based on the provided options.
      *
-     * @param {LocalModel} model - The local model instance.
-     * @param {keyof LocalData} localKey - The key of the local model's attribute used to establish the relationship.
-     * @param {new (...any: any[]) => ForeignModel} foreignModelCtor - The constructor function for the foreign model.
-     * @param {keyof ForeignData} foreignKey - The key of the foreign model's attribute used to establish the relationship.
-     * @param {object} foreignKey - Optional filter
-     * @return {Promise<ForeignModel | null>} A Promise that resolves to the related foreign model instance, or null if no related model is found.
+     * @param {HasManyOptions} options - Options for the hasMany relationship.
+     * @return {Promise<ForeignModel[]>} A Promise that resolves to an array of related foreign model instances.
      */
-    async hasMany<
-        LocalData extends BaseModelData, LocalModel extends Model<LocalData>,
-        ForeignData extends BaseModelData, ForeignModel extends Model<ForeignData>
-    > (
-        model: LocalModel,
-        localKey: keyof LocalData,
-        foreignModelCtor: ModelConstructor<ForeignModel>,
-        foreignKey: keyof ForeignData,
-        filters: object = {}
-    ): Promise<ForeignModel[]> 
-    {
-        const results = await new HasMany<LocalData, LocalModel, ForeignData>().handle(
-            model,
-            new foreignModelCtor().collection,
-            foreignKey,
-            localKey,
-            filters
-        )
+    public async hasMany<ForeignModel extends Model<any> = Model<any>>(options: HasManyOptions): Promise<ForeignModel[]> {
+        const data = await new HasMany().handle(options);
 
-        if(!results) return []
-
-        return results.map((result) => new foreignModelCtor(result))
-    }
-
-    /**
-     * Asynchronously retrieves a related model instance based on the provided local model, local key, foreign model constructor, and foreign key.
-     *
-     * @param {LocalModel} model - The local model instance.
-     * @param {keyof LocalData} localKey - The key of the local model's attribute used to establish the relationship.
-     * @param {new (...any: any[]) => ForeignModel} foreignModelCtor - The constructor function for the foreign model.
-     * @param {keyof ForeignData} foreignKey - The key of the foreign model's attribute used to establish the relationship.
-     * @param {object} foreignKey - Optional filter
-     * @return {Promise<ForeignModel | null>} A Promise that resolves to the related foreign model instance, or null if no related model is found.
-     */
-    async hasOne<
-        LocalData extends BaseModelData, LocalModel extends Model<LocalData>,
-        ForeignData extends BaseModelData, ForeignModel extends Model<ForeignData>
-    > (
-        model: LocalModel,
-        localKey: keyof LocalData,
-        foreignModelCtor: ModelConstructor<ForeignModel>,
-        foreignKey: keyof ForeignData,
-        filters: object = {}
-    ): Promise<ForeignModel | null> 
-    {
-        const document = await new HasOne<LocalData, LocalModel, ForeignData>().handle(
-            model,
-            new foreignModelCtor().collection,
-            foreignKey,
-            localKey,
-            filters
-        )
-
-        if(!document) return null
-
-        return new foreignModelCtor(document)
-    }
-
-    /**
-     * Set a timestamp on a Date field
-     * @param dateTimeField 
-     * @param value 
-     * @returns 
-     */
-    protected setTimestamp(dateTimeField: string, value: Date = new Date()) {
-        if(!this.timestamps || !this.dates.includes(dateTimeField)) {
-            return;
+        if (!data) {
+            return []
         }
-        this.setAttribute(dateTimeField, value)
+
+        return data.map((d: any) => new options['foreignModelCtor'](d)) as ForeignModel[]
     }
 } 
