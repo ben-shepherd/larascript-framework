@@ -2,11 +2,11 @@ import { describe, expect, test } from '@jest/globals';
 import testAppConfig from '@src/config/test';
 import Kernel from '@src/core/Kernel';
 import MongoDBProvider from '@src/core/providers/MongoDBProvider';
-import { AuthorModel } from '@src/tests/models/Author';
-import { MovieModel } from '@src/tests/models/Movie';
+import { AuthorModel } from '@src/tests/models/models/Author';
+import { MovieModel } from '@src/tests/models/models/Movie';
 
 describe('test belongsTo by fetching an author from a movie', () => {
-    test('kernal boot', async () => {
+    beforeAll(async () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
@@ -17,6 +17,14 @@ describe('test belongsTo by fetching an author from a movie', () => {
 
     let authorModel: AuthorModel;
     let movieModel: MovieModel;
+
+    afterAll(async () => {
+        await movieModel.delete()
+        expect(movieModel.data).toBeNull();
+
+        await authorModel.delete();
+        expect(authorModel.data).toBeNull();
+    });
 
     test('create author model', async () => {
         authorModel = new AuthorModel({
@@ -47,12 +55,4 @@ describe('test belongsTo by fetching an author from a movie', () => {
         expect(relatedAuthor).toBeInstanceOf(AuthorModel);
         expect(relatedAuthor?.getId()).toEqual(authorModel.getId());
     })
-
-    test('clean up created cecords', async () => {
-        await movieModel.delete()
-        expect(movieModel.data).toBeNull();
-
-        await authorModel.delete();
-        expect(authorModel.data).toBeNull();
-    });
 });

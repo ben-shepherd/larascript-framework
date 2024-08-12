@@ -7,14 +7,14 @@ import { IModel, ModelConstructor } from '../interfaces/IModel';
 import { App } from '../services/App';
 
 export default class Repository<Model extends IModel> implements IRepository<Model> {
-    public model: ModelConstructor<Model>;
+    public modelCtor: ModelConstructor<Model>;
     public collectionName!: string;
     public connection!: string;
 
     constructor(collectionName: string, modelConstructor: ModelConstructor<Model>) {
         this.collectionName = collectionName;
         this.connection = new modelConstructor().connection
-        this.model = modelConstructor;
+        this.modelCtor = modelConstructor;
     }
 
     /**
@@ -47,7 +47,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      */
     async findById(_id: string): Promise<Model | null> {
         const data = await App.container('mongodb').getDb(this.connection).collection(this.collectionName).findOne({ _id: new ObjectId(_id) }) as IData | null;
-        return data ? new this.model(data) : null;
+        return data ? new this.modelCtor(data) : null;
     }
 
     /**
@@ -57,7 +57,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      */
     async findOne(filter: object = {}): Promise<Model | null> {
         const data = await App.container('mongodb').getDb(this.connection).collection(this.collectionName).findOne(filter) as Model | null;
-        return data ? new this.model(data) : null;
+        return data ? new this.modelCtor(data) : null;
     }
 
     /**
@@ -67,6 +67,6 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      */
     async findMany(query: object = {}, options?: FindOptions): Promise<Model[]> {
         const dataArray = await App.container('mongodb').getDb(this.connection).collection(this.collectionName).find(query, options).toArray() as IData[];
-        return dataArray.map(data => new this.model(data));
+        return dataArray.map(data => new this.modelCtor(data));
     }
 }

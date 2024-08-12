@@ -6,7 +6,7 @@ import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload
 export interface EventServiceConfig {
     defaultDriver: string;
     drivers: IEventDrivers;
-    subscribers: ISubscribers
+    subscribers: ISubscribers;
 }
 
 export interface IEventService {

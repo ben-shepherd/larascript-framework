@@ -20,7 +20,7 @@ class TestModel extends Model<TestModelData> {
 
 describe('test model crud operations', () => {
 
-    test('kernal boot', async () => {
+    test('kernel boot', async () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [

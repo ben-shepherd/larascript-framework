@@ -8,6 +8,7 @@ import { IRoute } from '../interfaces/http/IRoute';
 export default class Express extends Service<IExpressConfig> implements IExpress {
     protected config!: IExpressConfig | null;
     private app: express.Express
+    private server;
     className: string = 'Express';
     
     /**

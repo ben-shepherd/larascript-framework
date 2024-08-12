@@ -1,5 +1,5 @@
 import Model from "@src/core/base/Model";
-import { MovieModel } from "@src/tests/models/Movie";
+import { MovieModel } from "@src/tests/models/models/Movie";
 
 export type AuthorModelData = {
     name: string

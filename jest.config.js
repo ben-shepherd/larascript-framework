@@ -7,4 +7,5 @@ module.exports = {
       '^@app/(.*)$': '<rootDir>/src/app/$1'
     },
     testMatch: ['<rootDir>/src/**/*.test.ts'],
+    testSequencer: '<rootDir>/src/tests/customSequencer.ts'
   };

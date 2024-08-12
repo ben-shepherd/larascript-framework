@@ -2,11 +2,11 @@ import { describe, expect, test } from '@jest/globals';
 import testAppConfig from '@src/config/test';
 import Kernel from '@src/core/Kernel';
 import MongoDBProvider from '@src/core/providers/MongoDBProvider';
-import { AuthorModel } from '@src/tests/models/Author';
-import { MovieModel } from '@src/tests/models/Movie';
+import { AuthorModel } from '@src/tests/models/models/Author';
+import { MovieModel } from '@src/tests/models/models/Movie';
 
 describe('test hasMany by movies from an author', () => {
-    test('kernal boot', async () => {
+    test('kernel boot', async () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [

@@ -1,7 +1,7 @@
 import Model from '@src/core/base/Model';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import BaseApiTokenModel from '@src/core/domains/auth/models/BaseApiTokenModel';
-import { BaseApiTokenData, BaseUserData } from '@src/core/domains/auth/types/Types.t';
+import { BaseUserData } from '@src/core/domains/auth/types/Types.t';
 
 interface TokensOptions {
     activeOnly: boolean
@@ -55,12 +55,12 @@ export default class BaseUserModel<UserData extends BaseUserData = BaseUserData>
             filters.revokedAt = null
         }
 
-        return this.hasMany<BaseUserData, BaseUserModel, BaseApiTokenData, BaseApiTokenModel>(
-            this,
-            this.primaryKey,
-            BaseApiTokenModel,
-            'userId',
+        return this.hasMany({
+            localModel: this,
+            localKey: this.primaryKey,
+            foreignModelCtor: BaseApiTokenModel,
+            foreignKey: 'userId',
             filters
-        )
+        })
     }
 }

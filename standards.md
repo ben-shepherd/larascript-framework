@@ -30,7 +30,7 @@ Filename: `MyService.ts`
 ```ts
 class MyService implements IMyService
 {
-    public function myServiceMethod({ data }: MyServiceMethodArgs): array
+    public myServiceMethod({ data }: MyServiceMethodArgs): array
     {
         /* logic */    
     }

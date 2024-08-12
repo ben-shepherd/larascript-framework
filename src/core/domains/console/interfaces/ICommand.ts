@@ -6,5 +6,5 @@ export interface ICommand {
     signature: string;
     description?: string;
     setParsedArguments: (parsedArgumenets: ParsedArgumentsArray) => void;
-    execute(...args: any[]): any;
+    execute(...args: any[]): Promise<any>;
 }

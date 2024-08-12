@@ -7,7 +7,7 @@ import { App } from '@src/core/services/App';
 
 describe('attempt to connect to MongoDB database', () => {
 
-  test('kernal boot', async () => {
+  test('kernel boot', async () => {
     await Kernel.boot({
       ...testAppConfig,
       providers: [

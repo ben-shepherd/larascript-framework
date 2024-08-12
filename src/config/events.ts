@@ -2,6 +2,7 @@ import { ExampleListener } from "@src/app/events/listeners/ExampleListener";
 import QueueDriver, { QueueDriverOptions } from "@src/core/domains/events/drivers/QueueDriver";
 import SynchronousDriver from "@src/core/domains/events/drivers/SynchronousDriver";
 import { IEventDrivers, ISubscribers } from "@src/core/domains/events/interfaces/IEventConfig";
+import WorkerModel from "@src/core/domains/events/models/WorkerModel";
 import DriverOptions from "@src/core/domains/events/services/QueueDriverOptions";
 
 /**
@@ -29,9 +30,9 @@ export const eventDrivers: IEventDrivers = {
         options: new DriverOptions<QueueDriverOptions>({
             queueName: 'default',
             retries: 3,
-            collection: 'workers',
             failedCollection: 'failedWorkers',
-            runAfterSeconds: 10
+            runAfterSeconds: 10,
+            workerModelCtor: WorkerModel
         })
     },
     queueOther: {
@@ -39,9 +40,9 @@ export const eventDrivers: IEventDrivers = {
         options: new DriverOptions<QueueDriverOptions>({
             queueName: 'other',
             retries: 3,
-            collection: 'workers',
             failedCollection: 'failedWorkers',
-            runAfterSeconds: 10
+            runAfterSeconds: 10,
+            workerModelCtor: WorkerModel
         })
     }
     

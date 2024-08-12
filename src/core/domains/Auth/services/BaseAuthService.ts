@@ -43,7 +43,7 @@ export default class BaseAuthService extends Service<IAuthConfig> implements IAu
      * @returns 
      */
     public async createApiTokenFromUser(user: UserModel): Promise<ApiToken> {
-        const apiToken = apiTokenFactory<ApiToken>(user, this.apiTokenRepository.model);
+        const apiToken = apiTokenFactory<ApiToken>(user, this.apiTokenRepository.modelCtor);
         await apiToken.save();
         return apiToken
     }

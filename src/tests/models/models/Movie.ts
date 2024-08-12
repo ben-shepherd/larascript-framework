@@ -1,9 +1,9 @@
 import Model from "@src/core/base/Model";
-import { AuthorModel } from "@src/tests/models/Author";
+import { AuthorModel } from "@src/tests/models/models/Author";
 
 export type MovieModelData = {
-    authorId: string;
-    name: string;
+    authorId?: string;
+    name?: string;
     yearReleased?: string;
 }
 export class MovieModel extends Model<MovieModelData> {
