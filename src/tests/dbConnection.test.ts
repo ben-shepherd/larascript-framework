@@ -22,7 +22,7 @@ describe('attempt to connect to MongoDB database', () => {
   /**
    * Test the MongoDB connection
    */
-  afterAll(async () => {
+  test('test MongoDB connection',async () => {
     const mongodb = App.container('mongodb');
     expect(mongodb).toBeInstanceOf(MongoDB);
 
