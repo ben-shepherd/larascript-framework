@@ -30,8 +30,8 @@ export class App extends Singleton<IAppConfig> {
         if(!kernel.containers.has(name)) {
             throw new UninitializedContainerError(name as string)
         }
-        return kernel.containers.get(name);
 
+        return kernel.containers.get(name);
     }
 
     public static env(): string | undefined {

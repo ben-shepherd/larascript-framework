@@ -1,38 +1,36 @@
 import 'dotenv/config';
 
 import appConfig from './config/app';
-import CommandEmptyArgument from './core/domains/console/exceptions/CommandEmptyArgument';
+import CommandNotFoundException from './core/domains/console/exceptions/CommandNotFoundException';
+import CommandBootService from './core/domains/console/service/CommandBootService';
 import Kernel, { KernelOptions } from './core/Kernel';
-import { App } from './core/services/App';
 
 require('dotenv').config();
 
 (async () => {
     try {
-        const options: KernelOptions = {}
         const args = process.argv.slice(2);
-
-        if(args.length) {
-            options.withoutProvider = ['ExpressProvider', 'RoutesProvider']
-        }
-
-        if(args.includes('--no-db')) {
-            options.withoutProvider?.push('MongoDBProvider');
-        }
-
+        const cmdBoot  = new CommandBootService();
+        const options: KernelOptions = cmdBoot.getKernelOptions(args, {})
+        
         await Kernel.boot(appConfig, options);
 
-        console.log('[App]: Started successfully');
-
         try {
-            App.container('console').reader(args).handle()
+            await cmdBoot.boot(args);
         }
         catch (err) {
-            if(err instanceof CommandEmptyArgument === false) {
+            if(!(err instanceof CommandNotFoundException)) {
                 throw err
             }
         }
+        
     } catch (error) {
         console.error('[App]: Failed to start', error);
     }
+
+    console.log('[App]: Started');
 })();
+function DetectCommandService() {
+    throw new Error('Function not implemented.');
+}
+
