@@ -1,4 +1,5 @@
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
+import replaceEnvValue from "@src/core/util/replaceEnvValue";
 import fs from "fs";
 import path from "path";
 
@@ -89,13 +90,6 @@ export default class GenerateJwtSecret extends BaseCommand {
      * @returns 
      */
     addSecretToString = (content: string, secret: string): string => {
-        const pattern = /(JWT_SECRET=.*)/g;
-        const regex = content.match(pattern)
-
-        if(regex?.[0]) {
-            content = content.replace(regex[0], `JWT_SECRET=${secret}`)
-        }
-        
-        return content
+        return replaceEnvValue('JWT_SECRET', secret, content)
     }
 }
