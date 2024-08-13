@@ -2,6 +2,9 @@ const Sequencer = require('@jest/test-sequencer').default;
 
 const firstTest = 'runApp.test.ts';
 
+/**
+ * Custom sequencer to make sure runApp runs first
+ */
 class CustomSequencer extends Sequencer {
   sort(tests) {
     return tests.sort((testA, testB) => {

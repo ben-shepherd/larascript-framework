@@ -1,4 +1,4 @@
-import { describe, expect, test } from '@jest/globals';
+import { describe, expect } from '@jest/globals';
 import testAppConfig from '@src/config/test';
 import MongoDB from '@src/core/domains/database/mongodb/services/MongoDB';
 import Kernel from '@src/core/Kernel';
@@ -7,7 +7,10 @@ import { App } from '@src/core/services/App';
 
 describe('attempt to connect to MongoDB database', () => {
 
-  test('kernel boot', async () => {
+  /**
+   * Boot the MongoDB provider
+   */
+  beforeAll(async () => {
     await Kernel.boot({
       ...testAppConfig,
       providers: [
@@ -16,8 +19,10 @@ describe('attempt to connect to MongoDB database', () => {
     }, {})
   })
 
-  test('mongodb connection attempt', async () => {
-
+  /**
+   * Test the MongoDB connection
+   */
+  afterAll(async () => {
     const mongodb = App.container('mongodb');
     expect(mongodb).toBeInstanceOf(MongoDB);
 

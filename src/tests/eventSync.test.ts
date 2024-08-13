@@ -6,6 +6,9 @@ import TestEventProvider from './providers/TestEventProvider';
 
 describe('mock event service', () => {
 
+  /**
+   * Register the test event provider
+   */
   beforeAll(async () => {
     await Kernel.boot({
       environment: 'testing',
@@ -16,6 +19,9 @@ describe('mock event service', () => {
     }, {})
   })
 
+  /**
+   * Dispatch a synchronus event
+   */
   test('test dispatch event sync', () => {
     App.container('events').dispatch(new TestSubscriber({ hello: 'world' }));
     expect(true).toBeTruthy()

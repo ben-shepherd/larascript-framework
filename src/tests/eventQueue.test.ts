@@ -15,6 +15,10 @@ describe('mock event service', () => {
   const movieName = 'testMovie';
   let movie: TestMovieModel | null;
 
+  /**
+   * Setup MongoDB
+   * Setup Kernel with test Console and Event provider
+   */
   beforeAll(async () => {
     await Kernel.boot({
       ...testAppConfig,
@@ -30,6 +34,10 @@ describe('mock event service', () => {
       .deleteMany({})
   });
 
+  /**
+   * After tests, check if the record was created
+   * Clear out created records
+   */
   afterAll(async () => {
     const repository = new Repository<TestMovieModel>('tests', TestMovieModel);
     movie = await repository.findOne({ name: movieName });
@@ -40,11 +48,17 @@ describe('mock event service', () => {
     expect(movie?.data).toBeNull();
   });
 
+  /**
+   * Dispatches the TestQueueSubscriber event to the worker
+   */
   test('dispatch a test event', (done) => {
     App.container('events').dispatch(new TestQueueSubscriber({ name: movieName }));
     done();
   });
 
+  /**
+   * Worker will run and create a record
+   */
   test('run the worker command', async () => {
     await App.container('console').reader(['worker']).handle();
   });

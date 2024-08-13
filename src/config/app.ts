@@ -1,4 +1,4 @@
-import TestCommand from '@src/app/commands/TestCommand';
+import ExampleCommand from '@src/app/commands/ExampleCommand';
 import AppProvider from '@src/app/providers/AppProvider';
 import ConsoleProvider from '@src/core/domains/console/providers/ConsoleProvider';
 import EventProvider from '@src/core/domains/events/providers/EventProvider';
@@ -41,7 +41,7 @@ const appConfig: IAppConfig = {
      * Commands
      */
     commands: [
-        TestCommand,
+        ExampleCommand,
     ]
 };
 

@@ -1,5 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 import appConfig from '@src/config/app';
+import authConfig from '@src/config/auth/auth';
 import ConsoleService from '@src/core/domains/console/service/ConsoleService';
 import MongoDB from '@src/core/domains/database/mongodb/services/MongoDB';
 import EventService from '@src/core/domains/events/services/EventService';
@@ -9,13 +10,17 @@ import Express from '@src/core/services/Express';
 
 describe('attempt to run app with normal appConfig', () => {
 
+  /**
+   * Boot kernel normally
+   * Check containers have been set
+   */
   test.concurrent('kernel boot', async () => {
     await Kernel.boot(appConfig, {})
     expect(App.container('events')).toBeInstanceOf(EventService);
     expect(App.container('mongodb')).toBeInstanceOf(MongoDB);
     expect(App.container('express')).toBeInstanceOf(Express);
     expect(App.container('console')).toBeInstanceOf(ConsoleService);
-    expect(App.container('auth')).toBeTruthy();
+    expect(App.container('auth')).toBeInstanceOf(authConfig.authService)
     expect(Kernel.getInstance().booted()).toBe(true);
   }, 10000)
 });
