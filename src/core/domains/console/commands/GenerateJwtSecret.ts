@@ -1,95 +1,25 @@
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
-import replaceEnvValue from "@src/core/util/replaceEnvValue";
-import fs from "fs";
-import path from "path";
+import EnvService from "../service/EnvService";
 
 export default class GenerateJwtSecret extends BaseCommand {
 
     signature: string = 'app:generate-jwt-secret';
 
-    envPath = path.resolve('@src/../', '.env')
-
-    envExamplePath = path.resolve('@src/../', '.env.example')
-
     execute = async () => {
         try {
+            const envService = new EnvService();
+
             // Generate a secret
             const secret = require('crypto').randomBytes(64).toString('hex');
 
-            // Create or update the env file
-            this.updateEnvFile(secret);
-            this.createEnvFile(secret);
+            // Copy over env file from example
+            envService.copyFileFromEnvExample();
+
+            // Update the secret
+            await envService.updateValues({ JWT_SECRET: secret });
         }
         catch (err) {
             console.error(err)
         }
-    }
-
-    /**
-     * @param secret 
-     * @returns 
-     */
-    createEnvFile = async (secret: string) => {
-
-        // Check if .env file exists
-        if (fs.existsSync(this.envPath)) {
-            return;
-        }
-
-        // Read the file
-        let contents = await this.readFileContents(this.envExamplePath)
-
-        // Add secret to contents
-        contents = this.addSecretToString(contents, secret)
-
-        // Write the file
-        fs.writeFileSync(this.envPath, contents)
-    }
-
-    /**
-     * @param secret 
-     * @returns 
-     */
-    updateEnvFile = async (secret: string) => {
-
-        // Check if the file exists
-        if (!fs.existsSync(this.envPath)) {
-            return;
-        }
-
-        // Read the file
-        let contents = await this.readFileContents(this.envPath)
-
-        // Add secret to contents
-        contents = this.addSecretToString(contents, secret)
-
-        // Write the file
-        fs.writeFileSync(this.envPath, contents)
-    }
-
-    /**
-     * Read file contents
-     * @param filePath 
-     * @returns 
-     */
-    readFileContents = (filePath): Promise<string> => {
-        return new Promise((resolve, reject) => {
-            fs.readFile(filePath, 'utf8', (err, data) => {
-                if (err) {
-                    reject(err)
-                }
-                resolve(data)
-            })
-        })
-    }
-
-    /**
-     * Updates JWT_SECRET property in a string
-     * @param content 
-     * @param secret 
-     * @returns 
-     */
-    addSecretToString = (content: string, secret: string): string => {
-        return replaceEnvValue('JWT_SECRET', secret, content)
     }
 }
