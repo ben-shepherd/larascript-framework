@@ -2,7 +2,7 @@ import CommandExecutionException from "@src/core/domains/console/exceptions/Comm
 import { ICommand } from "@src/core/domains/console/interfaces/ICommand";
 import { KeyPair, KeyPairArguementType, OnlyArguement, ParsedArguement, ParsedArgumentsArray } from "@src/core/domains/console/parsers/CommandArgumentParser";
 
-export default class BaseCommand implements ICommand {
+export default abstract class BaseCommand implements ICommand {
     public signature!: string;
     public description?: string;
     public execute!: (...args: any[]) => any;

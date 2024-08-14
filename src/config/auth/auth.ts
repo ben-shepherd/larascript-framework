@@ -30,11 +30,11 @@ const config: IAuthConfig = {
     /**
      * Enable or disable auth routes
      */
-    authRoutes: parseBooleanFromString(process.env.AUTH_ROUTES, 'true'),
+    authRoutes: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES, 'true'),
     /**
      * Enable or disable create a new user endpoint
      */
-    authCreateAllowed: parseBooleanFromString(process.env.AUTH_ROUTES_ALLOW_CREATE, 'true'),
+    authCreateAllowed: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES_ALLOW_CREATE, 'true'),
 }
 
 export default config;
