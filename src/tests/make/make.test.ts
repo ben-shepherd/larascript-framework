@@ -29,7 +29,7 @@ describe(`testing make commands (total ${makeTypes.length})`, () => {
             // Execute the command
             await cmd.execute();
 
-            // Get the command file name, as it will overwrite the name we've specified (By adding a suffix e.g. TestProvider
+            // Get the command file name, as it will overwrite the name we've specified (By adding a suffix e.g. TestProvider)
             const cmdFileName = cmd.getArguementByKey('name')?.value; 
             expect(cmdFileName).toBeTruthy();
 

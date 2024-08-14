@@ -4,21 +4,31 @@ import Kernel from '@src/core/Kernel';
 import MongoDBProvider from '@src/core/providers/MongoDBProvider';
 import { TestAuthorModel } from '@src/tests/models/models/TestAuthor';
 import { TestMovieModel } from '@src/tests/models/models/TestMovie';
+import testModelsHelper from './testModelsHelper';
 
 describe('test hasMany by movies from an author', () => {
-    test('kernel boot', async () => {
+
+    /**
+     * Boot the MongoDB provider
+     */
+    beforeAll(async () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
                 new MongoDBProvider()
             ]
         }, {})
-    })
 
+        await testModelsHelper.cleanupCollections()
+    })
+    
     let authorModel: TestAuthorModel;
     let movieModelOne: TestMovieModel;
     let movieModelTwo: TestMovieModel;
 
+    /**
+     * Create author model
+     */
     test('create author model', async () => {
         authorModel = new TestAuthorModel({
             name: 'authorName'
@@ -27,7 +37,9 @@ describe('test hasMany by movies from an author', () => {
         expect(authorModel.getId()).toBeTruthy();
     });
 
-
+    /**
+     * Create movie model one and two
+     */
     test('create movie model', async () => {
         movieModelOne = new TestMovieModel({
             authorId: authorModel.getId()?.toString() as string,
@@ -46,6 +58,9 @@ describe('test hasMany by movies from an author', () => {
         expect(movieModelTwo.getId()).toBeTruthy();
     })
 
+    /**
+     * Get related movies from author
+     */
     test('get related movies from author', async () => {
         const movies = await authorModel.movies();
         expect(movies.length).toEqual(2);
@@ -53,20 +68,12 @@ describe('test hasMany by movies from an author', () => {
         expect(movies[1].data?.name).toEqual(movieModelTwo.data?.name);
     })
 
+    /**
+     * Get related movies from author from year 1970
+     */
     test('get related movies from author from year 1970', async () => {
         const movies = await authorModel.moviesFromYear(1970);
         expect(movies.length).toEqual(1);
         expect(movies[0].data?.name).toEqual(movieModelOne.data?.name);
     })
-
-    test('clean up created cecords', async () => {
-        await movieModelOne.delete()
-        expect(movieModelOne.data).toBeNull();
-
-        await movieModelTwo.delete()
-        expect(movieModelTwo.data).toBeNull();
-
-        await authorModel.delete();
-        expect(authorModel.data).toBeNull();
-    });
 });

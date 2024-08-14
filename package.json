@@ -12,7 +12,8 @@
     "dev": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register ./src/app.ts",
     "dev:debug": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register ./src/debug.ts",
     "postinstall": "npm run build",
-    "test": "jest"
+    "test": "jest",
+    "test:all": "jest --runInBand"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

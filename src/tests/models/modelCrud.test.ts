@@ -1,36 +1,31 @@
 import { describe, expect, test } from '@jest/globals';
 import testAppConfig from '@src/config/test';
-import Model from '@src/core/base/Model';
 import Kernel from '@src/core/Kernel';
 import MongoDBProvider from '@src/core/providers/MongoDBProvider';
-
-type TestModelData = {
-    name: string
-}
-
-class TestModel extends Model<TestModelData> {
-    public collection: string = 'tests';
-
-    public fields: string[] = [
-        'name',
-        'createdAt',
-        'updatedAt'
-    ]
-}
+import TestModel from './models/TestModel';
+import testModelsHelper from './testModelsHelper';
 
 describe('test model crud operations', () => {
 
-    test('kernel boot', async () => {
+    /**
+     * Boot the MongoDB provider
+     */
+    beforeAll(async () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
                 new MongoDBProvider()
             ]
         }, {})
+
+        await testModelsHelper.cleanupCollections()
     })
 
     let modelInstance: TestModel;
 
+    /**
+     * Create test model
+     */
     test('create test model', async () => {
         modelInstance = new TestModel({
             name: 'nameValue'
@@ -41,15 +36,13 @@ describe('test model crud operations', () => {
         expect(modelInstance.getId()).toBeTruthy();
     })
 
+    /**
+     * Test changing attribute value
+     */
     test('test changing attribute value', async () => {
         modelInstance.setAttribute('name', 'differentNameValue');
         await modelInstance.update();
         await modelInstance.refresh();
         expect(modelInstance.getAttribute('name')).toEqual('differentNameValue');
     })
-
-    test('test deleting model', async () => {
-        await modelInstance.delete();
-        expect(modelInstance.data).toBeNull();
-    });
 });

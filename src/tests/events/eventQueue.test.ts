@@ -6,10 +6,10 @@ import MongoDBProvider from '@src/core/providers/MongoDBProvider';
 import { App } from '@src/core/services/App';
 import TestQueueSubscriber from '@src/tests/events/subscribers/TestQueueSubscriber';
 import { TestMovieModel } from '@src/tests/models/models/TestMovie';
-import TestWorkerModel from '@src/tests/models/models/TestWorkerModel';
 import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
 import TestEventProvider from '@src/tests/providers/TestEventProvider';
 import 'dotenv/config';
+import testModelsHelper from '../models/testModelsHelper';
 
 describe('mock event service', () => {
   const movieName = 'testMovie';
@@ -29,9 +29,7 @@ describe('mock event service', () => {
       ]
     }, {});
 
-    await App.container('mongodb').getDb()
-      .collection(new TestWorkerModel().collection)
-      .deleteMany({})
+    await testModelsHelper.cleanupCollections()
   });
 
   /**
