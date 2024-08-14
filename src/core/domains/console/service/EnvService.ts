@@ -12,8 +12,6 @@ export default class EnvService {
     /**
      * Update values in the .env file
      * 
-     * TODO: have the properties created if they don't exist
-     * 
      * @param secret 
      * @returns 
      */

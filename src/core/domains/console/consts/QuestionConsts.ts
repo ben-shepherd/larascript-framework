@@ -37,7 +37,7 @@ export const StatementActions: Record<typeof QuestionConstKeys[number], Statemen
  */
 export const QuestionConstsDefaultValues: Record<typeof QuestionConstKeys[number], string> = {
     APP_PORT: '5000',
-    MONGODB_DEFAULT_URI: 'mongodb://root:password@localhost:27017/app?authSource=admin',
+    MONGODB_DEFAULT_URI: 'mongodb://root:example@localhost:27017/app?authSource=admin',
     ENABLE_AUTH_ROUTES: 'Yes',
     ENABLE_AUTH_ROUTES_ALLOW_CREATE: 'Yes',
 } 
