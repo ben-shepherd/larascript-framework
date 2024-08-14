@@ -2,7 +2,7 @@ import BaseCommand from "@src/core/domains/console/base/BaseCommand";
 import fs from 'fs';
 import path from 'path';
 
-export const targetDirectories: Record<string,string> = {
+export const targetDirectories: Record<string, string> = {
     Repository: '@src/app/repositories',
     Model: '@src/app/models',
     Listener: '@src/app/events/listeners',
@@ -26,8 +26,7 @@ export const templates: Record<string, string> = {
     Provider: '@src/core/domains/make/templates/Provider.ts.template',
 } as const;
 
-export default abstract class BaseMakeCommand extends BaseCommand
-{
+export default abstract class BaseMakeCommand extends BaseCommand {
     /**
      * One of the possible template keys e.g. Repository, Model
      */
@@ -35,12 +34,11 @@ export default abstract class BaseMakeCommand extends BaseCommand
 
     /**
      * Checks if a target already exists
-     * @param key 
-     * @param name 
+     * @param key Command Type
+     * @param name Name of the file
      * @returns 
      */
-    existsInTargetDirectory(key: keyof typeof templates, name: string): boolean
-    {
+    existsInTargetDirectory(key: keyof typeof templates, name: string): boolean {
         const filePath = targetDirectories[key]
         const fullPath = this.replaceSrcDir(filePath);
         const futureFileName = this.makeFutureFilename(name);
@@ -51,15 +49,14 @@ export default abstract class BaseMakeCommand extends BaseCommand
 
     /**
      * Get contents
-     * @param key 
+     * @param key Command Type
      * @returns 
      */
-    async getTemplateContents(key: keyof typeof templates): Promise<string>
-    {
+    async getTemplateContents(key: keyof typeof templates): Promise<string> {
         const filePath = templates[key]
         const fullPath = this.replaceSrcDir(filePath);
 
-        if(!fs.existsSync(fullPath)) {
+        if (!fs.existsSync(fullPath)) {
             throw new Error(`File not found: ${fullPath}`)
         }
 
@@ -67,16 +64,34 @@ export default abstract class BaseMakeCommand extends BaseCommand
     }
 
     /**
-     * Write contents
-     * @param key 
-     * @param name 
-     * @param contents 
+     * Get the target dir full path
+     * @param key Command Type
+     * @param name Name of the file
+     * @returns 
      */
-    async writeContent(key: keyof typeof targetDirectories, name: string, contents: string): Promise<void>
-    {
-        const futureFileName = this.makeFutureFilename(name);        
+    public getTargetDirFullPath = (key: typeof targetDirectories[string], name: string): string => {
+        const futureFileName = this.makeFutureFilename(name);
         const targetDir = targetDirectories[key]
         const targetDirFullPath = path.resolve(this.replaceSrcDir(targetDir), futureFileName)
+
+        return targetDirFullPath;
+    }
+
+    /**
+     * Write contents
+     * @param key Command Type
+     * @param name Name of the file
+     * @param contents 
+     */
+    async writeContent(key: keyof typeof targetDirectories, name: string, contents: string): Promise<void> {
+        const targetDirFullPath = this.getTargetDirFullPath(key, name);
+
+        // Ensure the parent folder exists
+        const targetDir = path.dirname(targetDirFullPath);
+
+        if (!fs.existsSync(targetDir)) {
+            fs.mkdirSync(targetDir, { recursive: true });
+        }
 
         fs.writeFileSync(targetDirFullPath, contents)
     }
