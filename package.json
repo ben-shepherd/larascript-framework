@@ -10,8 +10,6 @@
     "start:worker": "node -r tsconfig-paths/register ./dist/worker.js",
     "start:console": "node -r tsconfig-paths/register ./dist/console.js",
     "dev": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register ./src/app.ts",
-    "dev:worker": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register ./src/worker.ts",
-    "dev:console": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register ./src/console.ts",
     "dev:debug": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register ./src/debug.ts",
     "postinstall": "npm run build",
     "test": "jest"
