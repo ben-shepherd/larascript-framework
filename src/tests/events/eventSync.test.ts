@@ -1,8 +1,8 @@
 import { describe } from '@jest/globals';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
-import TestSubscriber from './events/subscribers/TestSyncSubscriber';
-import TestEventProvider from './providers/TestEventProvider';
+import TestSubscriber from '@src/tests/events/subscribers/TestSyncSubscriber';
+import TestEventProvider from '@src/tests/providers/TestEventProvider';
 
 describe('mock event service', () => {
 
