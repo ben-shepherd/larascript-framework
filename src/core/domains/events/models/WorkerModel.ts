@@ -33,9 +33,9 @@ export default class WorkerModel extends Model<WorkerModelData>
         'createdAt'
     ]
 
-    constructor(data: WorkerModelData, collection: string) {
+    constructor(data: WorkerModelData) {
         super(data);
-        this.collection = collection; 
+        this.collection = 'worker'; 
     }
 
     public getPayload(): unknown {

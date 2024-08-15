@@ -7,6 +7,7 @@ import authRoutes from '@src/core/domains/auth/routes/auth';
 import Kernel from "@src/core/Kernel";
 import ExpressProvider from "@src/core/providers/ExpressProvider";
 import { App } from "@src/core/services/App";
+import BaseAuthService from '../domains/auth/services/BaseAuthService';
 
 export default class AuthProvider extends BaseProvider
 {
@@ -19,8 +20,7 @@ export default class AuthProvider extends BaseProvider
         /**
          * Setup the registed authService
          */
-        const authServiceConstructor = this.config.authService;
-        const authService = new authServiceConstructor(this.config)
+        const authService = new BaseAuthService(this.config)
         App.setContainer('auth', authService);
     }
 
@@ -31,7 +31,7 @@ export default class AuthProvider extends BaseProvider
         /**
          * Register the authentication routes
          */
-        if(expressConfig.enabled && this.config.authRoutes && Kernel.isProviderReady(ExpressProvider.name)) {
+        if(expressConfig.enabled && this.config.enableAuthRoutes && Kernel.isProviderReady(ExpressProvider.name)) {
             this.registerAuthRoutes();
         }
     }
@@ -39,7 +39,7 @@ export default class AuthProvider extends BaseProvider
     private registerAuthRoutes(): void {
         let authRoutesArray = [...authRoutes]
 
-        if(!this.config.authCreateAllowed) { 
+        if(!this.config.enableAuthRoutesAllowCreate) { 
             authRoutesArray = [
                 ...authRoutesArray.filter((route) => route.name !== 'authCreate'),
             ]

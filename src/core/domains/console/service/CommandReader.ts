@@ -1,4 +1,3 @@
-import CommandEmptyArgument from "@src/core/domains/console/exceptions/CommandEmptyArgument";
 import CommandNotFoundException from "@src/core/domains/console/exceptions/CommandNotFoundException";
 import { ICommandReader } from "@src/core/domains/console/interfaces/ICommandReader";
 import CommandArguementParser, { ParsedArgumentsArray } from "@src/core/domains/console/parsers/CommandArgumentParser";
@@ -31,12 +30,12 @@ export default class CommandReader implements ICommandReader {
     /**
      * Read and execute command
      */
-    handle() {
-        if(!this.argv.length) {
-            throw new CommandEmptyArgument();
-        }
+    async handle() {
+        const signature = this.argv.length && this.argv[0];
 
-        const signature = this.argv[0];
+        if(!signature) {
+            throw new CommandNotFoundException();
+        }
 
         const commandCtor = CommandRegister.getInstance().getBySignature(signature);
 
@@ -46,6 +45,6 @@ export default class CommandReader implements ICommandReader {
 
         const cmd = new commandCtor()
         cmd.setParsedArguments(this.runParser())
-        cmd.execute()
+        await cmd.execute()
     }
 }

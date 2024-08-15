@@ -1,7 +1,7 @@
 import BaseApiTokenModel from '@src/core/domains/auth/models/BaseApiTokenModel';
 import { BaseApiTokenData } from '@src/core/domains/auth/types/Types.t';
 import { ObjectId } from 'mongodb';
-import User, { UserData } from './User';
+import User from './User';
 
 export interface ApiTokenData extends BaseApiTokenData {
     _id?: ObjectId
@@ -21,7 +21,12 @@ export default class ApiToken extends BaseApiTokenModel<ApiTokenData> {
      * @returns 
      */
     public async user(): Promise<User | null> {
-        return await this.belongsTo<ApiTokenData, ApiToken, UserData, User>(this, 'userId', User, new User().primaryKey);
+        return this.belongsTo({
+            localKey: 'userId',
+            localModel: this,
+            foreignKey: '_id',
+            foreignModelCtor: User
+        })
     }   
 
 }

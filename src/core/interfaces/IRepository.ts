@@ -18,7 +18,7 @@ export interface IRepository<Model extends IModel> {
     /**
      * Model Constructor
      */
-    model: ModelConstructor<Model>;
+    modelCtor: ModelConstructor<Model>;
     /**
      * Get the MongoDB Collection
      */

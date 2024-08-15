@@ -5,6 +5,9 @@ import IAppConfig from "@src/core/interfaces/IAppConfig";
 import Kernel from "@src/core/Kernel";
 
 export class App extends Singleton<IAppConfig> {
+
+    public env!: string;
+
     public static setContainer<Name extends keyof ContainersTypeHelpers & string>(name: Name, container: ContainersTypeHelpers[Name]) {
         const kernel = Kernel.getInstance();
 
@@ -27,11 +30,11 @@ export class App extends Singleton<IAppConfig> {
         if(!kernel.containers.has(name)) {
             throw new UninitializedContainerError(name as string)
         }
-        return kernel.containers.get(name);
 
+        return kernel.containers.get(name);
     }
 
     public static env(): string | undefined {
-        return process.env.APP_ENV
+        return this.getInstance().env
     }
 }

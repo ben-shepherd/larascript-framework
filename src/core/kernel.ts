@@ -1,5 +1,7 @@
 import Singleton from "@src/core/base/Singleton";
 import IAppConfig from "@src/core/interfaces/IAppConfig";
+import 'dotenv/config';
+import { App } from "./services/App";
 
 export type Containers = {
     [key: string]: any
@@ -25,7 +27,7 @@ export default class Kernel<Config extends IAppConfig> extends Singleton<Config>
     }
 
     public booted(): boolean {
-        return this.readyProviders.length === this.appConfig.providers.length
+        return this.appConfig.providers.length > 0 && this.readyProviders.length === this.appConfig.providers.length
     }
 
     public static async boot<C extends IAppConfig>(config: C, options: KernelOptions): Promise<void> {
@@ -55,6 +57,7 @@ export default class Kernel<Config extends IAppConfig> extends Singleton<Config>
             kernel.preparedProviders.push(provider.constructor.name);
         }
 
+        App.getInstance().env = appConfig.environment;
         Kernel.getInstance().readyProviders = [...kernel.preparedProviders];
     }
 
