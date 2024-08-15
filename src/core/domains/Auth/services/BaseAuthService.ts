@@ -91,13 +91,13 @@ export default class BaseAuthService extends Service<IAuthConfig> implements IAu
         const apiToken = await this.apiTokenRepository.findOneActiveToken(decoded.token)
 
         if(!apiToken) {
-            throw new UnauthorizedError('Unauthorized (Error code: 1)')
+            throw new UnauthorizedError()
         }
 
         const user = await this.userRepository.findById(decoded.uid)
 
         if(!user) {
-            throw new UnauthorizedError('Unauthorized (Error code: 2)')
+            throw new UnauthorizedError()
         }
 
         return apiToken
@@ -113,11 +113,11 @@ export default class BaseAuthService extends Service<IAuthConfig> implements IAu
         const user = await this.userRepository.findOneByEmail(email);
 
         if(!user?.data?._id) {
-            throw new UnauthorizedError('Unauthorized (Error code: 1)')
+            throw new UnauthorizedError()
         }
 
         if(user?.data?.hashedPassword && !comparePassword(password, user.data?.hashedPassword)) {
-            throw new UnauthorizedError('Unauthorized (Error code: 2)')
+            throw new UnauthorizedError()
         }
 
         return this.createJwtFromUser(user)

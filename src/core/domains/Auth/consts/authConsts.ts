@@ -2,7 +2,8 @@ const authConsts = {
     routes: {
         authCreate: 'authCreate',
         authLogin: 'authLogin',
-        authUser: 'authUser'
+        authUser: 'authUser',
+        authRevoke: 'authRevoke'
     }
 }
 

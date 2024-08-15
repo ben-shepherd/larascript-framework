@@ -4,6 +4,7 @@ import user from "@src/core/domains/auth/actions/user";
 import authConsts from "@src/core/domains/auth/consts/authConsts";
 import { authorize } from "@src/core/http/middleware/authorize";
 import { IRoute } from "@src/core/interfaces/http/IRoute";
+import revoke from "../actions/revoke";
 
 const routes: IRoute[] = [
     {
@@ -24,6 +25,13 @@ const routes: IRoute[] = [
         method: 'get',
         path: '/api/auth/user',
         action: user,
+        middlewares: [authorize()]
+    },
+    {
+        name: authConsts.routes.authRevoke,
+        method: 'post',
+        path: '/api/auth/revoke',
+        action: revoke,
         middlewares: [authorize()]
     }
 ]
