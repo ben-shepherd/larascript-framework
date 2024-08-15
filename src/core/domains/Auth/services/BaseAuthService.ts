@@ -1,6 +1,7 @@
+import { default as UserModel } from '@app/models/auth/User';
+import UserRepository from '@app/repositories/auth/UserRepository';
 import ApiToken from '@src/app/models/auth/ApiToken';
 import ApiTokenRepository from '@src/app/repositories/auth/ApiTokenRepository';
-import { AuthConfigTypeHelpers } from '@src/config/auth/auth';
 import Service from '@src/core/base/Service';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
 import apiTokenFactory from '@src/core/domains/auth/factory/apiTokenFactory';
@@ -13,8 +14,6 @@ import comparePassword from '@src/core/domains/auth/utils/comparePassword';
 import createJwt from '@src/core/domains/auth/utils/createJwt';
 import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';
 
-type UserModel = AuthConfigTypeHelpers['userModel']
-type UserRepository = AuthConfigTypeHelpers['userRepository']
 
 export default class BaseAuthService extends Service<IAuthConfig> implements IAuthService {
     public config: IAuthConfig | null;
@@ -23,6 +22,7 @@ export default class BaseAuthService extends Service<IAuthConfig> implements IAu
      * Repository for accessing user data
      */
     public userRepository: UserRepository;
+    
     /**
      * Repository for accessing api tokens
      */
@@ -33,7 +33,7 @@ export default class BaseAuthService extends Service<IAuthConfig> implements IAu
     ) {
         super()
         this.config = config;
-        this.userRepository = new config.userRepository;
+        this.userRepository = new UserRepository();
         this.apiTokenRepository = new ApiTokenRepository();
     }
 

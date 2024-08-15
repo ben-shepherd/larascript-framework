@@ -1,8 +1,8 @@
+import { IAuthService } from '@src/core/domains/auth/interfaces/IAuthService';
 import ICommandService from '@src/core/domains/console/interfaces/ICommandService';
 import { IMongoDB } from '@src/core/domains/database/mongodb/interfaces/IMongoDB';
 import { IEventService } from '@src/core/domains/events/interfaces/IEventService';
 import IExpress from '@src/core/interfaces/http/IExpress';
-import { AuthConfigTypeHelpers } from './auth/auth';
 
 /**
  * ContainersTypeHelpers provides type hinting when accessing a container. 
@@ -29,7 +29,7 @@ export interface ContainersTypeHelpers {
      * Auth service
      * Provided by '@src/core/providers/AuthProvider'
      */
-    auth: AuthConfigTypeHelpers['authService'];
+    auth: IAuthService;
     /**
      * MongoDB Service
      * Provided by '@src/core/providers/MongoDBProvider'
