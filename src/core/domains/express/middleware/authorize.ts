@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 
-import unauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
+import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
 import IAuthorizedRequest from '@src/core/domains/auth/interfaces/IAuthorizedRequest';
 import responseError from '@src/core/domains/express/requests/responseError';
 import { App } from '@src/core/services/App';
@@ -14,7 +14,7 @@ export const authorize = () => async (req: IAuthorizedRequest, res: Response, ne
         const user = await apiToken?.user()
 
         if(!user || !apiToken) {
-            throw new unauthorizedError();
+            throw new UnauthorizedError();
         }
 
         req.user = user;
@@ -23,7 +23,7 @@ export const authorize = () => async (req: IAuthorizedRequest, res: Response, ne
         next();
     }
     catch (error) {
-        if(error instanceof unauthorizedError) {
+        if(error instanceof UnauthorizedError) {
             responseError(req, res, error, 401)
             return;
         }
