@@ -1,4 +1,3 @@
-import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
 import Validator from "../base/Validator";
 import IValidator from "../interfaces/IValidator";
@@ -12,7 +11,7 @@ class ValidatorService implements IValidatorService
         return new Validator(rules);
     }
 
-    public middleware(): (validator: IValidator) => (req: Request, res: Response, next: NextFunction) => Promise<void>
+    public middleware()
     {
         return validateMiddleware;
     }

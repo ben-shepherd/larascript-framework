@@ -98,11 +98,12 @@ export default class Express extends Service<IExpressConfig> implements IExpress
         const middlewares = [...route?.middlewares ?? []];
 
         if (route?.validator) {
-            const validator = new route.validator();
             const validatorMiddleware = App.container('validate').middleware()
+            const validator = new route.validator();
+            const validateBeforeAction = route?.validateBeforeAction ?? true
 
              middlewares.push(
-                validatorMiddleware(validator)
+                validatorMiddleware({ validator, validateBeforeAction })
              );
         }
 

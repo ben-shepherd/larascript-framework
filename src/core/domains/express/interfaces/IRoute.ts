@@ -9,4 +9,5 @@ export interface IRoute {
     action: IRouteAction;
     middlewares?: Middleware[];
     validator?: ValidatorCtor;
+    validateBeforeAction?: boolean;
 }

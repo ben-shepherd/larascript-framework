@@ -6,6 +6,7 @@ import authConsts from "@src/core/domains/auth/consts/authConsts";
 import { authorize } from "@src/core/domains/express/middleware/authorize";
 import Route from "@src/core/domains/express/routing/Route";
 import RouteGroup from "@src/core/domains/express/routing/RouteGroup";
+import CreateUserValidator from "../validators/CreateUserValidator";
 
 const routes = RouteGroup([
     Route({
@@ -18,7 +19,9 @@ const routes = RouteGroup([
         name: authConsts.routes.authCreate,
         method: 'post',
         path: '/api/auth/create',
-        action: create
+        action: create,
+        validator: CreateUserValidator,
+        validateBeforeAction: true
     }),
     Route({
         name: authConsts.routes.authUser,

@@ -17,7 +17,7 @@ export default class MakeProvider extends BaseProvider
 {
     async register(): Promise<void> 
     {
-        console.log('Registering MakeProvider')    
+        console.log('[Provider] Registering MakeProvider')    
 
         App.container('console').register().registerAll([
             MakeCmdCommand,
@@ -35,8 +35,5 @@ export default class MakeProvider extends BaseProvider
         ])
     }
 
-    async boot(): Promise<void> 
-    {
-        console.log('Booting MakeProvider')    
-    }
+    async boot(): Promise<void> {}
 }
