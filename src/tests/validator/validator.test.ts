@@ -21,14 +21,14 @@ describe('test validation', () => {
   const { UserObjectGood, UserObjectBad } = testValidatorHelper
 
   test('test provider', async () => {
-    expect(App.container('validator')).toBeInstanceOf(ValidatorService);
+    expect(App.container('validate')).toBeInstanceOf(ValidatorService);
   })
 
   test('test validator service', async () => {
-    const result = App.container('validator').validator().setRules(userValidator.rules()).validate(UserObjectGood);
+    const result = App.container('validate').validator().setRules(userValidator.rules()).validate(UserObjectGood);
     expect(result.success).toBeTruthy();
 
-    const result2 = App.container('validator').validator().setRules(userValidator.rules()).validate(UserObjectBad);
+    const result2 = App.container('validate').validator().setRules(userValidator.rules()).validate(UserObjectBad);
     expect(result2.success).toBeFalsy();
   })
 

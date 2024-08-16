@@ -6,7 +6,7 @@ class ValidationProvider extends BaseProvider
 {
     async register(): Promise<void> 
     {
-        App.setContainer('validator', new ValidatorService());
+        App.setContainer('validate', new ValidatorService());
     }
 
     async boot(): Promise<void> {}

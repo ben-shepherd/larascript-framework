@@ -50,5 +50,5 @@ export interface ContainersTypeHelpers {
      * Validator service
      * Provided by '@src/core/domains/validator/providers/ValidatorProvider'
      */
-    validator: IValidatorService;
+    validate: IValidatorService;
 }
