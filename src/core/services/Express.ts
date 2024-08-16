@@ -1,9 +1,11 @@
 import express from 'express';
 
-import Service from '../base/Service';
-import IExpress from '../interfaces/http/IExpress';
-import IExpressConfig from '../interfaces/http/IExpressConfig';
-import { IRoute } from '../interfaces/http/IRoute';
+import Service from '@src/core/base/Service';
+import IExpress from '@src/core/interfaces/http/IExpress';
+import IExpressConfig from '@src/core/interfaces/http/IExpressConfig';
+import { IRoute } from '@src/core/interfaces/http/IRoute';
+import { Middleware } from '@src/core/interfaces/Middleware.t';
+import { validateMiddleware } from '../domains/validator/middleware/validateMiddleware';
 
 export default class Express extends Service<IExpressConfig> implements IExpress {
     protected config!: IExpressConfig | null;
@@ -47,32 +49,65 @@ export default class Express extends Service<IExpressConfig> implements IExpress
     }
 
     /**
-     * Bind routes
+     * Bind Routes
+     * @param routes 
      */
     public bindRoutes(routes: IRoute[]): void {
         routes.forEach(route => {
-            const middlewares = route?.middlewares ?? []
-            const handlers = [...middlewares, route?.action]
-
-            console.log(`[Express] binding route ${route.method.toUpperCase()}: '${route.path}' as '${route.name}'`)
-
-            switch (route.method) {
-                case 'get':
-                    this.app.get(route.path, handlers);
-                    break;
-                case 'post':
-                    this.app.post(route.path, handlers);
-                    break;
-                case 'put':
-                    this.app.put(route.path, handlers);
-                    break;
-                case 'delete':
-                    this.app.delete(route.path, handlers);
-                    break;
-                default:
-                    throw new Error(`Unsupported method ${route.method} for path ${route.path}`);
-            }
+            this.bindSingleRoute(route)
         })
+    }
+
+    /**
+     * Bind Route
+     * @param route 
+     */
+    public bindSingleRoute(route: IRoute): void 
+    {
+        const middlewares = this.addValidatorMiddleware(route);
+        const handlers = [...middlewares, route?.action]
+
+        console.log(`[Express] binding route ${route.method.toUpperCase()}: '${route.path}' as '${route.name}'`)
+
+        switch (route.method) {
+            case 'get':
+                this.app.get(route.path, handlers);
+                break;
+            case 'post':
+                this.app.post(route.path, handlers);
+                break;
+            case 'patch':
+                this.app.patch(route.path, handlers);
+                break;
+            case 'put':
+                this.app.put(route.path, handlers);
+                break;
+            case 'delete':
+                this.app.delete(route.path, handlers);
+                break;
+            default:
+                throw new Error(`Unsupported method ${route.method} for path ${route.path}`);
+        }    
+    }
+
+    /**
+     * Adds validator middleware
+     * @param route 
+     * @returns 
+     */
+    public addValidatorMiddleware(route: IRoute): Middleware[]
+    {
+        const middlewares = [...route?.middlewares ?? []];
+
+        if (route?.validator) {
+            const validator = new route.validator();
+
+             middlewares.push(
+                validateMiddleware(validator)
+             );
+        }
+
+        return middlewares;
     }
 
     /**

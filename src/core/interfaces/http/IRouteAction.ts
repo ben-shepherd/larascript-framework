@@ -1,3 +1,4 @@
-import { Request, Response } from "express";
+import { BaseRequest } from "@src/core/domains/express/types/BaseRequest";
+import { Response } from "express";
 
-export type IRouteAction = (req: Request, res: Response) => any;
+export type IRouteAction = (req: BaseRequest, res: Response) => any;
