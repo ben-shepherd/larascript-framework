@@ -3,8 +3,8 @@ import apiRoutes from '@src/app/routes/api';
 import BaseProvider from "@src/core/base/Provider";
 import IExpressConfig from '@src/core/domains/express/interfaces/IExpressConfig';
 import ExpressProvider from "@src/core/domains/express/providers/ExpressProvider";
+import healthRoute from '@src/core/domains/express/routes/health';
 import Kernel from "@src/core/Kernel";
-import healthRoute from '@src/core/routes/health';
 import { App } from '@src/core/services/App';
 
 export default class RoutesProvider extends BaseProvider

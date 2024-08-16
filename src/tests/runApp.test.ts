@@ -4,9 +4,9 @@ import BaseAuthService from '@src/core/domains/auth/services/BaseAuthService';
 import ConsoleService from '@src/core/domains/console/service/ConsoleService';
 import MongoDB from '@src/core/domains/database/mongodb/services/MongoDB';
 import EventService from '@src/core/domains/events/services/EventService';
+import Express from '@src/core/domains/express/services/Express';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
-import Express from '@src/core/services/Express';
 
 describe('attempt to run app with normal appConfig', () => {
 
