@@ -3,9 +3,9 @@ import User from '@app/models/auth/User';
 import { describe } from '@jest/globals';
 import testAppConfig from '@src/config/test';
 import UserFactory from '@src/core/domains/auth/factory/UserFactory';
+import AuthProvider from '@src/core/domains/auth/providers/AuthProvider';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';
 import Kernel from '@src/core/Kernel';
-import AuthProvider from '@src/core/providers/AuthProvider';
 import MongoDBProvider from '@src/core/providers/MongoDBProvider';
 import { App } from '@src/core/services/App';
 
