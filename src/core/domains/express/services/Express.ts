@@ -10,7 +10,6 @@ import { Middleware } from '@src/core/interfaces/Middleware.t';
 export default class Express extends Service<IExpressConfig> implements IExpress {
     protected config!: IExpressConfig | null;
     private app: express.Express
-    private server;
     className: string = 'Express';
     
     /**
@@ -31,7 +30,6 @@ export default class Express extends Service<IExpressConfig> implements IExpress
             throw new Error('Config not provided');
         }
         for (const middleware of this.config?.globalMiddlewares ?? []) {
-            console.log('Express loaded middleware', middleware);
             this.app.use(middleware);
         }
     }
