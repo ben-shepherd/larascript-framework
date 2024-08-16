@@ -5,8 +5,8 @@ import testAppConfig from '@src/config/test';
 import UserFactory from '@src/core/domains/auth/factory/UserFactory';
 import AuthProvider from '@src/core/domains/auth/providers/AuthProvider';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';
+import MongoDBProvider from '@src/core/domains/database/mongodb/providers/MongoDBProvider';
 import Kernel from '@src/core/Kernel';
-import MongoDBProvider from '@src/core/providers/MongoDBProvider';
 import { App } from '@src/core/services/App';
 
 describe('attempt to run app with normal appConfig', () => {

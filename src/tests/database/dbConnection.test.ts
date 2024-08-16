@@ -1,8 +1,8 @@
 import { describe, expect } from '@jest/globals';
 import testAppConfig from '@src/config/test';
+import MongoDBProvider from '@src/core/domains/database/mongodb/providers/MongoDBProvider';
 import MongoDB from '@src/core/domains/database/mongodb/services/MongoDB';
 import Kernel from '@src/core/Kernel';
-import MongoDBProvider from '@src/core/providers/MongoDBProvider';
 import { App } from '@src/core/services/App';
 
 describe('attempt to connect to MongoDB database', () => {

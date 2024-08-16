@@ -4,10 +4,10 @@ import ConsoleProvider from '@src/core/domains/console/providers/ConsoleProvider
 import EventProvider from '@src/core/domains/events/providers/EventProvider';
 import { EnvironmentType } from '../core/consts/Environment';
 import AuthProvider from '../core/domains/auth/providers/AuthProvider';
+import MongoDBProvider from '../core/domains/database/mongodb/providers/MongoDBProvider';
 import ExpressProvider from '../core/domains/express/providers/ExpressProvider';
 import { default as CoreRoutesProvider } from '../core/domains/express/providers/RoutesProvider';
 import IAppConfig from '../core/interfaces/IAppConfig';
-import MongoDBProvider from '../core/providers/MongoDBProvider';
 
 /**
  * Available app configuration
