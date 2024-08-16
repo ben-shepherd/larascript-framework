@@ -7,7 +7,9 @@ export interface UserData extends BaseUserData {
     _id?: ObjectId
     email: string
     hashedPassword: string
-    roles: string[]
+    roles: string[],
+    firstName: string;
+    lastName: string;
 }
 
 export default class User extends BaseUserModel<UserData> {
