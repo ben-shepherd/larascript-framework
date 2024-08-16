@@ -3,8 +3,8 @@ import login from "@src/core/domains/auth/actions/login";
 import revoke from "@src/core/domains/auth/actions/revoke";
 import user from "@src/core/domains/auth/actions/user";
 import authConsts from "@src/core/domains/auth/consts/authConsts";
-import { authorize } from "@src/core/http/middleware/authorize";
 import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
+import { authorize } from "@src/core/domains/express/middleware/authorize";
 
 const routes: IRoute[] = [
     {

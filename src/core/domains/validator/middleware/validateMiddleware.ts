@@ -1,10 +1,10 @@
 import { NextFunction, Response } from 'express';
 
 import IAuthorizedRequest from '@src/core/domains/auth/interfaces/IAuthorizedRequest';
+import responseError from '@src/core/domains/express/requests/responseError';
+import responseValidationError from '@src/core/domains/express/requests/responseValidationError';
+import IValidator from '@src/core/domains/validator/interfaces/IValidator';
 import ValidationError from '@src/core/exceptions/ValidationError';
-import responseError from '@src/core/http/requests/responseError';
-import responseValidationError from '@src/core/http/requests/responseValidationError';
-import IValidator from '../interfaces/IValidator';
 
 export const validateMiddleware = (validator: IValidator) => async (req: IAuthorizedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
