@@ -1,7 +1,7 @@
 import { Response } from 'express';
 
 import IAuthorizedRequest from '@src/core/domains/auth/interfaces/IAuthorizedRequest';
-import responseError from '@src/core/http/requests/responseError';
+import responseError from '@src/core/domains/express/requests/responseError';
 
 export default (req: IAuthorizedRequest, res: Response) => {
     try {
