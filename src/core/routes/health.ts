@@ -1,5 +1,5 @@
 import health from '../actions/health';
-import { IRoute } from '../interfaces/http/IRoute';
+import { IRoute } from '../domains/express/interfaces/IRoute';
 
 const routes: IRoute[] = [
     {

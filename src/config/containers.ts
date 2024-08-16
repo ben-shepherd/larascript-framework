@@ -2,7 +2,7 @@ import { IAuthService } from '@src/core/domains/auth/interfaces/IAuthService';
 import ICommandService from '@src/core/domains/console/interfaces/ICommandService';
 import { IMongoDB } from '@src/core/domains/database/mongodb/interfaces/IMongoDB';
 import { IEventService } from '@src/core/domains/events/interfaces/IEventService';
-import IExpress from '@src/core/interfaces/http/IExpress';
+import IExpress from '@src/core/domains/express/interfaces/IExpress';
 
 /**
  * ContainersTypeHelpers provides type hinting when accessing a container. 

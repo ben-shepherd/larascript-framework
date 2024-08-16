@@ -4,7 +4,7 @@ import revoke from "@src/core/domains/auth/actions/revoke";
 import user from "@src/core/domains/auth/actions/user";
 import authConsts from "@src/core/domains/auth/consts/authConsts";
 import { authorize } from "@src/core/http/middleware/authorize";
-import { IRoute } from "@src/core/interfaces/http/IRoute";
+import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
 
 const routes: IRoute[] = [
     {

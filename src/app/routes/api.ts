@@ -1,4 +1,4 @@
-import { IRoute } from "@src/core/interfaces/http/IRoute"
+import { IRoute } from "@src/core/domains/express/interfaces/IRoute"
 import { Request, Response } from "express"
 
 const routes: IRoute[] = [

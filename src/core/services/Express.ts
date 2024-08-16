@@ -1,9 +1,9 @@
 import express from 'express';
 
 import Service from '@src/core/base/Service';
-import IExpress from '@src/core/interfaces/http/IExpress';
-import IExpressConfig from '@src/core/interfaces/http/IExpressConfig';
-import { IRoute } from '@src/core/interfaces/http/IRoute';
+import IExpress from '@src/core/domains/express/interfaces/IExpress';
+import IExpressConfig from '@src/core/domains/express/interfaces/IExpressConfig';
+import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
 import { Middleware } from '@src/core/interfaces/Middleware.t';
 import { validateMiddleware } from '../domains/validator/middleware/validateMiddleware';
 
