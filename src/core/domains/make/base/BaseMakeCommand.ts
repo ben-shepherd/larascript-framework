@@ -1,7 +1,7 @@
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
+import { IMakeOptions } from "@src/core/domains/make/interfaces/IMakeOptions";
 import fs from 'fs';
 import path from 'path';
-import { IMakeOptions } from "../interfaces/IMakeOptions";
 
 export const targetDirectories: Record<string, string> = {
     Repository: '@src/app/repositories',
@@ -15,6 +15,7 @@ export const targetDirectories: Record<string, string> = {
     Provider: '@src/app/providers',
     Routes: '@src/app/routes',
     Middleware: '@src/app/middleware',
+    Action: '@src/app/actions',
 } as const;
 
 export const templates: Record<string, string> = {
@@ -29,6 +30,7 @@ export const templates: Record<string, string> = {
     Provider: '@src/core/domains/make/templates/Provider.ts.template',
     Routes: '@src/core/domains/make/templates/Routes.ts.template',
     Middleware: '@src/core/domains/make/templates/Middleware.ts.template',
+    Action: '@src/core/domains/make/templates/Action.ts.template',
 } as const;
 
 export default abstract class BaseMakeCommand extends BaseCommand {
