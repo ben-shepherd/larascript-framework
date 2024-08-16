@@ -2,6 +2,7 @@ import ExampleCommand from '@src/app/commands/ExampleCommand';
 import AppProvider from '@src/app/providers/AppProvider';
 import ConsoleProvider from '@src/core/domains/console/providers/ConsoleProvider';
 import EventProvider from '@src/core/domains/events/providers/EventProvider';
+import MakeProvider from '@src/core/domains/make/providers/MakeProvider';
 import { EnvironmentType } from '../core/consts/Environment';
 import AuthProvider from '../core/domains/auth/providers/AuthProvider';
 import MongoDBProvider from '../core/domains/database/mongodb/providers/MongoDBProvider';
@@ -31,13 +32,14 @@ const appConfig: IAppConfig = {
         new CoreRoutesProvider(),
         new AuthProvider(),
         new ConsoleProvider(),
+        new MakeProvider(),
         /**
          * Add your providers below
          */
         new AppProvider(),
     ],
 
-    /**
+    /** 
      * Commands
      */
     commands: [

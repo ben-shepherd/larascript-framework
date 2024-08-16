@@ -1,14 +1,10 @@
 import CommandExecutionException from "@src/core/domains/console/exceptions/CommandExecutionException";
 import BaseMakeCommand from "@src/core/domains/make/base/BaseMakeCommand";
-
-export interface GenericMakeFileOptions {
-    endsWith?: string
-}
+import { IMakeOptions } from "../interfaces/IMakeOptions";
 
 export default class GenericMakeFileCommand extends BaseMakeCommand
 {
     protected args!: string[];
-    protected options!: GenericMakeFileOptions;
 
     /**
      * Allows generic usage of creating a make file command
@@ -16,13 +12,12 @@ export default class GenericMakeFileCommand extends BaseMakeCommand
      * @param description Example: Create a new model
      * @param key Example: Model
      */
-    constructor(signature: string, description: string, key: string, args: string[] = [], options: GenericMakeFileOptions = {} as GenericMakeFileOptions) {
-        super()
+    constructor(signature: string, description: string, key: string, args: string[] = [], options: IMakeOptions = {}) {
+        super(options)
         this.signature = signature;
         this.description = description;
         this.key = key;
         this.args = args;
-        this.options = options;
     }
 
     /**

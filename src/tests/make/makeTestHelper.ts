@@ -6,6 +6,7 @@ import MakeModelCommand from '@src/core/domains/make/commands/MakeModelCommand';
 import MakeObserverCommand from '@src/core/domains/make/commands/MakeObserverCommand';
 import MakeProviderCommand from '@src/core/domains/make/commands/MakeProviderCommand';
 import MakeRepositoryCommand from '@src/core/domains/make/commands/MakeRepositoryCommand';
+import MakeRoutesCommand from '@src/core/domains/make/commands/MakeRoutesCommand';
 import MakeServiceCommand from '@src/core/domains/make/commands/MakeServiceCommand';
 import MakeSingletonCommand from '@src/core/domains/make/commands/MakeSingletonCommand';
 import MakeSubscriberCommand from '@src/core/domains/make/commands/MakeSubscriberCommand';
@@ -71,6 +72,8 @@ const getCommandCtorByType = (type: typeof targetDirectories[string]): CommandCt
             return MakeObserverCommand;
         case 'Provider':
             return MakeProviderCommand;
+        case 'Routes':
+            return MakeRoutesCommand;
         default:
             throw new Error('Unknown command type')
     }

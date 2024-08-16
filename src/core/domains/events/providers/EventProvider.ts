@@ -16,6 +16,7 @@ export default class EventProvider extends BaseProvider
             drivers: eventDrivers,
             subscribers: eventSubscribers
         };
+        
         App.setContainer('events', new EventService(config));
     }
 
