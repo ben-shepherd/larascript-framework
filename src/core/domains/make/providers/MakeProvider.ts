@@ -9,6 +9,7 @@ import MakeServiceCommand from "@src/core/domains/make/commands/MakeServiceComma
 import MakeSingletonCommand from "@src/core/domains/make/commands/MakeSingletonCommand";
 import MakeSubscriberCommand from "@src/core/domains/make/commands/MakeSubscriberCommand";
 import { App } from "@src/core/services/App";
+import MakeMiddlewareCommand from "../commands/MakeMiddlewareCommand";
 import MakeRoutesCommand from "../commands/MakeRoutesCommand";
 
 export default class MakeProvider extends BaseProvider
@@ -27,7 +28,8 @@ export default class MakeProvider extends BaseProvider
             MakeSingletonCommand,
             MakeSubscriberCommand,
             MakeProviderCommand,
-            MakeRoutesCommand
+            MakeRoutesCommand,
+            MakeMiddlewareCommand,
         ])
     }
 

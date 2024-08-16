@@ -14,6 +14,7 @@ export const targetDirectories: Record<string, string> = {
     Observer: '@src/app/observers',
     Provider: '@src/app/providers',
     Routes: '@src/app/routes',
+    Middleware: '@src/app/middleware',
 } as const;
 
 export const templates: Record<string, string> = {
@@ -27,6 +28,7 @@ export const templates: Record<string, string> = {
     Observer: '@src/core/domains/make/templates/Observer.ts.template',
     Provider: '@src/core/domains/make/templates/Provider.ts.template',
     Routes: '@src/core/domains/make/templates/Routes.ts.template',
+    Middleware: '@src/core/domains/make/templates/Middleware.ts.template',
 } as const;
 
 export default abstract class BaseMakeCommand extends BaseCommand {

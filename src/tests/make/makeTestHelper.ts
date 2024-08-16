@@ -2,6 +2,7 @@ import { KeyPair, ParsedArgumentsArray } from '@src/core/domains/console/parsers
 import BaseMakeCommand, { targetDirectories } from '@src/core/domains/make/base/BaseMakeCommand';
 import MakeCmdCommand from '@src/core/domains/make/commands/MakeCmdCommand';
 import MakeListenerCommand from '@src/core/domains/make/commands/MakeListenerCommand';
+import MakeMiddlewareCommand from '@src/core/domains/make/commands/MakeMiddlewareCommand';
 import MakeModelCommand from '@src/core/domains/make/commands/MakeModelCommand';
 import MakeObserverCommand from '@src/core/domains/make/commands/MakeObserverCommand';
 import MakeProviderCommand from '@src/core/domains/make/commands/MakeProviderCommand';
@@ -74,6 +75,8 @@ const getCommandCtorByType = (type: typeof targetDirectories[string]): CommandCt
             return MakeProviderCommand;
         case 'Routes':
             return MakeRoutesCommand;
+        case 'Middleware':
+            return MakeMiddlewareCommand;
         default:
             throw new Error('Unknown command type')
     }
