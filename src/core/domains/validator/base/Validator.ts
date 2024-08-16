@@ -1,20 +1,12 @@
 import Joi from "joi";
-import IValidator from "../interfaces/IValidator";
-import IValidatorResult from "../interfaces/IValidatorResult";
+import BaseValidator from "./BaseValidator";
 
-abstract class Validator implements IValidator
-{
-    rules()
-    {
-        return Joi.object()
-    }
+class Validator extends BaseValidator {
+    constructor(rules: Joi.ObjectSchema = Joi.object({})) {
+        super()
 
-    validate<T>(payload: Record<string, unknown>): IValidatorResult<T> {
-        const result = this.rules().validate(payload)
-
-        return {
-            success: !result.error,
-            joi: result
+        if (rules) {
+            this.setRules(rules)
         }
     }
 }

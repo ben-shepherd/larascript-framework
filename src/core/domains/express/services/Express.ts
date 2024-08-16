@@ -4,8 +4,8 @@ import Service from '@src/core/base/Service';
 import IExpress from '@src/core/domains/express/interfaces/IExpress';
 import IExpressConfig from '@src/core/domains/express/interfaces/IExpressConfig';
 import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
-import { validateMiddleware } from '@src/core/domains/validator/middleware/validateMiddleware';
 import { Middleware } from '@src/core/interfaces/Middleware.t';
+import { App } from '@src/core/services/App';
 
 export default class Express extends Service<IExpressConfig> implements IExpress {
     protected config!: IExpressConfig | null;
@@ -99,9 +99,10 @@ export default class Express extends Service<IExpressConfig> implements IExpress
 
         if (route?.validator) {
             const validator = new route.validator();
+            const validatorMiddleware = App.container('validator').middleware()
 
              middlewares.push(
-                validateMiddleware(validator)
+                validatorMiddleware(validator)
              );
         }
 

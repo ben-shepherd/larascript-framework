@@ -3,6 +3,7 @@ import ICommandService from '@src/core/domains/console/interfaces/ICommandServic
 import { IMongoDB } from '@src/core/domains/database/mongodb/interfaces/IMongoDB';
 import { IEventService } from '@src/core/domains/events/interfaces/IEventService';
 import IExpress from '@src/core/domains/express/interfaces/IExpress';
+import IValidatorService from '@src/core/domains/validator/interfaces/IValidatorService';
 
 /**
  * ContainersTypeHelpers provides type hinting when accessing a container. 
@@ -44,5 +45,10 @@ export interface ContainersTypeHelpers {
      * Console service
      * Provided by '@src/core/domains/console/providers/ConsoleProvider'
      */
-    console: ICommandService
+    console: ICommandService;
+    /**
+     * Validator service
+     * Provided by '@src/core/domains/validator/providers/ValidatorProvider'
+     */
+    validator: IValidatorService;
 }

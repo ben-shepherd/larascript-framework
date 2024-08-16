@@ -3,6 +3,7 @@ import AppProvider from '@src/app/providers/AppProvider';
 import ConsoleProvider from '@src/core/domains/console/providers/ConsoleProvider';
 import EventProvider from '@src/core/domains/events/providers/EventProvider';
 import MakeProvider from '@src/core/domains/make/providers/MakeProvider';
+import ValidatorProvider from '@src/core/domains/validator/providers/ValidatorProvider';
 import { EnvironmentType } from '../core/consts/Environment';
 import AuthProvider from '../core/domains/auth/providers/AuthProvider';
 import MongoDBProvider from '../core/domains/database/mongodb/providers/MongoDBProvider';
@@ -33,6 +34,7 @@ const appConfig: IAppConfig = {
         new AuthProvider(),
         new ConsoleProvider(),
         new MakeProvider(),
+        new ValidatorProvider(),
         /**
          * Add your providers below
          */
