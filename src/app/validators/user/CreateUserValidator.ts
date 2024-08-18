@@ -7,6 +7,8 @@ class CreateUserValidator extends BaseValidator
         return Joi.object({
             email: Joi.string().email().required(),
             password: Joi.string().required().min(6),
+            firstName: Joi.string(),
+            lastName: Joi.string(),
         })
     }
 }

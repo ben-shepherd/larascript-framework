@@ -1,9 +1,11 @@
-import Joi from "joi";
+import Joi, { ValidationOptions } from "joi";
 import IValidatorResult from "./IValidatorResult";
+
+export type IInterfaceCtor = new (...args: any[]) => IValidator;
 
 interface IValidator<T = any>
 {
-    validate(payload: Record<string, unknown>): IValidatorResult<T>;
+    validate(payload: Record<string, unknown>, options?: ValidationOptions): IValidatorResult<T>;
 
     rules(): Joi.ObjectSchema<T>;
 

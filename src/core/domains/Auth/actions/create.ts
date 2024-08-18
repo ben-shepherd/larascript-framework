@@ -5,10 +5,11 @@ import responseError from '@src/core/domains/express/requests/responseError';
 import ValidationError from '@src/core/exceptions/ValidationError';
 import { App } from '@src/core/services/App';
 import { Request, Response } from 'express';
+import { IUserData } from '../interfaces/IUserModel';
 
 export default async (req: Request, res: Response): Promise<void> => {
 
-    const { email, password } = req.body;
+    const { email, password, firstName, lastName } = req.body as Pick<IUserData, 'email' | 'password' | 'firstName' | 'lastName'>;
 
     try {
         const repository = App.container('auth').userRepository;
@@ -21,7 +22,9 @@ export default async (req: Request, res: Response): Promise<void> => {
         const user = new UserFactory().create({
             email,
             hashedPassword: hashPassword(password),
-            roles: [Roles.USER]
+            roles: [Roles.USER],
+            firstName,
+            lastName
         });
         
         await user.save();

@@ -1,4 +1,4 @@
-import Joi from "joi";
+import Joi, { ValidationOptions } from "joi";
 import IValidator from "../interfaces/IValidator";
 import IValidatorResult from "../interfaces/IValidatorResult";
 
@@ -17,8 +17,8 @@ abstract class BaseValidator implements IValidator
         return this.schema ?? Joi.object({});
     }
 
-    validate<T>(payload: Record<string, unknown>): IValidatorResult<T> {
-        const result = this.rules().validate(payload)
+    validate<T>(payload: Record<string, unknown>, options?: ValidationOptions): IValidatorResult<T> {
+        const result = this.rules().validate(payload, options)
 
         return {
             success: !result.error,

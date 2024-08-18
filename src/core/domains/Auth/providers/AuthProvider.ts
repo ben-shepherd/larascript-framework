@@ -41,14 +41,14 @@ export default class AuthProvider extends BaseProvider
     }
 
     private registerAuthRoutes(): void {
-        let authRoutesArray = [...authRoutes]
+        let routes = authRoutes(this.config) 
 
         if(!this.config.enableAuthRoutesAllowCreate) { 
-            authRoutesArray = [
-                ...authRoutesArray.filter((route) => route.name !== 'authCreate'),
+            routes = [
+                ...routes.filter((route) => route.name !== 'authCreate'),
             ]
         }
 
-        App.container('express').bindRoutes(authRoutesArray);
+        App.container('express').bindRoutes(routes);
     }
 }

@@ -26,6 +26,7 @@ export interface IModel<Data extends IData = IData> extends IWithObserve {
     setAttribute(key: keyof Data, value: any): void;
     getAttribute(key: keyof Data): any;
     setTimestamp(dateTimeField: string, value: Date): void;
+    fill(data: Partial<Data>): void;
     getData(options: GetDataOptions): Data | null;
     refresh(): Promise<Data | null>;
     update(): Promise<void>;

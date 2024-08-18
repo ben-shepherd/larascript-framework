@@ -3,7 +3,8 @@ const authConsts = {
         authCreate: 'authCreate',
         authLogin: 'authLogin',
         authUser: 'authUser',
-        authRevoke: 'authRevoke'
+        authRevoke: 'authRevoke',
+        authUpdate: 'authUpdate'
     }
 }
 

@@ -1,6 +1,7 @@
 import ApiToken from '@app/models/auth/ApiToken';
 import User from '@app/models/auth/User';
 import { describe } from '@jest/globals';
+import authConfig from '@src/config/auth/auth';
 import testAppConfig from '@src/config/test';
 import UserFactory from '@src/core/domains/auth/factory/UserFactory';
 import AuthProvider from '@src/core/domains/auth/providers/AuthProvider';
@@ -48,6 +49,25 @@ describe('attempt to run app with normal appConfig', () => {
 
         await apiToken?.delete();
         expect(apiToken?.getData({ excludeGuarded: false })).toBeNull();  
+    })
+
+    test('test create user validator', async () => {
+        const validator = new authConfig.validators.createUser()
+        const result = validator.validate({
+            email,
+            password
+        });
+        expect(result.success).toBeTruthy();
+    })
+
+    test('test update user validator', async () => {
+        const validator = new authConfig.validators.updateUser()
+        const result = validator.validate({
+            password,
+            firstName: 'Tony',
+            lastName: 'Stark'
+        });
+        expect(result.success).toBeTruthy();
     })
 
     test('attempt credentials', async () => {

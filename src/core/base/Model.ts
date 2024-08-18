@@ -133,6 +133,16 @@ export default abstract class Model<Data extends IData> extends WithObserver<Dat
     }
 
     /**
+     * Fills the model with data.
+     * @param data 
+     */
+    fill(data: Partial<Data>): void {
+        Object.entries(data).filter(([_key, value]) => value !== undefined).forEach(([key, value]) => {
+            this.setAttribute(key, value)
+        });
+    }
+
+    /**
      * Retrieves the data from the model.
      *
      * @param {GetDataOptions} options - The options for retrieving the data.
