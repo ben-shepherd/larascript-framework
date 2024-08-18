@@ -1,6 +1,6 @@
 
-import ApiToken from '@app/models/auth/ApiToken';
-import User from '@app/models/auth/User';
+import User from '@src//models/auth/User';
+import ApiToken from '@src/app/models/auth/ApiToken';
 
 export default interface IAuthorizedRequest {
     user?: User | null;

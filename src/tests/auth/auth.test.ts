@@ -1,9 +1,10 @@
-import ApiToken from '@app/models/auth/ApiToken';
-import User from '@app/models/auth/User';
 import { describe } from '@jest/globals';
+import ApiToken from '@src/app/models/auth/ApiToken';
+import User from '@src/app/models/auth/User';
 import authConfig from '@src/config/auth/auth';
 import testAppConfig from '@src/config/test';
 import UserFactory from '@src/core/domains/auth/factory/UserFactory';
+import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
 import AuthProvider from '@src/core/domains/auth/providers/AuthProvider';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';
 import MongoDBProvider from '@src/core/domains/database/mongodb/providers/MongoDBProvider';
@@ -17,7 +18,7 @@ describe('attempt to run app with normal appConfig', () => {
     const password = 'testPassword';
     const hashedPassword = hashPassword(password);
     let jwtToken: string;
-    let apiToken: ApiToken | null; 
+    let apiToken: IApiTokenModel | null; 
 
     beforeAll(async () => {
         await Kernel.boot({

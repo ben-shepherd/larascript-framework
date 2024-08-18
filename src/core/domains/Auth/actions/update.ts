@@ -1,6 +1,6 @@
 import { Response } from 'express';
 
-import User from '@app/models/auth/User';
+import User from '@src/app/models/auth/User';
 import responseError from '@src/core/domains/express/requests/responseError';
 import { BaseRequest } from '../../express/types/BaseRequest.t';
 import { IUserData } from '../interfaces/IUserModel';

@@ -54,7 +54,7 @@ export default abstract class Model<Data extends IData> extends WithObserver<Dat
      * Set default collection name
      * @returns 
      */
-    private setDefaultCollection()
+    protected setDefaultCollection()
     {
         if(this.collection) {
             return;

@@ -1,4 +1,4 @@
-import ApiToken from '@app/models/auth/ApiToken'
+import ApiToken from '@src/app/models/auth/ApiToken'
 import Factory from '@src/core/base/Factory'
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel'
 import tokenFactory from '@src/core/domains/auth/utils/generateToken'

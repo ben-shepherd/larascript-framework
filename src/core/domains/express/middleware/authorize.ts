@@ -1,11 +1,11 @@
 import { NextFunction, Response } from 'express';
 
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
-import IAuthorizedRequest from '@src/core/domains/auth/interfaces/IAuthorizedRequest';
 import responseError from '@src/core/domains/express/requests/responseError';
 import { App } from '@src/core/services/App';
+import { BaseRequest } from '../types/BaseRequest.t';
 
-export const authorize = () => async (req: IAuthorizedRequest, res: Response, next: NextFunction): Promise<void> => {
+export const authorize = () => async (req: BaseRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const authorization = (req.headers.authorization ?? '').replace('Bearer ', '');
 

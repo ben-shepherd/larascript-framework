@@ -1,7 +1,7 @@
-import WorkerModelFactory from '@src/core/domains/events/factory/WorkerModelFactory';
 import { IEvent } from '@src/core/domains/events/interfaces/IEvent';
 import IEventDriver from '@src/core/domains/events/interfaces/IEventDriver';
 import { ModelConstructor } from '@src/core/interfaces/IModel';
+import WorkerModelFactory from '../factory/WorkerModelFactory';
 import WorkerModel from '../models/WorkerModel';
 
 export type WorkerModelCtor = ModelConstructor<WorkerModel>
