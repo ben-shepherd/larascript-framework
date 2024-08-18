@@ -6,12 +6,12 @@ import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IApiTokenRepository from '@src/core/domains/auth/interfaces/IApiTokenRepository';
 import { IAuthConfig } from '@src/core/domains/auth/interfaces/IAuthConfig';
 import { IAuthService } from '@src/core/domains/auth/interfaces/IAuthService';
+import { IJSonWebToken } from '@src/core/domains/auth/interfaces/IJSonWebToken';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import IUserRepository from '@src/core/domains/auth/interfaces/IUserRepository';
 import comparePassword from '@src/core/domains/auth/utils/comparePassword';
 import createJwt from '@src/core/domains/auth/utils/createJwt';
 import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';
-import { IJSonWebToken } from '../interfaces/IJSonWebToken';
 
 export default class AuthService extends Service<IAuthConfig> implements IAuthService {
 
