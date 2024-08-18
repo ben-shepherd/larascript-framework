@@ -34,7 +34,6 @@ export default class User extends Model<IUserData> implements IUserModel {
             localKey: '_id',
             foreignKey: 'userId',
             foreignModelCtor: ApiToken
-
         })    
     }
 }

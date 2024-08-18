@@ -1,13 +1,12 @@
-import Model from "@src/core/base/Model";
 import IData from "@src/core/interfaces/IData";
-import { ModelConstructor } from "@src/core/interfaces/IModel";
+import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { ObjectId } from "mongodb";
 
 export type BelongsToOptions = {
-    localModel: Model<IData>;
+    localModel: IModel<IData>;
     localKey: keyof IData;
-    foreignModelCtor: ModelConstructor<Model<IData>>,
+    foreignModelCtor: ModelConstructor<IModel<IData>>,
     foreignKey: keyof IData;
     filters?: object;
 }

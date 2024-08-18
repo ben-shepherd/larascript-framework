@@ -8,6 +8,7 @@ import { Dates, GetDataOptions, IModel } from '../interfaces/IModel';
 import { IObserver } from '../interfaces/observer/IObserver';
 import { WithObserver } from '../observer/WithObserver';
 import { App } from '../services/App';
+import Str from '../util/str/Str';
 
 export default abstract class Model<Data extends IData> extends WithObserver<Data> implements IModel<Data> {
     // The database connection
@@ -46,8 +47,26 @@ export default abstract class Model<Data extends IData> extends WithObserver<Dat
     constructor(data: Data | null) {
         super()
         this.data = data;
+        this.setDefaultCollection();
     }
 
+    /**
+     * Set default collection name
+     * @returns 
+     */
+    private setDefaultCollection()
+    {
+        if(this.collection) {
+            return;
+        }
+
+        this.collection = Str.plural(Str.startLowerCase(this.constructor.name));
+    }
+
+    /**
+     * Get database connection
+     * @returns 
+     */
     getDb(): Db {
         return App.container('mongodb').getDb(this.connection);
     }
@@ -169,7 +188,6 @@ export default abstract class Model<Data extends IData> extends WithObserver<Dat
             this.data = this.observeData('creating', this.data)
             this.setTimestamp('createdAt')
             this.setTimestamp('updatedAt')
-
             await this.getDb()
                 .collection(this.collection)
                 .insertOne(this.data);

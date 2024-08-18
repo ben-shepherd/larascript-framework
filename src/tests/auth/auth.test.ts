@@ -4,7 +4,6 @@ import { describe } from '@jest/globals';
 import testAppConfig from '@src/config/test';
 import UserFactory from '@src/core/domains/auth/factory/UserFactory';
 import AuthProvider from '@src/core/domains/auth/providers/AuthProvider';
-import AuthService from '@src/core/domains/auth/services/AuthService';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';
 import MongoDBProvider from '@src/core/domains/database/mongodb/providers/MongoDBProvider';
 import Kernel from '@src/core/Kernel';
@@ -18,7 +17,6 @@ describe('attempt to run app with normal appConfig', () => {
     const hashedPassword = hashPassword(password);
     let jwtToken: string;
     let apiToken: ApiToken | null; 
-    let auth: AuthService;
 
     beforeAll(async () => {
         await Kernel.boot({

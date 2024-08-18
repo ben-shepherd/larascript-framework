@@ -1,6 +1,6 @@
 import Service from '@src/core/base/Service';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
-import ApiTokenFactory from '@src/core/domains/auth/factory/apiTokenFactory';
+import ApiTokenFactory from '@src/core/domains/auth/factory/ApiTokenFactory';
 import jwtTokenFactory from '@src/core/domains/auth/factory/jwtTokenFactory';
 import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IApiTokenRepository from '@src/core/domains/auth/interfaces/IApiTokenRepository';
@@ -38,7 +38,6 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
         this.config = config;
         this.userRepository = new config.repositories.user;
         this.apiTokenRepository = new config.repositories.apiToken;
-
     }
 
     /**
