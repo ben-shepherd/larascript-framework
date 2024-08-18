@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 import appConfig from '@src/config/app';
-import BaseAuthService from '@src/core/domains/auth/services/BaseAuthService';
+import AuthService from '@src/core/domains/auth/services/AuthService';
 import ConsoleService from '@src/core/domains/console/service/ConsoleService';
 import MongoDB from '@src/core/domains/database/mongodb/services/MongoDB';
 import EventService from '@src/core/domains/events/services/EventService';
@@ -20,7 +20,7 @@ describe('attempt to run app with normal appConfig', () => {
     expect(App.container('mongodb')).toBeInstanceOf(MongoDB);
     expect(App.container('express')).toBeInstanceOf(Express);
     expect(App.container('console')).toBeInstanceOf(ConsoleService);
-    expect(App.container('auth')).toBeInstanceOf(BaseAuthService);
+    expect(App.container('auth')).toBeInstanceOf(AuthService);
     expect(Kernel.getInstance().booted()).toBe(true);
   }, 10000)
 });

@@ -1,19 +1,17 @@
-import ApiToken from "@app/models/auth/ApiToken";
-import User from "@app/models/auth/User";
-import ApiTokenRepository from "@app/repositories/auth/ApiTokenRepository";
-import UserRepository from "@app/repositories/auth/UserRepository";
 import IService from "@src/core/interfaces/IService";
+import IApiTokenRepository from "./IApiTokenRepository";
+import IUserRepository from "./IUserRepository";
 
 
-export interface IAuthService extends IService {
+export interface IAuthService<IUserModel, IApiTokenModel> extends IService {
     config: any;
-    userRepository: UserRepository,
-    apiTokenRepository: ApiTokenRepository,
-    attemptAuthenticateToken: (token: string) => Promise<ApiToken | null>
-    createJwtFromUser: (user: User) => Promise<string>
-    createApiTokenFromUser: (user: User) => Promise<ApiToken>
-    revokeToken: (apiToken: ApiToken) => Promise<void>
+    userRepository: IUserRepository;
+    apiTokenRepository: IApiTokenRepository;
+    attemptAuthenticateToken: (token: string) => Promise<IApiTokenModel | null>
+    createJwtFromUser: (user: IUserModel) => Promise<string>
+    createApiTokenFromUser: (user: IUserModel) => Promise<IApiTokenModel>
+    revokeToken: (apiToken: IApiTokenModel) => Promise<void>
     attemptCredentials: (email: string, password: string) => Promise<string>
-    jwt: (apiToken: ApiToken) => string
+    jwt: (apiToken: IApiTokenModel) => string
 }
 

@@ -1,16 +1,18 @@
-import UserObserver from '@src/app/observers/UserObserver';
-import BaseUserModel from '@src/core/domains/auth/models/BaseUserModel';
-import { BaseUserData } from '@src/core/domains/auth/types/Types.t';
+import Model from '@src/core/base/Model';
+import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import { ObjectId } from 'mongodb';
+import ApiToken from './ApiToken';
 
-export interface UserData extends BaseUserData {
+export interface UserData {
     _id?: ObjectId
     email: string
     hashedPassword: string
-    roles: string[]
+    roles: string[],
+    firstName?: string;
+    lastName?: string;
 }
 
-export default class User extends BaseUserModel<UserData> {
+export default class User extends Model<UserData> implements IUserModel {
 
     /**
      * Protected fields
@@ -29,8 +31,14 @@ export default class User extends BaseUserModel<UserData> {
         'lastName',
     ]
 
-    constructor(data: UserData | null = null) {
-        super(data);
-        this.observeWith(UserObserver)
+    tokens(): Promise<ApiToken[]> 
+    {
+        return this.hasMany({
+            localModel: this,
+            localKey: '_id',
+            foreignKey: 'userId',
+            foreignModelCtor: ApiToken
+
+        })    
     }
 }

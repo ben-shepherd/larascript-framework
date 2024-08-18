@@ -9,7 +9,7 @@ export default abstract class Factory<Model, Data> implements IFactory {
         this.modelCtor = modelCtor;
     }
 
-    create = (data: Data) => {
+    create = (data: Data): Model => {
         return new this.modelCtor(data)
     }
 }

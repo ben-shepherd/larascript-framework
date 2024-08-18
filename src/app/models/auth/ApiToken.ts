@@ -1,16 +1,16 @@
-import BaseApiTokenModel from '@src/core/domains/auth/models/BaseApiTokenModel';
-import { BaseApiTokenData } from '@src/core/domains/auth/types/Types.t';
+import Model from '@src/core/base/Model';
+import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
 import { ObjectId } from 'mongodb';
 import User from './User';
 
-export interface ApiTokenData extends BaseApiTokenData {
+export interface ApiTokenData {
     _id?: ObjectId
     userId: ObjectId
     token: string
     revokedAt: Date | null;
 }
 
-export default class ApiToken extends BaseApiTokenModel<ApiTokenData> {
+export default class ApiToken extends Model<ApiTokenData> implements IApiTokenModel<ApiTokenData> {
 
     constructor(data: ApiTokenData | null = null) {
         super(data);

@@ -9,14 +9,14 @@ import { IObserver } from '../interfaces/observer/IObserver';
 import { WithObserver } from '../observer/WithObserver';
 import { App } from '../services/App';
 
-export interface BaseModelData {
+export interface BaseModelData extends IData {
     _id?: ObjectId
     createdAt?: Date,
     updatedAt?: Date,
     [key: string]: any
 }
 
-export default abstract class Model<Data extends BaseModelData> extends WithObserver<Data> implements IModel {
+export default abstract class Model<Data extends BaseModelData> extends WithObserver<Data> implements IModel<Data> {
     // The database connection
     public connection: string = 'default';
 
@@ -55,7 +55,7 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
         this.data = data;
     }
 
-    protected getDb(): Db {
+    getDb(): Db {
         return App.container('mongodb').getDb(this.connection);
     }
 
@@ -113,7 +113,7 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
      * @param value 
      * @returns 
      */
-    protected setTimestamp(dateTimeField: string, value: Date = new Date()) {
+    setTimestamp(dateTimeField: string, value: Date = new Date()) {
         if (!this.timestamps || !this.dates.includes(dateTimeField)) {
             return;
         }

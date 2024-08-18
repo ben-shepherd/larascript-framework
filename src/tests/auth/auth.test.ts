@@ -33,10 +33,13 @@ describe('attempt to run app with normal appConfig', () => {
         testUser = new UserFactory().create({
             email,
             hashedPassword,
-            roles: []
+            roles: [],
+            firstName: 'Tony',
+            lastName: 'Stark'
         })
         await testUser.save();
         expect(testUser.getId()).toBeTruthy();
+        expect(testUser.getAttribute('firstName')).toBe('Tony');
     })
 
     afterAll(async () => {
