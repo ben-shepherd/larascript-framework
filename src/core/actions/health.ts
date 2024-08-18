@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { App } from '../services/App';
+import { App } from '@src/core/services/App';
 
 export default async (req: Request, res: Response) => {
 

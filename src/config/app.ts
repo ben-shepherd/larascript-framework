@@ -2,12 +2,14 @@ import ExampleCommand from '@src/app/commands/ExampleCommand';
 import AppProvider from '@src/app/providers/AppProvider';
 import ConsoleProvider from '@src/core/domains/console/providers/ConsoleProvider';
 import EventProvider from '@src/core/domains/events/providers/EventProvider';
-import { EnvironmentType } from '../core/consts/Environment';
-import IAppConfig from '../core/interfaces/IAppConfig';
-import AuthProvider from '../core/providers/AuthProvider';
-import ExpressProvider from '../core/providers/ExpressProvider';
-import MongoDBProvider from '../core/providers/MongoDBProvider';
-import { default as CoreRoutesProvider } from '../core/providers/RoutesProvider';
+import MakeProvider from '@src/core/domains/make/providers/MakeProvider';
+import ValidatorProvider from '@src/core/domains/validator/providers/ValidatorProvider';
+import { EnvironmentType } from '@src/core/consts/Environment';
+import AuthProvider from '@src/core/domains/auth/providers/AuthProvider';
+import MongoDBProvider from '@src/core/domains/database/mongodb/providers/MongoDBProvider';
+import ExpressProvider from '@src/core/domains/express/providers/ExpressProvider';
+import { default as CoreRoutesProvider } from '@src/core/domains/express/providers/RoutesProvider';
+import IAppConfig from '@src/core/interfaces/IAppConfig';
 
 /**
  * Available app configuration
@@ -31,13 +33,15 @@ const appConfig: IAppConfig = {
         new CoreRoutesProvider(),
         new AuthProvider(),
         new ConsoleProvider(),
+        new MakeProvider(),
+        new ValidatorProvider(),
         /**
          * Add your providers below
          */
         new AppProvider(),
     ],
 
-    /**
+    /** 
      * Commands
      */
     commands: [

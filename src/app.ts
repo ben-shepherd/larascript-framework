@@ -1,9 +1,9 @@
 import 'dotenv/config';
 
-import appConfig from './config/app';
-import CommandNotFoundException from './core/domains/console/exceptions/CommandNotFoundException';
-import CommandBootService from './core/domains/console/service/CommandBootService';
-import Kernel, { KernelOptions } from './core/Kernel';
+import appConfig from '@src/config/app';
+import CommandNotFoundException from '@src/core/domains/console/exceptions/CommandNotFoundException';
+import CommandBootService from '@src/core/domains/console/service/CommandBootService';
+import Kernel, { KernelOptions } from '@src/core/Kernel';
 
 require('dotenv').config();
 

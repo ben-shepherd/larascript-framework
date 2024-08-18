@@ -1,12 +1,14 @@
-import ApiToken from '@app/models/auth/ApiToken';
-import User from '@app/models/auth/User';
 import { describe } from '@jest/globals';
+import ApiToken from '@src/app/models/auth/ApiToken';
+import User from '@src/app/models/auth/User';
+import authConfig from '@src/config/auth/auth';
 import testAppConfig from '@src/config/test';
 import UserFactory from '@src/core/domains/auth/factory/UserFactory';
+import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
+import AuthProvider from '@src/core/domains/auth/providers/AuthProvider';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';
+import MongoDBProvider from '@src/core/domains/database/mongodb/providers/MongoDBProvider';
 import Kernel from '@src/core/Kernel';
-import AuthProvider from '@src/core/providers/AuthProvider';
-import MongoDBProvider from '@src/core/providers/MongoDBProvider';
 import { App } from '@src/core/services/App';
 
 describe('attempt to run app with normal appConfig', () => {
@@ -16,7 +18,7 @@ describe('attempt to run app with normal appConfig', () => {
     const password = 'testPassword';
     const hashedPassword = hashPassword(password);
     let jwtToken: string;
-    let apiToken: ApiToken | null; 
+    let apiToken: IApiTokenModel | null; 
 
     beforeAll(async () => {
         await Kernel.boot({
@@ -33,10 +35,13 @@ describe('attempt to run app with normal appConfig', () => {
         testUser = new UserFactory().create({
             email,
             hashedPassword,
-            roles: []
+            roles: [],
+            firstName: 'Tony',
+            lastName: 'Stark'
         })
         await testUser.save();
         expect(testUser.getId()).toBeTruthy();
+        expect(testUser.getAttribute('firstName')).toBe('Tony');
     })
 
     afterAll(async () => {
@@ -45,6 +50,25 @@ describe('attempt to run app with normal appConfig', () => {
 
         await apiToken?.delete();
         expect(apiToken?.getData({ excludeGuarded: false })).toBeNull();  
+    })
+
+    test('test create user validator', async () => {
+        const validator = new authConfig.validators.createUser()
+        const result = validator.validate({
+            email,
+            password
+        });
+        expect(result.success).toBeTruthy();
+    })
+
+    test('test update user validator', async () => {
+        const validator = new authConfig.validators.updateUser()
+        const result = validator.validate({
+            password,
+            firstName: 'Tony',
+            lastName: 'Stark'
+        });
+        expect(result.success).toBeTruthy();
     })
 
     test('attempt credentials', async () => {

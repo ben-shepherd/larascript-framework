@@ -1,6 +1,6 @@
-import CopyEnvExampleAction from "../actions/CopyEnvExampleAction"
-import GenerateJwtSecretAction from "../actions/GenerateJwtSecretAction"
-import { StatementActionCtor } from "../interfaces/IStatementAction"
+import CopyEnvExampleAction from "@src/core/domains/console/actions/CopyEnvExampleAction"
+import GenerateJwtSecretAction from "@src/core/domains/console/actions/GenerateJwtSecretAction"
+import { StatementActionCtor } from "@src/core/domains/console/interfaces/IStatementAction"
 
 /**
  * List of question keys

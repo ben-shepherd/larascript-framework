@@ -1,23 +1,17 @@
 import Roles from '@src/core/domains/auth/enums/RolesEnum';
 import UserFactory from '@src/core/domains/auth/factory/UserFactory';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';
+import responseError from '@src/core/domains/express/requests/responseError';
 import ValidationError from '@src/core/exceptions/ValidationError';
-import responseError from "@src/core/http/requests/responseError";
 import { App } from '@src/core/services/App';
 import { Request, Response } from 'express';
+import { IUserData } from '@src/core/domains/auth/interfaces/IUserModel';
 
 export default async (req: Request, res: Response): Promise<void> => {
 
-    const { email, password } = req.body;
+    const { email, password, firstName, lastName } = req.body as Pick<IUserData, 'email' | 'password' | 'firstName' | 'lastName'>;
 
     try {
-        if (!email || email?.length === 0 || !email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
-            throw new ValidationError('Invalid email address');
-        }
-        if(!password || password?.length <= 5) {
-            throw new ValidationError('Password must be at least 6 characters long');
-        }
-
         const repository = App.container('auth').userRepository;
         const existingUser = await repository.findOneByEmail(email);
 
@@ -28,7 +22,9 @@ export default async (req: Request, res: Response): Promise<void> => {
         const user = new UserFactory().create({
             email,
             hashedPassword: hashPassword(password),
-            roles: [Roles.USER]
+            roles: [Roles.USER],
+            firstName,
+            lastName
         });
         
         await user.save();

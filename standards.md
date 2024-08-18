@@ -81,11 +81,10 @@ const resultArray = myServiceMethod()
 - Prefixes available:
     - `@src` -> `/src`
     - `@core` -> `/src/core`
-    - `@app` -> `/src/app`
 
 Example
 ```ts
-import MyService from '@app/domains/MyFeature/services/MyService';
+import MyService from '@src/domains/MyFeature/services/MyService';
 import MongoDB from '@core/database/mongodb/services/MongoDB';
 ```
 

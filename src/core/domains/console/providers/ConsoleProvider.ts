@@ -4,7 +4,7 @@ import GenerateJwtSecret from "@src/core/domains/console/commands/GenerateJwtSec
 import WorkerCommand from "@src/core/domains/console/commands/WorkerCommand";
 import ConsoleService from "@src/core/domains/console/service/ConsoleService";
 import { App } from "@src/core/services/App";
-import SetupCommand from "../commands/SetupCommand";
+import SetupCommand from "@src/core/domains/console/commands/SetupCommand";
 
 export default class ConsoleProvider extends BaseProvider
 {

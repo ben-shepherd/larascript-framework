@@ -1,5 +1,5 @@
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
-import EnvService from "../service/EnvService";
+import EnvService from "@src/core/domains/console/service/EnvService";
 
 export default class GenerateJwtSecret extends BaseCommand {
 

@@ -1,9 +1,9 @@
 import { describe, expect, test } from '@jest/globals';
 import testAppConfig from '@src/config/test';
 import Kernel from '@src/core/Kernel';
-import MongoDBProvider from '@src/core/providers/MongoDBProvider';
-import TestModel from './models/TestModel';
-import testModelsHelper from './testModelsHelper';
+import MongoDBProvider from '@src/core/domains/database/mongodb/providers/MongoDBProvider';
+import TestModel from '@src/tests/models/models/TestModel';
+import testModelsHelper from '@src/tests/models/testModelsHelper';
 
 describe('test model crud operations', () => {
 

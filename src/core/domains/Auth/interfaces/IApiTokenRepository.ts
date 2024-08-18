@@ -1,7 +1,7 @@
-import BaseApiTokenModel from "@src/core/domains/auth/models/BaseApiTokenModel";
+import IApiTokenModel from "@src/core/domains/auth/interfaces/IApitokenModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
 
-export default interface IApiTokenRepository<Model extends BaseApiTokenModel = BaseApiTokenModel> extends IRepository<Model>{
-    findOneToken(...args: any[]): Promise<Model | null>;
-    findOneActiveToken(...args: any[]): Promise<Model | null>;
+export default interface IApiTokenRepository extends IRepository<IApiTokenModel> {
+    findOneToken(...args: any[]): Promise<IApiTokenModel | null>;
+    findOneActiveToken(...args: any[]): Promise<IApiTokenModel | null>;
 }

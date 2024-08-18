@@ -1,9 +1,9 @@
 import { Request } from 'express';
 
-import ApiToken from '@app/models/auth/ApiToken';
-import User from '@app/models/auth/User';
+import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
+import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 
 export default interface IAuthorizedRequest extends Request {
-    user?: User | null;
-    apiToken?: ApiToken | null;
+    user?: IUserModel | null;
+    apiToken?: IApiTokenModel | null;
 }

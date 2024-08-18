@@ -1,4 +1,8 @@
-import IData from "./IData";
+import { Db, ObjectId } from "mongodb";
+import { BelongsToOptions } from "@src/core/domains/database/mongodb/relationships/BelongsTo";
+import { HasManyOptions } from "@src/core/domains/database/mongodb/relationships/HasMany";
+import IData from "@src/core/interfaces/IData";
+import IWithObserve from "@src/core/interfaces/observer/IObservable";
 
 export type GetDataOptions = {excludeGuarded: boolean}
 
@@ -8,19 +12,27 @@ export type ModelConstructor<M extends IModel = IModel> = new (...args: any[]) =
 
 export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>
 
-export interface IModel {
+export interface IModel<Data extends IData = IData> extends IWithObserve {
     connection: string;
     primaryKey: string;
     collection: string;
+    fields: string[];
     guarded: string[];
-    data: IData | null;
+    data: Data | null;
     dates: Dates;
     timestamps: boolean;
-    setAttribute(key: string, value: any): void;
-    getAttribute(key: string): any;
-    getData(options: GetDataOptions): object | null;
-    refresh(): Promise<IData | null>;
+    observeProperties: Record<string, string>;
+    getId(): ObjectId | undefined;
+    setAttribute(key: keyof Data, value: any): void;
+    getAttribute(key: keyof Data): any;
+    setTimestamp(dateTimeField: string, value: Date): void;
+    fill(data: Partial<Data>): void;
+    getData(options: GetDataOptions): Data | null;
+    refresh(): Promise<Data | null>;
     update(): Promise<void>;
     save(): Promise<void>;
     delete(): Promise<void>;
+    getDb(): Db;
+    belongsTo(options: BelongsToOptions): Promise<IModel | null>;
+    hasMany(options: HasManyOptions): Promise<IModel[]>;
 }

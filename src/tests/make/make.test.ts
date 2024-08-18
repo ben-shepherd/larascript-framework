@@ -1,6 +1,6 @@
 import { describe, test } from '@jest/globals';
 import fs from 'fs';
-import makeTestHelper from './makeTestHelper';
+import makeTestHelper from '@src/tests/make/makeTestHelper';
 
 const makeTypes = makeTestHelper.getArrayOfCommandTypes();
 

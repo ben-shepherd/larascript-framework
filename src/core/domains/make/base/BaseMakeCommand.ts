@@ -1,4 +1,5 @@
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
+import { IMakeOptions } from "@src/core/domains/make/interfaces/IMakeOptions";
 import fs from 'fs';
 import path from 'path';
 
@@ -12,6 +13,9 @@ export const targetDirectories: Record<string, string> = {
     Command: '@src/app/commands',
     Observer: '@src/app/observers',
     Provider: '@src/app/providers',
+    Routes: '@src/app/routes',
+    Middleware: '@src/app/middleware',
+    Action: '@src/app/actions',
 } as const;
 
 export const templates: Record<string, string> = {
@@ -24,6 +28,9 @@ export const templates: Record<string, string> = {
     Command: '@src/core/domains/make/templates/Command.ts.template',
     Observer: '@src/core/domains/make/templates/Observer.ts.template',
     Provider: '@src/core/domains/make/templates/Provider.ts.template',
+    Routes: '@src/core/domains/make/templates/Routes.ts.template',
+    Middleware: '@src/core/domains/make/templates/Middleware.ts.template',
+    Action: '@src/core/domains/make/templates/Action.ts.template',
 } as const;
 
 export default abstract class BaseMakeCommand extends BaseCommand {
@@ -31,6 +38,12 @@ export default abstract class BaseMakeCommand extends BaseCommand {
      * One of the possible template keys e.g. Repository, Model
      */
     public key!: string;
+    public options!: IMakeOptions;
+
+    constructor(options: IMakeOptions = {}) {
+        super();
+        this.options = options;
+    }
 
     /**
      * Checks if a target already exists
@@ -124,6 +137,11 @@ export default abstract class BaseMakeCommand extends BaseCommand {
      * @returns 
      */
     makeFutureFilename(name: string, ext: string = '.ts'): string {
+
+        if(this.options.startWithLowercase) {
+            name = name.charAt(0).toLowerCase() + name.slice(1);
+        }
+
         return `${name}${ext}`;
     }
 

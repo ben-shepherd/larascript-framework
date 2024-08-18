@@ -1,4 +1,4 @@
-import SetupCommand from '../commands/SetupCommand';
+import SetupCommand from '@src/core/domains/console/commands/SetupCommand';
 
 export type StatementActionCtor<T extends IStatementAction = IStatementAction> = new (...args: any[]) => T;
 

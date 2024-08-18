@@ -1,15 +1,15 @@
 import { afterAll, beforeAll, describe, test } from '@jest/globals';
 import testAppConfig from '@src/config/test';
 import Repository from '@src/core/base/Repository';
+import MongoDBProvider from '@src/core/domains/database/mongodb/providers/MongoDBProvider';
 import Kernel from '@src/core/Kernel';
-import MongoDBProvider from '@src/core/providers/MongoDBProvider';
 import { App } from '@src/core/services/App';
 import TestQueueSubscriber from '@src/tests/events/subscribers/TestQueueSubscriber';
 import { TestMovieModel } from '@src/tests/models/models/TestMovie';
 import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
 import TestEventProvider from '@src/tests/providers/TestEventProvider';
 import 'dotenv/config';
-import testModelsHelper from '../models/testModelsHelper';
+import testModelsHelper from '@src/tests/models/testModelsHelper';
 
 describe('mock event service', () => {
   const movieName = 'testMovie';

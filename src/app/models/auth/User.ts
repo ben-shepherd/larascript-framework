@@ -1,16 +1,10 @@
-import UserObserver from '@src/app/observers/UserObserver';
-import BaseUserModel from '@src/core/domains/auth/models/BaseUserModel';
-import { BaseUserData } from '@src/core/domains/auth/types/Types.t';
-import { ObjectId } from 'mongodb';
+import Model from '@src/core/base/Model';
+import IUserModel, { IUserData } from '@src/core/domains/auth/interfaces/IUserModel';
+import ApiToken from '@src/app/models/auth/ApiToken';
 
-export interface UserData extends BaseUserData {
-    _id?: ObjectId
-    email: string
-    hashedPassword: string
-    roles: string[]
-}
+export default class User extends Model<IUserData> implements IUserModel {
 
-export default class User extends BaseUserModel<UserData> {
+    public collection: string = 'users';
 
     /**
      * Protected fields
@@ -23,14 +17,23 @@ export default class User extends BaseUserModel<UserData> {
      * Define your user fields that can be set
      */
     fields: string[] = [
-        ...this.fields,
         /** Define your user fields below */
+        'email',
+        'hashedPassword',
+        'roles',
         'firstName',
         'lastName',
+        'createdAt',
+        'updatedAt',
     ]
 
-    constructor(data: UserData | null = null) {
-        super(data);
-        this.observeWith(UserObserver)
+    tokens(): Promise<ApiToken[]> 
+    {
+        return this.hasMany({
+            localModel: this,
+            localKey: '_id',
+            foreignKey: 'userId',
+            foreignModelCtor: ApiToken
+        })    
     }
 }
