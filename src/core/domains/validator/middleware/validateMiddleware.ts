@@ -3,8 +3,8 @@ import { NextFunction, Response } from 'express';
 import responseError from '@src/core/domains/express/requests/responseError';
 import responseValidationError from '@src/core/domains/express/requests/responseValidationError';
 import ValidationError from '@src/core/exceptions/ValidationError';
-import { BaseRequest } from '../../express/types/BaseRequest.t';
-import { ValidatorMiddlewareProps } from '../interfaces/IValidatorService';
+import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
+import { ValidatorMiddlewareProps } from '@src/core/domains/validator/interfaces/IValidatorService';
 
 export const validateMiddleware = ({validator, validateBeforeAction}: ValidatorMiddlewareProps) => async (req: BaseRequest, res: Response, next: NextFunction): Promise<void> => {
     try {

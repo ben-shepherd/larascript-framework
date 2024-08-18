@@ -1,6 +1,6 @@
 import BaseProvider from "@src/core/base/Provider";
 import { App } from "@src/core/services/App";
-import ValidatorService from "../services/ValidatorService";
+import ValidatorService from "@src/core/domains/validator/services/ValidatorService";
 
 class ValidationProvider extends BaseProvider
 {

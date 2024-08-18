@@ -6,9 +6,9 @@ import authConsts from "@src/core/domains/auth/consts/authConsts";
 import { authorize } from "@src/core/domains/express/middleware/authorize";
 import Route from "@src/core/domains/express/routing/Route";
 import RouteGroup from "@src/core/domains/express/routing/RouteGroup";
-import { IRoute } from "../../express/interfaces/IRoute";
-import update from "../actions/update";
-import { IAuthConfig } from "../interfaces/IAuthConfig";
+import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
+import update from "@src/core/domains/auth/actions/update";
+import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
 
 export const routes = (config: IAuthConfig): IRoute[] => {
     return RouteGroup([

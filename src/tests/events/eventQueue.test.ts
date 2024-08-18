@@ -9,7 +9,7 @@ import { TestMovieModel } from '@src/tests/models/models/TestMovie';
 import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
 import TestEventProvider from '@src/tests/providers/TestEventProvider';
 import 'dotenv/config';
-import testModelsHelper from '../models/testModelsHelper';
+import testModelsHelper from '@src/tests/models/testModelsHelper';
 
 describe('mock event service', () => {
   const movieName = 'testMovie';

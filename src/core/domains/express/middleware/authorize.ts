@@ -3,7 +3,7 @@ import { NextFunction, Response } from 'express';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
 import responseError from '@src/core/domains/express/requests/responseError';
 import { App } from '@src/core/services/App';
-import { BaseRequest } from '../types/BaseRequest.t';
+import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 
 export const authorize = () => async (req: BaseRequest, res: Response, next: NextFunction): Promise<void> => {
     try {

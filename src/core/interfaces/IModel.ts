@@ -1,8 +1,8 @@
 import { Db, ObjectId } from "mongodb";
-import { BelongsToOptions } from "../domains/database/mongodb/relationships/BelongsTo";
-import { HasManyOptions } from "../domains/database/mongodb/relationships/HasMany";
-import IData from "./IData";
-import IWithObserve from "./observer/IObservable";
+import { BelongsToOptions } from "@src/core/domains/database/mongodb/relationships/BelongsTo";
+import { HasManyOptions } from "@src/core/domains/database/mongodb/relationships/HasMany";
+import IData from "@src/core/interfaces/IData";
+import IWithObserve from "@src/core/interfaces/observer/IObservable";
 
 export type GetDataOptions = {excludeGuarded: boolean}
 

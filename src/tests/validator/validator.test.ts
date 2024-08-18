@@ -4,7 +4,7 @@ import ValidationProvider from '@src/core/domains/validator/providers/ValidatorP
 import ValidatorService from '@src/core/domains/validator/services/ValidatorService';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
-import testValidatorHelper from './testValidatorHelper';
+import testValidatorHelper from '@src/tests/validator/testValidatorHelper';
 
 describe('test validation', () => {
 

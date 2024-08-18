@@ -5,7 +5,7 @@ import responseError from '@src/core/domains/express/requests/responseError';
 import ValidationError from '@src/core/exceptions/ValidationError';
 import { App } from '@src/core/services/App';
 import { Request, Response } from 'express';
-import { IUserData } from '../interfaces/IUserModel';
+import { IUserData } from '@src/core/domains/auth/interfaces/IUserModel';
 
 export default async (req: Request, res: Response): Promise<void> => {
 

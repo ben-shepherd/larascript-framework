@@ -4,7 +4,7 @@ import Kernel from '@src/core/Kernel';
 import MongoDBProvider from '@src/core/domains/database/mongodb/providers/MongoDBProvider';
 import { TestAuthorModel } from '@src/tests/models/models/TestAuthor';
 import { TestMovieModel } from '@src/tests/models/models/TestMovie';
-import testModelsHelper from './testModelsHelper';
+import testModelsHelper from '@src/tests/models/testModelsHelper';
 
 describe('test hasMany by movies from an author', () => {
 

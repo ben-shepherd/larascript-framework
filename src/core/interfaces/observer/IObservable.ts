@@ -1,4 +1,4 @@
-import { IObserver, IObserverEvent } from "./IObserver";
+import { IObserver, IObserverEvent } from "@src/core/interfaces/observer/IObserver";
 
 export type ObserveConstructor<ReturnType> = new () => IObserver<ReturnType>
 

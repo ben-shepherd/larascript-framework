@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import IValidator from "./IValidator";
+import IValidator from "@src/core/domains/validator/interfaces/IValidator";
 
 export interface ValidatorMiddlewareProps {
     validator: IValidator,

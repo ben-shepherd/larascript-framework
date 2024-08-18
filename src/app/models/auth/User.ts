@@ -1,6 +1,6 @@
 import Model from '@src/core/base/Model';
 import IUserModel, { IUserData } from '@src/core/domains/auth/interfaces/IUserModel';
-import ApiToken from './ApiToken';
+import ApiToken from '@src/app/models/auth/ApiToken';
 
 export default class User extends Model<IUserData> implements IUserModel {
 

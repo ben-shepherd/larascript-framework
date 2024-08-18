@@ -4,7 +4,7 @@ import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import IUserRepository from "@src/core/domains/auth/interfaces/IUserRepository";
 import { ModelConstructor } from "@src/core/interfaces/IModel";
 import { RepositoryConstructor } from "@src/core/interfaces/IRepository";
-import { IInterfaceCtor } from "../../validator/interfaces/IValidator";
+import { IInterfaceCtor } from "@src/core/domains/validator/interfaces/IValidator";
 
 export interface IAuthConfig {
     models: {

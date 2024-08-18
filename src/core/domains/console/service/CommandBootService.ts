@@ -1,6 +1,6 @@
 import { KernelOptions } from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
-import ICommandBootService from "../interfaces/ICommandBootService";
+import ICommandBootService from "@src/core/domains/console/interfaces/ICommandBootService";
 
 class CommandBootService implements ICommandBootService
 {

@@ -1,5 +1,5 @@
 import Joi, { ValidationOptions } from "joi";
-import IValidatorResult from "./IValidatorResult";
+import IValidatorResult from "@src/core/domains/validator/interfaces/IValidatorResult";
 
 export type IInterfaceCtor = new (...args: any[]) => IValidator;
 

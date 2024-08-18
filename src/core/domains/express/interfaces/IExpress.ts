@@ -1,6 +1,6 @@
 import express from "express";
-import IExpressConfig from "./IExpressConfig";
-import { IRoute } from "./IRoute";
+import IExpressConfig from "@src/core/domains/express/interfaces/IExpressConfig";
+import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
 
 export default interface IExpress {
     init(): void;

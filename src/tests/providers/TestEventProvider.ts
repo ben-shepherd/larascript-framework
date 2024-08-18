@@ -5,9 +5,9 @@ import { EventServiceConfig } from "@src/core/domains/events/interfaces/IEventSe
 import EventService from "@src/core/domains/events/services/EventService";
 import { default as DriverOptions } from '@src/core/domains/events/services/QueueDriverOptions';
 import { App } from "@src/core/services/App";
-import { TestListener } from "../events/listeners/TestListener";
-import { TestQueueListener } from "../events/listeners/TestQueueListener";
-import TestWorkerModel from "../models/models/TestWorkerModel";
+import { TestListener } from "@src/tests/events/listeners/TestListener";
+import { TestQueueListener } from "@src/tests/events/listeners/TestQueueListener";
+import TestWorkerModel from "@src/tests/models/models/TestWorkerModel";
 
 class TestEventProvider extends BaseProvider {
     async register(): Promise<void> {

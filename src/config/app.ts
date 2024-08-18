@@ -4,12 +4,12 @@ import ConsoleProvider from '@src/core/domains/console/providers/ConsoleProvider
 import EventProvider from '@src/core/domains/events/providers/EventProvider';
 import MakeProvider from '@src/core/domains/make/providers/MakeProvider';
 import ValidatorProvider from '@src/core/domains/validator/providers/ValidatorProvider';
-import { EnvironmentType } from '../core/consts/Environment';
-import AuthProvider from '../core/domains/auth/providers/AuthProvider';
-import MongoDBProvider from '../core/domains/database/mongodb/providers/MongoDBProvider';
-import ExpressProvider from '../core/domains/express/providers/ExpressProvider';
-import { default as CoreRoutesProvider } from '../core/domains/express/providers/RoutesProvider';
-import IAppConfig from '../core/interfaces/IAppConfig';
+import { EnvironmentType } from '@src/core/consts/Environment';
+import AuthProvider from '@src/core/domains/auth/providers/AuthProvider';
+import MongoDBProvider from '@src/core/domains/database/mongodb/providers/MongoDBProvider';
+import ExpressProvider from '@src/core/domains/express/providers/ExpressProvider';
+import { default as CoreRoutesProvider } from '@src/core/domains/express/providers/RoutesProvider';
+import IAppConfig from '@src/core/interfaces/IAppConfig';
 
 /**
  * Available app configuration

@@ -1,6 +1,6 @@
 import fs from 'fs';
-import SetupCommand from '../commands/SetupCommand';
-import { IStatementAction } from "../interfaces/IStatementAction";
+import SetupCommand from '@src/core/domains/console/commands/SetupCommand';
+import { IStatementAction } from "@src/core/domains/console/interfaces/IStatementAction";
 
 class CopyEnvExampleAction implements IStatementAction
 {

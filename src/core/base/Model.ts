@@ -1,14 +1,14 @@
 import { Db, ObjectId } from 'mongodb';
 
 
-import BelongsTo, { BelongsToOptions } from '../domains/database/mongodb/relationships/BelongsTo';
-import HasMany, { HasManyOptions } from '../domains/database/mongodb/relationships/HasMany';
-import IData from '../interfaces/IData';
-import { Dates, GetDataOptions, IModel } from '../interfaces/IModel';
-import { IObserver } from '../interfaces/observer/IObserver';
-import { WithObserver } from '../observer/WithObserver';
-import { App } from '../services/App';
-import Str from '../util/str/Str';
+import BelongsTo, { BelongsToOptions } from '@src/core/domains/database/mongodb/relationships/BelongsTo';
+import HasMany, { HasManyOptions } from '@src/core/domains/database/mongodb/relationships/HasMany';
+import IData from '@src/core/interfaces/IData';
+import { Dates, GetDataOptions, IModel } from '@src/core/interfaces/IModel';
+import { IObserver } from '@src/core/interfaces/observer/IObserver';
+import { WithObserver } from '@src/core/observer/WithObserver';
+import { App } from '@src/core/services/App';
+import Str from '@src/core/util/str/Str';
 
 export default abstract class Model<Data extends IData> extends WithObserver<Data> implements IModel<Data> {
     // The database connection

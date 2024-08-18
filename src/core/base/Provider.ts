@@ -1,5 +1,5 @@
 
-import { IProvider } from '../interfaces/IProvider';
+import { IProvider } from '@src/core/interfaces/IProvider';
 
 export default abstract class BaseProvider implements IProvider {
 

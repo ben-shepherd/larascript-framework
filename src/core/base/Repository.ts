@@ -1,10 +1,10 @@
 import { Collection, FindOptions, ObjectId } from 'mongodb';
 
+import ModelNotFound from '@src/core/exceptions/ModelNotFound';
+import IData from '@src/core/interfaces/IData';
+import { IModel, ModelConstructor } from '@src/core/interfaces/IModel';
 import { IRepository } from '@src/core/interfaces/IRepository';
-import ModelNotFound from '../exceptions/ModelNotFound';
-import IData from '../interfaces/IData';
-import { IModel, ModelConstructor } from '../interfaces/IModel';
-import { App } from '../services/App';
+import { App } from '@src/core/services/App';
 
 export default class Repository<Model extends IModel> implements IRepository<Model> {
     public modelCtor: ModelConstructor<Model>;

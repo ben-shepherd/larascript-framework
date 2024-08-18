@@ -1,6 +1,6 @@
 import Joi, { ValidationOptions } from "joi";
-import IValidator from "../interfaces/IValidator";
-import IValidatorResult from "../interfaces/IValidatorResult";
+import IValidator from "@src/core/domains/validator/interfaces/IValidator";
+import IValidatorResult from "@src/core/domains/validator/interfaces/IValidatorResult";
 
 abstract class BaseValidator implements IValidator
 {

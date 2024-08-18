@@ -2,9 +2,9 @@ import { Response } from 'express';
 
 import User from '@src/app/models/auth/User';
 import responseError from '@src/core/domains/express/requests/responseError';
-import { BaseRequest } from '../../express/types/BaseRequest.t';
-import { IUserData } from '../interfaces/IUserModel';
-import hashPassword from '../utils/hashPassword';
+import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
+import { IUserData } from '@src/core/domains/auth/interfaces/IUserModel';
+import hashPassword from '@src/core/domains/auth/utils/hashPassword';
 
 export default async (req: BaseRequest, res: Response) => {
     try {

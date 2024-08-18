@@ -1,6 +1,6 @@
 import CommandExecutionException from "@src/core/domains/console/exceptions/CommandExecutionException";
 import BaseMakeCommand from "@src/core/domains/make/base/BaseMakeCommand";
-import { IMakeOptions } from "../interfaces/IMakeOptions";
+import { IMakeOptions } from "@src/core/domains/make/interfaces/IMakeOptions";
 
 export default class GenericMakeFileCommand extends BaseMakeCommand
 {

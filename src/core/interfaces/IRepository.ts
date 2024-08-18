@@ -1,5 +1,5 @@
 import { Collection } from "mongodb";
-import { IModel, ModelConstructor } from "./IModel";
+import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
 export type RepositoryConstructor<
     Model extends IModel = IModel,

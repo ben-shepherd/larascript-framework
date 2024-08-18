@@ -1,4 +1,4 @@
-import { QuestionConstKeys, QuestionConsts, QuestionConstsDefaultValues, StatementConsts } from "../consts/QuestionConsts";
+import { QuestionConstKeys, QuestionConsts, QuestionConstsDefaultValues, StatementConsts } from "@src/core/domains/console/consts/QuestionConsts";
 
 type Props = {
     questionKey: typeof QuestionConstKeys[number],

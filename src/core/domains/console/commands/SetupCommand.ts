@@ -1,9 +1,9 @@
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
 import readline from 'node:readline';
-import { StatementActions } from "../consts/QuestionConsts";
-import QuestionDTO from "../data/QuestionDTO";
-import { StatementActionCtor } from "../interfaces/IStatementAction";
-import EnvService from "../service/EnvService";
+import { StatementActions } from "@src/core/domains/console/consts/QuestionConsts";
+import QuestionDTO from "@src/core/domains/console/data/QuestionDTO";
+import { StatementActionCtor } from "@src/core/domains/console/interfaces/IStatementAction";
+import EnvService from "@src/core/domains/console/service/EnvService";
 
 export default class SetupCommand extends BaseCommand {
 
