@@ -9,14 +9,7 @@ import { IObserver } from '../interfaces/observer/IObserver';
 import { WithObserver } from '../observer/WithObserver';
 import { App } from '../services/App';
 
-export interface BaseModelData extends IData {
-    _id?: ObjectId
-    createdAt?: Date,
-    updatedAt?: Date,
-    [key: string]: any
-}
-
-export default abstract class Model<Data extends BaseModelData> extends WithObserver<Data> implements IModel<Data> {
+export default abstract class Model<Data extends IData> extends WithObserver<Data> implements IModel<Data> {
     // The database connection
     public connection: string = 'default';
 
@@ -90,7 +83,7 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
      */
     setAttribute<K extends keyof Data = keyof Data>(key: K, value: any): void {
         if (!this.fields.includes(key as string)) {
-            throw new Error(`Attribute ${key as string} not found in model ${this.collection}`);
+            throw new Error(`Attribute ${key as string} not found in model ${this.constructor.name}`);
         }
         if (this.dates.includes(key as string) && value instanceof Date === false) {
             throw new Error(`Attribute '${key as string}' is a date and can be only set with the Date not found in model ${this.collection}`);
@@ -171,7 +164,6 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
      * @return {Promise<void>} A promise that resolves when the save operation is complete.
      */
     async save(): Promise<void> {
-
         if (this.data && !this.getId()) {
 
             this.data = this.observeData('creating', this.data)
@@ -213,7 +205,7 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
      * @param {BelongsToOptions} options - Options for the belongsTo relationship.
      * @return {Promise<ForeignModel | null>} A Promise that resolves to the related foreign model instance, or null if no related model is found.
      */
-    async belongsTo<ForeignModel extends Model<any> = Model<any>>(options: BelongsToOptions): Promise<ForeignModel | null> {
+    async belongsTo<ForeignModel extends IModel = IModel>(options: BelongsToOptions): Promise<ForeignModel | null> {
         const data = await new BelongsTo().handle(options);
 
         if (!data) {
@@ -229,7 +221,7 @@ export default abstract class Model<Data extends BaseModelData> extends WithObse
      * @param {HasManyOptions} options - Options for the hasMany relationship.
      * @return {Promise<ForeignModel[]>} A Promise that resolves to an array of related foreign model instances.
      */
-    public async hasMany<ForeignModel extends Model<any> = Model<any>>(options: HasManyOptions): Promise<ForeignModel[]> {
+    public async hasMany<ForeignModel extends IModel<any> = IModel<any>>(options: HasManyOptions): Promise<ForeignModel[]> {
         const data = await new HasMany().handle(options);
 
         if (!data) {

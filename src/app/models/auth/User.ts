@@ -1,18 +1,10 @@
 import Model from '@src/core/base/Model';
-import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
-import { ObjectId } from 'mongodb';
+import IUserModel, { IUserData } from '@src/core/domains/auth/interfaces/IUserModel';
 import ApiToken from './ApiToken';
 
-export interface UserData {
-    _id?: ObjectId
-    email: string
-    hashedPassword: string
-    roles: string[],
-    firstName?: string;
-    lastName?: string;
-}
+export default class User extends Model<IUserData> implements IUserModel {
 
-export default class User extends Model<UserData> implements IUserModel {
+    public collection: string = 'users';
 
     /**
      * Protected fields
@@ -25,10 +17,14 @@ export default class User extends Model<UserData> implements IUserModel {
      * Define your user fields that can be set
      */
     fields: string[] = [
-        ...this.fields,
         /** Define your user fields below */
+        'email',
+        'hashedPassword',
+        'roles',
         'firstName',
         'lastName',
+        'createdAt',
+        'updatedAt',
     ]
 
     tokens(): Promise<ApiToken[]> 

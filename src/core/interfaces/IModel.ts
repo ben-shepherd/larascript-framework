@@ -12,22 +12,22 @@ export type ModelConstructor<M extends IModel = IModel> = new (...args: any[]) =
 
 export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>
 
-export interface IModel<D extends IData = IData> extends IWithObserve {
+export interface IModel<Data extends IData = IData> extends IWithObserve {
     connection: string;
     primaryKey: string;
     collection: string;
     fields: string[];
     guarded: string[];
-    data: D | null;
+    data: Data | null;
     dates: Dates;
     timestamps: boolean;
     observeProperties: Record<string, string>;
     getId(): ObjectId | undefined;
-    setAttribute(key: string, value: any): void;
-    getAttribute(key: string): any;
+    setAttribute(key: keyof Data, value: any): void;
+    getAttribute(key: keyof Data): any;
     setTimestamp(dateTimeField: string, value: Date): void;
-    getData(options: GetDataOptions): object | null;
-    refresh(): Promise<D | null>;
+    getData(options: GetDataOptions): Data | null;
+    refresh(): Promise<Data | null>;
     update(): Promise<void>;
     save(): Promise<void>;
     delete(): Promise<void>;

@@ -11,8 +11,8 @@ export interface IAuthConfig {
         apiToken: ModelConstructor<IApiTokenModel>;
     },
     repositories: {
-        user: RepositoryConstructor<IUserModel, IUserRepository<IUserModel>>;
-        apiToken: RepositoryConstructor<IApiTokenModel, IApiTokenRepository<IApiTokenModel>>;
+        user: RepositoryConstructor<IUserModel, IUserRepository>;
+        apiToken: RepositoryConstructor<IApiTokenModel, IApiTokenRepository>;
     }
     enableAuthRoutes: boolean;
     enableAuthRoutesAllowCreate: boolean;

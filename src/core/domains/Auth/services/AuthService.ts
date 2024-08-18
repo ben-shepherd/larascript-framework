@@ -13,10 +13,7 @@ import comparePassword from '@src/core/domains/auth/utils/comparePassword';
 import createJwt from '@src/core/domains/auth/utils/createJwt';
 import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';
 
-export default class AuthService<
-    UserModel extends IUserModel = IUserModel,
-    ApiTokenModel extends IApiTokenModel = IApiTokenModel
->extends Service<IAuthConfig> implements IAuthService<UserModel, ApiTokenModel> {
+export default class AuthService extends Service<IAuthConfig> implements IAuthService {
 
     /**
      * Auth config
@@ -49,8 +46,8 @@ export default class AuthService<
      * @param user 
      * @returns 
      */
-    public async createApiTokenFromUser(user: UserModel): Promise<ApiTokenModel> {
-        const apiToken = new ApiTokenFactory().createFromUser(user) as ApiTokenModel;
+    public async createApiTokenFromUser(user: IUserModel): Promise<IApiTokenModel> {
+        const apiToken = new ApiTokenFactory().createFromUser(user)
         await apiToken.save();
         return apiToken
     }
@@ -60,12 +57,17 @@ export default class AuthService<
      * @param user 
      * @returns 
      */
-    async createJwtFromUser(user: UserModel): Promise<string> {
+    async createJwtFromUser(user: IUserModel): Promise<string> {
         const apiToken = await this.createApiTokenFromUser(user);
         return this.jwt(apiToken)
     }
 
-    jwt(apiToken: ApiTokenModel): string {
+    /**
+     * Generates a JWT
+     * @param apiToken 
+     * @returns 
+     */
+    jwt(apiToken: IApiTokenModel): string {
         if(!apiToken?.data?.userId) {
             throw new Error('Invalid token');
         }
@@ -78,7 +80,7 @@ export default class AuthService<
      * @param apiToken 
      * @returns 
      */
-    async revokeToken(apiToken: ApiTokenModel): Promise<void> {
+    async revokeToken(apiToken: IApiTokenModel): Promise<void> {
         if(apiToken?.data?.revokedAt) {
             return;
         }
@@ -92,10 +94,10 @@ export default class AuthService<
      * @param token 
      * @returns 
      */
-    async attemptAuthenticateToken(token: string): Promise<ApiTokenModel | null> {
+    async attemptAuthenticateToken(token: string): Promise<IApiTokenModel | null> {
         const decoded = decodeJwt(token) as JWTToken;
 
-        const apiToken = await this.apiTokenRepository.findOneActiveToken(decoded.token) as ApiTokenModel
+        const apiToken = await this.apiTokenRepository.findOneActiveToken(decoded.token)
 
         if(!apiToken) {
             throw new UnauthorizedError()
@@ -117,7 +119,7 @@ export default class AuthService<
      * @returns 
      */
     async attemptCredentials(email: string, password: string): Promise<string> {
-        const user = await this.userRepository.findOneByEmail(email) as UserModel;
+        const user = await this.userRepository.findOneByEmail(email) as IUserModel;
 
         if(!user?.data?._id) {
             throw new UnauthorizedError()

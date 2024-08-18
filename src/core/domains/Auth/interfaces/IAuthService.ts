@@ -1,9 +1,11 @@
 import IService from "@src/core/interfaces/IService";
+import IApiTokenModel from "./IApitokenModel";
 import IApiTokenRepository from "./IApiTokenRepository";
+import IUserModel from "./IUserModel";
 import IUserRepository from "./IUserRepository";
 
 
-export interface IAuthService<IUserModel, IApiTokenModel> extends IService {
+export interface IAuthService extends IService {
     config: any;
     userRepository: IUserRepository;
     apiTokenRepository: IApiTokenRepository;
