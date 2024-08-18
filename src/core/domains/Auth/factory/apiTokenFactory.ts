@@ -1,8 +1,8 @@
 import ApiToken from '@app/models/auth/ApiToken'
 import Factory from '@src/core/base/Factory'
+import IUserModel from '@src/core/domains/auth/interfaces/IUserModel'
 import tokenFactory from '@src/core/domains/auth/utils/generateToken'
 import IApiTokenModel, { IApiTokenData } from '../interfaces/IApitokenModel'
-import IUserModel from '../interfaces/IUserModel'
 
 class ApiTokenFactory extends Factory<IApiTokenModel, IApiTokenData>
 {

@@ -1,8 +1,12 @@
-import { JWTToken } from "@src/core/domains/auth/types/Types.t";
+import { IJSonWebToken } from "../interfaces/IJSonWebToken"
 
-export default (userId: string, token: string): JWTToken => {
-    return {
-        uid: userId,
-        token
+class JWTTokenFactory {
+    create(userId: string, token: string): IJSonWebToken {
+        return {
+            uid: userId,
+            token
+        }
     }
 }
+
+export default JWTTokenFactory

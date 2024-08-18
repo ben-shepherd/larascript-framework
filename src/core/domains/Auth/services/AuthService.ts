@@ -1,17 +1,17 @@
 import Service from '@src/core/base/Service';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
 import ApiTokenFactory from '@src/core/domains/auth/factory/ApiTokenFactory';
-import jwtTokenFactory from '@src/core/domains/auth/factory/jwtTokenFactory';
+import JWTTokenFactory from '@src/core/domains/auth/factory/JwtTokenFactory';
 import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IApiTokenRepository from '@src/core/domains/auth/interfaces/IApiTokenRepository';
 import { IAuthConfig } from '@src/core/domains/auth/interfaces/IAuthConfig';
 import { IAuthService } from '@src/core/domains/auth/interfaces/IAuthService';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import IUserRepository from '@src/core/domains/auth/interfaces/IUserRepository';
-import { JWTToken } from '@src/core/domains/auth/types/Types.t';
 import comparePassword from '@src/core/domains/auth/utils/comparePassword';
 import createJwt from '@src/core/domains/auth/utils/createJwt';
 import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';
+import { IJSonWebToken } from '../interfaces/IJSonWebToken';
 
 export default class AuthService extends Service<IAuthConfig> implements IAuthService {
 
@@ -70,7 +70,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
         if(!apiToken?.data?.userId) {
             throw new Error('Invalid token');
         }
-        const payload = jwtTokenFactory(apiToken.data?.userId?.toString(), apiToken.data?.token);
+        const payload = new JWTTokenFactory().create(apiToken.data?.userId?.toString(), apiToken.data?.token);
         return createJwt(payload, '1d');
     }
 
@@ -94,7 +94,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * @returns 
      */
     async attemptAuthenticateToken(token: string): Promise<IApiTokenModel | null> {
-        const decoded = decodeJwt(token) as JWTToken;
+        const decoded = decodeJwt(token) as IJSonWebToken;
 
         const apiToken = await this.apiTokenRepository.findOneActiveToken(decoded.token)
 

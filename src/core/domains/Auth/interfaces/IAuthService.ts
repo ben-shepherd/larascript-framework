@@ -1,8 +1,8 @@
+import IApiTokenModel from "@src/core/domains/auth/interfaces/IApitokenModel";
+import IApiTokenRepository from "@src/core/domains/auth/interfaces/IApiTokenRepository";
+import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
+import IUserRepository from "@src/core/domains/auth/interfaces/IUserRepository";
 import IService from "@src/core/interfaces/IService";
-import IApiTokenModel from "./IApitokenModel";
-import IApiTokenRepository from "./IApiTokenRepository";
-import IUserModel from "./IUserModel";
-import IUserRepository from "./IUserRepository";
 
 
 export interface IAuthService extends IService {

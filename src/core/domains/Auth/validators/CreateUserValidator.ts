@@ -1,5 +1,5 @@
+import BaseValidator from "@src/core/domains/validator/base/BaseValidator";
 import Joi, { ObjectSchema } from "joi";
-import BaseValidator from "../../validator/base/BaseValidator";
 
 class CreateUserValidator extends BaseValidator
 {

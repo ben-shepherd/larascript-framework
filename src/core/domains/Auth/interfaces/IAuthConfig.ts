@@ -1,9 +1,9 @@
+import IApiTokenModel from "@src/core/domains/auth/interfaces/IApitokenModel";
+import IApiTokenRepository from "@src/core/domains/auth/interfaces/IApiTokenRepository";
+import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
+import IUserRepository from "@src/core/domains/auth/interfaces/IUserRepository";
 import { ModelConstructor } from "@src/core/interfaces/IModel";
 import { RepositoryConstructor } from "@src/core/interfaces/IRepository";
-import IApiTokenModel from "./IApitokenModel";
-import IApiTokenRepository from "./IApiTokenRepository";
-import IUserModel from "./IUserModel";
-import IUserRepository from "./IUserRepository";
 
 export interface IAuthConfig {
     models: {

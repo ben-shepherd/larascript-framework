@@ -3,10 +3,10 @@ import login from "@src/core/domains/auth/actions/login";
 import revoke from "@src/core/domains/auth/actions/revoke";
 import user from "@src/core/domains/auth/actions/user";
 import authConsts from "@src/core/domains/auth/consts/authConsts";
+import CreateUserValidator from "@src/core/domains/auth/validators/CreateUserValidator";
 import { authorize } from "@src/core/domains/express/middleware/authorize";
 import Route from "@src/core/domains/express/routing/Route";
 import RouteGroup from "@src/core/domains/express/routing/RouteGroup";
-import CreateUserValidator from "../validators/CreateUserValidator";
 
 const routes = RouteGroup([
     Route({

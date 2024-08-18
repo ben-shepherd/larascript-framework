@@ -1,5 +1,5 @@
+import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
-import IUserModel from "./IUserModel";
 
 export default interface IUserRepository extends IRepository<IUserModel> 
 {
