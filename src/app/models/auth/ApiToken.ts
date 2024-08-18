@@ -1,27 +1,24 @@
-import BaseApiTokenModel from '@src/core/domains/auth/models/BaseApiTokenModel';
-import { BaseApiTokenData } from '@src/core/domains/auth/types/Types.t';
-import { ObjectId } from 'mongodb';
+import Model from '@src/core/base/Model';
+import IApiTokenModel, { IApiTokenData } from '@src/core/domains/auth/interfaces/IApitokenModel';
+import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import User from './User';
 
-export interface ApiTokenData extends BaseApiTokenData {
-    _id?: ObjectId
-    userId: ObjectId
-    token: string
-    revokedAt: Date | null;
-}
+class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
 
-export default class ApiToken extends BaseApiTokenModel<ApiTokenData> {
+    public fields: string[] = [
+        'userId',
+        'token',
+        'revokedAt'
+    ]
 
-    constructor(data: ApiTokenData | null = null) {
-        super(data);
-    }
+    public timestamps: boolean = false;
 
     /**
      * Finds the related user for this ApiToken
      * @returns 
      */
-    public async user(): Promise<User | null> {
-        return this.belongsTo({
+    public async user(): Promise<IUserModel | null> {
+        return this.belongsTo<IUserModel>({
             localKey: 'userId',
             localModel: this,
             foreignKey: '_id',
@@ -30,3 +27,5 @@ export default class ApiToken extends BaseApiTokenModel<ApiTokenData> {
     }   
 
 }
+
+export default ApiToken

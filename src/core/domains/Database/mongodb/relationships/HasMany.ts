@@ -1,13 +1,13 @@
-import Model, { BaseModelData } from "@src/core/base/Model";
-import { ModelConstructor } from "@src/core/interfaces/IModel";
+import IData from "@src/core/interfaces/IData";
+import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { ObjectId } from "mongodb";
 
 export type HasManyOptions = {
-    localModel: Model<BaseModelData>
-    localKey: keyof BaseModelData
-    foreignModelCtor: ModelConstructor<Model<BaseModelData>>
-    foreignKey: keyof BaseModelData
+    localModel: IModel<IData>
+    localKey: keyof IData
+    foreignModelCtor: ModelConstructor<IModel<IData>>
+    foreignKey: keyof IData
     filters?: object
 }
 

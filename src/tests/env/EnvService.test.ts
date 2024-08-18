@@ -49,7 +49,6 @@ describe('test EnvService methods', () => {
         }, fakeEnvPath);
 
         const envContent = await service.readFileContents(fakeEnvPath);
-        console.log('DEBUG', envContent)
         expect(envContent).toContain('JWT_SECRET=test');
     });
 });

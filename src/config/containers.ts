@@ -1,3 +1,5 @@
+import ApiToken from '@app/models/auth/ApiToken';
+import User from '@app/models/auth/User';
 import { IAuthService } from '@src/core/domains/auth/interfaces/IAuthService';
 import ICommandService from '@src/core/domains/console/interfaces/ICommandService';
 import { IMongoDB } from '@src/core/domains/database/mongodb/interfaces/IMongoDB';
@@ -30,7 +32,7 @@ export interface ContainersTypeHelpers {
      * Auth service
      * Provided by '@src/core/providers/AuthProvider'
      */
-    auth: IAuthService;
+    auth: IAuthService<User, ApiToken>;
     /**
      * MongoDB Service
      * Provided by '@src/core/providers/MongoDBProvider'

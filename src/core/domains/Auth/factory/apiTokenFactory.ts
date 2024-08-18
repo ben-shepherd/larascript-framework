@@ -1,19 +1,22 @@
-import BaseApiToken from '@src/core/domains/auth/models/BaseApiTokenModel'
-import BaseUserModel from '@src/core/domains/auth/models/BaseUserModel'
+import ApiToken from '@app/models/auth/ApiToken'
+import Factory from '@src/core/base/Factory'
+import IUserModel from '@src/core/domains/auth/interfaces/IUserModel'
 import tokenFactory from '@src/core/domains/auth/utils/generateToken'
-import { ModelConstructor } from '@src/core/interfaces/IModel'
+import IApiTokenModel, { IApiTokenData } from '../interfaces/IApitokenModel'
 
-export default <
-    Model extends BaseApiToken = BaseApiToken
-> (user: BaseUserModel, modelCtor: ModelConstructor<Model>): Model => {
-    
-    if(!user?.data?._id) {
-        throw new Error('Expected user to have an id')
+class ApiTokenFactory extends Factory<IApiTokenModel, IApiTokenData>
+{
+    constructor() {
+        super(ApiToken)
     }
-
-    return new modelCtor({
-        userId: user.data?._id,
-        token: tokenFactory(),
-        revokedAt: null,
-    })
+    
+    createFromUser(user: IUserModel): IApiTokenModel {
+        return new this.modelCtor({
+            userId: user.data?._id,
+            token: tokenFactory(),
+            revokedAt: null,
+        })
+    }
 }
+
+export default ApiTokenFactory

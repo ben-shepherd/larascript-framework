@@ -1,8 +1,7 @@
-import BaseUserModel from "@src/core/domains/auth/models/BaseUserModel";
-import { IModel } from "@src/core/interfaces/IModel";
+import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
 
-export default interface IUserRepository<Model extends IModel = BaseUserModel> extends IRepository<Model> 
+export default interface IUserRepository extends IRepository<IUserModel> 
 {
-    findOneByEmail(email: string): Promise<Model | null>
+    findOneByEmail(email: string): Promise<IUserModel | null>
 }

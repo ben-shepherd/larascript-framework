@@ -2,11 +2,13 @@ import { Collection } from "mongodb";
 import { IModel, ModelConstructor } from "./IModel";
 
 export type RepositoryConstructor<
-    Model extends IModel,
+    Model extends IModel = IModel,
     Repository extends IRepository<Model> = IRepository<Model>
 > = new (collectionName?: string, modelCtor?: ModelConstructor) => Repository;
 
-export interface IRepository<Model extends IModel> {
+export type RepositoryInstance<RCtor extends RepositoryConstructor<any>> = InstanceType<RCtor>
+
+export interface IRepository<Model extends IModel = IModel> {
     /**
      * Collection name
      */

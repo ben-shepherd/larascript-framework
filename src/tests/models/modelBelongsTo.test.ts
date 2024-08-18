@@ -59,7 +59,6 @@ describe('test belongsTo by fetching an author from a movie', () => {
      */
     test('get related author from movie with additional filters', async () => {
         const relatedAuthor = await movieModel.authorByName('authorName');
-        console.log('DEBUG', relatedAuthor)
         expect(relatedAuthor).toBeInstanceOf(TestAuthorModel);
         expect(relatedAuthor?.getId()).toEqual(authorModel.getId());
     })

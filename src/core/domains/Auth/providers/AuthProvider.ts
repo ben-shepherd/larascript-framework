@@ -4,10 +4,10 @@ import expressConfig from '@config/http/express';
 import BaseProvider from "@src/core/base/Provider";
 import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
 import authRoutes from '@src/core/domains/auth/routes/auth';
+import AuthService from '@src/core/domains/auth/services/AuthService';
 import ExpressProvider from "@src/core/domains/express/providers/ExpressProvider";
 import Kernel from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
-import BaseAuthService from '../services/BaseAuthService';
 
 export default class AuthProvider extends BaseProvider
 {
@@ -20,7 +20,11 @@ export default class AuthProvider extends BaseProvider
         /**
          * Setup the registed authService
          */
-        const authService = new BaseAuthService(this.config)
+        const authService = new AuthService(this.config)
+
+        /**
+         * Setup the container
+         */
         App.setContainer('auth', authService);
     }
 
