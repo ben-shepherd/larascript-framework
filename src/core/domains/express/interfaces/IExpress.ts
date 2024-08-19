@@ -5,7 +5,7 @@ import express from "express";
 export default interface IExpress {
     init(): void;
     bindRoutes(routes: IRoute[]): void;
-    getApp(): express.Express;
+    getExpress(): express.Express;
     listen(): Promise<void>;
     getConfig(): IExpressConfig | null;
     isEnabled(): boolean;

@@ -113,7 +113,7 @@ export default class Express extends Service<IExpressConfig> implements IExpress
     /**
      * Get the express instance
      */
-    public getApp(): express.Express {
+    public getExpress(): express.Express {
         return this.app
     }
 
