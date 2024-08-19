@@ -17,11 +17,12 @@ export default class ExpressProvider extends BaseProvider
 
     public async boot(): Promise<void>
     {
+        this.log('Booting ExpressProvider');
+        
         if(!this.config.enabled) {
+            this.log('Express is not enabled');
             return;
         }
-        
-        this.log('Booting ExpressProvider');
 
         const express = App.container('express');
         express.init();

@@ -1,4 +1,3 @@
-import apiRoutes from '@src/app/routes/api';
 import expressConfig from '@src/config/http/express';
 import BaseProvider from "@src/core/base/Provider";
 import IExpressConfig from '@src/core/domains/express/interfaces/IExpressConfig';
@@ -31,18 +30,9 @@ export default class RoutesProvider extends BaseProvider
         this.log('Booting RoutesProvider');
         
         /**
-         * Register routes in @src/app/routes/api
-         */
-        this.registerApiRoutes();
-
-        /**
          * Register routes in @src/core/routes/health
          */
         this.registerHealthRoute();
-    }
-
-    private registerApiRoutes(): void {
-        App.container('express').bindRoutes(apiRoutes);
     }
 
     private registerHealthRoute(): void {
