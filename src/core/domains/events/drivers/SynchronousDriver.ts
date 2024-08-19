@@ -10,8 +10,11 @@ export default class SynchronousDriver implements IEventDriver
      */
     async handle(event: IEvent) {
         const eventName = event.name
+
+        // Get all the listeners with this eventName
         const listenerConstructors = App.container('events').getListenersByEventName(eventName)
 
+        // Process immediatly
         for(const listenerCtor of listenerConstructors) {
             const listener = new listenerCtor();
             await listener.handle(event.payload);
