@@ -1,8 +1,8 @@
-import { Db, ObjectId } from "mongodb";
 import { BelongsToOptions } from "@src/core/domains/database/mongodb/relationships/BelongsTo";
 import { HasManyOptions } from "@src/core/domains/database/mongodb/relationships/HasMany";
-import IData from "@src/core/interfaces/IData";
+import IModelData from "@src/core/interfaces/IModelData";
 import IWithObserve from "@src/core/interfaces/observer/IObservable";
+import { Db, ObjectId } from "mongodb";
 
 export type GetDataOptions = {excludeGuarded: boolean}
 
@@ -12,7 +12,7 @@ export type ModelConstructor<M extends IModel = IModel> = new (...args: any[]) =
 
 export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>
 
-export interface IModel<Data extends IData = IData> extends IWithObserve {
+export interface IModel<Data extends IModelData = IModelData> extends IWithObserve {
     connection: string;
     primaryKey: string;
     collection: string;

@@ -1,8 +1,8 @@
-import IData from "@src/core/interfaces/IData";
 import { IModel } from "@src/core/interfaces/IModel";
+import IModelData from "@src/core/interfaces/IModelData";
 import { ObjectId } from "mongodb";
 
-export interface IApiTokenData extends IData {
+export interface IApiTokenData extends IModelData {
     userId: ObjectId
     token: string
     revokedAt: Date | null;

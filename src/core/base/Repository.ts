@@ -1,8 +1,8 @@
 import { Collection, FindOptions, ObjectId } from 'mongodb';
 
 import ModelNotFound from '@src/core/exceptions/ModelNotFound';
-import IData from '@src/core/interfaces/IData';
 import { IModel, ModelConstructor } from '@src/core/interfaces/IModel';
+import IModelData from '@src/core/interfaces/IModelData';
 import { IRepository } from '@src/core/interfaces/IRepository';
 import { App } from '@src/core/services/App';
 
@@ -46,7 +46,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @returns 
      */
     async findById(_id: string): Promise<Model | null> {
-        const data = await App.container('mongodb').getDb(this.connection).collection(this.collectionName).findOne({ _id: new ObjectId(_id) }) as IData | null;
+        const data = await App.container('mongodb').getDb(this.connection).collection(this.collectionName).findOne({ _id: new ObjectId(_id) }) as IModelData | null;
         return data ? new this.modelCtor(data) : null;
     }
 
@@ -66,7 +66,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @returns 
      */
     async findMany(query: object = {}, options?: FindOptions): Promise<Model[]> {
-        const dataArray = await App.container('mongodb').getDb(this.connection).collection(this.collectionName).find(query, options).toArray() as IData[];
+        const dataArray = await App.container('mongodb').getDb(this.connection).collection(this.collectionName).find(query, options).toArray() as IModelData[];
         return dataArray.map(data => new this.modelCtor(data));
     }
 }
