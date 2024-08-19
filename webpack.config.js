@@ -13,7 +13,6 @@ module.exports = {
     extensions: ['.ts', '.js'],
     alias: {
       '@src': path.resolve(__dirname, 'src/'),
-      '@config': path.resolve(__dirname, 'src/config/')
     }
   },
   module: {

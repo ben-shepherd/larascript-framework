@@ -4,8 +4,7 @@ export interface #name#Config {}
 
 export default class #name# extends BaseProvider
 {
-    protected config!: #name#Config;
-    configPath = '@config/#name#';
+    protected config: #name#Config = {}; // Important: Change to reference imporeted file from @src/config! 
 
     constructor() {
         super()

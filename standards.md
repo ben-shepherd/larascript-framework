@@ -80,12 +80,11 @@ const resultArray = myServiceMethod()
 
 - Prefixes available:
     - `@src` -> `/src`
-    - `@core` -> `/src/core`
 
 Example
 ```ts
 import MyService from '@src/domains/MyFeature/services/MyService';
-import MongoDB from '@core/database/mongodb/services/MongoDB';
+import MongoDB from '@src/database/mongodb/services/MongoDB';
 ```
 
 ## Example Folder Structure

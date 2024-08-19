@@ -1,10 +1,8 @@
 
-import authConfig from '@config/auth/auth';
-import expressConfig from '@config/http/express';
+import authConfig from '@src/config/auth/auth';
 import BaseProvider from "@src/core/base/Provider";
 import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
 import authRoutes from '@src/core/domains/auth/routes/auth';
-import AuthService from '@src/core/domains/auth/services/AuthService';
 import ExpressProvider from "@src/core/domains/express/providers/ExpressProvider";
 import Kernel from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
@@ -20,7 +18,8 @@ export default class AuthProvider extends BaseProvider
         /**
          * Setup the registed authService
          */
-        const authService = new AuthService(this.config)
+        const authServiceCtor = this.config.service.authService;
+        const authService = new authServiceCtor(this.config);
 
         /**
          * Setup the container
@@ -35,11 +34,17 @@ export default class AuthProvider extends BaseProvider
         /**
          * Register the authentication routes
          */
-        if(expressConfig.enabled && this.config.enableAuthRoutes && Kernel.isProviderReady(ExpressProvider.name)) {
+        const expressEnabled = Kernel.isProviderReady(ExpressProvider.name) && App.container('express').isEnabled();
+        const enableAuthRoutes = this.config.enableAuthRoutes;
+        
+        if(expressEnabled && enableAuthRoutes) {
             this.registerAuthRoutes();
         }
     }
 
+    /**
+     * Provide the authentication routes
+     */
     private registerAuthRoutes(): void {
         let routes = authRoutes(this.config) 
 

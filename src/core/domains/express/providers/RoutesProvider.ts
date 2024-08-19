@@ -1,5 +1,5 @@
-import expressConfig from '@config/http/express';
 import apiRoutes from '@src/app/routes/api';
+import expressConfig from '@src/config/http/express';
 import BaseProvider from "@src/core/base/Provider";
 import IExpressConfig from '@src/core/domains/express/interfaces/IExpressConfig';
 import ExpressProvider from "@src/core/domains/express/providers/ExpressProvider";

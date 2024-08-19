@@ -1,16 +1,17 @@
+import ApiToken from '@src/app/models/auth/ApiToken';
 import Model from '@src/core/base/Model';
 import IUserModel, { IUserData } from '@src/core/domains/auth/interfaces/IUserModel';
-import ApiToken from '@src/app/models/auth/ApiToken';
 
 export default class User extends Model<IUserData> implements IUserModel {
 
     public collection: string = 'users';
 
     /**
-     * Protected fields
+     * Guarded fields
      */
     guarded: string[] = [
-        ...this.guarded
+        'hashedPassword',
+        'roles'
     ];
 
     /**

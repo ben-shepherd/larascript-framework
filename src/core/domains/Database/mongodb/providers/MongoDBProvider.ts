@@ -1,4 +1,4 @@
-import mongodbConfig from '@config/database/mongodb';
+import mongodbConfig from '@src/config/database/mongodb';
 import BaseProvider from "@src/core/base/Provider";
 import IMongoDbConfig from "@src/core/domains/database/mongodb/interfaces/IMongoDbConfig";
 import MongoDB from "@src/core/domains/database/mongodb/services/MongoDB";

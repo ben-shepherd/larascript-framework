@@ -1,4 +1,4 @@
-import expressConfig from '@config/http/express';
+import expressConfig from '@src/config/http/express';
 import BaseProvider from "@src/core/base/Provider";
 import IExpressConfig from "@src/core/domains/express/interfaces/IExpressConfig";
 import Express from '@src/core/domains/express/services/Express';
@@ -10,10 +10,6 @@ export default class ExpressProvider extends BaseProvider
 
     public async register(): Promise<void> 
     {
-        if(!this.config.enabled) {
-            return;
-        }
-
         this.log('Registering ExpressProvider');
 
         App.setContainer('express', new Express(this.config));
