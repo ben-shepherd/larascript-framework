@@ -5,32 +5,33 @@ import CommandNotFoundException from '@src/core/domains/console/exceptions/Comma
 import CommandBootService from '@src/core/domains/console/service/CommandBootService';
 import Kernel, { KernelOptions } from '@src/core/Kernel';
 
-require('dotenv').config();
-
 (async () => {
     try {
         const args = process.argv.slice(2);
         const cmdBoot  = new CommandBootService();
         const options: KernelOptions = cmdBoot.getKernelOptions(args, {})
         
+        /**
+         * Boot the kernel
+         */
         await Kernel.boot(appConfig, options);
 
-        try {
-            await cmdBoot.boot(args);
-        }
-        catch (err) {
-            if(!(err instanceof CommandNotFoundException)) {
-                throw err
-            }
-        }
+        console.log('[App]: Started');
+
+        /**
+         * Execute commands
+         */
+        await cmdBoot.boot(args);
+    
+    } 
+    catch (err) {
         
-    } catch (error) {
-        console.error('[App]: Failed to start', error);
+        // We can safetly ignore CommandNotFoundExceptions 
+        if(err instanceof CommandNotFoundException) {
+            return;
+        }
+
+        console.error('[App]: Failed to start', err);
+        throw err;
     }
-
-    console.log('[App]: Started');
 })();
-function DetectCommandService() {
-    throw new Error('Function not implemented.');
-}
-

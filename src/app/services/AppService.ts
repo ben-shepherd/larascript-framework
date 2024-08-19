@@ -1,5 +1,5 @@
 import Service from "@src/core/base/Service";
-import { IAppService } from "../interfaces/IAppService";
+import { IAppService } from "@src/app/interfaces/IAppService";
 
 class AppService extends Service implements IAppService
 {

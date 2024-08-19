@@ -6,7 +6,7 @@ import { IInterfaceCtor } from "@src/core/domains/validator/interfaces/IValidato
 import { ModelConstructor } from "@src/core/interfaces/IModel";
 import { RepositoryConstructor } from "@src/core/interfaces/IRepository";
 import { ServiceConstructor } from "@src/core/interfaces/IService";
-import { IAuthService } from "./IAuthService";
+import { IAuthService } from "@src/core/domains/auth/interfaces/IAuthService";
 
 export interface IAuthConfig {
     service: {
