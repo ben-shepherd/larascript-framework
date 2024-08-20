@@ -13,8 +13,9 @@ import { App } from '@src/core/services/App';
     const mongodb = App.container('mongodb');
     const events = App.container('events')
     const express = App.container('express')
-    const console = App.container('console');
+    const cnsl = App.container('console');
+    const validator = App.container('validate')
 
-    // add your tests here below
+    // add your tinkers below
     
 })();
