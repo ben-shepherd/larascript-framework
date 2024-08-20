@@ -1,8 +1,8 @@
+import WorkerModelFactory from '@src/core/domains/events/factory/WorkerModelFactory';
 import { IEvent } from '@src/core/domains/events/interfaces/IEvent';
 import IEventDriver from '@src/core/domains/events/interfaces/IEventDriver';
-import { ModelConstructor } from '@src/core/interfaces/IModel';
-import WorkerModelFactory from '@src/core/domains/events/factory/WorkerModelFactory';
 import WorkerModel from '@src/core/domains/events/models/WorkerModel';
+import { ModelConstructor } from '@src/core/interfaces/IModel';
 
 export type WorkerModelCtor = ModelConstructor<WorkerModel>
 
@@ -18,12 +18,6 @@ export type QueueDriverOptions<WMCtor extends WorkerModelCtor = WorkerModelCtor>
 
 export default class QueueDriver implements IEventDriver
 {
-    /**
-     * Add the worker data to MongoDB
-     * 
-     * @param event
-     * @param options 
-     */
     async handle(event: IEvent, options: QueueDriverOptions) 
     {
         const workerModel = (new WorkerModelFactory).create(new options.workerModelCtor().collection, {
