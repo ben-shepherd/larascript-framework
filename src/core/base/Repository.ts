@@ -46,6 +46,10 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @returns 
      */
     async findById(_id: string): Promise<Model | null> {
+        if(!ObjectId.isValid(_id)) {
+            return null
+        }
+        
         const data = await App.container('mongodb').getDb(this.connection).collection(this.collectionName).findOne({ _id: new ObjectId(_id) }) as IModelData | null;
         return data ? new this.modelCtor(data) : null;
     }

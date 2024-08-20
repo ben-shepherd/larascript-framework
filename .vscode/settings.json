@@ -1,2 +1,5 @@
 {
+    "workbench.colorTheme": "GitHub Dark Dimmed",
+    "workbench.preferredHighContrastColorTheme": "Visual Studio Dark",
+    "workbench.preferredDarkColorTheme": "Visual Studio Dark"
 }
