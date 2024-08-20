@@ -1,14 +1,14 @@
-export type IObserverEvent = keyof IObserver
+export type IObserverEvent = keyof IObserver;
 
 export interface IObserver<ReturnType = any> {
-   creating?: (...args: any[]) => ReturnType;
-   created?: (...args: any[]) => ReturnType;
-   updating?: (...args: any[]) => ReturnType;
-   updated?: (...args: any[]) => ReturnType;
-   saving?: (...args: any[]) => ReturnType;
-   saved?: (...args: any[]) => ReturnType;
-   deleting?: (...args: any[]) => ReturnType;
-   deleted?: (...args: any[]) => ReturnType;
+   creating(data: ReturnType): ReturnType;
+   created(data: ReturnType): ReturnType;
+   updating(data: ReturnType): ReturnType;
+   updated(data: ReturnType): ReturnType;
+   saving(data: ReturnType): ReturnType;
+   saved(data: ReturnType): ReturnType;
+   deleting(data: ReturnType): ReturnType;
+   deleted(data: ReturnType): ReturnType;
 
    on(name: IObserverEvent, data: ReturnType): ReturnType;
    onCustom(customName: string, data: ReturnType): ReturnType;

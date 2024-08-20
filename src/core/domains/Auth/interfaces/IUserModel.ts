@@ -3,6 +3,7 @@ import IModelData from "@src/core/interfaces/IModelData";
 
 export interface IUserData extends IModelData {
     email: string
+    password?: string;
     hashedPassword: string
     roles: string[],
     firstName?: string;

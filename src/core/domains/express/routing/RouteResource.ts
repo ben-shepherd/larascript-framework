@@ -11,7 +11,7 @@ import Route from "./Route";
 import RouteGroup from "./RouteGroup";
 
 const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
-    const { name } = options
+    let name = options.name.startsWith('/') ? options.name.slice(1) : options.name
 
     const routes = RouteGroup([
         // Get all resources

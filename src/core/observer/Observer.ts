@@ -1,81 +1,83 @@
-import { IObserver } from "@src/core/interfaces/observer/IObserver";
+import { IObserver, IObserverEvent } from "@src/core/interfaces/observer/IObserver";
 
 export default abstract class Observer<ReturnType = any> implements IObserver<ReturnType>
 {
-    /**
-     * Defined methods
-     */
-    creating?: (...args: any[]) => ReturnType;
-    created?: (...args: any[]) => ReturnType;
-    updating?: (...args: any[]) => ReturnType;
-    updated?: (...args: any[]) => ReturnType;
-    saving?: (...args: any[]) => ReturnType;
-    saved?: (...args: any[]) => ReturnType;
-    deleting?: (...args: any[]) => ReturnType;
-    deleted?: (...args: any[]) => ReturnType;
+    creating(data: ReturnType): ReturnType {
+        return data;
+    }
 
-    /**
-     * Data has changed
-     * Pass it through the appropriate method, return the data
-     * 
-     * Example
-     *      this data = this.observer.on('updating', data)
-     * 
-     * @param name 
-     * @param data 
-     * @returns 
-     */
-    on(name: keyof IObserver, data: ReturnType): ReturnType {
+    created(data: ReturnType): ReturnType {
+        return data;
+    }
 
-        if(!this[name]) {
-            return data
-        }
-        if(this.creating && name === 'creating') {
-            return this.creating(data)
-        }
-        if(this.created && name === 'created') {
-            return this.created(data)
-        }
-        if(this.updating && name === 'updating') {
-            return this.updating(data)
-        }
-        if(this.updated && name === 'updated') {
-            return this.updated(data)
-        }
-        if(this.saving && name === 'saving') {
-            return this.saving(data)
-        }
-        if(this.saved && name === 'saved') {
-            return this.saved(data)
-        }
-        if(this.deleting && name === 'deleting') {
-            return this.deleting(data)
-        }
-        if(this.deleted && name === 'deleted') {
-            return this.deleted(data)
-        }
+    updating(data: ReturnType): ReturnType {
+        return data;
+    }
 
+    updated(data: ReturnType): ReturnType {
+        return data;
+    }
 
-        return data
+    saving(data: ReturnType): ReturnType {
+        return data;
+    }
+
+    saved(data: ReturnType): ReturnType {
+        return data;
+    }
+
+    deleting(data: ReturnType): ReturnType {
+        return data;
+    }
+
+    deleted(data: ReturnType): ReturnType {
+        return data;
     }
 
     /**
-     * Same 'on' logic but for custom methods not clearly defined
+     * Handles predefined observer events.
+     * This method is called when a known event occurs and routes the data
+     * through the appropriate event handler method.
      * 
-     * Example
-     *      this.data = this.observer.onCustom('onPasswordChange', data)
+     * @param name - The name of the event to handle (must be a key of IObserver)
+     * @param data - The data associated with the event
+     * @returns The processed data, or the original data if no handler is found
      * 
-     * @param customName name of the method
-     * @param data data to be modified
-     * @returns 
+     * @example
+     * // Inside some method of a class extending Observer
+     * this.data = this.on('updating', this.data);
+     */
+    on(name: IObserverEvent, data: ReturnType): ReturnType {
+        if (this[name] && typeof this[name] === 'function') {
+            // Call the method associated with the event name
+            return (this[name] as (data: ReturnType) => ReturnType)(data);
+        }
+        // If no method is found or it's not a function, return the original data
+        return data;
+    }
+
+    /**
+     * Handles custom observer events that are not part of the predefined set.
+     * This method allows for extension of the observer pattern with custom events.
+     * 
+     * @param customName - The name of the custom event to handle
+     * @param data - The data associated with the custom event
+     * @returns The processed data, or the original data if no handler is found
+     * 
+     * @example
+     * // Inside some method of a class extending Observer
+     * this.data = this.onCustom('onPasswordChange', this.data);
      */
     onCustom(customName: string, data: ReturnType): ReturnType {
-        const i = customName as keyof IObserver<ReturnType>;
-        if(this[i]) {
-
-            const fn = this[i] as (...args: any[]) => ReturnType
-            return fn(data)
+        // Attempt to find a method on this instance with the given custom name
+        const method = this[customName as keyof this] as ((data: ReturnType) => ReturnType) | undefined;
+        
+        if (method && typeof method === 'function') {
+            // If a matching method is found and it's a function, call it
+            return method.call(this, data);
         }
-        return data
+        
+        // If no matching method is found, return the original data unchanged
+        return data;
     }
 }
