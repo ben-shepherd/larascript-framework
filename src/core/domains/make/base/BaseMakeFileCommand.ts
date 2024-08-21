@@ -25,8 +25,6 @@ export default class BaseMakeFileCommand extends BaseCommand
      */
     public execute = async () => 
     {
-        console.log('DEBUG', this, this.parsedArgumenets)
-
         // Ensure a file always ends with the specified value
         if(this.options.endsWith) {
             this.ensureFileEndsWith(this.options.endsWith);
