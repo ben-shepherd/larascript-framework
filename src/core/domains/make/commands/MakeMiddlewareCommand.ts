@@ -1,11 +1,15 @@
-import GenericMakeFileCommand from "@src/core/domains/make/base/GenericMakeFileCommand";
+import BaseMakeFileCommand from "../base/BaseMakeFileCommand";
 
-export default class MakeMiddlewareCommand extends GenericMakeFileCommand
+export default class MakeMiddlewareCommand extends BaseMakeFileCommand
 {
     constructor() {
-        super('make:middleware', 'Create a middleware file', 'Middleware', ['name'], {
+        super({
+            signature: 'make:middleware',
+            description: 'Create a new middleware',
+            makeType: 'Middleware',
+            args: ['name'],
             endsWith: 'Middleware',
             startWithLowercase: true
-        });
+        })
     }
 }

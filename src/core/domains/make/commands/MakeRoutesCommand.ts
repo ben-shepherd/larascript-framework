@@ -1,11 +1,15 @@
-import GenericMakeFileCommand from "@src/core/domains/make/base/GenericMakeFileCommand";
+import BaseMakeFileCommand from "../base/BaseMakeFileCommand";
 
-export default class MakeRoutesCommand extends GenericMakeFileCommand
+export default class MakeRoutesCommand extends BaseMakeFileCommand
 {
     constructor() {
-        super('make:routes', 'Create a routing file', 'Routes', ['name'], {
+        super({
+            signature: 'make:routes',
+            description: 'Create a new routing file',
+            makeType: 'Routes',
+            args: ['name'],
             endsWith: 'Routes',
             startWithLowercase: true
-        });
+        })
     }
 }

@@ -1,6 +1,8 @@
 import { describe, test } from '@jest/globals';
-import fs from 'fs';
+import MakeFileService from '@src/core/domains/make/services/MakeFileService';
 import makeTestHelper from '@src/tests/make/makeTestHelper';
+import fs from 'fs';
+
 
 const makeTypes = makeTestHelper.getArrayOfCommandTypes();
 
@@ -19,6 +21,13 @@ describe(`testing make commands (total ${makeTypes.length})`, () => {
 
         test(`make ${makeType} (${currentCount}/${makeTypes.length})`, async () => {
 
+            const makeFileService = new MakeFileService({
+                signature: '<ignored>',
+                description: '<ignored>',
+                makeType: makeType,
+                args: ['name', 'collection'],
+            })
+
             // Determine the command class to use
             const cmdCtor = makeTestHelper.getCommandCtorByType(makeType);
             const cmd = new cmdCtor();
@@ -34,7 +43,7 @@ describe(`testing make commands (total ${makeTypes.length})`, () => {
             expect(cmdFileName).toBeTruthy();
 
             // Determine the full output path
-            const targetFileFullPath = cmd.getTargetDirFullPath(makeType, cmdFileName as string);
+            const targetFileFullPath = makeFileService.getTargetDirFullPath(makeType, cmdFileName as string);
             expect(targetFileFullPath).toBeTruthy();
             expect(fs.existsSync(targetFileFullPath)).toBeTruthy();
 

@@ -1,11 +1,15 @@
-import GenericMakeFileCommand from "@src/core/domains/make/base/GenericMakeFileCommand";
+import BaseMakeFileCommand from "../base/BaseMakeFileCommand";
 
-export default class MakeListenerCommand extends GenericMakeFileCommand
+export default class MakeActionCommand extends BaseMakeFileCommand
 {
     constructor() {
-        super('make:action', 'Create a new action', 'Action', ['name'], {
+        super({
+            signature: 'make:action',
+            description: 'Create a new action',
+            makeType: 'Action',
+            args: ['name'],
             endsWith: 'Action',
             startWithLowercase: true
-        });
+        })
     }
 }

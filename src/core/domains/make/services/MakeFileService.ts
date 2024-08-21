@@ -1,47 +1,15 @@
-import BaseCommand from "@src/core/domains/console/base/BaseCommand";
 import { IMakeOptions } from "@src/core/domains/make/interfaces/IMakeOptions";
 import fs from 'fs';
 import path from 'path';
+import { targetDirectories, templates } from "../consts/MakeTypes";
 
-export const targetDirectories: Record<string, string> = {
-    Repository: '@src/app/repositories',
-    Model: '@src/app/models',
-    Listener: '@src/app/events/listeners',
-    Subscriber: '@src/app/events/subscribers',
-    Service: '@src/app/services',
-    Singleton: '@src/app/services',
-    Command: '@src/app/commands',
-    Observer: '@src/app/observers',
-    Provider: '@src/app/providers',
-    Routes: '@src/app/routes',
-    Middleware: '@src/app/middleware',
-    Action: '@src/app/actions',
-} as const;
-
-export const templates: Record<string, string> = {
-    Repository: '@src/core/domains/make/templates/Repository.ts.template',
-    Model: '@src/core/domains/make/templates/Model.ts.template',
-    Listener: '@src/core/domains/make/templates/Listener.ts.template',
-    Subscriber: '@src/core/domains/make/templates/Subscriber.ts.template',
-    Service: '@src/core/domains/make/templates/Service.ts.template',
-    Singleton: '@src/core/domains/make/templates/Singleton.ts.template',
-    Command: '@src/core/domains/make/templates/Command.ts.template',
-    Observer: '@src/core/domains/make/templates/Observer.ts.template',
-    Provider: '@src/core/domains/make/templates/Provider.ts.template',
-    Routes: '@src/core/domains/make/templates/Routes.ts.template',
-    Middleware: '@src/core/domains/make/templates/Middleware.ts.template',
-    Action: '@src/core/domains/make/templates/Action.ts.template',
-} as const;
-
-export default abstract class BaseMakeCommand extends BaseCommand {
+export default class MakeFileService {
     /**
      * One of the possible template keys e.g. Repository, Model
      */
-    public key!: string;
     public options!: IMakeOptions;
 
-    constructor(options: IMakeOptions = {}) {
-        super();
+    constructor(options: IMakeOptions) {
         this.options = options;
     }
 

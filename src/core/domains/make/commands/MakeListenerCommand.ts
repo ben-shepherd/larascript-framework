@@ -1,10 +1,14 @@
-import GenericMakeFileCommand from "@src/core/domains/make/base/GenericMakeFileCommand";
+import BaseMakeFileCommand from "../base/BaseMakeFileCommand";
 
-export default class MakeListenerCommand extends GenericMakeFileCommand
+export default class MakeListenerCommand extends BaseMakeFileCommand
 {
     constructor() {
-        super('make:listener', 'Create a new model', 'Listener', ['name'], {
+        super({
+            signature: 'make:listener',
+            description: 'Create a new listener',
+            makeType: 'Listener',
+            args: ['name'],
             endsWith: 'Listener'
-        });
+        })
     }
 }

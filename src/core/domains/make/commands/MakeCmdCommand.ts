@@ -1,10 +1,14 @@
-import GenericMakeFileCommand from "@src/core/domains/make/base/GenericMakeFileCommand";
+import BaseMakeFileCommand from "../base/BaseMakeFileCommand";
 
-export default class MakeCmdCommand extends GenericMakeFileCommand
+export default class MakeCmdCommand extends BaseMakeFileCommand
 {
     constructor() {
-        super('make:command', 'Create a command', 'Command', ['name'], {
+        super({
+            signature: 'make:command',
+            description: 'Create a new command',
+            makeType: 'Command',
+            args: ['name'],
             endsWith: 'Command'
-        });
+        })
     }
 }

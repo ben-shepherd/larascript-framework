@@ -1,10 +1,14 @@
-import GenericMakeFileCommand from "@src/core/domains/make/base/GenericMakeFileCommand";
+import BaseMakeFileCommand from "../base/BaseMakeFileCommand";
 
-export default class MakeObserverCommand extends GenericMakeFileCommand
+export default class MakeObserverCommand extends BaseMakeFileCommand
 {
     constructor() {
-        super('make:observer', 'Create an observer', 'Observer', ['name'], {
+        super({
+            signature: 'make:observer',
+            description: 'Create a new observer',
+            makeType: 'Observer',
+            args: ['name'],
             endsWith: 'Observer'
-        });
+        })
     }
 }

@@ -1,10 +1,14 @@
-import GenericMakeFileCommand from "@src/core/domains/make/base/GenericMakeFileCommand";
+import BaseMakeFileCommand from "../base/BaseMakeFileCommand";
 
-export default class MakeRepositoryCommand extends GenericMakeFileCommand
+export default class MakeRepositoryCommand extends BaseMakeFileCommand
 {
     constructor() {
-        super('make:repository', 'Create a new repository', 'Repository', ['name', 'collection'], {
+        super({
+            signature: 'make:repository',
+            description: 'Create a new repository',
+            makeType: 'Repository',
+            args: ['name', 'collection'],
             endsWith: 'Repository'
-        });
+        })
     }
 }

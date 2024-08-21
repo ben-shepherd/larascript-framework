@@ -1,9 +1,13 @@
 import EventListener from "@src/core/domains/events/services/EventListener";
-import { Payload } from "@src/app/events/subscribers/#name#Subscriber";
+import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
 
-export class #name#Listener extends EventListener<Payload> {
+export interface I#name#Payload extends IEventPayload {
+
+}
+
+export class #name#Listener extends EventListener<I#name#Payload> {
     
-    handle = async (payload: Payload) => {
-        console.log('[#name#Listener]')
+    handle = async (payload: I#name#Payload) => {
+        
     }
 }

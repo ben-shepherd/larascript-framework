@@ -1,23 +1,23 @@
 import CommandExecutionException from "@src/core/domains/console/exceptions/CommandExecutionException";
-import BaseMakeCommand from "@src/core/domains/make/base/BaseMakeCommand";
 import { IMakeOptions } from "@src/core/domains/make/interfaces/IMakeOptions";
+import BaseCommand from "../../console/base/BaseCommand";
+import MakeFileService from "../services/MakeFileService";
 
-export default class GenericMakeFileCommand extends BaseMakeCommand
+export default class BaseMakeFileCommand extends BaseCommand
 {
-    protected args!: string[];
+    protected options!: IMakeOptions;
+    protected makeFileService!: MakeFileService;
 
     /**
      * Allows generic usage of creating a make file command
-     * @param signature Example: make:model
-     * @param description Example: Create a new model
-     * @param key Example: Model
+     * @param options 
      */
-    constructor(signature: string, description: string, key: string, args: string[] = [], options: IMakeOptions = {}) {
-        super(options)
-        this.signature = signature;
-        this.description = description;
-        this.key = key;
-        this.args = args;
+    constructor(options: IMakeOptions) {
+        super();
+        this.signature = options.signature;
+        this.description = options.description;
+        this.options = options;
+        this.makeFileService = new MakeFileService(this.options);
     }
 
     /**
@@ -25,6 +25,8 @@ export default class GenericMakeFileCommand extends BaseMakeCommand
      */
     public execute = async () => 
     {
+        console.log('DEBUG', this, this.parsedArgumenets)
+
         // Ensure a file always ends with the specified value
         if(this.options.endsWith) {
             this.ensureFileEndsWith(this.options.endsWith);
@@ -40,14 +42,14 @@ export default class GenericMakeFileCommand extends BaseMakeCommand
             throw new CommandExecutionException('--name argument not specified');
         }
 
-        if(this.existsInTargetDirectory(this.key, name)) {
+        if(this.makeFileService.existsInTargetDirectory(this.options.makeType, name)) {
             throw new CommandExecutionException(`File already exists with name '${name}'`);
         }
 
         // Write the new file
-        this.writeContent(this.key, name, template);
+        this.makeFileService.writeContent(this.options.makeType, name, template);
 
-        console.log(`Created ${this.key} as ${name}`);
+        console.log(`Created ${this.options.makeType} as ${name}`);
     }
     
     /**
@@ -56,7 +58,7 @@ export default class GenericMakeFileCommand extends BaseMakeCommand
     getTemplateWithInjectedArguments = async (): Promise<string> =>
     {
         // Check all the required arguments are present
-        for(const arg of this.args) {
+        for(const arg of this.options.args) {
             const value = this.getArguementByKey(arg)?.value;
 
             if(!value) {
@@ -65,10 +67,10 @@ export default class GenericMakeFileCommand extends BaseMakeCommand
         }
 
         // Fetch the template
-        let contents = (await this.getTemplateContents(this.key))
+        let contents = (await this.makeFileService.getTemplateContents(this.options.makeType))
 
         // Inject the arguements
-        for(const arg of this.args) {
+        for(const arg of this.options.args) {
             const value = this.getArguementByKey(arg)?.value as string;
             const pattern = new RegExp('#' + arg + '#', 'g');
             contents = contents.replace(pattern, value);
