@@ -1,5 +1,5 @@
-import { IRoute } from "../interfaces/IRoute"
-import { ResourceType } from "../interfaces/IRouteResourceOptions"
+import { IRoute } from "@src/core/domains/express/interfaces/IRoute"
+import { ResourceType } from "@src/core/domains/express/interfaces/IRouteResourceOptions"
 
 const extractResourceType = (route: IRoute): ResourceType => {
     const parts = route.name.split('.')

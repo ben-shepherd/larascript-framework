@@ -1,6 +1,6 @@
 import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
-import { ValidatorCtor } from "../../validator/types/ValidatorCtor";
+import { ValidatorCtor } from "@src/core/domains/validator/types/ValidatorCtor";
 
 export type ResourceType = 'index' | 'create' | 'update' | 'show' | 'delete';
 

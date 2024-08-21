@@ -1,7 +1,7 @@
 import { IMakeOptions } from "@src/core/domains/make/interfaces/IMakeOptions";
 import fs from 'fs';
 import path from 'path';
-import { targetDirectories, templates } from "../consts/MakeTypes";
+import { targetDirectories, templates } from "@src/core/domains/make/consts/MakeTypes";
 
 export default class MakeFileService {
     /**

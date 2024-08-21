@@ -1,4 +1,4 @@
-import BaseMakeFileCommand from "../base/BaseMakeFileCommand";
+import BaseMakeFileCommand from "@src/core/domains/make/base/BaseMakeFileCommand";
 
 export default class MakeRepositoryCommand extends BaseMakeFileCommand
 {

@@ -1,7 +1,7 @@
 import { Response } from 'express';
-import { IAction } from '../interfaces/IAction';
-import { IRouteResourceOptions } from '../interfaces/IRouteResourceOptions';
-import { BaseRequest } from '../types/BaseRequest.t';
+import { IAction } from '@src/core/domains/express/interfaces/IAction';
+import { IRouteResourceOptions } from '@src/core/domains/express/interfaces/IRouteResourceOptions';
+import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 
 const ResourceAction = (options: IRouteResourceOptions, action: IAction) => {
     return (req: BaseRequest, res: Response) => {

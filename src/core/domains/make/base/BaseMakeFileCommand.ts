@@ -1,7 +1,7 @@
 import CommandExecutionException from "@src/core/domains/console/exceptions/CommandExecutionException";
 import { IMakeOptions } from "@src/core/domains/make/interfaces/IMakeOptions";
-import BaseCommand from "../../console/base/BaseCommand";
-import MakeFileService from "../services/MakeFileService";
+import BaseCommand from "@src/core/domains/console/base/BaseCommand";
+import MakeFileService from "@src/core/domains/make/services/MakeFileService";
 
 export default class BaseMakeFileCommand extends BaseCommand
 {

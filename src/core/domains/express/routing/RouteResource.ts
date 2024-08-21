@@ -1,14 +1,14 @@
-import resourceAction from "../actions/resourceAction";
-import resourceCreate from "../actions/resourceCreate";
-import resourceDelete from "../actions/resourceDelete";
-import resourceIndex from "../actions/resourceIndex";
-import resourceShow from "../actions/resourceShow";
-import resourceUpdate from "../actions/resourceUpdate";
-import { IRoute } from "../interfaces/IRoute";
-import { IRouteResourceOptions } from "../interfaces/IRouteResourceOptions";
-import routeGroupUtil from "../utils/routeGroupUtil";
-import Route from "./Route";
-import RouteGroup from "./RouteGroup";
+import resourceAction from "@src/core/domains/express/actions/resourceAction";
+import resourceCreate from "@src/core/domains/express/actions/resourceCreate";
+import resourceDelete from "@src/core/domains/express/actions/resourceDelete";
+import resourceIndex from "@src/core/domains/express/actions/resourceIndex";
+import resourceShow from "@src/core/domains/express/actions/resourceShow";
+import resourceUpdate from "@src/core/domains/express/actions/resourceUpdate";
+import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
+import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
+import routeGroupUtil from "@src/core/domains/express/utils/routeGroupUtil";
+import Route from "@src/core/domains/express/routing/Route";
+import RouteGroup from "@src/core/domains/express/routing/RouteGroup";
 
 const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
     let name = options.name.startsWith('/') ? options.name.slice(1) : options.name
