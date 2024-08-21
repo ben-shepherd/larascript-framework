@@ -13,7 +13,7 @@ interface IValidator<T = any>
 
     setRules(rules: Joi.ObjectSchema): IValidator<T>;
 
-    setCustomMessages(customMessages: Record<string, string>): IValidator<T>;
+    setErrorMessage(customMessages: Record<string, string>): IValidator<T>;
 }
 
 export default IValidator

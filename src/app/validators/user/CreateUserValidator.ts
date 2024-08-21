@@ -19,7 +19,7 @@ class CreateUserValidator extends BaseValidator
         const user = await repository.findOneByEmail(payload.email as string);
 
         if(user) {
-            this.setCustomMessages({ email: 'User already exists' });
+            this.setErrorMessage({ email: 'User already exists' });
         }
     }
 

@@ -11,9 +11,9 @@ abstract class BaseValidator<P extends IValidatorPayload = IValidatorPayload> im
     public customValidatorMethods: string[] = [];
 
     /**
-     * Custom validation messages
+     * Custom validation error messages
      */
-    protected customMessages: Record<string, string> = {};
+    protected customErrorMessages: Record<string, string> = {};
 
     /**
      * Validation rules
@@ -56,7 +56,7 @@ abstract class BaseValidator<P extends IValidatorPayload = IValidatorPayload> im
 
         result = {
             ...result,
-            error: baseValidatorUtil.formatErrors(this.customMessages, result)
+            error: baseValidatorUtil.formatErrors(this.customErrorMessages, result)
         }
 
         return {
@@ -67,12 +67,12 @@ abstract class BaseValidator<P extends IValidatorPayload = IValidatorPayload> im
 
     /**
      * Set custom validation messages
-     * @param customMessages 
+     * @param messages 
      * @returns 
      */
-    setCustomMessages (customMessages: Record<string, string>): this
+    setErrorMessage (messages: Record<string, string>): this
     {
-        this.customMessages = customMessages;
+        this.customErrorMessages = messages;
         return this
     }
 
