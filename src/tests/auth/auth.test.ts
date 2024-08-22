@@ -1,7 +1,7 @@
 import { describe } from '@jest/globals';
 import ApiToken from '@src/app/models/auth/ApiToken';
 import User from '@src/app/models/auth/User';
-import authConfig from '@src/config/auth/auth';
+import authConfig from '@src/config/auth';
 import testAppConfig from '@src/config/test';
 import UserFactory from '@src/core/domains/auth/factory/UserFactory';
 import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';

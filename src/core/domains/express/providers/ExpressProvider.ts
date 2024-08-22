@@ -1,4 +1,4 @@
-import expressConfig from '@src/config/http/express';
+import httpConfig from '@src/config/http';
 import BaseProvider from "@src/core/base/Provider";
 import IExpressConfig from "@src/core/domains/express/interfaces/IExpressConfig";
 import Express from '@src/core/domains/express/services/Express';
@@ -6,7 +6,7 @@ import { App } from "@src/core/services/App";
 
 export default class ExpressProvider extends BaseProvider
 {
-    protected config: IExpressConfig = expressConfig;
+    protected config: IExpressConfig = httpConfig;
 
     public async register(): Promise<void> 
     {

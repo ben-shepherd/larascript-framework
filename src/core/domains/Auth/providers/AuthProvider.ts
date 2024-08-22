@@ -1,5 +1,5 @@
 
-import authConfig from '@src/config/auth/auth';
+import authConfig from '@src/config/auth';
 import BaseProvider from "@src/core/base/Provider";
 import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
 import authRoutes from '@src/core/domains/auth/routes/auth';
