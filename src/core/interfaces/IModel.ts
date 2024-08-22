@@ -2,7 +2,7 @@ import { BelongsToOptions } from "@src/core/domains/database/mongodb/relationshi
 import { HasManyOptions } from "@src/core/domains/database/mongodb/relationships/HasMany";
 import IModelData from "@src/core/interfaces/IModelData";
 import { Db, ObjectId } from "mongodb";
-import IWithObserve from "../domains/observer/interfaces/IWithObserve";
+import IWithObserve from "@src/core/domains/observer/interfaces/IWithObserve";
 
 export type GetDataOptions = {excludeGuarded: boolean}
 

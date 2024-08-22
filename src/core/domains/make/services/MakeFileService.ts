@@ -1,28 +1,29 @@
+import { targetDirectories, templates } from "@src/core/domains/make/consts/MakeTypes";
+import { IMakeFileArguments } from "@src/core/domains/make/interfaces/IMakeFileArguments";
 import { IMakeOptions } from "@src/core/domains/make/interfaces/IMakeOptions";
 import fs from 'fs';
 import path from 'path';
-import { targetDirectories, templates } from "@src/core/domains/make/consts/MakeTypes";
+
 
 export default class MakeFileService {
-    /**
-     * One of the possible template keys e.g. Repository, Model
-     */
+    
     public options!: IMakeOptions;
+    protected arguments!: IMakeFileArguments;
 
-    constructor(options: IMakeOptions) {
-        this.options = options;
+
+    constructor(options: IMakeOptions, makeFileArguments: IMakeFileArguments) {
+        this.options = options
+        this.arguments = makeFileArguments
     }
 
     /**
      * Checks if a target already exists
-     * @param key Command Type
      * @param name Name of the file
-     * @returns 
      */
-    existsInTargetDirectory(key: keyof typeof templates, name: string): boolean {
-        const filePath = targetDirectories[key]
+    existsInTargetDirectory(): boolean {
+        const filePath = targetDirectories[this.options.makeType]
         const fullPath = this.replaceSrcDir(filePath);
-        const futureFileName = this.makeFutureFilename(name);
+        const futureFileName = this.makeFutureFilename();
         const futureFilePath = path.resolve(fullPath, futureFileName)
 
         return fs.existsSync(futureFilePath)
@@ -30,11 +31,9 @@ export default class MakeFileService {
 
     /**
      * Get contents
-     * @param key Command Type
-     * @returns 
      */
-    async getTemplateContents(key: keyof typeof templates): Promise<string> {
-        const filePath = templates[key]
+    async getTemplateContents(): Promise<string> {
+        const filePath = templates[this.options.makeType]
         const fullPath = this.replaceSrcDir(filePath);
 
         if (!fs.existsSync(fullPath)) {
@@ -46,13 +45,12 @@ export default class MakeFileService {
 
     /**
      * Get the target dir full path
-     * @param key Command Type
      * @param name Name of the file
      * @returns 
      */
-    public getTargetDirFullPath = (key: typeof targetDirectories[string], name: string): string => {
-        const futureFileName = this.makeFutureFilename(name);
-        const targetDir = targetDirectories[key]
+    public getTargetDirFullPath = (): string => {
+        const futureFileName = this.makeFutureFilename();
+        const targetDir = targetDirectories[this.options.makeType]
         const targetDirFullPath = path.resolve(this.replaceSrcDir(targetDir), futureFileName)
 
         return targetDirFullPath;
@@ -60,12 +58,10 @@ export default class MakeFileService {
 
     /**
      * Write contents
-     * @param key Command Type
-     * @param name Name of the file
      * @param contents 
      */
-    async writeContent(key: keyof typeof targetDirectories, name: string, contents: string): Promise<void> {
-        const targetDirFullPath = this.getTargetDirFullPath(key, name);
+    async writeContent(contents: string): Promise<void> {
+        const targetDirFullPath = this.getTargetDirFullPath();
 
         // Ensure the parent folder exists
         const targetDir = path.dirname(targetDirFullPath);
@@ -104,13 +100,8 @@ export default class MakeFileService {
      * @param ext 
      * @returns 
      */
-    makeFutureFilename(name: string, ext: string = '.ts'): string {
-
-        if(this.options.startWithLowercase) {
-            name = name.charAt(0).toLowerCase() + name.slice(1);
-        }
-
-        return `${name}${ext}`;
+    makeFutureFilename(ext: string = '.ts'): string {
+        return `${this.arguments.name}${ext}`;
     }
 
 }

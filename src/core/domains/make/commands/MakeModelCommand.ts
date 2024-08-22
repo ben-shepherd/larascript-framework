@@ -8,6 +8,7 @@ export default class MakeModelCommand extends BaseMakeFileCommand
             description: 'Create a new model',
             makeType: 'Model',
             args: ['name', 'collection'],
+            argsOptional: ['collection'],
         })
     }
 }

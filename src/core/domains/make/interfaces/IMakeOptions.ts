@@ -3,6 +3,7 @@ export interface IMakeOptions {
     description: string;
     makeType: string;
     args: string[];
+    argsOptional?: string[];
     defaultArgs?: string[];
     endsWith?: string;
     startWithLowercase?: boolean;

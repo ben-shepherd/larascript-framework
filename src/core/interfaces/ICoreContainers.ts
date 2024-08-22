@@ -9,22 +9,22 @@ export interface ICoreContainers {
     [key: string]: any;
     /**
      * Event Dispatcher Service
-     * Provided by '@src/core/providers/EventProvider'
+     * Provided by '@src/core/domains/events/providers/EventProvider'
      */
     events: IEventService;
     /**
      * Auth service
-     * Provided by '@src/core/providers/AuthProvider'
+     * Provided by '@src/core/domains/auth/providers/AuthProvider'
      */
     auth: IAuthService;
     /**
      * MongoDB Service
-     * Provided by '@src/core/providers/MongoDBProvider'
+     * Provided by '@src/core/domains/database/mongodb/providers/MongoDBProvider'
      */
     mongodb: IMongoDB;
     /**
      * Express web server Service
-     * Provided by '@src/core/providers/ExpressProvider'
+     * Provided by '@src/core/domains/express/providers/ExpressProvider'
      */
     express: IExpress;
     /**

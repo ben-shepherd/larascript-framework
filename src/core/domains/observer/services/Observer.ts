@@ -1,4 +1,4 @@
-import { IObserver, IObserverEvent } from "../interfaces/IObserver";
+import { IObserver, IObserverEvent } from "@src/core/domains/observer/interfaces/IObserver";
 
 export default abstract class Observer<ReturnType = any> implements IObserver<ReturnType>
 {
@@ -50,7 +50,7 @@ export default abstract class Observer<ReturnType = any> implements IObserver<Re
     on(name: IObserverEvent, data: ReturnType): ReturnType {
         if (this[name] && typeof this[name] === 'function') {
             // Call the method associated with the event name
-            return (this[name] as (data: ReturnType) => ReturnType)(data);
+            return (this[name] as (data: ReturnType, ...args: any[]) => ReturnType)(data);
         }
         // If no method is found or it's not a function, return the original data
         return data;
@@ -66,15 +66,15 @@ export default abstract class Observer<ReturnType = any> implements IObserver<Re
      * 
      * @example
      * // Inside some method of a class extending Observer
-     * this.data = this.onCustom('onPasswordChange', this.data);
+     * this.data = this.onCustom('onPasswordChange', this.data, optionalParameter);
      */
-    onCustom(customName: string, data: ReturnType): ReturnType {
+    onCustom(customName: string, data: ReturnType, ...args: any[]): ReturnType {
         // Attempt to find a method on this instance with the given custom name
-        const method = this[customName as keyof this] as ((data: ReturnType) => ReturnType) | undefined;
+        const method = this[customName as keyof this] as ((data: ReturnType, ...args: any[]) => ReturnType) | undefined;
         
         if (method && typeof method === 'function') {
             // If a matching method is found and it's a function, call it
-            return method.call(this, data);
+            return method.apply(this, [data, ...args]);
         }
         
         // If no matching method is found, return the original data unchanged

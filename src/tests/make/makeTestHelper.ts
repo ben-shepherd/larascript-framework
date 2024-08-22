@@ -55,7 +55,7 @@ const getParsedArguments = (fileName: string, collectionName: string): ParsedArg
  * @param type 
  * @returns 
  */
-const getCommandCtorByType = (type: typeof targetDirectories[string]): CommandCtor => {
+const getCommandCtorByType = (type: typeof targetDirectories[string]): CommandCtor<BaseMakeFileCommand> => {
     switch(type) {
         case 'Repository':
             return MakeRepositoryCommand;

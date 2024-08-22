@@ -1,12 +1,20 @@
-import CommandExecutionException from "@src/core/domains/console/exceptions/CommandExecutionException";
-import { IMakeOptions } from "@src/core/domains/make/interfaces/IMakeOptions";
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
+import CommandExecutionException from "@src/core/domains/console/exceptions/CommandExecutionException";
+import { IMakeFileArguments } from "@src/core/domains/make/interfaces/IMakeFileArguments";
+import { IMakeOptions } from "@src/core/domains/make/interfaces/IMakeOptions";
+import ArgumentObserver from "@src/core/domains/make/observers/ArgumentObserver";
 import MakeFileService from "@src/core/domains/make/services/MakeFileService";
+
+const DefaultOptions: Partial<IMakeOptions> = {
+    startWithLowercase: false
+}
 
 export default class BaseMakeFileCommand extends BaseCommand
 {
     protected options!: IMakeOptions;
     protected makeFileService!: MakeFileService;
+    protected argumentObserver!: ArgumentObserver;
+    protected makeFileArguments!: IMakeFileArguments;
 
     /**
      * Allows generic usage of creating a make file command
@@ -14,10 +22,45 @@ export default class BaseMakeFileCommand extends BaseCommand
      */
     constructor(options: IMakeOptions) {
         super();
+        options = {...DefaultOptions, ...options};
         this.signature = options.signature;
         this.description = options.description;
         this.options = options;
-        this.makeFileService = new MakeFileService(this.options);
+        this.argumentObserver = new ArgumentObserver();
+    }
+
+    /**
+     * Base logic for preparing the arguments
+     * 'name' converts to lower/uppercase depending on options
+     * 'collection' is optional and automatically set based on the 'name' arguement
+     */
+    protected prepareArguments(): void
+    {
+        if(!this.getArguementByKey('name')?.value) {
+            throw new CommandExecutionException('--name argument not specified');
+        }
+
+        this.makeFileArguments = {
+            name: this.getArguementByKey('name')?.value as string,
+            collection: this.getArguementByKey('collection')?.value
+        }
+
+        this.makeFileArguments = this.argumentObserver.onCustom('setDefaultCollection', this.makeFileArguments, this.options);
+        this.makeFileArguments = this.argumentObserver.onCustom('setName', this.makeFileArguments, this.options);
+
+        this.setOverwriteArg('name', this.makeFileArguments.name);
+
+        if(this.makeFileArguments.collection) {
+            this.setOverwriteArg('collection', this.makeFileArguments.collection);
+        }
+    }
+
+    /**
+     * Prepare the make file service
+     */
+    protected prepareMakeFileService(): void
+    {
+        this.makeFileService = new MakeFileService(this.options, this.makeFileArguments);
     }
 
     /**
@@ -25,10 +68,8 @@ export default class BaseMakeFileCommand extends BaseCommand
      */
     public execute = async () => 
     {
-        // Ensure a file always ends with the specified value
-        if(this.options.endsWith) {
-            this.ensureFileEndsWith(this.options.endsWith);
-        }
+        this.prepareArguments();
+        this.prepareMakeFileService();
 
         // Get the template, inject the arguements
         const template = await this.getTemplateWithInjectedArguments();
@@ -40,14 +81,14 @@ export default class BaseMakeFileCommand extends BaseCommand
             throw new CommandExecutionException('--name argument not specified');
         }
 
-        if(this.makeFileService.existsInTargetDirectory(this.options.makeType, name)) {
+        if(this.makeFileService.existsInTargetDirectory()) {
             throw new CommandExecutionException(`File already exists with name '${name}'`);
         }
 
         // Write the new file
-        this.makeFileService.writeContent(this.options.makeType, name, template);
+        this.makeFileService.writeContent(template);
 
-        console.log(`Created ${this.options.makeType} as ${name}`);
+        console.log(`Created ${this.options.makeType}: ` + this.makeFileService.getTargetDirFullPath());
     }
     
     /**
@@ -55,24 +96,23 @@ export default class BaseMakeFileCommand extends BaseCommand
      */
     getTemplateWithInjectedArguments = async (): Promise<string> =>
     {
-        // Check all the required arguments are present
-        for(const arg of this.options.args) {
-            const value = this.getArguementByKey(arg)?.value;
-
-            if(!value) {
-                throw new CommandExecutionException(`--${arg} argument not specified`);
-            }
-        }
+        const { argsOptional = [] } = this.options
 
         // Fetch the template
-        let contents = (await this.makeFileService.getTemplateContents(this.options.makeType))
+        let contents = (await this.makeFileService.getTemplateContents())
 
         // Inject the arguements
-        for(const arg of this.options.args) {
-            const value = this.getArguementByKey(arg)?.value as string;
-            const pattern = new RegExp('#' + arg + '#', 'g');
+        Object.keys(this.makeFileArguments).forEach(argumentKey => {
+            const value = this.makeFileArguments[argumentKey];
+
+            if(!value && !argsOptional.includes(argumentKey)) {
+                throw new CommandExecutionException(`--${argumentKey} argument not specified`);
+            }
+
+            // Inject the arguements
+            const pattern = new RegExp('#' + argumentKey + '#', 'g');
             contents = contents.replace(pattern, value);
-        }
+        })
 
         return contents
     }
@@ -90,5 +130,10 @@ export default class BaseMakeFileCommand extends BaseCommand
 
             this.setOverwriteArg('name', name)
         }
+    }
+
+    public getMakeFileService(): MakeFileService
+    {
+        return this.makeFileService
     }
 }

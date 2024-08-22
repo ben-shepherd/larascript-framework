@@ -1,5 +1,4 @@
 import { describe, test } from '@jest/globals';
-import MakeFileService from '@src/core/domains/make/services/MakeFileService';
 import makeTestHelper from '@src/tests/make/makeTestHelper';
 import fs from 'fs';
 
@@ -18,15 +17,7 @@ describe(`testing make commands (total ${makeTypes.length})`, () => {
      * e.g. Command, Repository, Model etc.
      */
     for (const makeType of makeTypes) {
-
         test(`make ${makeType} (${currentCount}/${makeTypes.length})`, async () => {
-
-            const makeFileService = new MakeFileService({
-                signature: '<ignored>',
-                description: '<ignored>',
-                makeType: makeType,
-                args: ['name', 'collection'],
-            })
 
             // Determine the command class to use
             const cmdCtor = makeTestHelper.getCommandCtorByType(makeType);
@@ -43,23 +34,16 @@ describe(`testing make commands (total ${makeTypes.length})`, () => {
             expect(cmdFileName).toBeTruthy();
 
             // Determine the full output path
-            const targetFileFullPath = makeFileService.getTargetDirFullPath(makeType, cmdFileName as string);
+            const targetFileFullPath = cmd.getMakeFileService().getTargetDirFullPath();
             expect(targetFileFullPath).toBeTruthy();
             expect(fs.existsSync(targetFileFullPath)).toBeTruthy();
 
             // Update the filesToUnlink array, count for logging purposes
-            filesToUnlink.push(targetFileFullPath);
             currentCount++;
+
+            //  Clean up files
+            fs.unlinkSync(targetFileFullPath);
+            expect(fs.existsSync(targetFileFullPath)).toBeFalsy();
         })
     }
-
-    /**
-     * Once done, clean up all created files
-     */
-    afterAll(async () => {
-        for (const file of filesToUnlink) {
-            fs.unlinkSync(file);
-            expect(fs.existsSync(file)).toBeFalsy();
-        }
-    })
 });

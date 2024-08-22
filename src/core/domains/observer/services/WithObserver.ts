@@ -1,5 +1,5 @@
-import { IObserver, IObserverEvent } from "../interfaces/IObserver";
-import IWithObserve, { ObserveConstructor } from "../interfaces/IWithObserve";
+import { IObserver, IObserverEvent } from "@src/core/domains/observer/interfaces/IObserver";
+import IWithObserve, { ObserveConstructor } from "@src/core/domains/observer/interfaces/IWithObserve";
 
 export abstract class WithObserver<ReturnType> implements IWithObserve<ReturnType> {
 

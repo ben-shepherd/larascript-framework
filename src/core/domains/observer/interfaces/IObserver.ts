@@ -9,7 +9,6 @@ export interface IObserver<ReturnType = any> {
    saved(data: ReturnType): ReturnType;
    deleting(data: ReturnType): ReturnType;
    deleted(data: ReturnType): ReturnType;
-
    on(name: IObserverEvent, data: ReturnType): ReturnType;
    onCustom(customName: string, data: ReturnType): ReturnType;
 }
