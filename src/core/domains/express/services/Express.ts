@@ -113,7 +113,15 @@ export default class Express extends Service<IExpressConfig> implements IExpress
     /**
      * Get the express instance
      */
-    public getApp(): express.Express {
+    public getExpress(): express.Express {
         return this.app
+    }
+
+    /**
+     * Check if express is enabled
+     * @returns 
+     */
+    public isEnabled(): boolean {
+        return this.config?.enabled ?? false
     }
 }

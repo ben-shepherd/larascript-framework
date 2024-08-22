@@ -2,6 +2,7 @@ import CommandNotFoundException from "@src/core/domains/console/exceptions/Comma
 import { ICommandReader } from "@src/core/domains/console/interfaces/ICommandReader";
 import CommandArguementParser, { ParsedArgumentsArray } from "@src/core/domains/console/parsers/CommandArgumentParser";
 import CommandRegister from "@src/core/domains/console/service/CommandRegister";
+import CommandSignatureInvalid from "@src/core/domains/console/exceptions/CommandSignatureInvalid";
 
 export default class CommandReader implements ICommandReader {
     private argv: string[] = [];
@@ -40,11 +41,15 @@ export default class CommandReader implements ICommandReader {
         const commandCtor = CommandRegister.getInstance().getBySignature(signature);
 
         if(!commandCtor) {
-            throw new CommandNotFoundException()
+            throw new CommandSignatureInvalid()
         }
 
         const cmd = new commandCtor()
         cmd.setParsedArguments(this.runParser())
         await cmd.execute()
+
+        if(!cmd.keepProcessAlive) {
+            process.exit(0)
+        }
     }
 }

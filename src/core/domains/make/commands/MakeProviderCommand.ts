@@ -1,10 +1,14 @@
-import GenericMakeFileCommand from "@src/core/domains/make/base/GenericMakeFileCommand";
+import BaseMakeFileCommand from "@src/core/domains/make/base/BaseMakeFileCommand";
 
-export default class MakeProviderCommand extends GenericMakeFileCommand
+export default class MakeProviderCommand extends BaseMakeFileCommand
 {
     constructor() {
-        super('make:provider', 'Create a provider', 'Provider', ['name'], {
+        super({
+            signature: 'make:provider',
+            description: 'Create a new provider',
+            makeType: 'Provider',
+            args: ['name'],
             endsWith: 'Provider'
-        });
+        })
     }
 }

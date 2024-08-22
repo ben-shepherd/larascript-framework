@@ -1,7 +1,7 @@
 import { describe } from '@jest/globals';
 import ApiToken from '@src/app/models/auth/ApiToken';
 import User from '@src/app/models/auth/User';
-import authConfig from '@src/config/auth/auth';
+import authConfig from '@src/config/auth';
 import testAppConfig from '@src/config/test';
 import UserFactory from '@src/core/domains/auth/factory/UserFactory';
 import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
@@ -52,22 +52,47 @@ describe('attempt to run app with normal appConfig', () => {
         expect(apiToken?.getData({ excludeGuarded: false })).toBeNull();  
     })
 
-    test('test create user validator', async () => {
+    test('test create user validator (email already exists, validator should fail)', async () => {
         const validator = new authConfig.validators.createUser()
-        const result = validator.validate({
+        const result = await validator.validate({
             email,
-            password
-        });
-        expect(result.success).toBeTruthy();
-    })
-
-    test('test update user validator', async () => {
-        const validator = new authConfig.validators.updateUser()
-        const result = validator.validate({
             password,
             firstName: 'Tony',
             lastName: 'Stark'
         });
+
+        expect(result.success).toBeFalsy();
+    })
+
+    test('test create user validator', async () => {
+        const validator = new authConfig.validators.createUser()
+        const result = await validator.validate({
+            email: 'testUser2@test.com',
+            password,
+            firstName: 'Tony',
+            lastName: 'Stark'
+        });
+
+        if(!result.success) {
+            console.error(result.joi.error);
+        }
+
+        expect(result.success).toBeTruthy();
+    })
+
+
+    test('test update user validator', async () => {
+        const validator = new authConfig.validators.updateUser()
+        const result = await validator.validate({
+            password,
+            firstName: 'Tony',
+            lastName: 'Stark'
+        });
+
+        if(!result.success) {
+            console.error(result.joi.error);
+        }
+
         expect(result.success).toBeTruthy();
     })
 

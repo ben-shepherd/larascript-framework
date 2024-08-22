@@ -1,4 +1,4 @@
-import { ContainersTypeHelpers } from '@src/config/containers';
+import { IContainers } from '@src/config/containers';
 import Singleton from '@src/core/base/Singleton';
 import UninitializedContainerError from '@src/core/exceptions/UninitializedContainerError';
 import IAppConfig from "@src/core/interfaces/IAppConfig";
@@ -8,7 +8,7 @@ export class App extends Singleton<IAppConfig> {
 
     public env!: string;
 
-    public static setContainer<Name extends keyof ContainersTypeHelpers & string>(name: Name, container: ContainersTypeHelpers[Name]) {
+    public static setContainer<Name extends keyof IContainers & string>(name: Name, container: IContainers[Name]) {
         const kernel = Kernel.getInstance();
 
         if (kernel.booted()) {
@@ -24,7 +24,7 @@ export class App extends Singleton<IAppConfig> {
         kernel.containers.set(name, container);
     }
 
-    public static container<K extends keyof ContainersTypeHelpers = keyof ContainersTypeHelpers>(name: K): ContainersTypeHelpers[K] {
+    public static container<K extends keyof IContainers = keyof IContainers>(name: K): IContainers[K] {
         const kernel = Kernel.getInstance();
 
         if(!kernel.containers.has(name)) {

@@ -4,13 +4,7 @@ export interface #name#Config {}
 
 export default class #name# extends BaseProvider
 {
-    protected config!: #name#Config;
-    configPath = '@config/#name#';
-
-    constructor() {
-        super()
-        this.init()
-    }
+    protected config: #name#Config = {}; // Important: Change to reference imported file from @src/config! 
 
     public async register(): Promise<void> {
         this.log('Registering #name#');

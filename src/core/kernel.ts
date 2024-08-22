@@ -1,7 +1,7 @@
 import Singleton from "@src/core/base/Singleton";
 import IAppConfig from "@src/core/interfaces/IAppConfig";
-import 'dotenv/config';
 import { App } from "@src/core/services/App";
+import 'dotenv/config';
 
 export type Containers = {
     [key: string]: any

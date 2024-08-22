@@ -24,7 +24,7 @@ export default class Worker extends Singleton
     
     setDriver(driver: string) {
         this.options = this.getOptions(driver)
-        this.log(`Driver set to '${driver}'`)
+        this.log(`Driver set to '${driver}'`,)
     }
 
     /**
@@ -51,6 +51,7 @@ export default class Worker extends Singleton
             model = workerModel
 
             try {
+                console.log('Worker processing model', model.getId()?.toString())
                 await worker.processWorkerModel(model)
             }
             catch (err) {

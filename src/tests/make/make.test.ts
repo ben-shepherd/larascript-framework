@@ -1,6 +1,7 @@
 import { describe, test } from '@jest/globals';
-import fs from 'fs';
 import makeTestHelper from '@src/tests/make/makeTestHelper';
+import fs from 'fs';
+
 
 const makeTypes = makeTestHelper.getArrayOfCommandTypes();
 
@@ -16,7 +17,6 @@ describe(`testing make commands (total ${makeTypes.length})`, () => {
      * e.g. Command, Repository, Model etc.
      */
     for (const makeType of makeTypes) {
-
         test(`make ${makeType} (${currentCount}/${makeTypes.length})`, async () => {
 
             // Determine the command class to use
@@ -34,23 +34,16 @@ describe(`testing make commands (total ${makeTypes.length})`, () => {
             expect(cmdFileName).toBeTruthy();
 
             // Determine the full output path
-            const targetFileFullPath = cmd.getTargetDirFullPath(makeType, cmdFileName as string);
+            const targetFileFullPath = cmd.getMakeFileService().getTargetDirFullPath();
             expect(targetFileFullPath).toBeTruthy();
             expect(fs.existsSync(targetFileFullPath)).toBeTruthy();
 
             // Update the filesToUnlink array, count for logging purposes
-            filesToUnlink.push(targetFileFullPath);
             currentCount++;
+
+            //  Clean up files
+            fs.unlinkSync(targetFileFullPath);
+            expect(fs.existsSync(targetFileFullPath)).toBeFalsy();
         })
     }
-
-    /**
-     * Once done, clean up all created files
-     */
-    afterAll(async () => {
-        for (const file of filesToUnlink) {
-            fs.unlinkSync(file);
-            expect(fs.existsSync(file)).toBeFalsy();
-        }
-    })
 });

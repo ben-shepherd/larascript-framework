@@ -1,8 +1,9 @@
-import IData from "@src/core/interfaces/IData";
 import { IModel } from "@src/core/interfaces/IModel";
+import IModelData from "@src/core/interfaces/IModelData";
 
-export interface IUserData extends IData {
+export interface IUserData extends IModelData {
     email: string
+    password?: string;
     hashedPassword: string
     roles: string[],
     firstName?: string;

@@ -1,10 +1,14 @@
-import GenericMakeFileCommand from "@src/core/domains/make/base/GenericMakeFileCommand";
+import BaseMakeFileCommand from "@src/core/domains/make/base/BaseMakeFileCommand";
 
-export default class MakeServiceCommand extends GenericMakeFileCommand
+export default class MakeServiceCommand extends BaseMakeFileCommand
 {
     constructor() {
-        super('make:service', 'Create a service', 'Service', ['name'], {
+        super({
+            signature: 'make:service',
+            description: 'Create a new service',
+            makeType: 'Service',
+            args: ['name'],
             endsWith: 'Service'
-        });
+        })
     }
 }

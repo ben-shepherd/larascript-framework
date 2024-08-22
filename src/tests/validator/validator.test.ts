@@ -25,22 +25,22 @@ describe('test validation', () => {
   })
 
   test('test validator service', async () => {
-    const result = App.container('validate').validator().setRules(userValidator.rules()).validate(UserObjectGood);
+    const result = await App.container('validate').validator().setRules(userValidator.rules()).validate(UserObjectGood);
     expect(result.success).toBeTruthy();
 
-    const result2 = App.container('validate').validator().setRules(userValidator.rules()).validate(UserObjectBad);
+    const result2 = await App.container('validate').validator().setRules(userValidator.rules()).validate(UserObjectBad);
     expect(result2.success).toBeFalsy();
   })
 
   test('test successful validation', async () => {
-    const result = userValidator.validate(UserObjectGood)
+    const result = await userValidator.validate(UserObjectGood)
 
     expect(result.success).toBeTruthy();
     expect(result.joi.error).toBeFalsy();
   })
 
   test('test failed validation', async () => {
-    const result = userValidator.validate(UserObjectBad)
+    const result = await userValidator.validate(UserObjectBad)
 
     expect(result.success).toBeFalsy();
     expect(result.joi.error).toBeTruthy();

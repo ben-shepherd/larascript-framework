@@ -1,10 +1,32 @@
 import Observer from "@src/core/observer/Observer";
 
-interface #name#Data {
+interface I#name#Data {
 
 }
 
-export default class #name#Observer extends Observer<#name#Data>
+export default class #name#Observer extends Observer<I#name#Data>
 {  
+    created(data: I#name#Data): I#name#Data {
+        return data
+    }
 
+    creating(data: I#name#Data): I#name#Data {
+        return data
+    }
+
+    updating(data: I#name#Data): I#name#Data {
+        return data
+    }
+
+    updated(data: I#name#Data): I#name#Data {
+        return data
+    }
+
+    deleting(data: I#name#Data): I#name#Data {
+        return data
+    }
+
+    deleted(data: I#name#Data): I#name#Data {
+        return data
+    }
 }

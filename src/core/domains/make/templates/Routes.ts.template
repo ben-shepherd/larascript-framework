@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import Route from "@src/core/domains/express/routing/Route";
 import RouteGroup from "@src/core/domains/express/routing/RouteGroup";
 
-const #name#Routes = RouteGroup([
+const #name# = RouteGroup([
     Route({
         name: 'index',
         method: 'get',
@@ -14,4 +14,4 @@ const #name#Routes = RouteGroup([
     }),
 ])
 
-export default #name#Routes;
+export default #name#;

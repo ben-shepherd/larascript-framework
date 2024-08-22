@@ -5,14 +5,17 @@ import { App } from "@src/core/services/App";
 export default class WorkerCommand extends BaseCommand {
 
     signature: string = 'worker';
+
+    public keepProcessAlive = true;
     
     execute = async () => {
         const driver = this.getDriverName();
         const worker = Worker.getInstance()
-
         worker.setDriver(driver)
+
+        console.log('Running worker...', worker.options)        
     
-        await worker.work()
+        await worker.work();
         
         if(worker.options.runOnce) {
             return;

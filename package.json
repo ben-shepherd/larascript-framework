@@ -5,13 +5,10 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --color",
-    "imports": "node convert-imports.js",
+    "fix-imports": "node convert-imports.js",
     "start": "node ./dist/app.js",
-    "start:debug": "node -r tsconfig-paths/register -r ./log-paths.js ./dist/app.js",
-    "start:worker": "node -r tsconfig-paths/register ./dist/worker.js",
-    "start:console": "node -r tsconfig-paths/register ./dist/console.js",
     "dev": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register ./src/app.ts",
-    "dev:debug": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register ./src/debug.ts",
+    "dev:tinker": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register ./src/tinker.ts",
     "postinstall": "npm run build",
     "test": "jest --runInBand"
   },
