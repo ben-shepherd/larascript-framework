@@ -1,39 +1,31 @@
-import IService from '@src/core/interfaces/IService';
+import IService from "../interfaces/IService";
 
-export default abstract class Singleton<ConfigType extends Record<any,any> | null = null> implements IService {
+export default abstract class Singleton<Config extends Record<any,any> | null = null> implements IService {
     private static instances: Map<string, Singleton<any>> = new Map();
-    protected config!: ConfigType | null;
+    protected config!: Config | null;
 
-    constructor(config: ConfigType | null = null) {
+    constructor(config: Config | null = null) {
         this.config = config
     }
 
-    public static getInstance<
-        TService extends Singleton<any>,
-        TConfig extends Record<any,any> | null
-    >
-    (this: new (config: any) => TService, config: TConfig | null = null): TService 
+    public static getInstance<Service extends Singleton<any>,Config extends Record<any,any> | null>
+    (this: new (config: any) => Service, config: Config | null = null): Service 
     {
         const className = this.name
-
-        if(!className) {
-            console.warn('[Singleton] Error Context', this)
-            throw new Error('Invalid singleton. Missing property className')
-        }
 
         if(!Singleton.instances.has(className)) {
             Singleton.instances.set(className, new this(config));
         }
 
-        return Singleton.instances.get(className) as TService;
+        return Singleton.instances.get(className) as Service;
     }
 
-    public static isInitialized<TService extends Singleton<any>>(this: new (config: any) => TService): boolean {
+    public static isInitialized<Service extends Singleton<any>>(this: new (config: any) => Service): boolean {
         const className = this.name
         return Singleton.instances.has(className);
     }
 
-    public getConfig(): ConfigType | null {
+    public getConfig(): Config | null {
         return this.config; 
     }
 }

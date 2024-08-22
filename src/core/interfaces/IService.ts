@@ -1,6 +1,4 @@
-export type ServiceConstructor<
-    Service extends IService = IService
-> = new (...args: any[]) => Service;
+export type ServiceConstructor<T extends IService = IService> = new (...args: any[]) => T;
 
 export default interface IService {
     getConfig(...args: any[]): any;

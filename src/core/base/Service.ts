@@ -1,13 +1,13 @@
 import IService from '@src/core/interfaces/IService';
 
-export default abstract class Service<ConfigType = any> implements IService {
-    protected config!: ConfigType | null;
+export default abstract class Service<Config = any> implements IService {
+    protected config!: Config | null;
 
-    constructor(config: ConfigType | null = null) {
+    constructor(config: Config | null = null) {
         this.config = config
     }
 
-    public getConfig(): ConfigType | null {
+    public getConfig(): Config | null {
         return this.config;
     }
 }

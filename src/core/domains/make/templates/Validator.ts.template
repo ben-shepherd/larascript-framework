@@ -1,0 +1,17 @@
+import BaseValidator from "@src/core/domains/validator/base/BaseValidator";
+import Joi, { ObjectSchema } from "joi";
+
+class #name# extends BaseValidator
+{
+    public customValidatorMethods = [
+        
+    ]
+
+    rules(): ObjectSchema {
+        return Joi.object({
+            //fieldName: Joi.string()
+        })
+    }
+}
+
+export default #name#
