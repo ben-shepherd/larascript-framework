@@ -1,6 +1,6 @@
+import ICommandBootService from "@src/core/domains/console/interfaces/ICommandBootService";
 import { KernelOptions } from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
-import ICommandBootService from "@src/core/domains/console/interfaces/ICommandBootService";
 
 class CommandBootService implements ICommandBootService
 {
@@ -28,6 +28,9 @@ class CommandBootService implements ICommandBootService
             options.withoutProvider = ['ExpressProvider', 'RoutesProvider']
         }
 
+        if(args.includes('--no-auth')) {
+            options.withoutProvider?.push('AuthProvider');
+        }
         if(args.includes('--no-db')) {
             options.withoutProvider?.push('MongoDBProvider');
         }
