@@ -16,11 +16,34 @@ class ArgumentObserver<T extends IMakeFileArguments = IMakeFileArguments> extend
         if(!data.name) {
             throw new Error('Argument name cannot be empty')
         }
+
         if(options.startWithLowercase) {
             data.name = Str.startWithLowercase(data.name)
         }
         else {
             data.name = Str.startWithUppercase(data.name)
+        }
+
+        return data
+    }
+
+    /**
+     * 
+     * @param data 
+     * @param options 
+     * @returns 
+     */
+    setEndsWith(data: T, options: IMakeOptions): T
+    {
+        if(!data.name ) {
+            throw new Error('Argument name cannot be empty')
+        }
+        if(typeof options.endsWith !== 'string') {
+            return data
+        }
+
+        if(!data.name.endsWith(options.endsWith)) { 
+            data.name = `${data.name}${options.endsWith}`
         }
 
         return data

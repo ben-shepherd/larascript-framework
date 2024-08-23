@@ -8,7 +8,7 @@ const routes = RouteGroup([
         method: 'get',
         path: '/',
         action: (req: Request, res: Response) => {
-            res.send('OK')
+            res.send('OK!')
         }
     })
 ])

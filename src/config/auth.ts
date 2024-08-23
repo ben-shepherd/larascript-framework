@@ -25,9 +25,15 @@ const config: IAuthConfig = {
         updateUser: UpdateUserValidator,
     },
     /**
+     * JWT secret
+     */
+    jwtSecret: process.env.JWT_SECRET as string ?? '',
+
+    /**
      * Enable or disable auth routes
      */
     enableAuthRoutes: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES, 'true'),
+
     /**
      * Enable or disable create a new user endpoint
      */

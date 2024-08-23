@@ -2,7 +2,6 @@ import { describe } from '@jest/globals';
 import ApiToken from '@src/app/models/auth/ApiToken';
 import User from '@src/app/models/auth/User';
 import authConfig from '@src/config/auth';
-import testAppConfig from '@src/config/test';
 import UserFactory from '@src/core/domains/auth/factory/UserFactory';
 import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
 import AuthProvider from '@src/core/domains/auth/providers/AuthProvider';
@@ -10,6 +9,7 @@ import hashPassword from '@src/core/domains/auth/utils/hashPassword';
 import MongoDBProvider from '@src/core/domains/database/mongodb/providers/MongoDBProvider';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
+import testAppConfig from '@src/tests/config/testConfig';
 
 describe('attempt to run app with normal appConfig', () => {
 

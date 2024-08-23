@@ -12,6 +12,7 @@ import IUserRepository from '@src/core/domains/auth/interfaces/IUserRepository';
 import comparePassword from '@src/core/domains/auth/utils/comparePassword';
 import createJwt from '@src/core/domains/auth/utils/createJwt';
 import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';
+import InvalidJWTSecret from '@src/core/domains/auth/exceptions/InvalidJWTSecret';
 
 export default class AuthService extends Service<IAuthConfig> implements IAuthService {
 
@@ -38,6 +39,17 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
         this.config = config;
         this.userRepository = new config.repositories.user;
         this.apiTokenRepository = new config.repositories.apiToken;
+        this.validateJwtSecret();
+    }
+
+    /**
+     * Validate jwt secret
+     */
+    private validateJwtSecret()
+    {
+        if(!this.config.jwtSecret || this.config.jwtSecret === '') {
+            throw new InvalidJWTSecret();
+        }
     }
 
     /**
@@ -71,7 +83,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
             throw new Error('Invalid token');
         }
         const payload = new JWTTokenFactory().create(apiToken.data?.userId?.toString(), apiToken.data?.token);
-        return createJwt(payload, '1d');
+        return createJwt(this.config.jwtSecret, payload, '1d');
     }
 
     /**
@@ -94,7 +106,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * @returns 
      */
     async attemptAuthenticateToken(token: string): Promise<IApiTokenModel | null> {
-        const decoded = decodeJwt(token) as IJSonWebToken;
+        const decoded = decodeJwt(this.config.jwtSecret, token) as IJSonWebToken;
 
         const apiToken = await this.apiTokenRepository.findOneActiveToken(decoded.token)
 

@@ -9,7 +9,6 @@ describe(`testing make commands (total ${makeTypes.length})`, () => {
 
     const fileName = 'Test';
     const collection = 'TestCollection';
-    const filesToUnlink: string[] = [];
     let currentCount = 0;
 
     /**

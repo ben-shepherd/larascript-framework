@@ -45,8 +45,12 @@ export default class BaseMakeFileCommand extends BaseCommand
             collection: this.getArguementByKey('collection')?.value
         }
 
+        // Set a default collection, if required
         this.makeFileArguments = this.argumentObserver.onCustom('setDefaultCollection', this.makeFileArguments, this.options);
-        this.makeFileArguments = this.argumentObserver.onCustom('setName', this.makeFileArguments, this.options);
+        // Set name the name (lower or upper depending on options)
+        this.makeFileArguments = this.argumentObserver.onCustom('setName', this.makeFileArguments, this.options);        
+        // Ensure the file ends with the specified value
+        this.makeFileArguments = this.argumentObserver.onCustom('setEndsWith', this.makeFileArguments, this.options);
 
         this.setOverwriteArg('name', this.makeFileArguments.name);
 
@@ -75,11 +79,7 @@ export default class BaseMakeFileCommand extends BaseCommand
         const template = await this.getTemplateWithInjectedArguments();
 
         // Assuming every make command has a name argument
-        const name = this.getArguementByKey('name')?.value;   
-
-        if(!name) {
-            throw new CommandExecutionException('--name argument not specified');
-        }
+        const name = this.getArguementByKey('name')?.value as string;   
 
         if(this.makeFileService.existsInTargetDirectory()) {
             throw new CommandExecutionException(`File already exists with name '${name}'`);

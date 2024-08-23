@@ -5,6 +5,8 @@ export default class GenerateJwtSecret extends BaseCommand {
 
     signature: string = 'app:generate-jwt-secret';
 
+    public keepProcessAlive = false
+
     execute = async () => {
         try {
             const envService = new EnvService();
@@ -17,6 +19,8 @@ export default class GenerateJwtSecret extends BaseCommand {
 
             // Update the secret
             await envService.updateValues({ JWT_SECRET: secret });
+
+            console.log('Successfully generated jwt secret!')
         }
         catch (err) {
             console.error(err)

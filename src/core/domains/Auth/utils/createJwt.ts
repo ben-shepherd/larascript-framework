@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken'
 
-export default (data: object, expiresIn: string = '1h'): string => {
-    const jwtSecret = process.env.JWT_SECRET as string;
-    return jwt.sign(data, jwtSecret, { expiresIn })
+export default (secret: string, data: object, expiresIn: string = '1h'): string => {
+    return jwt.sign(data, secret, { expiresIn })
 }

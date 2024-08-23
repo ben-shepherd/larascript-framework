@@ -12,6 +12,7 @@ import MakeRoutesCommand from '@src/core/domains/make/commands/MakeRoutesCommand
 import MakeServiceCommand from '@src/core/domains/make/commands/MakeServiceCommand';
 import MakeSingletonCommand from '@src/core/domains/make/commands/MakeSingletonCommand';
 import MakeSubscriberCommand from '@src/core/domains/make/commands/MakeSubscriberCommand';
+import MakeValidatorCommand from '@src/core/domains/make/commands/MakeValidatorCommand';
 import { targetDirectories } from '@src/core/domains/make/consts/MakeTypes';
 
 export type CommandCtor<T extends BaseMakeFileCommand = BaseMakeFileCommand> = new (...args: any[]) => T;
@@ -81,6 +82,8 @@ const getCommandCtorByType = (type: typeof targetDirectories[string]): CommandCt
             return MakeMiddlewareCommand;
         case 'Action':
             return MakeActionCommand;
+        case 'Validator':
+            return MakeValidatorCommand;
         default:
             throw new Error('Unknown command type')
     }

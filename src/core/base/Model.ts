@@ -3,14 +3,15 @@ import { Db, ObjectId } from 'mongodb';
 
 import BelongsTo, { BelongsToOptions } from '@src/core/domains/database/mongodb/relationships/BelongsTo';
 import HasMany, { HasManyOptions } from '@src/core/domains/database/mongodb/relationships/HasMany';
+import { IObserver } from '@src/core/domains/observer/interfaces/IObserver';
+import { WithObserver } from '@src/core/domains/observer/services/WithObserver';
 import { Dates, GetDataOptions, IModel } from '@src/core/interfaces/IModel';
 import IModelData from '@src/core/interfaces/IModelData';
 import { App } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
-import { IObserver } from '@src/core/domains/observer/interfaces/IObserver';
-import { WithObserver } from '@src/core/domains/observer/services/WithObserver';
 
 export default abstract class Model<Data extends IModelData> extends WithObserver<Data> implements IModel<Data> {
+    
     // The database connection
     public connection: string = 'default';
 
