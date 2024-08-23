@@ -12,7 +12,7 @@ import IUserRepository from '@src/core/domains/auth/interfaces/IUserRepository';
 import comparePassword from '@src/core/domains/auth/utils/comparePassword';
 import createJwt from '@src/core/domains/auth/utils/createJwt';
 import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';
-import InvalidJWTSecret from '../exceptions/InvalidJWTSecret';
+import InvalidJWTSecret from '@src/core/domains/auth/exceptions/InvalidJWTSecret';
 
 export default class AuthService extends Service<IAuthConfig> implements IAuthService {
 

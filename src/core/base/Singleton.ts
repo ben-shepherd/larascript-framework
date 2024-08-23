@@ -1,4 +1,4 @@
-import IService from "../interfaces/IService";
+import IService from "@src/core/interfaces/IService";
 
 export default abstract class Singleton<Config extends Record<any,any> | null = null> implements IService {
     private static instances: Map<string, Singleton<any>> = new Map();

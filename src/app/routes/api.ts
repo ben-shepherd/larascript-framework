@@ -2,9 +2,9 @@ import Route from "@src/core/domains/express/routing/Route"
 import RouteGroup from "@src/core/domains/express/routing/RouteGroup"
 import RouteResource from "@src/core/domains/express/routing/RouteResource"
 import { Request, Response } from "express"
-import User from "../models/auth/User"
-import CreateUserValidator from "../validators/user/CreateUserValidator"
-import UpdateUserValidator from "../validators/user/UpdateUserValidator"
+import User from "@src/app/models/auth/User"
+import CreateUserValidator from "@src/app/validators/user/CreateUserValidator"
+import UpdateUserValidator from "@src/app/validators/user/UpdateUserValidator"
 
 const routes = RouteGroup([
     Route({

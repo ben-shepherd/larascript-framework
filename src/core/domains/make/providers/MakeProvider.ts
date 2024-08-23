@@ -12,7 +12,7 @@ import MakeServiceCommand from "@src/core/domains/make/commands/MakeServiceComma
 import MakeSingletonCommand from "@src/core/domains/make/commands/MakeSingletonCommand";
 import MakeSubscriberCommand from "@src/core/domains/make/commands/MakeSubscriberCommand";
 import { App } from "@src/core/services/App";
-import MakeValidatorCommand from "../commands/MakeValidatorCommand";
+import MakeValidatorCommand from "@src/core/domains/make/commands/MakeValidatorCommand";
 
 export default class MakeProvider extends BaseProvider
 {
