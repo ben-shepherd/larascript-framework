@@ -49,6 +49,13 @@ class QuestionDTO
         }
         return this.statement as string
     }
+
+    public getAnswer(): string | null {
+        if(this.answer?.length === 0) {
+            return this.defaultValue
+        }
+        return this.answer
+    }
 }
 
 export default QuestionDTO

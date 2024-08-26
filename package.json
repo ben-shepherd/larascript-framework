@@ -13,8 +13,7 @@
     "test": "jest --runInBand",
     "setup-app": "ts-node -r tsconfig-paths/register ./src/setup-app.ts",
     "setup": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register ./src/setup.ts",
-    "up": "docker-compose -f docker-compose.base.yml -f docker-compose.postgres.yml up -d",
-    "connect": "psql postgresql://root:example@localhost:5432/larascript_db"
+    "up": "docker-compose -f docker-compose.base.yml -f docker-compose.mongodb.yml up -d"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

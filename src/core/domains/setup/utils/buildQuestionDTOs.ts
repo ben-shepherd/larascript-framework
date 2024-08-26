@@ -1,5 +1,6 @@
 import CopyEnvExampleAction from "../actions/CopyEnvExampleAction";
 import GenerateJwtSecretAction from "../actions/GenerateJwtSecretAction";
+import SetupDatabaseAction from "../actions/SetupDatabaseAction";
 import { QuestionIDs } from "../consts/QuestionConsts";
 import QuestionDTO from "../DTOs/QuestionDTO";
 
@@ -19,7 +20,8 @@ const buildQuestionDTOs = (): QuestionDTO[] => {
             id: QuestionIDs.selectDb,
             question: 'Which database do you want to use? (mongodb/postgres)',
             defaultValue: 'mongodb',
-            acceptedAnswers: ['mongodb', 'postgres', '']
+            acceptedAnswers: ['mongodb', 'postgres', ''],
+            actionCtor: SetupDatabaseAction
         }),
         new QuestionDTO({
             id: QuestionIDs.appPort,
