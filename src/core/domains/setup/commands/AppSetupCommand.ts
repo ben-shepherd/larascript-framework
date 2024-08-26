@@ -1,9 +1,9 @@
 import readline from 'node:readline';
+import { IEnvService } from '../../../interfaces/IEnvService';
+import EnvService from "../../../services/EnvService";
 import BaseCommand from "../../console/base/BaseCommand";
 import { IConsoleInputService } from '../../console/interfaces/IConsoleInputService';
-import { IEnvService } from '../../console/interfaces/IEnvService';
 import ConsoleInputService from '../../console/service/ConsoleInputService';
-import EnvService from "../../console/service/EnvService";
 import QuestionDTO from '../DTOs/QuestionDTO';
 import { ISetupCommand } from '../interfaces/ISetupCommand';
 import buildQuestionDTOs from '../utils/buildQuestionDTOs';
@@ -55,9 +55,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
         
             this.input.clearScreen()
             
-            await this.processAnswer(
-                await this.promptUserForAnswer(question)
-            )
+            await this.processAnswer(question)
         }
 
         this.rl.close();
@@ -68,30 +66,6 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
     }
 
     /**
-     * Prompts the user for an answer
-     * 
-     * @param question 
-     * @returns 
-     */
-    promptUserForAnswer = async (question: QuestionDTO): Promise<QuestionDTO> => {
-        if (question.statement) {
-            this.writeLine(question.getText());
-            this.writeLine();
-            await this.input.waitForEnter();
-            return question;
-        }
-
-        this.writeLine(question.getText());
-
-        if (question.defaultValue) {
-            this.writeLine(`Default: ${question.defaultValue}`);
-        }
-
-        question.answer = await this.input.askQuestion('');
-        return question
-    }
-
-    /**
      * Processes the statement and runs an action
      * Alternatively, Updates the values in the environment
      * 
@@ -99,7 +73,8 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
      */
     processAnswer = async (question: QuestionDTO) => {
         await this.processStatementAction(question);
-        await this.processInput(question);
+        await this.processQuestion(question);
+        await this.processAction(question);
     }
 
     /**
@@ -115,13 +90,9 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
             return;
         }
 
-        if(!question.actionCtor) {
-            throw new Error(`Missing actionCtor for statement: ${question.statement}`)
-        }
-
-        const action = new question.actionCtor();
-        await action.handle(this, question.answer);
+        this.writeLine(question.getText());
         this.writeLine();
+        await this.input.waitForEnter();
     }
 
     /**
@@ -130,9 +101,23 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
      * @param question 
      * @returns 
      */
-    processInput = async (question: QuestionDTO) => {
+    processQuestion = async (question: QuestionDTO) => {
         if (question.statement) {
             return;
+        }
+
+        this.writeLine(question.getText());
+
+        if (question.defaultValue) {
+            this.writeLine(`Default: ${question.defaultValue}`);
+        }
+
+        question.answer = await this.input.askQuestion('');
+
+        if (question.acceptedAnswers && !question.acceptedAnswers.includes(question.answer)) {
+            this.writeLine(`Unexpected answer. Please try again.`);
+            await this.input.waitForEnter();
+            return await this.processQuestion(question);
         }
 
         let value: string = this.input.normalizeAnswer(question.answer, question.defaultValue);
@@ -140,6 +125,19 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
         await this.env.updateValues({ [question.id]: value });
     }
     
+    /**
+     * Runs the action
+     * @param question 
+     * @returns 
+     */
+    processAction = async (question: QuestionDTO) => {
+        if (!question.actionCtor) {
+            return;
+        }
+
+        const action = new question.actionCtor();
+        await action.handle(this, question);
+    }
 }
 
 export default AppSetupCommand

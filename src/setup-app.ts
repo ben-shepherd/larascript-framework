@@ -1,5 +1,4 @@
-import SetupCommand from "./core/domains/console/commands/SetupCommand";
-import EnvService from "./core/domains/console/service/EnvService";
+import EnvService from "./core/services/EnvService";
 
 // setup-database.js
 const readline = require('readline');
@@ -128,8 +127,6 @@ async function main() {
   console.log('Setting up .env')
   await setupEnvDatabaseDriver();
   
-  const setupCommand = new SetupCommand();
-  await setupCommand.execute();
 }
 
 main();

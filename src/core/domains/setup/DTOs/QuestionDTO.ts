@@ -7,6 +7,7 @@ type Props = {
     defaultValue?: string | null;
     answer?: string | null;
     actionCtor?: ActionCtor | null;
+    acceptedAnswers?: string[] | null;
 }
 
 class QuestionDTO
@@ -17,6 +18,7 @@ class QuestionDTO
     public defaultValue: string | null; 
     public answer: string | null = null;
     public actionCtor: ActionCtor | null = null;
+    public acceptedAnswers: string[] | null = null;
 
     constructor({
         id,
@@ -24,7 +26,8 @@ class QuestionDTO
         statement = null,
         defaultValue = null,
         answer = null,
-        actionCtor = null
+        actionCtor = null,
+        acceptedAnswers = null
     }: Props) 
     {
         if(!question && !statement) {
@@ -37,6 +40,7 @@ class QuestionDTO
         this.defaultValue = defaultValue;
         this.answer = answer;
         this.actionCtor = actionCtor;
+        this.acceptedAnswers = acceptedAnswers;
     }
 
     public getText(): string {

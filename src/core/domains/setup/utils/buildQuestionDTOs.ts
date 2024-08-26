@@ -18,7 +18,8 @@ const buildQuestionDTOs = (): QuestionDTO[] => {
         new QuestionDTO({
             id: QuestionIDs.selectDb,
             question: 'Which database do you want to use? (mongodb/postgres)',
-            defaultValue: 'mongodb'
+            defaultValue: 'mongodb',
+            acceptedAnswers: ['mongodb', 'postgres', '']
         }),
         new QuestionDTO({
             id: QuestionIDs.appPort,
@@ -28,12 +29,14 @@ const buildQuestionDTOs = (): QuestionDTO[] => {
         new QuestionDTO({
             id: QuestionIDs.enableAuthRoutes,
             question: 'Do you want to enable auth routes? (yes/no)',
-            defaultValue: 'yes'
+            defaultValue: 'yes',
+            acceptedAnswers: ['yes', 'no', 'y', 'n', '']
         }),
         new QuestionDTO({
             id: QuestionIDs.enableAuthRoutesAllowCreate,
             question: 'Do you want to allow users to create new accounts? (yes/no)',
-            defaultValue: 'yes'
+            defaultValue: 'yes',
+            acceptedAnswers: ['yes', 'no', 'y', 'n', '']
         }),
     ]
 }

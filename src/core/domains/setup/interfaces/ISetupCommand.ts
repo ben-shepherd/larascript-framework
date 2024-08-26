@@ -1,6 +1,6 @@
 import readline from 'node:readline';
+import { IEnvService } from "../../../interfaces/IEnvService";
 import { IConsoleInputService } from '../../console/interfaces/IConsoleInputService';
-import { IEnvService } from "../../console/interfaces/IEnvService";
 
 export interface ISetupCommand {
     env: IEnvService;
