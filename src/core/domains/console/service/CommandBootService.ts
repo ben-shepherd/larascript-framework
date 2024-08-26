@@ -27,7 +27,6 @@ class CommandBootService implements ICommandBootService
         if(args.length) {
             options.withoutProvider = ['ExpressProvider', 'RoutesProvider']
         }
-
         if(args.includes('--no-auth')) {
             options.withoutProvider?.push('AuthProvider');
         }
