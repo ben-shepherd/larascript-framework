@@ -1,10 +1,11 @@
 import replaceEnvValue from "@src/core/util/replaceEnvValue";
 import fs from "fs";
 import path from "path";
+import { IEnvService } from "../interfaces/IEnvService";
 
 type UpdateProps = Record<string, string>;
 
-export default class EnvService {
+export default class EnvService implements IEnvService {
     envPath = path.resolve('@src/../', '.env')
 
     envExamplePath = path.resolve('@src/../', '.env.example')

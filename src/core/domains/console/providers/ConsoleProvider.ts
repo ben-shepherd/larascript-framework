@@ -1,7 +1,5 @@
 import appConfig from "@src/config/app";
 import BaseProvider from "@src/core/base/Provider";
-import GenerateJwtSecret from "@src/core/domains/console/commands/GenerateJwtSecret";
-import SetupCommand from "@src/core/domains/console/commands/SetupCommand";
 import WorkerCommand from "@src/core/domains/console/commands/WorkerCommand";
 import ConsoleService from "@src/core/domains/console/service/ConsoleService";
 import { App } from "@src/core/services/App";
@@ -19,8 +17,8 @@ export default class ConsoleProvider extends BaseProvider
          * Register system provided commands
          */
         register.registerAll([
-            SetupCommand,
-            GenerateJwtSecret,
+            // SetupCommand,
+            // GenerateJwtSecret,
             WorkerCommand
         ])
 

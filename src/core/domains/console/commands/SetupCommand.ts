@@ -1,9 +1,9 @@
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
-import readline from 'node:readline';
 import { StatementActions } from "@src/core/domains/console/consts/QuestionConsts";
 import QuestionDTO from "@src/core/domains/console/data/QuestionDTO";
 import { StatementActionCtor } from "@src/core/domains/console/interfaces/IStatementAction";
 import EnvService from "@src/core/domains/console/service/EnvService";
+import readline from 'node:readline';
 
 export default class SetupCommand extends BaseCommand {
 
@@ -111,8 +111,8 @@ export default class SetupCommand extends BaseCommand {
             return;
         }
 
-        if (StatementActions[question.questionKey]) {
-            const statementActionCtor: StatementActionCtor = StatementActions[question.questionKey];
+        if (StatementActions[question.question]) {
+            const statementActionCtor: StatementActionCtor = StatementActions[question.question];
 
             // Execute the action
             await new statementActionCtor().handle(this, question.answer);
@@ -133,7 +133,7 @@ export default class SetupCommand extends BaseCommand {
 
         let value: string = this.normalizeValueFromAnswer(question);
 
-        await this.envService.updateValues({ [question.questionKey]: value });
+        await this.envService.updateValues({ [question.question]: value });
     }
 
     /**
