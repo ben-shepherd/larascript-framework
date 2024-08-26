@@ -1,6 +1,6 @@
 import fs from 'fs';
-import { IAction } from '../interfaces/IAction';
-import { ISetupCommand } from '../interfaces/ISetupCommand';
+import { IAction } from '@src/core/domains/setup/interfaces/IAction';
+import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand';
 
 class CopyEnvExampleAction implements IAction
 {

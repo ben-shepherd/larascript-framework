@@ -1,8 +1,8 @@
 import { IPackageJsonService } from '@src/core/interfaces/IPackageJsonService';
 import PackageJsonService from '@src/core/services/PackageJsonService';
-import QuestionDTO from '../DTOs/QuestionDTO';
-import { IAction } from '../interfaces/IAction';
-import { ISetupCommand } from '../interfaces/ISetupCommand';
+import QuestionDTO from '@src/core/domains/setup/DTOs/QuestionDTO';
+import { IAction } from '@src/core/domains/setup/interfaces/IAction';
+import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand';
 
 class SetupDatabaseAction implements IAction
 {

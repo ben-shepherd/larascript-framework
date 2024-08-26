@@ -1,4 +1,4 @@
-import EnvService from "./core/services/EnvService";
+import EnvService from "@src/core/services/EnvService";
 
 // setup-database.js
 const readline = require('readline');

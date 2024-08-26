@@ -1,6 +1,6 @@
 import BaseProvider from "@src/core/base/Provider";
 import { App } from "@src/core/services/App";
-import AppSetupCommand from "../commands/AppSetupCommand";
+import AppSetupCommand from "@src/core/domains/setup/commands/AppSetupCommand";
 
 class SetupProvider extends BaseProvider
 {

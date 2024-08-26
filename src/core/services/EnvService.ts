@@ -1,7 +1,7 @@
 import replaceEnvValue from "@src/core/util/replaceEnvValue";
 import fs from "fs";
 import path from "path";
-import { IEnvService } from "../interfaces/IEnvService";
+import { IEnvService } from "@src/core/interfaces/IEnvService";
 
 type UpdateProps = Record<string, string>;
 

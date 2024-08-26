@@ -1,12 +1,12 @@
+import BaseCommand from "@src/core/domains/console/base/BaseCommand";
+import { IConsoleInputService } from '@src/core/domains/console/interfaces/IConsoleInputService';
+import ConsoleInputService from '@src/core/domains/console/service/ConsoleInputService';
+import QuestionDTO from '@src/core/domains/setup/DTOs/QuestionDTO';
+import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand';
+import buildQuestionDTOs from '@src/core/domains/setup/utils/buildQuestionDTOs';
+import { IEnvService } from '@src/core/interfaces/IEnvService';
+import EnvService from "@src/core/services/EnvService";
 import readline from 'node:readline';
-import { IEnvService } from '../../../interfaces/IEnvService';
-import EnvService from "../../../services/EnvService";
-import BaseCommand from "../../console/base/BaseCommand";
-import { IConsoleInputService } from '../../console/interfaces/IConsoleInputService';
-import ConsoleInputService from '../../console/service/ConsoleInputService';
-import QuestionDTO from '../DTOs/QuestionDTO';
-import { ISetupCommand } from '../interfaces/ISetupCommand';
-import buildQuestionDTOs from '../utils/buildQuestionDTOs';
 
 class AppSetupCommand extends BaseCommand implements ISetupCommand
 {
@@ -34,17 +34,20 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
         this.input.writeLine(text);
     }
 
+    /**
+     * Executes the command
+     */
     public execute = async () =>
     {
         const questionsAll = buildQuestionDTOs();
 
-        this.writeLine('--- App Setup ---');
+        this.writeLine('--- Larascript Setup ---');
         this.writeLine();
+        this.writeLine('Setup Preview:');
 
-        this.writeLine('Preview of the questions:');
         for (const i in questionsAll) {
             const question = questionsAll[i];
-            this.writeLine(`- ${question.getText()}`);
+            this.writeLine(`- ${question.getPreviewText()}`);
         }
 
         this.writeLine();
@@ -55,7 +58,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
         
             this.input.clearScreen()
             
-            await this.processAnswer(question)
+            await this.processQuestionDTO(question)
         }
 
         this.rl.close();
@@ -66,26 +69,23 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
     }
 
     /**
-     * Processes the statement and runs an action
-     * Alternatively, Updates the values in the environment
+     * Processes questions, statements and actions
      * 
      * @param question 
      */
-    processAnswer = async (question: QuestionDTO) => {
-        await this.processStatementAction(question);
+    processQuestionDTO = async (question: QuestionDTO) => {
+        await this.processStatement(question);
         await this.processQuestion(question);
         await this.processAction(question);
     }
 
     /**
-     * If the question is a statement, there may be an action that needs to happen before the next question is processed
+     * Writes a statement to the console
      * 
-     * Example:
-     * Press Enter to continue > Generates a JWT Secret
      * @param question 
      * @returns 
      */
-    processStatementAction = async (question: QuestionDTO) => {
+    processStatement = async (question: QuestionDTO) => {
         if (!question.statement) {
             return;
         }
@@ -96,7 +96,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
     }
 
     /**
-     * Updates the values in the environment
+     * Asks a question to the user
      * 
      * @param question 
      * @returns 
@@ -127,6 +127,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
     
     /**
      * Runs the action
+     * 
      * @param question 
      * @returns 
      */

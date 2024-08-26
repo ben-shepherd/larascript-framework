@@ -1,10 +1,11 @@
-import { ActionCtor } from "../interfaces/IAction";
+import { ActionCtor } from "@src/core/domains/setup/interfaces/IAction";
 
 type Props = {
     id: string;
     question?: string | null;
     statement?: string | null;
     defaultValue?: string | null;
+    previewText?: string | null;
     answer?: string | null;
     actionCtor?: ActionCtor | null;
     acceptedAnswers?: string[] | null;
@@ -15,6 +16,7 @@ class QuestionDTO
     public id: string;
     public question: string | null;
     public statement: string | null;
+    public previewText: string | null;
     public defaultValue: string | null; 
     public answer: string | null = null;
     public actionCtor: ActionCtor | null = null;
@@ -24,6 +26,7 @@ class QuestionDTO
         id,
         question = null,
         statement = null,
+        previewText = null,
         defaultValue = null,
         answer = null,
         actionCtor = null,
@@ -37,6 +40,7 @@ class QuestionDTO
         this.id = id;
         this.question = question;
         this.statement = statement;
+        this.previewText = previewText;
         this.defaultValue = defaultValue;
         this.answer = answer;
         this.actionCtor = actionCtor;
@@ -55,6 +59,13 @@ class QuestionDTO
             return this.defaultValue
         }
         return this.answer
+    }
+
+    public getPreviewText(): string | null {
+        if(!this.previewText) {
+            return this.getText()
+        }
+        return this.previewText
     }
 }
 

@@ -1,4 +1,4 @@
-import { ISetupCommand } from './ISetupCommand';
+import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand';
 
 export type ActionCtor<T extends IAction = IAction> = new (...args: any[]) => T;
 

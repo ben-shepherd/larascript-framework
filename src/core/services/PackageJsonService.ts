@@ -1,7 +1,7 @@
 
 import fs from "fs";
 import path from "path";
-import { IPackageJson, IPackageJsonService } from "../interfaces/IPackageJsonService";
+import { IPackageJson, IPackageJsonService } from "@src/core/interfaces/IPackageJsonService";
 
 export default class PackageJsonService implements IPackageJsonService {
     packageJsonPath = path.resolve('@src/../', 'package.json')
