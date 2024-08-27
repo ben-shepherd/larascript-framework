@@ -2,7 +2,7 @@ import { describe, expect, test } from '@jest/globals';
 import appConfig from '@src/config/app';
 import AuthService from '@src/core/domains/auth/services/AuthService';
 import ConsoleService from '@src/core/domains/console/service/ConsoleService';
-import MongoDB from '@src/core/domains/database/mongodb/services/MongoDB';
+import MongoDB from '@src/core/domains/database/services/mongodb/MongoDB';
 import EventService from '@src/core/domains/events/services/EventService';
 import Express from '@src/core/domains/express/services/Express';
 import Kernel from '@src/core/Kernel';

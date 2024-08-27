@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, test } from '@jest/globals';
 import Repository from '@src/core/base/Repository';
-import MongoDBProvider from '@src/core/domains/database/mongodb/providers/MongoDBProvider';
+import DatabaseProvider from '@src/core/domains/database/providers/DatabaseProvider';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
@@ -23,7 +23,7 @@ describe('mock event service', () => {
     await Kernel.boot({
       ...testAppConfig,
       providers: [
-        new MongoDBProvider(),
+        new DatabaseProvider(),
         new TestConsoleProvider(),
         new TestEventProvider()
       ]

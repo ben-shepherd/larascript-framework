@@ -3,7 +3,7 @@ import AppProvider from '@src/app/providers/AppProvider';
 import { EnvironmentType } from '@src/core/consts/Environment';
 import AuthProvider from '@src/core/domains/auth/providers/AuthProvider';
 import ConsoleProvider from '@src/core/domains/console/providers/ConsoleProvider';
-import MongoDBProvider from '@src/core/domains/database/mongodb/providers/MongoDBProvider';
+import DatabaseProvider from '@src/core/domains/database/providers/DatabaseProvider';
 import EventProvider from '@src/core/domains/events/providers/EventProvider';
 import ExpressProvider from '@src/core/domains/express/providers/ExpressProvider';
 import { default as CoreRoutesProvider } from '@src/core/domains/express/providers/RoutesProvider';
@@ -28,7 +28,7 @@ const appConfig: IAppConfig = {
          * Core providers
          */
         new EventProvider(),
-        new MongoDBProvider(),
+        new DatabaseProvider(),
         new ExpressProvider(),
         new CoreRoutesProvider(),
         new AuthProvider(),

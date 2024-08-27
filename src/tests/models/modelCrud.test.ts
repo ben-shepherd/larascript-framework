@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 import Kernel from '@src/core/Kernel';
-import MongoDBProvider from '@src/core/domains/database/mongodb/providers/MongoDBProvider';
+import DatabaseProvider from '@src/core/domains/database/providers/DatabaseProvider';
 import testAppConfig from '@src/tests/config/testConfig';
 import TestModel from '@src/tests/models/models/TestModel';
 import testModelsHelper from '@src/tests/models/testModelsHelper';
@@ -14,7 +14,7 @@ describe('test model crud operations', () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
-                new MongoDBProvider()
+                new DatabaseProvider()
             ]
         }, {})
 

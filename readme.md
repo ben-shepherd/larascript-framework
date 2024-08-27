@@ -20,17 +20,19 @@ Larascript Node draws significant inspiration from Laravel, the popular PHP fram
 
 ## Core Features
 
-- App Containers
-- Express & Routing 
-- Authentication (JWTs)
-- MongoDB
+- Testing (Jest)
+- Providers
+- Express 
+- Built in Authentication
+- Multi-Database support (MongoDB & Postgres)
 - Models
-- Events
+- Repositories
+- Events & Queues
+- Workers
 - Observers
 - Providers
-- Console Commands
-- Queue Workers
-- Maker
+- Commands and CLI 
+- Make 
 
 ## Documentation
 

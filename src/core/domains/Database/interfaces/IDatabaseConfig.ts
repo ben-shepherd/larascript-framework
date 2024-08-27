@@ -1,4 +1,4 @@
-import IMongoDbConfig from "@src/core/domains/database/mongodb/interfaces/IMongoDbConfig";
+import IMongoDbConfig from "@src/core/domains/database/exceptions/mongodb/IMongoDbConfig";
 
 export interface IDatabaseConfig {
     mongodb: IMongoDbConfig;
