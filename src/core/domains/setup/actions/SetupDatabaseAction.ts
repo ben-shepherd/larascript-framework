@@ -1,8 +1,9 @@
-import { IPackageJsonService } from '@src/core/interfaces/IPackageJsonService';
-import PackageJsonService from '@src/core/services/PackageJsonService';
 import QuestionDTO from '@src/core/domains/setup/DTOs/QuestionDTO';
 import { IAction } from '@src/core/domains/setup/interfaces/IAction';
 import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand';
+import { IPackageJsonService } from '@src/core/interfaces/IPackageJsonService';
+import PackageJsonService from '@src/core/services/PackageJsonService';
+import defaultCredentials from '../utils/defaultCredentials';
 
 class SetupDatabaseAction implements IAction
 {
@@ -28,7 +29,7 @@ class SetupDatabaseAction implements IAction
         await this.updatePackageJsonUpScript(dbType);
 
         ref.writeLine('Updating .env');
-        await this.updateEnvDatabaseDriver(dbType, ref);
+        await this.updateEnv(dbType, ref);
     }
 
     /**
@@ -49,10 +50,20 @@ class SetupDatabaseAction implements IAction
      * @param dbType 
      * @param ref 
      */
-    async updateEnvDatabaseDriver(dbType: string, ref: ISetupCommand)
+    async updateEnv(dbType: string, ref: ISetupCommand)
     {
         ref.env.copyFileFromEnvExample();
-        await ref.env.updateValues({ DATABASE_DRIVER: dbType });
+
+        let env: Record<string,string> = { DATABASE_DEFAULT_DRIVER: dbType }
+
+        if(dbType === 'mongodb') {
+            env = {
+                ...env,
+                DATABASE_DEFAULT_URI: defaultCredentials.extractDefaultMongoDBCredentials() ?? ''
+            }
+        }
+
+        await ref.env.updateValues(env);
     }
 }
 

@@ -3,6 +3,7 @@ import 'tsconfig-paths/register';
 import appConfig from '@src/config/app';
 import Kernel from "@src/core/Kernel";
 import { App } from '@src/core/services/App';
+import defaultCredentials from './core/domains/setup/utils/defaultCredentials';
 
 (async() => {
     require('dotenv').config();
@@ -18,4 +19,5 @@ import { App } from '@src/core/services/App';
 
     // add your tinkers below
     
+    console.log(defaultCredentials.extractDefaultMongoDBCredentials());
 })();
