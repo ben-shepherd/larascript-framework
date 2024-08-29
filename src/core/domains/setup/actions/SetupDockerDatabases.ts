@@ -3,9 +3,8 @@ import { IAction } from '@src/core/domains/setup/interfaces/IAction';
 import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand';
 import { IPackageJsonService } from '@src/core/interfaces/IPackageJsonService';
 import PackageJsonService from '@src/core/services/PackageJsonService';
-import defaultCredentials from '../utils/defaultCredentials';
 
-class SetupDatabaseAction implements IAction
+class SetupDockerDatabases implements IAction
 {
     packageJson: IPackageJsonService;
 
@@ -17,7 +16,6 @@ class SetupDatabaseAction implements IAction
     /**
      * Handle the action 
      * - Updates the package.json up script
-     * - Updates the .env DATABASE_DRIVER
      * @param ref 
      * @param question 
      */
@@ -27,9 +25,6 @@ class SetupDatabaseAction implements IAction
 
         ref.writeLine('Updating package.json');
         await this.updatePackageJsonUpScript(dbType);
-
-        ref.writeLine('Updating .env');
-        await this.updateEnv(dbType, ref);
     }
 
     /**
@@ -39,32 +34,26 @@ class SetupDatabaseAction implements IAction
     async updatePackageJsonUpScript(dbType: string)
     {
         const packageJson = await this.packageJson.getJson();
+        let composeScriptsToInclude = '';
 
-        packageJson.scripts.up = `docker-compose -f docker-compose.base.yml -f docker-compose.${dbType}.yml up -d`;
+        const appendDbType = (db: string) => `-f docker-compose.${db}.yml `;
+
+        if(dbType === 'all') {
+            composeScriptsToInclude += appendDbType('mongodb');
+            composeScriptsToInclude += appendDbType('postgres');
+        }
+        else if(dbType === 'mongodb') {
+            composeScriptsToInclude += appendDbType('mongodb');
+        }
+        else if(dbType === 'postgres') {
+            composeScriptsToInclude += appendDbType('postgres');
+        }
+
+        packageJson.scripts.up = `docker-compose -f docker-compose.base.yml ${composeScriptsToInclude} up -d`;
 
         this.packageJson.writeFileContents(JSON.stringify(packageJson, null, 2));
     }
 
-    /**
-     * Update the .env
-     * @param dbType 
-     * @param ref 
-     */
-    async updateEnv(dbType: string, ref: ISetupCommand)
-    {
-        ref.env.copyFileFromEnvExample();
-
-        let env: Record<string,string> = { DATABASE_DEFAULT_DRIVER: dbType }
-
-        if(dbType === 'mongodb') {
-            env = {
-                ...env,
-                DATABASE_DEFAULT_URI: defaultCredentials.extractDefaultMongoDBCredentials() ?? ''
-            }
-        }
-
-        await ref.env.updateValues(env);
-    }
 }
 
-export default SetupDatabaseAction
+export default SetupDockerDatabases
