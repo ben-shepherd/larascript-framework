@@ -6,6 +6,7 @@
  */
 export const QuestionIDs = {
     selectDb: 'SELECT_DB',
+    selectDefaultDb: 'SELECT_DEFAULT_DB',
     copyEnvExample: 'COPY_ENV_EXAMPLE',
     appPort: 'APP_PORT',
     enableAuthRoutes: 'ENABLE_AUTH_ROUTES',

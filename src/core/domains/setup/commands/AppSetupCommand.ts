@@ -40,6 +40,8 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
     public execute = async () =>
     {
         const questionsAll = buildQuestionDTOs();
+        let previousQuestion: QuestionDTO | null = null;
+        let count = 1;
 
         this.writeLine('--- Larascript Setup ---');
         this.writeLine();
@@ -52,13 +54,16 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
 
         this.writeLine();
         await this.input.waitForEnter('When ready, press Enter to continue');
-
+        
         for (const i in questionsAll) {
             const question = questionsAll[i];
         
             this.input.clearScreen()
             
-            await this.processQuestionDTO(question)
+            await this.processQuestionDTO(count, question, previousQuestion)
+
+            previousQuestion = question
+            count++;
         }
 
         this.rl.close();
@@ -69,14 +74,42 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
     }
 
     /**
+     * Determines if a question should be processed
+     * @param question 
+     * @param previousQuestion 
+     * @returns 
+     */
+    questionIsApplicable = (question: QuestionDTO, previousQuestion: QuestionDTO): boolean => {
+
+        if(!question.applicableOnly || !previousQuestion.answer) {
+            return true;
+        }
+        
+        const matchesQuestionId = question.applicableOnly.ifId === previousQuestion.id
+        const matchesAnswer = question.applicableOnly.answerIncludes.includes(previousQuestion.answer)
+
+        if(matchesQuestionId && !matchesAnswer) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Processes questions, statements and actions
      * 
      * @param question 
      */
-    processQuestionDTO = async (question: QuestionDTO) => {
-        await this.processStatement(question);
-        await this.processQuestion(question);
+    processQuestionDTO = async (count: number, question: QuestionDTO, previousQuestion: QuestionDTO | null) => {
+
+        if(previousQuestion && !this.questionIsApplicable(question, previousQuestion)) {
+            return;
+        }
+
+        await this.processStatement(count, question);
+        await this.processQuestion(count, question);
         await this.processAction(question);
+        await this.processMultipleActions(question);
     }
 
     /**
@@ -85,12 +118,12 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
      * @param question 
      * @returns 
      */
-    processStatement = async (question: QuestionDTO) => {
+    processStatement = async (count: number, question: QuestionDTO) => {
         if (!question.statement) {
             return;
         }
 
-        this.writeLine(question.getText());
+        this.writeLine(`[${count}]: ${question.getText()}`);
         this.writeLine();
         await this.input.waitForEnter();
     }
@@ -101,12 +134,12 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
      * @param question 
      * @returns 
      */
-    processQuestion = async (question: QuestionDTO) => {
+    processQuestion = async (count: number, question: QuestionDTO) => {
         if (question.statement) {
             return;
         }
 
-        this.writeLine(question.getText());
+        this.writeLine(`[${count}]: ${question.getText()}`);
 
         if (question.defaultValue) {
             this.writeLine(`Default: ${question.defaultValue}`);
@@ -117,7 +150,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
         if (question.acceptedAnswers && !question.acceptedAnswers.includes(question.answer)) {
             this.writeLine(`Unexpected answer. Please try again.`);
             await this.input.waitForEnter();
-            return await this.processQuestion(question);
+            return await this.processQuestion(count, question);
         }
 
         let value: string = this.input.normalizeAnswer(question.answer, question.defaultValue);
@@ -138,6 +171,23 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
 
         const action = new question.actionCtor();
         await action.handle(this, question);
+    }
+
+    /**
+     * Runs multiple actions
+     * 
+     * @param question 
+     * @returns 
+     */
+    processMultipleActions = async (question: QuestionDTO) => {
+        if (!question.actionCtors) {
+            return;
+        }
+
+        for (const actionCtor of question.actionCtors) {
+            const action = new actionCtor();
+            await action.handle(this, question);
+        }
     }
 }
 

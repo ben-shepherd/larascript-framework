@@ -1,8 +1,9 @@
 import CopyEnvExampleAction from "@src/core/domains/setup/actions/CopyEnvExampleAction";
 import GenerateJwtSecretAction from "@src/core/domains/setup/actions/GenerateJwtSecretAction";
-import SetupDatabaseAction from "@src/core/domains/setup/actions/SetupDatabaseAction";
 import { QuestionIDs } from "@src/core/domains/setup/consts/QuestionConsts";
 import QuestionDTO from "@src/core/domains/setup/DTOs/QuestionDTO";
+import SetupDefaultDatabase from "../actions/SetupDefaultDatabase";
+import SetupDockerDatabases from "../actions/SetupDockerDatabases";
 
 const buildQuestionDTOs = (): QuestionDTO[] => {
     return [
@@ -20,11 +21,23 @@ const buildQuestionDTOs = (): QuestionDTO[] => {
         }),
         new QuestionDTO({
             id: QuestionIDs.selectDb,
-            question: 'Which database do you want to use? (mongodb/postgres). This step will overwrite your .env file.',
-            previewText: 'Choose Database Provider',
+            question: 'Which database providers should be installed? (all/mongodb/postgres). This step will overwrite your .env file.',
+            previewText: 'Choose Database Provider To Install',
+            defaultValue: 'all',
+            acceptedAnswers: ['all', 'mongodb', 'postgres', ''],
+            actionCtors: [SetupDockerDatabases, SetupDefaultDatabase]
+        }),
+        new QuestionDTO({
+            id: QuestionIDs.selectDefaultDb,
+            question: 'Which default database do you want to use?. This step will overwrite your .env file.',
+            previewText: 'Select Default Database',
             defaultValue: 'mongodb',
             acceptedAnswers: ['mongodb', 'postgres', ''],
-            actionCtor: SetupDatabaseAction
+            actionCtor: SetupDefaultDatabase,
+            applicableOnly: {
+                ifId: QuestionIDs.selectDb,
+                answerIncludes: ['all']
+            }
         }),
         new QuestionDTO({
             id: QuestionIDs.appPort,

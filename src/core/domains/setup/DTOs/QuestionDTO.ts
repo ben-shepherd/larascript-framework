@@ -1,5 +1,10 @@
 import { ActionCtor } from "@src/core/domains/setup/interfaces/IAction";
 
+type ApplicableOnly = {
+    ifId: string,
+    answerIncludes: string[]
+}
+
 type Props = {
     id: string;
     question?: string | null;
@@ -8,7 +13,9 @@ type Props = {
     previewText?: string | null;
     answer?: string | null;
     actionCtor?: ActionCtor | null;
+    actionCtors?: ActionCtor[] | null;
     acceptedAnswers?: string[] | null;
+    applicableOnly?: ApplicableOnly | null
 }
 
 class QuestionDTO
@@ -20,7 +27,9 @@ class QuestionDTO
     public defaultValue: string | null; 
     public answer: string | null = null;
     public actionCtor: ActionCtor | null = null;
+    public actionCtors: ActionCtor[] | null = null;
     public acceptedAnswers: string[] | null = null;
+    public applicableOnly: ApplicableOnly | null = null
 
     constructor({
         id,
@@ -30,7 +39,9 @@ class QuestionDTO
         defaultValue = null,
         answer = null,
         actionCtor = null,
-        acceptedAnswers = null
+        actionCtors = null,
+        acceptedAnswers = null,
+        applicableOnly = null
     }: Props) 
     {
         if(!question && !statement) {
@@ -44,7 +55,9 @@ class QuestionDTO
         this.defaultValue = defaultValue;
         this.answer = answer;
         this.actionCtor = actionCtor;
+        this.actionCtors = actionCtors;
         this.acceptedAnswers = acceptedAnswers;
+        this.applicableOnly = applicableOnly
     }
 
     public getText(): string {

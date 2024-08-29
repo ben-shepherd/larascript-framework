@@ -1,5 +1,5 @@
-import readline from 'node:readline';
 import { IConsoleInputService } from '@src/core/domains/console/interfaces/IConsoleInputService';
+import readline from 'node:readline';
 
 class ConsoleInputService implements IConsoleInputService
 {
