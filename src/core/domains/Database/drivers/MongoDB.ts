@@ -1,11 +1,11 @@
 import { Db, MongoClient } from 'mongodb';
 
-import { IMongoDBConfig } from '../../exceptions/mongodb/IMongoDBConfig';
-import { IDatabaseDriver } from '../../interfaces/IDatabaseDriver';
-import { IDatabaseQuery } from '../../interfaces/IDatabaseQuery';
-import MongoDBQuery from '../../query/MongoDBQuery';
+import { IMongoDBConfig } from '@src/core/domains/database/exceptions/mongodb/IMongoDBConfig';
+import { IDatabaseDriver } from '@src/core/domains/database/interfaces/IDatabaseDriver';
+import { IDatabaseQuery } from '@src/core/domains/database/interfaces/IDatabaseQuery';
+import MongoDBQuery from '@src/core/domains/database/query/MongoDBQuery';
 
-export default class MongoDBDriver implements IDatabaseDriver {
+export default class MongoDB implements IDatabaseDriver {
     protected client!: MongoClient;
     protected db!: Db;
  

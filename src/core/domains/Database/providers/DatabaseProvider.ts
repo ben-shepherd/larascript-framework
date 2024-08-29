@@ -2,7 +2,7 @@ import databaseConfig from '@src/config/database';
 import BaseProvider from "@src/core/base/Provider";
 import { IDatabaseConfig } from '@src/core/domains/database/interfaces/IDatabaseConfig';
 import { App } from "@src/core/services/App";
-import DatabaseService from '../services/DatabaseService';
+import DatabaseService from '@src/core/domains/database/services/DatabaseService';
 
 export default class DatabaseProvider extends BaseProvider
 {

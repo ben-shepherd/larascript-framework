@@ -1,6 +1,6 @@
 import { App } from '@src/core/services/App';
 import { Request, Response } from 'express';
-import MongoDBDriver from '../domains/database/services/mongodb/MongoDBDriver';
+import MongoDB from '@src/core/domains/database/drivers/MongoDB';
 
 export default async (req: Request, res: Response) => {
 
@@ -8,7 +8,7 @@ export default async (req: Request, res: Response) => {
         const db = App.container('db');
         const dbDriver = db.driver();
 
-        if(dbDriver instanceof MongoDBDriver) {
+        if(dbDriver instanceof MongoDB) {
             await dbDriver.getDb().stats()
         }
 

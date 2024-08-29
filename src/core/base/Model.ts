@@ -8,8 +8,8 @@ import { Dates, GetDataOptions, IModel } from '@src/core/interfaces/IModel';
 import IModelData from '@src/core/interfaces/IModelData';
 import { App } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
-import { IDatabaseQuery } from '../domains/database/interfaces/IDatabaseQuery';
-import BelongsTo, { BelongsToOptions } from '../domains/database/relationships/BelongsTo';
+import { IDatabaseQuery } from '@src/core/domains/database/interfaces/IDatabaseQuery';
+import BelongsTo, { BelongsToOptions } from '@src/core/domains/database/relationships/BelongsTo';
 
 export default abstract class Model<Data extends IModelData> extends WithObserver<Data> implements IModel<Data> {
     

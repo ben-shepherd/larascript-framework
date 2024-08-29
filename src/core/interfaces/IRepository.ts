@@ -1,5 +1,5 @@
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
-import { IDatabaseQuery } from "../domains/database/interfaces/IDatabaseQuery";
+import { IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
 
 export type RepositoryConstructor<
     Model extends IModel = IModel,

@@ -3,7 +3,7 @@ import ModelNotFound from '@src/core/exceptions/ModelNotFound';
 import { IModel, ModelConstructor } from '@src/core/interfaces/IModel';
 import { IRepository } from '@src/core/interfaces/IRepository';
 import { App } from '@src/core/services/App';
-import { IDatabaseQuery } from '../domains/database/interfaces/IDatabaseQuery';
+import { IDatabaseQuery } from '@src/core/domains/database/interfaces/IDatabaseQuery';
 
 export default class Repository<Model extends IModel> implements IRepository<Model> {
     public modelCtor: ModelConstructor<Model>;

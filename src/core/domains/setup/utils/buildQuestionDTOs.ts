@@ -2,8 +2,8 @@ import CopyEnvExampleAction from "@src/core/domains/setup/actions/CopyEnvExample
 import GenerateJwtSecretAction from "@src/core/domains/setup/actions/GenerateJwtSecretAction";
 import { QuestionIDs } from "@src/core/domains/setup/consts/QuestionConsts";
 import QuestionDTO from "@src/core/domains/setup/DTOs/QuestionDTO";
-import SetupDefaultDatabase from "../actions/SetupDefaultDatabase";
-import SetupDockerDatabases from "../actions/SetupDockerDatabases";
+import SetupDefaultDatabase from "@src/core/domains/setup/actions/SetupDefaultDatabase";
+import SetupDockerDatabases from "@src/core/domains/setup/actions/SetupDockerDatabases";
 
 const buildQuestionDTOs = (): QuestionDTO[] => {
     return [

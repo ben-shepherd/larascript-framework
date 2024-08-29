@@ -1,9 +1,9 @@
-import { IDatabaseConfig } from "../interfaces/IDatabaseConfig";
-import { IDatabaseDriver, IDatabaseDriverCtor } from "../interfaces/IDatabaseDriver";
-import { IDatabaseQuery } from "../interfaces/IDatabaseQuery";
-import { IDatabaseService } from "../interfaces/IDatabaseService";
-import { TDatabaseDriver } from "../types/DatabaseDriver.t";
-import MongoDBDriver from "./mongodb/MongoDBDriver";
+import MongoDB from "@src/core/domains/database/drivers/MongoDB";
+import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
+import { IDatabaseDriver, IDatabaseDriverCtor } from "@src/core/domains/database/interfaces/IDatabaseDriver";
+import { IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
+import { IDatabaseService } from "@src/core/domains/database/interfaces/IDatabaseService";
+import { TDatabaseDriver } from "@src/core/domains/database/types/DatabaseDriver.t";
 
 class DatabaseService implements IDatabaseService
 {
@@ -65,7 +65,7 @@ class DatabaseService implements IDatabaseService
     protected getDriverCtorByName(driverName: TDatabaseDriver): IDatabaseDriverCtor
     {
         if(driverName === 'mongodb') {
-            return MongoDBDriver;
+            return MongoDB;
         }
 
         throw new Error(`Invalid database driver: ${driverName}`);

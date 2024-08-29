@@ -2,7 +2,7 @@ import 'tsconfig-paths/register';
 
 import appConfig from '@src/config/app';
 import Kernel from "@src/core/Kernel";
-import { App } from './core/services/App';
+import { App } from '@src/core/services/App';
 
 (async () => {
     require('dotenv').config();
@@ -18,4 +18,5 @@ import { App } from './core/services/App';
 
     // add your tinkers below
 
-})();
+
+})(); 

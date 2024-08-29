@@ -1,5 +1,5 @@
-import { IDatabaseDriver } from "../interfaces/IDatabaseDriver";
-import { IDatabaseDocument, IDatabaseQuery } from "../interfaces/IDatabaseQuery";
+import { IDatabaseDriver } from "@src/core/domains/database/interfaces/IDatabaseDriver";
+import { IDatabaseDocument, IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
 
 abstract class DatabaseQuery implements IDatabaseQuery
 {

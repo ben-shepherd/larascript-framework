@@ -1,13 +1,13 @@
 import { BulkWriteOptions, ObjectId, UpdateOptions } from "mongodb";
-import DatabaseQuery from "../base/DatabaseQuery";
-import { IDatabaseDocument, IDatabaseQuery } from "../interfaces/IDatabaseQuery";
-import MongoDBDriver from "../services/mongodb/MongoDBDriver";
+import DatabaseQuery from "@src/core/domains/database/base/DatabaseQuery";
+import MongoDB from "@src/core/domains/database/drivers/MongoDB";
+import { IDatabaseDocument, IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
 
 class MongoDBQuery extends DatabaseQuery
 {
-    protected driver!: MongoDBDriver;
+    protected driver!: MongoDB;
 
-    constructor(driver: MongoDBDriver) {
+    constructor(driver: MongoDB) {
         super(driver);
         this.driver = driver;
     }

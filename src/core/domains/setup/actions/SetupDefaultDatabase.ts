@@ -1,7 +1,7 @@
 import QuestionDTO from '@src/core/domains/setup/DTOs/QuestionDTO';
 import { IAction } from '@src/core/domains/setup/interfaces/IAction';
 import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand';
-import defaultCredentials from '../utils/defaultCredentials';
+import defaultCredentials from '@src/core/domains/setup/utils/defaultCredentials';
 
 class SetupDefaultDatabase implements IAction
 {
