@@ -46,7 +46,13 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @returns 
      */
     async findById(_id: string): Promise<Model | null> {
-        return await this.query().findById(_id)
+        const data = await this.query().findById(_id)
+
+        if(!data) {
+            return null
+        }
+
+        return new this.modelCtor(data)
     }
 
     /**

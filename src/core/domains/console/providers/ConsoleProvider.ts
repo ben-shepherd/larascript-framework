@@ -17,8 +17,6 @@ export default class ConsoleProvider extends BaseProvider
          * Register system provided commands
          */
         register.registerAll([
-            // SetupCommand,
-            // GenerateJwtSecret,
             WorkerCommand
         ])
 
