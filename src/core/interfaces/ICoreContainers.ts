@@ -4,6 +4,7 @@ import { IMongoDB } from '@src/core/domains/database/exceptions/mongodb/IMongoDB
 import { IEventService } from '@src/core/domains/events/interfaces/IEventService';
 import IExpress from '@src/core/domains/express/interfaces/IExpress';
 import IValidatorService from '@src/core/domains/validator/interfaces/IValidatorService';
+import { IDatabaseService } from '../domains/database/interfaces/IDatabaseService';
 
 export interface ICoreContainers {
     [key: string]: any;
@@ -22,6 +23,7 @@ export interface ICoreContainers {
      * Provided by '@src/core/domains/database/mongodb/providers/MongoDBProvider'
      */
     mongodb: IMongoDB;
+    db: IDatabaseService;
     /**
      * Express web server Service
      * Provided by '@src/core/domains/express/providers/ExpressProvider'

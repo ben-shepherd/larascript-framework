@@ -2,30 +2,29 @@ import { Db, MongoClient } from 'mongodb';
 
 import Service from '@src/core/base/Service';
 import { IMongoDB } from '@src/core/domains/database/exceptions/mongodb/IMongoDB';
-import IMongoDbConfig from '@src/core/domains/database/exceptions/mongodb/IMongoDbConfig';
+
 import MongoDBConnection from '@src/core/domains/database/services/mongodb/MongoDBConnection';
 import { IConnections } from '../../exceptions/IConnections';
 import InvalidDatabaseConnection from '../../exceptions/InvalidDatabaseConnection';
+import { IDatabaseConfigConnection } from '../../interfaces/IDatabaseConfig';
 
 /**
  * MongoDB service
  */
-export default class MongoDB extends Service<IMongoDbConfig> implements IMongoDB {
-    /**
-     * Default connection
-     */
-    private __connnection: string = 'default';
+export default class MongoDB extends Service implements IMongoDB {
+    
+    private defaultConnectionName!: string;
+    private connectionConfigs: IDatabaseConfigConnection;
+
     /**
      * Connection store
      */
-    private connections: IConnections = {} as IConnections;
+    private store: IConnections = {} as IConnections;
 
-    constructor(config: IMongoDbConfig | null) {
-        super(config);
-        
-        if(config) {
-            this.__connnection = config.connection;
-        }
+    constructor(defaultConnectionName: string, connectionConfigs: IDatabaseConfigConnection) {
+        super();
+        this.defaultConnectionName = defaultConnectionName;
+        this.connectionConfigs = connectionConfigs;
     }
 
     /**
@@ -33,33 +32,37 @@ export default class MongoDB extends Service<IMongoDbConfig> implements IMongoDB
      * Define MongoDBConnection instances for every connection available
      */
     public init(): void {
-        if(Object.keys(this.connections).length) {
+        if(Object.keys(this.store).length) {
             throw new Error('MongoDB has already been initialised')
         }
 
-        const config = this.getConfig();
+        console.log('MongoDB connections:', this.connectionConfigs);
 
-        console.log('MongoDB connections:', config);
+        for (const connectionName of Object.keys(this.connectionConfigs)) {
+            const connectionConfig = this.connectionConfigs[connectionName];
+            const uri = connectionConfig?.uri ?? '';
+            const options = connectionConfig?.options ?? {};
 
-        for (const conn of Object.keys(config?.connections ?? {})) {
-            if (!config?.connections[conn]) {
-                continue;
-            }
-
-            if(!config?.connections[conn]?.uri) {
+            if(!uri?.length) {
                 throw new InvalidDatabaseConnection('MongoDB URI is empty or not present');
             }
 
-            this.connections[conn] = new MongoDBConnection(config.connections[conn]);
+            this.store[connectionName] = new MongoDBConnection({ uri, options });
         }
     }
 
     /**
     * Attempt connection on the default connection
     */
-    public async connectDefaultConnection(): Promise<void> {
-        if (this.connections[this.__connnection] instanceof MongoClient === false) {
-            await this.connect(this.__connnection);
+    public async connectDefaultConnection(): Promise<void> {  
+        const connectionName = this.defaultConnectionName;
+
+        if(this.connectionConfigs[connectionName] === undefined) {
+            throw new InvalidDatabaseConnection(`Invalid Database Connection: ${connectionName}`);
+        }
+
+        if (this.store[connectionName] instanceof MongoClient === false) {
+            await this.connect(connectionName);
         }
     }
 
@@ -80,18 +83,18 @@ export default class MongoDB extends Service<IMongoDbConfig> implements IMongoDB
      * @param connectionName Connection name
      * @returns string
      */
-    public getConnection(connectionName: string = this.__connnection): MongoDBConnection {
-        if (this.connections[connectionName] instanceof MongoDBConnection === false) {
+    public getConnection(connectionName: string = this.defaultConnectionName): MongoDBConnection {
+        if (this.store[connectionName] instanceof MongoDBConnection === false) {
             throw new InvalidDatabaseConnection(`Invalid Database Connection: ${connectionName}`);
         }
-        return this.connections[connectionName];
+        return this.store[connectionName];
     }
 
     /**
      *  Connection handler
      */
-    public async connect(connectionName: keyof IConnections = this.__connnection): Promise<void> {
-        if (this.connections[connectionName] instanceof MongoDBConnection === false) {
+    public async connect(connectionName: keyof IConnections = this.defaultConnectionName): Promise<void> {
+        if (this.store[connectionName] instanceof MongoDBConnection === false) {
             throw new InvalidDatabaseConnection(`Invalid Database Connection: ${connectionName}`);
         }
         await this.getConnection(connectionName as string).connect();
@@ -102,8 +105,8 @@ export default class MongoDB extends Service<IMongoDbConfig> implements IMongoDB
      * @param connectionName 
      * @returns 
      */
-    public getClient(connectionName: keyof IConnections = this.__connnection): MongoClient {
-        if (this.connections[connectionName] instanceof MongoDBConnection === false) {
+    public getClient(connectionName: keyof IConnections = this.defaultConnectionName): MongoClient {
+        if (this.store[connectionName] instanceof MongoDBConnection === false) {
             throw new InvalidDatabaseConnection(`Invalid Database Connection: ${connectionName}`);
         }
         return this.getConnection(connectionName as string)?.getClient();
@@ -114,8 +117,8 @@ export default class MongoDB extends Service<IMongoDbConfig> implements IMongoDB
      * @param connectionName 
      * @returns 
      */
-    public getDb(connectionName: string = this.__connnection): Db {
-        if (this.connections[connectionName] instanceof MongoDBConnection === false) {
+    public getDb(connectionName: string = this.defaultConnectionName): Db {
+        if (this.store[connectionName] instanceof MongoDBConnection === false) {
             throw new InvalidDatabaseConnection(`Invalid Database Connection: ${connectionName}`);
         }
         return this.getConnection(connectionName).getDb();

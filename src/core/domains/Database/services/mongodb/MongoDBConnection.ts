@@ -1,14 +1,14 @@
 import { Db, MongoClient } from 'mongodb';
 
 import Service from '@src/core/base/Service';
-import { Connection } from '@src/core/domains/database/exceptions/mongodb/IMongoDbConfig';
-import IMongoDBConnection from '@src/core/domains/database/exceptions/mongodb/IMongoDBConnection';
+import { IMongoDBConfig } from '../../exceptions/mongodb/IMongoDBConfig';
+import IMongoDBConnection from '../../exceptions/mongodb/IMongoDBConnection';
 
-export default class MongoDBConnection extends Service<Connection> implements IMongoDBConnection {
+export default class MongoDBConnection extends Service<IMongoDBConfig> implements IMongoDBConnection {
     private client: MongoClient;
     private db!: Db;
 
-    constructor({ uri, options }: Connection) {
+    constructor({ uri, options }: IMongoDBConfig) {
         super({ uri, options });
         this.client = new MongoClient(uri, options);
     }

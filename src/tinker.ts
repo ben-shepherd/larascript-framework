@@ -2,10 +2,9 @@ import 'tsconfig-paths/register';
 
 import appConfig from '@src/config/app';
 import Kernel from "@src/core/Kernel";
-import { App } from '@src/core/services/App';
-import defaultCredentials from './core/domains/setup/utils/defaultCredentials';
+import { App } from './core/services/App';
 
-(async() => {
+(async () => {
     require('dotenv').config();
 
     await Kernel.boot(appConfig, {})
@@ -17,7 +16,11 @@ import defaultCredentials from './core/domains/setup/utils/defaultCredentials';
     const cnsl = App.container('console');
     const validator = App.container('validate')
 
+    process.on('unhandledRejection', (reason, p) => {
+        console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+    });
+
     // add your tinkers below
-    
-    console.log(defaultCredentials.extractDefaultMongoDBCredentials());
+
+
 })();

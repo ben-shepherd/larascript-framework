@@ -5,7 +5,7 @@ services:
     depends_on:
       - mongodb
     environment:
-      - MONGODB_URI=mongodb://root:example@mongodb:27017/your_database_name?authSource=admin
+      - MONGODB_URI=mongodb://root:example@localhost:27017/app?authSource=admin
 
   mongodb:
     image: mongo:latest

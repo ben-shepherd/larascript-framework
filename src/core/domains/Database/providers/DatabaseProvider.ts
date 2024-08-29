@@ -2,7 +2,7 @@ import databaseConfig from '@src/config/database';
 import BaseProvider from "@src/core/base/Provider";
 import { IDatabaseConfig } from '@src/core/domains/database/interfaces/IDatabaseConfig';
 import { App } from "@src/core/services/App";
-import MongoDB from '../services/mongodb/MongoDB';
+import DatabaseService from '../services/DatabaseService';
 
 export default class DatabaseProvider extends BaseProvider
 {
@@ -10,17 +10,32 @@ export default class DatabaseProvider extends BaseProvider
 
     public async register(): Promise<void>
     {
-        this.log('Registering DatabaseProvider', this.config.mongodb);
-        
-        App.setContainer('mongodb', new MongoDB(this.config.mongodb))
+        this.log('Registering DatabaseProvider');
+
+        // mock MongoDB
+        const mongodbConnections = {}
+
+        for(const connectionName of Object.keys(this.config.connections)) {
+            const connectionConfig = this.config.connections[connectionName];
+
+            if(connectionConfig.driver === 'mongodb') {
+                mongodbConnections[connectionName] = connectionConfig
+            }
+        }
+
+        //App.setContainer('mongodb', new MongoDB(this.config.defaultConnectionName, mongodbConnections))
+
+        const db = new DatabaseService(this.config);
+        await db.boot();
+        App.setContainer('db', db)
     }
 
     public async boot(): Promise<void>
     {
         this.log('Booting DatabaseProvider');
 
-        await this.bootMongoDB();
-        await this.bootPostgres();
+        //await this.bootMongoDB();
+        //await this.bootPostgres();
     }
 
     /**
