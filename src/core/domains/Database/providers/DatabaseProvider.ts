@@ -12,19 +12,6 @@ export default class DatabaseProvider extends BaseProvider
     {
         this.log('Registering DatabaseProvider');
 
-        // mock MongoDB
-        const mongodbConnections = {}
-
-        for(const connectionName of Object.keys(this.config.connections)) {
-            const connectionConfig = this.config.connections[connectionName];
-
-            if(connectionConfig.driver === 'mongodb') {
-                mongodbConnections[connectionName] = connectionConfig
-            }
-        }
-
-        //App.setContainer('mongodb', new MongoDB(this.config.defaultConnectionName, mongodbConnections))
-
         const db = new DatabaseService(this.config);
         await db.boot();
         App.setContainer('db', db)
@@ -43,10 +30,10 @@ export default class DatabaseProvider extends BaseProvider
      */
     public async bootMongoDB()
     {
-        const mongodb = App.container('mongodb');
-        mongodb.init();
-        await mongodb.connectDefaultConnection();
-        await mongodb.connectKeepAlive()
+        // const mongodb = App.container('mongodb');
+        // mongodb.init();
+        // await mongodb.connectDefaultConnection();
+        // await mongodb.connectKeepAlive()
     }
 
     /**

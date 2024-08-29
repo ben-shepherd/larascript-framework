@@ -1,4 +1,4 @@
-import { Db, ObjectId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 
 
 import HasMany, { HasManyOptions } from '@src/core/domains/database/relationships/HasMany';
@@ -8,6 +8,7 @@ import { Dates, GetDataOptions, IModel } from '@src/core/interfaces/IModel';
 import IModelData from '@src/core/interfaces/IModelData';
 import { App } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
+import { IDatabaseQuery } from '../domains/database/interfaces/IDatabaseQuery';
 import BelongsTo, { BelongsToOptions } from '../domains/database/relationships/BelongsTo';
 
 export default abstract class Model<Data extends IModelData> extends WithObserver<Data> implements IModel<Data> {
@@ -64,12 +65,9 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
         this.collection = Str.plural(Str.startLowerCase(this.constructor.name));
     }
 
-    /**
-     * Get database connection
-     * @returns 
-     */
-    getDb(): Db {
-        return App.container('mongodb').getDb(this.connection);
+
+    getQuery(): IDatabaseQuery {
+        return App.container('db').query(this.connection).table(this.collection);
     }
 
     /**
@@ -167,8 +165,7 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
     async refresh(): Promise<Data | null> {
         if (!this.data) return null;
 
-        this.data = await this.getDb().collection(this.collection)
-            .findOne({ [this.primaryKey]: this.getId() }) as Data | null ?? null;
+        this.data = await this.getQuery().findOne({ [this.primaryKey]: this.getId() })
 
         return this.data
     }
@@ -181,10 +178,10 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      */
     async update(): Promise<void> {
         if (!this.getId()) return;
+        if(!this.data) return;
 
-        await this.getDb()
-            .collection(this.collection)
-            .updateOne({ [this.primaryKey]: this.getId() }, { $set: this.data as IModelData });
+        await this.getQuery()
+            .updateOne(this.data)
     }
 
     /**
@@ -199,9 +196,8 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
             this.data = this.observeData('creating', this.data)
             this.setTimestamp('createdAt')
             this.setTimestamp('updatedAt')
-            await this.getDb()
-                .collection(this.collection)
-                .insertOne(this.data);
+
+            await this.getQuery().insertOne(this.data);
             await this.refresh();
 
             this.data = this.observeData('created', this.data)
@@ -223,7 +219,7 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
     async delete(): Promise<void> {
         if (!this.data) return;
         this.data = this.observeData('deleting', this.data)
-        await this.getDb().collection(this.collection).deleteOne({ [this.primaryKey]: this.getId() })
+        await this.getQuery().deleteOne(this.data);
         this.data = null
         this.observeData('deleting', this.data)
     }
@@ -235,7 +231,7 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      * @return {Promise<ForeignModel | null>} A Promise that resolves to the related foreign model instance, or null if no related model is found.
      */
     async belongsTo<ForeignModel extends IModel = IModel>(options: BelongsToOptions): Promise<ForeignModel | null> {
-        const data = await new BelongsTo().handle(options);
+        const data = await new BelongsTo().handle(this.connection, options);
 
         if (!data) {
             return null
@@ -251,7 +247,7 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      * @return {Promise<ForeignModel[]>} A Promise that resolves to an array of related foreign model instances.
      */
     public async hasMany<ForeignModel extends IModel<any> = IModel<any>>(options: HasManyOptions): Promise<ForeignModel[]> {
-        const data = await new HasMany().handle(options);
+        const data = await new HasMany().handle(this.connection, options);
 
         if (!data) {
             return []

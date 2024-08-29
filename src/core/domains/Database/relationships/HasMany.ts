@@ -13,7 +13,7 @@ export type HasManyOptions = {
 
 export default class HasMany 
 { 
-    public async handle({
+    public async handle(connection: string, {
         localModel,
         localKey,
         foreignModelCtor,
@@ -30,11 +30,10 @@ export default class HasMany
             })
         }
 
-        return await App.container('mongodb')
-            .getDb()
-            ?.collection(new foreignModelCtor().collection)
-            .find(schema)
-            .toArray()
+        return await App.container('db')
+            .query(connection) 
+            .table(new foreignModelCtor().collection)
+            .findMany(schema)
     }
 
     /**

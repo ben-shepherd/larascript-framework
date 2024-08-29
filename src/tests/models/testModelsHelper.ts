@@ -5,7 +5,7 @@ const cleanupCollections = async () => {
     const colletionsToDrop = ['tests', 'testsWorker'];
 
     for (const collection of colletionsToDrop) {
-        await App.container('mongodb').getDb().collection(collection).deleteMany({})
+        await App.container('db').query().table(collection).truncate();
     }
 }
 

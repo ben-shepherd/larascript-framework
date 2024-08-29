@@ -53,6 +53,15 @@ class DatabaseService implements IDatabaseService
         }
     }
 
+    public driver(connectionName: string = this.config.defaultConnectionName): IDatabaseDriver
+    {
+        if(!this.store[connectionName]) {
+            throw new Error(`Invalid database connection: ${connectionName}`);
+        }
+
+        return this.store[connectionName];
+    }
+
     protected getDriverCtorByName(driverName: TDatabaseDriver): IDatabaseDriverCtor
     {
         if(driverName === 'mongodb') {

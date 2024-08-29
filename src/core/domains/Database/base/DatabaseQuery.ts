@@ -1,8 +1,7 @@
-import { BulkWriteOptions, UpdateOptions } from "mongodb";
 import { IDatabaseDriver } from "../interfaces/IDatabaseDriver";
 import { IDatabaseDocument, IDatabaseQuery } from "../interfaces/IDatabaseQuery";
 
-class DatabaseQuery implements IDatabaseQuery
+abstract class DatabaseQuery implements IDatabaseQuery
 {
     protected driver!: IDatabaseDriver;
     protected tableName!: string;
@@ -18,6 +17,10 @@ class DatabaseQuery implements IDatabaseQuery
         return this;
     } 
 
+    findById<T>(id: string): Promise<T | null> {
+        throw new Error("Method not implemented.");
+    }
+
     findOne<T>(filter?: object): Promise<T | null> {
         throw new Error("Method not implemented.");
     }
@@ -30,15 +33,15 @@ class DatabaseQuery implements IDatabaseQuery
         throw new Error("Method not implemented.");
     }
 
-    insertMany<T>(docs: IDatabaseDocument[], options?: BulkWriteOptions): Promise<T> {
+    insertMany<T>(docs: IDatabaseDocument[]): Promise<T> {
         throw new Error("Method not implemented.");
     }
 
-    updateOne<T>(doc: IDatabaseDocument, options?: UpdateOptions): Promise<T> {
+    updateOne<T>(doc: IDatabaseDocument): Promise<T> {
         throw new Error("Method not implemented.");
     }
 
-    updateMany<T>(docs: IDatabaseDocument[], options?: UpdateOptions): Promise<T> {
+    updateMany<T>(docs: IDatabaseDocument[]): Promise<T> {
         throw new Error("Method not implemented.");
     }
 
@@ -47,6 +50,10 @@ class DatabaseQuery implements IDatabaseQuery
     }
 
     deleteMany<T>(filter: object): Promise<T> {
+        throw new Error("Method not implemented.");
+    }
+
+    truncate(): Promise<void> {
         throw new Error("Method not implemented.");
     }
 }

@@ -1,10 +1,11 @@
-import { Collection, FindOptions, ObjectId } from 'mongodb';
+import { FindOptions } from 'mongodb';
 
 import ModelNotFound from '@src/core/exceptions/ModelNotFound';
 import { IModel, ModelConstructor } from '@src/core/interfaces/IModel';
 import IModelData from '@src/core/interfaces/IModelData';
 import { IRepository } from '@src/core/interfaces/IRepository';
 import { App } from '@src/core/services/App';
+import { IDatabaseQuery } from '../domains/database/interfaces/IDatabaseQuery';
 
 export default class Repository<Model extends IModel> implements IRepository<Model> {
     public modelCtor: ModelConstructor<Model>;
@@ -18,10 +19,11 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
     }
 
     /**
-     * Get the MongoDB Collection
+     * Get the query
+     * @returns 
      */
-    async collection(): Promise<Collection> {
-        return App.container('mongodb').getDb().collection(this.collectionName)
+    query(): IDatabaseQuery {
+        return App.container('db').query(this.connection).table(this.collectionName)
     }
     
     /**
@@ -46,12 +48,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @returns 
      */
     async findById(_id: string): Promise<Model | null> {
-        if(!ObjectId.isValid(_id)) {
-            return null
-        }
-        
-        const data = await App.container('mongodb').getDb(this.connection).collection(this.collectionName).findOne({ _id: new ObjectId(_id) }) as IModelData | null;
-        return data ? new this.modelCtor(data) : null;
+        return await this.query().findById(_id)
     }
 
     /**

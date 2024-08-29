@@ -1,5 +1,5 @@
-import { Collection } from "mongodb";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
+import { IDatabaseQuery } from "../domains/database/interfaces/IDatabaseQuery";
 
 export type RepositoryConstructor<
     Model extends IModel = IModel,
@@ -21,10 +21,12 @@ export interface IRepository<Model extends IModel = IModel> {
      * Model Constructor
      */
     modelCtor: ModelConstructor<Model>;
+    
     /**
-     * Get the MongoDB Collection
+     * Get the Database Query
      */
-    collection(): Promise<Collection>    
+    query(): IDatabaseQuery;
+
     /**
      * Find or fail if no document found
      * @param filter 

@@ -13,7 +13,7 @@ export type BelongsToOptions = {
 
 export default class BelongsTo 
 { 
-    public async handle({
+    public async handle(connection: string, {
         localModel,
         localKey,
         foreignModelCtor,
@@ -32,9 +32,9 @@ export default class BelongsTo
             [foreignKey]: localKeyValue
          }
 
-        return await App.container('mongodb')
-            .getDb()
-            .collection(new foreignModelCtor().collection)
-            .findOne(schema);
+        return App.container('db')
+        .query(connection)
+        .table(new foreignModelCtor().collection)
+        .findOne(schema)
     }
 }   
