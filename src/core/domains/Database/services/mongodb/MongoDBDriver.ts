@@ -8,15 +8,17 @@ import MongoDBQuery from '../../query/MongoDBQuery';
 export default class MongoDBDriver implements IDatabaseDriver {
     protected client!: MongoClient;
     protected db!: Db;
-
+ 
     constructor({ uri, options = {} }: IMongoDBConfig) {
         this.client = new MongoClient(uri, options);
     }
-    public getClient(): MongoClient {
+    public getClient(): MongoClient 
+    {
         throw this.client;
     }
 
-    public async connect(): Promise<void> {
+    public async connect(): Promise<void> 
+    {
         if(this.isConnected()) {
             return;
         }
@@ -30,11 +32,13 @@ export default class MongoDBDriver implements IDatabaseDriver {
         return new MongoDBQuery(this);
     }
 
-    public isConnected(): boolean {
+    public isConnected(): boolean 
+    {
         return this.db instanceof Db;
     }
 
-    public getDb(): Db {
+    public getDb(): Db 
+    {
         return this.db;
     }
 }

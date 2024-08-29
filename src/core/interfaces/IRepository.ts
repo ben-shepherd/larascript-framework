@@ -50,5 +50,5 @@ export interface IRepository<Model extends IModel = IModel> {
      * @param query 
      * @returns 
      */
-    findMany: (query: object) => Promise<Model[]>
+    findMany: (query: object, options?: object) => Promise<Model[]>
 }

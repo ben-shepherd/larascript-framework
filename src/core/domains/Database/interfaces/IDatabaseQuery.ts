@@ -4,8 +4,8 @@ export interface IDatabaseQuery {
 
     
     findById<T>(id: string): Promise<T | null>;
-    findOne<T>(filter?: object): Promise<T | null>;
-    findMany<T>(filter?: object): Promise<T[]>;
+    findOne<T>(filter?: object, ...args: any[]): Promise<T | null>;
+    findMany<T>(filter?: object, ...args: any[]): Promise<T[]>;
     
     insertOne<T>(doc: IDatabaseDocument, ...args: any[]): Promise<T>;
     insertMany<T>(docs: IDatabaseDocument[], ...args: any[]): Promise<T>;
