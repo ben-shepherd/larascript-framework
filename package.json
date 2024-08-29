@@ -13,7 +13,7 @@
     "test": "jest --runInBand",
     "setup-app": "ts-node -r tsconfig-paths/register ./src/setup-app.ts",
     "setup": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register ./src/setup.ts",
-    "up": "docker-compose -f docker-compose.base.yml -f docker-compose.mongodb.yml up -d"
+    "up": "docker-compose -f docker-compose.base.yml -f docker-compose.mongodb.yml -f docker-compose.postgres.yml  up -d"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -24,11 +24,8 @@
     "glob": "^11.0.0",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
-    "readline": "^1.3.0"
-  },
-  "optionalDependencies": {
     "mongodb": "^6.8.0",
-    "pg": "^8.12.0"
+    "readline": "^1.3.0"
   },
   "devDependencies": {
     "@jest/test-sequencer": "^29.7.0",

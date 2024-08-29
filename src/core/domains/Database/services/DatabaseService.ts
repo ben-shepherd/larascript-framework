@@ -7,15 +7,28 @@ import { TDatabaseDriver } from "@src/core/domains/database/types/DatabaseDriver
 
 class DatabaseService implements IDatabaseService
 {
+    /**
+     * Database config
+     */
     protected config!: IDatabaseConfig;
 
+    /**
+     * Stores all database connections
+     */
     protected store: Record<string, IDatabaseDriver> = {};
 
+    /**
+     * @param config 
+     */
     constructor(config: IDatabaseConfig)
     {
         this.config = config;
     }
 
+    /**
+     * Adds all connections to the store
+     * Connects databases
+     */
     public async boot()
     {
         Object.keys(this.config.connections).forEach((connectionName) => {
@@ -30,11 +43,20 @@ class DatabaseService implements IDatabaseService
         await this.connectKeepAlive();
     }        
 
+    /**
+     * Get the query service
+     * 
+     * @param connectionName 
+     * @returns 
+     */
     public query(connectionName: string = this.config.defaultConnectionName): IDatabaseQuery
     {
         return this.store[connectionName].query();
     }
 
+    /*
+     * Connects to the default connection 
+     */
     protected async connectDefault()
     {
         if(this.store[this.config.defaultConnectionName]) {
@@ -42,6 +64,9 @@ class DatabaseService implements IDatabaseService
         }
     }
 
+    /**
+     * Connects to all keep alive connections
+     */
     protected async connectKeepAlive()
     { 
         const connections = (this.config?.keepAliveConnections ?? '').split(',');
@@ -53,6 +78,12 @@ class DatabaseService implements IDatabaseService
         }
     }
 
+    /**
+     * Get the driver
+     * 
+     * @param connectionName 
+     * @returns 
+     */
     public driver(connectionName: string = this.config.defaultConnectionName): IDatabaseDriver
     {
         if(!this.store[connectionName]) {
@@ -62,6 +93,12 @@ class DatabaseService implements IDatabaseService
         return this.store[connectionName];
     }
 
+    /**
+     * Get the driver constructor by name
+     * 
+     * @param driverName 
+     * @returns 
+     */
     protected getDriverCtorByName(driverName: TDatabaseDriver): IDatabaseDriverCtor
     {
         if(driverName === 'mongodb') {

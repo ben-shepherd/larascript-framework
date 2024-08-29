@@ -1,10 +1,27 @@
 
+import { IPackageJson, IPackageJsonService } from "@src/core/interfaces/IPackageJsonService";
+import { exec } from "child_process";
 import fs from "fs";
 import path from "path";
-import { IPackageJson, IPackageJsonService } from "@src/core/interfaces/IPackageJsonService";
+import util from 'util';
+
+const execPromise = util.promisify(exec);
 
 export default class PackageJsonService implements IPackageJsonService {
+
     packageJsonPath = path.resolve('@src/../', 'package.json')
+
+    async installPackage(name: string) {
+        const cmd = `yarn add ${name}`
+        console.log('Running command: ', cmd)
+        await execPromise(cmd);
+    }
+
+    async uninstallPackage(name: string) {
+        const cmd = `yarn remove ${name}`
+        console.log('Running command: ', cmd)
+        await execPromise(cmd);
+    }
 
     /**
      * Get package json
@@ -36,7 +53,7 @@ export default class PackageJsonService implements IPackageJsonService {
      * @param filePath 
      * @returns 
      */
-    public readFileContents = (filePath: string= this.packageJsonPath): Promise<string> => {
+    readFileContents = (filePath: string= this.packageJsonPath): Promise<string> => {
         return new Promise((resolve, reject) => {
             fs.readFile(filePath, 'utf8', (err, data) => {
                 if (err) {

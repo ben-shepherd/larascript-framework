@@ -1,9 +1,10 @@
 import CopyEnvExampleAction from "@src/core/domains/setup/actions/CopyEnvExampleAction";
 import GenerateJwtSecretAction from "@src/core/domains/setup/actions/GenerateJwtSecretAction";
-import { QuestionIDs } from "@src/core/domains/setup/consts/QuestionConsts";
-import QuestionDTO from "@src/core/domains/setup/DTOs/QuestionDTO";
 import SetupDefaultDatabase from "@src/core/domains/setup/actions/SetupDefaultDatabase";
 import SetupDockerDatabases from "@src/core/domains/setup/actions/SetupDockerDatabases";
+import { QuestionIDs } from "@src/core/domains/setup/consts/QuestionConsts";
+import QuestionDTO from "@src/core/domains/setup/DTOs/QuestionDTO";
+import InstallDatabasePackages from "../actions/InstallDatabasePackages";
 
 const buildQuestionDTOs = (): QuestionDTO[] => {
     return [
@@ -25,7 +26,7 @@ const buildQuestionDTOs = (): QuestionDTO[] => {
             previewText: 'Choose Database Provider To Install',
             defaultValue: 'all',
             acceptedAnswers: ['all', 'mongodb', 'postgres', ''],
-            actionCtors: [SetupDockerDatabases, SetupDefaultDatabase]
+            actionCtors: [SetupDockerDatabases, SetupDefaultDatabase, InstallDatabasePackages]
         }),
         new QuestionDTO({
             id: QuestionIDs.selectDefaultDb,
@@ -39,6 +40,7 @@ const buildQuestionDTOs = (): QuestionDTO[] => {
                 answerIncludes: ['all']
             }
         }),
+        // todo: Add question for enabling express
         new QuestionDTO({
             id: QuestionIDs.appPort,
             question: 'What port should the app listen on? This step will overwrite your .env file.',

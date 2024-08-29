@@ -1,8 +1,8 @@
 import databaseConfig from '@src/config/database';
 import BaseProvider from "@src/core/base/Provider";
 import { IDatabaseConfig } from '@src/core/domains/database/interfaces/IDatabaseConfig';
-import { App } from "@src/core/services/App";
 import DatabaseService from '@src/core/domains/database/services/DatabaseService';
+import { App } from "@src/core/services/App";
 
 export default class DatabaseProvider extends BaseProvider
 {
@@ -20,27 +20,5 @@ export default class DatabaseProvider extends BaseProvider
     public async boot(): Promise<void>
     {
         this.log('Booting DatabaseProvider');
-
-        //await this.bootMongoDB();
-        //await this.bootPostgres();
-    }
-
-    /**
-     * Provide MongoDB Service
-     */
-    public async bootMongoDB()
-    {
-        // const mongodb = App.container('mongodb');
-        // mongodb.init();
-        // await mongodb.connectDefaultConnection();
-        // await mongodb.connectKeepAlive()
-    }
-
-    /**
-     * Provide Postgres Service
-     */
-    public async bootPostgres()
-    {
-
     }
 }

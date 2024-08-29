@@ -3,6 +3,7 @@ import { IAction } from '@src/core/domains/setup/interfaces/IAction';
 import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand';
 import { IPackageJsonService } from '@src/core/interfaces/IPackageJsonService';
 import PackageJsonService from '@src/core/services/PackageJsonService';
+import DatabaseDriverConsts from '../../database/consts/DatabaseDriverConsts';
 
 class SetupDockerDatabases implements IAction
 {
@@ -39,19 +40,17 @@ class SetupDockerDatabases implements IAction
         const appendDbType = (db: string) => `-f docker-compose.${db}.yml `;
 
         if(dbType === 'all') {
-            composeScriptsToInclude += appendDbType('mongodb');
-            composeScriptsToInclude += appendDbType('postgres');
+            Object.keys(DatabaseDriverConsts).forEach((type) => {
+                composeScriptsToInclude += appendDbType(type);
+            })
         }
-        else if(dbType === 'mongodb') {
-            composeScriptsToInclude += appendDbType('mongodb');
-        }
-        else if(dbType === 'postgres') {
-            composeScriptsToInclude += appendDbType('postgres');
+        else {
+            composeScriptsToInclude = appendDbType(dbType);
         }
 
         packageJson.scripts.up = `docker-compose -f docker-compose.base.yml ${composeScriptsToInclude} up -d`;
 
-        this.packageJson.writeFileContents(JSON.stringify(packageJson, null, 2));
+        await this.packageJson.writeFileContents(JSON.stringify(packageJson, null, 2));
     }
 
 }
