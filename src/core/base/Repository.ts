@@ -1,9 +1,9 @@
 
+import { IDatabaseQuery } from '@src/core/domains/database/interfaces/IDatabaseQuery';
 import ModelNotFound from '@src/core/exceptions/ModelNotFound';
 import { IModel, ModelConstructor } from '@src/core/interfaces/IModel';
 import { IRepository } from '@src/core/interfaces/IRepository';
 import { App } from '@src/core/services/App';
-import { IDatabaseQuery } from '@src/core/domains/database/interfaces/IDatabaseQuery';
 
 export default class Repository<Model extends IModel> implements IRepository<Model> {
     public modelCtor: ModelConstructor<Model>;
@@ -26,7 +26,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
     
     /**
      * Find or fail if no document found
-     * @param _id 
+     * @param filter
      * @returns 
      * @throws ModelNotFound
      */
@@ -41,12 +41,12 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
     }
 
     /**
-     * Find document by _id
-     * @param _id 
+     * Find document by id
+     * @param id 
      * @returns 
      */
-    async findById(_id: string): Promise<Model | null> {
-        const data = await this.query().findById(_id)
+    async findById(id: string): Promise<Model | null> {
+        const data = await this.query().findById(id)
 
         if(!data) {
             return null

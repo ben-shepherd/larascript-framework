@@ -24,7 +24,7 @@ class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
         return this.belongsTo<IUserModel>({
             localKey: 'userId',
             localModel: this,
-            foreignKey: '_id',
+            foreignKey: 'id',
             foreignModelCtor: User
         })
     }   

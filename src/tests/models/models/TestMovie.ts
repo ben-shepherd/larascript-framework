@@ -1,7 +1,8 @@
 import Model from "@src/core/base/Model";
+import IModelData from "@src/core/interfaces/IModelData";
 import { TestAuthorModel } from "@src/tests/models/models/TestAuthor";
 
-export type TestMovieModelData = {
+export interface TestMovieModelData extends IModelData {
     authorId?: string;
     name?: string;
     yearReleased?: string;
@@ -21,7 +22,7 @@ export class TestMovieModel extends Model<TestMovieModelData> {
         return this.belongsTo({
             localKey: 'authorId',
             localModel: this,
-            foreignKey: '_id',
+            foreignKey: 'id',
             foreignModelCtor: TestAuthorModel
         })
     }
@@ -30,7 +31,7 @@ export class TestMovieModel extends Model<TestMovieModelData> {
         return this.belongsTo({
             localKey: 'authorId',
             localModel: this,
-            foreignKey: '_id',
+            foreignKey: 'id',
             foreignModelCtor: TestAuthorModel,
             filters: {
                 name

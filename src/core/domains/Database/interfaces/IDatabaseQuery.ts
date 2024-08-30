@@ -8,7 +8,7 @@ export interface IDatabaseQuery {
     findMany<T>(filter?: object, ...args: any[]): Promise<T[]>;
     
     insertOne<T>(doc: IDatabaseDocument, ...args: any[]): Promise<T>;
-    insertMany<T>(docs: IDatabaseDocument[], ...args: any[]): Promise<T>;
+    insertMany<T>(docs: IDatabaseDocument[], ...args: any[]): Promise<T[]>;
     
     updateOne<T>(doc: IDatabaseDocument, ...args: any[]): Promise<T>;
     updateMany<T>(docs: IDatabaseDocument[], ...args: any[]): Promise<T>;
@@ -20,6 +20,6 @@ export interface IDatabaseQuery {
 }
 
 export interface IDatabaseDocument {
-    _id?: any;
+    id?: any;
     [key: string]: any;
 }

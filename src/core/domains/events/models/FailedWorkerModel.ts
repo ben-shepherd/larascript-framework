@@ -1,8 +1,7 @@
 import Model from "@src/core/base/Model";
-import { ObjectId } from "mongodb";
+import IModelData from "@src/core/interfaces/IModelData";
 
-export interface FailedWorkerModelData {
-    _id?: ObjectId;
+export interface FailedWorkerModelData extends IModelData {
     eventName: string;
     payload: any;
     error: any;

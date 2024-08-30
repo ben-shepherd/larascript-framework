@@ -1,4 +1,5 @@
 import Service from '@src/core/base/Service';
+import InvalidJWTSecret from '@src/core/domains/auth/exceptions/InvalidJWTSecret';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
 import ApiTokenFactory from '@src/core/domains/auth/factory/ApiTokenFactory';
 import JWTTokenFactory from '@src/core/domains/auth/factory/JwtTokenFactory';
@@ -12,7 +13,6 @@ import IUserRepository from '@src/core/domains/auth/interfaces/IUserRepository';
 import comparePassword from '@src/core/domains/auth/utils/comparePassword';
 import createJwt from '@src/core/domains/auth/utils/createJwt';
 import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';
-import InvalidJWTSecret from '@src/core/domains/auth/exceptions/InvalidJWTSecret';
 
 export default class AuthService extends Service<IAuthConfig> implements IAuthService {
 
@@ -132,7 +132,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
     async attemptCredentials(email: string, password: string): Promise<string> {
         const user = await this.userRepository.findOneByEmail(email) as IUserModel;
 
-        if(!user?.data?._id) {
+        if(!user?.data?.id) {
             throw new UnauthorizedError()
         }
 

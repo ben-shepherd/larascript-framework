@@ -1,5 +1,5 @@
-import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
+import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
 export type RepositoryConstructor<
     Model extends IModel = IModel,
@@ -34,7 +34,7 @@ export interface IRepository<Model extends IModel = IModel> {
      */
     findOrFail: (filter: object) => Promise<Model>
     /**
-     * Find document by _id
+     * Find document by id
      * @param id 
      * @returns 
      */

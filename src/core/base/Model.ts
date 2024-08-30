@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 
 
 import { IDatabaseQuery } from '@src/core/domains/database/interfaces/IDatabaseQuery';
@@ -17,7 +16,7 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
     public connection: string = 'default';
 
     // Primary identifier
-    public primaryKey: string = '_id';
+    public primaryKey: string = 'id';
 
     // The MongoDB document
     public data: Data | null;
@@ -73,19 +72,17 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
     /**
      * Returns the ObjectId associated with the primary key of the Model instance, or undefined if the primary key is not set.
      *
-     * @return {ObjectId | undefined} The ObjectId associated with the primary key, or undefined if the primary key is not set.
+     * @return {string | undefined} The Id associated with the primary key, or undefined if the primary key is not set.
      */
-    getId(): ObjectId | undefined {
-        if (!(this.data?._id instanceof ObjectId)) {
-            return undefined
-        }
-        return this.data?._id
+    getId(): string | undefined {
+        return this.data?.[this.primaryKey];
     }
 
     /**
-     * Returns the ObjectId associated with the primary key of the Model instance, or undefined if the primary key is not set.
-     *
-     * @return {ObjectId | undefined} The ObjectId associated with the primary key, or undefined if the primary key is not set.
+     * Retrieves the value of a specific attribute in the model's data object.
+     * 
+     * @param key 
+     * @returns 
      */
     getAttribute<K extends keyof Data = keyof Data>(key: K): Data[K] | null {
         return this.data?.[key] ?? null;
@@ -163,9 +160,11 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      * @return {Promise<Data | null>} The updated data of the model or null if no data is available.
      */
     async refresh(): Promise<Data | null> {
-        if (!this.data) return null;
+        const id = this.getId();
 
-        this.data = await this.getQuery().findOne({ [this.primaryKey]: this.getId() })
+        if (!id) return null;
+
+        this.data = await this.getQuery().findById(id)
 
         return this.data
     }
@@ -197,7 +196,7 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
             this.setTimestamp('createdAt')
             this.setTimestamp('updatedAt')
 
-            await this.getQuery().insertOne(this.data);
+            this.data = await this.getQuery().insertOne(this.data);
             await this.refresh();
 
             this.data = this.observeData('created', this.data)

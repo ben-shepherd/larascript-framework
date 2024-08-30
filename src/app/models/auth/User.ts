@@ -41,7 +41,7 @@ export default class User extends Model<IUserData> implements IUserModel {
     {
         return this.hasMany({
             localModel: this,
-            localKey: '_id',
+            localKey: 'id',
             foreignKey: 'userId',
             foreignModelCtor: ApiToken
         })    

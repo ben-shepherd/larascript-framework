@@ -1,7 +1,8 @@
 import Model from "@src/core/base/Model";
+import IModelData from "@src/core/interfaces/IModelData";
 import { TestMovieModel } from "@src/tests/models/models/TestMovie";
 
-export type TestAuthorModelData = {
+export interface TestAuthorModelData extends IModelData {
     name: string
 }
 export class TestAuthorModel extends Model<TestAuthorModelData> {
@@ -15,7 +16,7 @@ export class TestAuthorModel extends Model<TestAuthorModelData> {
 
     public async movies(): Promise<TestMovieModel[]> {
         return this.hasMany({
-            localKey: '_id',
+            localKey: 'id',
             localModel: this,
             foreignKey: 'authorId',
             foreignModelCtor: TestMovieModel
@@ -24,7 +25,7 @@ export class TestAuthorModel extends Model<TestAuthorModelData> {
 
     public async moviesFromYear(year: number): Promise<TestMovieModel[]> {
         return this.hasMany({
-            localKey: '_id',
+            localKey: 'id',
             localModel: this,
             foreignKey: 'authorId',
             foreignModelCtor: TestMovieModel,

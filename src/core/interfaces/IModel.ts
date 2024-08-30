@@ -1,9 +1,8 @@
+import { IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
+import { BelongsToOptions } from "@src/core/domains/database/relationships/BelongsTo";
 import { HasManyOptions } from "@src/core/domains/database/relationships/HasMany";
 import IWithObserve from "@src/core/domains/observer/interfaces/IWithObserve";
 import IModelData from "@src/core/interfaces/IModelData";
-import { ObjectId } from "mongodb";
-import { IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
-import { BelongsToOptions } from "@src/core/domains/database/relationships/BelongsTo";
 
 export type GetDataOptions = {excludeGuarded: boolean}
 
@@ -24,7 +23,7 @@ export interface IModel<Data extends IModelData = IModelData> extends IWithObser
     timestamps: boolean;
     observeProperties: Record<string, string>;
     getQuery(): IDatabaseQuery;
-    getId(): ObjectId | undefined;
+    getId(): string | undefined;
     setAttribute(key: keyof Data, value: any): void;
     getAttribute(key: keyof Data): any;
     setTimestamp(dateTimeField: string, value: Date): void;

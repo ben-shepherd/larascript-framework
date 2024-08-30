@@ -1,8 +1,7 @@
 import Model from "@src/core/base/Model";
-import { ObjectId } from "mongodb";
+import IModelData from "@src/core/interfaces/IModelData";
 
-export interface WorkerModelData {
-    _id?: ObjectId,
+export interface WorkerModelData extends IModelData {
     queueName: string;
     eventName: string;
     payload: any;

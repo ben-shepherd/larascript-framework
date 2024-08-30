@@ -29,19 +29,19 @@ abstract class DatabaseQuery implements IDatabaseQuery
         throw new Error("Method not implemented.");
     }
 
-    insertOne<T>(doc: IDatabaseDocument): Promise<T> {
+    insertOne<T>(document: IDatabaseDocument): Promise<T> {
         throw new Error("Method not implemented.");
     }
 
-    insertMany<T>(docs: IDatabaseDocument[]): Promise<T> {
+    insertMany<T>(documents: IDatabaseDocument[]): Promise<T[]> {
         throw new Error("Method not implemented.");
     }
 
-    updateOne<T>(doc: IDatabaseDocument): Promise<T> {
+    updateOne<T>(document: IDatabaseDocument): Promise<T> {
         throw new Error("Method not implemented.");
     }
 
-    updateMany<T>(docs: IDatabaseDocument[]): Promise<T> {
+    updateMany<T>(documents: IDatabaseDocument[]): Promise<T> {
         throw new Error("Method not implemented.");
     }
 

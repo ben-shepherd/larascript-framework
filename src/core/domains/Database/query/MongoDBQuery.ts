@@ -1,7 +1,7 @@
-import { BulkWriteOptions, ObjectId, UpdateOptions } from "mongodb";
 import DatabaseQuery from "@src/core/domains/database/base/DatabaseQuery";
 import MongoDB from "@src/core/domains/database/drivers/MongoDB";
-import { IDatabaseDocument, IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
+import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDatabaseQuery";
+import { BulkWriteOptions, ObjectId, UpdateOptions } from "mongodb";
 
 class MongoDBQuery extends DatabaseQuery
 {
@@ -12,18 +12,13 @@ class MongoDBQuery extends DatabaseQuery
         this.driver = driver;
     }
 
-    collection(coll: string): IDatabaseQuery
-    {
-        return this.table(coll)
-    }
-
     /**
-     * Normalize the id by converting it to an ObjectId
+     * Convert string id to ObjectId
      * 
      * @param id 
      * @returns 
      */
-    protected normalizeId(id: string | ObjectId): ObjectId
+    protected convertStringIdToObjectId(id: string | ObjectId): ObjectId
     {
         if(id instanceof ObjectId) {
             return id
@@ -36,19 +31,21 @@ class MongoDBQuery extends DatabaseQuery
         return new ObjectId(id)
     }
 
+
     /**
-     * Normalize the filter by normalizing _id
+     * Replaces `_id: ObjectId` with `id: string`
      * 
-     * @param filter 
+     * @param doc 
      * @returns 
      */
-    protected normalizefilter(filter: object): object
+    protected convertObjectIdToStringInDocument(doc: IDatabaseDocument): IDatabaseDocument
     {
-        if('_id' in filter && typeof filter._id === 'string') {
-            filter = { ...filter, _id: this.normalizeId(filter._id) }
+        if('_id' in doc && doc._id instanceof ObjectId) {
+            doc = { ...doc, id: doc._id.toString() }
+            delete doc._id
         }
 
-        return filter
+        return doc
     }
 
     /**
@@ -58,7 +55,7 @@ class MongoDBQuery extends DatabaseQuery
      * @returns 
      */
     async findById<T = IDatabaseDocument>(id: string): Promise<T | null> {
-        return await this.driver.getDb().collection(this.tableName).findOne({ _id: this.normalizeId(id) }) as T | null
+        return this.findOne({ _id: this.convertStringIdToObjectId(id) })
     }
 
     /**
@@ -68,7 +65,13 @@ class MongoDBQuery extends DatabaseQuery
      * @returns 
      */
     async findOne<T>(filter: object = {}): Promise<T | null> {
-        return await this.driver.getDb().collection(this.tableName).findOne(this.normalizefilter(filter)) as T | null
+        let document = await this.driver.getDb().collection(this.tableName).findOne(filter) as T | null;
+
+        if(document) {
+            document = this.convertObjectIdToStringInDocument(document) as T;
+        }
+        
+        return document
     }
 
     /**
@@ -78,28 +81,46 @@ class MongoDBQuery extends DatabaseQuery
      * @returns 
      */
     async findMany<T>(filter: object = {}): Promise<T[]> {
-        return await this.driver.getDb().collection(this.tableName).find(filter).toArray() as T[]
+        let documents = await this.driver.getDb().collection(this.tableName).find(filter).toArray() as T[];
+
+        return documents.map((d: any) => this.convertObjectIdToStringInDocument(d) as T)
     }
 
     /**
      * Insert a single document
      * 
-     * @param docs 
+     * @param document 
      * @returns 
      */
-    async insertOne<T>(docs: IDatabaseDocument): Promise<T> {
-        return await this.driver.getDb().collection(this.tableName).insertOne(docs) as T
+    async insertOne<T>(document: IDatabaseDocument): Promise<T> {
+        /**
+         * Insert the document
+         */
+        await this.driver.getDb().collection(this.tableName).insertOne(document);
+        /**
+         * After the document is inserted, MongoDB will automatically add `_id: ObjectId` to the document object.
+         * We will need to convert this to our standard `id: string` format
+         */
+        return this.convertObjectIdToStringInDocument(document) as T
     }
 
     /**
      * Insert multiple documents
      * 
-     * @param docs 
+     * @param documents 
      * @param options 
      * @returns 
      */
-    async insertMany<T>(docs: IDatabaseDocument[],  options?: BulkWriteOptions): Promise<T> {
-        return await this.driver.getDb().collection(this.tableName).insertMany(docs, options) as T;
+    async insertMany<T>(documents: IDatabaseDocument[],  options?: BulkWriteOptions): Promise<T[]> {
+        /**
+         * Insert the documents
+         */
+        await this.driver.getDb().collection(this.tableName).insertMany(documents, options);
+        /**
+         * After the document is inserted, MongoDB will automatically add `_id: ObjectId` to the document object.
+         * We will need to convert this to our standard `id: string` format
+         */
+        return documents.map((d: IDatabaseDocument) => this.convertObjectIdToStringInDocument(d) as T)
     }
 
     /**
@@ -110,7 +131,7 @@ class MongoDBQuery extends DatabaseQuery
      * @returns 
      */
     async updateOne<T>(doc: IDatabaseDocument, options?: UpdateOptions): Promise<T> {
-        return await this.driver.getDb().collection(this.tableName).updateOne({ _id: this.normalizeId(doc._id) }, { $set: doc }, options) as T
+        return await this.driver.getDb().collection(this.tableName).updateOne({ _id: this.convertStringIdToObjectId(doc.id) }, { $set: doc }, options) as T
     }
     
     /**
@@ -133,7 +154,7 @@ class MongoDBQuery extends DatabaseQuery
      * @returns 
      */
     async deleteOne<T>(doc: IDatabaseDocument): Promise<T> {
-        return await this.driver.getDb().collection(this.tableName).deleteOne({ _id: this.normalizeId(doc._id) }) as T
+        return await this.driver.getDb().collection(this.tableName).deleteOne({ _id: this.convertStringIdToObjectId(doc.id) }) as T
     }
 
     /**

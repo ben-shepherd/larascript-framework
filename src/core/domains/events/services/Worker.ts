@@ -8,7 +8,6 @@ import WorkerModel from "@src/core/domains/events/models/WorkerModel";
 import EventSubscriber from "@src/core/domains/events/services/EventSubscriber";
 import DriverOptions from "@src/core/domains/events/services/QueueDriverOptions";
 import { App } from "@src/core/services/App";
-import { ObjectId } from "mongodb";
 
 export default class Worker extends Singleton 
 {
@@ -100,10 +99,10 @@ export default class Worker extends Singleton
      * @param model 
      */
     private async deleteModel(model: WorkerModel) {
-        await App.container('mongodb')
-            .getDb()
-            .collection(new this.options.workerModelCtor().collection)
-            .deleteOne({ _id: model.getId() as ObjectId })
+        await App.container('db')
+            .query()
+            .table(new this.options.workerModelCtor().collection)
+            .deleteOne(model)
     }
 
     /**
