@@ -70,7 +70,7 @@ class ConsoleInputService implements IConsoleInputService
      * Clears the screen
      */
     clearScreen = () => {
-        //this.rl.write('\x1B[2J\x1B[0f');
+        this.rl.write('\x1B[2J\x1B[0f');
     }
 }
 
