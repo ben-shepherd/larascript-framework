@@ -1,12 +1,13 @@
 import IModelData from "@src/core/interfaces/IModelData";
 import { App } from "@src/core/services/App";
-import { IBelongsTo, IBelongsToOptions } from "../interfaces/relationships/IBelongsTo";
+import { ObjectId } from "mongodb";
+import { IBelongsTo, IBelongsToOptions } from "../../interfaces/relationships/IBelongsTo";
 
-export default class BelongsTo implements IBelongsTo
+export default class MongoDBBelongsTo implements IBelongsTo
 { 
     public async handle<T = IModelData>(connection: string, options: IBelongsToOptions): Promise<T>
     {
-        const {
+        let {
             localModel,
             localKey,
             foreignModelCtor,
@@ -15,6 +16,14 @@ export default class BelongsTo implements IBelongsTo
         } = options
 
         let localKeyValue = localModel.getAttribute(localKey);
+
+        if(typeof localKeyValue === 'string' && ObjectId.isValid(localKeyValue)) {
+            localKeyValue = new ObjectId(localKeyValue);
+        }
+
+        if(foreignKey === 'id') {
+            foreignKey = '_id'
+        }
 
         const schema = { 
             ...filters,

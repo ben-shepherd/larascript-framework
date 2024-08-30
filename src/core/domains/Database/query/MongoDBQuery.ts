@@ -2,6 +2,10 @@ import DatabaseQuery from "@src/core/domains/database/base/DatabaseQuery";
 import MongoDB from "@src/core/domains/database/drivers/MongoDB";
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDatabaseQuery";
 import { BulkWriteOptions, ObjectId, UpdateOptions } from "mongodb";
+import { IBelongsToCtor } from "../interfaces/relationships/IBelongsTo";
+import { IHasManyCtor } from "../interfaces/relationships/IHasMany";
+import MongoDBBelongsTo from "../relationships/mongodb/MongoDBBelongsTo";
+import MongoDBHasMany from "../relationships/mongodb/MongoDBHasMany";
 
 class MongoDBQuery extends DatabaseQuery
 {
@@ -174,6 +178,22 @@ class MongoDBQuery extends DatabaseQuery
      */
     async truncate(): Promise<void> {
         await this.driver.getDb().collection(this.tableName).deleteMany({})
+    }
+
+    /**
+     * Returns the BelongsToCtor
+     * - Some database providers may need handle relationships in a different way, 
+     *   this method can be used to handle them per database provider
+     * 
+     * 
+     * @returns 
+     */
+    belongsToCtor(): IBelongsToCtor {
+        return MongoDBBelongsTo
+    }
+
+    hasManyCtor(): IHasManyCtor {
+        return MongoDBHasMany
     }
 }
 

@@ -1,14 +1,14 @@
 
 
 import { IDatabaseQuery } from '@src/core/domains/database/interfaces/IDatabaseQuery';
-import BelongsTo, { BelongsToOptions } from '@src/core/domains/database/relationships/BelongsTo';
-import HasMany, { HasManyOptions } from '@src/core/domains/database/relationships/HasMany';
 import { IObserver } from '@src/core/domains/observer/interfaces/IObserver';
 import { WithObserver } from '@src/core/domains/observer/services/WithObserver';
 import { Dates, GetDataOptions, IModel } from '@src/core/interfaces/IModel';
 import IModelData from '@src/core/interfaces/IModelData';
 import { App } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
+import { IBelongsToOptions } from '../domains/database/interfaces/relationships/IBelongsTo';
+import { IHasManyOptions } from '../domains/database/interfaces/relationships/IHasMany';
 
 export default abstract class Model<Data extends IModelData> extends WithObserver<Data> implements IModel<Data> {
     
@@ -229,8 +229,9 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      * @param {BelongsToOptions} options - Options for the belongsTo relationship.
      * @return {Promise<ForeignModel | null>} A Promise that resolves to the related foreign model instance, or null if no related model is found.
      */
-    async belongsTo<ForeignModel extends IModel = IModel>(options: BelongsToOptions): Promise<ForeignModel | null> {
-        const data = await new BelongsTo().handle(this.connection, options);
+    async belongsTo<ForeignModel extends IModel = IModel>(options: IBelongsToOptions): Promise<ForeignModel | null> {
+        const belongsToCtor = this.getQuery().belongsToCtor();
+        const data = await new belongsToCtor().handle(this.connection, options);
 
         if (!data) {
             return null
@@ -245,8 +246,9 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      * @param {HasManyOptions} options - Options for the hasMany relationship.
      * @return {Promise<ForeignModel[]>} A Promise that resolves to an array of related foreign model instances.
      */
-    public async hasMany<ForeignModel extends IModel<any> = IModel<any>>(options: HasManyOptions): Promise<ForeignModel[]> {
-        const data = await new HasMany().handle(this.connection, options);
+    public async hasMany<ForeignModel extends IModel<any> = IModel<any>>(options: IHasManyOptions): Promise<ForeignModel[]> {
+        const hasManyCtor = this.getQuery().hasManyCtor();
+        const data = await new hasManyCtor().handle(this.connection, options);
 
         if (!data) {
             return []

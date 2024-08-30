@@ -1,5 +1,9 @@
 import { IDatabaseDriver } from "@src/core/domains/database/interfaces/IDatabaseDriver";
 import { IDatabaseDocument, IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
+import { IBelongsToCtor } from "../interfaces/relationships/IBelongsTo";
+import { IHasManyCtor } from "../interfaces/relationships/IHasMany";
+import BelongsTo from "../relationships/BelongsTo";
+import HasMany from "../relationships/HasMany";
 
 abstract class DatabaseQuery implements IDatabaseQuery
 {
@@ -55,6 +59,16 @@ abstract class DatabaseQuery implements IDatabaseQuery
 
     truncate(): Promise<void> {
         throw new Error("Method not implemented.");
+    }
+
+    belongsToCtor(): IBelongsToCtor
+    {
+        return BelongsTo
+    }
+
+    hasManyCtor(): IHasManyCtor
+    {
+        return HasMany;
     }
 }
 

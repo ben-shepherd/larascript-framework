@@ -1,3 +1,5 @@
+import { IBelongsToCtor } from "./relationships/IBelongsTo";
+import { IHasManyCtor } from "./relationships/IHasMany";
 
 export interface IDatabaseQuery {
     table(table: string): IDatabaseQuery;
@@ -17,6 +19,9 @@ export interface IDatabaseQuery {
     deleteMany<T>(docs: IDatabaseDocument[]): Promise<T>;
 
     truncate(): Promise<void>;
+
+    belongsToCtor(): IBelongsToCtor;
+    hasManyCtor(): IHasManyCtor;
 }
 
 export interface IDatabaseDocument {
