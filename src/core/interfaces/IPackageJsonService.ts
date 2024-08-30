@@ -11,4 +11,5 @@ export interface IPackageJsonService {
 
 export interface IPackageJson {
     scripts: Record<string, string>;
+    dependencies: Record<string, string>;
   }

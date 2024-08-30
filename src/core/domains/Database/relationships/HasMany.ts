@@ -24,6 +24,6 @@ export default class HasMany implements IHasMany
         return await App.container('db')
             .query(connection) 
             .table(new foreignModelCtor().collection)
-            .findMany(schema) as T[]
+            .findMany(schema)
     }
 }   

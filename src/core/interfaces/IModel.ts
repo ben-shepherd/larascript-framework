@@ -1,8 +1,8 @@
 import { IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
-import { BelongsToOptions } from "@src/core/domains/database/relationships/BelongsTo";
-import { HasManyOptions } from "@src/core/domains/database/relationships/HasMany";
 import IWithObserve from "@src/core/domains/observer/interfaces/IWithObserve";
 import IModelData from "@src/core/interfaces/IModelData";
+import { IBelongsToOptions } from "../domains/database/interfaces/relationships/IBelongsTo";
+import { IHasManyOptions } from "../domains/database/interfaces/relationships/IHasMany";
 
 export type GetDataOptions = {excludeGuarded: boolean}
 
@@ -33,6 +33,6 @@ export interface IModel<Data extends IModelData = IModelData> extends IWithObser
     update(): Promise<void>;
     save(): Promise<void>;
     delete(): Promise<void>;
-    belongsTo(options: BelongsToOptions): Promise<IModel | null>;
-    hasMany(options: HasManyOptions): Promise<IModel[]>;
+    belongsTo(options: IBelongsToOptions): Promise<IModel | null>;
+    hasMany(options: IHasManyOptions): Promise<IModel[]>;
 }

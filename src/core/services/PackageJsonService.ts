@@ -18,6 +18,13 @@ export default class PackageJsonService implements IPackageJsonService {
     }
 
     async uninstallPackage(name: string) {
+        const packageJson = await this.getJson()
+        const containsPackage = Object.keys(packageJson.dependencies).includes(name)
+        
+        if(!containsPackage) {
+            return;
+        }
+
         const cmd = `yarn remove ${name}`
         console.log('Running command: ', cmd)
         await execPromise(cmd);

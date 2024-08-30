@@ -4,7 +4,6 @@ import SetupDefaultDatabase from "@src/core/domains/setup/actions/SetupDefaultDa
 import SetupDockerDatabases from "@src/core/domains/setup/actions/SetupDockerDatabases";
 import { QuestionIDs } from "@src/core/domains/setup/consts/QuestionConsts";
 import QuestionDTO from "@src/core/domains/setup/DTOs/QuestionDTO";
-import InstallDatabasePackages from "../actions/InstallDatabasePackages";
 
 const buildQuestionDTOs = (): QuestionDTO[] => {
     return [
@@ -26,7 +25,7 @@ const buildQuestionDTOs = (): QuestionDTO[] => {
             previewText: 'Choose Database Provider To Install',
             defaultValue: 'all',
             acceptedAnswers: ['all', 'mongodb', 'postgres', ''],
-            actionCtors: [SetupDockerDatabases, SetupDefaultDatabase, InstallDatabasePackages]
+            actionCtors: [SetupDockerDatabases, SetupDefaultDatabase]
         }),
         new QuestionDTO({
             id: QuestionIDs.selectDefaultDb,
