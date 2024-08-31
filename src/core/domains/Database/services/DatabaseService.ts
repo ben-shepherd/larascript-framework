@@ -1,9 +1,10 @@
-import MongoDB from "@src/core/domains/database/drivers/MongoDB";
 import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import { IDatabaseDriver, IDatabaseDriverCtor } from "@src/core/domains/database/interfaces/IDatabaseDriver";
 import { IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
 import { IDatabaseService } from "@src/core/domains/database/interfaces/IDatabaseService";
 import { TDatabaseDriver } from "@src/core/domains/database/types/DatabaseDriver.t";
+import DatabaseConfig from "../config/DatabaseConfig";
+import { IDatabaseSchema } from "../interfaces/IDatabaseSchema";
 
 class DatabaseService implements IDatabaseService
 {
@@ -49,9 +50,20 @@ class DatabaseService implements IDatabaseService
      * @param connectionName 
      * @returns 
      */
-    public query(connectionName: string = this.config.defaultConnectionName): IDatabaseQuery
+    public query<T extends IDatabaseQuery = IDatabaseQuery>(connectionName: string = this.config.defaultConnectionName): T
     {
-        return this.store[connectionName].query();
+        return this.store[connectionName].query() as T;
+    }
+
+    /**
+     * Get the schema service
+     * 
+     * @param connectionName 
+     * @returns 
+     */
+    public schema<T extends IDatabaseSchema = IDatabaseSchema>(connectionName: string = this.config.defaultConnectionName): T
+    {
+        return this.store[connectionName].schema() as T;
     }
 
     /*
@@ -101,11 +113,13 @@ class DatabaseService implements IDatabaseService
      */
     protected getDriverCtorByName(driverName: TDatabaseDriver): IDatabaseDriverCtor
     {
-        if(driverName === 'mongodb') {
-            return MongoDB;
+        const driverCtor: IDatabaseDriverCtor | undefined = DatabaseConfig.constructors[driverName];
+
+        if(!driverCtor) {
+            throw new Error(`Invalid database driver: ${driverName}`);   
         }
 
-        throw new Error(`Invalid database driver: ${driverName}`);
+        return driverCtor;
     }
 }
 

@@ -4,11 +4,11 @@ import SetupDefaultDatabase from "@src/core/domains/setup/actions/SetupDefaultDa
 import SetupDockerDatabases from "@src/core/domains/setup/actions/SetupDockerDatabases";
 import { QuestionIDs } from "@src/core/domains/setup/consts/QuestionConsts";
 import QuestionDTO from "@src/core/domains/setup/DTOs/QuestionDTO";
-import DatabaseDriverConsts from "../../database/consts/DatabaseDriverConsts";
+import DatabaseConfig from "../../database/config/DatabaseConfig";
 import EnableExpress from "../actions/EnableExpress";
 
 const acceptedAnswersBoolean = ['yes', 'no', 'y', 'n', ''];
-const acceptedAnswersDatabases = ['all',  '', ...Object.keys(DatabaseDriverConsts)];
+const acceptedAnswersDatabases = ['all',  '', ...Object.keys(DatabaseConfig.drivers)];
 
 const buildQuestionDTOs = (): QuestionDTO[] => {
     return [

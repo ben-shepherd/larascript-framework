@@ -3,7 +3,6 @@ import { IHasManyCtor } from "./relationships/IHasMany";
 
 export interface IDatabaseQuery {
     table(table: string): IDatabaseQuery;
-
     
     findById<T>(id: string): Promise<T | null>;
     findOne<T>(filter?: object, ...args: any[]): Promise<T | null>;

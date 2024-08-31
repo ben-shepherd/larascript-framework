@@ -4,6 +4,8 @@ import { IMongoDBConfig } from '@src/core/domains/database/exceptions/mongodb/IM
 import { IDatabaseDriver } from '@src/core/domains/database/interfaces/IDatabaseDriver';
 import { IDatabaseQuery } from '@src/core/domains/database/interfaces/IDatabaseQuery';
 import MongoDBQuery from '@src/core/domains/database/query/MongoDBQuery';
+import { IDatabaseSchema } from '../interfaces/IDatabaseSchema';
+import MongoDBSchema from '../query/MongoDBSchema';
 
 export default class MongoDB implements IDatabaseDriver {
     protected client!: MongoClient;
@@ -12,12 +14,13 @@ export default class MongoDB implements IDatabaseDriver {
     constructor({ uri, options = {} }: IMongoDBConfig) {
         this.client = new MongoClient(uri, options);
     }
-    public getClient(): MongoClient 
+
+    getClient(): MongoClient 
     {
         throw this.client;
     }
 
-    public async connect(): Promise<void> 
+    async connect(): Promise<void> 
     {
         if(this.isConnected()) {
             return;
@@ -27,17 +30,22 @@ export default class MongoDB implements IDatabaseDriver {
         this.db = this.client.db();
     }
 
-    public query(): IDatabaseQuery
+    query(): IDatabaseQuery
     {
         return new MongoDBQuery(this);
     }
 
-    public isConnected(): boolean 
+    schema(): IDatabaseSchema 
+    {
+        return new MongoDBSchema(this);
+    }
+
+    isConnected(): boolean 
     {
         return this.db instanceof Db;
     }
 
-    public getDb(): Db 
+    getDb(): Db 
     {
         return this.db;
     }

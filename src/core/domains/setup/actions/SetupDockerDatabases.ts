@@ -3,7 +3,7 @@ import { IAction } from '@src/core/domains/setup/interfaces/IAction';
 import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand';
 import { IPackageJsonService } from '@src/core/interfaces/IPackageJsonService';
 import PackageJsonService from '@src/core/services/PackageJsonService';
-import DatabaseDriverConsts from '../../database/consts/DatabaseDriverConsts';
+import DatabaseConfig from '../../database/config/DatabaseConfig';
 
 class SetupDockerDatabases implements IAction
 {
@@ -40,7 +40,7 @@ class SetupDockerDatabases implements IAction
         const appendDbType = (db: string) => `-f docker-compose.${db}.yml `;
 
         if(dbType === 'all') {
-            Object.keys(DatabaseDriverConsts).forEach((type) => {
+            Object.keys(DatabaseConfig.drivers).forEach((type) => {
                 composeScriptsToInclude += appendDbType(type);
             })
         }
