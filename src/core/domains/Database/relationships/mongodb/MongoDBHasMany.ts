@@ -1,7 +1,7 @@
 import IModelData from "@src/core/interfaces/IModelData";
 import { App } from "@src/core/services/App";
 import { ObjectId } from "mongodb";
-import { IHasMany, IHasManyOptions } from "../../interfaces/relationships/IHasMany";
+import { IHasMany, IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 
 export default class HasMany implements IHasMany
 { 

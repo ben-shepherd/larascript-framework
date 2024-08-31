@@ -1,8 +1,8 @@
 import { IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
 import IWithObserve from "@src/core/domains/observer/interfaces/IWithObserve";
 import IModelData from "@src/core/interfaces/IModelData";
-import { IBelongsToOptions } from "../domains/database/interfaces/relationships/IBelongsTo";
-import { IHasManyOptions } from "../domains/database/interfaces/relationships/IHasMany";
+import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
+import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 
 export type GetDataOptions = {excludeGuarded: boolean}
 

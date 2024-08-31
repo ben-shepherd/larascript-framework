@@ -3,8 +3,8 @@ import { IDatabaseDriver, IDatabaseDriverCtor } from "@src/core/domains/database
 import { IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
 import { IDatabaseService } from "@src/core/domains/database/interfaces/IDatabaseService";
 import { TDatabaseDriver } from "@src/core/domains/database/types/DatabaseDriver.t";
-import DatabaseConfig from "../config/DatabaseConfig";
-import { IDatabaseSchema } from "../interfaces/IDatabaseSchema";
+import DatabaseConfig from "@src/core/domains/database/config/DatabaseConfig";
+import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 
 class DatabaseService implements IDatabaseService
 {

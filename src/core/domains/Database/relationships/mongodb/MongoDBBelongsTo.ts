@@ -1,7 +1,7 @@
 import IModelData from "@src/core/interfaces/IModelData";
 import { App } from "@src/core/services/App";
 import { ObjectId } from "mongodb";
-import { IBelongsTo, IBelongsToOptions } from "../../interfaces/relationships/IBelongsTo";
+import { IBelongsTo, IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 
 export default class MongoDBBelongsTo implements IBelongsTo
 { 

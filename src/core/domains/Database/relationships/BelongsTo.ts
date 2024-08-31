@@ -1,6 +1,6 @@
 import IModelData from "@src/core/interfaces/IModelData";
 import { App } from "@src/core/services/App";
-import { IBelongsTo, IBelongsToOptions } from "../interfaces/relationships/IBelongsTo";
+import { IBelongsTo, IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 
 export default class BelongsTo implements IBelongsTo
 { 

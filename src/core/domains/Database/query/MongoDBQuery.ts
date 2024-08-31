@@ -2,10 +2,10 @@ import DatabaseQuery from "@src/core/domains/database/base/DatabaseQuery";
 import MongoDB from "@src/core/domains/database/drivers/MongoDB";
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDatabaseQuery";
 import { BulkWriteOptions, ObjectId, UpdateOptions } from "mongodb";
-import { IBelongsToCtor } from "../interfaces/relationships/IBelongsTo";
-import { IHasManyCtor } from "../interfaces/relationships/IHasMany";
-import MongoDBBelongsTo from "../relationships/mongodb/MongoDBBelongsTo";
-import MongoDBHasMany from "../relationships/mongodb/MongoDBHasMany";
+import { IBelongsToCtor } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
+import { IHasManyCtor } from "@src/core/domains/database/interfaces/relationships/IHasMany";
+import MongoDBBelongsTo from "@src/core/domains/database/relationships/mongodb/MongoDBBelongsTo";
+import MongoDBHasMany from "@src/core/domains/database/relationships/mongodb/MongoDBHasMany";
 
 class MongoDBQuery extends DatabaseQuery
 {

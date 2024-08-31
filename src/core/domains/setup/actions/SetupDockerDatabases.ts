@@ -3,7 +3,7 @@ import { IAction } from '@src/core/domains/setup/interfaces/IAction';
 import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand';
 import { IPackageJsonService } from '@src/core/interfaces/IPackageJsonService';
 import PackageJsonService from '@src/core/services/PackageJsonService';
-import DatabaseConfig from '../../database/config/DatabaseConfig';
+import DatabaseConfig from '@src/core/domains/database/config/DatabaseConfig';
 
 class SetupDockerDatabases implements IAction
 {

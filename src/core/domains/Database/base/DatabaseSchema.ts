@@ -1,5 +1,5 @@
 import { IDatabaseDriver } from "@src/core/domains/database/interfaces/IDatabaseDriver";
-import { IDatabaseSchema } from "../interfaces/IDatabaseSchema";
+import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 
 abstract class DatabaseSchema implements IDatabaseSchema
 {

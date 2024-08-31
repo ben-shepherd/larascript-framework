@@ -1,6 +1,6 @@
 import { IAction } from "@src/core/domains/setup/interfaces/IAction";
 import { ISetupCommand } from "@src/core/domains/setup/interfaces/ISetupCommand";
-import QuestionDTO from "../DTOs/QuestionDTO";
+import QuestionDTO from "@src/core/domains/setup/DTOs/QuestionDTO";
 
 class GenerateJwtSecretAction implements IAction
 {

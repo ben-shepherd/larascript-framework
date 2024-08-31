@@ -1,9 +1,9 @@
 import { IDatabaseDriver } from "@src/core/domains/database/interfaces/IDatabaseDriver";
 import { IDatabaseDocument, IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
-import { IBelongsToCtor } from "../interfaces/relationships/IBelongsTo";
-import { IHasManyCtor } from "../interfaces/relationships/IHasMany";
-import BelongsTo from "../relationships/BelongsTo";
-import HasMany from "../relationships/HasMany";
+import { IBelongsToCtor } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
+import { IHasManyCtor } from "@src/core/domains/database/interfaces/relationships/IHasMany";
+import BelongsTo from "@src/core/domains/database/relationships/BelongsTo";
+import HasMany from "@src/core/domains/database/relationships/HasMany";
 
 abstract class DatabaseQuery implements IDatabaseQuery
 {

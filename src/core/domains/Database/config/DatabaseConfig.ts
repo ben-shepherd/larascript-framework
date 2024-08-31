@@ -1,5 +1,5 @@
-import MongoDB from "../drivers/MongoDB";
-import { IDatabaseDriverCtor } from "../interfaces/IDatabaseDriver";
+import MongoDB from "@src/core/domains/database/drivers/MongoDB";
+import { IDatabaseDriverCtor } from "@src/core/domains/database/interfaces/IDatabaseDriver";
 
 interface Config {
     drivers: Record<string, string>;

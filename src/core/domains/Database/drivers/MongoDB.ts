@@ -4,8 +4,8 @@ import { IMongoDBConfig } from '@src/core/domains/database/exceptions/mongodb/IM
 import { IDatabaseDriver } from '@src/core/domains/database/interfaces/IDatabaseDriver';
 import { IDatabaseQuery } from '@src/core/domains/database/interfaces/IDatabaseQuery';
 import MongoDBQuery from '@src/core/domains/database/query/MongoDBQuery';
-import { IDatabaseSchema } from '../interfaces/IDatabaseSchema';
-import MongoDBSchema from '../query/MongoDBSchema';
+import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
+import MongoDBSchema from '@src/core/domains/database/schema/MongoDBSchema';
 
 export default class MongoDB implements IDatabaseDriver {
     protected client!: MongoClient;

@@ -1,5 +1,5 @@
 import { IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
-import { IDatabaseSchema } from "./IDatabaseSchema";
+import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 
 export type IDatabaseDriverCtor = new (config: any) => IDatabaseDriver;
 

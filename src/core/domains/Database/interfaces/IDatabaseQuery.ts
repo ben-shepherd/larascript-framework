@@ -1,5 +1,5 @@
-import { IBelongsToCtor } from "./relationships/IBelongsTo";
-import { IHasManyCtor } from "./relationships/IHasMany";
+import { IBelongsToCtor } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
+import { IHasManyCtor } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 
 export interface IDatabaseQuery {
     table(table: string): IDatabaseQuery;

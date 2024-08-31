@@ -1,5 +1,5 @@
 import MongoDB from "@src/core/domains/database/drivers/MongoDB";
-import DatabaseSchema from "../base/DatabaseSchema";
+import DatabaseSchema from "@src/core/domains/database/base/DatabaseSchema";
 
 class MongoDBSchema extends DatabaseSchema
 {
