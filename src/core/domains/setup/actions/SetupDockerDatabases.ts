@@ -49,6 +49,7 @@ class SetupDockerDatabases implements IAction
         }
 
         packageJson.scripts.up = `docker-compose -f docker-compose.base.yml ${composeScriptsToInclude} up -d`;
+        packageJson.scripts.down = `docker-compose -f docker-compose.base.yml ${composeScriptsToInclude} down`;
 
         await this.packageJson.writeFileContents(JSON.stringify(packageJson, null, 2));
     }

@@ -15,6 +15,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
     rl: readline.Interface;
     env: IEnvService;
     input: IConsoleInputService;
+    questions!: QuestionDTO[];
 
     constructor() {
         super();
@@ -24,6 +25,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
         });
         this.env = new EnvService();
         this.input = new ConsoleInputService(this.rl);
+        this.questions = buildQuestionDTOs();
     }
 
     /**
@@ -39,32 +41,35 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
      */
     public execute = async () =>
     {
-        const questionsAll = buildQuestionDTOs();
-        let previousQuestion: QuestionDTO | null = null;
         let count = 1;
 
         this.writeLine('--- Larascript Setup ---');
         this.writeLine();
         this.writeLine('Setup Preview:');
 
-        for (const i in questionsAll) {
-            const question = questionsAll[i];
+        this.questions.forEach(question => {
             this.writeLine(`- ${question.getPreviewText()}`);
-        }
+        })
 
         this.writeLine();
         await this.input.waitForEnter('When ready, press Enter to continue');
         
-        for (const i in questionsAll) {
-            const question = questionsAll[i];
-        
+        for(const i in this.questions) {
+            const question = this.questions[i];
+            
             this.input.clearScreen()
             
-            await this.processQuestionDTO(count, question, previousQuestion)
+            await this.processQuestionDTO(count, question)
 
-            previousQuestion = question
             count++;
+            this.questions[parseInt(i)] = question
         }
+ 
+        this.input.clearScreen();
+
+        this.writeLine('--- Setup Complete ---');
+        this.writeLine('Happy coding!');
+        this.writeLine('');
 
         this.rl.close();
 
@@ -79,16 +84,17 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
      * @param previousQuestion 
      * @returns 
      */
-    questionIsApplicable = (question: QuestionDTO, previousQuestion: QuestionDTO): boolean => {
+    questionIsApplicable = (question: QuestionDTO): boolean => {
 
-        if(!question.applicableOnly || !previousQuestion.answer) {
+        if(!question.applicableOnly) {
             return true;
         }
         
-        const matchesQuestionId = question.applicableOnly.ifId === previousQuestion.id
-        const matchesAnswer = question.applicableOnly.answerIncludes.includes(previousQuestion.answer)
+        const ifId = question.applicableOnly.ifId;
+        const ifIdQuestion = this.questions.find(q => q.id === ifId) as QuestionDTO;
+        const matchesAnswer = question.applicableOnly.answerIncludes.includes(ifIdQuestion.getAnswer() as string)
 
-        if(matchesQuestionId && !matchesAnswer) {
+        if(!matchesAnswer) {
             return false;
         }
 
@@ -100,9 +106,9 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
      * 
      * @param question 
      */
-    processQuestionDTO = async (count: number, question: QuestionDTO, previousQuestion: QuestionDTO | null) => {
+    processQuestionDTO = async (count: number, question: QuestionDTO) => {
 
-        if(previousQuestion && !this.questionIsApplicable(question, previousQuestion)) {
+        if(!this.questionIsApplicable(question)) {
             return;
         }
 
