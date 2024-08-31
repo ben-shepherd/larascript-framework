@@ -1,17 +1,17 @@
 import { Db, MongoClient } from 'mongodb';
 
-import { IMongoDBConfig } from '@src/core/domains/database/exceptions/mongodb/IMongoDBConfig';
 import { IDatabaseDriver } from '@src/core/domains/database/interfaces/IDatabaseDriver';
 import { IDatabaseQuery } from '@src/core/domains/database/interfaces/IDatabaseQuery';
-import MongoDBQuery from '@src/core/domains/database/query/MongoDBQuery';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
+import MongoDBQuery from '@src/core/domains/database/query/MongoDBQuery';
 import MongoDBSchema from '@src/core/domains/database/schema/MongoDBSchema';
+import { IMongoDBConfigConnection } from '../interfaces/mongodb/IMongoDBConfigConnection';
 
 export default class MongoDB implements IDatabaseDriver {
     protected client!: MongoClient;
     protected db!: Db;
  
-    constructor({ uri, options = {} }: IMongoDBConfig) {
+    constructor({ uri, options = {} }: IMongoDBConfigConnection) {
         this.client = new MongoClient(uri, options);
     }
 
