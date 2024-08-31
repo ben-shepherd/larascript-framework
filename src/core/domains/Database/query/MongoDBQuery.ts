@@ -1,11 +1,11 @@
 import DatabaseQuery from "@src/core/domains/database/base/DatabaseQuery";
 import MongoDB from "@src/core/domains/database/drivers/MongoDB";
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDatabaseQuery";
-import { BulkWriteOptions, ObjectId, UpdateOptions } from "mongodb";
 import { IBelongsToCtor } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IHasManyCtor } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import MongoDBBelongsTo from "@src/core/domains/database/relationships/mongodb/MongoDBBelongsTo";
 import MongoDBHasMany from "@src/core/domains/database/relationships/mongodb/MongoDBHasMany";
+import { BulkWriteOptions, ObjectId, UpdateOptions } from "mongodb";
 
 class MongoDBQuery extends DatabaseQuery
 {
@@ -39,17 +39,17 @@ class MongoDBQuery extends DatabaseQuery
     /**
      * Replaces `_id: ObjectId` with `id: string`
      * 
-     * @param doc 
+     * @param document 
      * @returns 
      */
-    protected convertObjectIdToStringInDocument(doc: IDatabaseDocument): IDatabaseDocument
+    protected convertObjectIdToStringInDocument(document: IDatabaseDocument): IDatabaseDocument
     {
-        if('_id' in doc && doc._id instanceof ObjectId) {
-            doc = { ...doc, id: doc._id.toString() }
-            delete doc._id
+        if('_id' in document && document._id instanceof ObjectId) {
+            document = { ...document, id: document._id.toString() }
+            delete document._id
         }
 
-        return doc
+        return document
     }
 
     /**
@@ -111,42 +111,42 @@ class MongoDBQuery extends DatabaseQuery
     /**
      * Insert multiple documents
      * 
-     * @param documents 
+     * @param documentsArray 
      * @param options 
      * @returns 
      */
-    async insertMany<T>(documents: IDatabaseDocument[],  options?: BulkWriteOptions): Promise<T[]> {
+    async insertMany<T>(documentsArray: IDatabaseDocument[],  options?: BulkWriteOptions): Promise<T[]> {
         /**
          * Insert the documents
          */
-        await this.driver.getDb().collection(this.tableName).insertMany(documents, options);
+        await this.driver.getDb().collection(this.tableName).insertMany(documentsArray, options);
         /**
          * After the document is inserted, MongoDB will automatically add `_id: ObjectId` to the document object.
          * We will need to convert this to our standard `id: string` format
          */
-        return documents.map((d: IDatabaseDocument) => this.convertObjectIdToStringInDocument(d) as T)
+        return documentsArray.map((d: IDatabaseDocument) => this.convertObjectIdToStringInDocument(d) as T)
     }
 
     /**
      * Update a single document
      * 
-     * @param doc 
+     * @param document 
      * @param options 
      * @returns 
      */
-    async updateOne<T>(doc: IDatabaseDocument, options?: UpdateOptions): Promise<T> {
-        return await this.driver.getDb().collection(this.tableName).updateOne({ _id: this.convertStringIdToObjectId(doc.id) }, { $set: doc }, options) as T
+    async updateOne<T>(document: IDatabaseDocument, options?: UpdateOptions): Promise<T> {
+        return await this.driver.getDb().collection(this.tableName).updateOne({ _id: this.convertStringIdToObjectId(document.id) }, { $set: document }, options) as T
     }
     
     /**
      * Update multiple documents
      * 
-     * @param docs 
+     * @param documentsArray 
      * @param options 
      * @returns 
      */
-    async updateMany<T>(docs: IDatabaseDocument[], options?: UpdateOptions): Promise<T> {
-        return docs.forEach(async (doc) => {
+    async updateMany<T>(documentsArray: IDatabaseDocument[], options?: UpdateOptions): Promise<T> {
+        return documentsArray.forEach(async (doc) => {
             return await this.updateOne(doc, options)
         }) as T
     }
@@ -154,21 +154,21 @@ class MongoDBQuery extends DatabaseQuery
     /**
      * Delete a single document
      * 
-     * @param doc 
+     * @param document 
      * @returns 
      */
-    async deleteOne<T>(doc: IDatabaseDocument): Promise<T> {
-        return await this.driver.getDb().collection(this.tableName).deleteOne({ _id: this.convertStringIdToObjectId(doc.id) }) as T
+    async deleteOne<T>(document: IDatabaseDocument): Promise<T> {
+        return await this.driver.getDb().collection(this.tableName).deleteOne({ _id: this.convertStringIdToObjectId(document.id) }) as T
     }
 
     /**
      * Delete multiple documents
      * 
-     * @param docs 
+     * @param documentsArray 
      * @returns 
      */
-    async deleteMany<T>(docs: IDatabaseDocument[]): Promise<T> {
-        return docs.forEach(async (doc) => {
+    async deleteMany<T>(documentsArray: IDatabaseDocument[]): Promise<T> {
+        return documentsArray.forEach(async (doc) => {
             return await this.deleteOne(doc)
         }) as T
     }
@@ -182,9 +182,6 @@ class MongoDBQuery extends DatabaseQuery
 
     /**
      * Returns the BelongsToCtor
-     * - Some database providers may need handle relationships in a different way, 
-     *   this method can be used to handle them per database provider
-     * 
      * 
      * @returns 
      */
@@ -192,6 +189,11 @@ class MongoDBQuery extends DatabaseQuery
         return MongoDBBelongsTo
     }
 
+    /**
+     * Returns the HasManyCtor
+     * 
+     * @returns 
+     */
     hasManyCtor(): IHasManyCtor {
         return MongoDBHasMany
     }
