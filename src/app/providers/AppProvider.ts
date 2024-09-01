@@ -1,4 +1,4 @@
-import routes from "@src/app/routes/api";
+import apiRoutes from "@src/app/routes/api";
 import BaseProvider from "@src/core/base/Provider";
 import ExpressProvider from "@src/core/domains/express/providers/ExpressProvider";
 import Kernel from "@src/core/Kernel";
@@ -31,6 +31,7 @@ export default class AppProvider extends BaseProvider
         /**
          * Boot your services here
          */
+        // App.setContainer('myService', new MyService(this.config));
     }
 
     /**
@@ -42,6 +43,6 @@ export default class AppProvider extends BaseProvider
             return;
         }
         
-        App.container('express').bindRoutes(routes);
+        App.container('express').bindRoutes(apiRoutes);
     }
 }
