@@ -41,7 +41,7 @@ export default class Worker extends Singleton
         // Fetch the current list of queued results
         const workerResults: WorkerModel[] = await worker.getWorkerResults(this.options.queueName)
     
-        this.log('collection: ' + new this.options.workerModelCtor().collection)
+        this.log('collection: ' + new this.options.workerModelCtor().table)
         this.log(`${workerResults.length} queued items with queue name '${this.options.queueName}'`)
     
         for(const workerModel of workerResults) {
@@ -83,7 +83,7 @@ export default class Worker extends Singleton
      * @returns 
      */
     async getWorkerResults(queueName: string) {
-        const workerRepository = new Repository<WorkerModel>(new this.options.workerModelCtor().collection, this.options.workerModelCtor)
+        const workerRepository = new Repository<WorkerModel>(new this.options.workerModelCtor().table, this.options.workerModelCtor)
 
         return await workerRepository.findMany({
             queueName
@@ -101,7 +101,7 @@ export default class Worker extends Singleton
     private async deleteModel(model: WorkerModel) {
         await App.container('db')
             .query()
-            .table(new this.options.workerModelCtor().collection)
+            .table(new this.options.workerModelCtor().table)
             .deleteOne(model)
     }
 
@@ -111,7 +111,7 @@ export default class Worker extends Singleton
      */
     async processWorkerModel(model: WorkerModel) 
     {
-        model.collection = new this.options.workerModelCtor().collection
+        model.table = new this.options.workerModelCtor().table
         const eventName = model.getAttribute('eventName')
         const payload = model.getPayload() as IEventPayload
 
@@ -135,7 +135,7 @@ export default class Worker extends Singleton
      */
     async failedWorkerModel(model: WorkerModel, err: Error)
     {
-        model.collection = new this.options.workerModelCtor().collection;
+        model.table = new this.options.workerModelCtor().table;
 
         // Get attempts and max retreis
         const { retries } = this.options

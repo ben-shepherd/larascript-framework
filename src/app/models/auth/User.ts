@@ -5,7 +5,7 @@ import IUserModel, { IUserData } from '@src/core/domains/auth/interfaces/IUserMo
 
 export default class User extends Model<IUserData> implements IUserModel {
 
-    public collection: string = 'users';
+    public table: string = 'users';
 
 
     constructor(data: IUserData | null = null) {

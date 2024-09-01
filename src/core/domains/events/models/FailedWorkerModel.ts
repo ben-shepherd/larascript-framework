@@ -27,6 +27,6 @@ export default class FailedWorkerModel extends Model<FailedWorkerModelData> {
 
     constructor(data: FailedWorkerModelData, collection: string) {
         super(data)
-        this.collection = collection
+        this.table = collection
     }
 }

@@ -20,7 +20,7 @@ export default class QueueDriver implements IEventDriver
 {
     async handle(event: IEvent, options: QueueDriverOptions) 
     {
-        const workerModel = (new WorkerModelFactory).create(new options.workerModelCtor().collection, {
+        const workerModel = (new WorkerModelFactory).create(new options.workerModelCtor().table, {
             queueName: options.queueName,
             eventName: event.name,
             payload: JSON.stringify(event.payload),

@@ -11,7 +11,7 @@ export interface MigrationModelData extends IModelData {
 
 class MigrationModel extends Model<MigrationModelData>
 {
-    collection = 'migrations'
+    table = 'migrations'
 
     public dates: Dates = [
         'appliedAt'

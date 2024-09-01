@@ -1,8 +1,8 @@
 import { IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
-import IWithObserve from "@src/core/domains/observer/interfaces/IWithObserve";
-import IModelData from "@src/core/interfaces/IModelData";
 import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
+import IWithObserve from "@src/core/domains/observer/interfaces/IWithObserve";
+import IModelData from "@src/core/interfaces/IModelData";
 
 export type GetDataOptions = {excludeGuarded: boolean}
 
@@ -15,7 +15,7 @@ export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MC
 export interface IModel<Data extends IModelData = IModelData> extends IWithObserve {
     connection: string;
     primaryKey: string;
-    collection: string;
+    table: string;
     fields: string[];
     guarded: string[];
     data: Data | null;

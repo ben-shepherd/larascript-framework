@@ -34,7 +34,7 @@ export default class WorkerModel extends Model<WorkerModelData>
 
     constructor(data: WorkerModelData) {
         super(data);
-        this.collection = 'worker'; 
+        this.table = 'worker'; 
     }
 
     public getPayload(): unknown {

@@ -1,6 +1,6 @@
+import { IHasMany, IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import IModelData from "@src/core/interfaces/IModelData";
 import { App } from "@src/core/services/App";
-import { IHasMany, IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 
 export default class HasMany implements IHasMany
 { 
@@ -23,7 +23,7 @@ export default class HasMany implements IHasMany
 
         return await App.container('db')
             .query(connection) 
-            .table(new foreignModelCtor().collection)
+            .table(new foreignModelCtor().table)
             .findMany(schema)
     }
 }   

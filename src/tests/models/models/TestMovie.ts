@@ -8,7 +8,7 @@ export interface TestMovieModelData extends IModelData {
     yearReleased?: string;
 }
 export class TestMovieModel extends Model<TestMovieModelData> {
-    public collection: string = 'tests';
+    public table: string = 'tests';
 
     public fields: string[] = [
         'authorId',

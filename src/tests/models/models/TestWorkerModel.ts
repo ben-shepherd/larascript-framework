@@ -4,6 +4,6 @@ export default class TestWorkerModel extends WorkerModel
 {
     constructor(data: WorkerModelData | null = null) {
         super(data ?? {} as WorkerModelData)
-        this.collection = 'testsWorker'
+        this.table = 'testsWorker'
     }
 }

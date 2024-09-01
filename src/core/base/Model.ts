@@ -1,14 +1,14 @@
 
 
 import { IDatabaseQuery } from '@src/core/domains/database/interfaces/IDatabaseQuery';
+import { IBelongsToOptions } from '@src/core/domains/database/interfaces/relationships/IBelongsTo';
+import { IHasManyOptions } from '@src/core/domains/database/interfaces/relationships/IHasMany';
 import { IObserver } from '@src/core/domains/observer/interfaces/IObserver';
 import { WithObserver } from '@src/core/domains/observer/services/WithObserver';
 import { Dates, GetDataOptions, IModel } from '@src/core/interfaces/IModel';
 import IModelData from '@src/core/interfaces/IModelData';
 import { App } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
-import { IBelongsToOptions } from '@src/core/domains/database/interfaces/relationships/IBelongsTo';
-import { IHasManyOptions } from '@src/core/domains/database/interfaces/relationships/IHasMany';
 
 export default abstract class Model<Data extends IModelData> extends WithObserver<Data> implements IModel<Data> {
     
@@ -22,7 +22,7 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
     public data: Data | null;
 
     // The MongoDB collection
-    public collection!: string;
+    public table!: string;
 
     // Describe the fields and guarded attributes of the model
     // Fields that are allowed to be set on the model
@@ -57,16 +57,16 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      */
     protected setDefaultCollection()
     {
-        if(this.collection) {
+        if(this.table) {
             return;
         }
 
-        this.collection = Str.plural(Str.startLowerCase(this.constructor.name));
+        this.table = Str.plural(Str.startLowerCase(this.constructor.name));
     }
 
 
     getQuery(): IDatabaseQuery {
-        return App.container('db').query(this.connection).table(this.collection);
+        return App.container('db').query(this.connection).table(this.table);
     }
 
     /**
@@ -101,7 +101,7 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
             throw new Error(`Attribute ${key as string} not found in model ${this.constructor.name}`);
         }
         if (this.dates.includes(key as string) && value instanceof Date === false) {
-            throw new Error(`Attribute '${key as string}' is a date and can be only set with the Date not found in model ${this.collection}`);
+            throw new Error(`Attribute '${key as string}' is a date and can be only set with the Date not found in model ${this.table}`);
         }
         if (this.data) {
             this.data[key] = value;

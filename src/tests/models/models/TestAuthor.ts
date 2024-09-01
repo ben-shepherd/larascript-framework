@@ -6,7 +6,7 @@ export interface TestAuthorModelData extends IModelData {
     name: string
 }
 export class TestAuthorModel extends Model<TestAuthorModelData> {
-    public collection: string = 'tests';
+    public table: string = 'tests';
 
     public fields: string[] = [
         'born',
