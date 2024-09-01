@@ -8,4 +8,6 @@ export interface IDatabaseService
     driver(connectionName?: string): IDatabaseDriver;
     query(connectionName?: string): IDatabaseQuery;
     schema(connectionName?: string): IDatabaseSchema;
+    getClient<T = unknown>(): T;
+    isDriver(driver: string, connectionName?: string): boolean
 }

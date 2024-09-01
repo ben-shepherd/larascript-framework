@@ -6,7 +6,7 @@ export default abstract class BaseCommand implements ICommand {
     public signature!: string;
     public description?: string;
     public execute!: (...args: any[]) => any;
-    public keepProcessAlive?: boolean | undefined = false;
+    public keepProcessAlive?: boolean = false;
     protected parsedArgumenets: ParsedArgumentsArray = [];
     protected overwriteArgs: Record<string, string> = {};
     /**

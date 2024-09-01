@@ -5,7 +5,7 @@ import { IDatabaseQuery } from '@src/core/domains/database/interfaces/IDatabaseQ
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import MongoDBQuery from '@src/core/domains/database/query/MongoDBQuery';
 import MongoDBSchema from '@src/core/domains/database/schema/MongoDBSchema';
-import { IMongoDBConfigConnection } from '../interfaces/mongodb/IMongoDBConfigConnection';
+import { IMongoDBConfigConnection } from '@src/core/domains/database/interfaces/mongodb/IMongoDBConfigConnection';
 
 export default class MongoDB implements IDatabaseDriver {
     protected client!: MongoClient;
@@ -17,7 +17,7 @@ export default class MongoDB implements IDatabaseDriver {
 
     getClient(): MongoClient 
     {
-        throw this.client;
+        return this.client;
     }
 
     async connect(): Promise<void> 
