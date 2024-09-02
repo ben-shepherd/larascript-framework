@@ -1,7 +1,8 @@
+import { IMigration } from '@src/core/domains/migrations/interfaces/IMigration';
 import checksumFile from '@src/core/util/checksum';
+import Str from '@src/core/util/str/Str';
 import fs from 'fs';
 import path from 'path';
-import { IMigration } from '@src/core/domains/migrations/interfaces/IMigration';
 
 class MigrationFileService
 {
@@ -76,11 +77,9 @@ class MigrationFileService
     createDateFilename(name: string) 
     {
         const date = new Date();
-        const year = date.getFullYear();
-        const month = date.getMonth() + 1;
-        const day = date.getDate();
+        const dateString = date.toISOString().split('T')[0]
 
-        return `${year}-${month}-${day}-${name}.ts`;
+        return `${dateString}-${Str.convertToSafeMethod(name.toLowerCase())}.ts`;
     }
 
     /**

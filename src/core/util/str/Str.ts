@@ -51,6 +51,19 @@ class Str {
             })
             .replace(/\s+/g, '');
     }
+
+    /**
+     * Converts a string to a safe method string
+     * @param str 
+     * @returns 
+     */
+    public static readonly convertToSafeMethod = (str: string): string => {
+        // Replace non alpha numeric characters to _
+        // Captializes characters after the _
+        // Finally replaces _ with an empty string 
+        // Example: "Bad string for a class!" -> "BadStringForAClass"
+        return str.replace(/[^a-zA-Z0-9]/g, '_').replace(/_./g, x => x[1].toUpperCase()).replace('_', '');
+    }
 }
 
 export default Str;

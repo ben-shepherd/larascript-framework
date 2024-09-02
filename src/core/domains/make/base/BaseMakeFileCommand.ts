@@ -4,6 +4,7 @@ import { IMakeFileArguments } from "@src/core/domains/make/interfaces/IMakeFileA
 import { IMakeOptions } from "@src/core/domains/make/interfaces/IMakeOptions";
 import ArgumentObserver from "@src/core/domains/make/observers/ArgumentObserver";
 import MakeFileService from "@src/core/domains/make/services/MakeFileService";
+import Str from "@src/core/util/str/Str";
 
 const DefaultOptions: Partial<IMakeOptions> = {
     startWithLowercase: false
@@ -11,6 +12,8 @@ const DefaultOptions: Partial<IMakeOptions> = {
 
 export default class BaseMakeFileCommand extends BaseCommand
 {
+    public keepProcessAlive = false;
+
     protected options!: IMakeOptions;
     protected makeFileService!: MakeFileService;
     protected argumentObserver!: ArgumentObserver;
@@ -103,10 +106,15 @@ export default class BaseMakeFileCommand extends BaseCommand
 
         // Inject the arguements
         Object.keys(this.makeFileArguments).forEach(argumentKey => {
-            const value = this.makeFileArguments[argumentKey];
+            let value = this.makeFileArguments[argumentKey];
 
             if(!value && !argsOptional.includes(argumentKey)) {
                 throw new CommandExecutionException(`--${argumentKey} argument not specified`);
+            }
+
+            // Convert to safe method for class names and other places as code the name is used
+            if(argumentKey === 'name') {
+                value = Str.convertToSafeMethod(value)
             }
 
             // Inject the arguements

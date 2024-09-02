@@ -101,6 +101,13 @@ export default class MakeFileService {
      * @returns 
      */
     makeFutureFilename(ext: string = '.ts'): string {
+
+        // Use a custom function if provided
+        if(typeof this.options.customFilename === 'function') {
+           let fileName = this.options.customFilename(this.arguments.name);
+           return fileName.endsWith(ext) ? fileName : `${fileName}${ext}`
+        }
+
         return `${this.arguments.name}${ext}`;
     }
 

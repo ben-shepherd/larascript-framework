@@ -1,0 +1,12 @@
+import { IMigration } from "@src/core/domains/migrations/interfaces/IMigration";
+
+export class #name#Migration implements IMigration {
+
+    async up(): Promise<void> {
+        // Add your up migration here
+    }
+
+    async down(): Promise<void> {
+        // Add your down migration here
+    }
+}
