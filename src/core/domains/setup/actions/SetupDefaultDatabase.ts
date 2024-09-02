@@ -32,7 +32,7 @@ class SetupDefaultDatabase implements IAction
     {
         ref.env.copyFileFromEnvExample();
 
-        let env: Record<string,string> = { DATABASE_DEFAULT_DRIVER: dbType }
+        let env: Record<string,string> = { DATABASE_DEFAULT_PROVIDER: dbType }
 
         if(dbType === 'mongodb') {
             env = {

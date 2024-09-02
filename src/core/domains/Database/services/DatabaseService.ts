@@ -2,7 +2,7 @@ import DatabaseConfig from "@src/core/domains/database/config/DatabaseConfig";
 import InvalidDatabaseConnection from "@src/core/domains/database/exceptions/InvalidDatabaseConnection";
 import InvalidDatabaseDriver from "@src/core/domains/database/exceptions/InvalidDatabaseDriver";
 import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
-import { IDatabaseDriver, IDatabaseDriverCtor } from "@src/core/domains/database/interfaces/IDatabaseDriver";
+import { IDatabaseProvider, IDatabaseProviderCtor } from "@src/core/domains/database/interfaces/IDatabaseProvider";
 import { IDatabaseService } from "@src/core/domains/database/interfaces/IDatabaseService";
 
 class DatabaseService implements IDatabaseService {
@@ -12,9 +12,9 @@ class DatabaseService implements IDatabaseService {
     protected config!: IDatabaseConfig;
 
     /**
-     * Stores all database connections
+     * Stores all database providers, keyed by connection name
      */
-    protected store: Record<string, IDatabaseDriver> = {};
+    protected store: Record<string, IDatabaseProvider> = {};
 
     /**
      * @param config 
@@ -31,10 +31,10 @@ class DatabaseService implements IDatabaseService {
     {
         Object.keys(this.config.connections).forEach((connectionName) => {
             const connectionConfig = this.config.connections[connectionName];
-            const driverCtor = this.getDriverCtorByName(connectionConfig.driver);
-            const driver = new driverCtor(connectionConfig);
+            const providerCtor = this.getDriverCtorByName(connectionConfig.driver);
+            const provider = new providerCtor(connectionConfig);
 
-            this.store[connectionName] = driver;
+            this.store[connectionName] = provider;
         })
 
         await this.connectDefault();
@@ -107,7 +107,7 @@ class DatabaseService implements IDatabaseService {
      * @param connectionName 
      * @returns 
      */
-    isDriver(driver: string, connectionName: string = this.config.defaultConnectionName): boolean 
+    isProvider(driver: string, connectionName: string = this.config.defaultConnectionName): boolean 
     {
         try {
             const driverCtor = this.getDriverCtorByName(driver);
@@ -127,7 +127,7 @@ class DatabaseService implements IDatabaseService {
      * @param connectionName 
      * @returns 
      */
-    public driver<T>(connectionName: string = this.config.defaultConnectionName): T 
+    public provider<T>(connectionName: string = this.config.defaultConnectionName): T 
     {
         if (!this.store[connectionName]) {
             throw new InvalidDatabaseConnection(`Invalid database connection: ${connectionName}`);
@@ -142,9 +142,9 @@ class DatabaseService implements IDatabaseService {
      * @param driverName 
      * @returns 
      */
-    protected getDriverCtorByName(driverName: keyof typeof DatabaseConfig.drivers): IDatabaseDriverCtor 
+    protected getDriverCtorByName(driverName: keyof typeof DatabaseConfig.providers): IDatabaseProviderCtor 
     {
-        const driverCtor: IDatabaseDriverCtor | undefined = DatabaseConfig.constructors[driverName];
+        const driverCtor: IDatabaseProviderCtor | undefined = DatabaseConfig.constructors[driverName];
 
         if (!driverCtor) {
             throw new InvalidDatabaseDriver(`Invalid database driver: ${driverName}`);

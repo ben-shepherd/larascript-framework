@@ -1,12 +1,12 @@
+import MongoDB from '@src/core/domains/database/providers-db/MongoDB';
 import { App } from '@src/core/services/App';
 import { Request, Response } from 'express';
-import MongoDB from '@src/core/domains/database/drivers/MongoDB';
 
 export default async (req: Request, res: Response) => {
 
     try {
         const db = App.container('db');
-        const dbDriver = db.driver();
+        const dbDriver = db.provider();
 
         if(dbDriver instanceof MongoDB) {
             await dbDriver.getDb().stats()

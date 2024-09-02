@@ -1,9 +1,9 @@
-import { App } from "@src/core/services/App";
-import { MongoClient } from "mongodb";
 import MigrationFactory from "@src/core/domains/migrations/factory/MigrationFactory";
 import { IMigrationService, IMigrationServiceOptions } from "@src/core/domains/migrations/interfaces/IMigrationService";
 import MigrationRepository from "@src/core/domains/migrations/repository/MigrationRepository";
 import MigrationFileService from "@src/core/domains/migrations/services/MigrationFilesService";
+import { App } from "@src/core/services/App";
+import { MongoClient } from "mongodb";
 
 class MigrationService implements IMigrationService {
     private fileService: MigrationFileService = new MigrationFileService();
@@ -160,7 +160,7 @@ class MigrationService implements IMigrationService {
             /**
              * Handle MongoDB driver
              */
-            if (App.container('db').isDriver('mongodb')) {
+            if (App.container('db').isProvider('mongodb')) {
                 const client = App.container('db').getClient<MongoClient>();
                 const db = client.db();
 

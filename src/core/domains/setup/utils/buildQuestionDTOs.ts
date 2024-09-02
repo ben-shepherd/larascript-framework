@@ -1,14 +1,14 @@
+import DatabaseConfig from "@src/core/domains/database/config/DatabaseConfig";
 import CopyEnvExampleAction from "@src/core/domains/setup/actions/CopyEnvExampleAction";
+import EnableExpress from "@src/core/domains/setup/actions/EnableExpress";
 import GenerateJwtSecretAction from "@src/core/domains/setup/actions/GenerateJwtSecretAction";
 import SetupDefaultDatabase from "@src/core/domains/setup/actions/SetupDefaultDatabase";
 import SetupDockerDatabases from "@src/core/domains/setup/actions/SetupDockerDatabases";
 import { QuestionIDs } from "@src/core/domains/setup/consts/QuestionConsts";
 import QuestionDTO from "@src/core/domains/setup/DTOs/QuestionDTO";
-import DatabaseConfig from "@src/core/domains/database/config/DatabaseConfig";
-import EnableExpress from "@src/core/domains/setup/actions/EnableExpress";
 
 const acceptedAnswersBoolean = ['yes', 'no', 'y', 'n', ''];
-const acceptedAnswersDatabases = ['all',  '', ...Object.keys(DatabaseConfig.drivers)];
+const acceptedAnswersDatabases = ['all',  '', ...Object.keys(DatabaseConfig.providers)];
 
 const buildQuestionDTOs = (): QuestionDTO[] => {
     return [

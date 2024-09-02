@@ -1,11 +1,11 @@
-import { IDatabaseDriver } from "@src/core/domains/database/interfaces/IDatabaseDriver";
+import { IDatabaseProvider } from "@src/core/domains/database/interfaces/IDatabaseProvider";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 
 abstract class DatabaseSchema implements IDatabaseSchema
 {
-    protected driver!: IDatabaseDriver;
+    protected driver!: IDatabaseProvider;
 
-    constructor(driver: IDatabaseDriver)
+    constructor(driver: IDatabaseProvider)
     {
         this.driver = driver;
     }

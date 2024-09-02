@@ -1,11 +1,11 @@
+import { MongoDBTypes } from "@src/core/domains/database/interfaces/DatabaseProviderTypes";
 import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
-import { MongoDBTypes } from "@src/core/domains/database/interfaces/IDatabaseDriver";
 
 // Default connection string, fallback to 'default' if not set in environment
 const DEFAULT_CONNECTION = (process.env.DATABASE_DEFAULT_CONNECTION as string) ?? 'default';
 
 // Default database provider, fallback to 'mongodb' if not set in environment
-const DEFAULT_PROVIDER = (process.env.DATABASE_DEFAULT_DRIVER as string) ?? 'mongodb';
+const DEFAULT_PROVIDER = (process.env.DATABASE_DEFAULT_PROVIDER as string) ?? 'mongodb';
 
 /**
  * Type definition for database-specific helpers.
@@ -29,7 +29,7 @@ const DEFAULT_PROVIDER = (process.env.DATABASE_DEFAULT_DRIVER as string) ?? 'mon
  *  3. Type Safety: Always ensure that the DbTypeHelpers accurately reflects your actual database setup.
  *     Mismatches between the type definition and the real database driver can lead to runtime errors.
  * 
- *  4. Updating: Remember to update DbTypeHelpers when changing database drivers or adding new connections
+ *  4. Updating: Remember to update DbTypeHelpers when changing default database drivers
  *     to maintain accurate type information throughout your application.
  */
 export type DbTypeHelpers = MongoDBTypes

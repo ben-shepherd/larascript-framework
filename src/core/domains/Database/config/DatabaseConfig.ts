@@ -1,18 +1,18 @@
-import MongoDB from "@src/core/domains/database/drivers/MongoDB";
-import { IDatabaseDriverCtor } from "@src/core/domains/database/interfaces/IDatabaseDriver";
+import { IDatabaseProviderCtor } from "@src/core/domains/database/interfaces/IDatabaseProvider";
+import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 
 interface Config {
-    drivers: Record<string, string>;
-    constructors: Record<string, IDatabaseDriverCtor>;
+    providers: Record<string, string>;
+    constructors: Record<string, IDatabaseProviderCtor>;
     packages: Record<string, string>;
 }
 
 const DatabaseConfig: Config = {
     /**
-     * Database Driver Constants
+     * Database Provider Constants
      * Important: Value must match the related docker-compose.{value}.yml file
      */
-    drivers: {
+    providers: {
         mongodb: 'mongodb',
         postgres: 'postgres',
     },
@@ -22,7 +22,10 @@ const DatabaseConfig: Config = {
      * value: constructor
      * 
      * Example: 
-     *    mongodb: new (config: any) => IDatabaseDriver
+     *   mongodb: new (config: any) => IDatabaseProvider
+     * 
+     * Usage
+     *   Used for instantiating new database driver instances
      */
     constructors: {
         mongodb: MongoDB

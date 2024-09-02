@@ -1,4 +1,4 @@
-import { IDatabaseDriver } from "@src/core/domains/database/interfaces/IDatabaseDriver";
+import { IDatabaseProvider } from "@src/core/domains/database/interfaces/IDatabaseProvider";
 import { IDatabaseDocument, IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
 import { IBelongsToCtor } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IHasManyCtor } from "@src/core/domains/database/interfaces/relationships/IHasMany";
@@ -7,10 +7,10 @@ import HasMany from "@src/core/domains/database/relationships/HasMany";
 
 abstract class DatabaseQuery implements IDatabaseQuery
 {
-    protected driver!: IDatabaseDriver;
+    protected driver!: IDatabaseProvider;
     protected tableName!: string;
 
-    constructor(driver: IDatabaseDriver)
+    constructor(driver: IDatabaseProvider)
     {
         this.driver = driver;
     }

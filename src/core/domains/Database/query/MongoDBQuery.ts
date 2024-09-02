@@ -1,8 +1,8 @@
 import DatabaseQuery from "@src/core/domains/database/base/DatabaseQuery";
-import MongoDB from "@src/core/domains/database/drivers/MongoDB";
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDatabaseQuery";
 import { IBelongsToCtor } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IHasManyCtor } from "@src/core/domains/database/interfaces/relationships/IHasMany";
+import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 import MongoDBBelongsTo from "@src/core/domains/database/relationships/mongodb/MongoDBBelongsTo";
 import MongoDBHasMany from "@src/core/domains/database/relationships/mongodb/MongoDBHasMany";
 import { BulkWriteOptions, ObjectId, UpdateOptions } from "mongodb";
