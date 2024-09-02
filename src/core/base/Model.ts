@@ -48,14 +48,14 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
     constructor(data: Data | null) {
         super()
         this.data = data;
-        this.setDefaultCollection();
+        this.setDefaultTable();
     }
 
     /**
-     * Set default collection name
+     * Set default table name
      * @returns 
      */
-    protected setDefaultCollection()
+    protected setDefaultTable()
     {
         if(this.table) {
             return;
@@ -64,7 +64,10 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
         this.table = Str.plural(Str.startLowerCase(this.constructor.name));
     }
 
-
+    /**
+     * Get database query
+     * @returns 
+     */
     getQuery(): IDatabaseQuery {
         return App.container('db').query(this.connection).table(this.table);
     }
