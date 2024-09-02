@@ -43,6 +43,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
     {
         let count = 1;
 
+        this.input.clearScreen();
         this.writeLine('--- Larascript Setup ---');
         this.writeLine();
         this.writeLine('Setup Preview:');

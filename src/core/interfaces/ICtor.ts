@@ -1,0 +1,1 @@
+export type ICtor<T = any> = new (...args: any[]) => T
