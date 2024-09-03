@@ -5,20 +5,20 @@ import { IHasManyCtor } from "@src/core/domains/database/interfaces/relationship
 import BelongsTo from "@src/core/domains/database/relationships/BelongsTo";
 import HasMany from "@src/core/domains/database/relationships/HasMany";
 
-abstract class DatabaseQuery implements IDatabaseQuery
+abstract class DatabaseQuery<Query extends IDatabaseQuery = IDatabaseQuery,  Provider extends IDatabaseProvider = IDatabaseProvider> implements IDatabaseQuery
 {
-    protected driver!: IDatabaseProvider;
+    protected driver!: Provider;
     protected tableName!: string;
 
-    constructor(driver: IDatabaseProvider)
+    constructor(driver: Provider)
     {
         this.driver = driver;
     }
 
-    table(table: string): IDatabaseQuery
+    table(table: string): Query
     {
         this.tableName = table;
-        return this;
+        return this as any;
     } 
 
     findById<T>(id: string): Promise<T | null> {

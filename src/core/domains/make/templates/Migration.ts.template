@@ -1,12 +1,19 @@
-import { IMigration } from "@src/core/domains/migrations/interfaces/IMigration";
+import BaseMigration from "@src/core/domains/migrations/base/BaseMigration";
+import { App } from "@src/core/services/App";
 
-export class #name#Migration implements IMigration {
+export class #nameMigration extends BaseMigration {
 
-    async up(): Promise<void> {
-        // Add your up migration here
+    // This optional property should be specified when your migration should
+    // run on a specific database provider. Values: 'mongodb' | 'postgres'
+    //databaseProvider = 'postgres';
+
+    async up(): Promise<void> 
+    {
+        // Add your up logic here
     }
 
-    async down(): Promise<void> {
-        // Add your down migration here
+    async down(): Promise<void> 
+    {
+        // Add your down logic here
     }
 }

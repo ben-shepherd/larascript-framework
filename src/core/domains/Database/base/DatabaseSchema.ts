@@ -1,11 +1,11 @@
 import { IDatabaseProvider } from "@src/core/domains/database/interfaces/IDatabaseProvider";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 
-abstract class DatabaseSchema implements IDatabaseSchema
+abstract class DatabaseSchema<Provider extends IDatabaseProvider = IDatabaseProvider> implements IDatabaseSchema
 {
-    protected driver!: IDatabaseProvider;
+    protected driver!: Provider;
 
-    constructor(driver: IDatabaseProvider)
+    constructor(driver: Provider)
     {
         this.driver = driver;
     }

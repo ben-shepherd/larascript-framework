@@ -7,7 +7,6 @@ export default class User extends Model<IUserData> implements IUserModel {
 
     public table: string = 'users';
 
-
     constructor(data: IUserData | null = null) {
         super(data);
         this.observeWith(UserObserver);

@@ -7,7 +7,7 @@ import MongoDBBelongsTo from "@src/core/domains/database/relationships/mongodb/M
 import MongoDBHasMany from "@src/core/domains/database/relationships/mongodb/MongoDBHasMany";
 import { BulkWriteOptions, ObjectId, UpdateOptions } from "mongodb";
 
-class MongoDBQuery extends DatabaseQuery
+class MongoDBQuery extends DatabaseQuery<MongoDBQuery, MongoDB>
 {
     protected driver!: MongoDB;
 
@@ -146,8 +146,8 @@ class MongoDBQuery extends DatabaseQuery
      * @returns 
      */
     async updateMany<T>(documentsArray: IDatabaseDocument[], options?: UpdateOptions): Promise<T> {
-        return documentsArray.forEach(async (doc) => {
-            return await this.updateOne(doc, options)
+        return documentsArray.forEach(async (document) => {
+            return await this.updateOne(document, options)
         }) as T
     }
 

@@ -1,5 +1,6 @@
 import { IDatabaseProviderCtor } from "@src/core/domains/database/interfaces/IDatabaseProvider";
 import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
+import Postgres from "../providers-db/Postgres";
 
 interface Config {
     providers: Record<string, string>;
@@ -10,7 +11,7 @@ interface Config {
 const DatabaseConfig: Config = {
     /**
      * Database Provider Constants
-     * Important: Value must match the related docker-compose.{value}.yml file
+     * Important: Value must match the related docker-compose.{value}.yml file, if applicable
      */
     providers: {
         mongodb: 'mongodb',
@@ -28,7 +29,8 @@ const DatabaseConfig: Config = {
      *   Used for instantiating new database driver instances
      */
     constructors: {
-        mongodb: MongoDB
+        mongodb: MongoDB,
+        postgres: Postgres
     },
     /**
      * Database Package Constants

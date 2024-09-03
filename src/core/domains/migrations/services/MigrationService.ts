@@ -3,7 +3,8 @@ import { IMigrationService, IMigrationServiceOptions } from "@src/core/domains/m
 import MigrationRepository from "@src/core/domains/migrations/repository/MigrationRepository";
 import MigrationFileService from "@src/core/domains/migrations/services/MigrationFilesService";
 import { App } from "@src/core/services/App";
-import { MongoClient } from "mongodb";
+import createMongoDBSchema from "../schema/createMongoDBSchema";
+import createPostgresSchema from "../schema/createPostgresSchema";
 
 class MigrationService implements IMigrationService {
     private fileService: MigrationFileService = new MigrationFileService();
@@ -47,8 +48,7 @@ class MigrationService implements IMigrationService {
                 continue;
             }
 
-            console.log(`[Migration] up -> ${fileName}`);
-            await this.handleFile(fileName, newBatchCount);
+            await this.handleFileUp(fileName, newBatchCount);
         }
     }
 
@@ -97,7 +97,7 @@ class MigrationService implements IMigrationService {
      * @param newBatchCount 
      * @returns 
      */
-    async handleFile(fileName: string, newBatchCount: number): Promise<void> {
+    async handleFileUp(fileName: string, newBatchCount: number): Promise<void> {
         const fileChecksum = await this.fileService.checksum(fileName);
 
         const migrationDocument = await this.repository.findOne({
@@ -111,6 +111,13 @@ class MigrationService implements IMigrationService {
         }
 
         const migration = await this.fileService.getImportMigrationClass(fileName);
+
+        if(!migration.shouldUp()) {
+            console.log(`[Migration] Skipping (Provider mismatch) -> ${fileName}`);
+            return;
+        }
+
+        console.log(`[Migration] up -> ${fileName}`);
         await migration.up();
 
         const model = (new MigrationFactory).create({
@@ -150,7 +157,6 @@ class MigrationService implements IMigrationService {
         })
     }
 
-
     /**
      * Create the migrations schema
      * @returns 
@@ -161,14 +167,14 @@ class MigrationService implements IMigrationService {
              * Handle MongoDB driver
              */
             if (App.container('db').isProvider('mongodb')) {
-                const client = App.container('db').getClient<MongoClient>();
-                const db = client.db();
+                await createMongoDBSchema();
+            }
 
-                if (await db.listCollections({ name: 'migrations' }).hasNext()) {
-                    return;
-                }
-
-                await db.createCollection('migrations');
+            /**
+             * Handle Postgres driver
+             */
+            if(App.container('db').isProvider('postgres')) {
+                await createPostgresSchema();
             }
         }
         catch (err) {
@@ -179,6 +185,7 @@ class MigrationService implements IMigrationService {
             }
         }
     }
+
 }
 
 export default MigrationService

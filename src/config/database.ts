@@ -1,4 +1,4 @@
-import { MongoDBTypes } from "@src/core/domains/database/interfaces/DatabaseProviderTypes";
+import { PostgresTypes } from "@src/core/domains/database/interfaces/DatabaseProviderTypes";
 import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 
 // Default connection string, fallback to 'default' if not set in environment
@@ -32,7 +32,7 @@ const DEFAULT_PROVIDER = (process.env.DATABASE_DEFAULT_PROVIDER as string) ?? 'm
  *  4. Updating: Remember to update DbTypeHelpers when changing default database drivers
  *     to maintain accurate type information throughout your application.
  */
-export type DbTypeHelpers = MongoDBTypes
+export type DbTypeHelpers = PostgresTypes
 
 /**
  * Database configuration object implementing IDatabaseConfig interface.

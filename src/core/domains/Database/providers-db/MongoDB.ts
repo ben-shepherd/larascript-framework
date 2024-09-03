@@ -1,21 +1,21 @@
-import { Db, MongoClient } from 'mongodb';
+import { Db, MongoClient, MongoClientOptions } from 'mongodb';
 
 import { IDatabaseProvider } from '@src/core/domains/database/interfaces/IDatabaseProvider';
 import { IDatabaseQuery } from '@src/core/domains/database/interfaces/IDatabaseQuery';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
-import { IMongoDBConfigConnection } from '@src/core/domains/database/interfaces/mongodb/IMongoDBConfigConnection';
 import MongoDBQuery from '@src/core/domains/database/query/MongoDBQuery';
 import MongoDBSchema from '@src/core/domains/database/schema/MongoDBSchema';
+import { IDatabaseGenericConnectionConfig } from '../interfaces/IDatabaseGenericConnectionConfig';
 
 export default class MongoDB implements IDatabaseProvider {
     protected client!: MongoClient;
     protected db!: Db;
- 
+
     /**
      * Constructor for MongoDB class
-     * @param {IMongoDBConfigConnection} config - Configuration object containing URI and options for MongoDB connection
+     * @param {IDatabaseGenericConnectionConfig} config - Configuration object containing URI and options for MongoDB connection
      */
-    constructor({ uri, options = {} }: IMongoDBConfigConnection) {
+    constructor({ uri, options = {} }: IDatabaseGenericConnectionConfig<MongoClientOptions>) {
         this.client = new MongoClient(uri, options);
     }
 
@@ -23,8 +23,7 @@ export default class MongoDB implements IDatabaseProvider {
      * Get the MongoDB client instance
      * @returns {MongoClient} The MongoDB client
      */
-    getClient(): MongoClient 
-    {
+    getClient(): MongoClient {
         return this.client;
     }
 
@@ -32,12 +31,11 @@ export default class MongoDB implements IDatabaseProvider {
      * Connect to the MongoDB database
      * @returns {Promise<void>} A promise that resolves when the connection is established
      */
-    async connect(): Promise<void> 
-    {
-        if(this.isConnected()) {
+    async connect(): Promise<void> {
+        if (this.isConnected()) {
             return;
         }
-        
+
         await this.client.connect();
         this.db = this.client.db();
     }
@@ -46,8 +44,7 @@ export default class MongoDB implements IDatabaseProvider {
      * Get a query interface for MongoDB
      * @returns {IDatabaseQuery} An instance of MongoDBQuery
      */
-    query(): IDatabaseQuery
-    {
+    query(): IDatabaseQuery {
         return new MongoDBQuery(this);
     }
 
@@ -55,8 +52,7 @@ export default class MongoDB implements IDatabaseProvider {
      * Get a schema interface for MongoDB
      * @returns {IDatabaseSchema} An instance of MongoDBSchema
      */
-    schema(): IDatabaseSchema 
-    {
+    schema(): IDatabaseSchema {
         return new MongoDBSchema(this);
     }
 
@@ -64,8 +60,7 @@ export default class MongoDB implements IDatabaseProvider {
      * Check if the database connection is established
      * @returns {boolean} True if connected, false otherwise
      */
-    isConnected(): boolean 
-    {
+    isConnected(): boolean {
         return this.db instanceof Db;
     }
 
@@ -73,8 +68,7 @@ export default class MongoDB implements IDatabaseProvider {
      * Get the MongoDB database instance
      * @returns {Db} The MongoDB database instance
      */
-    getDb(): Db 
-    {
+    getDb(): Db {
         return this.db;
     }
 }
