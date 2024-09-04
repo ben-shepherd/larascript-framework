@@ -2,6 +2,7 @@ import QuestionDTO from '@src/core/domains/setup/DTOs/QuestionDTO';
 import { IAction } from '@src/core/domains/setup/interfaces/IAction';
 import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand';
 import defaultCredentials from '@src/core/domains/setup/utils/defaultCredentials';
+import InvalidDefaultCredentialsError from '../exceptions/InvalidDefaultCredentialsError';
 
 class SetupDefaultDatabase implements IAction
 {
@@ -32,16 +33,28 @@ class SetupDefaultDatabase implements IAction
     {
         ref.env.copyFileFromEnvExample();
 
-        let env: Record<string,string> = { DATABASE_DEFAULT_PROVIDER: dbType }
-
-        if(dbType === 'mongodb') {
-            env = {
-                ...env,
-                DATABASE_DEFAULT_URI: defaultCredentials.extractDefaultMongoDBCredentials() ?? ''
-            }
+        const extractors = {
+            mongodb: defaultCredentials.extractDefaultMongoDBCredentials,
+            postgres: defaultCredentials.extractDefaultPostgresCredentials
         }
 
-        await ref.env.updateValues(env);
+        let env: Record<string,string> = { DATABASE_DEFAULT_PROVIDER: dbType }
+        let databaseDefaultUri = undefined;
+
+        if(extractors[dbType]) {
+            databaseDefaultUri = extractors[dbType]();
+
+            if(!databaseDefaultUri) {
+                throw new InvalidDefaultCredentialsError(`The default credentials are invalid or could not be found for provider '${dbType}'`);
+            }
+
+            env = {
+                ...env,
+                DATABASE_DEFAULT_URI: databaseDefaultUri
+            }
+
+            await ref.env.updateValues(env);
+        }
     }
 }
 

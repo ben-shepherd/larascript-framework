@@ -4,6 +4,8 @@ services:
   api:
     depends_on:
       - postgres
+    environment:
+      - POSTGRES_URI=postgresql://root:example@postgres:5432/app
 
   postgres:
     image: postgres:latest
