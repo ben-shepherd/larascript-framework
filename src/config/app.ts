@@ -1,6 +1,6 @@
 import ExampleCommand from '@src/app/commands/ExampleCommand';
 import AppProvider from '@src/app/providers/AppProvider';
-import { EnvironmentType } from '@src/core/consts/Environment';
+import { EnvironmentDevelopment, EnvironmentType } from '@src/core/consts/Environment';
 import IAppConfig from '@src/core/interfaces/IAppConfig';
 import CoreProviders from '@src/core/providers/CoreProviders';
 
@@ -11,7 +11,7 @@ const appConfig: IAppConfig = {
     /**
      * The environment the app is running in
      */
-    environment: (process.env.APP_ENV as EnvironmentType) ?? 'development',
+    environment: (process.env.APP_ENV as EnvironmentType) ?? EnvironmentDevelopment,
     
     /**
      * Providers
