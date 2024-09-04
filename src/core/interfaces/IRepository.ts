@@ -1,4 +1,4 @@
-import { IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
+import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
 export type RepositoryConstructor<
@@ -25,7 +25,7 @@ export interface IRepository<Model extends IModel = IModel> {
     /**
      * Get the Database Query
      */
-    query(): IDatabaseQuery;
+    query(): IDocumentManager;
 
     /**
      * Find or fail if no document found

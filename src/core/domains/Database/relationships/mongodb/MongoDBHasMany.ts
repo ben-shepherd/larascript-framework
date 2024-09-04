@@ -25,7 +25,7 @@ export default class HasMany implements IHasMany
         }
 
         return await App.container('db')
-            .query(connection) 
+            .documentManager(connection) 
             .table(new foreignModelCtor().table)
             .findMany(schema)
     }

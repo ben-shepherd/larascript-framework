@@ -1,5 +1,5 @@
 
-import { IDatabaseQuery } from '@src/core/domains/database/interfaces/IDatabaseQuery';
+import { IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
 import ModelNotFound from '@src/core/exceptions/ModelNotFound';
 import { IModel, ModelConstructor } from '@src/core/interfaces/IModel';
 import { IRepository } from '@src/core/interfaces/IRepository';
@@ -20,8 +20,8 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * Get the query
      * @returns 
      */
-    query(): IDatabaseQuery {
-        return App.container('db').query(this.connection).table(this.collectionName)
+    query(): IDocumentManager {
+        return App.container('db').documentManager(this.connection).table(this.collectionName)
     }
     
     /**

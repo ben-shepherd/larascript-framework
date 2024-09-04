@@ -1,6 +1,6 @@
 
 
-import { IDatabaseQuery } from '@src/core/domains/database/interfaces/IDatabaseQuery';
+import { IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
 import { IBelongsToOptions } from '@src/core/domains/database/interfaces/relationships/IBelongsTo';
 import { IHasManyOptions } from '@src/core/domains/database/interfaces/relationships/IHasMany';
 import { IObserver } from '@src/core/domains/observer/interfaces/IObserver';
@@ -68,8 +68,8 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      * Get database query
      * @returns 
      */
-    getQuery(): IDatabaseQuery {
-        return App.container('db').query(this.connection).table(this.table);
+    getQuery(): IDocumentManager {
+        return App.container('db').documentManager(this.connection).table(this.table);
     }
 
     /**

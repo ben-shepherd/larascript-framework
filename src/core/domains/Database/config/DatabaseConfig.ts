@@ -1,6 +1,6 @@
 import { IDatabaseProviderCtor } from "@src/core/domains/database/interfaces/IDatabaseProvider";
 import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
-import Postgres from "../providers-db/Postgres";
+import Postgres from "@src/core/domains/database/providers-db/Postgres";
 
 interface Config {
     providers: Record<string, string>;

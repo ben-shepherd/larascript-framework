@@ -66,14 +66,14 @@ class DatabaseService implements IDatabaseService {
     }
 
     /**
-     * Get the query service
+     * Get the DocumentManager service
      * 
      * @param connectionName 
      * @returns 
      */
-    public query<T>(connectionName: string = this.config.defaultConnectionName): T 
+    public documentManager<T>(connectionName: string = this.config.defaultConnectionName): T 
     {
-        return this.store[connectionName].query() as T;
+        return this.store[connectionName].documentManager() as T;
     }
 
     /**

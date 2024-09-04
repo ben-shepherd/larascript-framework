@@ -1,5 +1,5 @@
 import { App } from "@src/core/services/App";
-import { IMigration } from "../interfaces/IMigration";
+import { IMigration } from "@src/core/domains/migrations/interfaces/IMigration";
 
 class BaseMigration implements IMigration
 {

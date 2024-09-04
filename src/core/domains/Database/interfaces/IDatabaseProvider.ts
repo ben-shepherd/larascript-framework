@@ -1,5 +1,5 @@
-import { IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
+import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 
 export type IDatabaseProviderCtor = new (config: any) => IDatabaseProvider;
 
@@ -9,6 +9,6 @@ export type IDatabaseProviderCtor = new (config: any) => IDatabaseProvider;
 export interface IDatabaseProvider {
     connect(): Promise<void>;
     getClient(): any;
-    query(): IDatabaseQuery;
+    documentManager(): IDocumentManager;
     schema(): IDatabaseSchema;
 }

@@ -1,11 +1,11 @@
 import { Db, MongoClient, MongoClientOptions } from 'mongodb';
 
 import { IDatabaseProvider } from '@src/core/domains/database/interfaces/IDatabaseProvider';
-import { IDatabaseQuery } from '@src/core/domains/database/interfaces/IDatabaseQuery';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
-import MongoDBQuery from '@src/core/domains/database/query/MongoDBQuery';
+import { IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
 import MongoDBSchema from '@src/core/domains/database/schema/MongoDBSchema';
-import { IDatabaseGenericConnectionConfig } from '../interfaces/IDatabaseGenericConnectionConfig';
+import MongoDbDocumentManager from '@src/core/domains/database/documentManagers/MongoDbDocumentManager';
+import { IDatabaseGenericConnectionConfig } from '@src/core/domains/database/interfaces/IDatabaseGenericConnectionConfig';
 
 export default class MongoDB implements IDatabaseProvider {
     protected client!: MongoClient;
@@ -42,10 +42,10 @@ export default class MongoDB implements IDatabaseProvider {
 
     /**
      * Get a query interface for MongoDB
-     * @returns {IDatabaseQuery} An instance of MongoDBQuery
+     * @returns {IDocumentManager} An instance of MongoDBQuery
      */
-    query(): IDatabaseQuery {
-        return new MongoDBQuery(this);
+    documentManager(): IDocumentManager {
+        return new MongoDbDocumentManager(this);
     }
 
     /**

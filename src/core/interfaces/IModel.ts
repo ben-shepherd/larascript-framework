@@ -1,4 +1,4 @@
-import { IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
+import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import IWithObserve from "@src/core/domains/observer/interfaces/IWithObserve";
@@ -22,7 +22,7 @@ export interface IModel<Data extends IModelData = IModelData> extends IWithObser
     dates: Dates;
     timestamps: boolean;
     observeProperties: Record<string, string>;
-    getQuery(): IDatabaseQuery;
+    getQuery(): IDocumentManager;
     getId(): string | undefined;
     setAttribute(key: keyof Data, value: any): void;
     getAttribute(key: keyof Data): any;

@@ -1,4 +1,4 @@
-import { IDatabaseGenericConnectionConfig } from "./IDatabaseGenericConnectionConfig";
+import { IDatabaseGenericConnectionConfig } from "@src/core/domains/database/interfaces/IDatabaseGenericConnectionConfig";
 
 export interface IDatabaseConfig {
     defaultConnectionName: string;

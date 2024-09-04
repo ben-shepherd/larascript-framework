@@ -1,5 +1,5 @@
 import { App } from "@src/core/services/App";
-import MongoDB from "../../database/providers-db/MongoDB";
+import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 
 const createMongoDBSchema = async () => {
     const db = App.container('db').provider<MongoDB>().getDb();

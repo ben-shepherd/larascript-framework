@@ -1,6 +1,6 @@
 import { App } from "@src/core/services/App";
 import { DataTypes } from "sequelize";
-import Postgres from "../../database/providers-db/Postgres";
+import Postgres from "@src/core/domains/database/providers-db/Postgres";
 
 const createPostgresSchema = async () => {
     const sequelize = App.container('db').provider<Postgres>().getSequelize();

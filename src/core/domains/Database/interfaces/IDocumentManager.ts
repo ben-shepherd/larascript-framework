@@ -1,8 +1,8 @@
 import { IBelongsToCtor } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IHasManyCtor } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 
-export interface IDatabaseQuery {
-    table(table: string): IDatabaseQuery;
+export interface IDocumentManager {
+    table(table: string): IDocumentManager;
     
     findById<T>(id: string): Promise<T | null>;
     findOne<T>(...args: any[]): Promise<T | null>;

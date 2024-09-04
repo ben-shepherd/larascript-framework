@@ -1,14 +1,14 @@
 
 import { IDatabaseProvider } from '@src/core/domains/database/interfaces/IDatabaseProvider';
-import { IDatabaseQuery } from '@src/core/domains/database/interfaces/IDatabaseQuery';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
+import { IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
 import { Pool, PoolConfig } from 'pg';
 import { QueryInterface, Sequelize } from 'sequelize';
 import { Options as SequelizeOptions } from 'sequelize/types/sequelize';
-import InvalidSequelize from '../exceptions/InvalidSequelize';
-import { IDatabaseGenericConnectionConfig } from '../interfaces/IDatabaseGenericConnectionConfig';
-import PostgresQuery from '../query/PostgresQuery';
-import PostgresSchema from '../schema/PostgresSchema';
+import PostgresDocumentManager from '@src/core/domains/database/documentManagers/PostgresDocumentManager';
+import InvalidSequelize from '@src/core/domains/database/exceptions/InvalidSequelize';
+import { IDatabaseGenericConnectionConfig } from '@src/core/domains/database/interfaces/IDatabaseGenericConnectionConfig';
+import PostgresSchema from '@src/core/domains/database/schema/PostgresSchema';
 
 export default class Postgres implements IDatabaseProvider {
     protected pool!: Pool;
@@ -39,11 +39,11 @@ export default class Postgres implements IDatabaseProvider {
 
     /**
      * Get a query interface for MongoDB
-     * @returns {IDatabaseQuery} An instance of MongoDBQuery
+     * @returns {IDocumentManager} An instance of MongoDBQuery
      */
-    query(): IDatabaseQuery
+    documentManager(): IDocumentManager
     {
-        return new PostgresQuery(this);
+        return new PostgresDocumentManager(this);
     }
 
     /**

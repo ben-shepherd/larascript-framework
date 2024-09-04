@@ -1,11 +1,11 @@
 import { DbTypeHelpers } from "@src/config/database";
 import { IDatabaseProvider } from "@src/core/domains/database/interfaces/IDatabaseProvider";
-import { IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
+import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 
 type Client = DbTypeHelpers['client'];
 type Provider = DbTypeHelpers['provider'] extends IDatabaseProvider ? DbTypeHelpers['provider'] : IDatabaseProvider;
-type Query = DbTypeHelpers['query'] extends IDatabaseQuery ? DbTypeHelpers['query'] : IDatabaseQuery
+type DocumentManager = DbTypeHelpers['query'] extends IDocumentManager ? DbTypeHelpers['query'] : IDocumentManager
 type Schema = DbTypeHelpers['schema'] extends IDatabaseSchema ? DbTypeHelpers['schema'] : IDatabaseSchema;
 
 export interface IDatabaseService
@@ -14,6 +14,6 @@ export interface IDatabaseService
     getClient<T = Client>(): T;
     provider<T = Provider>(connectionName?: string): T;
     isProvider(driver: string, connectionName?: string): boolean;
-    query<T = Query>(connectionName?: string): T;
+    documentManager<T = DocumentManager>(connectionName?: string): T;
     schema<T = Schema>(connectionName?: string): T;
 }

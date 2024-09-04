@@ -1,11 +1,11 @@
 import { IDatabaseProvider } from "@src/core/domains/database/interfaces/IDatabaseProvider";
-import { IDatabaseDocument, IDatabaseQuery } from "@src/core/domains/database/interfaces/IDatabaseQuery";
+import { IDatabaseDocument, IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IBelongsToCtor } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IHasManyCtor } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import BelongsTo from "@src/core/domains/database/relationships/BelongsTo";
 import HasMany from "@src/core/domains/database/relationships/HasMany";
 
-abstract class DatabaseQuery<Query extends IDatabaseQuery = IDatabaseQuery,  Provider extends IDatabaseProvider = IDatabaseProvider> implements IDatabaseQuery
+abstract class DatabaseQuery<Query extends IDocumentManager = IDocumentManager,  Provider extends IDatabaseProvider = IDatabaseProvider> implements IDocumentManager
 {
     protected driver!: Provider;
     protected tableName!: string;

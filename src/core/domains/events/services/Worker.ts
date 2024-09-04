@@ -100,7 +100,7 @@ export default class Worker extends Singleton
      */
     private async deleteModel(model: WorkerModel) {
         await App.container('db')
-            .query()
+            .documentManager()
             .table(new this.options.workerModelCtor().table)
             .deleteOne(model)
     }

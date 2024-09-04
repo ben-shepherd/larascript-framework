@@ -1,11 +1,11 @@
 import DatabaseQuery from "@src/core/domains/database/base/DatabaseQuery";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { BindOrReplacements, QueryOptions, QueryTypes } from "sequelize";
-import PostgresQueryBuilder, { SelectOptions } from "../builder/PostgresQueryBuilder";
-import { IDatabaseDocument } from "../interfaces/IDatabaseQuery";
-import Postgres from "../providers-db/Postgres";
+import PostgresQueryBuilder, { SelectOptions } from "@src/core/domains/database/builder/PostgresQueryBuilder";
+import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
+import Postgres from "@src/core/domains/database/providers-db/Postgres";
 
-class PostgresQuery extends DatabaseQuery<PostgresQuery, Postgres>
+class PostgresDocumentManager extends DatabaseQuery<PostgresDocumentManager, Postgres>
 {
     protected builder = new PostgresQueryBuilder()
 
@@ -144,4 +144,4 @@ class PostgresQuery extends DatabaseQuery<PostgresQuery, Postgres>
     }
 }
 
-export default PostgresQuery
+export default PostgresDocumentManager

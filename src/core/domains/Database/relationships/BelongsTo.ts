@@ -22,7 +22,7 @@ export default class BelongsTo implements IBelongsTo
          }
 
         return App.container('db')
-            .query(connection)
+            .documentManager(connection)
             .table(new foreignModelCtor().table)
             .findOne(schema) as T
     }

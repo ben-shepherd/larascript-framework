@@ -3,8 +3,8 @@ import { IMigrationService, IMigrationServiceOptions } from "@src/core/domains/m
 import MigrationRepository from "@src/core/domains/migrations/repository/MigrationRepository";
 import MigrationFileService from "@src/core/domains/migrations/services/MigrationFilesService";
 import { App } from "@src/core/services/App";
-import createMongoDBSchema from "../schema/createMongoDBSchema";
-import createPostgresSchema from "../schema/createPostgresSchema";
+import createMongoDBSchema from "@src/core/domains/migrations/schema/createMongoDBSchema";
+import createPostgresSchema from "@src/core/domains/migrations/schema/createPostgresSchema";
 
 class MigrationService implements IMigrationService {
     private fileService: MigrationFileService = new MigrationFileService();
