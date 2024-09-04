@@ -5,7 +5,7 @@ import { IHasManyCtor } from "@src/core/domains/database/interfaces/relationship
 import BelongsTo from "@src/core/domains/database/relationships/BelongsTo";
 import HasMany from "@src/core/domains/database/relationships/HasMany";
 
-abstract class DatabaseQuery<Query extends IDocumentManager = IDocumentManager,  Provider extends IDatabaseProvider = IDatabaseProvider> implements IDocumentManager
+abstract class BaseDocumentManager<Query extends IDocumentManager = IDocumentManager,  Provider extends IDatabaseProvider = IDatabaseProvider> implements IDocumentManager
 {
     protected driver!: Provider;
     protected tableName!: string;
@@ -72,4 +72,4 @@ abstract class DatabaseQuery<Query extends IDocumentManager = IDocumentManager, 
     }
 }
 
-export default DatabaseQuery
+export default BaseDocumentManager

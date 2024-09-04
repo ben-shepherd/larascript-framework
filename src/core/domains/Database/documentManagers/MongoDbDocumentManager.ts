@@ -1,4 +1,4 @@
-import DatabaseQuery from "@src/core/domains/database/base/DatabaseQuery";
+import BaseDocumentManager from "@src/core/domains/database/base/DatabaseQuery";
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IBelongsToCtor } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IHasManyCtor } from "@src/core/domains/database/interfaces/relationships/IHasMany";
@@ -7,7 +7,7 @@ import MongoDBBelongsTo from "@src/core/domains/database/relationships/mongodb/M
 import MongoDBHasMany from "@src/core/domains/database/relationships/mongodb/MongoDBHasMany";
 import { BulkWriteOptions, ObjectId, UpdateOptions } from "mongodb";
 
-class MongoDbDocumentManager extends DatabaseQuery<MongoDbDocumentManager, MongoDB>
+class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager, MongoDB>
 {
     protected driver!: MongoDB;
 
