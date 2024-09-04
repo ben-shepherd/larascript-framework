@@ -1,14 +1,22 @@
 import MigrationFactory from "@src/core/domains/migrations/factory/MigrationFactory";
 import { IMigrationService, IMigrationServiceOptions } from "@src/core/domains/migrations/interfaces/IMigrationService";
 import MigrationRepository from "@src/core/domains/migrations/repository/MigrationRepository";
-import MigrationFileService from "@src/core/domains/migrations/services/MigrationFilesService";
-import { App } from "@src/core/services/App";
 import createMongoDBSchema from "@src/core/domains/migrations/schema/createMongoDBSchema";
 import createPostgresSchema from "@src/core/domains/migrations/schema/createPostgresSchema";
+import MigrationFileService from "@src/core/domains/migrations/services/MigrationFilesService";
+import { App } from "@src/core/services/App";
+import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
 
 class MigrationService implements IMigrationService {
-    private fileService: MigrationFileService = new MigrationFileService();
-    private repository: MigrationRepository = new MigrationRepository();
+    private fileService!: MigrationFileService;
+    private repository!: MigrationRepository;
+    protected config!: IMigrationConfig;
+
+    constructor(config: IMigrationConfig = {}) {
+        this.config = config;
+        this.fileService = new MigrationFileService(config.appMigrationsDir);
+        this.repository = new MigrationRepository();
+    }
 
     async boot()
     {

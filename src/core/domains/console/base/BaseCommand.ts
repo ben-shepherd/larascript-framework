@@ -9,6 +9,12 @@ export default abstract class BaseCommand implements ICommand {
     public keepProcessAlive?: boolean = false;
     protected parsedArgumenets: ParsedArgumentsArray = [];
     protected overwriteArgs: Record<string, string> = {};
+    protected config: object = {};
+
+    constructor(config: object = {}) {
+        this.config = config;
+    }
+
     /**
      * Set the parsed arguements
      * @param parsedArgumenets 

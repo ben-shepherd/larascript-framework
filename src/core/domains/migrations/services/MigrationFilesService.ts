@@ -4,9 +4,15 @@ import Str from '@src/core/util/str/Str';
 import fs from 'fs';
 import path from 'path';
 
+const APP_MIGRATIONS_DIR = '@src/../src/app/migrations';
+
 class MigrationFileService
 {
-    appMigrationsDir = path.resolve('@src/../src', 'app/migrations');
+    appMigrationsDir!: string;
+
+    constructor(appMigrationsDir?: string) {
+        this.appMigrationsDir = path.resolve(appMigrationsDir ?? APP_MIGRATIONS_DIR);
+    }
 
     /**
      * Get the checksum of the specified file
@@ -18,7 +24,7 @@ class MigrationFileService
             fileName = `${fileName}.ts`;
         }
         
-        return await checksumFile(path.resolve('@src/../src/app/migrations', fileName));
+        return await checksumFile(path.resolve(this.appMigrationsDir, fileName));
     }
 
     /**

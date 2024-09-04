@@ -10,12 +10,31 @@ class MongoDBSchema extends DatabaseSchema
         this.driver = driver;
     }
 
-    createTable(name: string, ...args: any[]): void {
+    /**
+     * Create a table
+     * @param name 
+     * @param args 
+     */
+    async createTable(name: string, ...args: any[]): Promise<void> {
         this.driver.getDb().createCollection(name);
     }
 
-    dropTable(name: string, ...args: any[]): void {
-        this.driver.getDb().dropCollection(name);
+    /**
+     * Drop a table
+     * @param name 
+     * @param args 
+     */
+    async dropTable(name: string, ...args: any[]): Promise<void> {
+        await this.driver.getDb().dropCollection(name);
+    }
+
+    /**
+     * Check if table exists
+     * @param name 
+     * @returns 
+     */
+    async tableExists(name: string): Promise<boolean> {
+        return (await this.driver.getDb().listCollections().toArray()).map(c => c.name).includes(name);
     }
 }
 

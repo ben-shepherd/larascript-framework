@@ -2,7 +2,7 @@ import QuestionDTO from '@src/core/domains/setup/DTOs/QuestionDTO';
 import { IAction } from '@src/core/domains/setup/interfaces/IAction';
 import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand';
 import defaultCredentials from '@src/core/domains/setup/utils/defaultCredentials';
-import InvalidDefaultCredentialsError from '../exceptions/InvalidDefaultCredentialsError';
+import InvalidDefaultCredentialsError from '@src/core/domains/setup/exceptions/InvalidDefaultCredentialsError';
 
 class SetupDefaultDatabase implements IAction
 {

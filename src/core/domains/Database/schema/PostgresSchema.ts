@@ -1,7 +1,7 @@
 import DatabaseSchema from "@src/core/domains/database/base/DatabaseSchema";
+import Postgres from "@src/core/domains/database/providers-db/Postgres";
 import { DataTypes, QueryInterfaceCreateTableOptions, QueryInterfaceDropTableOptions } from "sequelize";
 import { ModelAttributes } from 'sequelize/types/model';
-import Postgres from "@src/core/domains/database/providers-db/Postgres";
 
 class PostgresSchema extends DatabaseSchema<Postgres>
 {
@@ -47,6 +47,17 @@ class PostgresSchema extends DatabaseSchema<Postgres>
         const sequelize = this.driver.getClient();
         const queryInterface = sequelize.getQueryInterface();
         queryInterface.dropTable(name, options);
+    }
+
+    /**
+     * Check if table exists
+     * @param name 
+     * @returns 
+     */
+    async tableExists(name: string): Promise<boolean> {
+        const sequelize = this.driver.getClient();
+        const queryInterface = sequelize.getQueryInterface();
+        return await queryInterface.tableExists(name);
     }
 }
 

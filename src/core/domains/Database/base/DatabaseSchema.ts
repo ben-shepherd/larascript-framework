@@ -16,6 +16,14 @@ abstract class DatabaseSchema<Provider extends IDatabaseProvider = IDatabaseProv
     dropTable(name: string, ...args: any[]): void {
         throw new Error("Method not implemented.");
     }
+
+    tableExists(name: string): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+
+    alterTable(name: string, ...args: any[]): void {
+        throw new Error("Method not implemented.");
+    }
 }
 
 export default DatabaseSchema

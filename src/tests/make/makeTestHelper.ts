@@ -4,6 +4,7 @@ import MakeActionCommand from '@src/core/domains/make/commands/MakeActionCommand
 import MakeCmdCommand from '@src/core/domains/make/commands/MakeCmdCommand';
 import MakeListenerCommand from '@src/core/domains/make/commands/MakeListenerCommand';
 import MakeMiddlewareCommand from '@src/core/domains/make/commands/MakeMiddlewareCommand';
+import MakeMigrationCommand from '@src/core/domains/make/commands/MakeMigrationCommand';
 import MakeModelCommand from '@src/core/domains/make/commands/MakeModelCommand';
 import MakeObserverCommand from '@src/core/domains/make/commands/MakeObserverCommand';
 import MakeProviderCommand from '@src/core/domains/make/commands/MakeProviderCommand';
@@ -84,8 +85,10 @@ const getCommandCtorByType = (type: typeof targetDirectories[string]): CommandCt
             return MakeActionCommand;
         case 'Validator':
             return MakeValidatorCommand;
+        case 'Migration':
+            return MakeMigrationCommand;
         default:
-            throw new Error('Unknown command type')
+            throw new Error(`Unknown command type '${type}'`)
     }
 }
 
