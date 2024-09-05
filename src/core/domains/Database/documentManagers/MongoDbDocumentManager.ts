@@ -1,4 +1,3 @@
-import BaseDocumentManager from "@src/core/domains/database/base/DatabaseQuery";
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IBelongsToCtor } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IHasManyCtor } from "@src/core/domains/database/interfaces/relationships/IHasMany";
@@ -6,6 +5,7 @@ import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 import MongoDBBelongsTo from "@src/core/domains/database/relationships/mongodb/MongoDBBelongsTo";
 import MongoDBHasMany from "@src/core/domains/database/relationships/mongodb/MongoDBHasMany";
 import { BulkWriteOptions, ObjectId, UpdateOptions } from "mongodb";
+import BaseDocumentManager from "../base/BaseDocumentManager";
 
 class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager, MongoDB>
 {
@@ -59,7 +59,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @returns 
      */
     async findById<T = IDatabaseDocument>(id: string): Promise<T | null> {
-        return this.findOne({ _id: this.convertStringIdToObjectId(id) })
+        return this.findOne({ filter: { _id: this.convertStringIdToObjectId(id) } })
     }
 
     /**
@@ -68,7 +68,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param filter 
      * @returns 
      */
-    async findOne<T>(filter: object = {}): Promise<T | null> {
+    async findOne<T>({filter = {}}: {filter?: object}): Promise<T | null> {
         let document = await this.driver.getDb().collection(this.tableName).findOne(filter) as T | null;
 
         if(document) {
@@ -84,7 +84,8 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param filter 
      * @returns 
      */
-    async findMany<T>(filter: object = {}): Promise<T[]> {
+    async findMany<T>({ filter = {} }: {filter?: object}): Promise<T[]> 
+    {
         let documents = await this.driver.getDb().collection(this.tableName).find(filter).toArray() as T[];
 
         return documents.map((d: any) => this.convertObjectIdToStringInDocument(d) as T)
@@ -96,7 +97,11 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param document 
      * @returns 
      */
-    async insertOne<T>(document: IDatabaseDocument): Promise<T> {
+    async insertOne<T>(document: IDatabaseDocument): Promise<T> 
+    {
+        this.validator.validateSingleDocument(document)
+        this.validator.validateWithoutId(document)
+
         /**
          * Insert the document
          */
@@ -115,7 +120,11 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param options 
      * @returns 
      */
-    async insertMany<T>(documentsArray: IDatabaseDocument[],  options?: BulkWriteOptions): Promise<T[]> {
+    async insertMany<T>(documentsArray: IDatabaseDocument[],  options?: BulkWriteOptions): Promise<T[]> 
+    {
+        this.validator.validateMultipleDocuments(documentsArray)
+        this.validator.validateWithoutId(documentsArray)
+        
         /**
          * Insert the documents
          */
@@ -134,8 +143,14 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param options 
      * @returns 
      */
-    async updateOne<T>(document: IDatabaseDocument, options?: UpdateOptions): Promise<T> {
-        return await this.driver.getDb().collection(this.tableName).updateOne({ _id: this.convertStringIdToObjectId(document.id) }, { $set: document }, options) as T
+    async updateOne<T>(document: IDatabaseDocument, options?: UpdateOptions): Promise<T> 
+    {
+        this.validator.validateSingleDocument(document)
+        this.validator.validateContainsId(document)
+
+        await this.driver.getDb().collection(this.tableName).updateOne({ _id: this.convertStringIdToObjectId(document.id) }, { $set: document }, options) as T
+
+        return this.convertObjectIdToStringInDocument(document) as T
     }
     
     /**
@@ -145,10 +160,18 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param options 
      * @returns 
      */
-    async updateMany<T>(documentsArray: IDatabaseDocument[], options?: UpdateOptions): Promise<T> {
-        return documentsArray.forEach(async (document) => {
-            return await this.updateOne(document, options)
-        }) as T
+    async updateMany<T>(documentsArray: IDatabaseDocument[], options?: UpdateOptions): Promise<T> 
+    {
+        this.validator.validateMultipleDocuments(documentsArray)
+        this.validator.validateContainsId(documentsArray)
+
+        let documentsUpdated: IDatabaseDocument[] = [];
+
+        for(const document of documentsArray) {
+            documentsUpdated.push(await this.updateOne(document, options))
+        }
+
+        return documentsUpdated as T
     }
 
     /**
@@ -157,7 +180,11 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param document 
      * @returns 
      */
-    async deleteOne<T>(document: IDatabaseDocument): Promise<T> {
+    async deleteOne<T>(document: IDatabaseDocument): Promise<T> 
+    {
+        this.validator.validateSingleDocument(document)
+        this.validator.validateContainsId(document)
+
         return await this.driver.getDb().collection(this.tableName).deleteOne({ _id: this.convertStringIdToObjectId(document.id) }) as T
     }
 
@@ -167,7 +194,11 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param documentsArray 
      * @returns 
      */
-    async deleteMany<T>(documentsArray: IDatabaseDocument[]): Promise<T> {
+    async deleteMany<T>(documentsArray: IDatabaseDocument[]): Promise<T> 
+    {
+        this.validator.validateMultipleDocuments(documentsArray)
+        this.validator.validateContainsId(documentsArray)
+
         return documentsArray.forEach(async (doc) => {
             return await this.deleteOne(doc)
         }) as T

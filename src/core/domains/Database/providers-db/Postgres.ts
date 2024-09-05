@@ -1,19 +1,28 @@
 
-import { IDatabaseProvider } from '@src/core/domains/database/interfaces/IDatabaseProvider';
-import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
-import { IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
-import { Pool, PoolConfig } from 'pg';
-import { QueryInterface, Sequelize } from 'sequelize';
-import { Options as SequelizeOptions } from 'sequelize/types/sequelize';
 import PostgresDocumentManager from '@src/core/domains/database/documentManagers/PostgresDocumentManager';
 import InvalidSequelize from '@src/core/domains/database/exceptions/InvalidSequelize';
 import { IDatabaseGenericConnectionConfig } from '@src/core/domains/database/interfaces/IDatabaseGenericConnectionConfig';
+import { IDatabaseProvider } from '@src/core/domains/database/interfaces/IDatabaseProvider';
+import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
+import { IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
 import PostgresSchema from '@src/core/domains/database/schema/PostgresSchema';
+import { Pool, PoolConfig } from 'pg';
+import { QueryInterface, Sequelize } from 'sequelize';
+import { Options as SequelizeOptions } from 'sequelize/types/sequelize';
 
 export default class Postgres implements IDatabaseProvider {
     protected pool!: Pool;
     protected sequelize!: Sequelize;
     protected config!: IDatabaseGenericConnectionConfig<SequelizeOptions>;
+
+    /**
+     * Override config
+     * This fixes an issue where a SQL select query string did not keep the casing of the provided table name.
+     * When the select query string is buit, it's now wrapped around double quotes which ensures the casing of the table name.
+     */
+    protected overrideConfig = {
+        quoteIdentifiers: true
+    }
  
     /**
      * Constructor for MongoDB class
@@ -34,7 +43,7 @@ export default class Postgres implements IDatabaseProvider {
      */
     async connect(): Promise<void> 
     {
-        this.sequelize = new Sequelize(this.config.uri, this.config.options)
+        this.sequelize = new Sequelize(this.config.uri, { ...this.config.options, ...this.overrideConfig })
     }
 
     /**

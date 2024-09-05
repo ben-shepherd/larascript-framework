@@ -61,17 +61,17 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @returns 
      */
     async findOne(filter: object = {}): Promise<Model | null> {
-        const data = await this.query().findOne(filter);
+        const data = await this.query().findOne({filter});
         return data ? new this.modelCtor(data) : null;
     }
 
     /**
      * Find multiple documents
-     * @param query 
+     * @param filter 
      * @returns 
      */
-    async findMany(query: object = {}, options?: object): Promise<Model[]> {
-        const dataArray = await this.query().findMany(query, options)
+    async findMany(filter: object = {}, options?: object): Promise<Model[]> {
+        const dataArray = await this.query().findMany({filter}, options)
         return dataArray.map(data => new this.modelCtor(data));
     }
 }

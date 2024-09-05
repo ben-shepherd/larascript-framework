@@ -1,9 +1,9 @@
-import BaseDocumentManager from "@src/core/domains/database/base/DatabaseQuery";
 import PostgresQueryBuilder, { SelectOptions } from "@src/core/domains/database/builder/PostgresQueryBuilder";
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
 import Postgres from "@src/core/domains/database/providers-db/Postgres";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { BindOrReplacements, QueryOptions, QueryTypes } from "sequelize";
+import BaseDocumentManager from "../base/BaseDocumentManager";
 
 class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManager, Postgres>
 {
@@ -49,7 +49,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
                 limit: 1
             })
     
-            const results = await sequelize. query(
+            const results = await sequelize.query(
                 queryString,
                 {
                     replacements: (selectOptions.filter ?? {}) as BindOrReplacements,
@@ -85,6 +85,9 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
      */
     async insertOne<T = object>(document: IDatabaseDocument, options?: QueryOptions): Promise<T> 
     {
+        this.validator.validateSingleDocument(document)
+        this.validator.validateWithoutId(document)
+
         document = this.documentWithUuid(document)
 
         const queryInterface = this.driver.getQueryInterface();
@@ -99,10 +102,17 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
      * @param options 
      * @returns 
      */
-    async insertMany<T = object | number>(documents: IDatabaseDocument[], options?: QueryOptions): Promise<T[]> 
+    async insertMany<T>(documents: IDatabaseDocument[], options?: QueryOptions): Promise<T> 
     {
+        this.validator.validateMultipleDocuments(documents)
+        this.validator.validateWithoutId(documents)
+
+        documents = documents.map(d => this.documentWithUuid(d))
+
         const queryInterface = this.driver.getQueryInterface();
-        return await queryInterface.bulkInsert(this.tableName, documents.map(d => this.documentWithUuid(d)), options) as T[];
+        await queryInterface.bulkInsert(this.tableName, documents, options) as T[];
+
+        return documents as T
     }
 
     /**
@@ -110,10 +120,15 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
      * @param document 
      * @returns 
      */
-    async updateOne<T>(document: IDatabaseDocument): Promise<T> {
-        const queryInterface = this.driver.getQueryInterface();
+    async updateOne<T>(document: IDatabaseDocument): Promise<T> 
+    {
+        this.validator.validateSingleDocument(document)
+        this.validator.validateContainsId(document)
 
-        return await queryInterface.bulkUpdate(this.tableName, document, { id: document.id }) as T
+        const queryInterface = this.driver.getQueryInterface();
+        await queryInterface.bulkUpdate(this.tableName, document, { id: document.id })
+
+        return document as T
     }
 
     /**
@@ -121,10 +136,16 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
      * @param documents 
      * @returns 
      */
-    async updateMany<T>(documents: IDatabaseDocument): Promise<T> {
-        return documents.forEach(async (document) => {
-            return await this.updateOne(document)
-        })
+    async updateMany<T>(documents: IDatabaseDocument[]): Promise<T> 
+    {
+        this.validator.validateMultipleDocuments(documents)
+        this.validator.validateContainsId(documents)
+
+        for(const document of documents) {
+            await this.updateOne(document)
+        }
+
+        return documents as T
     }
 
     /**
@@ -132,7 +153,11 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
      * @param document 
      * @returns 
      */
-    async deleteOne<T>(document: IDatabaseDocument): Promise<T> {
+    async deleteOne<T>(document: IDatabaseDocument): Promise<T> 
+    {
+        this.validator.validateSingleDocument(document)
+        this.validator.validateContainsId(document)
+
         const queryInterface = this.driver.getQueryInterface();
 
         return await queryInterface.bulkDelete(this.tableName, {
@@ -145,7 +170,11 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
      * @param documents 
      * @returns 
      */
-    async deleteMany<T>(documents: IDatabaseDocument): Promise<T> {
+    async deleteMany<T>(documents: IDatabaseDocument): Promise<T> 
+    {
+        this.validator.validateMultipleDocuments(documents)
+        this.validator.validateContainsId(documents)
+
         return documents.forEach(async (document) => {
             return await this.deleteOne(document)
         })

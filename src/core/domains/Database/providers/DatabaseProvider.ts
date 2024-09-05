@@ -10,7 +10,7 @@ export default class DatabaseProvider extends BaseProvider
 
     public async register(): Promise<void>
     {
-        this.log('Registering DatabaseProvider');
+        this.log('Registering DatabaseProvider', this.config);
 
         const db = new DatabaseService(this.config);
         await db.boot();

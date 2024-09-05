@@ -19,7 +19,7 @@ class PostgresQueryBuilder
      */
     select({ fields, tableName, filter = {}, order = [], limit = undefined }: SelectOptions): string
     {
-        let queryStr = `SELECT ${this.selectColumnsClause(fields)} FROM ${tableName}`;
+        let queryStr = `SELECT ${this.selectColumnsClause(fields)} FROM "${tableName}"`;
 
         if(Object.keys(filter ?? {}).length > 0)
         {

@@ -33,6 +33,6 @@ export default class MongoDBBelongsTo implements IBelongsTo
         return App.container('db')
             .documentManager(connection)
             .table(new foreignModelCtor().table)
-            .findOne(schema) as T
+            .findOne({ filter: schema }) as T
     }
 }   
