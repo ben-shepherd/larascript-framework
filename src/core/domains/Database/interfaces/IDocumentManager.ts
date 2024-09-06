@@ -9,10 +9,10 @@ export interface IDocumentManager {
     
     findById<T>(id: string): Promise<T | null>;
     findOne<T>(...args: any[]): Promise<T | null>;
-    findMany<T>(...args: any[]): Promise<T[]>;
+    findMany<T>(...args: any[]): Promise<T>;
     
     insertOne<T>(document: IDatabaseDocument, ...args: any[]): Promise<T>;
-    insertMany<T>(documents: IDatabaseDocument[], ...args: any[]): Promise<T[]>;
+    insertMany<T>(documents: IDatabaseDocument[], ...args: any[]): Promise<T>;
     
     updateOne<T>(document: IDatabaseDocument, ...args: any[]): Promise<T>;
     updateMany<T>(documents: IDatabaseDocument[], ...args: any[]): Promise<T>;

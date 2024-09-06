@@ -6,9 +6,9 @@ import MongoDBBelongsTo from "@src/core/domains/database/relationships/mongodb/M
 import MongoDBHasMany from "@src/core/domains/database/relationships/mongodb/MongoDBHasMany";
 import { BulkWriteOptions, ObjectId, UpdateOptions } from "mongodb";
 import BaseDocumentManager from "../base/BaseDocumentManager";
+import InvalidObjectId from "../exceptions/InvalidObjectId";
 
-class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager, MongoDB>
-{
+class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager, MongoDB> {
     protected driver!: MongoDB;
 
     constructor(driver: MongoDB) {
@@ -22,14 +22,13 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param id 
      * @returns 
      */
-    protected convertStringIdToObjectId(id: string | ObjectId): ObjectId
-    {
-        if(id instanceof ObjectId) {
+    protected convertStringIdToObjectId(id: string | ObjectId): ObjectId {
+        if (id instanceof ObjectId) {
             return id
         }
 
-        if(!ObjectId.isValid(id)) {
-            throw new Error('Invalid ObjectId')
+        if (!ObjectId.isValid(id)) {
+            throw new InvalidObjectId(`Invalid ObjectId: ${id}`)
         }
 
         return new ObjectId(id)
@@ -42,9 +41,8 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param document 
      * @returns 
      */
-    protected convertObjectIdToStringInDocument(document: IDatabaseDocument): IDatabaseDocument
-    {
-        if('_id' in document && document._id instanceof ObjectId) {
+    protected convertObjectIdToStringInDocument(document: IDatabaseDocument): IDatabaseDocument {
+        if ('_id' in document && document._id instanceof ObjectId) {
             document = { ...document, id: document._id.toString() }
             delete document._id
         }
@@ -59,7 +57,15 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @returns 
      */
     async findById<T = IDatabaseDocument>(id: string): Promise<T | null> {
-        return this.findOne({ filter: { _id: this.convertStringIdToObjectId(id) } })
+        try {
+            return this.findOne({ filter: { _id: this.convertStringIdToObjectId(id) } })
+        }
+        catch (err) {
+            if (!(err instanceof InvalidObjectId)) {
+                throw err
+            }
+        }
+        return null
     }
 
     /**
@@ -68,13 +74,13 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param filter 
      * @returns 
      */
-    async findOne<T>({filter = {}}: {filter?: object}): Promise<T | null> {
+    async findOne<T>({ filter = {} }: { filter?: object }): Promise<T | null> {
         let document = await this.driver.getDb().collection(this.tableName).findOne(filter) as T | null;
 
-        if(document) {
+        if (document) {
             document = this.convertObjectIdToStringInDocument(document) as T;
         }
-        
+
         return document
     }
 
@@ -84,11 +90,10 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param filter 
      * @returns 
      */
-    async findMany<T>({ filter = {} }: {filter?: object}): Promise<T[]> 
-    {
-        let documents = await this.driver.getDb().collection(this.tableName).find(filter).toArray() as T[];
+    async findMany<T>({ filter = {} }: { filter?: object }): Promise<T> {
+        let documents = await this.driver.getDb().collection(this.tableName).find(filter).toArray();
 
-        return documents.map((d: any) => this.convertObjectIdToStringInDocument(d) as T)
+        return documents.map((d: any) => this.convertObjectIdToStringInDocument(d)) as T
     }
 
     /**
@@ -97,8 +102,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param document 
      * @returns 
      */
-    async insertOne<T>(document: IDatabaseDocument): Promise<T> 
-    {
+    async insertOne<T>(document: IDatabaseDocument): Promise<T> {
         this.validator.validateSingleDocument(document)
         this.validator.validateWithoutId(document)
 
@@ -120,11 +124,10 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param options 
      * @returns 
      */
-    async insertMany<T>(documentsArray: IDatabaseDocument[],  options?: BulkWriteOptions): Promise<T[]> 
-    {
+    async insertMany<T>(documentsArray: IDatabaseDocument[], options?: BulkWriteOptions): Promise<T> {
         this.validator.validateMultipleDocuments(documentsArray)
         this.validator.validateWithoutId(documentsArray)
-        
+
         /**
          * Insert the documents
          */
@@ -133,7 +136,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
          * After the document is inserted, MongoDB will automatically add `_id: ObjectId` to the document object.
          * We will need to convert this to our standard `id: string` format
          */
-        return documentsArray.map((d: IDatabaseDocument) => this.convertObjectIdToStringInDocument(d) as T)
+        return documentsArray.map((d: IDatabaseDocument) => this.convertObjectIdToStringInDocument(d)) as T
     }
 
     /**
@@ -143,8 +146,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param options 
      * @returns 
      */
-    async updateOne<T>(document: IDatabaseDocument, options?: UpdateOptions): Promise<T> 
-    {
+    async updateOne<T>(document: IDatabaseDocument, options?: UpdateOptions): Promise<T> {
         this.validator.validateSingleDocument(document)
         this.validator.validateContainsId(document)
 
@@ -152,7 +154,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
 
         return this.convertObjectIdToStringInDocument(document) as T
     }
-    
+
     /**
      * Update multiple documents
      * 
@@ -160,14 +162,13 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param options 
      * @returns 
      */
-    async updateMany<T>(documentsArray: IDatabaseDocument[], options?: UpdateOptions): Promise<T> 
-    {
+    async updateMany<T>(documentsArray: IDatabaseDocument[], options?: UpdateOptions): Promise<T> {
         this.validator.validateMultipleDocuments(documentsArray)
         this.validator.validateContainsId(documentsArray)
 
         let documentsUpdated: IDatabaseDocument[] = [];
 
-        for(const document of documentsArray) {
+        for (const document of documentsArray) {
             documentsUpdated.push(await this.updateOne(document, options))
         }
 
@@ -180,8 +181,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param document 
      * @returns 
      */
-    async deleteOne<T>(document: IDatabaseDocument): Promise<T> 
-    {
+    async deleteOne<T>(document: IDatabaseDocument): Promise<T> {
         this.validator.validateSingleDocument(document)
         this.validator.validateContainsId(document)
 
@@ -194,8 +194,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param documentsArray 
      * @returns 
      */
-    async deleteMany<T>(documentsArray: IDatabaseDocument[]): Promise<T> 
-    {
+    async deleteMany<T>(documentsArray: IDatabaseDocument[]): Promise<T> {
         this.validator.validateMultipleDocuments(documentsArray)
         this.validator.validateContainsId(documentsArray)
 

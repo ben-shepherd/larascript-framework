@@ -35,7 +35,7 @@ abstract class BaseDocumentManager<Query extends IDocumentManager = IDocumentMan
         throw new Error("Method not implemented.");
     }
 
-    findMany<T>({filter = {}}: {filter?: object}): Promise<T[]> {
+    findMany<T>({filter = {}}: {filter?: object}): Promise<T> {
         throw new Error("Method not implemented.");
     }
 
@@ -43,7 +43,7 @@ abstract class BaseDocumentManager<Query extends IDocumentManager = IDocumentMan
         throw new Error("Method not implemented.");
     }
 
-    insertMany<T>(documents: IDatabaseDocument[]): Promise<T[]> {
+    insertMany<T>(documents: IDatabaseDocument[]): Promise<T> {
         throw new Error("Method not implemented.");
     }
 
