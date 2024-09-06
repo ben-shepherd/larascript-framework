@@ -1,7 +1,7 @@
 import { IDatabaseProvider } from "@src/core/domains/database/interfaces/IDatabaseProvider";
 import { IDatabaseDocument, IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
-import { IHasManyCtor } from "@src/core/domains/database/interfaces/relationships/IHasMany";
+import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import BelongsTo from "@src/core/domains/database/relationships/BelongsTo";
 import HasMany from "@src/core/domains/database/relationships/HasMany";
 import MissingTable from "../exceptions/InvalidTable";
@@ -87,13 +87,12 @@ abstract class BaseDocumentManager<
         throw new Error("Method not implemented.");
     }
 
-    belongsTo<T>(document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null> {
+    async belongsTo<T>(document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null> {
         return new BelongsTo().handle(this.driver.connectionName, document, options);
     }
 
-    hasManyCtor(): IHasManyCtor
-    {
-        return HasMany;
+    async hasMany<T>(document: IDatabaseDocument, options: IHasManyOptions): Promise<T> {
+        return new HasMany().handle(this.driver.connectionName, document, options) as T;
     }
 }
 

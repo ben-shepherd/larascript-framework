@@ -14,13 +14,13 @@ export default class BelongsTo implements IBelongsTo
             filters = {}
         } = options
 
-        const documentManager = App.container('db')
-            .documentManager(connection)
-            .table(foreignTable)
-
         if(!document[localKey]) {
             throw new Error(`Document must have a ${localKey} property`)
         }
+
+        const documentManager = App.container('db')
+            .documentManager(connection)
+            .table(foreignTable)
 
         let localKeyValue = document[localKey];
 

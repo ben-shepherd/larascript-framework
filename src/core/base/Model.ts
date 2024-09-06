@@ -228,10 +228,10 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
     }
 
     /**
-     * Retrieves a related model instance based on the provided options.
-     *
-     * @param {BelongsToOptions} options - Options for the belongsTo relationship.
-     * @return {Promise<ForeignModel | null>} A Promise that resolves to the related foreign model instance, or null if no related model is found.
+     * Retrieves related model based on the provided options.
+     * @param foreignModel 
+     * @param options 
+     * @returns 
      */
     async belongsTo<T extends IModel = IModel>(foreignModel: ICtor<T>, options: Omit<IBelongsToOptions, 'foreignTable'>): Promise<T | null> {
 
@@ -255,19 +255,25 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
     }
 
     /**
-     * Retrieves an array of related model instances based on the provided options.
-     *
-     * @param {HasManyOptions} options - Options for the hasMany relationship.
-     * @return {Promise<ForeignModel[]>} A Promise that resolves to an array of related foreign model instances.
+     * Retrieves related models based on the provided options.
+     * @param foreignModel 
+     * @param options 
+     * @returns 
      */
-    public async hasMany<ForeignModel extends IModel<any> = IModel<any>>(options: IHasManyOptions): Promise<ForeignModel[]> {
-        const hasManyCtor = this.getDocumentManager().hasManyCtor();
-        const data = await new hasManyCtor().handle(this.connection, options);
+    public async hasMany<T extends IModel = IModel>(foreignModel: ICtor<T>, options: Omit<IHasManyOptions, 'foreignTable'>): Promise<T[]> {
 
-        if (!data) {
+        const documentManager = App.container('db')
+            .documentManager(this.connection);
+
+        if(!this.data) {
             return []
         }
 
-        return data.map((d: any) => new options['foreignModelCtor'](d)) as ForeignModel[]
+        const results = await documentManager.hasMany(this.data, {
+            ...options,
+            foreignTable: (new foreignModel()).table
+        }) as object[]
+
+        return results.map((document) => new foreignModel(document))
     }
 } 

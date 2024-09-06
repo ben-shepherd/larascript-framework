@@ -35,5 +35,5 @@ export interface IModel<Data extends IModelData = IModelData> extends IWithObser
     save(): Promise<void>;
     delete(): Promise<void>;
     belongsTo<T extends IModel = IModel>(foreignModel: ICtor<T>, options: IBelongsToOptions): Promise<T | null>;
-    hasMany(options: IHasManyOptions): Promise<IModel[]>;
+    hasMany<T extends IModel = IModel>(foreignModel: ICtor<T>, options: IHasManyOptions): Promise<T[]>;
 }

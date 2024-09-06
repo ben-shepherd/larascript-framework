@@ -15,20 +15,16 @@ export class TestAuthorModel extends Model<TestAuthorModelData> {
     ]
 
     public async movies(): Promise<TestMovieModel[]> {
-        return this.hasMany({
+        return this.hasMany(TestMovieModel, {
             localKey: 'id',
-            localModel: this,
-            foreignKey: 'authorId',
-            foreignModelCtor: TestMovieModel
+            foreignKey: 'authorId'
         })
     }
 
     public async moviesFromYear(year: number): Promise<TestMovieModel[]> {
-        return this.hasMany({
+        return this.hasMany(TestMovieModel, {
             localKey: 'id',
-            localModel: this,
             foreignKey: 'authorId',
-            foreignModelCtor: TestMovieModel,
             filters: {
                 yearReleased: year.toString()
             }

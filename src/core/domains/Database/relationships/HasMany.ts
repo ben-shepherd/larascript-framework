@@ -1,29 +1,34 @@
 import { IHasMany, IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import IModelData from "@src/core/interfaces/IModelData";
 import { App } from "@src/core/services/App";
+import { IDatabaseDocument } from "../interfaces/IDocumentManager";
 
-export default class HasMany implements IHasMany
-{ 
-    public async handle<T = IModelData>(connection: string, options: IHasManyOptions): Promise<T[]>
+export default class HasMany implements IHasMany 
+{
+    public async handle<T = IModelData>(connection: string, document: IDatabaseDocument, options: IHasManyOptions): Promise<T> 
     {
         const {
-            localModel,
             localKey,
-            foreignModelCtor,
             foreignKey,
+            foreignTable,
             filters = {}
         } = options
 
-        let localKeyValue = localModel.getAttribute(localKey);
+        if (!document[localKey]) {
+            throw new Error(`Document must have a ${localKey} property`)
+        }
+
+        const documentManager = App.container('db')
+            .documentManager(connection)
+            .table(foreignTable)
+
+        let localKeyValue = document[localKey]
 
         const schema = {
             ...filters,
             [foreignKey]: localKeyValue,
         }
 
-        return await App.container('db')
-            .documentManager(connection) 
-            .table(new foreignModelCtor().table)
-            .findMany({ filter: schema })
+        return await documentManager.findMany({ filter: schema }) as T
     }
-}   
+}       

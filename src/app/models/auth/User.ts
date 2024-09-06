@@ -36,13 +36,11 @@ export default class User extends Model<IUserData> implements IUserModel {
         'updatedAt',
     ]
 
-    tokens(): Promise<ApiToken[]> 
+    async tokens(): Promise<ApiToken[]> 
     {
-        return this.hasMany({
-            localModel: this,
+        return this.hasMany(ApiToken, {
             localKey: 'id',
-            foreignKey: 'userId',
-            foreignModelCtor: ApiToken
-        })    
+            foreignKey: 'userId'
+        }) 
     }
 }

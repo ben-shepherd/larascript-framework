@@ -2,23 +2,33 @@ import { IHasMany, IHasManyOptions } from "@src/core/domains/database/interfaces
 import IModelData from "@src/core/interfaces/IModelData";
 import { App } from "@src/core/services/App";
 import { ObjectId } from "mongodb";
+import { IDatabaseDocument } from "../../interfaces/IDocumentManager";
 
 export default class HasMany implements IHasMany
 { 
-    public async handle<T = IModelData>(connection: string, options: IHasManyOptions): Promise<T[]>
+    public async handle<T = IModelData>(connection: string, document: IDatabaseDocument, options: IHasManyOptions): Promise<T[]>
     {
-        const {
-            localModel,
+        let {
             localKey,
-            foreignModelCtor,
+            foreignTable,
             foreignKey,
             filters = {}
         } = options;
 
+        if(localKey === 'id') {
+            localKey = '_id';
+        }
+        if(foreignKey === 'id') {
+            foreignKey = '_id';
+        }
+
+        if (!document[localKey]) {
+            throw new Error(`Document must have a ${localKey} property`)
+        }
+        
         const schema = {
             ...filters,
-            ...this.buildIdFindSchema({
-                localModel,
+            ...this.buildFilters(document, {
                 localKey,
                 foreignKey
             })
@@ -26,21 +36,20 @@ export default class HasMany implements IHasMany
 
         return await App.container('db')
             .documentManager(connection) 
-            .table(new foreignModelCtor().table)
+            .table(foreignTable)
             .findMany({ filter: schema })
     }
 
     /**
-     * Converts ID to ObjectId if valid
-     * Query performs on foreignKey checking for both string and ObjectId
+     * Creates an OR condition for both string and ObjectId, if applicable
      * 
      * @param {HasManyOptions} options
      * @returns
      */
-    private buildIdFindSchema = ({ localModel, localKey, foreignKey }: Pick<IHasManyOptions, 'localModel' | 'localKey' | 'foreignKey'>) => {
-        let localKeyValue = localModel.getAttribute(localKey);
+    private buildFilters = (document: IDatabaseDocument, { localKey, foreignKey }: Pick<IHasManyOptions, 'localKey' | 'foreignKey'>) => {
+        let localKeyValue = document[localKey];
 
-        let idFindSchema = {
+        let filters = {
             [foreignKey]: localKeyValue
         }
         
@@ -49,7 +58,7 @@ export default class HasMany implements IHasMany
         }
 
         if(localKeyValue instanceof ObjectId) {
-            idFindSchema = {
+            filters = {
                 "$or": [
                     {
                         [foreignKey]: localKeyValue
@@ -61,6 +70,6 @@ export default class HasMany implements IHasMany
             }
         }
 
-        return idFindSchema
+        return filters
     }
 }   

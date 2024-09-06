@@ -1,9 +1,7 @@
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
-import { IHasManyCtor } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 import MongoDBBelongsTo from "@src/core/domains/database/relationships/mongodb/MongoDBBelongsTo";
-import MongoDBHasMany from "@src/core/domains/database/relationships/mongodb/MongoDBHasMany";
 import { BulkWriteOptions, ObjectId, UpdateOptions } from "mongodb";
 import BaseDocumentManager from "../base/BaseDocumentManager";
 import InvalidObjectId from "../exceptions/InvalidObjectId";
@@ -237,15 +235,6 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
             document,
             options
         ) as T ?? null
-    }
-
-    /**
-     * Returns the HasManyCtor
-     * 
-     * @returns 
-     */
-    hasManyCtor(): IHasManyCtor {
-        return MongoDBHasMany
     }
 }
 
