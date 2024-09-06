@@ -43,7 +43,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
             const sequelize = this.driver.getClient();
             const queryString = this.builder.select({
                 ...selectOptions,
-                tableName: this.tableName,
+                tableName: this.getTable(),
                 limit: 1
             })
 
@@ -68,7 +68,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
         const sequelize = this.driver.getClient()
         const queryString = this.builder.select({
             ...selectOptions,
-            tableName: this.tableName
+            tableName: this.getTable()
         })
 
         return await sequelize.query(
@@ -93,7 +93,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
         document = this.documentWithUuid(document)
 
         const queryInterface = this.driver.getQueryInterface();
-        await queryInterface.insert(null, this.tableName, document, options) as T
+        await queryInterface.insert(null, this.getTable(), document, options) as T
 
         return document as T
     }
@@ -111,7 +111,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
         documents = documents.map(d => this.documentWithUuid(d))
 
         const queryInterface = this.driver.getQueryInterface();
-        await queryInterface.bulkInsert(this.tableName, documents, options) as T[];
+        await queryInterface.bulkInsert(this.getTable(), documents, options) as T[];
 
         return documents as T
     }
@@ -126,7 +126,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
         this.validator.validateContainsId(document)
 
         const queryInterface = this.driver.getQueryInterface();
-        await queryInterface.bulkUpdate(this.tableName, document, { id: document.id })
+        await queryInterface.bulkUpdate(this.getTable(), document, { id: document.id })
 
         return document as T
     }
@@ -158,7 +158,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
 
         const queryInterface = this.driver.getQueryInterface();
 
-        return await queryInterface.bulkDelete(this.tableName, {
+        return await queryInterface.bulkDelete(this.getTable(), {
             id: document.id
         }) as T
     }
@@ -182,7 +182,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
      */
     async truncate(): Promise<void> {
         const queryInterface = this.driver.getQueryInterface();
-        await queryInterface.bulkDelete(this.tableName, {});
+        await queryInterface.bulkDelete(this.getTable(), {});
     }
 }
 

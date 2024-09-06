@@ -92,7 +92,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @returns 
      */
     async findOne<T>({ filter = {} }: { filter?: object }): Promise<T | null> {
-        let document = await this.driver.getDb().collection(this.tableName).findOne(filter) as T | null;
+        let document = await this.driver.getDb().collection(this.getTable()).findOne(filter) as T | null;
 
         if (document) {
             document = this.convertObjectIdToStringInDocument(document) as T;
@@ -108,7 +108,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @returns 
      */
     async findMany<T>({ filter = {} }: { filter?: object }): Promise<T> {
-        let documents = await this.driver.getDb().collection(this.tableName).find(filter).toArray();
+        let documents = await this.driver.getDb().collection(this.getTable()).find(filter).toArray();
 
         return documents.map((d: any) => this.convertObjectIdToStringInDocument(d)) as T
     }
@@ -126,7 +126,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
         /**
          * Insert the document
          */
-        await this.driver.getDb().collection(this.tableName).insertOne(document);
+        await this.driver.getDb().collection(this.getTable()).insertOne(document);
         /**
          * After the document is inserted, MongoDB will automatically add `_id: ObjectId` to the document object.
          * We will need to convert this to our standard `id: string` format
@@ -148,7 +148,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
         /**
          * Insert the documents
          */
-        await this.driver.getDb().collection(this.tableName).insertMany(documentsArray, options);
+        await this.driver.getDb().collection(this.getTable()).insertMany(documentsArray, options);
         /**
          * After the document is inserted, MongoDB will automatically add `_id: ObjectId` to the document object.
          * We will need to convert this to our standard `id: string` format
@@ -170,7 +170,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
         const objectId =  this.convertToObjectId(document.id)
         const data = this.stripIds(document)
 
-        await this.driver.getDb().collection(this.tableName).updateOne({ _id: this.convertToObjectId(document.id) }, { $set: { ...this.stripIds(document)} }, options) as T
+        await this.driver.getDb().collection(this.getTable()).updateOne({ _id: this.convertToObjectId(document.id) }, { $set: { ...this.stripIds(document)} }, options) as T
         
         return this.convertObjectIdToStringInDocument(document) as T;
     }
@@ -205,7 +205,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
         this.validator.validateSingleDocument(document)
         this.validator.validateContainsId(document)
 
-        return await this.driver.getDb().collection(this.tableName).deleteOne({ _id: this.convertToObjectId(document.id) }) as T
+        return await this.driver.getDb().collection(this.getTable()).deleteOne({ _id: this.convertToObjectId(document.id) }) as T
     }
 
     /**
@@ -227,7 +227,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * Truncate the collection
      */
     async truncate(): Promise<void> {
-        await this.driver.getDb().collection(this.tableName).deleteMany({})
+        await this.driver.getDb().collection(this.getTable()).deleteMany({})
     }
 
 

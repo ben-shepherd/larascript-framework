@@ -1,73 +1,97 @@
 import { describe, expect, test } from '@jest/globals';
 import Kernel from '@src/core/Kernel';
 import Repository from '@src/core/base/Repository';
-import DatabaseProvider from '@src/core/domains/database/providers/DatabaseProvider';
-import PostgresSchema from '@src/core/domains/database/schema/PostgresSchema';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
 import TestModel from '@src/tests/models/models/TestModel';
 import { DataTypes } from 'sequelize';
-import testModelsHelper from '@src/tests/models/testModelsHelper';
+import { getTestConnectionNames } from '../config/testDatabaseConfig';
+import TestDatabaseProvider from '../providers/TestDatabaseProvider';
 
-describe('test model crud operations', () => {
+const connections = getTestConnectionNames()
+
+const createTable = async (connectionName: string) => {
+    const schema = App.container('db').schema(connectionName)
+
+    schema.createTable('tests', {
+        name: DataTypes.STRING,
+        createdAt: DataTypes.DATE,
+        updatedAt: DataTypes.DATE
+    })
+}
+
+const dropTable = async (connectionName: string) => {
+    const schema = App.container('db').schema(connectionName)
+
+    if(await schema.tableExists('tests')) {
+        await schema.dropTable('tests');
+    }
+}
+
+
+describe('test model crud', () => {
 
     beforeAll(async () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
-                new DatabaseProvider()
+                new TestDatabaseProvider()
             ]
         }, {})
 
-        await App.container('db').schema<PostgresSchema>().createTable('tests', {
-            name: DataTypes.STRING,
-            createdAt: DataTypes.DATE,
-            updatedAt: DataTypes.DATE
-        })
-    })
-
-    afterAll(async () => {
-        await testModelsHelper.cleanupCollections();
-    })
-
-    let modelInstance: TestModel;
-
-    test('create test model', async () => {
-        modelInstance = new TestModel({
-            name: 'nameValue'
-        });
-        expect(modelInstance.getAttribute('name')).toEqual('nameValue');
-
-        await modelInstance.save();
-        expect(modelInstance.getId()).toBeTruthy();
-    })
-
-    test('test changing attribute value', async () => {
-        modelInstance.setAttribute('name', 'differentNameValue');
-        await modelInstance.update();
-        await modelInstance.refresh();
         
-        expect(modelInstance.getAttribute('name')).toEqual('differentNameValue');
+        for(const connectionName of connections) {
+            await dropTable(connectionName)
+            await createTable(connectionName)
+        }
     })
 
-    test('re-query created record', async () => {
-        const testDocument = await App.container('db').documentManager().table((new TestModel(null)).table).findOne({
-            filter: {
-                name: 'differentNameValue'
-            }
-        }) as TestModel;
+    test('CRUD', async () => {
+        
+        for(const connectionName of connections) {
+            const documentManager = App.container('db').documentManager(connectionName).table('tests');
+            await documentManager.truncate();
 
-        expect(testDocument?.['name']).toEqual('differentNameValue');
+            /**
+             * Create a model
+             */
+            const createdModel = new TestModel({
+                name: 'John'
+            });
+            expect(createdModel.getAttribute('name')).toEqual('John');
+            
+            await createdModel.save();
+            expect(typeof createdModel.getId() === 'string').toBe(true);
     
-    })
+            /**
+             * Change name attribute
+             */
+            createdModel.setAttribute('name', 'Jane');
+            await createdModel.update();
+            await createdModel.refresh();
+            expect(typeof createdModel.getId() === 'string').toBe(true);
+            expect(createdModel.getAttribute('name')).toEqual('Jane');
+    
 
-    test('re-query with repository', async () => {
-        const repository = new Repository(new TestModel(null).table, TestModel);
-        const modelInstance = await repository.findOne({
-            name: 'differentNameValue'   
-        })
-        
-        expect(modelInstance?.getAttribute('name')).toEqual('differentNameValue');
+            /**
+             * Query with repository
+             */
+            const repository = new Repository(new TestModel(null).table, TestModel);
+            const fetchedModel = await repository.findOne({
+                name: 'Jane'   
+            })
+            expect(fetchedModel).toBeTruthy()
+            expect(fetchedModel?.getId() === createdModel.getId()).toBe(true)
+            expect(fetchedModel?.getAttribute('name')).toEqual('Jane');
+
+            /**
+             * Delete the model
+             */
+            await createdModel.delete();
+            expect(createdModel.getId()).toBeFalsy();
+            expect(createdModel.getData()).toBeFalsy();
+        }
+
     
     })
 });

@@ -148,10 +148,10 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      * @param {GetDataOptions} options - The options for retrieving the data.
      * @return {Data | null} The retrieved data or null if no data is available.
      */
-    getData(options: GetDataOptions): Data | null {
+    getData(options: GetDataOptions = { excludeGuarded: true }): Data | null {
         let data = this.data;
 
-        if (options.excludeGuarded) {
+        if (data && options.excludeGuarded) {
             data = Object.fromEntries(Object.entries(data ?? {}).filter(([key]) => !this.guarded.includes(key))) as Data
         }
 

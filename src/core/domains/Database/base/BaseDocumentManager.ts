@@ -1,9 +1,10 @@
 import { IDatabaseProvider } from "@src/core/domains/database/interfaces/IDatabaseProvider";
 import { IDatabaseDocument, IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
-import { IBelongsToCtor, IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
+import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IHasManyCtor } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import BelongsTo from "@src/core/domains/database/relationships/BelongsTo";
 import HasMany from "@src/core/domains/database/relationships/HasMany";
+import MissingTable from "../exceptions/InvalidTable";
 import { IDocumentValidator } from "../interfaces/IDocumentValidator";
 import DocumentValidator from "../validator/DocumentValidator";
 
@@ -21,17 +22,30 @@ abstract class BaseDocumentManager<
     {
         this.driver = driver;
     }
-    belongsToCtor(): IBelongsToCtor {
-        throw new Error("Method not implemented.");
-    }
 
-
-
+    /**
+     * Set table
+     * @param table 
+     * @returns 
+     */
     table(table: string): Query
     {
         this.tableName = table;
         return this as any;
     } 
+
+    /**
+     * Get table
+     * @returns 
+     */
+    getTable(): string
+    {
+        if(!this.tableName) {
+            throw new MissingTable()
+        }
+
+        return this.tableName;
+    }
 
     findById<T>(id: string): Promise<T | null> {
         throw new Error("Method not implemented.");
