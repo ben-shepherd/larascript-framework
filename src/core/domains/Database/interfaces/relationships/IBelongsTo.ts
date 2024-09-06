@@ -1,19 +1,19 @@
-import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import IModelData from "@src/core/interfaces/IModelData";
+import { IDatabaseDocument } from "../IDocumentManager";
 
 export type IBelongsToCtor = new () => IBelongsTo;
 
 export interface IBelongsToOptions {
-    localModel: IModel<IModelData>;
     localKey: keyof IModelData;
-    foreignModelCtor: ModelConstructor<IModel<IModelData>>;
     foreignKey: keyof IModelData;
+    foreignTable: string;
     filters?: object;
 }
 
 export interface IBelongsTo {
     handle(
         connection: string,
+        document: IDatabaseDocument,
         options: IBelongsToOptions
     ): Promise<IModelData | null>;
 }

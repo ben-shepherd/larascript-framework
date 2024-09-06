@@ -1,38 +1,60 @@
 import { IBelongsTo, IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
-import IModelData from "@src/core/interfaces/IModelData";
 import { App } from "@src/core/services/App";
 import { ObjectId } from "mongodb";
+import { IDatabaseDocument } from "../../interfaces/IDocumentManager";
+import DocumentValidator from "../../validator/DocumentValidator";
 
 export default class MongoDBBelongsTo implements IBelongsTo
 { 
-    public async handle<T = IModelData>(connection: string, options: IBelongsToOptions): Promise<T>
+    protected validator = new DocumentValidator();
+
+    public async handle<T>(connection: string, document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null>
     {
         let {
-            localModel,
             localKey,
-            foreignModelCtor,
+            foreignTable,
             foreignKey,
-            filters = {}
+            filters: filtersOptions = {}
         } = options
 
-        let localKeyValue = localModel.getAttribute(localKey);
+        if(localKey === 'id') {
+            localKey = '_id';
+        }
+        if(foreignKey === 'id') {
+            foreignKey = '_id';
+        }
+
+        const localKeyValue = document[localKey];
+        let filter = {};
 
         if(typeof localKeyValue === 'string' && ObjectId.isValid(localKeyValue)) {
-            localKeyValue = new ObjectId(localKeyValue);
+            filter = {
+                "$or": [
+                    {
+                        [foreignKey]: localKeyValue
+                    },
+                    {
+                        [foreignKey]: new ObjectId(localKeyValue)
+                    }
+                ]
+            }
+        }
+        else {
+            filter = {
+                [foreignKey]: localKeyValue
+            }
         }
 
-        if(foreignKey === 'id') {
-            foreignKey = '_id'
+        filter = {
+            ...filtersOptions,
+            ...filter
         }
+        
+        const documentManager = App.container('db')
+            .provider(connection)
+            .documentManager()
+            .table(foreignTable);
 
-        const schema = { 
-            ...filters,
-            [foreignKey]: localKeyValue
-         }
-
-        return App.container('db')
-            .documentManager(connection)
-            .table(new foreignModelCtor().table)
-            .findOne({ filter: schema }) as T
+        return await documentManager.findOne({ filter }) as T | null;
     }
 }   

@@ -9,11 +9,12 @@ import { Dates, GetDataOptions, IModel } from '@src/core/interfaces/IModel';
 import IModelData from '@src/core/interfaces/IModelData';
 import { App } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
+import { ICtor } from '../interfaces/ICtor';
 
 export default abstract class Model<Data extends IModelData> extends WithObserver<Data> implements IModel<Data> {
     
     // The database connection
-    public connection: string = 'default';
+    public connection: string = App.container('db').getDefaultConnectionName();
 
     // Primary identifier
     public primaryKey: string = 'id';
@@ -68,7 +69,7 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      * Get database query
      * @returns 
      */
-    getQuery(): IDocumentManager {
+    getDocumentManager(): IDocumentManager {
         return App.container('db').documentManager(this.connection).table(this.table);
     }
 
@@ -167,7 +168,7 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
 
         if (!id) return null;
 
-        this.data = await this.getQuery().findById(id)
+        this.data = await this.getDocumentManager().findById(id)
 
         return this.data
     }
@@ -182,7 +183,7 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
         if (!this.getId()) return;
         if(!this.data) return;
 
-        await this.getQuery()
+        await this.getDocumentManager()
             .updateOne(this.data)
     }
 
@@ -199,7 +200,7 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
             this.setTimestamp('createdAt')
             this.setTimestamp('updatedAt')
 
-            this.data = await this.getQuery().insertOne(this.data);
+            this.data = await this.getDocumentManager().insertOne(this.data);
             await this.refresh();
 
             this.data = this.observeData('created', this.data)
@@ -221,7 +222,7 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
     async delete(): Promise<void> {
         if (!this.data) return;
         this.data = this.observeData('deleting', this.data)
-        await this.getQuery().deleteOne(this.data);
+        await this.getDocumentManager().deleteOne(this.data);
         this.data = null
         this.observeData('deleting', this.data)
     }
@@ -232,15 +233,25 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      * @param {BelongsToOptions} options - Options for the belongsTo relationship.
      * @return {Promise<ForeignModel | null>} A Promise that resolves to the related foreign model instance, or null if no related model is found.
      */
-    async belongsTo<ForeignModel extends IModel = IModel>(options: IBelongsToOptions): Promise<ForeignModel | null> {
-        const belongsToCtor = this.getQuery().belongsToCtor();
-        const data = await new belongsToCtor().handle(this.connection, options);
+    async belongsTo<T extends IModel = IModel>(foreignModel: ICtor<T>, options: Omit<IBelongsToOptions, 'foreignTable'>): Promise<T | null> {
 
-        if (!data) {
+        const documentManager = App.container('db')
+            .documentManager(this.connection);
+
+        if(!this.data) {
             return null
         }
+        
+        const result = await documentManager.belongsTo(this.data, {
+            ...options,
+            foreignTable: (new foreignModel()).table
+        })
 
-        return new options['foreignModelCtor'](data) as ForeignModel
+        if(!result) {
+            return null;
+        }
+
+        return new foreignModel(result)
     }
 
     /**
@@ -250,7 +261,7 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      * @return {Promise<ForeignModel[]>} A Promise that resolves to an array of related foreign model instances.
      */
     public async hasMany<ForeignModel extends IModel<any> = IModel<any>>(options: IHasManyOptions): Promise<ForeignModel[]> {
-        const hasManyCtor = this.getQuery().hasManyCtor();
+        const hasManyCtor = this.getDocumentManager().hasManyCtor();
         const data = await new hasManyCtor().handle(this.connection, options);
 
         if (!data) {

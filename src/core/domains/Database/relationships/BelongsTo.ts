@@ -1,29 +1,34 @@
 import { IBelongsTo, IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import IModelData from "@src/core/interfaces/IModelData";
 import { App } from "@src/core/services/App";
+import { IDatabaseDocument } from "../interfaces/IDocumentManager";
 
 export default class BelongsTo implements IBelongsTo
 { 
-    public async handle<T = IModelData>(connection: string, options: IBelongsToOptions): Promise<T>
-    {
+    public async handle<T = IModelData>(connection: string, document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null>
+    {   
         const {
-            localModel,
             localKey,
-            foreignModelCtor,
             foreignKey,
+            foreignTable,
             filters = {}
         } = options
 
-        let localKeyValue = localModel.getAttribute(localKey);
+        const documentManager = App.container('db')
+            .documentManager(connection)
+            .table(foreignTable)
+
+        if(!document[localKey]) {
+            throw new Error(`Document must have a ${localKey} property`)
+        }
+
+        let localKeyValue = document[localKey];
 
         const schema = { 
             ...filters,
             [foreignKey]: localKeyValue
          }
 
-        return App.container('db')
-            .documentManager(connection)
-            .table(new foreignModelCtor().table)
-            .findOne({ filter: schema }) as T
+         return await documentManager.findOne({ filter: schema }) as T ?? null
     }
 }   

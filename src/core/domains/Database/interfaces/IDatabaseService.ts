@@ -11,6 +11,7 @@ type Schema = DbTypeHelpers['schema'] extends IDatabaseSchema ? DbTypeHelpers['s
 export interface IDatabaseService
 {
     boot(): Promise<void>;
+    getDefaultConnectionName(): string;
     getClient<T = Client>(connectionName?: string): T;
     provider<T = Provider>(connectionName?: string): T;
     isProvider(driver: string, connectionName?: string): boolean;

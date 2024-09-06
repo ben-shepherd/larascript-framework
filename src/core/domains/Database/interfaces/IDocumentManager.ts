@@ -1,4 +1,4 @@
-import { IBelongsToCtor } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
+import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IHasManyCtor } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import { IDocumentValidator } from "./IDocumentValidator";
 
@@ -22,7 +22,7 @@ export interface IDocumentManager {
 
     truncate(): Promise<void>;
 
-    belongsToCtor(): IBelongsToCtor;
+    belongsTo<T>(document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null>;
     hasManyCtor(): IHasManyCtor;
 }
 

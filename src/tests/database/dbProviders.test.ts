@@ -3,24 +3,29 @@ import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
 import { DataTypes } from 'sequelize';
+import { getTestConnectionNames } from '../config/testDatabaseConfig';
 import TestDatabaseProvider from '../providers/TestDatabaseProvider';
 
-const connections = ['mongodb', 'postgres'];
+const connections = getTestConnectionNames()
 const tableName = 'testTable';
-type Data = { id?: string, name: string, age: number };
+type Data = { id?: string, name: string, age: number, relatedId?: string };
 
 const createTable = async (connectionName: string) => {
     const schema = App.container('db').schema(connectionName);
     await schema.createTable(tableName, {
         name: DataTypes.STRING,
-        age: DataTypes.INTEGER
+        age: DataTypes.INTEGER,
+        relatedId: DataTypes.STRING
     });
 };
 
 const dropTable = async (connectionName: string) => {
-    if (await App.container('db').schema().tableExists(tableName)) {
+    try {
         const schema = App.container('db').schema(connectionName);
         await schema.dropTable(tableName);
+    }
+    catch (err) {
+        // console.log(err);
     }
 };
 
@@ -115,6 +120,9 @@ describe('DocumentManager Interface Tests', () => {
 
     test('updateOne', async () => {
         for (const connectionName of connections) {
+            if(connectionName === 'mongodb') {
+                console.log('')
+            }
             const documentManager = App.container('db').documentManager(connectionName).table(tableName);
             await documentManager.truncate()
 
@@ -131,6 +139,9 @@ describe('DocumentManager Interface Tests', () => {
 
     test('updateMany', async () => {
         for (const connectionName of connections) {
+            if(connectionName === 'mongodb') {
+                console.log('')
+            }
             const documentManager = App.container('db').documentManager(connectionName).table(tableName);
             await documentManager.truncate()
 
@@ -180,6 +191,48 @@ describe('DocumentManager Interface Tests', () => {
             expect(remainingDocs.length).toBe(0);
         }
     });
+
+    test('belongsTo', async() => {
+        for (const connectionName of connections) {
+            const documentManager = App.container('db').documentManager(connectionName).table(tableName);
+            await documentManager.truncate()
+
+            const documentOne = await documentManager.insertOne<Data>({
+                name: 'John',
+                age: 10
+            })
+            expect(typeof documentOne.id === 'string').toBe(true)
+            expect(documentOne.name).toBe('John')
+            expect(documentOne.age).toBe(10)
+
+            const relatedDocument = await documentManager.insertOne<Data>({
+                name: 'Jane',
+                age: 20,
+                relatedId: documentOne.id
+            })
+            expect(typeof relatedDocument.id === 'string').toBe(true)
+            expect(relatedDocument.name).toBe('Jane')
+            expect(relatedDocument.age).toBe(20)
+
+            const foundDocument = await documentManager.belongsTo<Data>(documentOne, {
+                localKey: 'id',
+                foreignKey: 'relatedId',
+                foreignTable: tableName
+            })
+            expect(foundDocument?.id === relatedDocument.id).toBe(true)
+            expect(foundDocument?.name).toBe('Jane')
+            expect(foundDocument?.age).toBe(20)
+        }
+    })
+
+    // test('hasMany', async() => {
+    //     for (const connectionName of connections) {
+    //         const documentManager = App.container('db').documentManager(connectionName).table(tableName);
+    //         await documentManager.truncate()
+
+    //         // todo
+    //     }
+    // })
 
     test('truncate', async () => {
         for (const connectionName of connections) {

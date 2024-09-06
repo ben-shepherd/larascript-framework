@@ -11,6 +11,7 @@ import { QueryInterface, Sequelize } from 'sequelize';
 import { Options as SequelizeOptions } from 'sequelize/types/sequelize';
 
 export default class Postgres implements IDatabaseProvider {
+    public connectionName!: string;
     protected pool!: Pool;
     protected sequelize!: Sequelize;
     protected config!: IDatabaseGenericConnectionConfig<SequelizeOptions>;
@@ -28,7 +29,8 @@ export default class Postgres implements IDatabaseProvider {
      * Constructor for MongoDB class
      * @param {PoolConfig} config - Configuration object containing URI and options for MongoDB connection
      */
-    constructor(config: IDatabaseGenericConnectionConfig<SequelizeOptions>) {
+    constructor(connectionName: string, config: IDatabaseGenericConnectionConfig<SequelizeOptions>) {
+        this.connectionName = connectionName;
         this.config = config;
     }
 

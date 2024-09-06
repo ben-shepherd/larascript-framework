@@ -19,20 +19,16 @@ export class TestMovieModel extends Model<TestMovieModelData> {
     ]
 
     public async author(): Promise<TestAuthorModel | null> {
-        return this.belongsTo({
+        return this.belongsTo(TestAuthorModel, {
             localKey: 'authorId',
-            localModel: this,
-            foreignKey: 'id',
-            foreignModelCtor: TestAuthorModel
+            foreignKey: 'id'
         })
     }
 
     public async authorByName(name: string): Promise<TestAuthorModel | null> {
-        return this.belongsTo({
+        return this.belongsTo(TestAuthorModel, {
             localKey: 'authorId',
-            localModel: this,
             foreignKey: 'id',
-            foreignModelCtor: TestAuthorModel,
             filters: {
                 name
             }

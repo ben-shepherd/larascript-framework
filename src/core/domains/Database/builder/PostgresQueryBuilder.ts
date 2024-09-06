@@ -75,7 +75,7 @@ class PostgresQueryBuilder
     whereClause(filter: object = {}): string
     {
         return Object.keys(filter).map((key) => {
-            return `${key} = :${key}`
+            return `"${key}" = :${key}`
         }).join(' AND ');
     }
 }

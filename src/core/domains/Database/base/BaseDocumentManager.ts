@@ -1,13 +1,16 @@
 import { IDatabaseProvider } from "@src/core/domains/database/interfaces/IDatabaseProvider";
 import { IDatabaseDocument, IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
-import { IBelongsToCtor } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
+import { IBelongsToCtor, IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IHasManyCtor } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import BelongsTo from "@src/core/domains/database/relationships/BelongsTo";
 import HasMany from "@src/core/domains/database/relationships/HasMany";
 import { IDocumentValidator } from "../interfaces/IDocumentValidator";
 import DocumentValidator from "../validator/DocumentValidator";
 
-abstract class BaseDocumentManager<Query extends IDocumentManager = IDocumentManager,  Provider extends IDatabaseProvider = IDatabaseProvider> implements IDocumentManager
+abstract class BaseDocumentManager<
+    Query extends IDocumentManager = IDocumentManager,
+    Provider extends IDatabaseProvider = IDatabaseProvider
+> implements IDocumentManager
 {
     protected driver!: Provider;
     protected tableName!: string;
@@ -17,6 +20,9 @@ abstract class BaseDocumentManager<Query extends IDocumentManager = IDocumentMan
     constructor(driver: Provider)
     {
         this.driver = driver;
+    }
+    belongsToCtor(): IBelongsToCtor {
+        throw new Error("Method not implemented.");
     }
 
 
@@ -67,9 +73,8 @@ abstract class BaseDocumentManager<Query extends IDocumentManager = IDocumentMan
         throw new Error("Method not implemented.");
     }
 
-    belongsToCtor(): IBelongsToCtor
-    {
-        return BelongsTo
+    belongsTo<T>(document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null> {
+        return new BelongsTo().handle(this.driver.connectionName, document, options);
     }
 
     hasManyCtor(): IHasManyCtor

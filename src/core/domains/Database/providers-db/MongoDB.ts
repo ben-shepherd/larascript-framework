@@ -1,13 +1,14 @@
 import { Db, MongoClient, MongoClientOptions } from 'mongodb';
 
+import MongoDbDocumentManager from '@src/core/domains/database/documentManagers/MongoDbDocumentManager';
+import { IDatabaseGenericConnectionConfig } from '@src/core/domains/database/interfaces/IDatabaseGenericConnectionConfig';
 import { IDatabaseProvider } from '@src/core/domains/database/interfaces/IDatabaseProvider';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import { IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
 import MongoDBSchema from '@src/core/domains/database/schema/MongoDBSchema';
-import MongoDbDocumentManager from '@src/core/domains/database/documentManagers/MongoDbDocumentManager';
-import { IDatabaseGenericConnectionConfig } from '@src/core/domains/database/interfaces/IDatabaseGenericConnectionConfig';
 
 export default class MongoDB implements IDatabaseProvider {
+    public connectionName!: string;
     protected client!: MongoClient;
     protected db!: Db;
 
@@ -15,7 +16,8 @@ export default class MongoDB implements IDatabaseProvider {
      * Constructor for MongoDB class
      * @param {IDatabaseGenericConnectionConfig} config - Configuration object containing URI and options for MongoDB connection
      */
-    constructor({ uri, options = {} }: IDatabaseGenericConnectionConfig<MongoClientOptions>) {
+    constructor(connectionName, { uri, options = {} }: IDatabaseGenericConnectionConfig<MongoClientOptions>) {
+        this.connectionName = connectionName;
         this.client = new MongoClient(uri, options);
     }
 

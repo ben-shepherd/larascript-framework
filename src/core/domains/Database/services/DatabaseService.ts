@@ -27,42 +27,25 @@ class DatabaseService implements IDatabaseService {
      * Adds all connections to the store
      * Connects databases
      */
-    public async boot()
-    {
+    public async boot() {
         Object.keys(this.config.connections).forEach((connectionName) => {
             const connectionConfig = this.config.connections[connectionName];
             const providerCtor = this.getDriverCtorByName(connectionConfig.driver);
-            const provider = new providerCtor(connectionConfig);
+            const provider = new providerCtor(connectionName, connectionConfig);
 
             this.store[connectionName] = provider;
         })
 
         await this.connectDefault();
         await this.connectKeepAlive();
-     }
-
-    /*
-     * Connects to the default connection 
-     */
-    protected async connectDefault() 
-    {
-        if (this.store[this.config.defaultConnectionName]) {
-            await this.store[this.config.defaultConnectionName].connect();
-        }
     }
 
     /**
-     * Connects to all keep alive connections
+     * Get the default connection name
+     * @returns 
      */
-    protected async connectKeepAlive() 
-    {
-        const connections = (this.config?.keepAliveConnections ?? '').split(',');
-
-        for (const connectionName of connections) {
-            if (this.store[connectionName]) {
-                await this.store[connectionName].connect();
-            }
-        }
+    getDefaultConnectionName(): string {
+        return this.config.defaultConnectionName
     }
 
     /**
@@ -71,8 +54,8 @@ class DatabaseService implements IDatabaseService {
      * @param connectionName 
      * @returns 
      */
-    public documentManager<T>(connectionName: string = this.config.defaultConnectionName): T 
-    {
+    documentManager<T>(connectionName: string = this.config.defaultConnectionName): T {
+        console.log('documentManager', { connectionName, stores: Object.keys(this.store) });
         return this.store[connectionName].documentManager() as T;
     }
 
@@ -82,8 +65,7 @@ class DatabaseService implements IDatabaseService {
      * @param connectionName 
      * @returns 
      */
-    public schema<T>(connectionName: string = this.config.defaultConnectionName): T 
-    {
+    schema<T>(connectionName: string = this.config.defaultConnectionName): T {
         return this.store[connectionName].schema() as T;
     }
 
@@ -94,8 +76,7 @@ class DatabaseService implements IDatabaseService {
      * 
      * @returns 
      */
-    public getClient<T = unknown>(connectionName: string = this.config.defaultConnectionName): T
-    {
+    getClient<T = unknown>(connectionName: string = this.config.defaultConnectionName): T {
         return this.store[connectionName].getClient();
     }
 
@@ -107,8 +88,7 @@ class DatabaseService implements IDatabaseService {
      * @param connectionName 
      * @returns 
      */
-    isProvider(driver: string, connectionName: string = this.config.defaultConnectionName): boolean 
-    {
+    isProvider(driver: string, connectionName: string = this.config.defaultConnectionName): boolean {
         try {
             const driverCtor = this.getDriverCtorByName(driver);
             return this.store[connectionName] instanceof driverCtor;
@@ -127,13 +107,34 @@ class DatabaseService implements IDatabaseService {
      * @param connectionName 
      * @returns 
      */
-    public provider<T>(connectionName: string = this.config.defaultConnectionName): T 
-    {
+    provider<T>(connectionName: string = this.config.defaultConnectionName): T {
         if (!this.store[connectionName]) {
             throw new InvalidDatabaseConnection(`Invalid database connection: ${connectionName}`);
         }
 
         return this.store[connectionName] as T;
+    }
+
+    /*
+     * Connects to the default connection 
+     */
+    protected async connectDefault() {
+        if (this.store[this.config.defaultConnectionName]) {
+            await this.store[this.config.defaultConnectionName].connect();
+        }
+    }
+
+    /**
+     * Connects to all keep alive connections
+     */
+    protected async connectKeepAlive() {
+        const connections = (this.config?.keepAliveConnections ?? '').split(',');
+
+        for (const connectionName of connections) {
+            if (this.store[connectionName]) {
+                await this.store[connectionName].connect();
+            }
+        }
     }
 
     /**
@@ -142,8 +143,7 @@ class DatabaseService implements IDatabaseService {
      * @param driverName 
      * @returns 
      */
-    protected getDriverCtorByName(driverName: keyof typeof DatabaseConfig.providers): IDatabaseProviderCtor 
-    {
+    protected getDriverCtorByName(driverName: keyof typeof DatabaseConfig.providers): IDatabaseProviderCtor {
         const driverCtor: IDatabaseProviderCtor | undefined = DatabaseConfig.constructors[driverName];
 
         if (!driverCtor) {

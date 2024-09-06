@@ -3,6 +3,7 @@ import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relatio
 import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import IWithObserve from "@src/core/domains/observer/interfaces/IWithObserve";
 import IModelData from "@src/core/interfaces/IModelData";
+import { ICtor } from "./ICtor";
 
 export type GetDataOptions = {excludeGuarded: boolean}
 
@@ -22,7 +23,7 @@ export interface IModel<Data extends IModelData = IModelData> extends IWithObser
     dates: Dates;
     timestamps: boolean;
     observeProperties: Record<string, string>;
-    getQuery(): IDocumentManager;
+    getDocumentManager(): IDocumentManager;
     getId(): string | undefined;
     setAttribute(key: keyof Data, value: any): void;
     getAttribute(key: keyof Data): any;
@@ -33,6 +34,6 @@ export interface IModel<Data extends IModelData = IModelData> extends IWithObser
     update(): Promise<void>;
     save(): Promise<void>;
     delete(): Promise<void>;
-    belongsTo(options: IBelongsToOptions): Promise<IModel | null>;
+    belongsTo<T extends IModel = IModel>(foreignModel: ICtor<T>, options: IBelongsToOptions): Promise<T | null>;
     hasMany(options: IHasManyOptions): Promise<IModel[]>;
 }

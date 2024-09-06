@@ -1,5 +1,5 @@
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
-import { IBelongsToCtor } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
+import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IHasManyCtor } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 import MongoDBBelongsTo from "@src/core/domains/database/relationships/mongodb/MongoDBBelongsTo";
@@ -17,12 +17,30 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
     }
 
     /**
+     * Removes `id` and `_id` from document
+     * @param document 
+     * @param fields 
+     * @returns 
+     */
+    protected stripIds(document: IDatabaseDocument, fields: string[] = ['id', '_id']): IDatabaseDocument {
+        const data = { ...document }
+
+        fields.forEach((field: string) => {
+            if (field in data) {
+                delete data[field]
+            }
+        })
+        
+        return data
+    }
+
+    /**
      * Convert string id to ObjectId
      * 
      * @param id 
      * @returns 
      */
-    protected convertStringIdToObjectId(id: string | ObjectId): ObjectId {
+    protected convertToObjectId(id: string | ObjectId): ObjectId {
         if (id instanceof ObjectId) {
             return id
         }
@@ -33,7 +51,6 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
 
         return new ObjectId(id)
     }
-
 
     /**
      * Replaces `_id: ObjectId` with `id: string`
@@ -58,7 +75,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      */
     async findById<T = IDatabaseDocument>(id: string): Promise<T | null> {
         try {
-            return this.findOne({ filter: { _id: this.convertStringIdToObjectId(id) } })
+            return this.findOne({ filter: { _id: this.convertToObjectId(id) } })
         }
         catch (err) {
             if (!(err instanceof InvalidObjectId)) {
@@ -149,10 +166,13 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
     async updateOne<T>(document: IDatabaseDocument, options?: UpdateOptions): Promise<T> {
         this.validator.validateSingleDocument(document)
         this.validator.validateContainsId(document)
+        
+        const objectId =  this.convertToObjectId(document.id)
+        const data = this.stripIds(document)
 
-        await this.driver.getDb().collection(this.tableName).updateOne({ _id: this.convertStringIdToObjectId(document.id) }, { $set: document }, options) as T
-
-        return this.convertObjectIdToStringInDocument(document) as T
+        await this.driver.getDb().collection(this.tableName).updateOne({ _id: this.convertToObjectId(document.id) }, { $set: { ...this.stripIds(document)} }, options) as T
+        
+        return this.convertObjectIdToStringInDocument(document) as T;
     }
 
     /**
@@ -185,7 +205,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
         this.validator.validateSingleDocument(document)
         this.validator.validateContainsId(document)
 
-        return await this.driver.getDb().collection(this.tableName).deleteOne({ _id: this.convertStringIdToObjectId(document.id) }) as T
+        return await this.driver.getDb().collection(this.tableName).deleteOne({ _id: this.convertToObjectId(document.id) }) as T
     }
 
     /**
@@ -210,13 +230,13 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
         await this.driver.getDb().collection(this.tableName).deleteMany({})
     }
 
-    /**
-     * Returns the BelongsToCtor
-     * 
-     * @returns 
-     */
-    belongsToCtor(): IBelongsToCtor {
-        return MongoDBBelongsTo
+
+    async belongsTo<T>(document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null> {
+        return new MongoDBBelongsTo().handle(
+            this.driver.connectionName,
+            document,
+            options
+        ) as T ?? null
     }
 
     /**
