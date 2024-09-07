@@ -2,11 +2,11 @@ import { describe, expect, test } from '@jest/globals';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
+import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
 import { TestAuthorModel } from '@src/tests/models/models/TestAuthor';
 import { TestMovieModel } from '@src/tests/models/models/TestMovie';
-import { DataTypes } from 'sequelize';
-import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
 import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
+import { DataTypes } from 'sequelize';
 
 const connections = getTestConnectionNames()
 
@@ -15,6 +15,8 @@ const createTable = async (connectionName: string) => {
 
     schema.createTable('tests', {
         name: DataTypes.STRING,
+        authorId: DataTypes.STRING,
+        yearReleased: DataTypes.INTEGER,
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE
     })
@@ -53,6 +55,8 @@ describe('test hasMany', () => {
     
     test('hasMany', async () => {
         for(const connection of connections) {
+            console.log('[Connection]', connection)
+
             await truncate(connection);
 
             /**
@@ -61,6 +65,7 @@ describe('test hasMany', () => {
             const authorModel = new TestAuthorModel({
                 name: 'John'
             })
+            authorModel.connection = connection
             await authorModel.save();
             expect(typeof authorModel.getId() === 'string').toBe(true)
             expect(authorModel.data?.name).toEqual('John');
@@ -71,22 +76,24 @@ describe('test hasMany', () => {
             const movieModelOne = new TestMovieModel({
                 authorId: authorModel.getId()?.toString() as string,
                 name: 'Movie One',
-                yearReleased: '1970'
+                yearReleased: 1970
             })
+            movieModelOne.connection = connection
             await movieModelOne.save();
             expect(typeof movieModelOne.getId() === 'string').toBe(true);
             expect(movieModelOne.data?.name).toEqual('Movie One');
-            expect(movieModelOne.data?.yearReleased).toEqual('1970');
+            expect(movieModelOne.data?.yearReleased).toEqual(1970);
     
             const movieModelTwo = new TestMovieModel({
                 authorId: authorModel.getId()?.toString() as string,
                 name: 'Movie Two',
-                yearReleased: '1980'
+                yearReleased: 1980
             })
+            movieModelTwo.connection = connection
             await movieModelTwo.save();
             expect(typeof movieModelTwo.getId() === 'string').toBe(true);
             expect(movieModelTwo.data?.name).toEqual('Movie Two');
-            expect(movieModelTwo.data?.yearReleased).toEqual('1980');
+            expect(movieModelTwo.data?.yearReleased).toEqual(1980);
     
             /**
              * Get related movies from author

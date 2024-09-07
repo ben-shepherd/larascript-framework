@@ -5,7 +5,7 @@ import { TestAuthorModel } from "@src/tests/models/models/TestAuthor";
 export interface TestMovieModelData extends IModelData {
     authorId?: string;
     name?: string;
-    yearReleased?: string;
+    yearReleased?: number;
 }
 export class TestMovieModel extends Model<TestMovieModelData> {
 

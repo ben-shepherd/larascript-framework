@@ -27,7 +27,7 @@ export class TestAuthorModel extends Model<TestAuthorModelData> {
             localKey: 'id',
             foreignKey: 'authorId',
             filters: {
-                yearReleased: year.toString()
+                yearReleased: year
             }
         })
     }

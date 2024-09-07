@@ -2,11 +2,11 @@ import { describe, expect, test } from '@jest/globals';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
+import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
 import { TestAuthorModel } from '@src/tests/models/models/TestAuthor';
 import { TestMovieModel } from '@src/tests/models/models/TestMovie';
-import { DataTypes } from 'sequelize';
-import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
 import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
+import { DataTypes } from 'sequelize';
 
 const tableName = 'tests';
 const connections = getTestConnectionNames()
@@ -17,6 +17,7 @@ const createTable = async (connectionName: string) => {
     await schema.createTable(tableName, {
         name: DataTypes.STRING,
         born: DataTypes.INTEGER,
+        authorId: DataTypes.STRING,
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE
     });
