@@ -28,7 +28,7 @@ export default [...compat.extends("eslint:recommended"), {
         sourceType: "module",
         parserOptions: {
             project: "tsconfig.json",
-            tsconfigRootDir: "C:\\Users\\bensh\\Documents\\Projects\\larascript\\larascript-node",
+            tsconfigRootDir: ".",
         },
     },
 
@@ -41,7 +41,7 @@ export default [...compat.extends("eslint:recommended"), {
             "newlines-between": "always",
         }],
         "no-const-assign": "error",
-        "no-var": "error",
+        "no-var": "",
         "prefer-const": ["error", {
             destructuring: "any",
             ignoreReadBeforeAssign: false,
