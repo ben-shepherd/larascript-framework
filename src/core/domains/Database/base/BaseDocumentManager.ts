@@ -133,7 +133,7 @@ abstract class BaseDocumentManager<
         }
         catch (err) {
             if(err instanceof Error && err?.message) {
-                console.log(err?.message)
+                console.log(`Database error(${this.driver.connectionName}): `, err.message, err.stack)
             }
             throw err
         }
