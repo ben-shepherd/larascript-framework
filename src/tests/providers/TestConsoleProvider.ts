@@ -3,8 +3,8 @@ import WorkerCommand from "@src/core/domains/console/commands/WorkerCommand";
 import ConsoleService from "@src/core/domains/console/service/ConsoleService";
 import { App } from "@src/core/services/App";
 
-class TestConsoleProvider extends BaseProvider
-{
+class TestConsoleProvider extends BaseProvider {
+
     async register(): Promise<void> {
         console.log('Registering ConsoleProvider')
 
@@ -19,6 +19,7 @@ class TestConsoleProvider extends BaseProvider
     }
 
     async boot(): Promise<void> {}
+
 }
 
 export default TestConsoleProvider

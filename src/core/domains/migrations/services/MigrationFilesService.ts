@@ -6,8 +6,8 @@ import path from 'path';
 
 const APP_MIGRATIONS_DIR = '@src/../src/app/migrations';
 
-class MigrationFileService
-{
+class MigrationFileService {
+
     appMigrationsDir!: string;
 
     constructor(appMigrationsDir?: string) {
@@ -66,10 +66,9 @@ class MigrationFileService
      * Get all migration file names from oldest to newest
      * @returns 
      */
-    getMigrationFileNames(): string[]
-    {
+    getMigrationFileNames(): string[] {
         const files = fs.readdirSync(this.appMigrationsDir)
-            // Remove the .ts extension
+        // Remove the .ts extension
             .map((file) => file.replace('.ts', ''))
 
         return files;
@@ -80,8 +79,7 @@ class MigrationFileService
      * @param name 
      * @returns 
      */
-    createDateFilename(name: string) 
-    {
+    createDateFilename(name: string) {
         const date = new Date();
         const dateString = date.toISOString().split('T')[0]
 
@@ -94,8 +92,7 @@ class MigrationFileService
      * @param fileName 
      * @returns 
      */
-    parseDate(fileName: string): Date | null
-    {
+    parseDate(fileName: string): Date | null {
         const pattern = /^(\d{4})-(\d{2})-(\d{2})/;
         const match = pattern.exec(fileName);
 
@@ -107,6 +104,7 @@ class MigrationFileService
 
         return new Date(parseInt(year), parseInt(month) - 1, parseInt(day), 1, 1, 1)
     }
+
 }
 
 export default MigrationFileService

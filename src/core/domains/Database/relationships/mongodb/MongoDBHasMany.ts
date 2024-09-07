@@ -2,12 +2,12 @@ import { IHasMany, IHasManyOptions } from "@src/core/domains/database/interfaces
 import IModelData from "@src/core/interfaces/IModelData";
 import { App } from "@src/core/services/App";
 import { ObjectId } from "mongodb";
+
 import { IDatabaseDocument } from "../../interfaces/IDocumentManager";
 
-export default class HasMany implements IHasMany
-{ 
-    public async handle<T = IModelData>(connection: string, document: IDatabaseDocument, options: IHasManyOptions): Promise<T[]>
-    {
+export default class HasMany implements IHasMany {
+ 
+    public async handle<T = IModelData>(connection: string, document: IDatabaseDocument, options: IHasManyOptions): Promise<T[]> {
         let {
             localKey,
             foreignTable,
@@ -72,4 +72,5 @@ export default class HasMany implements IHasMany
 
         return filters
     }
+
 }   

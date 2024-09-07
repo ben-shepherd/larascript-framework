@@ -1,15 +1,15 @@
 import { IBelongsTo, IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { App } from "@src/core/services/App";
 import { ObjectId } from "mongodb";
+
 import { IDatabaseDocument } from "../../interfaces/IDocumentManager";
 import DocumentValidator from "../../validator/DocumentValidator";
 
-export default class MongoDBBelongsTo implements IBelongsTo
-{ 
+export default class MongoDBBelongsTo implements IBelongsTo {
+ 
     protected validator = new DocumentValidator();
 
-    public async handle<T>(connection: string, document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null>
-    {
+    public async handle<T>(connection: string, document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null> {
         let {
             localKey,
             foreignTable,
@@ -57,4 +57,5 @@ export default class MongoDBBelongsTo implements IBelongsTo
 
         return await documentManager.findOne({ filter }) as T | null;
     }
+
 }   

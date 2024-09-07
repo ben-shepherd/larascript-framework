@@ -3,12 +3,19 @@ import { ICommand } from "@src/core/domains/console/interfaces/ICommand";
 import { KeyPair, KeyPairArguementType, OnlyArguement, ParsedArguement, ParsedArgumentsArray } from "@src/core/domains/console/parsers/CommandArgumentParser";
 
 export default abstract class BaseCommand implements ICommand {
+
     public signature!: string;
+
     public description?: string;
+
     public execute!: (...args: any[]) => any;
+
     public keepProcessAlive?: boolean = false;
+
     protected parsedArgumenets: ParsedArgumentsArray = [];
+
     protected overwriteArgs: Record<string, string> = {};
+
     protected config: object = {};
 
     constructor(config: object = {}) {
@@ -79,10 +86,10 @@ export default abstract class BaseCommand implements ICommand {
     /**
      * End the process
      */
-    end(): void
-    {
+    end(): void {
         if(!(this.config as { keepProcessAlive?: boolean })?.keepProcessAlive) {
             process.exit();
         }
     }
+
 }

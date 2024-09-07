@@ -8,6 +8,7 @@ export interface TestMovieModelData extends IModelData {
     yearReleased?: string;
 }
 export class TestMovieModel extends Model<TestMovieModelData> {
+
     public table: string = 'tests';
 
     public fields: string[] = [
@@ -34,4 +35,5 @@ export class TestMovieModel extends Model<TestMovieModelData> {
             }
         })
     }
+
 }

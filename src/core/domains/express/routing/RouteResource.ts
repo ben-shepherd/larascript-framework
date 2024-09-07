@@ -11,10 +11,10 @@ import Route from "@src/core/domains/express/routing/Route";
 import RouteGroup from "@src/core/domains/express/routing/RouteGroup";
 
 const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
-    let name = options.name.startsWith('/') ? options.name.slice(1) : options.name
+    const name = options.name.startsWith('/') ? options.name.slice(1) : options.name
 
     const routes = RouteGroup([
-        // Get all resources
+    // Get all resources
         Route({
             name: `${name}.index`,
             method: 'get',

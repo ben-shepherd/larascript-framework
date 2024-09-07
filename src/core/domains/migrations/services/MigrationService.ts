@@ -8,8 +8,11 @@ import MigrationFileService from "@src/core/domains/migrations/services/Migratio
 import { App } from "@src/core/services/App";
 
 class MigrationService implements IMigrationService {
+
     private fileService!: MigrationFileService;
+
     private repository!: MigrationRepository;
+
     protected config!: IMigrationConfig;
 
     constructor(config: IMigrationConfig = {}) {
@@ -18,9 +21,8 @@ class MigrationService implements IMigrationService {
         this.repository = new MigrationRepository();
     }
 
-    async boot()
-    {
-        // Create the migrations schema
+    async boot() {
+    // Create the migrations schema
         await this.createSchema();
     }
 
@@ -69,9 +71,8 @@ class MigrationService implements IMigrationService {
     /**
      * Run the migrations down
      */
-    async down({ batch }: Pick<IMigrationServiceOptions, 'batch'>): Promise<void> 
-    {
-        // Get the current batch count
+    async down({ batch }: Pick<IMigrationServiceOptions, 'batch'>): Promise<void> {
+    // Get the current batch count
         const batchCount = batch ?? await this.getCurrentBatchCount();    
 
         // Get the migration results
@@ -181,6 +182,7 @@ class MigrationService implements IMigrationService {
      */
     protected async createSchema(): Promise<void> {
         try {
+
             /**
              * Handle MongoDB driver
              */

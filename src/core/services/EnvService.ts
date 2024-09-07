@@ -6,6 +6,7 @@ import { IEnvService } from "@src/core/interfaces/IEnvService";
 type UpdateProps = Record<string, string>;
 
 export default class EnvService implements IEnvService {
+
     envPath = path.resolve('@src/../', '.env')
 
     envExamplePath = path.resolve('@src/../', '.env.example')
@@ -17,7 +18,7 @@ export default class EnvService implements IEnvService {
      * @returns 
      */
     public updateValues = async (props: UpdateProps, filePath = this.envPath) => {
-        // Check if the file exists
+    // Check if the file exists
         if (!fs.existsSync(filePath)) {
             return;
         }
@@ -72,4 +73,5 @@ export default class EnvService implements IEnvService {
             fs.copyFileSync(from, to)   
         }
     }
+
 }

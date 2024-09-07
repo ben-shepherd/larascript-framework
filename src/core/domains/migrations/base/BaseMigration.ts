@@ -6,8 +6,8 @@ import { App } from "@src/core/services/App";
  * It implements the IMigration interface and provides core functionality
  * for database operations and migration control.
  */
-abstract class BaseMigration implements IMigration
-{
+abstract class BaseMigration implements IMigration {
+
     /**
      * schema is used for database table operations like creating, altering, or dropping tables.
      * It's retrieved from the database connection in the App container.
@@ -51,9 +51,8 @@ abstract class BaseMigration implements IMigration
      * Determines whether this migration should be executed.
      * @returns true if the migration should run, false otherwise
      */
-    shouldUp(): boolean
-    {
-        // If no specific database provider is set, the migration runs on the default provider
+    shouldUp(): boolean {
+    // If no specific database provider is set, the migration runs on the default provider
         if(!this.databaseProvider) { 
             return true;
         }
@@ -61,6 +60,7 @@ abstract class BaseMigration implements IMigration
         // Check if the current database matches the specified provider for this migration
         return App.container('db').isProvider(this.databaseProvider);
     }
+
 }
 
 export default BaseMigration;

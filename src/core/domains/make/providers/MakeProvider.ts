@@ -15,10 +15,9 @@ import MakeValidatorCommand from "@src/core/domains/make/commands/MakeValidatorC
 import { App } from "@src/core/services/App";
 import MakeMigrationCommand from "@src/core/domains/make/commands/MakeMigrationCommand";
 
-export default class MakeProvider extends BaseProvider
-{
-    async register(): Promise<void> 
-    {
+export default class MakeProvider extends BaseProvider {
+
+    async register(): Promise<void> {
         console.log('[Provider] Registering MakeProvider')    
 
         App.container('console').register().registerAll([
@@ -40,4 +39,5 @@ export default class MakeProvider extends BaseProvider
     }
 
     async boot(): Promise<void> {}
+
 }

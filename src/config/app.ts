@@ -8,6 +8,7 @@ import CoreProviders from '@src/core/providers/CoreProviders';
  * Available app configuration
  */
 const appConfig: IAppConfig = {
+
     /**
      * The environment the app is running in
      */

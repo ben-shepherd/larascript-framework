@@ -16,10 +16,9 @@ export type QueueDriverOptions<WMCtor extends WorkerModelCtor = WorkerModelCtor>
     runOnce?: boolean;
 }
 
-export default class QueueDriver implements IEventDriver
-{
-    async handle(event: IEvent, options: QueueDriverOptions) 
-    {
+export default class QueueDriver implements IEventDriver {
+
+    async handle(event: IEvent, options: QueueDriverOptions) {
         const workerModel = (new WorkerModelFactory).create(new options.workerModelCtor().table, {
             queueName: options.queueName,
             eventName: event.name,
@@ -30,4 +29,5 @@ export default class QueueDriver implements IEventDriver
 
         await workerModel.save();
     }
+
 }

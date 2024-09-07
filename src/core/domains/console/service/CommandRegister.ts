@@ -3,8 +3,8 @@ import CommandRegisterException from "@src/core/domains/console/exceptions/Comma
 import { ICommandConstructor } from "@src/core/domains/console/interfaces/ICommand";
 import { ICommandRegister, Registered } from "@src/core/domains/console/interfaces/ICommandRegister";
 
-export default class CommandRegister extends Singleton implements ICommandRegister
-{
+export default class CommandRegister extends Singleton implements ICommandRegister {
+
     /**
      * Registered commands
      */
@@ -29,8 +29,7 @@ export default class CommandRegister extends Singleton implements ICommandRegist
      * @param key 
      * @param cmdCtor 
      */
-    register(cmdCtor: ICommandConstructor) 
-    {
+    register(cmdCtor: ICommandConstructor) {
         const signature = (new cmdCtor).signature
 
         if(this.commands.has(signature)) {
@@ -45,8 +44,7 @@ export default class CommandRegister extends Singleton implements ICommandRegist
      * @param cmdCtor 
      * @param config 
      */
-    addCommandConfig(signatures: string[], config: object) 
-    {
+    addCommandConfig(signatures: string[], config: object) {
         signatures.forEach((signature: string) => this.commandConfigs.set(signature, config));
     }
 
@@ -55,8 +53,7 @@ export default class CommandRegister extends Singleton implements ICommandRegist
      * @param cmdCtor 
      * @returns 
      */
-    getCommandConfig<T extends object = object>(signature: string): T | null
-    {
+    getCommandConfig<T extends object = object>(signature: string): T | null {
         return this.commandConfigs.get(signature) as T ?? null;
     }
 
@@ -65,8 +62,7 @@ export default class CommandRegister extends Singleton implements ICommandRegist
      * @param key 
      * @returns 
      */
-    get<CommandCtor extends ICommandConstructor>(key: string): CommandCtor
-    {
+    get<CommandCtor extends ICommandConstructor>(key: string): CommandCtor {
         if(!this.commands.has(key)) {
             throw new CommandRegisterException(`Command '${key}' could not be found`);
         }
@@ -89,4 +85,5 @@ export default class CommandRegister extends Singleton implements ICommandRegist
     getBySignature(string: string): ICommandConstructor | null {
         return this.commands.get(string) as ICommandConstructor ?? null
     }
+
 }

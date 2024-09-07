@@ -6,6 +6,7 @@ import CommandRegister from "@src/core/domains/console/service/CommandRegister";
 import { App } from "@src/core/services/App";
 
 export default class CommandReader implements ICommandReader {
+
     private argv: string[] = [];
 
     /**
@@ -54,4 +55,5 @@ export default class CommandReader implements ICommandReader {
 
         cmd.end();
     }
+
 }

@@ -4,9 +4,11 @@ import { IProvider } from '@src/core/interfaces/IProvider';
 export default abstract class BaseProvider implements IProvider {
 
     protected providerName: string | null = null;
+
     protected config: any = {};
 
     abstract register(): Promise<void>;
+
     abstract boot(): Promise<void>;
 
     protected log(message: string, ...args: any[]): void {
@@ -21,4 +23,5 @@ export default abstract class BaseProvider implements IProvider {
     public getProviderName(): string | null {
         return this.providerName;
     }
+
 }

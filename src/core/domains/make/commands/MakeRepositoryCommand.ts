@@ -1,7 +1,7 @@
 import BaseMakeFileCommand from "@src/core/domains/make/base/BaseMakeFileCommand";
 
-export default class MakeRepositoryCommand extends BaseMakeFileCommand
-{
+export default class MakeRepositoryCommand extends BaseMakeFileCommand {
+
     constructor() {
         super({
             signature: 'make:repository',
@@ -11,4 +11,5 @@ export default class MakeRepositoryCommand extends BaseMakeFileCommand
             endsWith: 'Repository'
         })
     }
+
 }

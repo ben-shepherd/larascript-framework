@@ -8,13 +8,18 @@ import { IEnvService } from '@src/core/interfaces/IEnvService';
 import EnvService from "@src/core/services/EnvService";
 import readline from 'node:readline';
 
-class AppSetupCommand extends BaseCommand implements ISetupCommand
-{
+class AppSetupCommand extends BaseCommand implements ISetupCommand {
+
     public signature = 'app:setup';
+
     public description = 'Setup the application';
+
     rl: readline.Interface;
+
     env: IEnvService;
+
     input: IConsoleInputService;
+
     questions!: QuestionDTO[];
 
     constructor() {
@@ -39,8 +44,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
     /**
      * Executes the command
      */
-    public execute = async () =>
-    {
+    public execute = async () => {
         let count = 1;
 
         this.input.clearScreen();
@@ -156,7 +160,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
             return await this.processQuestion(count, question);
         }
 
-        let value: string = this.input.normalizeAnswer(question.answer, question.defaultValue);
+        const value: string = this.input.normalizeAnswer(question.answer, question.defaultValue);
 
         await this.env.updateValues({ [question.id]: value });
     }
@@ -192,6 +196,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
             await action.handle(this, question);
         }
     }
+
 }
 
 export default AppSetupCommand

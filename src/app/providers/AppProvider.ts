@@ -6,21 +6,19 @@ import { App } from "@src/core/services/App";
 
 export interface AppConfig {}
 
-export default class AppProvider extends BaseProvider
-{
+export default class AppProvider extends BaseProvider {
+
     protected config: AppConfig = {};
 
-    public async register(): Promise<void> 
-    {
+    public async register(): Promise<void> {
         this.log('Registering AppProvider');
 
-        /**
+    /**
          * Register your services here
          */
     }
 
-    public async boot(): Promise<void> 
-    {
+    public async boot(): Promise<void> {
         this.log('Booting AppProvider');
 
         /**
@@ -28,21 +26,21 @@ export default class AppProvider extends BaseProvider
          */
         this.routes();
 
-        /**
+    /**
          * Boot your services here
          */
-        // App.setContainer('myService', new MyService(this.config));
+    // App.setContainer('myService', new MyService(this.config));
     }
 
     /**
      *  Setup routing files
      */
-    private routes(): void
-    {
+    private routes(): void {
         if(!Kernel.isProviderReady(ExpressProvider.name)) {
             return;
         }
         
         App.container('express').bindRoutes(apiRoutes);
     }
+
 }

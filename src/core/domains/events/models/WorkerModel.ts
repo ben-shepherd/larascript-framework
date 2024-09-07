@@ -19,8 +19,8 @@ export const initialWorkerModalData = {
     createdAt: new Date()
 }
 
-export default class WorkerModel extends Model<WorkerModelData> 
-{
+export default class WorkerModel extends Model<WorkerModelData> {
+
     dates = ['createdAt']
 
     fields = [
@@ -45,4 +45,5 @@ export default class WorkerModel extends Model<WorkerModelData>
             return null
         }
     }
+
 }

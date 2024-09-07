@@ -1,5 +1,6 @@
 import returnOrThrow from "@src/core/util/returns/returnOrThrow";
 import { z } from "zod";
+
 import InvalidDocument from "../exceptions/UnidentifiableDocument";
 import { IDatabaseDocument } from "../interfaces/IDocumentManager";
 import { IDocumentValidator } from "../interfaces/IDocumentValidator";
@@ -114,6 +115,7 @@ class DocumentValidator implements IDocumentValidator {
 
         return true;
     }
+
 }
 
 export default DocumentValidator

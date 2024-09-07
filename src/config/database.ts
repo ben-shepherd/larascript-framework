@@ -51,6 +51,7 @@ const config: IDatabaseConfig = {
      * Define multiple connections here if needed.
      */
     connections: {
+
         /**
          * Default connection configuration.
          * Uses environment variables for flexible deployment across different environments.
@@ -60,7 +61,7 @@ const config: IDatabaseConfig = {
             uri: process.env.DATABASE_DEFAULT_URI as string,
             options: {} // Additional connection options can be specified here
         },
-        // Add more connection configurations as needed
+    // Add more connection configurations as needed
     },
 };
 

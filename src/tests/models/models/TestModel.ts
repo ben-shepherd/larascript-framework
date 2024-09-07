@@ -5,6 +5,7 @@ type TestModelData = {
 }
 
 class TestModel extends Model<TestModelData> {
+
     public table: string = 'tests';
 
     public fields: string[] = [
@@ -12,6 +13,7 @@ class TestModel extends Model<TestModelData> {
         'createdAt',
         'updatedAt'
     ]
+
 }
 
 export default TestModel

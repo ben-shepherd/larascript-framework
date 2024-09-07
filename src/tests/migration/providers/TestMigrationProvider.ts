@@ -4,12 +4,11 @@ import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigra
 import MigrationProvider from "@src/core/domains/migrations/providers/MigrationProvider";
 import { App } from "@src/core/services/App";
 
-class TestMigrationProvider extends MigrationProvider
-{
+class TestMigrationProvider extends MigrationProvider {
+
     protected config: IMigrationConfig = {};
     
-    async register(): Promise<void>
-    {
+    async register(): Promise<void> {
         super.register();
 
         /**
@@ -25,6 +24,7 @@ class TestMigrationProvider extends MigrationProvider
             (new MigrateDownCommand).signature
         ], config)
     }
+
 }
 
 export default TestMigrationProvider

@@ -6,26 +6,26 @@ import testAppConfig from '@src/tests/config/testConfig';
 
 describe('attempt to connect to MongoDB database', () => {
 
-  /**
+    /**
    * Boot the MongoDB provider
    */
-  beforeAll(async () => {
-    await Kernel.boot({
-      ...testAppConfig,
-      providers: [
-        new DatabaseProvider()
-      ]
-    }, {})
-  })
+    beforeAll(async () => {
+        await Kernel.boot({
+            ...testAppConfig,
+            providers: [
+                new DatabaseProvider()
+            ]
+        }, {})
+    })
 
-  /**
+    /**
    * Test the MongoDB connection
    */
-  test('test db connection',async () => {
-    const db = App.container('db');
-    expect(db).toBeTruthy();
+    test('test db connection',async () => {
+        const db = App.container('db');
+        expect(db).toBeTruthy();
 
-    await db.boot();
-    expect(db).toBeTruthy();
-  });
+        await db.boot();
+        expect(db).toBeTruthy();
+    });
 });

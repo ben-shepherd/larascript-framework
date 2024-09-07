@@ -1,8 +1,8 @@
 import DatabaseSchema from "@src/core/domains/database/base/DatabaseSchema";
 import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 
-class MongoDBSchema extends DatabaseSchema
-{
+class MongoDBSchema extends DatabaseSchema {
+
     protected driver!: MongoDB;
 
     constructor(driver: MongoDB) {
@@ -36,6 +36,7 @@ class MongoDBSchema extends DatabaseSchema
     async tableExists(name: string): Promise<boolean> {
         return (await this.driver.getDb().listCollections().toArray()).map(c => c.name).includes(name);
     }
+
 }
 
 export default MongoDBSchema

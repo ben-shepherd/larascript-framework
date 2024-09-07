@@ -47,12 +47,12 @@ const buildQuestionDTOs = (): QuestionDTO[] => {
             }
         }),
         new QuestionDTO({
-           id: QuestionIDs.enableExpress,
-           question: 'Do you want to enable express? (yes/no) This step will overwrite your .env file.',
-           previewText: 'Enable Express',
-           defaultValue: 'yes',
-           acceptedAnswers: acceptedAnswersBoolean,
-           actionCtor: EnableExpress,
+            id: QuestionIDs.enableExpress,
+            question: 'Do you want to enable express? (yes/no) This step will overwrite your .env file.',
+            previewText: 'Enable Express',
+            defaultValue: 'yes',
+            acceptedAnswers: acceptedAnswersBoolean,
+            actionCtor: EnableExpress,
         }),
         new QuestionDTO({
             id: QuestionIDs.appPort,

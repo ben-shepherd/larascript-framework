@@ -7,31 +7,37 @@ import IValidatorService from '@src/core/domains/validator/interfaces/IValidator
 
 export interface ICoreContainers {
     [key: string]: any;
+
     /**
      * Event Dispatcher Service
      * Provided by '@src/core/domains/events/providers/EventProvider'
      */
     events: IEventService;
+
     /**
      * Auth service
      * Provided by '@src/core/domains/auth/providers/AuthProvider'
      */
     auth: IAuthService;
+
     /**
      * Database Service
      * Provided by '@src/core/domains/database/providers/DatabaseProvider'
      */
     db: IDatabaseService;
+
     /**
      * Express web server Service
      * Provided by '@src/core/domains/express/providers/ExpressProvider'
      */
     express: IExpress;
+
     /**
      * Console service
      * Provided by '@src/core/domains/console/providers/ConsoleProvider'
      */
     console: ICommandService;
+
     /**
      * Validator service
      * Provided by '@src/core/domains/validator/providers/ValidatorProvider'

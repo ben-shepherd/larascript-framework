@@ -1,14 +1,14 @@
 import { IDatabaseProvider } from "@src/core/domains/database/interfaces/IDatabaseProvider";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 
-abstract class DatabaseSchema<Provider extends IDatabaseProvider = IDatabaseProvider> implements IDatabaseSchema
-{
+abstract class DatabaseSchema<Provider extends IDatabaseProvider = IDatabaseProvider> implements IDatabaseSchema {
+
     protected driver!: Provider;
 
-    constructor(driver: Provider)
-    {
+    constructor(driver: Provider) {
         this.driver = driver;
     }
+
     createTable(name: string, ...args: any[]): void {
         throw new Error("Method not implemented.");
     }
@@ -24,6 +24,7 @@ abstract class DatabaseSchema<Provider extends IDatabaseProvider = IDatabaseProv
     alterTable(name: string, ...args: any[]): void {
         throw new Error("Method not implemented.");
     }
+
 }
 
 export default DatabaseSchema

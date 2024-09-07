@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-
 import unauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
 import responseError from '@src/core/domains/express/requests/responseError';
 import { App } from '@src/core/services/App';
@@ -17,7 +16,7 @@ export default async (req: Request, res: Response): Promise<void> => {
             success: true,
             token,
             user: user?.getData({ excludeGuarded: true })
-         })
+        })
     }
     catch (error) {
         if(error instanceof unauthorizedError) {

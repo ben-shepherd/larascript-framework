@@ -2,10 +2,9 @@ import { IAction } from "@src/core/domains/setup/interfaces/IAction";
 import { ISetupCommand } from "@src/core/domains/setup/interfaces/ISetupCommand";
 import QuestionDTO from "@src/core/domains/setup/DTOs/QuestionDTO";
 
-class GenerateJwtSecretAction implements IAction
-{
-    async handle(ref: ISetupCommand, question: QuestionDTO): Promise<any>
-    {
+class GenerateJwtSecretAction implements IAction {
+
+    async handle(ref: ISetupCommand, question: QuestionDTO): Promise<any> {
         const answerIsYes = question.getAnswer() === 'y' || question.getAnswer() === 'yes';
 
         if(!answerIsYes) {
@@ -18,6 +17,7 @@ class GenerateJwtSecretAction implements IAction
 
         ref.writeLine('Successfully generated jwt secret!');
     }
+
 }
 
 export default GenerateJwtSecretAction

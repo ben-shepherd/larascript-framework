@@ -5,6 +5,7 @@ import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
 import TestModel from '@src/tests/models/models/TestModel';
 import { DataTypes } from 'sequelize';
+
 import { getTestConnectionNames } from '../config/testDatabaseConfig';
 import TestDatabaseProvider from '../providers/TestDatabaseProvider';
 

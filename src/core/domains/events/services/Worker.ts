@@ -9,8 +9,8 @@ import EventSubscriber from "@src/core/domains/events/services/EventSubscriber";
 import DriverOptions from "@src/core/domains/events/services/QueueDriverOptions";
 import { App } from "@src/core/services/App";
 
-export default class Worker extends Singleton 
-{
+export default class Worker extends Singleton {
+
     /**
      * Queue driver options
      */
@@ -109,8 +109,7 @@ export default class Worker extends Singleton
      * Proces the worker by dispatching it through the event driver 'sync'
      * @param model 
      */
-    async processWorkerModel(model: WorkerModel) 
-    {
+    async processWorkerModel(model: WorkerModel) {
         model.table = new this.options.workerModelCtor().table
         const eventName = model.getAttribute('eventName')
         const payload = model.getPayload() as IEventPayload
@@ -133,8 +132,7 @@ export default class Worker extends Singleton
      * @param err 
      * @returns 
      */
-    async failedWorkerModel(model: WorkerModel, err: Error)
-    {
+    async failedWorkerModel(model: WorkerModel, err: Error) {
         model.table = new this.options.workerModelCtor().table;
 
         // Get attempts and max retreis
@@ -160,8 +158,7 @@ export default class Worker extends Singleton
      * @param model 
      * @param err 
      */
-    async moveFailedWorkerModel(model: WorkerModel, err: Error)
-    {
+    async moveFailedWorkerModel(model: WorkerModel, err: Error) {
         this.log('Moved to failed')
         
         const failedWorkerModel = (new FailedWorkerModelFactory).create(
@@ -184,4 +181,5 @@ export default class Worker extends Singleton
     protected log(message: string) {
         console.log('[Worker]: ', message)
     }
+
 }

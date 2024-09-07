@@ -1,5 +1,4 @@
 import { Db, MongoClient, MongoClientOptions } from 'mongodb';
-
 import MongoDbDocumentManager from '@src/core/domains/database/documentManagers/MongoDbDocumentManager';
 import { IDatabaseGenericConnectionConfig } from '@src/core/domains/database/interfaces/IDatabaseGenericConnectionConfig';
 import { IDatabaseProvider } from '@src/core/domains/database/interfaces/IDatabaseProvider';
@@ -8,8 +7,11 @@ import { IDocumentManager } from '@src/core/domains/database/interfaces/IDocumen
 import MongoDBSchema from '@src/core/domains/database/schema/MongoDBSchema';
 
 export default class MongoDB implements IDatabaseProvider {
+
     public connectionName!: string;
+
     protected client!: MongoClient;
+
     protected db!: Db;
 
     /**
@@ -73,4 +75,5 @@ export default class MongoDB implements IDatabaseProvider {
     getDb(): Db {
         return this.db;
     }
+
 }

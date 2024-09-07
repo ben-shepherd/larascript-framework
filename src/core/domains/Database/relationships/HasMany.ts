@@ -1,12 +1,12 @@
 import { IHasMany, IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import IModelData from "@src/core/interfaces/IModelData";
 import { App } from "@src/core/services/App";
+
 import { IDatabaseDocument } from "../interfaces/IDocumentManager";
 
-export default class HasMany implements IHasMany 
-{
-    public async handle<T = IModelData>(connection: string, document: IDatabaseDocument, options: IHasManyOptions): Promise<T> 
-    {
+export default class HasMany implements IHasMany {
+
+    public async handle<T = IModelData>(connection: string, document: IDatabaseDocument, options: IHasManyOptions): Promise<T> {
         const {
             localKey,
             foreignKey,
@@ -22,7 +22,7 @@ export default class HasMany implements IHasMany
             .documentManager(connection)
             .table(foreignTable)
 
-        let localKeyValue = document[localKey]
+        const localKeyValue = document[localKey]
 
         const schema = {
             ...filters,
@@ -31,4 +31,5 @@ export default class HasMany implements IHasMany
 
         return await documentManager.findMany({ filter: schema }) as T
     }
+
 }       

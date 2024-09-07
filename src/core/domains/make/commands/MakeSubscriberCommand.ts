@@ -1,7 +1,7 @@
 import BaseMakeFileCommand from "@src/core/domains/make/base/BaseMakeFileCommand";
 
-export default class MakeSubscriberCommand extends BaseMakeFileCommand
-{
+export default class MakeSubscriberCommand extends BaseMakeFileCommand {
+
     constructor() {
         super({
             signature: 'make:subscriber',
@@ -11,4 +11,5 @@ export default class MakeSubscriberCommand extends BaseMakeFileCommand
             endsWith: 'Subscriber'
         })
     }
+
 }

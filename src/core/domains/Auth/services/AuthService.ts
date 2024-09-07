@@ -45,8 +45,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
     /**
      * Validate jwt secret
      */
-    private validateJwtSecret()
-    {
+    private validateJwtSecret() {
         if(!this.config.jwtSecret || this.config.jwtSecret === '') {
             throw new InvalidJWTSecret();
         }
@@ -142,4 +141,5 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
 
         return this.createJwtFromUser(user)
     }
+
 }

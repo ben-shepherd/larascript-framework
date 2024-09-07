@@ -48,7 +48,7 @@ export const eventDrivers: IEventDrivers = {
             workerModelCtor: WorkerModel  // Constructor for the Worker model
         })
     }
- } as const;
+} as const;
 
 /**
  * Event Subscribers Configuration

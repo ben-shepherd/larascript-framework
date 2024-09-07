@@ -7,15 +7,14 @@ type Props = {
     appliedAt: Date;
 }
 
-class MigrationFactory
-{
+class MigrationFactory {
+
     /**
      * Create a migration model
      * @param param0 
      * @returns 
      */
-    create({ name, batch, checksum, appliedAt }: Props): MigrationModel
-    {
+    create({ name, batch, checksum, appliedAt }: Props): MigrationModel {
         return new MigrationModel({
             name,
             batch,
@@ -23,6 +22,7 @@ class MigrationFactory
             appliedAt
         })
     }
+
 }
 
 export default MigrationFactory

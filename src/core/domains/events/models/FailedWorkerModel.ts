@@ -16,6 +16,7 @@ export const initialFailedWorkerModalData = {
 }
 
 export default class FailedWorkerModel extends Model<FailedWorkerModelData> {
+
     dates = ['failedAt']
 
     fields = [
@@ -28,4 +29,5 @@ export default class FailedWorkerModel extends Model<FailedWorkerModelData> {
     constructor(data: FailedWorkerModelData) {
         super(data)
     }
+
 }

@@ -10,17 +10,17 @@ import { App } from '@src/core/services/App';
 
 describe('attempt to run app with normal appConfig', () => {
 
-  /**
+    /**
    * Boot kernel normally
    * Check containers have been set
    */
-  test.concurrent('kernel boot', async () => {
-    await Kernel.boot(appConfig, {})
-    expect(App.container('events')).toBeInstanceOf(EventService);
-    expect(App.container('db')).toBeInstanceOf(DatabaseService);
-    expect(App.container('express')).toBeInstanceOf(Express);
-    expect(App.container('console')).toBeInstanceOf(ConsoleService);
-    expect(App.container('auth')).toBeInstanceOf(AuthService);
-    expect(Kernel.getInstance().booted()).toBe(true);
-  }, 10000)
+    test.concurrent('kernel boot', async () => {
+        await Kernel.boot(appConfig, {})
+        expect(App.container('events')).toBeInstanceOf(EventService);
+        expect(App.container('db')).toBeInstanceOf(DatabaseService);
+        expect(App.container('express')).toBeInstanceOf(Express);
+        expect(App.container('console')).toBeInstanceOf(ConsoleService);
+        expect(App.container('auth')).toBeInstanceOf(AuthService);
+        expect(Kernel.getInstance().booted()).toBe(true);
+    }, 10000)
 });

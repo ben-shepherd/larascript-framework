@@ -1,5 +1,4 @@
 import { NextFunction, Response } from 'express';
-
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
 import responseError from '@src/core/domains/express/requests/responseError';
 import { App } from '@src/core/services/App';

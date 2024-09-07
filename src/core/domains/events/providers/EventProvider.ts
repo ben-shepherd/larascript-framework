@@ -5,10 +5,9 @@ import { EventServiceConfig } from "@src/core/domains/events/interfaces/IEventSe
 import EventService from "@src/core/domains/events/services/EventService";
 import { App } from "@src/core/services/App";
 
-export default class EventProvider extends BaseProvider
-{
-    public async register(): Promise<void> 
-    {
+export default class EventProvider extends BaseProvider {
+
+    public async register(): Promise<void> {
         this.log('Registering EventProvider');
 
         const config: EventServiceConfig = {

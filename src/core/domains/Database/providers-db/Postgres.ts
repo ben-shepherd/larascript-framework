@@ -11,9 +11,13 @@ import { QueryInterface, Sequelize } from 'sequelize';
 import { Options as SequelizeOptions } from 'sequelize/types/sequelize';
 
 export default class Postgres implements IDatabaseProvider {
+
     public connectionName!: string;
+
     protected pool!: Pool;
+
     protected sequelize!: Sequelize;
+
     protected config!: IDatabaseGenericConnectionConfig<SequelizeOptions>;
 
     /**
@@ -34,8 +38,7 @@ export default class Postgres implements IDatabaseProvider {
         this.config = config;
     }
 
-    getClient(): Sequelize 
-    {
+    getClient(): Sequelize {
         return this.sequelize;
     }
 
@@ -43,8 +46,7 @@ export default class Postgres implements IDatabaseProvider {
      * Connect to the MongoDB database
      * @returns {Promise<void>} A promise that resolves when the connection is established
      */
-    async connect(): Promise<void> 
-    {
+    async connect(): Promise<void> {
         this.sequelize = new Sequelize(this.config.uri, { ...this.config.options, ...this.overrideConfig })
     }
 
@@ -52,8 +54,7 @@ export default class Postgres implements IDatabaseProvider {
      * Get a query interface for MongoDB
      * @returns {IDocumentManager} An instance of MongoDBQuery
      */
-    documentManager(): IDocumentManager
-    {
+    documentManager(): IDocumentManager {
         return new PostgresDocumentManager(this);
     }
 
@@ -61,8 +62,7 @@ export default class Postgres implements IDatabaseProvider {
      * Get a schema interface for MongoDB
      * @returns {IDatabaseSchema} An instance of MongoDBSchema
      */
-    schema(): IDatabaseSchema 
-    {
+    schema(): IDatabaseSchema {
         return new PostgresSchema(this);
     }
 
@@ -70,8 +70,7 @@ export default class Postgres implements IDatabaseProvider {
      * Check if the database connection is established
      * @returns {boolean} True if connected, false otherwise
      */
-    isConnected(): boolean 
-    {
+    isConnected(): boolean {
         return this.sequelize instanceof Sequelize;
     }
 
@@ -79,8 +78,7 @@ export default class Postgres implements IDatabaseProvider {
      * Get the sequelize instance
      * @returns 
      */
-    getSequelize(): Sequelize
-    {
+    getSequelize(): Sequelize {
         if(!this.sequelize) {
             throw new InvalidSequelize('Sequelize is not connected');
         }
@@ -88,8 +86,8 @@ export default class Postgres implements IDatabaseProvider {
         return this.sequelize
     }
 
-    getQueryInterface(): QueryInterface
-    {
+    getQueryInterface(): QueryInterface {
         return this.getSequelize().getQueryInterface();
     }
+
 }

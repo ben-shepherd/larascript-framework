@@ -4,10 +4,9 @@ import WorkerCommand from "@src/core/domains/console/commands/WorkerCommand";
 import ConsoleService from "@src/core/domains/console/service/ConsoleService";
 import { App } from "@src/core/services/App";
 
-export default class ConsoleProvider extends BaseProvider
-{
-    async register(): Promise<void> 
-    {
+export default class ConsoleProvider extends BaseProvider {
+
+    async register(): Promise<void> {
         this.log('Registering ConsoleProvider')
 
         const cnsl = new ConsoleService();

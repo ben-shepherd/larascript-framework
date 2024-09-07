@@ -4,8 +4,8 @@ import IApiTokenModel, { IApiTokenData } from '@src/core/domains/auth/interfaces
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel'
 import tokenFactory from '@src/core/domains/auth/utils/generateToken'
 
-class ApiTokenFactory extends Factory<IApiTokenModel, IApiTokenData>
-{
+class ApiTokenFactory extends Factory<IApiTokenModel, IApiTokenData> {
+
     constructor() {
         super(ApiToken)
     }
@@ -17,6 +17,7 @@ class ApiTokenFactory extends Factory<IApiTokenModel, IApiTokenData>
             revokedAt: null,
         })
     }
+
 }
 
 export default ApiTokenFactory

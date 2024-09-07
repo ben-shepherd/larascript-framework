@@ -25,6 +25,7 @@ export default class User extends Model<IUserData> implements IUserModel {
      * Define your user fields that can be set
      */
     fields: string[] = [
+
         /** Define your user fields below */
         'email',
         'password',
@@ -40,11 +41,11 @@ export default class User extends Model<IUserData> implements IUserModel {
         'roles'
     ]
 
-    async tokens(): Promise<ApiToken[]> 
-    {
+    async tokens(): Promise<ApiToken[]> {
         return this.hasMany(ApiToken, {
             localKey: 'id',
             foreignKey: 'userId'
         }) 
     }
+
 }

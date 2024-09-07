@@ -2,8 +2,8 @@ import ICommandBootService from "@src/core/domains/console/interfaces/ICommandBo
 import { KernelOptions } from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
 
-class CommandBootService implements ICommandBootService
-{
+class CommandBootService implements ICommandBootService {
+
     /**
      * Execute commands
      * @param args 
@@ -20,8 +20,7 @@ class CommandBootService implements ICommandBootService
      * @param options 
      * @returns 
      */
-    getKernelOptions = (args: string[], options: KernelOptions): KernelOptions => 
-    {
+    getKernelOptions = (args: string[], options: KernelOptions): KernelOptions => {
         options.withoutProvider = [...(options.withoutProvider ?? [])];
 
         if(args.length) {

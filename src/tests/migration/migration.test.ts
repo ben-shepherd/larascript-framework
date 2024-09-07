@@ -1,5 +1,4 @@
 import Kernel from '@src/core/Kernel';
-
 import { describe } from '@jest/globals';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import DatabaseProvider from '@src/core/domains/database/providers/DatabaseProvider';

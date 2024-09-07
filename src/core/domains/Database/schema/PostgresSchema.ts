@@ -3,8 +3,8 @@ import Postgres from "@src/core/domains/database/providers-db/Postgres";
 import { DataTypes, QueryInterfaceCreateTableOptions, QueryInterfaceDropTableOptions } from "sequelize";
 import { ModelAttributes } from 'sequelize/types/model';
 
-class PostgresSchema extends DatabaseSchema<Postgres>
-{
+class PostgresSchema extends DatabaseSchema<Postgres> {
+
     /**
      * Ensure id property is added to attributes
      * @param attributes 
@@ -59,6 +59,7 @@ class PostgresSchema extends DatabaseSchema<Postgres>
         const queryInterface = sequelize.getQueryInterface();
         return await queryInterface.tableExists(name);
     }
+
 }
 
 export default PostgresSchema

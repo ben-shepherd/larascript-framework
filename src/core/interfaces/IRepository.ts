@@ -9,14 +9,17 @@ export type RepositoryConstructor<
 export type RepositoryInstance<RCtor extends RepositoryConstructor<any>> = InstanceType<RCtor>
 
 export interface IRepository<Model extends IModel = IModel> {
+
     /**
      * Collection name
      */
     collectionName: string;
+
     /**
      * Connection name
      */
     connection: string;
+
     /**
      * Model Constructor
      */
@@ -33,18 +36,21 @@ export interface IRepository<Model extends IModel = IModel> {
      * @returns 
      */
     findOrFail: (filter: object) => Promise<Model>
+
     /**
      * Find document by id
      * @param id 
      * @returns 
      */
     findById: (id: string) => Promise<Model | null>
+
     /**
      * Find a single document
      * @param query 
      * @returns 
      */
     findOne: (query: object) => Promise<Model | null>
+
     /**
      * Find multiple documents
      * @param query 

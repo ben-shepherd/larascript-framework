@@ -18,17 +18,26 @@ type Props = {
     applicableOnly?: ApplicableOnly | null
 }
 
-class QuestionDTO
-{
+class QuestionDTO {
+
     public id: string;
+
     public question: string | null;
+
     public statement: string | null;
+
     public previewText: string | null;
-    public defaultValue: string | null; 
+
+    public defaultValue: string | null;
+ 
     public answer: string | null = null;
+
     public actionCtor: ActionCtor | null = null;
+
     public actionCtors: ActionCtor[] | null = null;
+
     public acceptedAnswers: string[] | null = null;
+
     public applicableOnly: ApplicableOnly | null = null
 
     constructor({
@@ -42,8 +51,7 @@ class QuestionDTO
         actionCtors = null,
         acceptedAnswers = null,
         applicableOnly = null
-    }: Props) 
-    {
+    }: Props) {
         if(!question && !statement) {
             throw new Error('Missing question or statement')
         }
@@ -80,6 +88,7 @@ class QuestionDTO
         }
         return this.previewText
     }
+
 }
 
 export default QuestionDTO

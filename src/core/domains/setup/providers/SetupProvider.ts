@@ -2,8 +2,8 @@ import BaseProvider from "@src/core/base/Provider";
 import { App } from "@src/core/services/App";
 import AppSetupCommand from "@src/core/domains/setup/commands/AppSetupCommand";
 
-class SetupProvider extends BaseProvider
-{
+class SetupProvider extends BaseProvider {
+
     async register(): Promise<void> {
         this.log('Registering SetupProvider');
 
@@ -15,6 +15,7 @@ class SetupProvider extends BaseProvider
     async boot(): Promise<void> {
         this.log('Booting SetupProvider');
     }
+
 }
 
 export default SetupProvider

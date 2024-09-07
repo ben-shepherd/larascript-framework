@@ -10,11 +10,11 @@ import SetupProvider from '@src/core/domains/setup/providers/SetupProvider';
     require('dotenv').config();
 
     await Kernel.boot({
-      ...appConfig,
-      providers: [
-        new ConsoleProvider(),
-        new SetupProvider()
-      ]
+        ...appConfig,
+        providers: [
+            new ConsoleProvider(),
+            new SetupProvider()
+        ]
     }, {})
 
     await App.container('console').reader(['app:setup']).handle();

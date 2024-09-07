@@ -1,5 +1,4 @@
 import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
-
 import MongoDBSchema from "@src/core/domains/database/schema/MongoDBSchema";
 import { MongoClient } from "mongodb";
 import { Sequelize } from "sequelize";

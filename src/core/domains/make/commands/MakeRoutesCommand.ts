@@ -1,7 +1,7 @@
 import BaseMakeFileCommand from "@src/core/domains/make/base/BaseMakeFileCommand";
 
-export default class MakeRoutesCommand extends BaseMakeFileCommand
-{
+export default class MakeRoutesCommand extends BaseMakeFileCommand {
+
     constructor() {
         super({
             signature: 'make:routes',
@@ -12,4 +12,5 @@ export default class MakeRoutesCommand extends BaseMakeFileCommand
             startWithLowercase: true
         })
     }
+
 }

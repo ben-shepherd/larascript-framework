@@ -3,9 +3,11 @@ import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocume
 import Postgres from "@src/core/domains/database/providers-db/Postgres";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { BindOrReplacements, QueryOptions, QueryTypes } from "sequelize";
+
 import BaseDocumentManager from "../base/BaseDocumentManager";
 
 class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManager, Postgres> {
+
     protected builder = new PostgresQueryBuilder()
 
     /**
@@ -195,6 +197,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
         const queryInterface = this.driver.getQueryInterface();
         await queryInterface.bulkDelete(this.getTable(), {});
     }
+
 }
 
 export default PostgresDocumentManager

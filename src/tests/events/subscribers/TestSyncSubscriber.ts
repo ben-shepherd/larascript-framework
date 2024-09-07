@@ -8,4 +8,5 @@ export default class TestSubscriber extends EventSubscriber<any> {
 
         super(eventName, driver, payload)
     }
+
 }

@@ -9,8 +9,8 @@ export interface MigrationModelData extends IModelData {
     appliedAt: Date;
 }
 
-class MigrationModel extends Model<MigrationModelData>
-{
+class MigrationModel extends Model<MigrationModelData> {
+
     table = 'migrations'
 
     public dates: Dates = [
@@ -23,6 +23,7 @@ class MigrationModel extends Model<MigrationModelData>
         'checksum',
         'appliedAt'
     ]
+
 }
 
 export default MigrationModel

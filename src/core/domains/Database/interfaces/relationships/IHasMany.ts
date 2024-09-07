@@ -1,4 +1,5 @@
 import IModelData from "@src/core/interfaces/IModelData";
+
 import { IDatabaseDocument } from "../IDocumentManager";
 
 export type IHasManyCtor = new () => IHasMany;

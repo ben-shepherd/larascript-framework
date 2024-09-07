@@ -1,7 +1,7 @@
 import BaseMakeFileCommand from "@src/core/domains/make/base/BaseMakeFileCommand";
 
-export default class MakeModelCommand extends BaseMakeFileCommand
-{
+export default class MakeModelCommand extends BaseMakeFileCommand {
+
     constructor() {
         super({
             signature: 'make:model',
@@ -11,4 +11,5 @@ export default class MakeModelCommand extends BaseMakeFileCommand
             argsOptional: ['collection'],
         })
     }
+
 }

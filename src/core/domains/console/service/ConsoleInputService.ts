@@ -1,12 +1,11 @@
 import { IConsoleInputService } from '@src/core/domains/console/interfaces/IConsoleInputService';
 import readline from 'node:readline';
 
-class ConsoleInputService implements IConsoleInputService
-{
+class ConsoleInputService implements IConsoleInputService {
+
     rl: readline.Interface;
 
-    constructor(rl: readline.Interface)
-    {
+    constructor(rl: readline.Interface) {
         this.rl = rl;
     }
 
@@ -72,6 +71,7 @@ class ConsoleInputService implements IConsoleInputService
     clearScreen = () => {
         this.rl.write('\x1B[2J\x1B[0f');
     }
+
 }
 
 export default ConsoleInputService

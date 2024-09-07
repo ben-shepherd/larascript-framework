@@ -5,12 +5,11 @@ import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand'
 import { IPackageJsonService } from '@src/core/interfaces/IPackageJsonService';
 import PackageJsonService from '@src/core/services/PackageJsonService';
 
-class SetupDockerDatabases implements IAction
-{
+class SetupDockerDatabases implements IAction {
+
     packageJson: IPackageJsonService;
 
-    constructor() 
-    {
+    constructor() {
         this.packageJson = new PackageJsonService();
     }
 
@@ -20,8 +19,7 @@ class SetupDockerDatabases implements IAction
      * @param ref 
      * @param question 
      */
-    async handle(ref: ISetupCommand, question: QuestionDTO): Promise<any>
-    {
+    async handle(ref: ISetupCommand, question: QuestionDTO): Promise<any> {
         const dbType = question.getAnswer() as string;
 
         ref.writeLine('Updating package.json');
@@ -32,8 +30,7 @@ class SetupDockerDatabases implements IAction
      * Update the package.json up script
      * @param dbType 
      */
-    async updatePackageJsonUpScript(dbType: string)
-    {
+    async updatePackageJsonUpScript(dbType: string) {
         const packageJson = await this.packageJson.getJson();
         let composeScriptsToInclude = '';
 

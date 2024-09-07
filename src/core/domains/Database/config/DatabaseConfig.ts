@@ -9,6 +9,7 @@ interface Config {
 }
 
 const DatabaseConfig: Config = {
+
     /**
      * Database Provider Constants
      * Important: Value must match the related docker-compose.{value}.yml file, if applicable
@@ -17,6 +18,7 @@ const DatabaseConfig: Config = {
         mongodb: 'mongodb',
         postgres: 'postgres',
     },
+
     /**
      * Database Driver Constructors
      * key: value
@@ -32,6 +34,7 @@ const DatabaseConfig: Config = {
         mongodb: MongoDB,
         postgres: Postgres
     },
+
     /**
      * Database Package Constants
      * Important: The value must equal the name of the package that can be installed with `yarn add {value}`

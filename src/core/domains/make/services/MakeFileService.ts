@@ -8,6 +8,7 @@ import path from 'path';
 export default class MakeFileService {
     
     public options!: IMakeOptions;
+
     protected arguments!: IMakeFileArguments;
 
 
@@ -80,7 +81,7 @@ export default class MakeFileService {
      * @returns 
      */
     updateOriginalPathFilename(originalPath: string, fileName: string): string {
-        // use negative lookup to determine the last string after the last '/'
+    // use negative lookup to determine the last string after the last '/'
         return originalPath.replace(/\/(?!.*\/)(.+)$/, `/${fileName}.ts`)
     }
 
@@ -104,8 +105,8 @@ export default class MakeFileService {
 
         // Use a custom function if provided
         if(typeof this.options.customFilename === 'function') {
-           let fileName = this.options.customFilename(this.arguments.name);
-           return fileName.endsWith(ext) ? fileName : `${fileName}${ext}`
+            const fileName = this.options.customFilename(this.arguments.name);
+            return fileName.endsWith(ext) ? fileName : `${fileName}${ext}`
         }
 
         return `${this.arguments.name}${ext}`;

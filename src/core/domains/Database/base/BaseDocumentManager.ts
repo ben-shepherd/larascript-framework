@@ -4,6 +4,7 @@ import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relatio
 import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import BelongsTo from "@src/core/domains/database/relationships/BelongsTo";
 import HasMany from "@src/core/domains/database/relationships/HasMany";
+
 import MissingTable from "../exceptions/InvalidTable";
 import { IDocumentValidator } from "../interfaces/IDocumentValidator";
 import { IPrepareOptions } from "../interfaces/IPrepareOptions";
@@ -12,16 +13,16 @@ import DocumentValidator from "../validator/DocumentValidator";
 abstract class BaseDocumentManager<
     Query extends IDocumentManager = IDocumentManager,
     Provider extends IDatabaseProvider = IDatabaseProvider
-> implements IDocumentManager
-{
+> implements IDocumentManager {
+
     protected driver!: Provider;
+
     protected tableName!: string;
     
     public readonly validator: IDocumentValidator = new DocumentValidator();
     
 
-    constructor(driver: Provider)
-    {
+    constructor(driver: Provider) {
         this.driver = driver;
     }
 
@@ -30,8 +31,7 @@ abstract class BaseDocumentManager<
      * @param document 
      * @returns 
      */
-    prepareDocument(document: IDatabaseDocument, options?: IPrepareOptions): IDatabaseDocument 
-    {
+    prepareDocument(document: IDatabaseDocument, options?: IPrepareOptions): IDatabaseDocument {
         const preparedDocument = {...document}
 
         for(const key in preparedDocument) {
@@ -52,8 +52,7 @@ abstract class BaseDocumentManager<
      * @param table 
      * @returns 
      */
-    table(table: string): Query
-    {
+    table(table: string): Query {
         this.tableName = table;
         return this as any;
     } 
@@ -62,8 +61,7 @@ abstract class BaseDocumentManager<
      * Get table
      * @returns 
      */
-    getTable(): string
-    {
+    getTable(): string {
         if(!this.tableName) {
             throw new MissingTable()
         }
@@ -118,6 +116,7 @@ abstract class BaseDocumentManager<
     async hasMany<T>(document: IDatabaseDocument, options: IHasManyOptions): Promise<T> {
         return new HasMany().handle(this.driver.connectionName, document, options) as T;
     }
+
 }
 
 export default BaseDocumentManager

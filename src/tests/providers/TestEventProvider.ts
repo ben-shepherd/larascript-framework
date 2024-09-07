@@ -10,6 +10,7 @@ import { TestQueueListener } from "@src/tests/events/listeners/TestQueueListener
 import TestWorkerModel from "@src/tests/models/models/TestWorkerModel";
 
 class TestEventProvider extends BaseProvider {
+
     async register(): Promise<void> {
         const config: EventServiceConfig = {
             defaultDriver: 'sync',
@@ -43,6 +44,7 @@ class TestEventProvider extends BaseProvider {
     }
 
     async boot(): Promise<void> { }
+
 }
 
 export default TestEventProvider

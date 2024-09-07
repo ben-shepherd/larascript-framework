@@ -1,8 +1,8 @@
 import BaseMakeFileCommand from "@src/core/domains/make/base/BaseMakeFileCommand";
 import MigrationFileService from "@src/core/domains/migrations/services/MigrationFilesService";
 
-export default class MakeMigrationCommand extends BaseMakeFileCommand
-{
+export default class MakeMigrationCommand extends BaseMakeFileCommand {
+
     constructor() {
         super({
             signature: 'make:migration',
@@ -14,4 +14,5 @@ export default class MakeMigrationCommand extends BaseMakeFileCommand
             }
         })
     }
+
 }

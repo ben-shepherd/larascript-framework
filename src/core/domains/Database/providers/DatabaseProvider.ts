@@ -4,12 +4,11 @@ import { IDatabaseConfig } from '@src/core/domains/database/interfaces/IDatabase
 import DatabaseService from '@src/core/domains/database/services/DatabaseService';
 import { App } from "@src/core/services/App";
 
-export default class DatabaseProvider extends BaseProvider
-{
+export default class DatabaseProvider extends BaseProvider {
+
     protected config: IDatabaseConfig = databaseConfig;
 
-    public async register(): Promise<void>
-    {
+    public async register(): Promise<void> {
         this.log('Registering DatabaseProvider');
 
         const db = new DatabaseService(this.config);
@@ -17,8 +16,8 @@ export default class DatabaseProvider extends BaseProvider
         App.setContainer('db', db)
     }
 
-    public async boot(): Promise<void>
-    {
+    public async boot(): Promise<void> {
         this.log('Booting DatabaseProvider');
     }
+
 }

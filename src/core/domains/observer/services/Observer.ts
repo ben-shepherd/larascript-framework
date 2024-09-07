@@ -1,7 +1,7 @@
 import { IObserver, IObserverEvent } from "@src/core/domains/observer/interfaces/IObserver";
 
-export default abstract class Observer<ReturnType = any> implements IObserver<ReturnType>
-{
+export default abstract class Observer<ReturnType = any> implements IObserver<ReturnType> {
+
     creating(data: ReturnType): ReturnType {
         return data;
     }
@@ -69,7 +69,7 @@ export default abstract class Observer<ReturnType = any> implements IObserver<Re
      * this.data = this.onCustom('onPasswordChange', this.data, optionalParameter);
      */
     onCustom(customName: string, data: ReturnType, ...args: any[]): ReturnType {
-        // Attempt to find a method on this instance with the given custom name
+    // Attempt to find a method on this instance with the given custom name
         const method = this[customName as keyof this] as ((data: ReturnType, ...args: any[]) => ReturnType) | undefined;
         
         if (method && typeof method === 'function') {
@@ -80,4 +80,5 @@ export default abstract class Observer<ReturnType = any> implements IObserver<Re
         // If no matching method is found, return the original data unchanged
         return data;
     }
+
 }

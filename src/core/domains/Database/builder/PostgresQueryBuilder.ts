@@ -8,8 +8,8 @@ export type SelectOptions = {
     limit?: number
 }
 
-class PostgresQueryBuilder
-{
+class PostgresQueryBuilder {
+
     /**
      * Build select
      * @param fields 
@@ -17,22 +17,18 @@ class PostgresQueryBuilder
      * @param filter 
      * @returns 
      */
-    select({ fields, tableName, filter = {}, order = [], limit = undefined }: SelectOptions): string
-    {
+    select({ fields, tableName, filter = {}, order = [], limit = undefined }: SelectOptions): string {
         let queryStr = `SELECT ${this.selectColumnsClause(fields)} FROM "${tableName}"`;
 
-        if(Object.keys(filter ?? {}).length > 0)
-        {
+        if(Object.keys(filter ?? {}).length > 0) {
             queryStr += ` WHERE ${this.whereClause(filter)}`;
         }
 
-        if(order.length > 0)
-        {
+        if(order.length > 0) {
             queryStr += ` ORDER BY ${this.orderByClause(order)}`
         }
 
-        if(limit)
-        {
+        if(limit) {
             queryStr += ` LIMIT ${limit}`
         }
 
@@ -44,8 +40,7 @@ class PostgresQueryBuilder
      * @param fields 
      * @returns 
      */
-    selectColumnsClause(fields: string[] | null = null): string
-    {
+    selectColumnsClause(fields: string[] | null = null): string {
         return fields ? fields.join(', ') : '*';
     }
 
@@ -54,8 +49,7 @@ class PostgresQueryBuilder
      * @param orders 
      * @returns 
      */
-    orderByClause(orders: Record<string, 'ASC' | 'DESC'>[] = []): string
-    {
+    orderByClause(orders: Record<string, 'ASC' | 'DESC'>[] = []): string {
         let queryStr = '';
 
         orders.forEach((order) => {
@@ -72,8 +66,7 @@ class PostgresQueryBuilder
      * @param filter 
      * @returns 
      */
-    whereClause(filter: object = {}): string
-    {
+    whereClause(filter: object = {}): string {
         return Object.keys(filter).map((key) => {
             const value = filter[key];
 
@@ -84,6 +77,7 @@ class PostgresQueryBuilder
             return `"${key}" = :${key}`
         }).join(' AND ');
     }
+
 }
 
 export default PostgresQueryBuilder

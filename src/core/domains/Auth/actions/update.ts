@@ -1,5 +1,4 @@
 import { Response } from 'express';
-
 import User from '@src/app/models/auth/User';
 import responseError from '@src/core/domains/express/requests/responseError';
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';

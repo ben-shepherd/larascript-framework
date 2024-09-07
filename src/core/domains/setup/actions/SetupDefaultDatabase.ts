@@ -4,16 +4,15 @@ import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand'
 import defaultCredentials from '@src/core/domains/setup/utils/defaultCredentials';
 import InvalidDefaultCredentialsError from '@src/core/domains/setup/exceptions/InvalidDefaultCredentialsError';
 
-class SetupDefaultDatabase implements IAction
-{
+class SetupDefaultDatabase implements IAction {
+
     /**
      * Handle the action 
      * - Updates the .env DATABASE_DRIVER
      * @param ref 
      * @param question 
      */
-    async handle(ref: ISetupCommand, question: QuestionDTO): Promise<any>
-    {
+    async handle(ref: ISetupCommand, question: QuestionDTO): Promise<any> {
         const dbType = question.getAnswer() as string;
 
         if(dbType === 'all') {
@@ -29,8 +28,7 @@ class SetupDefaultDatabase implements IAction
      * @param dbType 
      * @param ref 
      */
-    async updateEnv(dbType: string, ref: ISetupCommand)
-    {
+    async updateEnv(dbType: string, ref: ISetupCommand) {
         ref.env.copyFileFromEnvExample();
 
         const extractors = {
@@ -56,6 +54,7 @@ class SetupDefaultDatabase implements IAction
             await ref.env.updateValues(env);
         }
     }
+
 }
 
 export default SetupDefaultDatabase

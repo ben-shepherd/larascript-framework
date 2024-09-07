@@ -1,9 +1,10 @@
 import BaseMigration from "@src/core/domains/migrations/base/BaseMigration";
 import { DataTypes } from "sequelize";
+
 import User from "../models/auth/User";
 
-export class CreateUserModelMigration extends BaseMigration 
-{
+export class CreateUserModelMigration extends BaseMigration {
+
     // Specify the database provider if this migration should run on a particular database.
     // Uncomment and set to 'mongodb', 'postgres', or another supported provider.
     // If left commented out, the migration will run only on the default provider.
@@ -11,8 +12,7 @@ export class CreateUserModelMigration extends BaseMigration
 
     table = (new User).table;
 
-    async up(): Promise<void> 
-    {
+    async up(): Promise<void> {
         const stringNullable = {
             type: DataTypes.STRING,
             allowNull: true
@@ -29,8 +29,8 @@ export class CreateUserModelMigration extends BaseMigration
         })
     }
 
-    async down(): Promise<void> 
-    {
+    async down(): Promise<void> {
         await this.schema.dropTable(this.table);
     }
+
 }

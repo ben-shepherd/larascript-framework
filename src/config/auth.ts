@@ -24,6 +24,7 @@ const config: IAuthConfig = {
         createUser: CreateUserValidator,
         updateUser: UpdateUserValidator,
     },
+
     /**
      * JWT secret
      */

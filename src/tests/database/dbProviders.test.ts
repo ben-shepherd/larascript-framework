@@ -3,6 +3,7 @@ import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
 import { DataTypes } from 'sequelize';
+
 import { getTestConnectionNames } from '../config/testDatabaseConfig';
 import TestDatabaseProvider from '../providers/TestDatabaseProvider';
 
@@ -25,7 +26,7 @@ const dropTable = async (connectionName: string) => {
         await schema.dropTable(tableName);
     }
     catch (err) {
-        // console.log(err);
+    // console.log(err);
     }
 };
 

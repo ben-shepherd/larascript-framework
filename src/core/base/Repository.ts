@@ -6,8 +6,11 @@ import { IRepository } from '@src/core/interfaces/IRepository';
 import { App } from '@src/core/services/App';
 
 export default class Repository<Model extends IModel> implements IRepository<Model> {
+
     public modelCtor: ModelConstructor<Model>;
+
     public collectionName!: string;
+
     public connection!: string;
 
     constructor(collectionName: string, modelConstructor: ModelConstructor<Model>) {
@@ -74,4 +77,5 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
         const dataArray = await this.query().findMany({filter}, options)
         return (dataArray as unknown[]).map(data => new this.modelCtor(data));
     }
+
 }

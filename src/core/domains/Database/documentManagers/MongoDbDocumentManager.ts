@@ -3,10 +3,12 @@ import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relatio
 import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 import MongoDBBelongsTo from "@src/core/domains/database/relationships/mongodb/MongoDBBelongsTo";
 import { BulkWriteOptions, ObjectId, UpdateOptions } from "mongodb";
+
 import BaseDocumentManager from "../base/BaseDocumentManager";
 import InvalidObjectId from "../exceptions/InvalidObjectId";
 
 class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager, MongoDB> {
+
     protected driver!: MongoDB;
 
     constructor(driver: MongoDB) {
@@ -106,7 +108,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @returns 
      */
     async findMany<T>({ filter = {} }: { filter?: object }): Promise<T> {
-        let documents = await this.driver.getDb().collection(this.getTable()).find(filter).toArray();
+        const documents = await this.driver.getDb().collection(this.getTable()).find(filter).toArray();
 
         return documents.map((d: any) => this.convertObjectIdToStringInDocument(d)) as T
     }
@@ -125,6 +127,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
          * Insert the document
          */
         await this.driver.getDb().collection(this.getTable()).insertOne(document);
+
         /**
          * After the document is inserted, MongoDB will automatically add `_id: ObjectId` to the document object.
          * We will need to convert this to our standard `id: string` format
@@ -147,6 +150,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
          * Insert the documents
          */
         await this.driver.getDb().collection(this.getTable()).insertMany(documentsArray, options);
+
         /**
          * After the document is inserted, MongoDB will automatically add `_id: ObjectId` to the document object.
          * We will need to convert this to our standard `id: string` format
@@ -184,7 +188,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
         this.validator.validateMultipleDocuments(documentsArray)
         this.validator.validateContainsId(documentsArray)
 
-        let documentsUpdated: IDatabaseDocument[] = [];
+        const documentsUpdated: IDatabaseDocument[] = [];
 
         for (const document of documentsArray) {
             documentsUpdated.push(await this.updateOne(document, options))
@@ -236,6 +240,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
             options
         ) as T ?? null
     }
+
 }
 
 export default MongoDbDocumentManager

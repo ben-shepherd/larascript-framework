@@ -6,6 +6,7 @@ import { IDatabaseProvider, IDatabaseProviderCtor } from "@src/core/domains/data
 import { IDatabaseService } from "@src/core/domains/database/interfaces/IDatabaseService";
 
 class DatabaseService implements IDatabaseService {
+
     /**
      * Database config
      */
@@ -19,8 +20,7 @@ class DatabaseService implements IDatabaseService {
     /**
      * @param config 
      */
-    constructor(config: IDatabaseConfig) 
-    {
+    constructor(config: IDatabaseConfig) {
         this.config = config;
     }
 
@@ -28,8 +28,7 @@ class DatabaseService implements IDatabaseService {
      * Adds all connections to the store
      * Connects databases
      */
-    public async boot() 
-    {
+    public async boot() {
         Object.keys(this.config.connections).forEach((connectionName) => {
             const connectionConfig = this.config.connections[connectionName];
             const providerCtor = this.getDriverCtorByName(connectionConfig.driver);
@@ -46,8 +45,7 @@ class DatabaseService implements IDatabaseService {
      * Get the default connection name
      * @returns 
      */
-    getDefaultConnectionName(): string 
-    {
+    getDefaultConnectionName(): string {
         return this.config.defaultConnectionName
     }
 
@@ -57,8 +55,7 @@ class DatabaseService implements IDatabaseService {
      * @param connectionName 
      * @returns 
      */
-    documentManager<T>(connectionName: string = this.config.defaultConnectionName): T 
-    {
+    documentManager<T>(connectionName: string = this.config.defaultConnectionName): T {
         return this.store[connectionName].documentManager() as T;
     }
 
@@ -68,8 +65,7 @@ class DatabaseService implements IDatabaseService {
      * @param connectionName 
      * @returns 
      */
-    schema<T>(connectionName: string = this.config.defaultConnectionName): T 
-    {
+    schema<T>(connectionName: string = this.config.defaultConnectionName): T {
         return this.store[connectionName].schema() as T;
     }
 
@@ -80,8 +76,7 @@ class DatabaseService implements IDatabaseService {
      * 
      * @returns 
      */
-    getClient<T = unknown>(connectionName: string = this.config.defaultConnectionName): T 
-    {
+    getClient<T = unknown>(connectionName: string = this.config.defaultConnectionName): T {
         return this.store[connectionName].getClient();
     }
 
@@ -93,8 +88,7 @@ class DatabaseService implements IDatabaseService {
      * @param connectionName 
      * @returns 
      */
-    isProvider(driver: string, connectionName: string = this.config.defaultConnectionName): boolean 
-    {
+    isProvider(driver: string, connectionName: string = this.config.defaultConnectionName): boolean {
         try {
             const driverCtor = this.getDriverCtorByName(driver);
             return this.store[connectionName] instanceof driverCtor;
@@ -113,8 +107,7 @@ class DatabaseService implements IDatabaseService {
      * @param connectionName 
      * @returns 
      */
-    provider<T>(connectionName: string = this.config.defaultConnectionName): T 
-    {
+    provider<T>(connectionName: string = this.config.defaultConnectionName): T {
         if (!this.store[connectionName]) {
             throw new InvalidDatabaseConnection(`Invalid database connection: ${connectionName}`);
         }
@@ -125,8 +118,7 @@ class DatabaseService implements IDatabaseService {
     /*
      * Connects to the default connection 
      */
-    protected async connectDefault() 
-    {
+    protected async connectDefault() {
         if (this.store[this.config.defaultConnectionName]) {
             await this.store[this.config.defaultConnectionName].connect();
         }
@@ -135,8 +127,7 @@ class DatabaseService implements IDatabaseService {
     /**
      * Connects to all keep alive connections
      */
-    protected async connectKeepAlive() 
-    {
+    protected async connectKeepAlive() {
         const connections = (this.config?.keepAliveConnections ?? '').split(',');
 
         for (const connectionName of connections) {
@@ -152,8 +143,7 @@ class DatabaseService implements IDatabaseService {
      * @param driverName 
      * @returns 
      */
-    protected getDriverCtorByName(driverName: keyof typeof DatabaseConfig.providers): IDatabaseProviderCtor 
-    {
+    protected getDriverCtorByName(driverName: keyof typeof DatabaseConfig.providers): IDatabaseProviderCtor {
         const driverCtor: IDatabaseProviderCtor | undefined = DatabaseConfig.constructors[driverName];
 
         if (!driverCtor) {
@@ -162,6 +152,7 @@ class DatabaseService implements IDatabaseService {
 
         return driverCtor;
     }
+
 }
 
 export default DatabaseService;

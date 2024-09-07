@@ -7,8 +7,8 @@ import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload
 import { EventServiceConfig, IEventService } from "@src/core/domains/events/interfaces/IEventService";
 import EventDispatcher from "@src/core/domains/events/services/EventDispatcher";
 
-export default class EventService extends Singleton<EventServiceConfig>  implements IEventService
-{
+export default class EventService extends Singleton<EventServiceConfig>  implements IEventService {
+
     public config!: EventServiceConfig;
 
     constructor(config: EventServiceConfig) {
@@ -44,4 +44,5 @@ export default class EventService extends Singleton<EventServiceConfig>  impleme
         }
         return this.config.drivers[driverName];
     }
+
 }

@@ -3,8 +3,8 @@ import IValidatorResult from "@src/core/domains/validator/interfaces/IValidatorR
 import Joi, { ValidationOptions } from "joi";
 import baseValidatorUtil from "@src/core/domains/validator/util/baseValidatorUtil";
 
-abstract class BaseValidator<P extends IValidatorPayload = IValidatorPayload> implements IValidator
-{
+abstract class BaseValidator<P extends IValidatorPayload = IValidatorPayload> implements IValidator {
+
     /**
      * Custom validator methods
      */
@@ -29,7 +29,7 @@ abstract class BaseValidator<P extends IValidatorPayload = IValidatorPayload> im
         /**
          * Validate the payload with Joi rules
          */
-        let result = this.rules().validate(payload, options)
+        const result = this.rules().validate(payload, options)
 
         if(result.error) {
             return {
@@ -50,8 +50,7 @@ abstract class BaseValidator<P extends IValidatorPayload = IValidatorPayload> im
      * @param result 
      * @returns 
      */
-    private async validateCustomMethods<T>(payload: P, result: Joi.ValidationResult): Promise<IValidatorResult<T>>
-    {
+    private async validateCustomMethods<T>(payload: P, result: Joi.ValidationResult): Promise<IValidatorResult<T>> {
         await this.runCustomValidatorMethods(payload);
 
         result = {
@@ -70,8 +69,7 @@ abstract class BaseValidator<P extends IValidatorPayload = IValidatorPayload> im
      * @param messages 
      * @returns 
      */
-    setErrorMessage (messages: Record<string, string>): this
-    {
+    setErrorMessage (messages: Record<string, string>): this {
         this.customErrorMessages = messages;
         return this
     }
@@ -81,8 +79,7 @@ abstract class BaseValidator<P extends IValidatorPayload = IValidatorPayload> im
      * @param rules 
      * @returns 
      */
-    setRules(rules: Joi.ObjectSchema): this
-    {
+    setRules(rules: Joi.ObjectSchema): this {
         this.schema = rules;
         return this
     }
@@ -91,8 +88,7 @@ abstract class BaseValidator<P extends IValidatorPayload = IValidatorPayload> im
      * Get validation rules
      * @returns 
      */
-    rules(): Joi.ObjectSchema
-    {
+    rules(): Joi.ObjectSchema {
         return this.schema ?? Joi.object({});
     }
 
@@ -100,12 +96,12 @@ abstract class BaseValidator<P extends IValidatorPayload = IValidatorPayload> im
      * Run custom validator methods
      * @param payload 
      */
-    private async runCustomValidatorMethods(payload: P): Promise<void>
-    {
+    private async runCustomValidatorMethods(payload: P): Promise<void> {
         for(const method of this.customValidatorMethods ) {
             await this[method](payload);
         }
     }
+
 }
 
 export default BaseValidator

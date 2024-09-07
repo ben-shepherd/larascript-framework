@@ -4,14 +4,13 @@ import MigrateUpCommand from "@src/core/domains/migrations/commands/MigrateUpCom
 import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
 import { App } from "@src/core/services/App";
 
-class MigrationProvider extends BaseProvider
-{
+class MigrationProvider extends BaseProvider {
+
     protected config: IMigrationConfig = {
         appMigrationsDir: '@src/../src/app/migrations',
     };
     
-    async register(): Promise<void>
-    {
+    async register(): Promise<void> {
         console.log('Registering MigrationProvider');   
 
         App.container('console').register().registerAll([
@@ -25,10 +24,10 @@ class MigrationProvider extends BaseProvider
         ], this.config)
     }
 
-    async boot(): Promise<void> 
-    {
+    async boot(): Promise<void> {
         console.log('Registering MigrationProvider');   
     }
+
 }
 
 export default MigrationProvider
