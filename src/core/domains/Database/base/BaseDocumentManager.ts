@@ -121,6 +121,23 @@ abstract class BaseDocumentManager<
         return new HasMany().handle(this.driver.connectionName, document, options) as T;
     }
 
+    /**
+     * Catches and logs any errors that occur in the callback,
+     * then re-throws the error
+     * @param callback - The callback function to wrap
+     * @returns The result of the callback, or throws an error if it fails
+     */
+    protected async captureError<T>(callback:  () => Promise<T>): Promise<T> {
+        try {
+            return await callback()
+        }
+        catch (err) {
+            if(err instanceof Error && err?.message) {
+                console.log(err?.message)
+            }
+            throw err
+        }
+    }
 }
 
 export default BaseDocumentManager

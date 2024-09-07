@@ -83,15 +83,17 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @returns 
      */
     async findById<T = IDatabaseDocument>(id: string): Promise<T | null> {
-        try {
-            return this.findOne({ filter: { _id: this.convertToObjectId(id) } })
-        }
-        catch (err) {
-            if (!(err instanceof InvalidObjectId)) {
-                throw err
+        return this.captureError(async() => {
+            try {
+                return this.findOne({ filter: { _id: this.convertToObjectId(id) } })
             }
-        }
-        return null
+            catch (err) {
+                if (!(err instanceof InvalidObjectId)) {
+                    throw err
+                }
+            }
+            return null
+        })
     }
 
     /**
@@ -101,13 +103,15 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @returns 
      */
     async findOne<T>({ filter = {} }: { filter?: object }): Promise<T | null> {
-        let document = await this.driver.getDb().collection(this.getTable()).findOne(filter) as T | null;
-
-        if (document) {
-            document = this.convertObjectIdToStringInDocument(document) as T;
-        }
-
-        return document
+        return this.captureError(async() => {
+            let document = await this.driver.getDb().collection(this.getTable()).findOne(filter) as T | null;
+    
+            if (document) {
+                document = this.convertObjectIdToStringInDocument(document) as T;
+            }
+    
+            return document
+        })
     }
 
     /**
@@ -117,18 +121,17 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @returns 
      */
     async findMany<T>({ filter, order }: FindOptions): Promise<T> {
-        const test = {
-            sort: order ? this.convertOrderToSort(order ?? []) : undefined,
-        };
-        const documents = await this.driver
-            .getDb()
-            .collection(this.getTable())
-            .find(filter as object, {
-                sort: order ? this.convertOrderToSort(order ?? []) : undefined,
-            })
-            .toArray();
-
-        return documents.map((d: any) => this.convertObjectIdToStringInDocument(d)) as T
+        return this.captureError(async() => {
+            const documents = await this.driver
+                .getDb()
+                .collection(this.getTable())
+                .find(filter as object, {
+                    sort: order ? this.convertOrderToSort(order ?? []) : undefined,
+                })
+                .toArray();
+    
+            return documents.map((d: any) => this.convertObjectIdToStringInDocument(d)) as T
+        })
     }
 
     /**
@@ -138,19 +141,21 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @returns 
      */
     async insertOne<T>(document: IDatabaseDocument): Promise<T> {
-        this.validator.validateSingleDocument(document)
-        this.validator.validateWithoutId(document)
-
-        /**
-         * Insert the document
-         */
-        await this.driver.getDb().collection(this.getTable()).insertOne(document);
-
-        /**
-         * After the document is inserted, MongoDB will automatically add `_id: ObjectId` to the document object.
-         * We will need to convert this to our standard `id: string` format
-         */
-        return this.convertObjectIdToStringInDocument(document) as T
+        return this.captureError(async() => {
+            this.validator.validateSingleDocument(document)
+            this.validator.validateWithoutId(document)
+    
+            /**
+             * Insert the document
+             */
+            await this.driver.getDb().collection(this.getTable()).insertOne(document);
+    
+            /**
+             * After the document is inserted, MongoDB will automatically add `_id: ObjectId` to the document object.
+             * We will need to convert this to our standard `id: string` format
+             */
+            return this.convertObjectIdToStringInDocument(document) as T
+        })
     }
 
     /**
@@ -161,19 +166,21 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @returns 
      */
     async insertMany<T>(documentsArray: IDatabaseDocument[], options?: BulkWriteOptions): Promise<T> {
-        this.validator.validateMultipleDocuments(documentsArray)
-        this.validator.validateWithoutId(documentsArray)
-
-        /**
-         * Insert the documents
-         */
-        await this.driver.getDb().collection(this.getTable()).insertMany(documentsArray, options);
-
-        /**
-         * After the document is inserted, MongoDB will automatically add `_id: ObjectId` to the document object.
-         * We will need to convert this to our standard `id: string` format
-         */
-        return documentsArray.map((d: IDatabaseDocument) => this.convertObjectIdToStringInDocument(d)) as T
+        return this.captureError(async() => {
+            this.validator.validateMultipleDocuments(documentsArray)
+            this.validator.validateWithoutId(documentsArray)
+    
+            /**
+             * Insert the documents
+             */
+            await this.driver.getDb().collection(this.getTable()).insertMany(documentsArray, options);
+    
+            /**
+             * After the document is inserted, MongoDB will automatically add `_id: ObjectId` to the document object.
+             * We will need to convert this to our standard `id: string` format
+             */
+            return documentsArray.map((d: IDatabaseDocument) => this.convertObjectIdToStringInDocument(d)) as T
+        })
     }
 
     /**
@@ -184,15 +191,17 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @returns 
      */
     async updateOne<T>(document: IDatabaseDocument, options?: UpdateOptions): Promise<T> {
-        this.validator.validateSingleDocument(document)
-        this.validator.validateContainsId(document)
-        
-        const objectId =  this.convertToObjectId(document.id)
-        const data = this.stripIds(document)
-
-        await this.driver.getDb().collection(this.getTable()).updateOne({ _id: objectId }, { $set: data }, options) as T
-        
-        return this.convertObjectIdToStringInDocument(document) as T;
+        return this.captureError(async() => {
+            this.validator.validateSingleDocument(document)
+            this.validator.validateContainsId(document)
+            
+            const objectId =  this.convertToObjectId(document.id)
+            const data = this.stripIds(document)
+    
+            await this.driver.getDb().collection(this.getTable()).updateOne({ _id: objectId }, { $set: data }, options) as T
+            
+            return this.convertObjectIdToStringInDocument(document) as T;
+        })
     }
 
     /**
@@ -203,16 +212,18 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @returns 
      */
     async updateMany<T>(documentsArray: IDatabaseDocument[], options?: UpdateOptions): Promise<T> {
-        this.validator.validateMultipleDocuments(documentsArray)
-        this.validator.validateContainsId(documentsArray)
-
-        const documentsUpdated: IDatabaseDocument[] = [];
-
-        for (const document of documentsArray) {
-            documentsUpdated.push(await this.updateOne(document, options))
-        }
-
-        return documentsUpdated as T
+        return this.captureError(async() => {
+            this.validator.validateMultipleDocuments(documentsArray)
+            this.validator.validateContainsId(documentsArray)
+    
+            const documentsUpdated: IDatabaseDocument[] = [];
+    
+            for (const document of documentsArray) {
+                documentsUpdated.push(await this.updateOne(document, options))
+            }
+    
+            return documentsUpdated as T
+        })
     }
 
     /**
@@ -222,10 +233,12 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @returns 
      */
     async deleteOne<T>(document: IDatabaseDocument): Promise<T> {
-        this.validator.validateSingleDocument(document)
-        this.validator.validateContainsId(document)
-
-        return await this.driver.getDb().collection(this.getTable()).deleteOne({ _id: this.convertToObjectId(document.id) }) as T
+        return this.captureError(async() => {
+            this.validator.validateSingleDocument(document)
+            this.validator.validateContainsId(document)
+    
+            return await this.driver.getDb().collection(this.getTable()).deleteOne({ _id: this.convertToObjectId(document.id) }) as T
+        })
     }
 
     /**
@@ -235,30 +248,37 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @returns 
      */
     async deleteMany<T>(documentsArray: IDatabaseDocument[]): Promise<T> {
-        this.validator.validateMultipleDocuments(documentsArray)
-        this.validator.validateContainsId(documentsArray)
-
-        return documentsArray.forEach(async (doc) => {
-            return await this.deleteOne(doc)
-        }) as T
+        return this.captureError(async() => {
+            this.validator.validateMultipleDocuments(documentsArray)
+            this.validator.validateContainsId(documentsArray)
+    
+            return documentsArray.forEach(async (doc) => {
+                return await this.deleteOne(doc)
+            }) as T
+        })
     }
 
     /**
      * Truncate the collection
      */
     async truncate(): Promise<void> {
-        await this.driver.getDb().collection(this.getTable()).deleteMany({})
+        return this.captureError(async() => {
+            await this.driver.getDb().collection(this.getTable()).deleteMany({})
+        })
     }
 
 
     async belongsTo<T>(document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null> {
-        return new MongoDBBelongsTo().handle(
-            this.driver.connectionName,
-            document,
-            options
-        ) as T ?? null
+        return this.captureError(async() => {
+            return new MongoDBBelongsTo().handle(
+                this.driver.connectionName,
+                document,
+                options
+            ) as T ?? null
+        })
     }
 
+    
 }
 
 export default MongoDbDocumentManager
