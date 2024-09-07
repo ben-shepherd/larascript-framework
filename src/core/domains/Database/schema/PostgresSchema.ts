@@ -1,8 +1,7 @@
 import Postgres from "@src/core/domains/database/providers-db/Postgres";
 import { DataTypes, QueryInterfaceCreateTableOptions, QueryInterfaceDropTableOptions } from "sequelize";
 import { ModelAttributes } from 'sequelize/types/model';
-
-import BaseDatabaseSchema from "../base/BaseDatabaseSchema";
+import BaseDatabaseSchema from "@src/core/domains/database/base/BaseDatabaseSchema";
 
 class PostgresSchema extends BaseDatabaseSchema<Postgres> {
 

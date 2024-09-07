@@ -3,8 +3,7 @@ import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relatio
 import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import IWithObserve from "@src/core/domains/observer/interfaces/IWithObserve";
 import IModelData from "@src/core/interfaces/IModelData";
-
-import { ICtor } from "./ICtor";
+import { ICtor } from "@src/core/interfaces/ICtor";
 
 export type GetDataOptions = {excludeGuarded: boolean}
 

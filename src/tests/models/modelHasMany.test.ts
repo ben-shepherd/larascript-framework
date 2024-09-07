@@ -5,9 +5,8 @@ import testAppConfig from '@src/tests/config/testConfig';
 import { TestAuthorModel } from '@src/tests/models/models/TestAuthor';
 import { TestMovieModel } from '@src/tests/models/models/TestMovie';
 import { DataTypes } from 'sequelize';
-
-import { getTestConnectionNames } from '../config/testDatabaseConfig';
-import TestDatabaseProvider from '../providers/TestDatabaseProvider';
+import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
+import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 
 const connections = getTestConnectionNames()
 

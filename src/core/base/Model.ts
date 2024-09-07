@@ -7,8 +7,7 @@ import { Dates, GetDataOptions, IModel } from '@src/core/interfaces/IModel';
 import IModelData from '@src/core/interfaces/IModelData';
 import { App } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
-
-import { ICtor } from '../interfaces/ICtor';
+import { ICtor } from '@src/core/interfaces/ICtor';
 
 /**
  * Abstract base class for database models.

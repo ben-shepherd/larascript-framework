@@ -1,4 +1,4 @@
-import { IDatabaseDocument } from "./IDocumentManager";
+import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
 
 export interface IDocumentValidator
 {

@@ -15,6 +15,7 @@ export interface AppProviderConfig {}
  * Extends BaseProvider to provide application-specific functionality
  */
 export default class AppProvider extends BaseProvider {
+
     // Configuration object for the AppProvider
     protected config: AppProviderConfig = {};
 
@@ -59,4 +60,5 @@ export default class AppProvider extends BaseProvider {
         // Bind API routes to the Express instance
         App.container('express').bindRoutes(apiRoutes);
     }
+
 }

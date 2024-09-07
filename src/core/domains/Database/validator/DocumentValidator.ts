@@ -1,9 +1,8 @@
 import returnOrThrow from "@src/core/util/returns/returnOrThrow";
 import { z } from "zod";
-
-import InvalidDocument from "../exceptions/UnidentifiableDocument";
-import { IDatabaseDocument } from "../interfaces/IDocumentManager";
-import { IDocumentValidator } from "../interfaces/IDocumentValidator";
+import InvalidDocument from "@src/core/domains/database/exceptions/UnidentifiableDocument";
+import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
+import { IDocumentValidator } from "@src/core/domains/database/interfaces/IDocumentValidator";
 
 class DocumentValidator implements IDocumentValidator {
 

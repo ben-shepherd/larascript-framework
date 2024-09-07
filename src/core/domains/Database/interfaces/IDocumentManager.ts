@@ -1,8 +1,7 @@
 import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
-
-import { IDocumentValidator } from "./IDocumentValidator";
-import { IPrepareOptions } from "./IPrepareOptions";
+import { IDocumentValidator } from "@src/core/domains/database/interfaces/IDocumentValidator";
+import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
 
 export interface IDocumentManager {
     validator: IDocumentValidator;

@@ -1,6 +1,5 @@
 import IModelData from "@src/core/interfaces/IModelData";
-
-import { IDatabaseDocument } from "../IDocumentManager";
+import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
 
 export type IBelongsToCtor = new () => IBelongsTo;
 

@@ -1,6 +1,5 @@
 import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
-
-import BaseDatabaseSchema from "../base/BaseDatabaseSchema";
+import BaseDatabaseSchema from "@src/core/domains/database/base/BaseDatabaseSchema";
 
 class MongoDBSchema extends BaseDatabaseSchema {
 

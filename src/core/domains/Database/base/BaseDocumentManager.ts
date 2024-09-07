@@ -5,11 +5,10 @@ import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relatio
 import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import BelongsTo from "@src/core/domains/database/relationships/BelongsTo";
 import HasMany from "@src/core/domains/database/relationships/HasMany";
-
-import MissingTable from "../exceptions/InvalidTable";
-import { IDocumentValidator } from "../interfaces/IDocumentValidator";
-import { IPrepareOptions } from "../interfaces/IPrepareOptions";
-import DocumentValidator from "../validator/DocumentValidator";
+import MissingTable from "@src/core/domains/database/exceptions/InvalidTable";
+import { IDocumentValidator } from "@src/core/domains/database/interfaces/IDocumentValidator";
+import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
+import DocumentValidator from "@src/core/domains/database/validator/DocumentValidator";
 
 /**
  * Abstract base class for document management operations

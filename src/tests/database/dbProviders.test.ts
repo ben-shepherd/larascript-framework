@@ -3,9 +3,8 @@ import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
 import { DataTypes } from 'sequelize';
-
-import { getTestConnectionNames } from '../config/testDatabaseConfig';
-import TestDatabaseProvider from '../providers/TestDatabaseProvider';
+import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
+import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 
 const connections = getTestConnectionNames()
 const tableName = 'testTable';

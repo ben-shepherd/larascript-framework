@@ -1,9 +1,8 @@
 import { IBelongsTo, IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { App } from "@src/core/services/App";
 import { ObjectId } from "mongodb";
-
-import { IDatabaseDocument } from "../../interfaces/IDocumentManager";
-import DocumentValidator from "../../validator/DocumentValidator";
+import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
+import DocumentValidator from "@src/core/domains/database/validator/DocumentValidator";
 
 export default class MongoDBBelongsTo implements IBelongsTo {
  

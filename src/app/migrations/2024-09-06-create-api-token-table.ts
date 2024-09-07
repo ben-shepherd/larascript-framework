@@ -1,7 +1,6 @@
 import BaseMigration from "@src/core/domains/migrations/base/BaseMigration";
 import { DataTypes } from "sequelize";
-
-import ApiToken from "../models/auth/ApiToken";
+import ApiToken from "@src/app/models/auth/ApiToken";
 
 export class CreateApiTokenMigration extends BaseMigration {
 

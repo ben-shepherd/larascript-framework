@@ -3,8 +3,7 @@ import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocume
 import Postgres from "@src/core/domains/database/providers-db/Postgres";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { BindOrReplacements, QueryOptions, QueryTypes } from "sequelize";
-
-import BaseDocumentManager from "../base/BaseDocumentManager";
+import BaseDocumentManager from "@src/core/domains/database/base/BaseDocumentManager";
 
 class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManager, Postgres> {
 

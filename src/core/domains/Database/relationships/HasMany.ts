@@ -1,8 +1,7 @@
 import { IHasMany, IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import IModelData from "@src/core/interfaces/IModelData";
 import { App } from "@src/core/services/App";
-
-import { IDatabaseDocument } from "../interfaces/IDocumentManager";
+import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
 
 export default class HasMany implements IHasMany {
 

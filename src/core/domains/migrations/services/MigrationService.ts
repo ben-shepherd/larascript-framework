@@ -6,7 +6,7 @@ import createMongoDBSchema from "@src/core/domains/migrations/schema/createMongo
 import createPostgresSchema from "@src/core/domains/migrations/schema/createPostgresSchema";
 import MigrationFileService from "@src/core/domains/migrations/services/MigrationFilesService";
 import { App } from "@src/core/services/App";
-import { IMigration } from "../interfaces/IMigration";
+import { IMigration } from "@src/core/domains/migrations/interfaces/IMigration";
 
 interface MigrationDetail {
     fileName: string,
@@ -37,7 +37,7 @@ class MigrationService implements IMigrationService {
      * @returns A record of all migration class instances, keyed by the filename
      */
     async getMigrationDetails({ group, filterByFileName }: IMigrationServiceOptions): Promise<MigrationDetail[]> {
-        let result: MigrationDetail[] = [];
+        const result: MigrationDetail[] = [];
 
         const migrationFileNames = await this.fileService.getMigrationFileNames();
         
@@ -65,7 +65,7 @@ class MigrationService implements IMigrationService {
     async up({ filterByFileName, group }: Omit<IMigrationServiceOptions, 'batch'>): Promise<void> {
 
         // Get the migration file names
-        let migrationsDetails = await this.getMigrationDetails({ filterByFileName, group });
+        const migrationsDetails = await this.getMigrationDetails({ filterByFileName, group });
 
         // Sort from oldest to newest
         migrationsDetails.sort((a, b) => {

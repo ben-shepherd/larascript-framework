@@ -3,9 +3,8 @@ import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relatio
 import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 import MongoDBBelongsTo from "@src/core/domains/database/relationships/mongodb/MongoDBBelongsTo";
 import { BulkWriteOptions, ObjectId, UpdateOptions } from "mongodb";
-
-import BaseDocumentManager from "../base/BaseDocumentManager";
-import InvalidObjectId from "../exceptions/InvalidObjectId";
+import BaseDocumentManager from "@src/core/domains/database/base/BaseDocumentManager";
+import InvalidObjectId from "@src/core/domains/database/exceptions/InvalidObjectId";
 
 class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager, MongoDB> {
 
