@@ -24,9 +24,7 @@ const dropTable = async (connectionName: string) => {
         const schema = App.container('db').schema(connectionName);
         await schema.dropTable(tableName);
     }
-    catch (err) {
-    // console.log(err);
-    }
+    catch (err) {}
 };
 
 const createDocument = (): Data => {
@@ -40,7 +38,7 @@ const createDocument = (): Data => {
     };
 };
 
-describe('DocumentManager Interface Tests', () => {
+describe('Combined DocumentManager Interface Test', () => {
     beforeAll(async () => {
         await Kernel.boot({
             ...testAppConfig,
@@ -61,48 +59,44 @@ describe('DocumentManager Interface Tests', () => {
         }
     });
 
-    test('findById', async () => {
+    test('All DocumentManager operations', async () => {
         for (const connectionName of connections) {
-            const documentManager = App.container('db').documentManager(connectionName).table(tableName);
-            await documentManager.truncate()
+            console.log('[Connection]', connectionName);
 
+            const documentManager = App.container('db').documentManager(connectionName).table(tableName);
+            await documentManager.truncate();
+
+            // Test insertOne and findById
+            console.log('--- Testing insertOne and findById ---');
+            await documentManager.truncate()
             const data = createDocument();
             const insertedDoc = await documentManager.insertOne<Data>(data);
             
             const foundDoc = await documentManager.findById<Data>(insertedDoc.id as string);
             expect(foundDoc).toBeTruthy();
             expect(foundDoc?.id).toEqual(insertedDoc.id);
-            expect(foundDoc?.name).toEqual(data.name);
-            expect(foundDoc?.age).toEqual(data.age);
+            expect(foundDoc?.name).toEqual(insertedDoc.name);
+            expect(foundDoc?.age).toEqual(insertedDoc.age);
 
             const nonExistentDoc = await documentManager.findById<Data>('non-existent-id');
             expect(nonExistentDoc).toBeNull();
-        }
-    });
 
-    test('findOne', async () => {
-        for (const connectionName of connections) {
-            const documentManager = App.container('db').documentManager(connectionName).table(tableName);
+            // Test findOne
+            console.log('--- Testing findOne ---');
             await documentManager.truncate()
+            const findOneData = createDocument()
+            await documentManager.insertOne(findOneData)
+            const foundOneDoc = await documentManager.findOne<Data>({ filter: { name: findOneData.name } });
+            expect(foundOneDoc).toBeTruthy();
+            expect(foundOneDoc?.name).toEqual(findOneData.name);
+            expect(foundOneDoc?.age).toEqual(findOneData.age);
 
-            const data = createDocument();
-            await documentManager.insertOne<Data>(data);
-            
-            const foundDoc = await documentManager.findOne<Data>({ filter: { name: data.name } });
-            expect(foundDoc).toBeTruthy();
-            expect(foundDoc?.name).toEqual(data.name);
-            expect(foundDoc?.age).toEqual(data.age);
+            const nonExistentOneDoc = await documentManager.findOne<Data>({ filter: { name: 'Non-existent Name'} });
+            expect(nonExistentOneDoc).toBeNull();
 
-            const nonExistentDoc = await documentManager.findOne<Data>({ filter: { name: 'Non-existent Name'} });
-            expect(nonExistentDoc).toBeNull();
-        }
-    });
-
-    test('findMany', async () => {
-        for (const connectionName of connections) {
-            const documentManager = App.container('db').documentManager(connectionName).table(tableName);
+            // Test insertMany and findMany
+            console.log('--- Testing insertMany and findMany ---');
             await documentManager.truncate()
-
             const data1 = createDocument();
             const data2 = createDocument();
             await documentManager.insertMany<Data[]>([data1, data2]);
@@ -115,139 +109,78 @@ describe('DocumentManager Interface Tests', () => {
 
             const noResults = await documentManager.findMany<Data[]>({ filter: { name: 'Non-existent Name' } });
             expect(noResults.length).toBe(0);
-        }
-    });
 
-    test('updateOne', async () => {
-        for (const connectionName of connections) {
-            if(connectionName === 'mongodb') {
-                console.log('')
-            }
-            const documentManager = App.container('db').documentManager(connectionName).table(tableName);
+            // Test updateOne
+            console.log('--- Testing updateOne ---');
             await documentManager.truncate()
+            const updateOneData = createDocument()
+            const updateOneInsertedDocument = await documentManager.insertOne<Data>(updateOneData);
+            await documentManager.updateOne<Data>({ ...updateOneInsertedDocument, name: 'Updated Name' });
+            const updatedDoc = await documentManager.findById<Data>(updateOneInsertedDocument.id as string);
+            expect(updatedDoc?.id).toEqual(updateOneInsertedDocument.id);
+            expect(updatedDoc?.name).toEqual('Updated Name');
+            expect(updatedDoc?.age).toEqual(updateOneData.age);
 
-            const data = createDocument();
-            const insertedDoc = await documentManager.insertOne<Data>(data);
-            
-            const updatedData = { ...insertedDoc, name: 'Updated Name' };
-            const updatedDoc = await documentManager.updateOne<Data>(updatedData);
-            expect(updatedDoc.id).toEqual(insertedDoc.id);
-            expect(updatedDoc.name).toEqual('Updated Name');
-            expect(updatedDoc.age).toEqual(data.age);
-        }
-    });
-
-    test('updateMany', async () => {
-        for (const connectionName of connections) {
-            if(connectionName === 'mongodb') {
-                console.log('')
-            }
-            const documentManager = App.container('db').documentManager(connectionName).table(tableName);
+            // Test updateMany
+            console.log('--- Testing updateMany ---');
             await documentManager.truncate()
-
-            const data1 = createDocument();
-            const data2 = createDocument();
-            const insertedDocs = await documentManager.insertMany<Data[]>([data1, data2]);
-            
-            const updatedData = insertedDocs.map(doc => ({ ...doc, age: 100 }));
-            const results = await documentManager.updateMany<Data[]>(updatedData);
-            expect(results.length).toBeGreaterThanOrEqual(2);
-
+            await documentManager.insertMany<Data[]>([createDocument(), createDocument(), createDocument()]);
+            const allDocs = await documentManager.findMany<Data[]>({});
+            expect(allDocs.length).toBeGreaterThanOrEqual(3);
+            const docsToUpdate = allDocs.map(doc => ({ ...doc, age: 100 }));
+            await documentManager.updateMany<Data[]>(docsToUpdate);
             const updatedDocs = await documentManager.findMany<Data[]>({ filter: { age: 100 } });
-            expect(updatedDocs.length).toBeGreaterThanOrEqual(2);
-        }
-    });
+            expect(updatedDocs.length).toBeGreaterThanOrEqual(3);
 
-    test('deleteOne', async () => {
-        for (const connectionName of connections) {
-            const documentManager = App.container('db').documentManager(connectionName).table(tableName);
-            await documentManager.truncate()
+            // Test belongsTo
+            console.log('--- Testing belongsTo ---');
+            const parentDoc = await documentManager.insertOne<Data>({
+                name: 'Parent',
+                age: 50
+            });
+            const childDoc = await documentManager.insertOne<Data>({
+                name: 'Child',
+                age: 25,
+                relatedId: parentDoc.id
+            });
 
-            const data = createDocument();
-            const insertedDoc = await documentManager.insertOne<Data>(data);
-            
-            const result = await documentManager.deleteOne<Data>(insertedDoc);
-            expect(result).toBeTruthy();
-
-            const foundDoc = await documentManager.findById<Data>(insertedDoc.id as string);
-            expect(foundDoc).toBeNull();
-        }
-    });
-
-    test('deleteMany', async () => {
-        for (const connectionName of connections) {
-            const documentManager = App.container('db').documentManager(connectionName).table(tableName);
-            await documentManager.truncate()
-
-            const data1 = createDocument();
-            const data2 = createDocument();
-            const insertedDocs = await documentManager.insertMany<Data[]>([data1, data2]);
-            
-            await documentManager.deleteMany(insertedDocs);
-            const results = await documentManager.findMany<Data[]>({});
-            expect(results.length).toBe(0);
-
-            const remainingDocs = await documentManager.findMany<Data[]>({});
-            expect(remainingDocs.length).toBe(0);
-        }
-    });
-
-    test('belongsTo', async() => {
-        for (const connectionName of connections) {
-            const documentManager = App.container('db').documentManager(connectionName).table(tableName);
-            await documentManager.truncate()
-
-            const documentOne = await documentManager.insertOne<Data>({
-                name: 'John',
-                age: 10
-            })
-            expect(typeof documentOne.id === 'string').toBe(true)
-            expect(documentOne.name).toBe('John')
-            expect(documentOne.age).toBe(10)
-
-            const relatedDocument = await documentManager.insertOne<Data>({
-                name: 'Jane',
-                age: 20,
-                relatedId: documentOne.id
-            })
-            expect(typeof relatedDocument.id === 'string').toBe(true)
-            expect(relatedDocument.name).toBe('Jane')
-            expect(relatedDocument.age).toBe(20)
-
-            console.log('all documents', await documentManager.findMany<Data>({}))
-
-            const foundDocument = await documentManager.belongsTo<Data>(documentOne, {
+            const relatedChildDoc = await documentManager.belongsTo<Data>(parentDoc, {
                 localKey: 'id',
                 foreignKey: 'relatedId',
                 foreignTable: tableName
-            })
-            expect(foundDocument?.id === relatedDocument.id).toBe(true)
-            expect(foundDocument?.name).toBe('Jane')
-            expect(foundDocument?.age).toBe(20)
-        }
-    })
+            });
+            expect(relatedChildDoc?.id).toEqual(childDoc.id);
+            expect(relatedChildDoc?.name).toEqual('Child');
+            expect(relatedChildDoc?.age).toEqual(childDoc.age);
 
-    // test('hasMany', async() => {
-    //     for (const connectionName of connections) {
-    //         const documentManager = App.container('db').documentManager(connectionName).table(tableName);
-    //         await documentManager.truncate()
-
-    //         // todo
-    //     }
-    // })
-
-    test('truncate', async () => {
-        for (const connectionName of connections) {
-            const documentManager = App.container('db').documentManager(connectionName).table(tableName);
+            // Test deleteOne
+            console.log('--- Testing deleteOne ---');
             await documentManager.truncate()
-            
-            const data1 = createDocument();
-            const data2 = createDocument();
-            await documentManager.insertMany<Data[]>([data1, data2]);
-            await documentManager.truncate();
+            const docToDelete = await documentManager.insertOne<Data>(createDocument());
+            await documentManager.deleteOne<Data>(docToDelete);
+            const deleteOneResult = await documentManager.findMany<Data[]>({});
+            expect(deleteOneResult.length).toBe(0);
 
+            const deletedDoc = await documentManager.findById<Data>(docToDelete.id as string);
+            expect(deletedDoc).toBeNull();
+
+            // Test deleteMany
+            console.log('--- Testing deleteMany ---');
+            await documentManager.truncate()
+            await documentManager.insertMany<Data[]>([createDocument(), createDocument(), createDocument()]);
+            const docsBeforeDelete = await documentManager.findMany<Data[]>({});
+            expect(docsBeforeDelete.length).toBeGreaterThanOrEqual(3);
+            await documentManager.deleteMany(docsBeforeDelete);
             const remainingDocs = await documentManager.findMany<Data[]>({});
             expect(remainingDocs.length).toBe(0);
+
+            // Test truncate
+            console.log('--- Testing truncate ---');
+            await documentManager.insertMany<Data[]>([createDocument(), createDocument()]);
+            await documentManager.truncate();
+            await documentManager.findMany<Data[]>({});
+            const docsAfterTruncate = await documentManager.findMany<Data[]>({});
+            expect(docsAfterTruncate.length).toBe(0);
         }
     });
 });

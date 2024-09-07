@@ -44,11 +44,6 @@ describe('test belongsTo by fetching an author from a movie', () => {
                 new TestDatabaseProvider()
             ]
         }, {})
-
-        for(const connectionName of connections) {
-            await dropTable(connectionName)
-            await createTable(connectionName)
-        }
     })
 
     /**
@@ -58,6 +53,10 @@ describe('test belongsTo by fetching an author from a movie', () => {
 
         for(const connectionName of connections) {
             console.log('[Connection]', connectionName)
+
+            await dropTable(connectionName)
+            await createTable(connectionName)
+
             App.container('db').setDefaultConnectionName(connectionName)
             
             await truncate(connectionName)

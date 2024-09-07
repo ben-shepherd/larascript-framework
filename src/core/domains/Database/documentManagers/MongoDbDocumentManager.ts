@@ -252,9 +252,11 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
             this.validator.validateMultipleDocuments(documentsArray)
             this.validator.validateContainsId(documentsArray)
     
-            return documentsArray.forEach(async (doc) => {
-                return await this.deleteOne(doc)
-            }) as T
+            for(const document of documentsArray) {
+                await this.deleteOne(document)
+            }
+
+            return documentsArray as T
         })
     }
 
