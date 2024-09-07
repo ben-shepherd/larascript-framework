@@ -28,6 +28,11 @@ abstract class BaseMigration implements IMigration {
     databaseProvider?: string | undefined;
 
     /**
+     * group specifies the group that this migration belongs to.
+     */
+    group?: string;
+
+    /**
      * Implements the forward migration logic.
      * This method should be overridden in child classes to define
      * the specific changes to be applied to the database.

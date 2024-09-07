@@ -10,6 +10,8 @@ export class CreateApiTokenMigration extends BaseMigration {
     // If left commented out, the migration will run only on the default provider.
     // databaseProvider: 'mongodb' | 'postgres' = 'postgres';
 
+    group?: string = 'app:setup';
+
     table = new ApiToken(null).table;
 
     async up(): Promise<void> {

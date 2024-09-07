@@ -6,6 +6,12 @@ import createMongoDBSchema from "@src/core/domains/migrations/schema/createMongo
 import createPostgresSchema from "@src/core/domains/migrations/schema/createPostgresSchema";
 import MigrationFileService from "@src/core/domains/migrations/services/MigrationFilesService";
 import { App } from "@src/core/services/App";
+import { IMigration } from "../interfaces/IMigration";
+
+interface MigrationDetail {
+    fileName: string,
+    migration: IMigration
+}
 
 class MigrationService implements IMigrationService {
 
@@ -27,18 +33,44 @@ class MigrationService implements IMigrationService {
     }
 
     /**
+     * Get all migration details
+     * @returns A record of all migration class instances, keyed by the filename
+     */
+    async getMigrationDetails({ group, filterByFileName }: IMigrationServiceOptions): Promise<MigrationDetail[]> {
+        let result: MigrationDetail[] = [];
+
+        const migrationFileNames = await this.fileService.getMigrationFileNames();
+        
+        for(const fileName of migrationFileNames) {
+            const migration = await this.fileService.getImportMigrationClass(fileName);
+
+            if(filterByFileName && fileName !== filterByFileName) {
+                continue;
+            }
+
+            if(group && migration.group !== group) {
+                continue;
+            }
+
+            result.push({fileName, migration});
+        }
+
+        return result;
+    }
+
+    /**
      * Run the migrations up
      * @param options 
      */
-    async up({ filterByFileName }: Pick<IMigrationServiceOptions, 'filterByFileName'>): Promise<void> {
+    async up({ filterByFileName, group }: Omit<IMigrationServiceOptions, 'batch'>): Promise<void> {
 
         // Get the migration file names
-        const migrationFileNames = await this.fileService.getMigrationFileNames();
+        let migrationsDetails = await this.getMigrationDetails({ filterByFileName, group });
 
         // Sort from oldest to newest
-        migrationFileNames.sort((a, b) => {
-            const aDate = this.fileService.parseDate(a);
-            const bDate = this.fileService.parseDate(b);
+        migrationsDetails.sort((a, b) => {
+            const aDate = this.fileService.parseDate(a.fileName);
+            const bDate = this.fileService.parseDate(b.fileName);
 
             if(!aDate || !bDate) {
                 return 0;
@@ -50,21 +82,15 @@ class MigrationService implements IMigrationService {
         // Get the current batch count
         const newBatchCount = (await this.getCurrentBatchCount()) + 1;
 
-        const filteredMigrationFileNames = migrationFileNames.filter(fileName => {
-            if (filterByFileName && fileName !== filterByFileName) {
-                return false;
-            }
-            return true;
-        })
-
-        if(!filteredMigrationFileNames.length) {
+        if(!migrationsDetails.length) {
             console.log('[Migration] No migrations to run');
         }
 
         // Run the migrations for every file
-        for (const fileName of filteredMigrationFileNames) {
-            console.log('[Migration] up -> ' + fileName);
-            await this.handleFileUp(fileName, newBatchCount);
+        for (const migrationDetail of migrationsDetails) {
+            console.log('[Migration] up -> ' + migrationDetail.fileName);
+            
+            await this.handleFileUp(migrationDetail, newBatchCount);
         }
     }
 
@@ -116,7 +142,9 @@ class MigrationService implements IMigrationService {
      * @param newBatchCount 
      * @returns 
      */
-    async handleFileUp(fileName: string, newBatchCount: number): Promise<void> {
+    async handleFileUp(migrationDetail: MigrationDetail, newBatchCount: number): Promise<void> {
+        const { fileName, migration } = migrationDetail
+
         const fileChecksum = await this.fileService.checksum(fileName);
 
         const migrationDocument = await this.repository.findOne({
@@ -128,8 +156,6 @@ class MigrationService implements IMigrationService {
             console.log(`[Migration] ${fileName} already applied`);
             return;
         }
-
-        const migration = await this.fileService.getImportMigrationClass(fileName);
 
         if(!migration.shouldUp()) {
             console.log(`[Migration] Skipping (Provider mismatch) -> ${fileName}`);

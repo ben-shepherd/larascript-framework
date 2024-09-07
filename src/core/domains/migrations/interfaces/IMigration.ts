@@ -6,6 +6,11 @@ export interface IMigration {
     databaseProvider?:  string;
 
     /**
+     * Specify the group this migration belongs to
+     */
+    group?: string;
+
+    /**
      * Run the migrations up
      */
     up(): Promise<void>

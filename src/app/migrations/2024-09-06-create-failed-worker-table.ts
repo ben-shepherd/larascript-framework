@@ -9,6 +9,8 @@ export class CreateFailedWorkerTableMigration extends BaseMigration {
     // If left commented out, the migration will run only on the default provider.
     // databaseProvider: 'mongodb' | 'postgres' = 'postgres';
 
+    group?: string = 'app:setup';
+
     table = (new FailedWorkerModel({} as FailedWorkerModelData)).table
 
     async up(): Promise<void> {

@@ -1,5 +1,6 @@
 export interface IMigrationServiceOptions {
     filterByFileName?: string
+    group?: string
     batch?: number
 }
 
