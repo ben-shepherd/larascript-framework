@@ -8,5 +8,5 @@ export interface ICommandRegister {
     addCommandConfig(signatures: string[], config: object): void;
     getCommandConfig<T extends object = object>(signature: string): T | null;
     getRegistered(): Registered;
-    getBySignature: (string: string) => void;
+    getBySignature(string: string): ICommandConstructor | null;
 }
