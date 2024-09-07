@@ -75,6 +75,12 @@ class PostgresQueryBuilder
     whereClause(filter: object = {}): string
     {
         return Object.keys(filter).map((key) => {
+            const value = filter[key];
+
+            if(value === null) {
+                return `"${key}" IS NULL`;
+            }
+            
             return `"${key}" = :${key}`
         }).join(' AND ');
     }

@@ -25,8 +25,7 @@ export default class FailedWorkerModel extends Model<FailedWorkerModelData> {
         'failedAt'
     ]
 
-    constructor(data: FailedWorkerModelData, collection: string) {
+    constructor(data: FailedWorkerModelData) {
         super(data)
-        this.table = collection
     }
 }

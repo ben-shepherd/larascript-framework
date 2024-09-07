@@ -1,26 +1,27 @@
 import BaseMigration from "@src/core/domains/migrations/base/BaseMigration";
+import { DataTypes } from "sequelize";
+import ApiToken from "../models/auth/ApiToken";
 
-export class #name#Migration extends BaseMigration 
+export class CreateApiTokenMigration extends BaseMigration 
 {
     // Specify the database provider if this migration should run on a particular database.
     // Uncomment and set to 'mongodb', 'postgres', or another supported provider.
     // If left commented out, the migration will run only on the default provider.
     // databaseProvider: 'mongodb' | 'postgres' = 'postgres';
 
+    table = new ApiToken(null).table;
+
     async up(): Promise<void> 
     {
-        // Example:
-        // await this.schema.createTable('users', (table) => {
-        //     table.increments('id').primary();
-        //     table.string('username').unique().notNullable();
-        //     table.string('email').unique().notNullable();
-        //     table.timestamps(true, true);
-        // });
+        await this.schema.createTable(this.table, {
+            userId: DataTypes.STRING,
+            token: DataTypes.STRING,
+            revokedAt: DataTypes.DATE
+        })
     }
 
     async down(): Promise<void> 
     {
-        // Example:
-        // await this.schema.dropTable('users');
+        await this.schema.dropTable(this.table);
     }
 }

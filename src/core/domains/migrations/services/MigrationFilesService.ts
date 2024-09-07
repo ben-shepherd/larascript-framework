@@ -85,7 +85,7 @@ class MigrationFileService
         const date = new Date();
         const dateString = date.toISOString().split('T')[0]
 
-        return `${dateString}-${Str.convertToSafeMethod(name.toLowerCase())}.ts`;
+        return `${dateString}-${Str.convertToSafeFileName(name.toLowerCase())}.ts`;
     }
 
     /**

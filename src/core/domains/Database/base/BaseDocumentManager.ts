@@ -6,6 +6,7 @@ import BelongsTo from "@src/core/domains/database/relationships/BelongsTo";
 import HasMany from "@src/core/domains/database/relationships/HasMany";
 import MissingTable from "../exceptions/InvalidTable";
 import { IDocumentValidator } from "../interfaces/IDocumentValidator";
+import { IPrepareOptions } from "../interfaces/IPrepareOptions";
 import DocumentValidator from "../validator/DocumentValidator";
 
 abstract class BaseDocumentManager<
@@ -17,10 +18,33 @@ abstract class BaseDocumentManager<
     protected tableName!: string;
     
     public readonly validator: IDocumentValidator = new DocumentValidator();
+    
 
     constructor(driver: Provider)
     {
         this.driver = driver;
+    }
+
+    /**
+     * Prepare document
+     * @param document 
+     * @returns 
+     */
+    prepareDocument(document: IDatabaseDocument, options?: IPrepareOptions): IDatabaseDocument 
+    {
+        const preparedDocument = {...document}
+
+        for(const key in preparedDocument) {
+            if(options?.jsonStringify?.includes(key)) {
+                preparedDocument[key] = JSON.stringify(preparedDocument[key])
+            }
+            if(options?.jsonParse?.includes(key)) {
+                preparedDocument[key] = JSON.parse(preparedDocument[key])
+            }
+
+        }
+        
+        return preparedDocument
     }
 
     /**

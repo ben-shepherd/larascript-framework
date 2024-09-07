@@ -1,11 +1,11 @@
 import MigrationFactory from "@src/core/domains/migrations/factory/MigrationFactory";
+import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
 import { IMigrationService, IMigrationServiceOptions } from "@src/core/domains/migrations/interfaces/IMigrationService";
 import MigrationRepository from "@src/core/domains/migrations/repository/MigrationRepository";
 import createMongoDBSchema from "@src/core/domains/migrations/schema/createMongoDBSchema";
 import createPostgresSchema from "@src/core/domains/migrations/schema/createPostgresSchema";
 import MigrationFileService from "@src/core/domains/migrations/services/MigrationFilesService";
 import { App } from "@src/core/services/App";
-import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
 
 class MigrationService implements IMigrationService {
     private fileService!: MigrationFileService;
@@ -48,14 +48,20 @@ class MigrationService implements IMigrationService {
         // Get the current batch count
         const newBatchCount = (await this.getCurrentBatchCount()) + 1;
 
-        // Run the migrations for every file
-        for (const fileName of migrationFileNames) {
-
-            // Check if the file should be skipped
+        const filteredMigrationFileNames = migrationFileNames.filter(fileName => {
             if (filterByFileName && fileName !== filterByFileName) {
-                continue;
+                return false;
             }
+            return true;
+        })
 
+        if(!filteredMigrationFileNames.length) {
+            console.log('[Migration] No migrations to run');
+        }
+
+        // Run the migrations for every file
+        for (const fileName of filteredMigrationFileNames) {
+            console.log('[Migration] up -> ' + fileName);
             await this.handleFileUp(fileName, newBatchCount);
         }
     }
@@ -84,6 +90,10 @@ class MigrationService implements IMigrationService {
 
             return aDate.getTime() - bDate.getTime();
         });
+
+        if(!results.length) {
+            console.log('[Migration] No migrations to run');
+        }
 
         // Run the migrations
         for(const result of results) {

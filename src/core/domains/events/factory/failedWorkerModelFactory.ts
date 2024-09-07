@@ -13,6 +13,6 @@ export default class FailedWorkerModelFactory {
             payload,
             error,
             failedAt: new Date(),
-        }, collection)
+        })
     }
 }

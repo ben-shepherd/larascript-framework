@@ -52,8 +52,6 @@ export default class CommandReader implements ICommandReader {
         cmd.setParsedArguments(this.runParser())
         await cmd.execute()
 
-        if(!cmd.keepProcessAlive) {
-            process.exit(0)
-        }
+        cmd.end();
     }
 }

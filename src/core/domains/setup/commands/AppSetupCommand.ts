@@ -73,10 +73,6 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand
         this.writeLine('');
 
         this.rl.close();
-
-        if(!this.keepProcessAlive) {
-            process.nextTick(() => process.exit(0));   
-        }
     }
 
     /**

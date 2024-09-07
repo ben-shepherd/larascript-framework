@@ -36,6 +36,10 @@ export default class User extends Model<IUserData> implements IUserModel {
         'updatedAt',
     ]
 
+    json = [
+        'roles'
+    ]
+
     async tokens(): Promise<ApiToken[]> 
     {
         return this.hasMany(ApiToken, {

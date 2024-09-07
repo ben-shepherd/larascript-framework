@@ -12,7 +12,7 @@ import Str from '@src/core/util/str/Str';
 import { ICtor } from '../interfaces/ICtor';
 
 export default abstract class Model<Data extends IModelData> extends WithObserver<Data> implements IModel<Data> {
-    
+
     // The database connection
     public connection: string = App.container('db').getDefaultConnectionName();
 
@@ -36,6 +36,11 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
     public dates: Dates = ['createdAt', 'updatedAt']
     public timestamps: boolean = true;
 
+    /**
+     * JSON Attributes
+     */
+    public json: string[] = [];
+
     // Observe proeprties with custom methods
     // Key: property name
     // Value: custom method
@@ -56,9 +61,8 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      * Set default table name
      * @returns 
      */
-    protected setDefaultTable()
-    {
-        if(this.table) {
+    protected setDefaultTable() {
+        if (this.table) {
             return;
         }
 
@@ -181,10 +185,24 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      */
     async update(): Promise<void> {
         if (!this.getId()) return;
-        if(!this.data) return;
+        if (!this.data) return;
 
         await this.getDocumentManager()
-            .updateOne(this.data)
+            .updateOne(
+                this.prepareDocument()
+            )
+    }
+
+    /**
+     * Prepares a document for saving
+     * JSON Stringify any fields specified by this.json
+     * @param data 
+     * @returns 
+     */
+    prepareDocument<T>(): T {
+        return this.getDocumentManager().prepareDocument({...this.data}, {
+            jsonStringify: this.json
+        }) as T
     }
 
     /**
@@ -194,13 +212,14 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      * @return {Promise<void>} A promise that resolves when the save operation is complete.
      */
     async save(): Promise<void> {
+
         if (this.data && !this.getId()) {
 
             this.data = this.observeData('creating', this.data)
             this.setTimestamp('createdAt')
             this.setTimestamp('updatedAt')
 
-            this.data = await this.getDocumentManager().insertOne(this.data);
+            this.data = await this.getDocumentManager().insertOne(this.prepareDocument());
             await this.refresh();
 
             this.data = this.observeData('created', this.data)
@@ -238,16 +257,16 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
         const documentManager = App.container('db')
             .documentManager(this.connection);
 
-        if(!this.data) {
+        if (!this.data) {
             return null
         }
-        
+
         const result = await documentManager.belongsTo(this.data, {
             ...options,
             foreignTable: (new foreignModel()).table
         })
 
-        if(!result) {
+        if (!result) {
             return null;
         }
 
@@ -265,7 +284,7 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
         const documentManager = App.container('db')
             .documentManager(this.connection);
 
-        if(!this.data) {
+        if (!this.data) {
             return []
         }
 

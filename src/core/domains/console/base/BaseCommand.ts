@@ -75,4 +75,14 @@ export default abstract class BaseCommand implements ICommand {
     setOverwriteArg(key: string, value: string) {
         this.overwriteArgs[key] = value
     }
+
+    /**
+     * End the process
+     */
+    end(): void
+    {
+        if(!(this.config as { keepProcessAlive?: boolean })?.keepProcessAlive) {
+            process.exit();
+        }
+    }
 }

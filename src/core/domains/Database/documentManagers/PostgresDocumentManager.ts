@@ -20,6 +20,15 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
         }
     }
 
+    protected documentStripUndefinedProperties(document: IDatabaseDocument): IDatabaseDocument {
+        for(const key in document) {
+            if(document[key] === undefined) {
+                delete document[key]
+            }
+        }
+        return document
+    }
+
     /**
      * Find document by id
      * @param id 
@@ -91,6 +100,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
         this.validator.validateWithoutId(document)
 
         document = this.documentWithUuid(document)
+        document = this.documentStripUndefinedProperties(document)
 
         const queryInterface = this.driver.getQueryInterface();
         await queryInterface.insert(null, this.getTable(), document, options) as T
@@ -109,6 +119,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
         this.validator.validateWithoutId(documents)
 
         documents = documents.map(d => this.documentWithUuid(d))
+        documents = documents.map(d => this.documentStripUndefinedProperties(d))
 
         const queryInterface = this.driver.getQueryInterface();
         await queryInterface.bulkInsert(this.getTable(), documents, options) as T[];

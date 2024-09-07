@@ -23,6 +23,7 @@ export interface IModel<Data extends IModelData = IModelData> extends IWithObser
     dates: Dates;
     timestamps: boolean;
     observeProperties: Record<string, string>;
+    prepareDocument<T = object>(): T;
     getDocumentManager(): IDocumentManager;
     getId(): string | undefined;
     setAttribute(key: keyof Data, value: any): void;
