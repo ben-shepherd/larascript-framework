@@ -1,10 +1,10 @@
-import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
+import BaseDocumentManager from "@src/core/domains/database/base/BaseDocumentManager";
+import InvalidObjectId from "@src/core/domains/database/exceptions/InvalidObjectId";
+import { FindOptions, IDatabaseDocument, OrderOptions } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 import MongoDBBelongsTo from "@src/core/domains/database/relationships/mongodb/MongoDBBelongsTo";
-import { BulkWriteOptions, ObjectId, UpdateOptions } from "mongodb";
-import BaseDocumentManager from "@src/core/domains/database/base/BaseDocumentManager";
-import InvalidObjectId from "@src/core/domains/database/exceptions/InvalidObjectId";
+import { BulkWriteOptions, ObjectId, Sort, UpdateOptions } from "mongodb";
 
 class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager, MongoDB> {
 
@@ -66,6 +66,16 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
         return document
     }
 
+    protected convertOrderToSort(order: OrderOptions): Sort {
+        const sort = {}
+        Object.keys(order).forEach((key: string) => {
+            Object.keys(order[key]).forEach((column: string) => {
+                sort[column] = order[key][column].toLowerCase() === 'asc' ? 1 : -1
+            })
+        })
+        return sort
+    }
+
     /**
      * Find document by _id
      * 
@@ -106,8 +116,17 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param filter 
      * @returns 
      */
-    async findMany<T>({ filter = {} }: { filter?: object }): Promise<T> {
-        const documents = await this.driver.getDb().collection(this.getTable()).find(filter).toArray();
+    async findMany<T>({ filter, order }: FindOptions): Promise<T> {
+        const test = {
+            sort: order ? this.convertOrderToSort(order ?? []) : undefined,
+        };
+        const documents = await this.driver
+            .getDb()
+            .collection(this.getTable())
+            .find(filter as object, {
+                sort: order ? this.convertOrderToSort(order ?? []) : undefined,
+            })
+            .toArray();
 
         return documents.map((d: any) => this.convertObjectIdToStringInDocument(d)) as T
     }
@@ -171,7 +190,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
         const objectId =  this.convertToObjectId(document.id)
         const data = this.stripIds(document)
 
-        await this.driver.getDb().collection(this.getTable()).updateOne({ _id: this.convertToObjectId(document.id) }, { $set: { ...this.stripIds(document)} }, options) as T
+        await this.driver.getDb().collection(this.getTable()).updateOne({ _id: objectId }, { $set: data }, options) as T
         
         return this.convertObjectIdToStringInDocument(document) as T;
     }

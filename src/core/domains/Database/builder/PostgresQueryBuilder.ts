@@ -1,3 +1,4 @@
+
 export type OrderArray = Record<string, 'ASC' | 'DESC'>[]
 
 export type SelectOptions = {
@@ -52,13 +53,12 @@ class PostgresQueryBuilder {
     orderByClause(orders: Record<string, 'ASC' | 'DESC'>[] = []): string {
         let queryStr = '';
 
-        orders.forEach((order) => {
-            Object.keys(order).forEach((key) => {
-                queryStr += `${key} ${order[key]}, `
-            })
-        })
+        return orders.map((order) => {
+            return Object.keys(order).map((key) => {
+                return `"${key}" ${order[key]}`
+            }).join(', ')
+        }).join(', ');
 
-        return queryStr;
     }
 
     /**

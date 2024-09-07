@@ -1,7 +1,10 @@
-import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
-import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import { IDocumentValidator } from "@src/core/domains/database/interfaces/IDocumentValidator";
 import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
+import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
+import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
+
+export type OrderOptions = Record<string, 'ASC' | 'DESC'>[];
+export type FindOptions = { filter?: object, order?: OrderOptions }
 
 export interface IDocumentManager {
     validator: IDocumentValidator;

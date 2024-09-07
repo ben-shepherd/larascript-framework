@@ -1,10 +1,10 @@
-import { Db, MongoClient, MongoClientOptions } from 'mongodb';
 import MongoDbDocumentManager from '@src/core/domains/database/documentManagers/MongoDbDocumentManager';
 import { IDatabaseGenericConnectionConfig } from '@src/core/domains/database/interfaces/IDatabaseGenericConnectionConfig';
 import { IDatabaseProvider } from '@src/core/domains/database/interfaces/IDatabaseProvider';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import { IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
 import MongoDBSchema from '@src/core/domains/database/schema/MongoDBSchema';
+import { Db, MongoClient, MongoClientOptions } from 'mongodb';
 
 export default class MongoDB implements IDatabaseProvider {
 
@@ -73,7 +73,10 @@ export default class MongoDB implements IDatabaseProvider {
      * @returns {Db} The MongoDB database instance
      */
     getDb(): Db {
-        return this.db;
+        if(!this.client) {
+            throw new Error('MongoDB client is not connected');
+        }
+        return this.client.db();
     }
 
 }

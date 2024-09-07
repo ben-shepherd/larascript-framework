@@ -1,13 +1,13 @@
 // Import necessary interfaces and classes
+import MissingTable from "@src/core/domains/database/exceptions/InvalidTable";
 import { IDatabaseProvider } from "@src/core/domains/database/interfaces/IDatabaseProvider";
 import { IDatabaseDocument, IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
+import { IDocumentValidator } from "@src/core/domains/database/interfaces/IDocumentValidator";
+import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
 import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import BelongsTo from "@src/core/domains/database/relationships/BelongsTo";
 import HasMany from "@src/core/domains/database/relationships/HasMany";
-import MissingTable from "@src/core/domains/database/exceptions/InvalidTable";
-import { IDocumentValidator } from "@src/core/domains/database/interfaces/IDocumentValidator";
-import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
 import DocumentValidator from "@src/core/domains/database/validator/DocumentValidator";
 
 /**
@@ -83,9 +83,9 @@ abstract class BaseDocumentManager<
     // Abstract methods to be implemented by subclasses
     abstract findById<T>(id: string): Promise<T | null>;
 
-    abstract findOne<T>({filter}: {filter?: object}): Promise<T | null>;
+    abstract findOne<T>(options: object): Promise<T | null>;
 
-    abstract findMany<T>({filter}: {filter?: object}): Promise<T>;
+    abstract findMany<T>(options: object): Promise<T>;
 
     abstract insertOne<T>(document: IDatabaseDocument): Promise<T>;
 

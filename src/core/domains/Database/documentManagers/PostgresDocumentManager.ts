@@ -1,9 +1,9 @@
+import BaseDocumentManager from "@src/core/domains/database/base/BaseDocumentManager";
 import PostgresQueryBuilder, { SelectOptions } from "@src/core/domains/database/builder/PostgresQueryBuilder";
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
 import Postgres from "@src/core/domains/database/providers-db/Postgres";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { BindOrReplacements, QueryOptions, QueryTypes } from "sequelize";
-import BaseDocumentManager from "@src/core/domains/database/base/BaseDocumentManager";
 
 class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManager, Postgres> {
 
@@ -74,19 +74,20 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
         return null
     }
 
-    async findMany<T>(selectOptions: Partial<SelectOptions>): Promise<T> {
+    async findMany<T>(options: Partial<SelectOptions>): Promise<T> {
         const sequelize = this.driver.getClient()
+
         const queryString = this.builder.select({
-            ...selectOptions,
+            ...options,
             tableName: this.getTable()
         })
 
         return await sequelize.query(
             queryString,
             {
-                replacements: (selectOptions.filter ?? {}) as BindOrReplacements,
+                replacements: (options.filter ?? {}) as BindOrReplacements,
                 type: QueryTypes.SELECT,
-            }
+            },
         ) as T
     }
 
