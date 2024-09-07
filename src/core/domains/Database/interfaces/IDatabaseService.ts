@@ -12,6 +12,7 @@ export interface IDatabaseService
 {
     boot(): Promise<void>;
     getDefaultConnectionName(): string;
+    setDefaultConnectionName(connectionName: string): void;
     getClient<T = Client>(connectionName?: string): T;
     provider<T = Provider>(connectionName?: string): T;
     isProvider(driver: string, connectionName?: string): boolean;

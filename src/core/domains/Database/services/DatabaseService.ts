@@ -18,6 +18,11 @@ class DatabaseService implements IDatabaseService {
     protected store: Record<string, IDatabaseProvider> = {};
 
     /**
+     * Override the default connection name (Testing purposes)
+     */
+    protected overrideDefaultConnectionName?: string;
+
+    /**
      * @param config 
      */
     constructor(config: IDatabaseConfig) {
@@ -46,9 +51,16 @@ class DatabaseService implements IDatabaseService {
      * @returns 
      */
     getDefaultConnectionName(): string {
-        return this.config.defaultConnectionName
+        return this.overrideDefaultConnectionName ?? this.config.defaultConnectionName
     }
 
+    /**
+     * Set the default connection name
+     * @param name 
+     */
+    setDefaultConnectionName(name: string | null) {
+        this.overrideDefaultConnectionName = name ?? undefined
+    }
     /**
      * Get the DocumentManager service
      * 
