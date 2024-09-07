@@ -87,7 +87,7 @@ export default abstract class BaseCommand implements ICommand {
      * End the process
      */
     end(): void {
-        if(!(this.config as { keepProcessAlive?: boolean })?.keepProcessAlive) {
+        if(!this.keepProcessAlive) {
             process.exit();
         }
     }

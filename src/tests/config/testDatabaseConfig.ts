@@ -9,7 +9,7 @@ if(!defaultMongoDbCredentials || !defaultPostgresCredentials) {
 }
 
 const testDatabaseConfig: IDatabaseConfig = {
-    defaultConnectionName: 'mongodb',
+    defaultConnectionName: 'postgres',
     keepAliveConnections: 'postgres',
     connections: {
         mongodb: {

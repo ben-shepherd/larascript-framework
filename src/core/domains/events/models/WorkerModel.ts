@@ -32,6 +32,10 @@ export default class WorkerModel extends Model<WorkerModelData> {
         'createdAt'
     ]
 
+    json = [
+        'payload'
+    ]
+
     constructor(data: WorkerModelData) {
         super(data); 
     }

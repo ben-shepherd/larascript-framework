@@ -87,10 +87,6 @@ export default class Worker extends Singleton {
 
         return await workerRepository.findMany({
             queueName
-        }, {
-            sort: {
-                createdAt: 'descending'
-            }
         })
     }
 
@@ -118,7 +114,7 @@ export default class Worker extends Singleton {
         const event = new EventSubscriber(eventName as string, this.syncDriver, payload)
 
         // Dispatch the event
-        App.container('events').dispatch(event)
+        await App.container('events').dispatch(event)
 
         // Delete record as it was a success
         await this.deleteModel(model)

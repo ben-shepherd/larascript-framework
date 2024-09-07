@@ -20,8 +20,8 @@ export default class EventService extends Singleton<EventServiceConfig>  impleme
      * @param event 
      * @returns 
      */
-    dispatch<Payload extends IEventPayload>(event: IEvent<Payload>) {
-        return (new EventDispatcher).dispatch(event);
+    async dispatch<Payload extends IEventPayload>(event: IEvent<Payload>) {
+        return await (new EventDispatcher).dispatch(event);
     }
 
     /**
