@@ -1,8 +1,8 @@
+import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IBelongsTo, IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
+import DocumentValidator from "@src/core/domains/database/validator/DocumentValidator";
 import { App } from "@src/core/services/App";
 import { ObjectId } from "mongodb";
-import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
-import DocumentValidator from "@src/core/domains/database/validator/DocumentValidator";
 
 export default class MongoDBBelongsTo implements IBelongsTo {
  
@@ -16,6 +16,8 @@ export default class MongoDBBelongsTo implements IBelongsTo {
             filters: filtersOptions = {}
         } = options
 
+        const localKeyValue = document[localKey];
+        
         if(localKey === 'id') {
             localKey = '_id';
         }
@@ -23,7 +25,6 @@ export default class MongoDBBelongsTo implements IBelongsTo {
             foreignKey = '_id';
         }
 
-        const localKeyValue = document[localKey];
         let filter = {};
 
         if(typeof localKeyValue === 'string' && ObjectId.isValid(localKeyValue)) {
