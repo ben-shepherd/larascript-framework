@@ -4,7 +4,7 @@ import BaseProvider from "@src/core/base/Provider";
 import { EventServiceConfig } from "@src/core/domains/events/interfaces/IEventService";
 import EventService from "@src/core/domains/events/services/EventService";
 import { App } from "@src/core/services/App";
-import WorkerCommand from "../../console/commands/WorkerCommand";
+import WorkerCommand from "@src/core/domains/console/commands/WorkerCommand";
 
 export default class EventProvider extends BaseProvider {
 

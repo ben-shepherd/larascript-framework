@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --color",
-    "fix-imports": "node convert-imports.js",
+    "fix-imports": "node fix-imports.js",
     "eslint": "npx eslint --fix src",
     "start": "node ./dist/app.js",
     "dev": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register ./src/app.ts",

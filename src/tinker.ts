@@ -3,7 +3,7 @@ import 'tsconfig-paths/register';
 
 import appConfig from '@src/config/app';
 import Kernel from "@src/core/Kernel";
-import TestDatabaseProvider from './tests/providers/TestDatabaseProvider';
+import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 
 (async () => {
     await Kernel.boot({

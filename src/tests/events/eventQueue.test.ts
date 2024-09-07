@@ -8,8 +8,8 @@ import { TestMovieModel } from '@src/tests/models/models/TestMovie';
 import TestEventProvider from '@src/tests/providers/TestEventProvider';
 import 'dotenv/config';
 import { DataTypes } from 'sequelize';
-import TestConsoleProvider from '../providers/TestConsoleProvider';
-import TestDatabaseProvider from '../providers/TestDatabaseProvider';
+import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
+import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 
 const createTable = async () => {
     await App.container('db').schema().createTable('testsWorker', {
