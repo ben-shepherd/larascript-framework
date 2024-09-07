@@ -10,12 +10,12 @@ import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorPr
 import { IProvider } from "@src/core/interfaces/IProvider";
 
 const CoreProviders: IProvider[] = [
+    new ConsoleProvider(),
     new EventProvider(),
     new DatabaseProvider(),
     new ExpressProvider(),
     new RoutesProvider(),
     new AuthProvider(),
-    new ConsoleProvider(),
     new MigrationProvider(),
     new MakeProvider(),
     new ValidatorProvider(),
