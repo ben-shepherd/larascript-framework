@@ -1,9 +1,10 @@
-import DatabaseSchema from "@src/core/domains/database/base/DatabaseSchema";
 import Postgres from "@src/core/domains/database/providers-db/Postgres";
 import { DataTypes, QueryInterfaceCreateTableOptions, QueryInterfaceDropTableOptions } from "sequelize";
 import { ModelAttributes } from 'sequelize/types/model';
 
-class PostgresSchema extends DatabaseSchema<Postgres> {
+import BaseDatabaseSchema from "../base/BaseDatabaseSchema";
+
+class PostgresSchema extends BaseDatabaseSchema<Postgres> {
 
     /**
      * Ensure id property is added to attributes

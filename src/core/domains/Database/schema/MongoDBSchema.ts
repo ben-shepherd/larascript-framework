@@ -1,7 +1,8 @@
-import DatabaseSchema from "@src/core/domains/database/base/DatabaseSchema";
 import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 
-class MongoDBSchema extends DatabaseSchema {
+import BaseDatabaseSchema from "../base/BaseDatabaseSchema";
+
+class MongoDBSchema extends BaseDatabaseSchema {
 
     protected driver!: MongoDB;
 

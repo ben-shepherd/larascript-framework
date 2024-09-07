@@ -1,3 +1,4 @@
+// Import necessary interfaces and classes
 import { IDatabaseProvider } from "@src/core/domains/database/interfaces/IDatabaseProvider";
 import { IDatabaseDocument, IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
@@ -10,26 +11,37 @@ import { IDocumentValidator } from "../interfaces/IDocumentValidator";
 import { IPrepareOptions } from "../interfaces/IPrepareOptions";
 import DocumentValidator from "../validator/DocumentValidator";
 
+/**
+ * Abstract base class for document management operations
+ * @template Query - Type extending IDocumentManager
+ * @template Provider - Type extending IDatabaseProvider
+ */
 abstract class BaseDocumentManager<
     Query extends IDocumentManager = IDocumentManager,
     Provider extends IDatabaseProvider = IDatabaseProvider
 > implements IDocumentManager {
 
+    // Protected properties
     protected driver!: Provider;
 
     protected tableName!: string;
     
+    // Public property for document validation
     public readonly validator: IDocumentValidator = new DocumentValidator();
     
-
+    /**
+     * Constructor for BaseDocumentManager
+     * @param driver - Database provider instance
+     */
     constructor(driver: Provider) {
         this.driver = driver;
     }
 
     /**
-     * Prepare document
-     * @param document 
-     * @returns 
+     * Prepare document for database operations
+     * @param document - Document to be prepared
+     * @param options - Optional preparation options
+     * @returns Prepared document
      */
     prepareDocument(document: IDatabaseDocument, options?: IPrepareOptions): IDatabaseDocument {
         const preparedDocument = {...document}
@@ -41,16 +53,15 @@ abstract class BaseDocumentManager<
             if(options?.jsonParse?.includes(key)) {
                 preparedDocument[key] = JSON.parse(preparedDocument[key])
             }
-
         }
         
         return preparedDocument
     }
 
     /**
-     * Set table
-     * @param table 
-     * @returns 
+     * Set the table name for database operations
+     * @param table - Name of the table
+     * @returns Current instance cast as Query type
      */
     table(table: string): Query {
         this.tableName = table;
@@ -58,8 +69,9 @@ abstract class BaseDocumentManager<
     } 
 
     /**
-     * Get table
-     * @returns 
+     * Get the current table name
+     * @returns Current table name
+     * @throws MissingTable if table name is not set
      */
     getTable(): string {
         if(!this.tableName) {
@@ -69,50 +81,43 @@ abstract class BaseDocumentManager<
         return this.tableName;
     }
 
-    findById<T>(id: string): Promise<T | null> {
-        throw new Error("Method not implemented.");
-    }
+    // Abstract methods to be implemented by subclasses
+    abstract findById<T>(id: string): Promise<T | null>;
 
-    findOne<T>({filter = {}}: {filter?: object}): Promise<T | null> {
-        throw new Error("Method not implemented.");
-    }
+    abstract findOne<T>({filter}: {filter?: object}): Promise<T | null>;
 
-    findMany<T>({filter = {}}: {filter?: object}): Promise<T> {
-        throw new Error("Method not implemented.");
-    }
+    abstract findMany<T>({filter}: {filter?: object}): Promise<T>;
 
-    insertOne<T>(document: IDatabaseDocument): Promise<T> {
-        throw new Error("Method not implemented.");
-    }
+    abstract insertOne<T>(document: IDatabaseDocument): Promise<T>;
 
-    insertMany<T>(documents: IDatabaseDocument[]): Promise<T> {
-        throw new Error("Method not implemented.");
-    }
+    abstract insertMany<T>(documents: IDatabaseDocument[]): Promise<T>;
 
-    updateOne<T>(document: IDatabaseDocument): Promise<T> {
-        throw new Error("Method not implemented.");
-    }
+    abstract updateOne<T>(document: IDatabaseDocument): Promise<T>;
 
-    updateMany<T>(documents: IDatabaseDocument[]): Promise<T> {
-        throw new Error("Method not implemented.");
-    }
+    abstract updateMany<T>(documents: IDatabaseDocument[]): Promise<T>;
 
-    deleteOne<T>(filter: object): Promise<T> {
-        throw new Error("Method not implemented.");
-    }
+    abstract deleteOne<T>(filter: object): Promise<T>;
 
-    deleteMany<T>(filter: object): Promise<T> {
-        throw new Error("Method not implemented.");
-    }
+    abstract deleteMany<T>(filter: object): Promise<T>;
 
-    truncate(): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
+    abstract truncate(): Promise<void>;
 
+    /**
+     * Handle "belongs to" relationship
+     * @param document - Source document
+     * @param options - Relationship options
+     * @returns Promise resolving to related document or null
+     */
     async belongsTo<T>(document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null> {
         return new BelongsTo().handle(this.driver.connectionName, document, options);
     }
 
+    /**
+     * Handle "has many" relationship
+     * @param document - Source document
+     * @param options - Relationship options
+     * @returns Promise resolving to array of related documents
+     */
     async hasMany<T>(document: IDatabaseDocument, options: IHasManyOptions): Promise<T> {
         return new HasMany().handle(this.driver.connectionName, document, options) as T;
     }
