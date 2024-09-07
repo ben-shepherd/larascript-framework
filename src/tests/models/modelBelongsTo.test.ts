@@ -36,8 +36,6 @@ const truncate = async (connectionName: string) => {
     await schema.truncate();
 }
 
-const log = (...args: any[]) => console.log(...args)
-
 describe('test belongsTo by fetching an author from a movie', () => {
     beforeAll(async () => {
         await Kernel.boot({
@@ -59,7 +57,9 @@ describe('test belongsTo by fetching an author from a movie', () => {
     test('belongsTo', async () => {
 
         for(const connectionName of connections) {
-            console.log('connectionName', connectionName)
+            console.log('[Connection]', connectionName)
+            App.container('db').setDefaultConnectionName(connectionName)
+            
             await truncate(connectionName)
 
             /**

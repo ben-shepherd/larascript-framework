@@ -5,11 +5,11 @@ import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
 import TestQueueSubscriber from '@src/tests/events/subscribers/TestQueueSubscriber';
 import { TestMovieModel } from '@src/tests/models/models/TestMovie';
+import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
+import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 import TestEventProvider from '@src/tests/providers/TestEventProvider';
 import 'dotenv/config';
 import { DataTypes } from 'sequelize';
-import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
-import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 
 const createTable = async () => {
     await App.container('db').schema().createTable('testsWorker', {
@@ -50,9 +50,6 @@ describe('mock event service', () => {
                 new TestEventProvider()
             ]
         }, {});
-
-        await dropTable()
-        await createTable()
     });
 
 
@@ -60,6 +57,9 @@ describe('mock event service', () => {
    * Dispatches the TestQueueSubscriber event to the worker
    */
     test('dispatch a test event', async () => {
+        await dropTable()
+        await createTable()
+
         // Dispatch an event
         const events = App.container('events');
         await events.dispatch(new TestQueueSubscriber({ name: movieName }));

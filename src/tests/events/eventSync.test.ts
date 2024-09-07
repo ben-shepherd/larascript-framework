@@ -3,6 +3,7 @@ import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import TestSubscriber from '@src/tests/events/subscribers/TestSyncSubscriber';
 import TestEventProvider from '@src/tests/providers/TestEventProvider';
+import TestConsoleProvider from '../providers/TestConsoleProvider';
 
 describe('mock event service', () => {
 
@@ -13,6 +14,7 @@ describe('mock event service', () => {
         await Kernel.boot({
             environment: 'testing',
             providers: [
+                new TestConsoleProvider(),
                 new TestEventProvider()
             ],
             commands: []

@@ -3,10 +3,10 @@ import Kernel from '@src/core/Kernel';
 import Repository from '@src/core/base/Repository';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
-import TestModel from '@src/tests/models/models/TestModel';
-import { DataTypes } from 'sequelize';
 import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
+import TestModel from '@src/tests/models/models/TestModel';
 import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
+import { DataTypes } from 'sequelize';
 
 const connections = getTestConnectionNames()
 
@@ -49,6 +49,9 @@ describe('test model crud', () => {
     test('CRUD', async () => {
         
         for(const connectionName of connections) {
+            console.log('[Connection]', connectionName)
+            App.container('db').setDefaultConnectionName(connectionName);
+
             const documentManager = App.container('db').documentManager(connectionName).table('tests');
             await documentManager.truncate();
 

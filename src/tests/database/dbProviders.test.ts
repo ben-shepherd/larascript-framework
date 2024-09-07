@@ -2,9 +2,9 @@ import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
-import { DataTypes } from 'sequelize';
 import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
 import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
+import { DataTypes } from 'sequelize';
 
 const connections = getTestConnectionNames()
 const tableName = 'testTable';
@@ -213,6 +213,8 @@ describe('DocumentManager Interface Tests', () => {
             expect(typeof relatedDocument.id === 'string').toBe(true)
             expect(relatedDocument.name).toBe('Jane')
             expect(relatedDocument.age).toBe(20)
+
+            console.log('all documents', await documentManager.findMany<Data>({}))
 
             const foundDocument = await documentManager.belongsTo<Data>(documentOne, {
                 localKey: 'id',

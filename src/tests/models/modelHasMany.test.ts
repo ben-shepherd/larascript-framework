@@ -54,10 +54,11 @@ describe('test hasMany', () => {
     })
     
     test('hasMany', async () => {
-        for(const connection of connections) {
-            console.log('[Connection]', connection)
+        for(const connectionName of connections) {
+            console.log('[Connection]', connectionName)
+            App.container('db').setDefaultConnectionName(connectionName);
 
-            await truncate(connection);
+            await truncate(connectionName);
 
             /**
              * Create author model
@@ -65,7 +66,6 @@ describe('test hasMany', () => {
             const authorModel = new TestAuthorModel({
                 name: 'John'
             })
-            authorModel.connection = connection
             await authorModel.save();
             expect(typeof authorModel.getId() === 'string').toBe(true)
             expect(authorModel.data?.name).toEqual('John');
@@ -78,7 +78,6 @@ describe('test hasMany', () => {
                 name: 'Movie One',
                 yearReleased: 1970
             })
-            movieModelOne.connection = connection
             await movieModelOne.save();
             expect(typeof movieModelOne.getId() === 'string').toBe(true);
             expect(movieModelOne.data?.name).toEqual('Movie One');
@@ -89,7 +88,6 @@ describe('test hasMany', () => {
                 name: 'Movie Two',
                 yearReleased: 1980
             })
-            movieModelTwo.connection = connection
             await movieModelTwo.save();
             expect(typeof movieModelTwo.getId() === 'string').toBe(true);
             expect(movieModelTwo.data?.name).toEqual('Movie Two');
