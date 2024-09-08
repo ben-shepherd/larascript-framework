@@ -3,7 +3,7 @@ import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import TestSubscriber from '@src/tests/events/subscribers/TestSyncSubscriber';
 import TestEventProvider from '@src/tests/providers/TestEventProvider';
-import TestConsoleProvider from '../providers/TestConsoleProvider';
+import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
 
 describe('mock event service', () => {
 

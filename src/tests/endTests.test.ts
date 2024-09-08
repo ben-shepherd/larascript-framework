@@ -1,13 +1,13 @@
 import { describe, expect, test } from '@jest/globals';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
-import testAppConfig from './config/testConfig';
-import { getTestConnectionNames } from './config/testDatabaseConfig';
-import { TestAuthorModel } from './models/models/TestAuthor';
-import TestModel from './models/models/TestModel';
-import { TestMovieModel } from './models/models/TestMovie';
-import TestWorkerModel from './models/models/TestWorkerModel';
-import TestDatabaseProvider from './providers/TestDatabaseProvider';
+import testAppConfig from '@src/tests/config/testConfig';
+import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
+import { TestAuthorModel } from '@src/tests/models/models/TestAuthor';
+import TestModel from '@src/tests/models/models/TestModel';
+import { TestMovieModel } from '@src/tests/models/models/TestMovie';
+import TestWorkerModel from '@src/tests/models/models/TestWorkerModel';
+import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 
 describe('clean up tables', () => {
 
