@@ -1,7 +1,7 @@
+import BaseDatabaseSchema from "@src/core/domains/database/base/BaseDatabaseSchema";
 import Postgres from "@src/core/domains/database/providers-db/Postgres";
 import { DataTypes, QueryInterfaceCreateTableOptions, QueryInterfaceDropTableOptions } from "sequelize";
 import { ModelAttributes } from 'sequelize/types/model';
-import BaseDatabaseSchema from "@src/core/domains/database/base/BaseDatabaseSchema";
 
 class PostgresSchema extends BaseDatabaseSchema<Postgres> {
 
@@ -46,7 +46,7 @@ class PostgresSchema extends BaseDatabaseSchema<Postgres> {
     async dropTable(name: string, options?: QueryInterfaceDropTableOptions): Promise<void> {
         const sequelize = this.driver.getClient();
         const queryInterface = sequelize.getQueryInterface();
-        queryInterface.dropTable(name, options);
+        await queryInterface.dropTable(name, options);
     }
 
     /**
