@@ -91,17 +91,6 @@ export default class Worker extends Singleton {
     }
 
     /**
-     * Delete the model
-     * @param model 
-     */
-    private async deleteModel(model: WorkerModel) {
-        await App.container('db')
-            .documentManager()
-            .table(new this.options.workerModelCtor().table)
-            .deleteOne(model)
-    }
-
-    /**
      * Proces the worker by dispatching it through the event driver 'sync'
      * @param model 
      */
@@ -117,7 +106,7 @@ export default class Worker extends Singleton {
         await App.container('events').dispatch(event)
 
         // Delete record as it was a success
-        await this.deleteModel(model)
+        await model.delete();
 
         this.log(`Processed: ${eventName}`)
     }
@@ -171,7 +160,7 @@ export default class Worker extends Singleton {
         )
 
         await failedWorkerModel.save()
-        await this.deleteModel(model)
+        await model.delete();
     }
 
     protected log(message: string) {
