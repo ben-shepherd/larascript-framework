@@ -2,7 +2,7 @@ import { IAuthService } from '@src/core/domains/auth/interfaces/IAuthService';
 import ICommandService from '@src/core/domains/console/interfaces/ICommandService';
 import { IDatabaseService } from '@src/core/domains/database/interfaces/IDatabaseService';
 import { IEventService } from '@src/core/domains/events/interfaces/IEventService';
-import IExpress from '@src/core/domains/express/interfaces/IExpress';
+import IExpressService from '@src/core/domains/express/interfaces/IExpress';
 import IValidatorService from '@src/core/domains/validator/interfaces/IValidatorService';
 
 export interface ICoreContainers {
@@ -30,7 +30,7 @@ export interface ICoreContainers {
      * Express web server Service
      * Provided by '@src/core/domains/express/providers/ExpressProvider'
      */
-    express: IExpress;
+    express: IExpressService;
 
     /**
      * Console service
