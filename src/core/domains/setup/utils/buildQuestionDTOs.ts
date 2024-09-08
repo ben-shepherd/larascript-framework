@@ -28,8 +28,8 @@ const buildQuestionDTOs = (): QuestionDTO[] => {
         }),
         new QuestionDTO({
             id: QuestionIDs.selectDb,
-            question: 'Which database providers should be installed? (all/mongodb/postgres). This step will overwrite your .env file.',
-            previewText: 'Choose Database Provider To Install',
+            question: 'Which database providers will be used? (all/mongodb/postgres). This step will overwrite your .env file.',
+            previewText: 'Choose Database Provider to Use',
             defaultValue: 'all',
             acceptedAnswers: acceptedAnswersDatabases,
             actionCtors: [SetupDockerDatabases, SetupDefaultDatabase]
