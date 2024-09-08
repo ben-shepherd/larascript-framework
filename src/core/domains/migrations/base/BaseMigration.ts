@@ -25,10 +25,11 @@ abstract class BaseMigration implements IMigration {
      * If undefined, the migration will run on the default provider.
      * Can be set to 'mongodb', 'postgres', or other supported database systems.
      */
-    databaseProvider?: string | undefined;
+    databaseProvider?: string;
 
     /**
-     * group specifies the group that this migration belongs to.
+     * Define the name of the migration group.
+     * Allows filterable migrations with --group=<group-name>
      */
     group?: string;
 
