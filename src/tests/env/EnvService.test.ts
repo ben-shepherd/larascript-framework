@@ -1,5 +1,5 @@
 import { describe } from '@jest/globals';
-import EnvService from '@src/core/domains/console/service/EnvService';
+import EnvService from '@src/core/services/EnvService';
 import fs from 'fs';
 import path from 'path';
 

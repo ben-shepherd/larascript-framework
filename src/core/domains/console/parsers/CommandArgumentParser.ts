@@ -75,4 +75,5 @@ export default class CommandArguementParser {
 
         return {type: OnlyArguement, value: command}
     }
+
 }

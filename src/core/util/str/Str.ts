@@ -1,4 +1,5 @@
 class Str {
+
     /**
      * Pluralizes a string
      * @param str 
@@ -51,6 +52,35 @@ class Str {
             })
             .replace(/\s+/g, '');
     }
+
+    /**
+     * Converts a string to a safe method string
+     * @param str 
+     * @returns 
+     */
+    public static readonly convertToSafeMethod = (str: string): string => {
+    // Replace non-alphanumeric characters with underscores
+    // Capitalize characters after the underscores
+    // Finally replace underscores with dashes
+    // Example: "2024-09-06 create user model.ts" -> "2024-09-06-create-user-model.ts"
+        return str
+            .replace(/[^a-zA-Z0-9]/g, '_')
+            .replace(/_./g, x => x[1].toUpperCase())
+            .replace(/_/g, '');
+    }
+
+    /**
+     * Converts a string to a safe method string
+     * @param str 
+     * @returns 
+     */
+    public static readonly convertToSafeFileName = (str: string): string => {
+        return str
+            .replace(/[^a-zA-Z0-9-]/g, '_')
+            .replace(/_./g, x => x[1].toUpperCase())
+            .replace(/_/g, '-');
+    }
+
 }
 
 export default Str;

@@ -1,7 +1,7 @@
 import BaseMakeFileCommand from "@src/core/domains/make/base/BaseMakeFileCommand";
 
-export default class MakeListenerCommand extends BaseMakeFileCommand
-{
+export default class MakeListenerCommand extends BaseMakeFileCommand {
+
     constructor() {
         super({
             signature: 'make:listener',
@@ -11,4 +11,5 @@ export default class MakeListenerCommand extends BaseMakeFileCommand
             endsWith: 'Listener'
         })
     }
+
 }

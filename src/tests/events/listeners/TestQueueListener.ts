@@ -3,12 +3,13 @@ import { TestMovieModel } from "@src/tests/models/models/TestMovie";
  
 export class TestQueueListener extends EventListener<{name: string}> {
     
-    handle = async ({name}: {name: string}) => {
-        console.log('[TestQueueListener]', { name })
+    handle = async (payload: {name: string}) => {
+        console.log('[TestQueueListener]', { name: payload })
 
         const movie = new TestMovieModel({
-            name
+            name: payload.name
         });
         await movie.save();
     }
+
 }

@@ -11,13 +11,13 @@ import MakeRoutesCommand from "@src/core/domains/make/commands/MakeRoutesCommand
 import MakeServiceCommand from "@src/core/domains/make/commands/MakeServiceCommand";
 import MakeSingletonCommand from "@src/core/domains/make/commands/MakeSingletonCommand";
 import MakeSubscriberCommand from "@src/core/domains/make/commands/MakeSubscriberCommand";
-import { App } from "@src/core/services/App";
 import MakeValidatorCommand from "@src/core/domains/make/commands/MakeValidatorCommand";
+import { App } from "@src/core/services/App";
+import MakeMigrationCommand from "@src/core/domains/make/commands/MakeMigrationCommand";
 
-export default class MakeProvider extends BaseProvider
-{
-    async register(): Promise<void> 
-    {
+export default class MakeProvider extends BaseProvider {
+
+    async register(): Promise<void> {
         console.log('[Provider] Registering MakeProvider')    
 
         App.container('console').register().registerAll([
@@ -34,8 +34,10 @@ export default class MakeProvider extends BaseProvider
             MakeMiddlewareCommand,
             MakeActionCommand,
             MakeValidatorCommand,
+            MakeMigrationCommand,
         ])
     }
 
     async boot(): Promise<void> {}
+
 }

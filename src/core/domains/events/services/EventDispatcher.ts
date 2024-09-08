@@ -7,12 +7,12 @@ import { App } from "@src/core/services/App";
 
 
 export default class EventDispatcher extends Singleton implements IEventDispatcher {
+
     /**
      * Handle the dispatched event
      * @param event 
      */
-    public async dispatch<Payload extends IEventPayload>(event: IEvent<Payload>) 
-    {
+    public async dispatch<Payload extends IEventPayload>(event: IEvent<Payload>) {
         console.log(`[EventDispatcher:dispatch] Event '${event.name}' with driver '${event.driver}'`)
 
         const driverOptions = this.getDriverOptionsFromEvent(event)
@@ -27,8 +27,7 @@ export default class EventDispatcher extends Singleton implements IEventDispatch
      * @param IEvent event
      * @returns 
      */
-    protected getDriverOptionsFromEvent(event: IEvent): IDriverConfig
-    {
+    protected getDriverOptionsFromEvent(event: IEvent): IDriverConfig {
         const driver = App.container('events').config.drivers[event.driver]
 
         if(!driver) {
@@ -37,4 +36,5 @@ export default class EventDispatcher extends Singleton implements IEventDispatch
 
         return driver
     }
+
 }

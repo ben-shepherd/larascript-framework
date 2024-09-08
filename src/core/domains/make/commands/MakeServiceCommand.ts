@@ -1,7 +1,7 @@
 import BaseMakeFileCommand from "@src/core/domains/make/base/BaseMakeFileCommand";
 
-export default class MakeServiceCommand extends BaseMakeFileCommand
-{
+export default class MakeServiceCommand extends BaseMakeFileCommand {
+
     constructor() {
         super({
             signature: 'make:service',
@@ -11,4 +11,5 @@ export default class MakeServiceCommand extends BaseMakeFileCommand
             endsWith: 'Service'
         })
     }
+
 }

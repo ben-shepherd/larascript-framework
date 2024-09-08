@@ -1,7 +1,7 @@
 import BaseMakeFileCommand from "@src/core/domains/make/base/BaseMakeFileCommand";
 
-export default class MakeValidatorCommand extends BaseMakeFileCommand
-{
+export default class MakeValidatorCommand extends BaseMakeFileCommand {
+
     constructor() {
         super({
             signature: 'make:validator',
@@ -12,4 +12,5 @@ export default class MakeValidatorCommand extends BaseMakeFileCommand
             startWithLowercase: false
         })
     }
+
 }

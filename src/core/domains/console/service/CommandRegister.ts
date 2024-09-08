@@ -3,18 +3,24 @@ import CommandRegisterException from "@src/core/domains/console/exceptions/Comma
 import { ICommandConstructor } from "@src/core/domains/console/interfaces/ICommand";
 import { ICommandRegister, Registered } from "@src/core/domains/console/interfaces/ICommandRegister";
 
-export default class CommandRegister extends Singleton implements ICommandRegister
-{
+export default class CommandRegister extends Singleton implements ICommandRegister {
+
     /**
      * Registered commands
      */
     protected commands: Registered = new Map();
 
     /**
+     * Command configs
+     * Key is the signature
+     */
+    protected commandConfigs: Map<string, object> = new Map();
+
+    /**
      * Register multiple commands
      * @param cmds 
      */
-    public registerAll(cmds: Array<ICommandConstructor>) {
+    registerAll(cmds: Array<ICommandConstructor>) {
         cmds.forEach(cmdCtor => this.register(cmdCtor))
     }
 
@@ -23,8 +29,7 @@ export default class CommandRegister extends Singleton implements ICommandRegist
      * @param key 
      * @param cmdCtor 
      */
-    public register(cmdCtor: ICommandConstructor) 
-    {
+    register(cmdCtor: ICommandConstructor) {
         const signature = (new cmdCtor).signature
 
         if(this.commands.has(signature)) {
@@ -35,12 +40,29 @@ export default class CommandRegister extends Singleton implements ICommandRegist
     }
 
     /**
+     * Add command config
+     * @param cmdCtor 
+     * @param config 
+     */
+    addCommandConfig(signatures: string[], config: object) {
+        signatures.forEach((signature: string) => this.commandConfigs.set(signature, config));
+    }
+
+    /**
+     * Get command config
+     * @param cmdCtor 
+     * @returns 
+     */
+    getCommandConfig<T extends object = object>(signature: string): T | null {
+        return this.commandConfigs.get(signature) as T ?? null;
+    }
+
+    /**
      * Get a particular command by the key
      * @param key 
      * @returns 
      */
-    public get<CommandCtor extends ICommandConstructor>(key: string): CommandCtor
-    {
+    get<CommandCtor extends ICommandConstructor>(key: string): CommandCtor {
         if(!this.commands.has(key)) {
             throw new CommandRegisterException(`Command '${key}' could not be found`);
         }
@@ -52,7 +74,7 @@ export default class CommandRegister extends Singleton implements ICommandRegist
      * Returns all registered commands
      * @returns 
      */
-    public getRegistered(): Registered {
+    getRegistered(): Registered {
         return this.commands
     }
 
@@ -60,7 +82,8 @@ export default class CommandRegister extends Singleton implements ICommandRegist
      * @param string 
      * @returns 
      */
-    public getBySignature(string: string): ICommandConstructor | null {
+    getBySignature(string: string): ICommandConstructor | null {
         return this.commands.get(string) as ICommandConstructor ?? null
     }
+
 }

@@ -12,4 +12,5 @@ export default class ExampleSubscriber extends EventSubscriber<Payload> {
 
         super(eventName, driver, payload)
     }
+
 }

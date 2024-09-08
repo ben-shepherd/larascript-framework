@@ -5,8 +5,7 @@ import IUserModel, { IUserData } from '@src/core/domains/auth/interfaces/IUserMo
 
 export default class User extends Model<IUserData> implements IUserModel {
 
-    public collection: string = 'users';
-
+    public table: string = 'users';
 
     constructor(data: IUserData | null = null) {
         super(data);
@@ -26,6 +25,7 @@ export default class User extends Model<IUserData> implements IUserModel {
      * Define your user fields that can be set
      */
     fields: string[] = [
+
         /** Define your user fields below */
         'email',
         'password',
@@ -37,13 +37,15 @@ export default class User extends Model<IUserData> implements IUserModel {
         'updatedAt',
     ]
 
-    tokens(): Promise<ApiToken[]> 
-    {
-        return this.hasMany({
-            localModel: this,
-            localKey: '_id',
-            foreignKey: 'userId',
-            foreignModelCtor: ApiToken
-        })    
+    json = [
+        'roles'
+    ]
+
+    async tokens(): Promise<ApiToken[]> {
+        return this.hasMany(ApiToken, {
+            localKey: 'id',
+            foreignKey: 'userId'
+        }) 
     }
+
 }

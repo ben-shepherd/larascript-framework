@@ -2,8 +2,8 @@ import ICommandService from "@src/core/domains/console/interfaces/ICommandServic
 import CommandReader from "@src/core/domains/console/service/CommandReader";
 import CommandRegister from "@src/core/domains/console/service/CommandRegister";
 
-export default class ConsoleService implements ICommandService
-{
+export default class ConsoleService implements ICommandService {
+
     public reader(argv: string[]): CommandReader {
         return new CommandReader(argv);
     }
@@ -11,4 +11,5 @@ export default class ConsoleService implements ICommandService
     public register(): CommandRegister {
         return CommandRegister.getInstance();
     }
+
 }

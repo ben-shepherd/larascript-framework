@@ -10,4 +10,5 @@ export default class DriverOptions<Options extends Record<string, any> = {}> {
     getOptions(): Options {
         return this.options;
     }
+
 }

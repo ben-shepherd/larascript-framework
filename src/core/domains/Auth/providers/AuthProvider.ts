@@ -7,8 +7,8 @@ import ExpressProvider from "@src/core/domains/express/providers/ExpressProvider
 import Kernel from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
 
-export default class AuthProvider extends BaseProvider
-{
+export default class AuthProvider extends BaseProvider {
+
     protected config: IAuthConfig = authConfig;
 
     public async register(): Promise<void> {
@@ -56,4 +56,5 @@ export default class AuthProvider extends BaseProvider
 
         App.container('express').bindRoutes(routes);
     }
+
 }

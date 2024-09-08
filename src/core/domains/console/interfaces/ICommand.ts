@@ -8,4 +8,5 @@ export interface ICommand {
     keepProcessAlive?: boolean;
     setParsedArguments: (parsedArgumenets: ParsedArgumentsArray) => void;
     execute(...args: any[]): Promise<any>;
+    end(): void;
 }

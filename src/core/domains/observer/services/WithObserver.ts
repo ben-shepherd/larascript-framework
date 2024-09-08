@@ -50,4 +50,5 @@ export abstract class WithObserver<ReturnType> implements IWithObserve<ReturnTyp
         }
         return this.observer.onCustom(customName as string, data)
     }
+
 }

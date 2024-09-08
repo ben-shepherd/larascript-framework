@@ -16,6 +16,7 @@ export const targetDirectories: Record<string, string> = {
     Middleware: `${APP_PATH}/middleware`,
     Action: `${APP_PATH}/actions`,
     Validator: `${APP_PATH}/validators`,
+    Migration: `${APP_PATH}/migrations`,
 } as const;
 
 export const templates: Record<string, string> = {
@@ -32,6 +33,7 @@ export const templates: Record<string, string> = {
     Middleware: `${TEMPLATE_PATH}/Middleware.ts.template`,
     Action: `${TEMPLATE_PATH}/Action.ts.template`,
     Validator: `${TEMPLATE_PATH}/Validator.ts.template`,
+    Migration: `${TEMPLATE_PATH}/Migration.ts.template`,
 } as const;
 
 export default Object.freeze({

@@ -4,16 +4,22 @@ import { IMakeFileArguments } from "@src/core/domains/make/interfaces/IMakeFileA
 import { IMakeOptions } from "@src/core/domains/make/interfaces/IMakeOptions";
 import ArgumentObserver from "@src/core/domains/make/observers/ArgumentObserver";
 import MakeFileService from "@src/core/domains/make/services/MakeFileService";
+import Str from "@src/core/util/str/Str";
 
 const DefaultOptions: Partial<IMakeOptions> = {
     startWithLowercase: false
 }
 
-export default class BaseMakeFileCommand extends BaseCommand
-{
+export default class BaseMakeFileCommand extends BaseCommand {
+
+    public keepProcessAlive = false;
+
     protected options!: IMakeOptions;
+
     protected makeFileService!: MakeFileService;
+
     protected argumentObserver!: ArgumentObserver;
+
     protected makeFileArguments!: IMakeFileArguments;
 
     /**
@@ -34,8 +40,7 @@ export default class BaseMakeFileCommand extends BaseCommand
      * 'name' converts to lower/uppercase depending on options
      * 'collection' is optional and automatically set based on the 'name' arguement
      */
-    protected prepareArguments(): void
-    {
+    protected prepareArguments(): void {
         if(!this.getArguementByKey('name')?.value) {
             throw new CommandExecutionException('--name argument not specified');
         }
@@ -62,16 +67,14 @@ export default class BaseMakeFileCommand extends BaseCommand
     /**
      * Prepare the make file service
      */
-    protected prepareMakeFileService(): void
-    {
+    protected prepareMakeFileService(): void {
         this.makeFileService = new MakeFileService(this.options, this.makeFileArguments);
     }
 
     /**
      * Base logic for making a new file
      */
-    public execute = async () => 
-    {
+    public execute = async () => {
         this.prepareArguments();
         this.prepareMakeFileService();
 
@@ -94,8 +97,7 @@ export default class BaseMakeFileCommand extends BaseCommand
     /**
      * Get template contents with injected argument values
      */
-    getTemplateWithInjectedArguments = async (): Promise<string> =>
-    {
+    getTemplateWithInjectedArguments = async (): Promise<string> => {
         const { argsOptional = [] } = this.options
 
         // Fetch the template
@@ -103,10 +105,15 @@ export default class BaseMakeFileCommand extends BaseCommand
 
         // Inject the arguements
         Object.keys(this.makeFileArguments).forEach(argumentKey => {
-            const value = this.makeFileArguments[argumentKey];
+            let value = this.makeFileArguments[argumentKey];
 
             if(!value && !argsOptional.includes(argumentKey)) {
                 throw new CommandExecutionException(`--${argumentKey} argument not specified`);
+            }
+
+            // Convert to safe method for class names and other places as code the name is used
+            if(argumentKey === 'name') {
+                value = Str.convertToSafeMethod(value)
             }
 
             // Inject the arguements
@@ -121,8 +128,7 @@ export default class BaseMakeFileCommand extends BaseCommand
      * Ensure a file always ends with the specified value
      * @param endsWith 
      */
-    ensureFileEndsWith(endsWith: string)
-    {
+    ensureFileEndsWith(endsWith: string) {
         let name = this.getArguementByKey('name')?.value;
 
         if(name && !name?.endsWith(endsWith)) {
@@ -132,8 +138,8 @@ export default class BaseMakeFileCommand extends BaseCommand
         }
     }
 
-    public getMakeFileService(): MakeFileService
-    {
+    public getMakeFileService(): MakeFileService {
         return this.makeFileService
     }
+
 }

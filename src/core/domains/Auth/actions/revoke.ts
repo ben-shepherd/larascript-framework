@@ -1,5 +1,4 @@
 import { Response } from 'express';
-
 import ApiToken from '@src/app/models/auth/ApiToken';
 import IAuthorizedRequest from '@src/core/domains/auth/interfaces/IAuthorizedRequest';
 import responseError from '@src/core/domains/express/requests/responseError';

@@ -9,6 +9,7 @@ type Params = {
     workerModelCtor: ModelConstructor<WorkerModel>
 }
 export default class WorkerModelFactory {
+
     create(collection: string, { queueName, eventName, payload, retries, workerModelCtor }: Params): WorkerModel {
         return new workerModelCtor({
             ...initialWorkerModalData,
@@ -19,4 +20,5 @@ export default class WorkerModelFactory {
             createdAt: new Date()
         }, collection)
     }
+
 }

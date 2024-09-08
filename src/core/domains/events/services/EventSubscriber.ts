@@ -10,7 +10,9 @@ export default class EventSubscriber<
 > implements IEvent<Payload, Watchters, Drivers> {
 
     public name: keyof Watchters & string;
+
     public driver: keyof Drivers;
+
     public payload: Payload;
 
     constructor(name: keyof Watchters & string, driver: keyof Drivers, payload: Payload) {
@@ -25,4 +27,5 @@ export default class EventSubscriber<
             throw new EventSubscriberException('EventSubscriber must have a \'driver\' property')
         }
     }
+
 }

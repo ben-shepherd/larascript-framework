@@ -1,7 +1,6 @@
-import { ObjectId } from "mongodb";
 
 export default interface IModelData {
-    _id?: ObjectId
+    id?: string;
     createdAt?: Date;
     updatedAt?: Date;
     [key: string]: any;

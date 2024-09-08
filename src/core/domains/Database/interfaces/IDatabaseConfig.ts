@@ -1,6 +1,10 @@
-import IMongoDbConfig from "@src/core/domains/database/mongodb/interfaces/IMongoDbConfig";
+import { IDatabaseGenericConnectionConfig } from "@src/core/domains/database/interfaces/IDatabaseGenericConnectionConfig";
 
 export interface IDatabaseConfig {
-    mongodb: IMongoDbConfig;
-    postgres: null
+    defaultConnectionName: string;
+    keepAliveConnections: string;
+    connections: {
+        [key: string]: IDatabaseGenericConnectionConfig
+    }
 }
+

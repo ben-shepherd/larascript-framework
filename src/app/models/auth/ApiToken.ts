@@ -1,7 +1,7 @@
-import User from '@src/app/models/auth/User';
 import Model from '@src/core/base/Model';
 import IApiTokenModel, { IApiTokenData } from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
+import User from '@src/app/models/auth/User';
 
 class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
 
@@ -21,11 +21,9 @@ class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
      * @returns 
      */
     public async user(): Promise<IUserModel | null> {
-        return this.belongsTo<IUserModel>({
+        return this.belongsTo(User, {
             localKey: 'userId',
-            localModel: this,
-            foreignKey: '_id',
-            foreignModelCtor: User
+            foreignKey: 'id',
         })
     }   
 

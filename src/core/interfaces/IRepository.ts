@@ -1,4 +1,4 @@
-import { Collection } from "mongodb";
+import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
 export type RepositoryConstructor<
@@ -9,44 +9,52 @@ export type RepositoryConstructor<
 export type RepositoryInstance<RCtor extends RepositoryConstructor<any>> = InstanceType<RCtor>
 
 export interface IRepository<Model extends IModel = IModel> {
+
     /**
      * Collection name
      */
     collectionName: string;
+
     /**
      * Connection name
      */
     connection: string;
+
     /**
      * Model Constructor
      */
     modelCtor: ModelConstructor<Model>;
+    
     /**
-     * Get the MongoDB Collection
+     * Get the Database Query
      */
-    collection(): Promise<Collection>    
+    query(): IDocumentManager;
+
     /**
      * Find or fail if no document found
      * @param filter 
      * @returns 
      */
     findOrFail: (filter: object) => Promise<Model>
+
     /**
-     * Find document by _id
+     * Find document by id
      * @param id 
      * @returns 
      */
     findById: (id: string) => Promise<Model | null>
+
     /**
      * Find a single document
      * @param query 
      * @returns 
      */
     findOne: (query: object) => Promise<Model | null>
+
     /**
      * Find multiple documents
      * @param query 
      * @returns 
      */
-    findMany: (query: object) => Promise<Model[]>
+    findMany: (query: object, options?: object) => Promise<Model[]>
 }

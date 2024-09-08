@@ -1,12 +1,40 @@
 import { describe, expect, test } from '@jest/globals';
 import Kernel from '@src/core/Kernel';
-import MongoDBProvider from '@src/core/domains/database/mongodb/providers/MongoDBProvider';
+import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
+import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
 import { TestAuthorModel } from '@src/tests/models/models/TestAuthor';
 import { TestMovieModel } from '@src/tests/models/models/TestMovie';
-import testModelsHelper from '@src/tests/models/testModelsHelper';
+import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
+import { DataTypes } from 'sequelize';
 
-describe('test hasMany by movies from an author', () => {
+const connections = getTestConnectionNames()
+
+const createTable = async (connectionName: string) => {
+    const schema = App.container('db').schema(connectionName)
+
+    schema.createTable('tests', {
+        name: DataTypes.STRING,
+        authorId: DataTypes.STRING,
+        yearReleased: DataTypes.INTEGER,
+        createdAt: DataTypes.DATE,
+        updatedAt: DataTypes.DATE
+    })
+}
+
+const dropTable = async (connectionName: string) => {
+    const schema = App.container('db').schema(connectionName)
+
+    if(await schema.tableExists('tests')) {
+        await schema.dropTable('tests');
+    }
+}
+
+const truncate = async (connectionName: string) => {
+    await App.container('db').documentManager(connectionName).table('tests').truncate()
+}
+
+describe('test hasMany', () => {
 
     /**
      * Boot the MongoDB provider
@@ -15,65 +43,70 @@ describe('test hasMany by movies from an author', () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
-                new MongoDBProvider()
+                new TestDatabaseProvider()
             ]
         }, {})
 
-        await testModelsHelper.cleanupCollections()
+        for(const connection of connections) {
+            await dropTable(connection)
+            await createTable(connection)
+        }
     })
     
-    let authorModel: TestAuthorModel;
-    let movieModelOne: TestMovieModel;
-    let movieModelTwo: TestMovieModel;
+    test('hasMany', async () => {
+        for(const connectionName of connections) {
+            console.log('[Connection]', connectionName)
+            App.container('db').setDefaultConnectionName(connectionName);
 
-    /**
-     * Create author model
-     */
-    test('create author model', async () => {
-        authorModel = new TestAuthorModel({
-            name: 'authorName'
-        })
-        await authorModel.save();
-        expect(authorModel.getId()).toBeTruthy();
-    });
+            await truncate(connectionName);
 
-    /**
-     * Create movie model one and two
-     */
-    test('create movie model', async () => {
-        movieModelOne = new TestMovieModel({
-            authorId: authorModel.getId()?.toString() as string,
-            name: 'Movie One',
-            yearReleased: '1970'
-        })
-        await movieModelOne.save();
-        expect(movieModelOne.getId()).toBeTruthy();
+            /**
+             * Create author model
+             */
+            const authorModel = new TestAuthorModel({
+                name: 'John'
+            })
+            await authorModel.save();
+            expect(typeof authorModel.getId() === 'string').toBe(true)
+            expect(authorModel.data?.name).toEqual('John');
+    
+            /**
+             * Create movie model one and two
+             */
+            const movieModelOne = new TestMovieModel({
+                authorId: authorModel.getId()?.toString() as string,
+                name: 'Movie One',
+                yearReleased: 1970
+            })
+            await movieModelOne.save();
+            expect(typeof movieModelOne.getId() === 'string').toBe(true);
+            expect(movieModelOne.data?.name).toEqual('Movie One');
+            expect(movieModelOne.data?.yearReleased).toEqual(1970);
+    
+            const movieModelTwo = new TestMovieModel({
+                authorId: authorModel.getId()?.toString() as string,
+                name: 'Movie Two',
+                yearReleased: 1980
+            })
+            await movieModelTwo.save();
+            expect(typeof movieModelTwo.getId() === 'string').toBe(true);
+            expect(movieModelTwo.data?.name).toEqual('Movie Two');
+            expect(movieModelTwo.data?.yearReleased).toEqual(1980);
+    
+            /**
+             * Get related movies from author
+             */
+            const relatedMovies = await authorModel.movies();
+            expect(relatedMovies.length).toEqual(2);
+            expect(relatedMovies.find((m) => m.data?.name === movieModelOne.data?.name)).toBeTruthy()
+            expect(relatedMovies.find((m) => m.data?.name === movieModelTwo.data?.name)).toBeTruthy()
 
-        movieModelTwo = new TestMovieModel({
-            authorId: authorModel.getId()?.toString() as string,
-            name: 'Movie Two',
-            yearReleased: '1980'
-        })
-        await movieModelTwo.save();
-        expect(movieModelTwo.getId()).toBeTruthy();
-    })
-
-    /**
-     * Get related movies from author
-     */
-    test('get related movies from author', async () => {
-        const movies = await authorModel.movies();
-        expect(movies.length).toEqual(2);
-        expect(movies[0].data?.name).toEqual(movieModelOne.data?.name);
-        expect(movies[1].data?.name).toEqual(movieModelTwo.data?.name);
-    })
-
-    /**
-     * Get related movies from author from year 1970
-     */
-    test('get related movies from author from year 1970', async () => {
-        const movies = await authorModel.moviesFromYear(1970);
-        expect(movies.length).toEqual(1);
-        expect(movies[0].data?.name).toEqual(movieModelOne.data?.name);
+            /**
+             * Get related movies from author from year 1970
+             */
+            const relatedMoviesWithFilters = await authorModel.moviesFromYear(1970);
+            expect(relatedMoviesWithFilters.length).toEqual(1);
+            expect(relatedMovies.find((m) => m.data?.name === movieModelOne.data?.name)).toBeTruthy()
+        }
     })
 });

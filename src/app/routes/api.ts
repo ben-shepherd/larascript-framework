@@ -2,7 +2,7 @@ import Route from "@src/core/domains/express/routing/Route"
 import RouteGroup from "@src/core/domains/express/routing/RouteGroup"
 import { Request, Response } from "express"
 
-const routes = RouteGroup([
+const apiRoutes = RouteGroup([
     Route({
         name: 'index',
         method: 'get',
@@ -13,4 +13,4 @@ const routes = RouteGroup([
     })
 ])
 
-export default routes
+export default apiRoutes

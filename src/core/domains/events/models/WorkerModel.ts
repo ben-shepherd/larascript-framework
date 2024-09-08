@@ -1,8 +1,7 @@
 import Model from "@src/core/base/Model";
-import { ObjectId } from "mongodb";
+import IModelData from "@src/core/interfaces/IModelData";
 
-export interface WorkerModelData {
-    _id?: ObjectId,
+export interface WorkerModelData extends IModelData {
     queueName: string;
     eventName: string;
     payload: any;
@@ -20,8 +19,8 @@ export const initialWorkerModalData = {
     createdAt: new Date()
 }
 
-export default class WorkerModel extends Model<WorkerModelData> 
-{
+export default class WorkerModel extends Model<WorkerModelData> {
+
     dates = ['createdAt']
 
     fields = [
@@ -33,9 +32,12 @@ export default class WorkerModel extends Model<WorkerModelData>
         'createdAt'
     ]
 
+    json = [
+        'payload'
+    ]
+
     constructor(data: WorkerModelData) {
-        super(data);
-        this.collection = 'worker'; 
+        super(data); 
     }
 
     public getPayload(): unknown {
@@ -47,4 +49,5 @@ export default class WorkerModel extends Model<WorkerModelData>
             return null
         }
     }
+
 }

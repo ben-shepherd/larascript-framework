@@ -1,13 +1,15 @@
 import Model from "@src/core/base/Model";
+import IModelData from "@src/core/interfaces/IModelData";
 import { TestAuthorModel } from "@src/tests/models/models/TestAuthor";
 
-export type TestMovieModelData = {
+export interface TestMovieModelData extends IModelData {
     authorId?: string;
     name?: string;
-    yearReleased?: string;
+    yearReleased?: number;
 }
 export class TestMovieModel extends Model<TestMovieModelData> {
-    public collection: string = 'tests';
+
+    public table: string = 'tests';
 
     public fields: string[] = [
         'authorId',
@@ -18,23 +20,20 @@ export class TestMovieModel extends Model<TestMovieModelData> {
     ]
 
     public async author(): Promise<TestAuthorModel | null> {
-        return this.belongsTo({
+        return this.belongsTo(TestAuthorModel, {
             localKey: 'authorId',
-            localModel: this,
-            foreignKey: '_id',
-            foreignModelCtor: TestAuthorModel
+            foreignKey: 'id'
         })
     }
 
     public async authorByName(name: string): Promise<TestAuthorModel | null> {
-        return this.belongsTo({
+        return this.belongsTo(TestAuthorModel, {
             localKey: 'authorId',
-            localModel: this,
-            foreignKey: '_id',
-            foreignModelCtor: TestAuthorModel,
+            foreignKey: 'id',
             filters: {
                 name
             }
         })
     }
+
 }
