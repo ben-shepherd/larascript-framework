@@ -7,8 +7,7 @@ import Joi, { ValidationError, ValidationErrorItem } from "joi";
  * @param result 
  * @returns 
  */
-const formatErrors = (customMessages: Record<string, string>, result: Joi.ValidationResult): ValidationError | undefined =>
-{
+const formatErrors = (customMessages: Record<string, string>, result: Joi.ValidationResult): ValidationError | undefined => {
     let customizedError: ValidationError | undefined;
 
     const errorDetails: ValidationErrorItem[] = [];

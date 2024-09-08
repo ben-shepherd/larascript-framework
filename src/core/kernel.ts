@@ -11,10 +11,13 @@ export type KernelOptions = {
 }
 
 export default class Kernel<Config extends IAppConfig> extends Singleton<Config> {
+
     private appConfig!: IAppConfig;
+
     public containers: Map<keyof Containers, Containers[keyof Containers]> = new Map();
 
     public preparedProviders: string[];
+
     public readyProviders: string[];
 
     constructor(appConfig: Config | null) {
@@ -64,4 +67,5 @@ export default class Kernel<Config extends IAppConfig> extends Singleton<Config>
     public static isProviderReady(providerName: string): boolean {
         return this.getInstance().preparedProviders.includes(providerName) || this.getInstance().readyProviders.includes(providerName);
     }
+
 }

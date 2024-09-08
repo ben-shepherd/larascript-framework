@@ -1,8 +1,7 @@
 import Model from "@src/core/base/Model";
-import { ObjectId } from "mongodb";
+import IModelData from "@src/core/interfaces/IModelData";
 
-export interface FailedWorkerModelData {
-    _id?: ObjectId;
+export interface FailedWorkerModelData extends IModelData {
     eventName: string;
     payload: any;
     error: any;
@@ -17,6 +16,7 @@ export const initialFailedWorkerModalData = {
 }
 
 export default class FailedWorkerModel extends Model<FailedWorkerModelData> {
+
     dates = ['failedAt']
 
     fields = [
@@ -26,8 +26,8 @@ export default class FailedWorkerModel extends Model<FailedWorkerModelData> {
         'failedAt'
     ]
 
-    constructor(data: FailedWorkerModelData, collection: string) {
+    constructor(data: FailedWorkerModelData) {
         super(data)
-        this.collection = collection
     }
+
 }

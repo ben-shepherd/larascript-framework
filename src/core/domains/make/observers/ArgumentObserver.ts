@@ -3,16 +3,15 @@ import { IMakeOptions } from "@src/core/domains/make/interfaces/IMakeOptions";
 import Observer from "@src/core/domains/observer/services/Observer";
 import Str from "@src/core/util/str/Str";
 
-class ArgumentObserver<T extends IMakeFileArguments = IMakeFileArguments> extends Observer<IMakeFileArguments>
-{
+class ArgumentObserver<T extends IMakeFileArguments = IMakeFileArguments> extends Observer<IMakeFileArguments> {
+
     /**
      * Sets the argument name, depending on the options.startWithLowercase
      * @param data 
      * @param options 
      * @returns 
      */
-    setName(data: T, options: IMakeOptions): T
-    {
+    setName(data: T, options: IMakeOptions): T {
         if(!data.name) {
             throw new Error('Argument name cannot be empty')
         }
@@ -33,8 +32,7 @@ class ArgumentObserver<T extends IMakeFileArguments = IMakeFileArguments> extend
      * @param options 
      * @returns 
      */
-    setEndsWith(data: T, options: IMakeOptions): T
-    {
+    setEndsWith(data: T, options: IMakeOptions): T {
         if(!data.name ) {
             throw new Error('Argument name cannot be empty')
         }
@@ -67,6 +65,7 @@ class ArgumentObserver<T extends IMakeFileArguments = IMakeFileArguments> extend
 
         return data
     }
+
 }
 
 export default ArgumentObserver

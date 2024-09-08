@@ -1,32 +1,31 @@
 import { describe, expect } from '@jest/globals';
-import MongoDBProvider from '@src/core/domains/database/mongodb/providers/MongoDBProvider';
-import MongoDB from '@src/core/domains/database/mongodb/services/MongoDB';
 import Kernel from '@src/core/Kernel';
+import DatabaseProvider from '@src/core/domains/database/providers/DatabaseProvider';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
 
 describe('attempt to connect to MongoDB database', () => {
 
-  /**
+    /**
    * Boot the MongoDB provider
    */
-  beforeAll(async () => {
-    await Kernel.boot({
-      ...testAppConfig,
-      providers: [
-        new MongoDBProvider()
-      ]
-    }, {})
-  })
+    beforeAll(async () => {
+        await Kernel.boot({
+            ...testAppConfig,
+            providers: [
+                new DatabaseProvider()
+            ]
+        }, {})
+    })
 
-  /**
+    /**
    * Test the MongoDB connection
    */
-  test('test MongoDB connection',async () => {
-    const mongodb = App.container('mongodb');
-    expect(mongodb).toBeInstanceOf(MongoDB);
+    test('test db connection',async () => {
+        const db = App.container('db');
+        expect(db).toBeTruthy();
 
-    mongodb.connectDefaultConnection();
-    expect(mongodb.getDb()).toBeTruthy();
-  });
+        await db.boot();
+        expect(db).toBeTruthy();
+    });
 });

@@ -5,13 +5,15 @@ type TestModelData = {
 }
 
 class TestModel extends Model<TestModelData> {
-    public collection: string = 'tests';
+
+    public table: string = 'tests';
 
     public fields: string[] = [
         'name',
         'createdAt',
         'updatedAt'
     ]
+
 }
 
 export default TestModel

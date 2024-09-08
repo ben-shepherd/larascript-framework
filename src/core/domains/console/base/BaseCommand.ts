@@ -3,12 +3,25 @@ import { ICommand } from "@src/core/domains/console/interfaces/ICommand";
 import { KeyPair, KeyPairArguementType, OnlyArguement, ParsedArguement, ParsedArgumentsArray } from "@src/core/domains/console/parsers/CommandArgumentParser";
 
 export default abstract class BaseCommand implements ICommand {
+
     public signature!: string;
+
     public description?: string;
+
     public execute!: (...args: any[]) => any;
-    public keepProcessAlive?: boolean | undefined = false;
+
+    public keepProcessAlive?: boolean = false;
+
     protected parsedArgumenets: ParsedArgumentsArray = [];
+
     protected overwriteArgs: Record<string, string> = {};
+
+    protected config: object = {};
+
+    constructor(config: object = {}) {
+        this.config = config;
+    }
+
     /**
      * Set the parsed arguements
      * @param parsedArgumenets 
@@ -69,4 +82,14 @@ export default abstract class BaseCommand implements ICommand {
     setOverwriteArg(key: string, value: string) {
         this.overwriteArgs[key] = value
     }
+
+    /**
+     * End the process
+     */
+    end(): void {
+        if(!this.keepProcessAlive) {
+            process.exit();
+        }
+    }
+
 }

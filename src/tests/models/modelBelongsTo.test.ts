@@ -1,65 +1,101 @@
 import { describe, expect, test } from '@jest/globals';
 import Kernel from '@src/core/Kernel';
-import MongoDBProvider from '@src/core/domains/database/mongodb/providers/MongoDBProvider';
+import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
+import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
 import { TestAuthorModel } from '@src/tests/models/models/TestAuthor';
 import { TestMovieModel } from '@src/tests/models/models/TestMovie';
-import testModelsHelper from '@src/tests/models/testModelsHelper';
+import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
+import { DataTypes } from 'sequelize';
+
+const tableName = 'tests';
+const connections = getTestConnectionNames()
+console.log('modelBelongsTo', connections)
+
+const createTable = async (connectionName: string) => {
+    const schema = App.container('db').schema(connectionName);
+    await schema.createTable(tableName, {
+        name: DataTypes.STRING,
+        born: DataTypes.INTEGER,
+        authorId: DataTypes.STRING,
+        createdAt: DataTypes.DATE,
+        updatedAt: DataTypes.DATE
+    });
+};
+
+const dropTable = async (connectionName: string) => {
+    try {
+        const schema = App.container('db').schema(connectionName);
+        await schema.dropTable(tableName);
+    }
+    catch (err) {}
+}
+
+const truncate = async (connectionName: string) => {
+    const schema = App.container('db').documentManager(connectionName).table(tableName);
+    await schema.truncate();
+}
 
 describe('test belongsTo by fetching an author from a movie', () => {
     beforeAll(async () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
-                new MongoDBProvider()
+                new TestDatabaseProvider()
             ]
         }, {})
-
-        await testModelsHelper.cleanupCollections()
     })
-
-    let authorModel: TestAuthorModel;
-    let movieModel: TestMovieModel;
 
     /**
      * Create author model
      */
-    test('create author model', async () => {
-        authorModel = new TestAuthorModel({
-            name: 'authorName'
-        })
-        await authorModel.save();
-        expect(authorModel.getId()).toBeTruthy();
+    test('belongsTo', async () => {
+
+        for(const connectionName of connections) {
+            console.log('[Connection]', connectionName)
+
+            await dropTable(connectionName)
+            await createTable(connectionName)
+
+            App.container('db').setDefaultConnectionName(connectionName)
+            
+            await truncate(connectionName)
+
+            /**
+             * Create an author
+             */
+            const authorModel = new TestAuthorModel({
+                name: 'authorName'
+            })
+            await authorModel.save();
+            expect(typeof authorModel.getId() === 'string').toBe(true)
+
+            /**
+             * Create related movie
+             */
+            const movieModel = new TestMovieModel({
+                authorId: authorModel.getId() as string,
+                name: 'Movie One'
+            })
+            await movieModel.save();
+            expect(typeof movieModel.getId() === 'string').toBe(true)
+
+            /**
+             * Find related author
+             */
+            const relatedAuthor = await movieModel.author();
+            expect(relatedAuthor).toBeInstanceOf(TestAuthorModel);
+            expect(typeof relatedAuthor?.getId() === 'string').toBe(true);
+            expect(relatedAuthor?.getId()).toEqual(authorModel.getId());
+
+            /**
+             * Find related author with filters
+             */
+            const relatedAuthorWithFilters = await movieModel.authorByName('authorName');
+            expect(relatedAuthorWithFilters).toBeInstanceOf(TestAuthorModel);
+            expect(typeof relatedAuthorWithFilters?.getId() === 'string').toBe(true);
+            expect(relatedAuthorWithFilters?.getId()).toEqual(authorModel.getId());
+        }
     });
 
-
-    /**
-     * Create movie model, and link previously created author
-     */
-    test('create movie model', async () => {
-        movieModel = new TestMovieModel({
-            authorId: authorModel.getId()?.toString() as string,
-            name: 'Movie One'
-        })
-        await movieModel.save();
-        expect(movieModel.getId()).toBeTruthy();
-    })
-
-    /**
-     * Get related author from movie
-     */
-    test('get related author from movie', async () => {
-        const relatedAuthor = await movieModel.author();
-        expect(relatedAuthor).toBeInstanceOf(TestAuthorModel);
-        expect(relatedAuthor?.getId()).toEqual(authorModel.getId());
-    })
-
-    /**
-     * Get related author from movie, by using filters
-     */
-    test('get related author from movie with additional filters', async () => {
-        const relatedAuthor = await movieModel.authorByName('authorName');
-        expect(relatedAuthor).toBeInstanceOf(TestAuthorModel);
-        expect(relatedAuthor?.getId()).toEqual(authorModel.getId());
-    })
 });

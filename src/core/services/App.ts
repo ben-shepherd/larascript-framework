@@ -37,4 +37,5 @@ export class App extends Singleton<IAppConfig> {
     public static env(): string | undefined {
         return this.getInstance().env
     }
+
 }

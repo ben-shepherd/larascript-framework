@@ -3,7 +3,9 @@ import Factory from '@src/core/base/Factory';
 import { IUserData } from '@src/core/domains/auth/interfaces/IUserModel';
 
 export default class UserFactory extends Factory<User, IUserData> {
-   constructor() {
-      super(User)
-   }
+
+    constructor() {
+        super(User)
+    }
+
 }

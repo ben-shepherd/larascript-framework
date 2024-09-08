@@ -7,4 +7,5 @@ export interface IMakeOptions {
     defaultArgs?: string[];
     endsWith?: string;
     startWithLowercase?: boolean;
+    customFilename?: (name: string) => string;
 }

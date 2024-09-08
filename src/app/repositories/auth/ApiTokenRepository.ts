@@ -4,6 +4,7 @@ import IApiTokenRepository from "@src/core/domains/auth/interfaces/IApiTokenRepo
 
 
 export default class ApiTokenRepository extends Repository<ApiToken> implements IApiTokenRepository {
+
     constructor() {
         super('apiTokens', ApiToken)
     }
@@ -25,4 +26,5 @@ export default class ApiTokenRepository extends Repository<ApiToken> implements 
     async findOneActiveToken(token: string): Promise<ApiToken | null> {
         return await this.findOne({ token, revokedAt: null })
     }
+
 }

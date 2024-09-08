@@ -23,7 +23,7 @@ import Kernel, { KernelOptions } from '@src/core/Kernel';
          */
         await cmdBoot.boot(args);
     
-    } 
+    }
     catch (err) {
         
         // We can safetly ignore CommandNotFoundExceptions 

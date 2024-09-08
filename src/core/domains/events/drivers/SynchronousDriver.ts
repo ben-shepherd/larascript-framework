@@ -2,8 +2,8 @@ import { IEvent } from '@src/core/domains/events/interfaces/IEvent';
 import IEventDriver from '@src/core/domains/events/interfaces/IEventDriver';
 import { App } from '@src/core/services/App';
 
-export default class SynchronousDriver implements IEventDriver
-{
+export default class SynchronousDriver implements IEventDriver {
+
     /**
      * Run all the events immediatly 
      * @param event 
@@ -20,4 +20,5 @@ export default class SynchronousDriver implements IEventDriver
             await listener.handle(event.payload);
         }
     }
+
 }

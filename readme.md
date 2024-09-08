@@ -14,27 +14,30 @@ A TypeScript Node.js framework built with Express and MongoDB.
 
 Larascript Node is a robust backend API framework designed for rapid development. It leverages TypeScript for enhanced code quality and developer experience, Express for efficient routing and middleware support, MongoDB for flexible data storage, and JSON Web Tokens (JWTs) for secure authentication. This combination allows developers to quickly build and deploy scalable, type-safe APIs with built-in best practices and patterns.
 
-# Inspiration
+## Documentation
+
+For comprehensive guides and in-depth explanations of Larascript Node's core features, please visit our official documentation at [https://www.larascriptnode.com](https://www.larascriptnode.com/).
+
+## Inspiration
 
 Larascript Node draws significant inspiration from Laravel, the popular PHP framework known for its elegant syntax and developer-friendly features. Like Laravel, this project aims to provide a smooth and enjoyable development experience in the Node.js ecosystem. We've adapted many of Laravel's beloved concepts and design patterns to TypeScript and Node.js, including the use of models, events, observers, and service providers. Our goal is to bring the "developer happiness" philosophy of Laravel to the world of Node.js, offering a structured yet flexible framework that makes backend development both efficient and enjoyable. While the underlying technologies differ, the spirit of rapid development, clean code, and powerful features that made Laravel so popular in the PHP world is at the heart of Larascript Node.
 
 ## Core Features
 
-- App Containers
-- Express & Routing 
-- Authentication (JWTs)
-- MongoDB
+- Testing (Jest)
+- Providers
+- Express 
+- Built in Authentication
+- Multi-Database support (MongoDB & Postgres)
 - Models
-- Events
+- Repositories
+- Events & Queues
+- Workers
 - Observers
 - Providers
-- Console Commands
-- Queue Workers
-- Maker
+- Commands and CLI 
+- Make 
 
-## Documentation
-
-For comprehensive guides and in-depth explanations of Larascript Node's core features, please visit our official documentation at [https://www.larascriptnode.com](https://www.larascriptnode.com/).
 
 ## Coding standards
 

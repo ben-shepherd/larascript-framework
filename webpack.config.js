@@ -13,6 +13,16 @@ module.exports = {
     extensions: ['.ts', '.js'],
     alias: {
       '@src': path.resolve(__dirname, 'src/'),
+    },
+    fallback: {
+      kerberos: false,
+      '@mongodb-js/zstd': false,
+      '@aws-sdk/credential-providers': false,
+      'gcp-metadata': false,
+      snappy: false,
+      socks: false,
+      aws4: false,
+      'mongodb-client-encryption': false
     }
   },
   module: {

@@ -1,21 +1,28 @@
+import 'dotenv/config';
 import 'tsconfig-paths/register';
 
 import appConfig from '@src/config/app';
 import Kernel from "@src/core/Kernel";
-import { App } from '@src/core/services/App';
+import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 
-(async() => {
-    require('dotenv').config();
+(async () => {
+    await Kernel.boot({
+        ...appConfig,
+        providers: [
+            new TestDatabaseProvider(),
+            ...appConfig.providers,
+        ]
+    }, {
+        withoutProvider: ['DatabaseProvider']
+    })
 
-    await Kernel.boot(appConfig, {})
-
-    const auth = App.container('auth');
-    const mongodb = App.container('mongodb');
-    const events = App.container('events')
-    const express = App.container('express')
-    const cnsl = App.container('console');
-    const validator = App.container('validate')
+    // const auth = App.container('auth');
+    // const db = App.container('db');
+    // const events = App.container('events')
+    // const express = App.container('express')
+    // const cnsl = App.container('console');
+    // const validator = App.container('validate')
 
     // add your tinkers below
-    
-})();
+
+})(); 

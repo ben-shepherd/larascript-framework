@@ -6,8 +6,8 @@ import healthRoute from '@src/core/domains/express/routes/health';
 import Kernel from "@src/core/Kernel";
 import { App } from '@src/core/services/App';
 
-export default class RoutesProvider extends BaseProvider
-{
+export default class RoutesProvider extends BaseProvider {
+
     protected config: IExpressConfig = httpConfig;
     
     public async register(): Promise<void> {
@@ -38,4 +38,5 @@ export default class RoutesProvider extends BaseProvider
     private registerHealthRoute(): void {
         App.container('express').bindRoutes(healthRoute);
     }
+
 }

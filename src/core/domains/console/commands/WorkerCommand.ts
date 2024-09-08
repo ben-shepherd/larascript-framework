@@ -34,4 +34,5 @@ export default class WorkerCommand extends BaseCommand {
 
         return process.env.APP_WORKER_DRIVER ?? 'queue';
     }
+
 }

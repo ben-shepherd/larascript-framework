@@ -4,6 +4,7 @@ import MakeActionCommand from '@src/core/domains/make/commands/MakeActionCommand
 import MakeCmdCommand from '@src/core/domains/make/commands/MakeCmdCommand';
 import MakeListenerCommand from '@src/core/domains/make/commands/MakeListenerCommand';
 import MakeMiddlewareCommand from '@src/core/domains/make/commands/MakeMiddlewareCommand';
+import MakeMigrationCommand from '@src/core/domains/make/commands/MakeMigrationCommand';
 import MakeModelCommand from '@src/core/domains/make/commands/MakeModelCommand';
 import MakeObserverCommand from '@src/core/domains/make/commands/MakeObserverCommand';
 import MakeProviderCommand from '@src/core/domains/make/commands/MakeProviderCommand';
@@ -34,8 +35,7 @@ const getArrayOfCommandTypes = (): string[] => {
  * @param collectionName 
  * @returns 
  */
-const getParsedArguments = (fileName: string, collectionName: string): ParsedArgumentsArray => 
-{
+const getParsedArguments = (fileName: string, collectionName: string): ParsedArgumentsArray => {
     return [
         {
             type: KeyPair,
@@ -58,34 +58,36 @@ const getParsedArguments = (fileName: string, collectionName: string): ParsedArg
  */
 const getCommandCtorByType = (type: typeof targetDirectories[string]): CommandCtor<BaseMakeFileCommand> => {
     switch(type) {
-        case 'Repository':
-            return MakeRepositoryCommand;
-        case 'Model':
-            return MakeModelCommand;
-        case 'Listener':
-            return MakeListenerCommand;
-        case 'Subscriber':
-            return MakeSubscriberCommand;
-        case 'Service':
-            return MakeServiceCommand;
-        case 'Singleton':
-            return MakeSingletonCommand;
-        case 'Command':
-            return MakeCmdCommand;
-        case 'Observer':
-            return MakeObserverCommand;
-        case 'Provider':
-            return MakeProviderCommand;
-        case 'Routes':
-            return MakeRoutesCommand;
-        case 'Middleware':
-            return MakeMiddlewareCommand;
-        case 'Action':
-            return MakeActionCommand;
-        case 'Validator':
-            return MakeValidatorCommand;
-        default:
-            throw new Error('Unknown command type')
+    case 'Repository':
+        return MakeRepositoryCommand;
+    case 'Model':
+        return MakeModelCommand;
+    case 'Listener':
+        return MakeListenerCommand;
+    case 'Subscriber':
+        return MakeSubscriberCommand;
+    case 'Service':
+        return MakeServiceCommand;
+    case 'Singleton':
+        return MakeSingletonCommand;
+    case 'Command':
+        return MakeCmdCommand;
+    case 'Observer':
+        return MakeObserverCommand;
+    case 'Provider':
+        return MakeProviderCommand;
+    case 'Routes':
+        return MakeRoutesCommand;
+    case 'Middleware':
+        return MakeMiddlewareCommand;
+    case 'Action':
+        return MakeActionCommand;
+    case 'Validator':
+        return MakeValidatorCommand;
+    case 'Migration':
+        return MakeMigrationCommand;
+    default:
+        throw new Error(`Unknown command type '${type}'`)
     }
 }
 

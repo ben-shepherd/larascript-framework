@@ -11,7 +11,7 @@ export interface EventServiceConfig {
 
 export interface IEventService {
     config: EventServiceConfig;
-    dispatch<Payload extends IEventPayload>(event: IEvent<Payload>): void;
+    dispatch<Payload extends IEventPayload>(event: IEvent<Payload>): Promise<void>;
     getListenersByEventName(eventName: string): EventListenerConstructor[];
     getDriver(driverName: string): IDriverConfig;
 }

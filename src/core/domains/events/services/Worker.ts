@@ -8,10 +8,9 @@ import WorkerModel from "@src/core/domains/events/models/WorkerModel";
 import EventSubscriber from "@src/core/domains/events/services/EventSubscriber";
 import DriverOptions from "@src/core/domains/events/services/QueueDriverOptions";
 import { App } from "@src/core/services/App";
-import { ObjectId } from "mongodb";
 
-export default class Worker extends Singleton 
-{
+export default class Worker extends Singleton {
+
     /**
      * Queue driver options
      */
@@ -42,7 +41,7 @@ export default class Worker extends Singleton
         // Fetch the current list of queued results
         const workerResults: WorkerModel[] = await worker.getWorkerResults(this.options.queueName)
     
-        this.log('collection: ' + new this.options.workerModelCtor().collection)
+        this.log('collection: ' + new this.options.workerModelCtor().table)
         this.log(`${workerResults.length} queued items with queue name '${this.options.queueName}'`)
     
         for(const workerModel of workerResults) {
@@ -84,35 +83,19 @@ export default class Worker extends Singleton
      * @returns 
      */
     async getWorkerResults(queueName: string) {
-        const workerRepository = new Repository<WorkerModel>(new this.options.workerModelCtor().collection, this.options.workerModelCtor)
+        const workerRepository = new Repository<WorkerModel>(new this.options.workerModelCtor().table, this.options.workerModelCtor)
 
         return await workerRepository.findMany({
             queueName
-        }, {
-            sort: {
-                createdAt: 'descending'
-            }
         })
-    }
-
-    /**
-     * Delete the model
-     * @param model 
-     */
-    private async deleteModel(model: WorkerModel) {
-        await App.container('mongodb')
-            .getDb()
-            .collection(new this.options.workerModelCtor().collection)
-            .deleteOne({ _id: model.getId() as ObjectId })
     }
 
     /**
      * Proces the worker by dispatching it through the event driver 'sync'
      * @param model 
      */
-    async processWorkerModel(model: WorkerModel) 
-    {
-        model.collection = new this.options.workerModelCtor().collection
+    async processWorkerModel(model: WorkerModel) {
+        model.table = new this.options.workerModelCtor().table
         const eventName = model.getAttribute('eventName')
         const payload = model.getPayload() as IEventPayload
 
@@ -120,10 +103,10 @@ export default class Worker extends Singleton
         const event = new EventSubscriber(eventName as string, this.syncDriver, payload)
 
         // Dispatch the event
-        App.container('events').dispatch(event)
+        await App.container('events').dispatch(event)
 
         // Delete record as it was a success
-        await this.deleteModel(model)
+        await model.delete();
 
         this.log(`Processed: ${eventName}`)
     }
@@ -134,9 +117,8 @@ export default class Worker extends Singleton
      * @param err 
      * @returns 
      */
-    async failedWorkerModel(model: WorkerModel, err: Error)
-    {
-        model.collection = new this.options.workerModelCtor().collection;
+    async failedWorkerModel(model: WorkerModel, err: Error) {
+        model.table = new this.options.workerModelCtor().table;
 
         // Get attempts and max retreis
         const { retries } = this.options
@@ -161,8 +143,7 @@ export default class Worker extends Singleton
      * @param model 
      * @param err 
      */
-    async moveFailedWorkerModel(model: WorkerModel, err: Error)
-    {
+    async moveFailedWorkerModel(model: WorkerModel, err: Error) {
         this.log('Moved to failed')
         
         const failedWorkerModel = (new FailedWorkerModelFactory).create(
@@ -179,10 +160,11 @@ export default class Worker extends Singleton
         )
 
         await failedWorkerModel.save()
-        await this.deleteModel(model)
+        await model.delete();
     }
 
     protected log(message: string) {
         console.log('[Worker]: ', message)
     }
+
 }

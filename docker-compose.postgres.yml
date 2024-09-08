@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  api:
+    depends_on:
+      - postgres
+    environment:
+      - POSTGRES_URI=postgresql://root:example@localhost:5432/app
+
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: example
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:

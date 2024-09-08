@@ -1,14 +1,16 @@
-import { Collection, FindOptions, ObjectId } from 'mongodb';
 
+import { IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
 import ModelNotFound from '@src/core/exceptions/ModelNotFound';
 import { IModel, ModelConstructor } from '@src/core/interfaces/IModel';
-import IModelData from '@src/core/interfaces/IModelData';
 import { IRepository } from '@src/core/interfaces/IRepository';
 import { App } from '@src/core/services/App';
 
 export default class Repository<Model extends IModel> implements IRepository<Model> {
+
     public modelCtor: ModelConstructor<Model>;
+
     public collectionName!: string;
+
     public connection!: string;
 
     constructor(collectionName: string, modelConstructor: ModelConstructor<Model>) {
@@ -18,15 +20,16 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
     }
 
     /**
-     * Get the MongoDB Collection
+     * Get the query
+     * @returns 
      */
-    async collection(): Promise<Collection> {
-        return App.container('mongodb').getDb().collection(this.collectionName)
+    query(): IDocumentManager {
+        return App.container('db').documentManager(this.connection).table(this.collectionName)
     }
     
     /**
      * Find or fail if no document found
-     * @param _id 
+     * @param filter
      * @returns 
      * @throws ModelNotFound
      */
@@ -41,17 +44,18 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
     }
 
     /**
-     * Find document by _id
-     * @param _id 
+     * Find document by id
+     * @param id 
      * @returns 
      */
-    async findById(_id: string): Promise<Model | null> {
-        if(!ObjectId.isValid(_id)) {
+    async findById(id: string): Promise<Model | null> {
+        const data = await this.query().findById(id)
+
+        if(!data) {
             return null
         }
-        
-        const data = await App.container('mongodb').getDb(this.connection).collection(this.collectionName).findOne({ _id: new ObjectId(_id) }) as IModelData | null;
-        return data ? new this.modelCtor(data) : null;
+
+        return new this.modelCtor(data)
     }
 
     /**
@@ -60,17 +64,18 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @returns 
      */
     async findOne(filter: object = {}): Promise<Model | null> {
-        const data = await App.container('mongodb').getDb(this.connection).collection(this.collectionName).findOne(filter) as Model | null;
+        const data = await this.query().findOne({filter});
         return data ? new this.modelCtor(data) : null;
     }
 
     /**
      * Find multiple documents
-     * @param query 
+     * @param filter 
      * @returns 
      */
-    async findMany(query: object = {}, options?: FindOptions): Promise<Model[]> {
-        const dataArray = await App.container('mongodb').getDb(this.connection).collection(this.collectionName).find(query, options).toArray() as IModelData[];
-        return dataArray.map(data => new this.modelCtor(data));
+    async findMany(filter: object = {}, options?: object): Promise<Model[]> {
+        const dataArray = await this.query().findMany({filter}, options)
+        return (dataArray as unknown[]).map(data => new this.modelCtor(data));
     }
+
 }

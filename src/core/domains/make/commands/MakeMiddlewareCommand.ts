@@ -1,7 +1,7 @@
 import BaseMakeFileCommand from "@src/core/domains/make/base/BaseMakeFileCommand";
 
-export default class MakeMiddlewareCommand extends BaseMakeFileCommand
-{
+export default class MakeMiddlewareCommand extends BaseMakeFileCommand {
+
     constructor() {
         super({
             signature: 'make:middleware',
@@ -12,4 +12,5 @@ export default class MakeMiddlewareCommand extends BaseMakeFileCommand
             startWithLowercase: true
         })
     }
+
 }

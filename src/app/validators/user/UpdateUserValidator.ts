@@ -1,8 +1,8 @@
 import BaseValidator from "@src/core/domains/validator/base/BaseValidator";
 import Joi, { ObjectSchema } from "joi";
 
-class UpdateUserValidator extends BaseValidator
-{
+class UpdateUserValidator extends BaseValidator {
+
     rules(): ObjectSchema {
         return Joi.object({
             password: Joi.string().min(6),
@@ -10,6 +10,7 @@ class UpdateUserValidator extends BaseValidator
             lastName: Joi.string(),
         })
     }
+
 }
 
 export default UpdateUserValidator
