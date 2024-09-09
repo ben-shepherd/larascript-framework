@@ -39,7 +39,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * Get the query builder
      * @returns The query builder
      */
-    query(): IDocumentManager {
+    documentManager(): IDocumentManager {
         return App.container('db').documentManager(this.connection).table(this.collectionName)
     }
     
@@ -65,7 +65,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @returns The found model or null
      */
     async findById(id: string): Promise<Model | null> {
-        const data = await this.query().findById(id)
+        const data = await this.documentManager().findById(id)
 
         if(!data) {
             return null
@@ -80,7 +80,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @returns The found model or null
      */
     async findOne(filter: object = {}): Promise<Model | null> {
-        const data = await this.query().findOne({filter});
+        const data = await this.documentManager().findOne({filter});
         return data ? new this.modelCtor(data) : null;
     }
 
@@ -91,7 +91,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @returns The found models
      */
     async findMany(filter: object = {}, options?: object): Promise<Model[]> {
-        const dataArray = await this.query().findMany({filter}, options)
+        const dataArray = await this.documentManager().findMany({filter}, options)
         return (dataArray as unknown[]).map(data => new this.modelCtor(data));
     }
 

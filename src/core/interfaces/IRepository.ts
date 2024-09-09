@@ -28,7 +28,7 @@ export interface IRepository<Model extends IModel = IModel> {
     /**
      * Get the Database Query
      */
-    query(): IDocumentManager;
+    documentManager(): IDocumentManager;
 
     /**
      * Find or fail if no document found
