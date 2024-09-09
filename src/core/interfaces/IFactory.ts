@@ -1,3 +1,3 @@
 export default interface IFactory {
-    create: (...args: any[]) => any
+    create(...args: any[]): any;
 }
