@@ -5,7 +5,7 @@ import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumen
 
 type Client = DbTypeHelpers['client'];
 type Provider = DbTypeHelpers['provider'] extends IDatabaseProvider ? DbTypeHelpers['provider'] : IDatabaseProvider;
-type DocumentManager = DbTypeHelpers['query'] extends IDocumentManager ? DbTypeHelpers['query'] : IDocumentManager
+type DocumentManager = DbTypeHelpers['documentManager'] extends IDocumentManager ? DbTypeHelpers['documentManager'] : IDocumentManager
 type Schema = DbTypeHelpers['schema'] extends IDatabaseSchema ? DbTypeHelpers['schema'] : IDatabaseSchema;
 
 export interface IDatabaseService
