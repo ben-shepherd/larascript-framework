@@ -2,52 +2,198 @@
 
 ## 🚧 ALPHA STATUS 🚧
 
-Please note that this project is currently in Alpha. As such:
+Please note that Larascript Node is currently in Alpha:
 
-- Some features may be removed or changed without notice.
-- Certain functionalities might not work as expected.
-- We appreciate your patience as we continue to update and test.
+- Features may be subject to change or removal without prior notice.
+- Some functionalities might not perform as intended.
+- We appreciate your understanding and feedback as we continue development and testing.
 
-## Larascript Node
+## About Larascript
 
-A TypeScript Node.js framework built with Express and MongoDB.
+Larascript Node is a powerful backend framework designed to streamline the creation of RESTful APIs in JavaScript. Leveraging TypeScript for enhanced code quality and developer experience, it integrates popular packages such as Express, MongoDB, and Postgres. The framework's architecture draws inspiration from PHP's Laravel, offering a familiar and efficient structure for developers.
 
-Larascript Node is a robust backend API framework designed for rapid development. It leverages TypeScript for enhanced code quality and developer experience, Express for efficient routing and middleware support, MongoDB for flexible data storage, and JSON Web Tokens (JWTs) for secure authentication. This combination allows developers to quickly build and deploy scalable, type-safe APIs with built-in best practices and patterns.
+## Your Guide to Mastering Larascript Node
 
-## Documentation
+For comprehensive guides and detailed explanations of Larascript Node's features, please visit our official documentation at [https://www.larascriptnode.com](https://www.larascriptnode.com/).
 
-For comprehensive guides and in-depth explanations of Larascript Node's core features, please visit our official documentation at [https://www.larascriptnode.com](https://www.larascriptnode.com/).
+## Framework Foundations
 
-## Inspiration
+- Comprehensive testing suite (Jest)
+- Service providers
+- Express integration
+- Robust authentication system
+- Multi-database support (MongoDB & Postgres)
+- Eloquent-inspired models
+- Repository pattern implementation
+- Event-driven architecture with queues
+- Background workers
+- Observer pattern
+- Command-line interface (CLI) with customizable commands
+- Code generation templates
 
-Larascript Node draws significant inspiration from Laravel, the popular PHP framework known for its elegant syntax and developer-friendly features. Like Laravel, this project aims to provide a smooth and enjoyable development experience in the Node.js ecosystem. We've adapted many of Laravel's beloved concepts and design patterns to TypeScript and Node.js, including the use of models, events, observers, and service providers. Our goal is to bring the "developer happiness" philosophy of Laravel to the world of Node.js, offering a structured yet flexible framework that makes backend development both efficient and enjoyable. While the underlying technologies differ, the spirit of rapid development, clean code, and powerful features that made Laravel so popular in the PHP world is at the heart of Larascript Node.
+## Larascript Node in Action: Real-World Code Examples
 
-## Core Features
+Below are some examples of how you can use Larascript Node.
 
-- Testing (Jest)
-- Providers
-- Express 
-- Built in Authentication
-- Multi-Database support (MongoDB & Postgres)
-- Models
-- Repositories
-- Events & Queues
-- Workers
-- Observers
-- Providers
-- Commands and CLI 
-- Make 
+### Models
 
+Here is an example of model. The ApiToken is responsible for handling user tokens.
 
-## Coding standards
+```typescript
+class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
 
-To ensure consistency and maintain code quality across the project, we adhere to a set of coding standards. For detailed guidelines and best practices, please refer to our [Coding Standards document](standards.md).
+    /**
+     * Required ApiToken fields
+     *
+     * @field userId The user this token belongs to
+     * @field token The token itself
+     * @field revokedAt The date and time the token was revoked (null if not revoked)
+     */
+    public fields: string[] = [
+        'userId',
+        'token',
+        'revokedAt'
+    ]
+
+    /**
+     * Disable createdAt and updatedAt timestamps
+     */
+    public timestamps: boolean = false;
+
+    /**
+     * Finds the related user for this ApiToken
+     * @returns The user model if found, or null if not
+     */
+    public async user(): Promise<IUserModel | null> {
+        return this.belongsTo(User, {
+            localKey: 'userId',
+            foreignKey: 'id',
+        })
+    }   
+
+}
+```
+
+## Repositories
+
+Here is an example of a repository.
+
+```typescript
+export default class UserRepository extends Repository<User> implements IUserRepository {
+
+    constructor() {
+        super('users', User)
+    }
+
+    /**
+     * Finds a User by their email address
+     * @param email 
+     * @returns 
+     */
+    public async findOneByEmail(email: string): Promise<User | null> {
+        return await this.findOne({ email })
+    }
+
+}
+```
+
+## Migration
+
+Here is an example of a migration used to create the ApiToken table.
+
+```typescript
+export class CreateApiTokenMigration extends BaseMigration {
+
+    group?: string = 'app:setup';
+
+    async up(): Promise<void> {
+        await this.schema.createTable(new ApiToken(null).table, {
+            userId: DataTypes.STRING,
+            token: DataTypes.STRING,
+            revokedAt: DataTypes.DATE
+        })
+    }
+
+    async down(): Promise<void> {
+        await this.schema.dropTable(new ApiToken(null).table);
+    }
+}
+```
+
+## Validator
+
+Here is an example of a Validator used to update a user.
+
+```typescript
+class UpdateUserValidator extends BaseValidator {
+
+    rules(): ObjectSchema {
+        return Joi.object({
+            password: Joi.string().min(6),
+            firstName: Joi.string(),
+            lastName: Joi.string(),
+        })
+    }
+
+}
+```
+
+## Provider
+
+Here is an example of our ConsoleProvider which boots up the commands system.
+
+```typescript
+export default class ConsoleProvider extends BaseProvider {
+
+    /**
+     * Register method
+     * Called when the provider is being registered
+     * Use this method to set up any initial configurations or services
+     */
+    async register(): Promise<void> {
+        this.log('Registering ConsoleProvider');
+
+        /**
+         * Add the console service to the container
+         */
+        App.setContainer('console', new ConsoleService())
+
+        /**
+         * Register commands from @src/config/app
+         */
+        App.container('console').register().registerAll(commandsConfig)
+    }
+
+    /**
+     * Boot method
+     * Called after all providers have been registered
+     * Use this method to perform any actions that require other services to be available
+     */
+    async boot(): Promise<void> {}
+
+}
+```
+
+## Coding Standards
+
+To maintain consistency and code quality across the project, we adhere to a set of coding standards. For detailed guidelines and best practices, please refer to our [Coding Standards document](standards.md).
+
+## How Laravel Inspired Our Node.js Journey
+
+Larascript Node is heavily influenced by Laravel, the renowned PHP framework celebrated for its elegant syntax and developer-friendly approach. We've adapted many of Laravel's beloved concepts and design patterns to the Node.js ecosystem, including models, events, observers, and service providers. 
+
+Our aim is to bring Laravel's "developer happiness" philosophy to Node.js, offering a structured yet flexible framework that enhances both efficiency and enjoyment in backend development. While the underlying technologies differ, Larascript Node embodies the spirit of rapid development, clean code, and powerful features that have made Laravel a favorite in the PHP world.
 
 ## Author
+
+LinkedIn: [Visit Benjamin's LinkedIn](https://www.linkedin.com/in/benjamin-programmer/)
+
+Contact Email: [ben.shepherd@gmx.com](mailto:ben.shepherd@gmx.com)
+
+## GitHub Metrics
 
 ![ben-shepherd's Stats](https://github-readme-stats.vercel.app/api?username=ben-shepherd&theme=dracula&show_icons=true&hide_border=false&count_private=true)
 
 ![ben-shepherd's Streak](https://github-readme-streak-stats.herokuapp.com/?user=ben-shepherd&theme=dracula&hide_border=false)
 
-![ben-shepherd's Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=ben-shepherd&theme=dracula&show_icons=true&hide_border=false&layout=compact)
-
+![ben-shepherd's Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=ben-shepherd&theme=dracula&show_icons=true&hide_border=false&layout=compact) 
