@@ -2,8 +2,8 @@ import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumen
 import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import IWithObserve from "@src/core/domains/observer/interfaces/IWithObserve";
-import IModelData from "@src/core/interfaces/IModelData";
 import { ICtor } from "@src/core/interfaces/ICtor";
+import IModelData from "@src/core/interfaces/IModelData";
 
 export type GetDataOptions = {excludeGuarded: boolean}
 
@@ -22,6 +22,7 @@ export interface IModel<Data extends IModelData = IModelData> extends IWithObser
     data: Data | null;
     dates: Dates;
     timestamps: boolean;
+    json: string[];
     observeProperties: Record<string, string>;
     prepareDocument<T = object>(): T;
     getDocumentManager(): IDocumentManager;
