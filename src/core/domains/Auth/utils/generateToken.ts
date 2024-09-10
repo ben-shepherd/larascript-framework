@@ -1,3 +1,9 @@
-import crypto from 'crypto'
+import crypto, { BinaryToTextEncoding } from 'crypto'
 
-export default (size: number = 64, bufferEncoding: BufferEncoding = 'hex'): string => crypto.randomBytes(size).toString(bufferEncoding)
+/**
+ * Generates a random token of the given size (in bytes) and encoding.
+ * @param {number} [size=64] The size of the token in bytes.
+ * @param {BinaryToTextEncoding} [bufferEncoding='hex'] The encoding to use when converting the buffer to a string.
+ * @returns {string} A random token as a string.
+ */
+export default (size: number = 64, bufferEncoding: BinaryToTextEncoding = 'hex'): string => crypto.randomBytes(size).toString(bufferEncoding)

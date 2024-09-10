@@ -1,6 +1,6 @@
-enum Roles {
-    ADMIN = 'admin',
-    USER = 'user'
-}
+const roles = Object.freeze({
+    USER: 'user',
+    ADMIN: 'admin'
+})
 
-export default Roles
+export default roles

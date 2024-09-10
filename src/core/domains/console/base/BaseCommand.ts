@@ -1,8 +1,8 @@
-import readline from 'readline';
 import CommandExecutionException from "@src/core/domains/console/exceptions/CommandExecutionException";
 import { ICommand } from "@src/core/domains/console/interfaces/ICommand";
 import { KeyPair, KeyPairArguementType, OnlyArguement, ParsedArguement, ParsedArgumentsArray } from "@src/core/domains/console/parsers/CommandArgumentParser";
 import ConsoleInputService from "@src/core/domains/console/service/ConsoleInputService";
+import readline from 'readline';
 
 /**
  * Base command class
@@ -71,6 +71,7 @@ export default abstract class BaseCommand implements ICommand {
      * @param args
      * @returns
      */
+    // eslint-disable-next-line no-unused-vars
     abstract execute(...args: any[]): any;
 
     /**
