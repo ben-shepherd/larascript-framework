@@ -138,6 +138,7 @@ abstract class BaseDocumentManager<
             throw err
         }
     }
+
 }
 
 export default BaseDocumentManager

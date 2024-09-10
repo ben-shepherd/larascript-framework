@@ -33,6 +33,8 @@ export default [...compat.extends("eslint:recommended"), {
     },
 
     rules: {
+        "no-empty": "off",
+        "no-var": "error",
         "no-unused-vars": "warn",
         "sort-imports": ["error", {
             ignoreDeclarationSort: true,
@@ -42,7 +44,6 @@ export default [...compat.extends("eslint:recommended"), {
             "newlines-between": "always",
         }],
         "no-const-assign": "error",
-        "no-var": "warn",
         "prefer-const": ["error", {
             destructuring: "any",
             ignoreReadBeforeAssign: false,
@@ -60,7 +61,7 @@ export default [...compat.extends("eslint:recommended"), {
             ImportDeclaration: { multiline: true, consistent: true },
             ExportDeclaration: { multiline: true, consistent: true },
         }],
-        "class-methods-use-this": ["error", {
+        "class-methods-use-this": ["off", {
             exceptMethods: [],
         }],
         "lines-between-class-members": ["error", "always", {

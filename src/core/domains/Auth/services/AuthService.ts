@@ -1,6 +1,8 @@
 import Service from '@src/core/base/Service';
 import InvalidJWTSecret from '@src/core/domains/auth/exceptions/InvalidJWTSecret';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
+import ApiTokenFactory from '@src/core/domains/auth/factory/apiTokenFactory';
+import JWTTokenFactory from '@src/core/domains/auth/factory/jwtTokenFactory';
 import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IApiTokenRepository from '@src/core/domains/auth/interfaces/IApiTokenRepository';
 import { IAuthConfig } from '@src/core/domains/auth/interfaces/IAuthConfig';
@@ -13,8 +15,6 @@ import comparePassword from '@src/core/domains/auth/utils/comparePassword';
 import createJwt from '@src/core/domains/auth/utils/createJwt';
 import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';
 import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
-import ApiTokenFactory from '@src/core/domains/auth/factory/apiTokenFactory';
-import JWTTokenFactory from '@src/core/domains/auth/factory/jwtTokenFactory';
 
 export default class AuthService extends Service<IAuthConfig> implements IAuthService {
 
@@ -83,7 +83,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
         if(!apiToken?.data?.userId) {
             throw new Error('Invalid token');
         }
-        const payload = new JWTTokenFactory().create(apiToken.data?.userId?.toString(), apiToken.data?.token);
+        const payload = JWTTokenFactory.create(apiToken.data?.userId?.toString(), apiToken.data?.token);
         return createJwt(this.config.jwtSecret, payload, '1d');
     }
 
@@ -149,8 +149,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * 
      * @returns an array of IRoute objects, or null if auth routes are disabled
      */
-    getAuthRoutes(): IRoute[] | null
-    {
+    getAuthRoutes(): IRoute[] | null {
         if(!this.config.enableAuthRoutes) {
             return null
         }
@@ -163,4 +162,5 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
 
         return routes;
     }
+
 }

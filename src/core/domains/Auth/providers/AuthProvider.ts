@@ -35,4 +35,5 @@ export default class AuthProvider extends BaseProvider {
     }
 
     public async boot(): Promise<void> {}
+
 }

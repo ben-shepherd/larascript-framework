@@ -9,6 +9,7 @@ class TestConsoleProvider extends BaseProvider {
     }
 
     async boot(): Promise<void> { /* nothing to boot */ }
+
 }
 
 export default TestConsoleProvider

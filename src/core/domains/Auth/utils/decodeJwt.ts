@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken'
-
 import { IJSonWebToken } from '@src/core/domains/auth/interfaces/IJSonWebToken'
 
 /**

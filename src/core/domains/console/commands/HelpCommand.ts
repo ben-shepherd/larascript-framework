@@ -3,15 +3,11 @@ import { App } from "@src/core/services/App";
 
 export default class HelpCommand extends BaseCommand {
 
-    /**
-     * The signature of the command
-     */
     signature: string = 'help';
 
     description = 'List all available commands';
 
     public keepProcessAlive = false;
-
 
     /**
      * Execute the command
@@ -41,4 +37,5 @@ export default class HelpCommand extends BaseCommand {
             this.input.writeLine();
         });
     }
+
 }

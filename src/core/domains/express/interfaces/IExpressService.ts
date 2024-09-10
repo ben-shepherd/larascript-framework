@@ -9,4 +9,5 @@ export default interface IExpressService {
     listen(): Promise<void>;
     getConfig(): IExpressConfig | null;
     isEnabled(): boolean;
+    getRoutes(): IRoute[];
 }

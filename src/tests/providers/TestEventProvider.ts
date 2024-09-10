@@ -36,6 +36,7 @@ class TestEventProvider extends EventProvider {
             ]
         }
     }
+
 }
 
 export default TestEventProvider

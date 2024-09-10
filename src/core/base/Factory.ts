@@ -32,4 +32,5 @@ export default abstract class Factory<Model, Data> implements IFactory {
     create(data: Data): Model {
         return new this.modelCtor(data)
     }
+
 }

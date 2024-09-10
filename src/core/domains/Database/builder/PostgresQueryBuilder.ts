@@ -51,7 +51,7 @@ class PostgresQueryBuilder {
      * @returns 
      */
     orderByClause(orders: Record<string, 'ASC' | 'DESC'>[] = []): string {
-        let queryStr = '';
+        const queryStr = '';
 
         return orders.map((order) => {
             return Object.keys(order).map((key) => {

@@ -23,8 +23,8 @@ class CommandBootService implements ICommandBootService {
     getKernelOptions = (args: string[], options: KernelOptions): KernelOptions => {
         options.withoutProvider = [...(options.withoutProvider ?? [])];
 
-        if(args.length) {
-            options.withoutProvider = ['ExpressProvider', 'RoutesProvider']
+        if(args.includes('--no-express')) {
+            options.withoutProvider = ['ExpressProvider']
         }
         if(args.includes('--no-auth')) {
             options.withoutProvider?.push('AuthProvider');

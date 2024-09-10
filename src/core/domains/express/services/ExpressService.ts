@@ -6,14 +6,13 @@ import { Middleware } from '@src/core/interfaces/Middleware.t';
 import { App } from '@src/core/services/App';
 import express from 'express';
 
-
 export default class ExpressService extends Service<IExpressConfig> implements IExpressService {
 
     protected config!: IExpressConfig | null;
 
     private app: express.Express
 
-    className: string = 'Express';
+    private registedRoutes: IRoute[] = [];
     
     /**
      * Config defined in @src/config/http/express.ts
@@ -87,6 +86,8 @@ export default class ExpressService extends Service<IExpressConfig> implements I
         default:
             throw new Error(`Unsupported method ${route.method} for path ${route.path}`);
         }    
+
+        this.registedRoutes.push(route)
     }
 
     /**
@@ -123,6 +124,14 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      */
     public isEnabled(): boolean {
         return this.config?.enabled ?? false
+    }
+
+    /**
+     * Get all registered routes
+     * @returns array of IRoute
+     */
+    public getRoutes(): IRoute[] {
+        return this.registedRoutes
     }
 
 }

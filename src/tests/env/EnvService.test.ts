@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { describe } from '@jest/globals';
 import EnvService from '@src/core/services/EnvService';
 import fs from 'fs';

@@ -19,17 +19,17 @@ export default class WorkerCommand extends BaseCommand {
     /**
      * Execute the command
      */
-    
+
     async execute() {
         const driver = this.getDriverName();
         const worker = Worker.getInstance()
         worker.setDriver(driver)
 
-        console.log('Running worker...', worker.options)        
-    
+        console.log('Running worker...', worker.options)
+
         await worker.work();
-        
-        if(worker.options.runOnce) {
+
+        if (worker.options.runOnce) {
             return;
         }
 
@@ -42,8 +42,9 @@ export default class WorkerCommand extends BaseCommand {
     /**
      * Get the driver name based on the environment
      */
+     
     getDriverName() {
-        if(App.env() === 'testing') {
+        if (App.env() === 'testing') {
             return 'testing';
         }
 

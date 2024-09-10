@@ -73,4 +73,5 @@ export default class User extends Model<IUserData> implements IUserModel {
             filters
         }) 
     }
+
 }
