@@ -1,14 +1,9 @@
-import apiRoutes from "@src/app/routes/api";
 import BaseProvider from "@src/core/base/Provider";
 import ExpressProvider from "@src/core/domains/express/providers/ExpressProvider";
+import healthRoutes from "@src/core/domains/express/routes/healthRoutes";
 import Kernel from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
-
-/**
- * Interface for AppProvider configuration
- * Adjust your AppProviderConfig here as needed
- */
-export interface AppProviderConfig {}
+import apiRoutes from "../routes/api";
 
 /**
  * AppProvider class
@@ -16,13 +11,11 @@ export interface AppProviderConfig {}
  */
 export default class AppProvider extends BaseProvider {
 
-    // Configuration object for the AppProvider
-    protected config: AppProviderConfig = {};
-
     /**
      * Register method
      * Called when the provider is being registered
      * Use this method to set up any initial configurations or services
+     * @returns Promise<void>
      */
     public async register(): Promise<void> {
         this.log('Registering AppProvider');
@@ -35,6 +28,7 @@ export default class AppProvider extends BaseProvider {
      * Boot method
      * Called after all providers have been registered
      * Use this method to perform any actions that require other services to be available
+     * @returns Promise<void>
      */
     public async boot(): Promise<void> {
         this.log('Booting AppProvider');
@@ -50,15 +44,22 @@ export default class AppProvider extends BaseProvider {
     /**
      * Setup routing files
      * Binds API routes to the Express instance if ExpressProvider is ready
+     * @private
      */
     private addApiRoutes(): void {
+
         // Check if ExpressProvider is ready before binding routes
         if(!Kernel.isProviderReady(ExpressProvider.name)) {
             return;
         }
+
+        const expressService = App.container('express');
+        const authService = App.container('auth');
         
-        // Bind API routes to the Express instance
-        App.container('express').bindRoutes(apiRoutes);
+        // Bind routes
+        expressService.bindRoutes(healthRoutes);
+        expressService.bindRoutes(authService.getAuthRoutes() ?? [])
+        expressService.bindRoutes(apiRoutes);
     }
 
 }

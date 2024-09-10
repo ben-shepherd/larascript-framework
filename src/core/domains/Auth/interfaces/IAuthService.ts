@@ -3,6 +3,7 @@ import IApiTokenRepository from "@src/core/domains/auth/interfaces/IApiTokenRepo
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import IUserRepository from "@src/core/domains/auth/interfaces/IUserRepository";
 import IService from "@src/core/interfaces/IService";
+import { IRoute } from "../../express/interfaces/IRoute";
 
 
 export interface IAuthService extends IService {
@@ -15,5 +16,6 @@ export interface IAuthService extends IService {
     revokeToken: (apiToken: IApiTokenModel) => Promise<void>
     attemptCredentials: (email: string, password: string) => Promise<string>
     jwt: (apiToken: IApiTokenModel) => string
+    getAuthRoutes(): IRoute[] | null
 }
 
