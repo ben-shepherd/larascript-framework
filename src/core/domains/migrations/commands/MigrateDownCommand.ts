@@ -9,6 +9,8 @@ class MigrateDownCommand extends BaseCommand {
      */
     public signature: string = 'migrate:down';
 
+    description = 'Rollback migrations';
+
     /**
      * Constructor.
      * @param config

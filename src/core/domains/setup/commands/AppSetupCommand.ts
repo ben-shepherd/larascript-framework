@@ -12,7 +12,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
 
     public signature = 'app:setup';
 
-    public description = 'Setup the application';
+    public description = 'Runs the app setup process.';
 
     rl: readline.Interface;
 

@@ -9,6 +9,8 @@ export default class WorkerCommand extends BaseCommand {
      */
     signature: string = 'worker';
 
+    description = 'Run the worker to process queued event items';
+
     /**
      * Whether to keep the process alive after command execution
      */

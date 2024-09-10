@@ -12,6 +12,8 @@ class MigrateUpCommand extends BaseCommand {
      */
     public signature: string = 'migrate:up';
 
+    description = 'Run up migrations';
+
     /**
      * Constructor
      * @param config
