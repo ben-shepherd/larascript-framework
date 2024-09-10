@@ -50,6 +50,17 @@ class PostgresSchema extends BaseDatabaseSchema<Postgres> {
     }
 
     /**
+     * Alter a table
+     * @param name - The name of the table to alter
+     * @param args - Additional arguments for table alteration
+     * @returns Promise resolving to void
+     * @throws Error if the method is not implemented
+     */
+    alterTable(name: string, ...args: any[]): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+
+    /**
      * Check if table exists
      * @param name 
      * @returns 

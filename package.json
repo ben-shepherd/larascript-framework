@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack --color",
     "fix-imports": "node fix-imports.js",
-    "eslint": "npx eslint --fix src",
+    "fix-eslint": "npx eslint --fix src",
+    "fix": "yarn run fix-eslint && yarn run fix-imports",
     "start": "node ./dist/app.js",
     "dev": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register ./src/app.ts",
     "dev:tinker": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register ./src/tinker.ts",

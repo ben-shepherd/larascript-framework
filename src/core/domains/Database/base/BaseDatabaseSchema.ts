@@ -20,9 +20,7 @@ abstract class BaseDatabaseSchema<Provider extends IDatabaseProvider = IDatabase
         this.driver = driver;
     }
 
-    alterTable(name: string, ...args: any[]): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
+    abstract alterTable(name: string, ...args: any[]): Promise<void>;
 
     /**
      * Abstract method to create a new table in the database
