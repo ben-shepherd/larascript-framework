@@ -34,7 +34,6 @@ export default [...compat.extends("eslint:recommended"), {
 
     rules: {
         "no-unused-vars": "warn",
-        "no-var": "error",
         "sort-imports": ["error", {
             ignoreDeclarationSort: true,
         }],
@@ -43,7 +42,7 @@ export default [...compat.extends("eslint:recommended"), {
             "newlines-between": "always",
         }],
         "no-const-assign": "error",
-        "no-var": "",
+        "no-var": "warn",
         "prefer-const": ["error", {
             destructuring: "any",
             ignoreReadBeforeAssign: false,
