@@ -74,7 +74,7 @@ export default class BaseMakeFileCommand extends BaseCommand {
     /**
      * Base logic for making a new file
      */
-    public execute = async () => {
+    async execute() {
         this.prepareArguments();
         this.prepareMakeFileService();
 

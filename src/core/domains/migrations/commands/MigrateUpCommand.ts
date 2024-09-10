@@ -25,7 +25,7 @@ class MigrateUpCommand extends BaseCommand {
     /**
      * Execute the command
      */
-    execute = async () => {
+    async execute() {
         // Read the arguments
         const file = this.getArguementByKey('file')?.value;
         const group = this.getArguementByKey('group')?.value;

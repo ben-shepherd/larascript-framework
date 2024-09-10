@@ -8,8 +8,6 @@ export default abstract class BaseCommand implements ICommand {
 
     public description?: string;
 
-    public execute!: (...args: any[]) => any;
-
     public keepProcessAlive?: boolean = false;
 
     protected parsedArgumenets: ParsedArgumentsArray = [];
@@ -21,6 +19,9 @@ export default abstract class BaseCommand implements ICommand {
     constructor(config: object = {}) {
         this.config = config;
     }
+
+    
+    abstract execute(...args: any[]): any;
 
     /**
      * Set the parsed arguements

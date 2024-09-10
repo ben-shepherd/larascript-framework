@@ -1,6 +1,6 @@
 import { ParsedArgumentsArray } from "@src/core/domains/console/parsers/CommandArgumentParser";
 
-export type ICommandConstructor<Command extends ICommand = ICommand> = new (...args: any[]) => Command
+export type ICommandConstructor<T extends ICommand = ICommand> = new (...args: any[]) => T
 
 export interface ICommand {
     signature: string;

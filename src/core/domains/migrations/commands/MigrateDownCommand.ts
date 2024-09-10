@@ -22,7 +22,7 @@ class MigrateDownCommand extends BaseCommand {
     /**
      * Execute the command.
      */
-    execute = async () => {
+    async execute() {
         // Read the arguments
         const batch = this.getArguementByKey('batch')?.value;
         

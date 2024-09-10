@@ -44,7 +44,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
     /**
      * Executes the command
      */
-    public execute = async () => {
+    async execute() {
         let count = 1;
 
         this.input.clearScreen();

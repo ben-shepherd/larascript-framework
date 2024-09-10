@@ -4,11 +4,21 @@ import { App } from "@src/core/services/App";
 
 export default class WorkerCommand extends BaseCommand {
 
+    /**
+     * The signature of the command
+     */
     signature: string = 'worker';
 
+    /**
+     * Whether to keep the process alive after command execution
+     */
     public keepProcessAlive = true;
+
+    /**
+     * Execute the command
+     */
     
-    execute = async () => {
+    async execute() {
         const driver = this.getDriverName();
         const worker = Worker.getInstance()
         worker.setDriver(driver)
@@ -27,6 +37,9 @@ export default class WorkerCommand extends BaseCommand {
         }, worker.options.runAfterSeconds * 1000)
     }
 
+    /**
+     * Get the driver name based on the environment
+     */
     getDriverName() {
         if(App.env() === 'testing') {
             return 'testing';
