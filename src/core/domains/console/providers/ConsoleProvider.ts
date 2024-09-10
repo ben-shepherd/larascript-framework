@@ -3,6 +3,7 @@ import BaseProvider from "@src/core/base/Provider";
 import ConsoleService from "@src/core/domains/console/service/ConsoleService";
 import { App } from "@src/core/services/App";
 import HelpCommand from "../commands/HelpCommand";
+import ListRoutesCommand from "../commands/ListRoutesCommand";
 
 export default class ConsoleProvider extends BaseProvider {
 
@@ -23,7 +24,8 @@ export default class ConsoleProvider extends BaseProvider {
          * Register internal commands
          */
         App.container('console').register().registerAll([
-            HelpCommand
+            HelpCommand,
+            ListRoutesCommand
         ]);
         
         /**
