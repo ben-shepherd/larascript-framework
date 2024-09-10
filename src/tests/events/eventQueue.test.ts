@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { beforeAll, describe, test } from '@jest/globals';
 import Repository from '@src/core/base/Repository';
 import Kernel from '@src/core/Kernel';

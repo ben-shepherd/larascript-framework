@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { describe, expect } from '@jest/globals';
 import Kernel from '@src/core/Kernel';
 import DatabaseProvider from '@src/core/domains/database/providers/DatabaseProvider';

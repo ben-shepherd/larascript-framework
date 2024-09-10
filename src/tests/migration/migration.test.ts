@@ -1,11 +1,12 @@
-import Kernel from '@src/core/Kernel';
+/* eslint-disable no-undef */
 import { describe } from '@jest/globals';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import DatabaseProvider from '@src/core/domains/database/providers/DatabaseProvider';
+import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
-import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
 import TestMigrationProvider from '@src/tests/migration/providers/TestMigrationProvider';
+import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
 
 describe('test migrations', () => {
 

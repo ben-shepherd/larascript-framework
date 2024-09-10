@@ -2,8 +2,9 @@ import { IAuthService } from '@src/core/domains/auth/interfaces/IAuthService';
 import ICommandService from '@src/core/domains/console/interfaces/ICommandService';
 import { IDatabaseService } from '@src/core/domains/database/interfaces/IDatabaseService';
 import { IEventService } from '@src/core/domains/events/interfaces/IEventService';
-import IValidatorService from '@src/core/domains/validator/interfaces/IValidatorService';
 import IExpressService from '@src/core/domains/express/interfaces/IExpressService';
+import IValidatorService from '@src/core/domains/validator/interfaces/IValidatorService';
+import readline from 'node:readline';
 
 export interface ICoreContainers {
     [key: string]: any;
@@ -37,6 +38,12 @@ export interface ICoreContainers {
      * Provided by '@src/core/domains/console/providers/ConsoleProvider'
      */
     console: ICommandService;
+
+    /**
+     * Readline interface
+     * Provided by '@src/core/domains/console/providers/ConsoleProvider'
+     */
+    readline: readline.Interface;
 
     /**
      * Validator service

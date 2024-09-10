@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { describe, test } from '@jest/globals';
 import makeTestHelper from '@src/tests/make/makeTestHelper';
 import fs from 'fs';

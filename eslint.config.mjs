@@ -33,7 +33,9 @@ export default [...compat.extends("eslint:recommended"), {
     },
 
     rules: {
+        "no-empty": "off",
         "no-var": "error",
+        "no-unused-vars": "warn",
         "sort-imports": ["error", {
             ignoreDeclarationSort: true,
         }],

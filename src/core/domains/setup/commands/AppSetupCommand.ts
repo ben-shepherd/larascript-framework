@@ -6,15 +6,12 @@ import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand'
 import buildQuestionDTOs from '@src/core/domains/setup/utils/buildQuestionDTOs';
 import { IEnvService } from '@src/core/interfaces/IEnvService';
 import EnvService from "@src/core/services/EnvService";
-import readline from 'node:readline';
 
 class AppSetupCommand extends BaseCommand implements ISetupCommand {
 
     public signature = 'app:setup';
 
     public description = 'Runs the app setup process.';
-
-    rl: readline.Interface;
 
     env: IEnvService;
 
@@ -24,12 +21,8 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
 
     constructor() {
         super();
-        this.rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout,
-        });
         this.env = new EnvService();
-        this.input = new ConsoleInputService(this.rl);
+        this.input = new ConsoleInputService();
         this.questions = buildQuestionDTOs();
     }
 
@@ -75,8 +68,6 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
         this.writeLine('--- Setup Complete ---');
         this.writeLine('Happy coding!');
         this.writeLine('');
-
-        this.rl.close();
     }
 
     /**

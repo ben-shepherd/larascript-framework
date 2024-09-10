@@ -1,11 +1,10 @@
 import { Request, Response } from "express";
 import { MongoClient } from "mongodb";
 import { Sequelize } from "sequelize";
-
-import MongoDB from "../domains/database/providers-db/MongoDB";
-import Postgres from "../domains/database/providers-db/Postgres";
-import responseError from "../domains/express/requests/responseError";
-import { App } from "../services/App";
+import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
+import Postgres from "@src/core/domains/database/providers-db/Postgres";
+import responseError from "@src/core/domains/express/requests/responseError";
+import { App } from "@src/core/services/App";
 
 /**
  * Health check endpoint

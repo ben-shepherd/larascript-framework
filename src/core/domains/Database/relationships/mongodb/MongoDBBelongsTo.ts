@@ -9,11 +9,13 @@ export default class MongoDBBelongsTo implements IBelongsTo {
     protected validator = new DocumentValidator();
 
     public async handle<T>(connection: string, document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null> {
+        const {
+            foreignTable,
+            filters: filtersOptions = {}
+        } = options
         let {
             localKey,
-            foreignTable,
             foreignKey,
-            filters: filtersOptions = {}
         } = options
 
         const localKeyValue = document[localKey];

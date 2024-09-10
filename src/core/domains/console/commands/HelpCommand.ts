@@ -7,9 +7,6 @@ export default class HelpCommand extends BaseCommand {
 
     description = 'List all available commands';
 
-    /**
-     * Whether to keep the process alive after command execution
-     */
     public keepProcessAlive = false;
 
     /**

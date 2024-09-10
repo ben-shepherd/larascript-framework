@@ -1,12 +1,13 @@
 import { IConsoleInputService } from '@src/core/domains/console/interfaces/IConsoleInputService';
+import { App } from '@src/core/services/App';
 import readline from 'node:readline';
 
 class ConsoleInputService implements IConsoleInputService {
 
     rl: readline.Interface;
 
-    constructor(rl: readline.Interface) {
-        this.rl = rl;
+    constructor() {
+        this.rl = App.container('readline');
     }
 
     /**

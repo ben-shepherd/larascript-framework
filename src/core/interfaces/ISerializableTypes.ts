@@ -1,1 +1,0 @@
-export type ISerializableTypes = number | string | boolean | undefined;

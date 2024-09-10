@@ -42,7 +42,7 @@ export default class WorkerCommand extends BaseCommand {
     /**
      * Get the driver name based on the environment
      */
-    // eslint-disable-next-line class-methods-use-this
+     
     getDriverName() {
         if (App.env() === 'testing') {
             return 'testing';

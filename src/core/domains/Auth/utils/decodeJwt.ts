@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken'
-
-import { IJSonWebToken } from '../interfaces/IJSonWebToken'
+import { IJSonWebToken } from '@src/core/domains/auth/interfaces/IJSonWebToken'
 
 /**
  * Decodes a JWT token using the provided secret.

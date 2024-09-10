@@ -1,17 +1,19 @@
+import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IHasMany, IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import IModelData from "@src/core/interfaces/IModelData";
 import { App } from "@src/core/services/App";
 import { ObjectId } from "mongodb";
-import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
 
 export default class HasMany implements IHasMany {
  
     public async handle<T = IModelData>(connection: string, document: IDatabaseDocument, options: IHasManyOptions): Promise<T[]> {
+        const {
+            foreignTable,
+            filters = {}
+        } = options
         let {
             localKey,
-            foreignTable,
             foreignKey,
-            filters = {}
         } = options;
 
         if(localKey === 'id') {
