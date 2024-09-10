@@ -1,8 +1,8 @@
-import readline from 'readline';
-import CommandExecutionException from "../exceptions/CommandExecutionException";
-import { ICommand } from "../interfaces/ICommand";
-import { KeyPair, KeyPairArguementType, OnlyArguement, ParsedArguement, ParsedArgumentsArray } from "../parsers/CommandArgumentParser";
-import ConsoleInputService from "../service/ConsoleInputService";
+import { App } from "@src/core/services/App";
+import CommandExecutionException from "@src/core/domains/console/exceptions/CommandExecutionException";
+import { ICommand } from "@src/core/domains/console/interfaces/ICommand";
+import { KeyPair, KeyPairArguementType, OnlyArguement, ParsedArguement, ParsedArgumentsArray } from "@src/core/domains/console/parsers/CommandArgumentParser";
+import ConsoleInputService from "@src/core/domains/console/service/ConsoleInputService";
 
 /**
  * Base command class
@@ -47,22 +47,13 @@ export default abstract class BaseCommand implements ICommand {
     protected input!: ConsoleInputService;
 
     /**
-     * Readline interface
-     */
-    protected rl: readline.Interface;
-
-    /**
      * Constructor
      *
      * @param config
      */
     constructor(config: object = {}) {
         this.config = config;
-        this.rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout,
-        });
-        this.input = new ConsoleInputService(this.rl);
+        this.input = new ConsoleInputService();
     }
 
     /**
@@ -138,6 +129,10 @@ export default abstract class BaseCommand implements ICommand {
      * End the process
      */
     end(): void {
+        // Close the readline
+        App.container('readline').close();
+
+        // End the process
         if(!this.keepProcessAlive) {
             process.exit();
         }

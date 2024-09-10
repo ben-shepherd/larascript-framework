@@ -3,7 +3,7 @@ import ExpressProvider from "@src/core/domains/express/providers/ExpressProvider
 import healthRoutes from "@src/core/domains/express/routes/healthRoutes";
 import Kernel from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
-import apiRoutes from "../routes/api";
+import apiRoutes from "@src/app/routes/api";
 
 /**
  * AppProvider class

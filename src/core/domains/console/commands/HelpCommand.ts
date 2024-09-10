@@ -1,13 +1,7 @@
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
 import { App } from "@src/core/services/App";
-import readline from 'node:readline';
-import ConsoleInputService from "../service/ConsoleInputService";
 
 export default class HelpCommand extends BaseCommand {
-
-    protected input!: ConsoleInputService;
-
-    rl: readline.Interface;
 
     /**
      * The signature of the command
@@ -16,20 +10,8 @@ export default class HelpCommand extends BaseCommand {
 
     description = 'List all available commands';
 
-    /**
-     * Whether to keep the process alive after command execution
-     */
     public keepProcessAlive = false;
 
-
-    constructor() {
-        super();
-        this.rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout,
-        });
-        this.input = new ConsoleInputService(this.rl);
-    }
 
     /**
      * Execute the command
