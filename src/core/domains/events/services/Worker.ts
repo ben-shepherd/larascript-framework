@@ -2,12 +2,12 @@ import Repository from "@src/core/base/Repository";
 import Singleton from "@src/core/base/Singleton";
 import { QueueDriverOptions } from "@src/core/domains/events/drivers/QueueDriver";
 import EventDriverException from "@src/core/domains/events/exceptions/EventDriverException";
-import FailedWorkerModelFactory from "@src/core/domains/events/factory/FailedWorkerModelFactory";
 import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
 import WorkerModel from "@src/core/domains/events/models/WorkerModel";
 import EventSubscriber from "@src/core/domains/events/services/EventSubscriber";
 import DriverOptions from "@src/core/domains/events/services/QueueDriverOptions";
 import { App } from "@src/core/services/App";
+import FailedWorkerModelFactory from "../factory/failedWorkerModelFactory";
 
 export default class Worker extends Singleton {
 
@@ -83,7 +83,7 @@ export default class Worker extends Singleton {
      * @returns 
      */
     async getWorkerResults(queueName: string) {
-        const workerRepository = new Repository<WorkerModel>(new this.options.workerModelCtor().table, this.options.workerModelCtor)
+        const workerRepository = new Repository<WorkerModel>(this.options.workerModelCtor)
 
         return await workerRepository.findMany({
             queueName

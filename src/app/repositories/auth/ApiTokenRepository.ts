@@ -6,7 +6,7 @@ import IApiTokenRepository from "@src/core/domains/auth/interfaces/IApiTokenRepo
 export default class ApiTokenRepository extends Repository<ApiToken> implements IApiTokenRepository {
 
     constructor() {
-        super('apiTokens', ApiToken)
+        super(ApiToken)
     }
 
     /**

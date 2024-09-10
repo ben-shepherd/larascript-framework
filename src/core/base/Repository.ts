@@ -29,8 +29,8 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @param collectionName The name of the collection/table
      * @param modelConstructor The model constructor
      */
-    constructor(collectionName: string, modelConstructor: ModelConstructor<Model>) {
-        this.collectionName = collectionName;
+    constructor(modelConstructor: ModelConstructor<Model>, collectionName?: string) {
+        this.collectionName = collectionName ?? (new modelConstructor()).table;
         this.connection = new modelConstructor().connection
         this.modelCtor = modelConstructor;
     }

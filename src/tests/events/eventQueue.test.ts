@@ -68,7 +68,7 @@ describe('mock event service', () => {
         await App.container('console').reader(['worker']).handle();
 
         // Check if the movie was created
-        const repository = new Repository<TestMovieModel>('tests', TestMovieModel);
+        const repository = new Repository<TestMovieModel>(TestMovieModel);
         const movie = await repository.findOne({ name: movieName });
         expect(typeof movie?.getId() === 'string').toBe(true)
         expect(movie?.getAttribute('name')).toBe(movieName);

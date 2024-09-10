@@ -79,7 +79,7 @@ describe('test model crud', () => {
             /**
              * Query with repository
              */
-            const repository = new Repository(new TestModel(null).table, TestModel);
+            const repository = new Repository(TestModel);
             const fetchedModel = await repository.findOne({
                 name: 'Jane'   
             })

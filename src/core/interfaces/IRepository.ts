@@ -4,7 +4,7 @@ import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 export type RepositoryConstructor<
     Model extends IModel = IModel,
     Repository extends IRepository<Model> = IRepository<Model>
-> = new (collectionName?: string, modelCtor?: ModelConstructor) => Repository;
+> = new (modelCtor?: ModelConstructor, collectionName?: string) => Repository;
 
 export type RepositoryInstance<RCtor extends RepositoryConstructor<any>> = InstanceType<RCtor>
 

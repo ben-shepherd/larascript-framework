@@ -8,8 +8,7 @@ import { Response } from 'express';
 
 export default async (req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void> => {
     try {
-        const modelInstance = new options.resource;
-        const repository = new Repository(modelInstance.table, options.resource);
+        const repository = new Repository(options.resource);
 
         const result = await repository.findById(req.params?.id);
 
