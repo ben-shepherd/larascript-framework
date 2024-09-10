@@ -1,10 +1,11 @@
 import Service from '@src/core/base/Service';
 import IExpressConfig from '@src/core/domains/express/interfaces/IExpressConfig';
+import IExpressService from '@src/core/domains/express/interfaces/IExpressService';
 import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
 import { Middleware } from '@src/core/interfaces/Middleware.t';
 import { App } from '@src/core/services/App';
 import express from 'express';
-import IExpressService from '@src/core/domains/express/interfaces/IExpressService';
+
 
 export default class ExpressService extends Service<IExpressConfig> implements IExpressService {
 

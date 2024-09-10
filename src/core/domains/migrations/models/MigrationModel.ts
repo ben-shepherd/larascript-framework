@@ -1,5 +1,4 @@
 import Model from "@src/core/base/Model";
-import { Dates } from "@src/core/interfaces/IModel";
 import IModelData from "@src/core/interfaces/IModelData";
 
 export interface MigrationModelData extends IModelData {
@@ -13,7 +12,7 @@ class MigrationModel extends Model<MigrationModelData> {
 
     table = 'migrations'
 
-    public dates: Dates = [
+    public dates = [
         'appliedAt'
     ]
 
