@@ -36,4 +36,5 @@ export default class ListRoutesCommand extends BaseCommand {
             this.input.writeLine(`- ${route.path}`);
         })
     }
+
 }

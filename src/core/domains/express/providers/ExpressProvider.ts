@@ -35,6 +35,7 @@ export default class ExpressProvider extends BaseProvider {
      * @returns Promise<void>
      */
     public async boot(): Promise<void> {
+
         /**
          * If Express is not enabled, return from the boot method
          */

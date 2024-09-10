@@ -61,6 +61,8 @@ class DatabaseService implements IDatabaseService {
     setDefaultConnectionName(name: string | null) {
         this.overrideDefaultConnectionName = name ?? undefined
     }
+
+
     /**
      * Get the DocumentManager service
      * 

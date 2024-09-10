@@ -40,6 +40,12 @@ Below are some examples of how you can use Larascript Node.
 Here is an example of model. The ApiToken is responsible for handling user tokens.
 
 ```typescript
+interface IApiTokenData extends IModelData {
+    userId: string;
+    token: string
+    revokedAt: Date | null;
+}
+
 class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
 
     /**
@@ -82,7 +88,7 @@ Here is an example of a repository.
 export default class UserRepository extends Repository<User> implements IUserRepository {
 
     constructor() {
-        super('users', User)
+        super(User)
     }
 
     /**

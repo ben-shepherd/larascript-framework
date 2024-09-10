@@ -1,7 +1,7 @@
 import authConfig from "@src/config/auth";
 import BaseProvider from "@src/core/base/Provider";
 import { App } from "@src/core/services/App";
-import { IAuthConfig } from "../interfaces/IAuthConfig";
+import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
 
 export default class AuthProvider extends BaseProvider {
 
@@ -35,4 +35,5 @@ export default class AuthProvider extends BaseProvider {
     }
 
     public async boot(): Promise<void> {}
+
 }

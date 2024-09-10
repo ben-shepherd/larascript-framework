@@ -7,7 +7,7 @@ import WorkerModel from "@src/core/domains/events/models/WorkerModel";
 import EventSubscriber from "@src/core/domains/events/services/EventSubscriber";
 import DriverOptions from "@src/core/domains/events/services/QueueDriverOptions";
 import { App } from "@src/core/services/App";
-import FailedWorkerModelFactory from "../factory/failedWorkerModelFactory";
+import FailedWorkerModelFactory from "@src/core/domains/events/factory/failedWorkerModelFactory";
 
 export default class Worker extends Singleton {
 

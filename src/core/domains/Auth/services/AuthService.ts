@@ -12,9 +12,9 @@ import authRoutes from '@src/core/domains/auth/routes/auth';
 import comparePassword from '@src/core/domains/auth/utils/comparePassword';
 import createJwt from '@src/core/domains/auth/utils/createJwt';
 import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';
-import { IRoute } from '../../express/interfaces/IRoute';
-import ApiTokenFactory from '../factory/apiTokenFactory';
-import JWTTokenFactory from '../factory/jwtTokenFactory';
+import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
+import ApiTokenFactory from '@src/core/domains/auth/factory/apiTokenFactory';
+import JWTTokenFactory from '@src/core/domains/auth/factory/jwtTokenFactory';
 
 export default class AuthService extends Service<IAuthConfig> implements IAuthService {
 
@@ -149,8 +149,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * 
      * @returns an array of IRoute objects, or null if auth routes are disabled
      */
-    getAuthRoutes(): IRoute[] | null
-    {
+    getAuthRoutes(): IRoute[] | null {
         if(!this.config.enableAuthRoutes) {
             return null
         }
@@ -163,4 +162,5 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
 
         return routes;
     }
+
 }

@@ -1,8 +1,8 @@
 import readline from 'readline';
-import CommandExecutionException from "../exceptions/CommandExecutionException";
-import { ICommand } from "../interfaces/ICommand";
-import { KeyPair, KeyPairArguementType, OnlyArguement, ParsedArguement, ParsedArgumentsArray } from "../parsers/CommandArgumentParser";
-import ConsoleInputService from "../service/ConsoleInputService";
+import CommandExecutionException from "@src/core/domains/console/exceptions/CommandExecutionException";
+import { ICommand } from "@src/core/domains/console/interfaces/ICommand";
+import { KeyPair, KeyPairArguementType, OnlyArguement, ParsedArguement, ParsedArgumentsArray } from "@src/core/domains/console/parsers/CommandArgumentParser";
+import ConsoleInputService from "@src/core/domains/console/service/ConsoleInputService";
 
 /**
  * Base command class

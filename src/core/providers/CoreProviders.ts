@@ -7,7 +7,7 @@ import MakeProvider from "@src/core/domains/make/providers/MakeProvider";
 import MigrationProvider from "@src/core/domains/migrations/providers/MigrationProvider";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 import { IProvider } from "@src/core/interfaces/IProvider";
-import SetupProvider from "../domains/setup/providers/SetupProvider";
+import SetupProvider from "@src/core/domains/setup/providers/SetupProvider";
 
 const CoreProviders: IProvider[] = [
     new ConsoleProvider(),

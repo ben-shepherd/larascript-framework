@@ -130,8 +130,8 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      * Get all registered routes
      * @returns array of IRoute
      */
-    public getRoutes(): IRoute[]
-    {
+    public getRoutes(): IRoute[] {
         return this.registedRoutes
     }
+
 }

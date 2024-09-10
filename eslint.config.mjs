@@ -41,7 +41,6 @@ export default [...compat.extends("eslint:recommended"), {
             "newlines-between": "always",
         }],
         "no-const-assign": "error",
-        "no-var": "",
         "prefer-const": ["error", {
             destructuring: "any",
             ignoreReadBeforeAssign: false,

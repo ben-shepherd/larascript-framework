@@ -43,4 +43,5 @@ export default class HelpCommand extends BaseCommand {
             this.input.writeLine();
         });
     }
+
 }

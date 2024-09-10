@@ -7,4 +7,5 @@ export default class ExampleCommand extends BaseCommand {
     async execute() {
         console.log('Hello world!')
     }
+
 }

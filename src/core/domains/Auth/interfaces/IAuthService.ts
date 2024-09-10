@@ -3,7 +3,7 @@ import IApiTokenRepository from "@src/core/domains/auth/interfaces/IApiTokenRepo
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import IUserRepository from "@src/core/domains/auth/interfaces/IUserRepository";
 import IService from "@src/core/interfaces/IService";
-import { IRoute } from "../../express/interfaces/IRoute";
+import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
 
 
 export interface IAuthService extends IService {
