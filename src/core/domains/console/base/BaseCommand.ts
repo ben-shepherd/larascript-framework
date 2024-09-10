@@ -1,31 +1,82 @@
-import CommandExecutionException from "@src/core/domains/console/exceptions/CommandExecutionException";
-import { ICommand } from "@src/core/domains/console/interfaces/ICommand";
-import { KeyPair, KeyPairArguementType, OnlyArguement, ParsedArguement, ParsedArgumentsArray } from "@src/core/domains/console/parsers/CommandArgumentParser";
+import readline from 'readline';
+import CommandExecutionException from "../exceptions/CommandExecutionException";
+import { ICommand } from "../interfaces/ICommand";
+import { KeyPair, KeyPairArguementType, OnlyArguement, ParsedArguement, ParsedArgumentsArray } from "../parsers/CommandArgumentParser";
+import ConsoleInputService from "../service/ConsoleInputService";
 
+/**
+ * Base command class
+ *
+ * @abstract
+ */
 export default abstract class BaseCommand implements ICommand {
 
+    /**
+     * Command signature
+     */
     public signature!: string;
 
+    /**
+     * Command description
+     */
     public description?: string;
 
+    /**
+     * Whether to keep the process alive after execution
+     */
     public keepProcessAlive?: boolean = false;
 
+    /**
+     * Parsed arguements
+     */
     protected parsedArgumenets: ParsedArgumentsArray = [];
 
+    /**
+     * Overwrite arguements
+     */
     protected overwriteArgs: Record<string, string> = {};
 
+    /**
+     * Config
+     */
     protected config: object = {};
 
+    /**
+     * Input service
+     */
+    protected input!: ConsoleInputService;
+
+    /**
+     * Readline interface
+     */
+    protected rl: readline.Interface;
+
+    /**
+     * Constructor
+     *
+     * @param config
+     */
     constructor(config: object = {}) {
         this.config = config;
+        this.rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        });
+        this.input = new ConsoleInputService(this.rl);
     }
 
-    
+    /**
+     * Execute the command
+     *
+     * @param args
+     * @returns
+     */
     abstract execute(...args: any[]): any;
 
     /**
      * Set the parsed arguements
-     * @param parsedArgumenets 
+     *
+     * @param parsedArgumenets
      */
     setParsedArguments = (parsedArgumenets: ParsedArgumentsArray) => {
         this.parsedArgumenets = parsedArgumenets;
@@ -33,8 +84,9 @@ export default abstract class BaseCommand implements ICommand {
 
     /**
      * Find a ParsedArguement at a given position (starts at 1)
-     * @param nth 
-     * @returns 
+     *
+     * @param nth
+     * @returns
      */
     getArguementAtPos = (nth: number): ParsedArguement | null => {
         if(nth === 0) {
@@ -52,10 +104,8 @@ export default abstract class BaseCommand implements ICommand {
 
     /**
      * Get an arguemenet by a given key
-     * @param key 
-     * @returns 
      */
-    getArguementByKey = (key: string): KeyPairArguementType | null => {
+    getArguementByKey = (key: string): ParsedArguement | null => {
         if(this.overwriteArgs[key]) {
             return {
                 type: KeyPair,
@@ -68,7 +118,10 @@ export default abstract class BaseCommand implements ICommand {
 
             // We can ignore any arguements that are missing a key.
             if(arguement.type === OnlyArguement) {
-                return false;
+                return {
+                    type: OnlyArguement,
+                    value: true
+                }
             }
 
             return arguement.key === key
@@ -76,9 +129,6 @@ export default abstract class BaseCommand implements ICommand {
     }
 
     /**
-     * 
-     * @param key 
-     * @param value 
      */
     setOverwriteArg(key: string, value: string) {
         this.overwriteArgs[key] = value
