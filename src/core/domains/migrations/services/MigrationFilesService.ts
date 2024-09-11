@@ -6,6 +6,9 @@ import path from 'path';
 
 const APP_MIGRATIONS_DIR = '@src/../src/app/migrations';
 
+/**
+ * Handles file operations for migrations
+ */
 class MigrationFileService {
 
     appMigrationsDir!: string;

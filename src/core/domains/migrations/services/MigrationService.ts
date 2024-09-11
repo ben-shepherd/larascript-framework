@@ -1,4 +1,5 @@
 import MigrationFactory from "@src/core/domains/migrations/factory/MigrationFactory";
+import { IMigration } from "@src/core/domains/migrations/interfaces/IMigration";
 import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
 import { IMigrationService, IMigrationServiceOptions } from "@src/core/domains/migrations/interfaces/IMigrationService";
 import MigrationRepository from "@src/core/domains/migrations/repository/MigrationRepository";
@@ -6,13 +7,17 @@ import createMongoDBSchema from "@src/core/domains/migrations/schema/createMongo
 import createPostgresSchema from "@src/core/domains/migrations/schema/createPostgresSchema";
 import MigrationFileService from "@src/core/domains/migrations/services/MigrationFilesService";
 import { App } from "@src/core/services/App";
-import { IMigration } from "@src/core/domains/migrations/interfaces/IMigration";
 
 interface MigrationDetail {
     fileName: string,
     migration: IMigration
 }
 
+/**
+ * MigrationService class is responsible for handling migrations.
+ * It creates a MigrationRepository and a MigrationFileService.
+ * It also provides methods to get the current batch count, to run up and down migrations.
+ */
 class MigrationService implements IMigrationService {
 
     private fileService!: MigrationFileService;
