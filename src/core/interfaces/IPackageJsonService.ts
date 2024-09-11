@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * IPackageJsonService is an interface for a service that handles operations with package.json
  *

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * A service is a class that provides a specific functionality to the application.
  * It usually has a single responsibility and can be used by other services or controllers.

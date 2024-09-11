@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { DbTypeHelpers } from "@src/config/database";
 import { IDatabaseProvider } from "@src/core/domains/database/interfaces/IDatabaseProvider";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";

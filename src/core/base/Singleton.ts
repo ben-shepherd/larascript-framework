@@ -35,6 +35,7 @@ export default abstract class Singleton<Config extends Record<any,any> | null = 
      * @returns The singleton instance of the service.
      */
     public static getInstance<Service extends Singleton<any>,Config extends Record<any,any> | null>
+    // eslint-disable-next-line no-unused-vars
     (this: new (config: any) => Service, config: Config | null = null): Service {
         const className = this.name
 
@@ -52,6 +53,7 @@ export default abstract class Singleton<Config extends Record<any,any> | null = 
      * @param this - The service class.
      * @returns True if the service is initialized, false otherwise.
      */
+    // eslint-disable-next-line no-unused-vars
     public static isInitialized<Service extends Singleton<any>>(this: new (config: any) => Service): boolean {
         const className = this.name
         return Singleton.instances.has(className);

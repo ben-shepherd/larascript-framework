@@ -172,7 +172,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
             return await this.processQuestion(count, question);
         }
 
-        const value: string = this.input.normalizeAnswer(question.answer, question.defaultValue);
+        const value: string = this.input.normalizeAnswer(question.answer, question.defaultValue ?? '');
 
         await this.env.updateValues({ [question.id]: value });
     }

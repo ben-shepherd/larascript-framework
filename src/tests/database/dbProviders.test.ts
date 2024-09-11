@@ -25,6 +25,7 @@ const dropTable = async (connectionName: string) => {
         const schema = App.container('db').schema(connectionName);
         await schema.dropTable(tableName);
     }
+    // eslint-disable-next-line no-unused-vars
     catch (err) {}
 };
 

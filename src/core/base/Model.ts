@@ -173,6 +173,7 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      */
     fill(data: Partial<Data>): void {
         Object.entries(data)
+            // eslint-disable-next-line no-unused-vars
             .filter(([_key, value]) => value !== undefined)
             .forEach(([key, value]) => {
                 this.setAttribute(key, value);

@@ -42,6 +42,7 @@ class MongoDBSchema extends BaseDatabaseSchema {
      * @param name 
      * @param args 
      */
+    // eslint-disable-next-line no-unused-vars
     alterTable(name: string, ...args: any[]): Promise<void> {
         throw new Error("Method not implemented.");
     }

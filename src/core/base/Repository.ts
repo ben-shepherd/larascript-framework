@@ -91,7 +91,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @returns The found models
      */
     async findMany(filter: object = {}, options?: object): Promise<Model[]> {
-        const dataArray = await this.documentManager().findMany({filter}, options)
+        const dataArray = await this.documentManager().findMany({...options, filter})
         return (dataArray as unknown[]).map(data => new this.modelCtor(data));
     }
 

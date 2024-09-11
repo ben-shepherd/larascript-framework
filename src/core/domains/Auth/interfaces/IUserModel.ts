@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { IModel } from "@src/core/interfaces/IModel";
 import IModelData from "@src/core/interfaces/IModelData";
 

@@ -114,6 +114,7 @@ export default abstract class Observer<ReturnType = any> implements IObserver<Re
     on(name: IObserverEvent, data: ReturnType): ReturnType {
         if (this[name] && typeof this[name] === 'function') {
             // Call the method associated with the event name
+            // eslint-disable-next-line no-unused-vars
             return (this[name] as (data: ReturnType, ...args: any[]) => ReturnType)(data);
         }
         // If no method is found or it's not a function, return the original data
@@ -134,6 +135,7 @@ export default abstract class Observer<ReturnType = any> implements IObserver<Re
      */
     onCustom(customName: string, data: ReturnType, ...args: any[]): ReturnType {
     // Attempt to find a method on this instance with the given custom name
+        // eslint-disable-next-line no-unused-vars
         const method = this[customName as keyof this] as ((data: ReturnType, ...args: any[]) => ReturnType) | undefined;
         
         if (method && typeof method === 'function') {

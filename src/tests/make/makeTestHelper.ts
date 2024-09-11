@@ -17,6 +17,7 @@ import MakeSubscriberCommand from '@src/core/domains/make/commands/MakeSubscribe
 import MakeValidatorCommand from '@src/core/domains/make/commands/MakeValidatorCommand';
 import { targetDirectories } from '@src/core/domains/make/consts/MakeTypes';
 
+// eslint-disable-next-line no-unused-vars
 export type CommandCtor<T extends BaseMakeFileCommand = BaseMakeFileCommand> = new (...args: any[]) => T;
 
 /**

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
 

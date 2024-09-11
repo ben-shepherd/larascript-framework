@@ -69,6 +69,7 @@ export default class WorkerModel extends Model<WorkerModelData> {
             const payload = this.getAttribute('payload');
             return JSON.parse(payload)
         }
+        // eslint-disable-next-line no-unused-vars
         catch (err) {
             return null
         }

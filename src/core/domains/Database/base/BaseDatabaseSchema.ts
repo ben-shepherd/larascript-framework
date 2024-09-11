@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { IDatabaseProvider } from "@src/core/domains/database/interfaces/IDatabaseProvider";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 
@@ -20,6 +21,11 @@ abstract class BaseDatabaseSchema<Provider extends IDatabaseProvider = IDatabase
         this.driver = driver;
     }
 
+    /**
+     * Abstract method to alter (modify) a table from the database
+     * @param name - Name of the table to drop
+     * @param args - Additional arguments for table deletion
+     */
     abstract alterTable(name: string, ...args: any[]): Promise<void>;
 
     /**
