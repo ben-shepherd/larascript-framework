@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { IConsoleInputService } from '@src/core/domains/console/interfaces/IConsoleInputService';
 import { IEnvService } from "@src/core/interfaces/IEnvService";
 
