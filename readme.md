@@ -18,22 +18,69 @@ For comprehensive guides and detailed explanations of Larascript Node's features
 
 ## Framework Foundations
 
-- Comprehensive testing suite (Jest)
 - Service providers
-- Express integration
-- Robust authentication system
+- Wrappers for ease of use Express.js
+- Authentication built in
 - Multi-database support (MongoDB & Postgres)
+- Migrations for database schema management
 - Eloquent-inspired models
-- Repository pattern implementation
+- Repository pattern
 - Event-driven architecture with queues
 - Background workers
 - Observer pattern
+- Extendable Base Classes
 - Command-line interface (CLI) with customizable commands
 - Code generation templates
+- Comprehensive testing suite (Jest)
 
 ## Larascript Node in Action: Real-World Code Examples
 
 Below are some examples of how you can use Larascript Node.
+
+
+## Service Providers
+
+Here is an example of our ConsoleProvider which boots up the commands system.
+
+```typescript
+export default class ConsoleProvider extends BaseProvider {
+
+    /**
+     * Register method
+     * Called when the provider is being registered
+     * Use this method to set up any initial configurations or services
+     */
+    async register(): Promise<void> {
+        this.log('Registering ConsoleProvider');
+
+            /**
+         * Add readline for interacting with the terminal
+         */
+        App.setContainer('readline', readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        }));
+
+        /**
+         * Add the console service to the container
+         */
+        App.setContainer('console', new ConsoleService())
+
+        /**
+         * Register commands from @src/config/app
+         */
+        App.container('console').register().registerAll(commandsConfig)
+    }
+
+    /**
+     * Boot method
+     * Called after all providers have been registered
+     * Use this method to perform any actions that require other services to be available
+     */
+    async boot(): Promise<void> {}
+
+}
+```
 
 ### Models
 
@@ -144,38 +191,40 @@ class UpdateUserValidator extends BaseValidator {
 }
 ```
 
-## Provider
 
-Here is an example of our ConsoleProvider which boots up the commands system.
+## Observer
+
+Here is an example of an Observer, which listens for changes on the User model.
 
 ```typescript
-export default class ConsoleProvider extends BaseProvider {
+export default class UserObserver extends Observer<IUserData> {
 
     /**
-     * Register method
-     * Called when the provider is being registered
-     * Use this method to set up any initial configurations or services
+     * Called when the User model is being created.
+     * Automatically hashes the password if it is provided.
+     * @param data The User data being created.
+     * @returns The processed User data.
      */
-    async register(): Promise<void> {
-        this.log('Registering ConsoleProvider');
-
-        /**
-         * Add the console service to the container
-         */
-        App.setContainer('console', new ConsoleService())
-
-        /**
-         * Register commands from @src/config/app
-         */
-        App.container('console').register().registerAll(commandsConfig)
+    creating(data: IUserData): IUserData {
+        data = this.onPasswordChange(data)
+        return data
     }
 
     /**
-     * Boot method
-     * Called after all providers have been registered
-     * Use this method to perform any actions that require other services to be available
+     * Automatically hashes the password if it is provided.
+     * @param data The User data being created/updated.
+     * @returns The processed User data.
      */
-    async boot(): Promise<void> {}
+    onPasswordChange(data: IUserData): IUserData {
+        if(!data.password) {
+            return data
+        }
+        
+        data.hashedPassword = hashPassword(data.password);
+        delete data.password;
+
+        return data
+    }
 
 }
 ```
