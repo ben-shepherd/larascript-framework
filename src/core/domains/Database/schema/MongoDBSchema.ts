@@ -1,5 +1,5 @@
-import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 import BaseDatabaseSchema from "@src/core/domains/database/base/BaseDatabaseSchema";
+import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 
 class MongoDBSchema extends BaseDatabaseSchema {
 
@@ -15,7 +15,7 @@ class MongoDBSchema extends BaseDatabaseSchema {
      * @param name 
      * @param args 
      */
-    async createTable(name: string, ...args: any[]): Promise<void> {
+    async createTable(name: string): Promise<void> {
         this.driver.getDb().createCollection(name);
     }
 
@@ -24,7 +24,7 @@ class MongoDBSchema extends BaseDatabaseSchema {
      * @param name 
      * @param args 
      */
-    async dropTable(name: string, ...args: any[]): Promise<void> {
+    async dropTable(name: string): Promise<void> {
         await this.driver.getDb().dropCollection(name);
     }
 
@@ -35,6 +35,16 @@ class MongoDBSchema extends BaseDatabaseSchema {
      */
     async tableExists(name: string): Promise<boolean> {
         return (await this.driver.getDb().listCollections().toArray()).map(c => c.name).includes(name);
+    }
+
+    /**
+     * Alter a table
+     * @param name 
+     * @param args 
+     */
+    // eslint-disable-next-line no-unused-vars
+    alterTable(...args: any[]): Promise<void> {
+        throw new Error("Method not implemented.");
     }
 
 }

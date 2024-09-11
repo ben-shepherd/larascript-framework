@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { describe, expect, test } from '@jest/globals';
 import Kernel from '@src/core/Kernel';
 import Repository from '@src/core/base/Repository';
@@ -79,7 +80,7 @@ describe('test model crud', () => {
             /**
              * Query with repository
              */
-            const repository = new Repository(new TestModel(null).table, TestModel);
+            const repository = new Repository(TestModel);
             const fetchedModel = await repository.findOne({
                 name: 'Jane'   
             })

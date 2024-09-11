@@ -1,9 +1,10 @@
-import #name#Model from "@src/app/models/#name#Model";
+import Model from "@src/app/models/Model";
 import Repository from "@src/core/base/Repository";
 
-export default class #name#Repository extends Repository<#name#Model>
-{
+export default class #name# extends Repository<Model> {
+
     constructor() {
-        super('#collection#', #name#Model)
+        super(Model)
     }
+
 }

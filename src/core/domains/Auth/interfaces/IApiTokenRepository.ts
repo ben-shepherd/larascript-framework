@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import IApiTokenModel from "@src/core/domains/auth/interfaces/IApitokenModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
 

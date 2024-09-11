@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { describe } from '@jest/globals';
 import ValidationProvider from '@src/core/domains/validator/providers/ValidatorProvider';
 import ValidatorService from '@src/core/domains/validator/services/ValidatorService';

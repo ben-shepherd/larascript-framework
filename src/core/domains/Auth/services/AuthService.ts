@@ -1,8 +1,8 @@
 import Service from '@src/core/base/Service';
 import InvalidJWTSecret from '@src/core/domains/auth/exceptions/InvalidJWTSecret';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
-import ApiTokenFactory from '@src/core/domains/auth/factory/ApiTokenFactory';
-import JWTTokenFactory from '@src/core/domains/auth/factory/JwtTokenFactory';
+import ApiTokenFactory from '@src/core/domains/auth/factory/apiTokenFactory';
+import JWTTokenFactory from '@src/core/domains/auth/factory/jwtTokenFactory';
 import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IApiTokenRepository from '@src/core/domains/auth/interfaces/IApiTokenRepository';
 import { IAuthConfig } from '@src/core/domains/auth/interfaces/IAuthConfig';
@@ -10,9 +10,11 @@ import { IAuthService } from '@src/core/domains/auth/interfaces/IAuthService';
 import { IJSonWebToken } from '@src/core/domains/auth/interfaces/IJSonWebToken';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import IUserRepository from '@src/core/domains/auth/interfaces/IUserRepository';
+import authRoutes from '@src/core/domains/auth/routes/auth';
 import comparePassword from '@src/core/domains/auth/utils/comparePassword';
 import createJwt from '@src/core/domains/auth/utils/createJwt';
 import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';
+import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
 
 export default class AuthService extends Service<IAuthConfig> implements IAuthService {
 
@@ -81,7 +83,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
         if(!apiToken?.data?.userId) {
             throw new Error('Invalid token');
         }
-        const payload = new JWTTokenFactory().create(apiToken.data?.userId?.toString(), apiToken.data?.token);
+        const payload = JWTTokenFactory.create(apiToken.data?.userId?.toString(), apiToken.data?.token);
         return createJwt(this.config.jwtSecret, payload, '1d');
     }
 
@@ -140,6 +142,25 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
         }
 
         return this.createJwtFromUser(user)
+    }
+
+    /**
+     * Returns the auth routes
+     * 
+     * @returns an array of IRoute objects, or null if auth routes are disabled
+     */
+    getAuthRoutes(): IRoute[] | null {
+        if(!this.config.enableAuthRoutes) {
+            return null
+        }
+
+        const routes = authRoutes(this.config);
+
+        if(!this.config.enableAuthRoutesAllowCreate) {
+            return routes.filter((route) => route.name !== 'authCreate');
+        }
+
+        return routes;
     }
 
 }

@@ -3,11 +3,11 @@ import { IBelongsToOptions } from '@src/core/domains/database/interfaces/relatio
 import { IHasManyOptions } from '@src/core/domains/database/interfaces/relationships/IHasMany';
 import { IObserver } from '@src/core/domains/observer/interfaces/IObserver';
 import { WithObserver } from '@src/core/domains/observer/services/WithObserver';
-import { Dates, GetDataOptions, IModel } from '@src/core/interfaces/IModel';
+import { ICtor } from '@src/core/interfaces/ICtor';
+import { GetDataOptions, IModel } from '@src/core/interfaces/IModel';
 import IModelData from '@src/core/interfaces/IModelData';
 import { App } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
-import { ICtor } from '@src/core/interfaces/ICtor';
 
 /**
  * Abstract base class for database models.
@@ -58,7 +58,7 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      * List of fields that should be treated as dates.
      * These fields will be automatically managed if timestamps is true.
      */
-    public dates: Dates = ['createdAt', 'updatedAt'];
+    public dates: string[] = ['createdAt', 'updatedAt'];
 
     /**
      * Flag to enable automatic timestamp management.
@@ -173,6 +173,7 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      */
     fill(data: Partial<Data>): void {
         Object.entries(data)
+            // eslint-disable-next-line no-unused-vars
             .filter(([_key, value]) => value !== undefined)
             .forEach(([key, value]) => {
                 this.setAttribute(key, value);

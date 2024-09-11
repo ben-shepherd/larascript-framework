@@ -1,10 +1,9 @@
-import readline from 'node:readline';
-import { IEnvService } from "@src/core/interfaces/IEnvService";
+/* eslint-disable no-unused-vars */
 import { IConsoleInputService } from '@src/core/domains/console/interfaces/IConsoleInputService';
+import { IEnvService } from "@src/core/interfaces/IEnvService";
 
 export interface ISetupCommand {
     env: IEnvService;
     input: IConsoleInputService;
-    rl: readline.Interface;
     writeLine(line: string): void;
 }

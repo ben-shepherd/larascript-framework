@@ -1,5 +1,6 @@
-import { NextFunction, Request, Response } from "express";
+/* eslint-disable no-unused-vars */
 import IValidator from "@src/core/domains/validator/interfaces/IValidator";
+import { NextFunction, Request, Response } from "express";
 
 export interface ValidatorMiddlewareProps {
     validator: IValidator,

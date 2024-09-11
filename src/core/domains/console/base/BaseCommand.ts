@@ -1,30 +1,74 @@
 import CommandExecutionException from "@src/core/domains/console/exceptions/CommandExecutionException";
 import { ICommand } from "@src/core/domains/console/interfaces/ICommand";
 import { KeyPair, KeyPairArguementType, OnlyArguement, ParsedArguement, ParsedArgumentsArray } from "@src/core/domains/console/parsers/CommandArgumentParser";
+import ConsoleInputService from "@src/core/domains/console/service/ConsoleInputService";
+import { App } from "@src/core/services/App";
 
+/**
+ * Base command class
+ *
+ * @abstract
+ */
 export default abstract class BaseCommand implements ICommand {
 
+    /**
+     * Command signature
+     */
     public signature!: string;
 
+    /**
+     * Command description
+     */
     public description?: string;
 
-    public execute!: (...args: any[]) => any;
-
+    /**
+     * Whether to keep the process alive after execution
+     */
     public keepProcessAlive?: boolean = false;
 
+    /**
+     * Parsed arguements
+     */
     protected parsedArgumenets: ParsedArgumentsArray = [];
 
+    /**
+     * Overwrite arguements
+     */
     protected overwriteArgs: Record<string, string> = {};
 
+    /**
+     * Config
+     */
     protected config: object = {};
 
+    /**
+     * Input service
+     */
+    protected input!: ConsoleInputService;
+
+    /**
+     * Constructor
+     *
+     * @param config
+     */
     constructor(config: object = {}) {
         this.config = config;
+        this.input = new ConsoleInputService();
     }
 
     /**
+     * Execute the command
+     *
+     * @param args
+     * @returns
+     */
+    // eslint-disable-next-line no-unused-vars
+    abstract execute(...args: any[]): any;
+
+    /**
      * Set the parsed arguements
-     * @param parsedArgumenets 
+     *
+     * @param parsedArgumenets
      */
     setParsedArguments = (parsedArgumenets: ParsedArgumentsArray) => {
         this.parsedArgumenets = parsedArgumenets;
@@ -32,8 +76,9 @@ export default abstract class BaseCommand implements ICommand {
 
     /**
      * Find a ParsedArguement at a given position (starts at 1)
-     * @param nth 
-     * @returns 
+     *
+     * @param nth
+     * @returns
      */
     getArguementAtPos = (nth: number): ParsedArguement | null => {
         if(nth === 0) {
@@ -51,10 +96,8 @@ export default abstract class BaseCommand implements ICommand {
 
     /**
      * Get an arguemenet by a given key
-     * @param key 
-     * @returns 
      */
-    getArguementByKey = (key: string): KeyPairArguementType | null => {
+    getArguementByKey = (key: string): ParsedArguement | null => {
         if(this.overwriteArgs[key]) {
             return {
                 type: KeyPair,
@@ -67,7 +110,10 @@ export default abstract class BaseCommand implements ICommand {
 
             // We can ignore any arguements that are missing a key.
             if(arguement.type === OnlyArguement) {
-                return false;
+                return {
+                    type: OnlyArguement,
+                    value: true
+                }
             }
 
             return arguement.key === key
@@ -75,9 +121,6 @@ export default abstract class BaseCommand implements ICommand {
     }
 
     /**
-     * 
-     * @param key 
-     * @param value 
      */
     setOverwriteArg(key: string, value: string) {
         this.overwriteArgs[key] = value
@@ -87,6 +130,10 @@ export default abstract class BaseCommand implements ICommand {
      * End the process
      */
     end(): void {
+        // Close the readline
+        App.container('readline').close();
+
+        // End the process
         if(!this.keepProcessAlive) {
             process.exit();
         }

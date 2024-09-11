@@ -1,22 +1,48 @@
-
+/**
+ * Order array type
+ */
 export type OrderArray = Record<string, 'ASC' | 'DESC'>[]
 
+/**
+ * Options for select query
+ */
 export type SelectOptions = {
+
+    /**
+     * Table name
+     */
     tableName: string
+
+    /**
+     * Fields to select
+     */
     fields?: string[]
+
+    /**
+     * Filter for query
+     */
     filter?: object
+
+    /**
+     * Order by
+     */
     order?: OrderArray
+
+    /**
+     * Limit
+     */
     limit?: number
 }
 
+/**
+ * Query builder for Postgres
+ */
 class PostgresQueryBuilder {
 
     /**
-     * Build select
-     * @param fields 
-     * @param tableName 
-     * @param filter 
-     * @returns 
+     * Build select query
+     * @param options Select options
+     * @returns Query string
      */
     select({ fields, tableName, filter = {}, order = [], limit = undefined }: SelectOptions): string {
         let queryStr = `SELECT ${this.selectColumnsClause(fields)} FROM "${tableName}"`;
@@ -37,22 +63,20 @@ class PostgresQueryBuilder {
     }
 
     /**
-     * Build select columns
-     * @param fields 
-     * @returns 
+     * Build select columns clause
+     * @param fields Fields to select
+     * @returns Select columns clause
      */
     selectColumnsClause(fields: string[] | null = null): string {
         return fields ? fields.join(', ') : '*';
     }
 
     /**
-     * Build order by
-     * @param orders 
-     * @returns 
+     * Build order by clause
+     * @param orders Orders
+     * @returns Order by clause
      */
     orderByClause(orders: Record<string, 'ASC' | 'DESC'>[] = []): string {
-        let queryStr = '';
-
         return orders.map((order) => {
             return Object.keys(order).map((key) => {
                 return `"${key}" ${order[key]}`
@@ -63,8 +87,8 @@ class PostgresQueryBuilder {
 
     /**
      * Build where clause
-     * @param filter 
-     * @returns 
+     * @param filter Filter
+     * @returns Where clause
      */
     whereClause(filter: object = {}): string {
         return Object.keys(filter).map((key) => {
@@ -80,4 +104,7 @@ class PostgresQueryBuilder {
 
 }
 
+/**
+ * Default export
+ */
 export default PostgresQueryBuilder

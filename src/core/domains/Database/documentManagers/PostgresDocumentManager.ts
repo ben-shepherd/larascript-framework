@@ -5,14 +5,19 @@ import Postgres from "@src/core/domains/database/providers-db/Postgres";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { BindOrReplacements, QueryOptions, QueryTypes } from "sequelize";
 
+/**
+ * PostgreSQL document manager
+ *
+ * Provides methods for interacting with a PostgreSQL database
+ */
 class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManager, Postgres> {
 
     protected builder = new PostgresQueryBuilder()
 
     /**
      * Adds the id: uuid to the document
-     * @param document 
-     * @returns 
+     * @param document The document to add an id to
+     * @returns The document with an id added
      */
     protected documentWithUuid(document: IDatabaseDocument): IDatabaseDocument {
         return {
@@ -21,6 +26,11 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
         }
     }
 
+    /**
+     * Removes undefined properties from the document
+     * @param document The document to clean
+     * @returns The cleaned document
+     */
     protected documentStripUndefinedProperties(document: IDatabaseDocument): IDatabaseDocument {
         for (const key in document) {
             if (document[key] === undefined) {
@@ -31,9 +41,9 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
     }
 
     /**
-     * Find document by id
-     * @param id 
-     * @returns 
+     * Find a document by id
+     * @param id The id of the document to find
+     * @returns The found document, or null if not found
      */
     async findById<T>(id: string): Promise<T | null> {
         return this.captureError(async () => {
@@ -55,8 +65,8 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
 
     /**
      * Find a single document
-     * @param filter 
-     * @returns 
+     * @param selectOptions The options for selecting the document
+     * @returns The found document, or null if not found
      */
     async findOne<T>(selectOptions: Partial<SelectOptions>): Promise<T | null> {
         return this.captureError(async () => {
@@ -79,6 +89,11 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
         })
     }
 
+    /**
+     * Find multiple documents
+     * @param options The options for selecting the documents
+     * @returns The found documents
+     */
     async findMany<T>(options: Partial<SelectOptions>): Promise<T> {
         return this.captureError(async () => {
             const sequelize = this.driver.getClient()
@@ -99,10 +114,10 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
     }
 
     /**
-     * Insert one document
-     * @param document 
-     * @param options 
-     * @returns 
+     * Insert a single document
+     * @param document The document to insert
+     * @param options The options for inserting the document
+     * @returns The inserted document
      */
     async insertOne<T = object>(document: IDatabaseDocument, options?: QueryOptions): Promise<T> {
         return this.captureError(async () => {
@@ -121,9 +136,9 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
 
     /**
      * Insert multiple documents
-     * @param documents 
-     * @param options 
-     * @returns 
+     * @param documents The documents to insert
+     * @param options The options for inserting the documents
+     * @returns The inserted documents
      */
     async insertMany<T>(documents: IDatabaseDocument[], options?: QueryOptions): Promise<T> {
         return this.captureError(async () => {
@@ -141,9 +156,9 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
     }
 
     /**
-     * Update one document
-     * @param document 
-     * @returns 
+     * Update a single document
+     * @param document The document to update
+     * @returns The updated document
      */
     async updateOne<T>(document: IDatabaseDocument): Promise<T> {
         return this.captureError(async () => {
@@ -159,8 +174,8 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
 
     /**
      * Update multiple documents
-     * @param documents 
-     * @returns 
+     * @param documents The documents to update
+     * @returns The updated documents
      */
     async updateMany<T>(documents: IDatabaseDocument[]): Promise<T> {
         return this.captureError(async () => {
@@ -176,9 +191,9 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
     }
 
     /**
-     * Delete one document
-     * @param document 
-     * @returns 
+     * Delete a single document
+     * @param document The document to delete
+     * @returns The deleted document
      */
     async deleteOne<T>(document: IDatabaseDocument): Promise<T> {
         return this.captureError(async () => {
@@ -195,8 +210,8 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
 
     /**
      * Delete multiple documents
-     * @param documents 
-     * @returns 
+     * @param documents The documents to delete
+     * @returns The deleted documents
      */
     async deleteMany<T>(documents: IDatabaseDocument): Promise<T> {
         return this.captureError(async () => {
@@ -210,7 +225,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
     }
 
     /**
-     * Truncate table
+     * Truncate the table
      */
     async truncate(): Promise<void> {
         return this.captureError(async () => {

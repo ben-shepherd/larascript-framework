@@ -5,10 +5,17 @@ import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import ModelNotFound from '@src/core/exceptions/ModelNotFound';
 import { Response } from 'express';
 
+/**
+ * Deletes a resource
+ *
+ * @param {BaseRequest} req - The request object
+ * @param {Response} res - The response object
+ * @param {IRouteResourceOptions} options - The options object
+ * @returns {Promise<void>}
+ */
 export default async (req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void> => {
     try {
-        const modelInstance = new options.resource;
-        const repository = new Repository(modelInstance.table, options.resource);
+        const repository = new Repository(options.resource);
 
         const result = await repository.findById(req.params?.id);
 

@@ -4,12 +4,22 @@ import MigrateUpCommand from "@src/core/domains/migrations/commands/MigrateUpCom
 import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
 import { App } from "@src/core/services/App";
 
+/**
+ * MigrationProvider class handles all migration related tasks
+ */
 class MigrationProvider extends BaseProvider {
 
+    /**
+     * The default configuration for the migrations
+     */
     protected config: IMigrationConfig = {
         appMigrationsDir: '@src/../src/app/migrations',
     };
     
+    /**
+     * Registers the migration commands and adds them to the console service
+     * with the default configuration
+     */
     async register(): Promise<void> {
         console.log('Registering MigrationProvider');   
 
@@ -24,6 +34,9 @@ class MigrationProvider extends BaseProvider {
         ], this.config)
     }
 
+    /**
+     * Currently does nothing
+     */
     async boot(): Promise<void> {
         console.log('Registering MigrationProvider');   
     }

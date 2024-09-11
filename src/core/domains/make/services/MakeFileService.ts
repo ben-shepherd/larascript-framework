@@ -5,6 +5,17 @@ import fs from 'fs';
 import path from 'path';
 
 
+/**
+ * Responsible for creating a new file based on a template
+ * 
+ * Handles: 
+ * - Getting the template contents
+ * - Writing the new file
+ * - Determining the target dir full path
+ * - Replacing the fileName with the new name
+ * - Replacing @src with the src/ directory
+ * - Creating a future filename
+ */
 export default class MakeFileService {
     
     public options!: IMakeOptions;
@@ -12,6 +23,11 @@ export default class MakeFileService {
     protected arguments!: IMakeFileArguments;
 
 
+    /**
+     * Constructor
+     * @param options Options for the make command
+     * @param makeFileArguments Arguments passed to the make command
+     */
     constructor(options: IMakeOptions, makeFileArguments: IMakeFileArguments) {
         this.options = options
         this.arguments = makeFileArguments
@@ -20,6 +36,7 @@ export default class MakeFileService {
     /**
      * Checks if a target already exists
      * @param name Name of the file
+     * @returns True if the file already exists, false otherwise
      */
     existsInTargetDirectory(): boolean {
         const filePath = targetDirectories[this.options.makeType]
@@ -31,7 +48,8 @@ export default class MakeFileService {
     }
 
     /**
-     * Get contents
+     * Get contents of the template
+     * @returns Template contents
      */
     async getTemplateContents(): Promise<string> {
         const filePath = templates[this.options.makeType]
@@ -46,8 +64,7 @@ export default class MakeFileService {
 
     /**
      * Get the target dir full path
-     * @param name Name of the file
-     * @returns 
+     * @returns Target dir full path
      */
     public getTargetDirFullPath = (): string => {
         const futureFileName = this.makeFutureFilename();
@@ -58,8 +75,8 @@ export default class MakeFileService {
     }
 
     /**
-     * Write contents
-     * @param contents 
+     * Write contents to the target file
+     * @param contents Contents to write
      */
     async writeContent(contents: string): Promise<void> {
         const targetDirFullPath = this.getTargetDirFullPath();
@@ -78,7 +95,7 @@ export default class MakeFileService {
      * Take the fileName in the path and replace it with the new name
      * @param originalPath 
      * @param fileName 
-     * @returns 
+     * @returns Updated path
      */
     updateOriginalPathFilename(originalPath: string, fileName: string): string {
     // use negative lookup to determine the last string after the last '/'
@@ -88,18 +105,18 @@ export default class MakeFileService {
     /**
      * Replaces @src with the src/ directory
      * @param targetDir 
-     * @returns 
+     * @returns Updated path
      */
     replaceSrcDir(targetDir: string) {
         return targetDir.replace(/^@src\//, 'src/');
     }
 
     /**
-     * Make a future filename
+     * Makes a future filename
      * @param templateName 
      * @param name 
      * @param ext 
-     * @returns 
+     * @returns Future filename
      */
     makeFutureFilename(ext: string = '.ts'): string {
 

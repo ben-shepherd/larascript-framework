@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 export type IObserverEvent = keyof IObserver;
 
 export interface IObserver<ReturnType = any> {

@@ -1,16 +1,23 @@
-
-import authConfig from '@src/config/auth';
+import authConfig from "@src/config/auth";
 import BaseProvider from "@src/core/base/Provider";
-import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
-import authRoutes from '@src/core/domains/auth/routes/auth';
-import ExpressProvider from "@src/core/domains/express/providers/ExpressProvider";
-import Kernel from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
+import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
 
 export default class AuthProvider extends BaseProvider {
 
+    /**
+     * The configuration for the auth service
+     */
     protected config: IAuthConfig = authConfig;
 
+    /**
+     * Register method
+     *
+     * Called when the provider is being registered
+     * Use this method to set up any initial configurations or services
+     *
+     * @returns Promise<void>
+     */
     public async register(): Promise<void> {
 
         this.log('Registering AuthProvider');
@@ -27,34 +34,6 @@ export default class AuthProvider extends BaseProvider {
         App.setContainer('auth', authService);
     }
 
-    public async boot(): Promise<void> {
-
-        this.log('Booting AuthProvider');
-
-        /**
-         * Register the authentication routes
-         */
-        const expressEnabled = Kernel.isProviderReady(ExpressProvider.name) && App.container('express').isEnabled();
-        const enableAuthRoutes = this.config.enableAuthRoutes;
-        
-        if(expressEnabled && enableAuthRoutes) {
-            this.registerAuthRoutes();
-        }
-    }
-
-    /**
-     * Provide the authentication routes
-     */
-    private registerAuthRoutes(): void {
-        let routes = authRoutes(this.config) 
-
-        if(!this.config.enableAuthRoutesAllowCreate) { 
-            routes = [
-                ...routes.filter((route) => route.name !== 'authCreate'),
-            ]
-        }
-
-        App.container('express').bindRoutes(routes);
-    }
+    public async boot(): Promise<void> {}
 
 }

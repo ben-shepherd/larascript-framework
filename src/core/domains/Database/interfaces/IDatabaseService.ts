@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { DbTypeHelpers } from "@src/config/database";
 import { IDatabaseProvider } from "@src/core/domains/database/interfaces/IDatabaseProvider";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
@@ -5,7 +6,7 @@ import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumen
 
 type Client = DbTypeHelpers['client'];
 type Provider = DbTypeHelpers['provider'] extends IDatabaseProvider ? DbTypeHelpers['provider'] : IDatabaseProvider;
-type DocumentManager = DbTypeHelpers['query'] extends IDocumentManager ? DbTypeHelpers['query'] : IDocumentManager
+type DocumentManager = DbTypeHelpers['documentManager'] extends IDocumentManager ? DbTypeHelpers['documentManager'] : IDocumentManager
 type Schema = DbTypeHelpers['schema'] extends IDatabaseSchema ? DbTypeHelpers['schema'] : IDatabaseSchema;
 
 export interface IDatabaseService

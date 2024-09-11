@@ -1,20 +1,34 @@
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
-import MigrationService from "@src/core/domains/migrations/services/MigrationService";
 import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
+import MigrationService from "@src/core/domains/migrations/services/MigrationService";
 
-class MigrateUpCommand extends BaseCommand {
+class MigrateDownCommand extends BaseCommand {
 
+    /**
+     * Signature for the command.
+     */
     public signature: string = 'migrate:down';
 
+    description = 'Rollback migrations';
+
+    /**
+     * Constructor.
+     * @param config
+     */
     constructor(config: IMigrationConfig = {}) {
         super(config);
         // Allow for configurable keepProcessAlive for testing purposes
         this.keepProcessAlive = config?.keepProcessAlive ?? this.keepProcessAlive;
     }
 
-
-    execute = async () => {
+    /**
+     * Execute the command.
+     */
+    async execute() {
+        // Read the arguments
         const batch = this.getArguementByKey('batch')?.value;
+        
+        // Run the migrations
         const service = new MigrationService(this.config);
         await service.boot();
         await service.down({ batch: batch ? parseInt(batch) : undefined }); 
@@ -22,4 +36,4 @@ class MigrateUpCommand extends BaseCommand {
 
 }
 
-export default MigrateUpCommand
+export default MigrateDownCommand

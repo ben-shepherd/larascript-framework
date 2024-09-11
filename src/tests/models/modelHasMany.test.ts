@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { describe, expect, test } from '@jest/globals';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';

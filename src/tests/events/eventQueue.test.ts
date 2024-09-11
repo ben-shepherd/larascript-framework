@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { beforeAll, describe, test } from '@jest/globals';
 import Repository from '@src/core/base/Repository';
 import Kernel from '@src/core/Kernel';
@@ -68,7 +69,7 @@ describe('mock event service', () => {
         await App.container('console').reader(['worker']).handle();
 
         // Check if the movie was created
-        const repository = new Repository<TestMovieModel>('tests', TestMovieModel);
+        const repository = new Repository<TestMovieModel>(TestMovieModel);
         const movie = await repository.findOne({ name: movieName });
         expect(typeof movie?.getId() === 'string').toBe(true)
         expect(movie?.getAttribute('name')).toBe(movieName);

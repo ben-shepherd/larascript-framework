@@ -1,18 +1,23 @@
-import express from 'express';
 import Service from '@src/core/base/Service';
-import IExpress from '@src/core/domains/express/interfaces/IExpress';
 import IExpressConfig from '@src/core/domains/express/interfaces/IExpressConfig';
+import IExpressService from '@src/core/domains/express/interfaces/IExpressService';
 import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
 import { Middleware } from '@src/core/interfaces/Middleware.t';
 import { App } from '@src/core/services/App';
+import express from 'express';
 
-export default class Express extends Service<IExpressConfig> implements IExpress {
+/**
+ * ExpressService class
+ * Responsible for initializing and configuring ExpressJS
+ * @implements IExpressService
+ */
+export default class ExpressService extends Service<IExpressConfig> implements IExpressService {
 
     protected config!: IExpressConfig | null;
 
     private app: express.Express
 
-    className: string = 'Express';
+    private registedRoutes: IRoute[] = [];
     
     /**
      * Config defined in @src/config/http/express.ts
@@ -24,8 +29,8 @@ export default class Express extends Service<IExpressConfig> implements IExpress
     }
 
     /**
-     * init
-     * Apply global middleware 
+     * Initializes ExpressService by applying global middleware defined in config.
+     * Global middleware is applied in the order it is defined in the config.
      */
     public init() {
         if (!this.config) {
@@ -37,7 +42,8 @@ export default class Express extends Service<IExpressConfig> implements IExpress
     }
 
     /**
-     * Start listening for connections
+     * Starts listening for connections on the port specified in the config.
+     * If no port is specified, the service will not start listening.
      */
     public async listen(): Promise<void> {   
         const port =  this.config?.port
@@ -48,7 +54,7 @@ export default class Express extends Service<IExpressConfig> implements IExpress
     }
 
     /**
-     * Bind Routes
+     * Binds multiple routes to the Express instance.
      * @param routes 
      */
     public bindRoutes(routes: IRoute[]): void {
@@ -58,7 +64,7 @@ export default class Express extends Service<IExpressConfig> implements IExpress
     }
 
     /**
-     * Bind Route
+     * Binds a single route to the Express instance.
      * @param route 
      */
     public bindSingleRoute(route: IRoute): void {
@@ -86,12 +92,14 @@ export default class Express extends Service<IExpressConfig> implements IExpress
         default:
             throw new Error(`Unsupported method ${route.method} for path ${route.path}`);
         }    
+
+        this.registedRoutes.push(route)
     }
 
     /**
-     * Adds validator middleware
+     * Adds validator middleware to the route.
      * @param route 
-     * @returns 
+     * @returns middlewares with added validator middleware
      */
     public addValidatorMiddleware(route: IRoute): Middleware[] {
         const middlewares = [...route?.middlewares ?? []];
@@ -110,18 +118,26 @@ export default class Express extends Service<IExpressConfig> implements IExpress
     }
 
     /**
-     * Get the express instance
+     * Returns the Express instance.
      */
     public getExpress(): express.Express {
         return this.app
     }
 
     /**
-     * Check if express is enabled
-     * @returns 
+     * Checks if Express is enabled.
+     * @returns true if enabled, false otherwise.
      */
     public isEnabled(): boolean {
         return this.config?.enabled ?? false
+    }
+
+    /**
+     * Returns all registered routes.
+     * @returns array of IRoute
+     */
+    public getRoutes(): IRoute[] {
+        return this.registedRoutes
     }
 
 }

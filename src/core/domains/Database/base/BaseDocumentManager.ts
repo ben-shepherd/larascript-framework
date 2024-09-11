@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // Import necessary interfaces and classes
 import MissingTable from "@src/core/domains/database/exceptions/InvalidTable";
 import { IDatabaseProvider } from "@src/core/domains/database/interfaces/IDatabaseProvider";
@@ -15,10 +16,7 @@ import DocumentValidator from "@src/core/domains/database/validator/DocumentVali
  * @template Query - Type extending IDocumentManager
  * @template Provider - Type extending IDatabaseProvider
  */
-abstract class BaseDocumentManager<
-    Query extends IDocumentManager = IDocumentManager,
-    Provider extends IDatabaseProvider = IDatabaseProvider
-> implements IDocumentManager {
+abstract class BaseDocumentManager<Query extends IDocumentManager = IDocumentManager, Provider extends IDatabaseProvider = IDatabaseProvider> implements IDocumentManager {
 
     // Protected properties
     protected driver!: Provider;
@@ -138,6 +136,7 @@ abstract class BaseDocumentManager<
             throw err
         }
     }
+
 }
 
 export default BaseDocumentManager

@@ -1,17 +1,24 @@
 import BaseValidator from "@src/core/domains/validator/base/BaseValidator";
 import Joi, { ObjectSchema } from "joi";
 
-class #name# extends BaseValidator
-{
+class #name# extends BaseValidator {
+
     public customValidatorMethods = [
-        
+        'validateCustomMethod'
     ]
+
+    async validateCustomMethod(payload: any) {
+        if(!payload) {
+            this.setErrorMessage({ name: 'Example error message' });
+        }
+    }
 
     rules(): ObjectSchema {
         return Joi.object({
             //fieldName: Joi.string()
         })
     }
+
 }
 
 export default #name#

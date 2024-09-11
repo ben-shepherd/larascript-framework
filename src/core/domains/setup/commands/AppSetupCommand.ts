@@ -6,30 +6,44 @@ import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand'
 import buildQuestionDTOs from '@src/core/domains/setup/utils/buildQuestionDTOs';
 import { IEnvService } from '@src/core/interfaces/IEnvService';
 import EnvService from "@src/core/services/EnvService";
-import readline from 'node:readline';
 
+/**
+ * Command to run the setup process
+ */
 class AppSetupCommand extends BaseCommand implements ISetupCommand {
 
+    /**
+     * The command signature
+     */
     public signature = 'app:setup';
 
-    public description = 'Setup the application';
+    /**
+     * The command description
+     */
+    public description = 'Runs the app setup process.';
 
-    rl: readline.Interface;
-
+    /**
+     * The environment service
+     */
     env: IEnvService;
 
+    /**
+     * The console input service
+     */
     input: IConsoleInputService;
 
+    /**
+     * The questions to ask the user
+     */
     questions!: QuestionDTO[];
 
+    /**
+     * Constructor
+     */
     constructor() {
         super();
-        this.rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout,
-        });
         this.env = new EnvService();
-        this.input = new ConsoleInputService(this.rl);
+        this.input = new ConsoleInputService();
         this.questions = buildQuestionDTOs();
     }
 
@@ -44,7 +58,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
     /**
      * Executes the command
      */
-    public execute = async () => {
+    async execute() {
         let count = 1;
 
         this.input.clearScreen();
@@ -54,7 +68,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
 
         this.questions.forEach(question => {
             this.writeLine(`- ${question.getPreviewText()}`);
-        })
+        });
 
         this.writeLine();
         await this.input.waitForEnter('When ready, press Enter to continue');
@@ -75,8 +89,6 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
         this.writeLine('--- Setup Complete ---');
         this.writeLine('Happy coding!');
         this.writeLine('');
-
-        this.rl.close();
     }
 
     /**
@@ -85,7 +97,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
      * @param previousQuestion 
      * @returns 
      */
-    questionIsApplicable = (question: QuestionDTO): boolean => {
+    questionIsApplicable = (question: QuestionDTO): boolean =>{
 
         if(!question.applicableOnly) {
             return true;
@@ -107,7 +119,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
      * 
      * @param question 
      */
-    processQuestionDTO = async (count: number, question: QuestionDTO) => {
+    processQuestionDTO = async (count: number, question: QuestionDTO) =>{
 
         if(!this.questionIsApplicable(question)) {
             return;
@@ -160,7 +172,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
             return await this.processQuestion(count, question);
         }
 
-        const value: string = this.input.normalizeAnswer(question.answer, question.defaultValue);
+        const value: string = this.input.normalizeAnswer(question.answer, question.defaultValue ?? '');
 
         await this.env.updateValues({ [question.id]: value });
     }

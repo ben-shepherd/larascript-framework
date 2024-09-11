@@ -59,6 +59,9 @@ export default class CommandArguementParser {
             throw new CommandArguementParserException(`Invalid command argment: '${command}'. Did you forget to prefix with --?`)
         }
 
+        /**
+         * --myArguementWithValue="my value"
+         */
         const regExp = new RegExp(/^--([^=]+)(=|\s)"?([^"]+)"?$/)
         const matches = regExp.exec(command)
 

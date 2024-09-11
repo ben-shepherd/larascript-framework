@@ -1,8 +1,9 @@
+/* eslint-disable no-undef */
 import { describe } from '@jest/globals';
 import ApiToken from '@src/app/models/auth/ApiToken';
 import User from '@src/app/models/auth/User';
 import authConfig from '@src/config/auth';
-import UserFactory from '@src/core/domains/auth/factory/UserFactory';
+import UserFactory from '@src/core/domains/auth/factory/userFactory';
 import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
 import AuthProvider from '@src/core/domains/auth/providers/AuthProvider';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';

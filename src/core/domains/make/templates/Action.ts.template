@@ -1,14 +1,16 @@
-import { Response } from 'express';
-
 import responseError from '@src/core/domains/express/requests/responseError';
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
+import { Response } from 'express';
 
+/**
+ * <enter description>
+ *
+ * @param {BaseRequest} req - The Express Request object
+ * @param {Response} res - The Express Response object
+ * @returns {Promise<void>} - A Promise that resolves to void
+ */
 export const #name# = (req: BaseRequest, res: Response) => {
     try {
-        /**
-         * Handle your action logic
-         */
-
         res.send({ success: true })
     }
     catch (error) {

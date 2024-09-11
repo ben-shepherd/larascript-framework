@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { describe, expect, test } from '@jest/globals';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
@@ -28,6 +29,7 @@ const dropTable = async (connectionName: string) => {
         const schema = App.container('db').schema(connectionName);
         await schema.dropTable(tableName);
     }
+    // eslint-disable-next-line no-unused-vars
     catch (err) {}
 }
 

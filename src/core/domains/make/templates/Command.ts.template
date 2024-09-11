@@ -1,10 +1,25 @@
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
 
-export default class #name#Command extends BaseCommand {
+class #name# extends BaseCommand {
 
-    signature: string = 'command:#name#';
+    signature: string = 'app:#name#';
 
-    execute = () => {
-        console.log('#name#')
+    description = '<enter description>';
+
+    keepProcessAlive = false;
+
+    /**
+     * Execute the command
+     *
+     * @returns {Promise<void>}
+     */
+    async execute() {
+
+        /**
+         * Your command logic
+         */
     }
+
 }
+
+export default #name#

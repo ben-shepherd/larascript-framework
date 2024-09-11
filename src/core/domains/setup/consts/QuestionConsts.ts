@@ -2,7 +2,7 @@
 /**
  * List of question IDs
  * Value: Should match the property in .env
- * Value can also be any arbitary string if it belongs to a statement
+ * Value can also be any arbitrary string if it belongs to a statement
  */
 export const QuestionIDs = {
     selectDb: 'SELECT_DB',

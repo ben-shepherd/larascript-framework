@@ -4,7 +4,7 @@ export default class ExampleCommand extends BaseCommand {
 
     signature: string = 'app:example';
 
-    execute = async () => {
+    async execute() {
         console.log('Hello world!')
     }
 

@@ -6,15 +6,12 @@ import { IDatabaseProvider } from '@src/core/domains/database/interfaces/IDataba
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import { IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
 import PostgresSchema from '@src/core/domains/database/schema/PostgresSchema';
-import { Pool, PoolConfig } from 'pg';
 import { QueryInterface, Sequelize } from 'sequelize';
 import { Options as SequelizeOptions } from 'sequelize/types/sequelize';
 
 export default class Postgres implements IDatabaseProvider {
 
     public connectionName!: string;
-
-    protected pool!: Pool;
 
     protected sequelize!: Sequelize;
 
@@ -30,8 +27,9 @@ export default class Postgres implements IDatabaseProvider {
     }
  
     /**
-     * Constructor for MongoDB class
-     * @param {PoolConfig} config - Configuration object containing URI and options for MongoDB connection
+     * Constructor for Postgres
+     * @param connectionName - The connection name
+     * @param config - The configuration object
      */
     constructor(connectionName: string, config: IDatabaseGenericConnectionConfig<SequelizeOptions>) {
         this.connectionName = connectionName;

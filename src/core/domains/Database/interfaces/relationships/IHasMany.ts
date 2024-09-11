@@ -1,5 +1,6 @@
-import IModelData from "@src/core/interfaces/IModelData";
+/* eslint-disable no-unused-vars */
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
+import IModelData from "@src/core/interfaces/IModelData";
 
 export type IHasManyCtor = new () => IHasMany;
 

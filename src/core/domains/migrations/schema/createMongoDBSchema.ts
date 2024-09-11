@@ -1,6 +1,11 @@
-import { App } from "@src/core/services/App";
 import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
+import { App } from "@src/core/services/App";
 
+/**
+ * Creates the migrations schema for MongoDB
+ *
+ * @returns {Promise<void>}
+ */
 const createMongoDBSchema = async () => {
     const db = App.container('db').provider<MongoDB>().getDb();
 

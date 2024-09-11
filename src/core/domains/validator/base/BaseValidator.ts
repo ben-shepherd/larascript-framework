@@ -1,8 +1,13 @@
 import IValidator, { IValidatorPayload } from "@src/core/domains/validator/interfaces/IValidator";
 import IValidatorResult from "@src/core/domains/validator/interfaces/IValidatorResult";
-import Joi, { ValidationOptions } from "joi";
 import baseValidatorUtil from "@src/core/domains/validator/util/baseValidatorUtil";
+import Joi, { ValidationOptions } from "joi";
 
+/**
+ * Base validator class
+ * 
+ * @abstract
+ */
 abstract class BaseValidator<P extends IValidatorPayload = IValidatorPayload> implements IValidator {
 
     /**

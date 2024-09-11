@@ -1,4 +1,3 @@
-import ExampleCommand from '@src/app/commands/ExampleCommand';
 import AppProvider from '@src/app/providers/AppProvider';
 import { EnvironmentDevelopment, EnvironmentType } from '@src/core/consts/Environment';
 import IAppConfig from '@src/core/interfaces/IAppConfig';
@@ -28,13 +27,6 @@ const appConfig: IAppConfig = {
          * Add your providers below
          */
         new AppProvider(),
-    ],
-
-    /** 
-     * Register your commands here
-     */
-    commands: [
-        ExampleCommand,
     ]
 };
 

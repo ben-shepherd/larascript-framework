@@ -10,21 +10,36 @@ const DefaultOptions: Partial<IMakeOptions> = {
     startWithLowercase: false
 }
 
+/**
+ * Base logic for making a new file
+ */
 export default class BaseMakeFileCommand extends BaseCommand {
 
     public keepProcessAlive = false;
 
+    /**
+     * Options for the make command
+     */
     protected options!: IMakeOptions;
 
+    /**
+     * Service for creating a new file
+     */
     protected makeFileService!: MakeFileService;
 
+    /**
+     * Observer for watching argument changes
+     */
     protected argumentObserver!: ArgumentObserver;
 
+    /**
+     * Arguments for the make command
+     */
     protected makeFileArguments!: IMakeFileArguments;
 
     /**
-     * Allows generic usage of creating a make file command
-     * @param options 
+     * Constructor
+     * @param options Options for the make command
      */
     constructor(options: IMakeOptions) {
         super();
@@ -36,7 +51,7 @@ export default class BaseMakeFileCommand extends BaseCommand {
     }
 
     /**
-     * Base logic for preparing the arguments
+     * Prepare the arguments
      * 'name' converts to lower/uppercase depending on options
      * 'collection' is optional and automatically set based on the 'name' arguement
      */
@@ -74,7 +89,7 @@ export default class BaseMakeFileCommand extends BaseCommand {
     /**
      * Base logic for making a new file
      */
-    public execute = async () => {
+    async execute() {
         this.prepareArguments();
         this.prepareMakeFileService();
 
@@ -119,7 +134,7 @@ export default class BaseMakeFileCommand extends BaseCommand {
             // Inject the arguements
             const pattern = new RegExp('#' + argumentKey + '#', 'g');
             contents = contents.replace(pattern, value);
-        })
+        });
 
         return contents
     }
@@ -143,3 +158,4 @@ export default class BaseMakeFileCommand extends BaseCommand {
     }
 
 }
+

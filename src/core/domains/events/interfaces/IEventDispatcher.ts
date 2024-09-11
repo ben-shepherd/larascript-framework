@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import IDispatchable from "@src/core/domains/events/interfaces/IDispatchable";
 import { IEvent } from "@src/core/domains/events/interfaces/IEvent";
 

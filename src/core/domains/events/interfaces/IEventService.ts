@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { IEvent } from "@src/core/domains/events/interfaces/IEvent";
 import { IDriverConfig, IEventDrivers, ISubscribers } from "@src/core/domains/events/interfaces/IEventConfig";
 import { EventListenerConstructor } from "@src/core/domains/events/interfaces/IEventListener";

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { IEventListener } from "@src/core/domains/events/interfaces/IEventListener";
 import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
 

@@ -1,12 +1,23 @@
-import ApiToken from '@src/app/models/auth/ApiToken';
-import UserObserver from '@src/app/observers/UserObserver';
-import Model from '@src/core/base/Model';
-import IUserModel, { IUserData } from '@src/core/domains/auth/interfaces/IUserModel';
+import ApiToken from "@src/app/models/auth/ApiToken";
+import UserObserver from "@src/app/observers/UserObserver";
+import Model from "@src/core/base/Model";
+import IUserModel, { IUserData } from "@src/core/domains/auth/interfaces/IUserModel";
 
+/**
+ * User model
+ *
+ * Represents a user in the database.
+ */
 export default class User extends Model<IUserData> implements IUserModel {
 
+    /**
+     * Table name
+     */
     public table: string = 'users';
 
+    /**
+     * @param data User data
+     */
     constructor(data: IUserData | null = null) {
         super(data);
         this.observeWith(UserObserver);
@@ -14,6 +25,8 @@ export default class User extends Model<IUserData> implements IUserModel {
 
     /**
      * Guarded fields
+     *
+     * These fields cannot be set directly.
      */
     guarded: string[] = [
         'hashedPassword',
@@ -22,11 +35,11 @@ export default class User extends Model<IUserData> implements IUserModel {
     ];
 
     /**
-     * Define your user fields that can be set
+     * The fields that are allowed to be set directly
+     *
+     * These fields can be set directly on the model.
      */
     fields: string[] = [
-
-        /** Define your user fields below */
         'email',
         'password',
         'hashedPassword',
@@ -37,14 +50,27 @@ export default class User extends Model<IUserData> implements IUserModel {
         'updatedAt',
     ]
 
+    /**
+     * Fields that should be returned as JSON
+     *
+     * These fields will be returned as JSON when the model is serialized.
+     */
     json = [
         'roles'
     ]
 
-    async tokens(): Promise<ApiToken[]> {
+    /**
+     * @returns The tokens associated with this user
+     *
+     * Retrieves the ApiToken models associated with this user.
+     */
+    async tokens(active: boolean = true): Promise<ApiToken[]> {
+        const filters = active ? { revokedAt: null } : {};
+
         return this.hasMany(ApiToken, {
             localKey: 'id',
-            foreignKey: 'userId'
+            foreignKey: 'userId',
+            filters
         }) 
     }
 

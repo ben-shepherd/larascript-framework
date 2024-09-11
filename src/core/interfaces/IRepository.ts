@@ -1,12 +1,18 @@
+/* eslint-disable no-unused-vars */
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
-export type RepositoryConstructor<
-    Model extends IModel = IModel,
-    Repository extends IRepository<Model> = IRepository<Model>
-> = new (collectionName?: string, modelCtor?: ModelConstructor) => Repository;
+/**
+ * Constructor type for repositories.
+ * @template Model The type of model the repository is for.
+ * @template Repository The type of the repository itself.
+ */
+export type RepositoryConstructor<Model extends IModel = IModel, Repository extends IRepository<Model> = IRepository<Model>> = new (modelCtor?: ModelConstructor, collectionName?: string) => Repository;
 
-export type RepositoryInstance<RCtor extends RepositoryConstructor<any>> = InstanceType<RCtor>
+/**
+ * Instance type of a repository constructor.
+ * @template RCtor The repository constructor.
+ */
 
 export interface IRepository<Model extends IModel = IModel> {
 
@@ -28,7 +34,7 @@ export interface IRepository<Model extends IModel = IModel> {
     /**
      * Get the Database Query
      */
-    query(): IDocumentManager;
+    documentManager(): IDocumentManager;
 
     /**
      * Find or fail if no document found

@@ -6,9 +6,7 @@ require('dotenv').config();
 const testAppConfig: IAppConfig = {
     environment: EnvironmentTesting,
 
-    providers: [],
-
-    commands: []
+    providers: []
 };
 
 export default testAppConfig;
