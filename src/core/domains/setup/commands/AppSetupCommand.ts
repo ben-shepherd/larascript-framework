@@ -7,18 +7,39 @@ import buildQuestionDTOs from '@src/core/domains/setup/utils/buildQuestionDTOs';
 import { IEnvService } from '@src/core/interfaces/IEnvService';
 import EnvService from "@src/core/services/EnvService";
 
+/**
+ * Command to run the setup process
+ */
 class AppSetupCommand extends BaseCommand implements ISetupCommand {
 
+    /**
+     * The command signature
+     */
     public signature = 'app:setup';
 
+    /**
+     * The command description
+     */
     public description = 'Runs the app setup process.';
 
+    /**
+     * The environment service
+     */
     env: IEnvService;
 
+    /**
+     * The console input service
+     */
     input: IConsoleInputService;
 
+    /**
+     * The questions to ask the user
+     */
     questions!: QuestionDTO[];
 
+    /**
+     * Constructor
+     */
     constructor() {
         super();
         this.env = new EnvService();
@@ -47,7 +68,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
 
         this.questions.forEach(question => {
             this.writeLine(`- ${question.getPreviewText()}`);
-        })
+        });
 
         this.writeLine();
         await this.input.waitForEnter('When ready, press Enter to continue');
@@ -76,7 +97,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
      * @param previousQuestion 
      * @returns 
      */
-    questionIsApplicable = (question: QuestionDTO): boolean => {
+    questionIsApplicable = (question: QuestionDTO): boolean =>{
 
         if(!question.applicableOnly) {
             return true;
@@ -98,7 +119,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
      * 
      * @param question 
      */
-    processQuestionDTO = async (count: number, question: QuestionDTO) => {
+    processQuestionDTO = async (count: number, question: QuestionDTO) =>{
 
         if(!this.questionIsApplicable(question)) {
             return;
