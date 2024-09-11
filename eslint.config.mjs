@@ -15,65 +15,78 @@ const compat = new FlatCompat({
     allConfig: js.configs.all
 });
 
-export default [...compat.extends("eslint:recommended"), {
-    plugins: {
-        import: fixupPluginRules(_import),
-    },
-
-    languageOptions: {
-        globals: {
-            ...globals.node,
+export default [
+    ...compat.extends("eslint:recommended"),
+    {
+        files: ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
+        ignores: ["fix-imports.js", "jest.config.js", "webpack.config.js"],
+        plugins: {
+            import: fixupPluginRules(_import),
         },
-        ecmaVersion: 2020,
-        sourceType: "module",
-        parserOptions: {
-            project: "tsconfig.json",
-            tsconfigRootDir: ".",
+        languageOptions: {
+            globals: {
+                ...globals.node,
+            },
+            ecmaVersion: 2020,
+            sourceType: "module",
+            parser: tsParser,
+            parserOptions: {
+                project: "tsconfig.json",
+                tsconfigRootDir: ".",
+            },
+        },
+        rules: {
+            "no-empty": "off",
+            "no-var": "error",
+            "no-unused-vars": "warn",
+            "sort-imports": ["error", {
+                ignoreDeclarationSort: true,
+            }],
+            "import/order": ["error", {
+                groups: [["builtin", "external", "internal"]],
+                "newlines-between": "always",
+            }],
+            "no-const-assign": "error",
+            "prefer-const": ["error", {
+                destructuring: "any",
+                ignoreReadBeforeAssign: false,
+            }],
+            "brace-style": ["error", "stroustrup", {
+                allowSingleLine: false,
+            }],
+            "lines-around-comment": ["error", {
+                beforeBlockComment: true,
+            }],
+            indent: ["error", 4],
+            "object-curly-newline": ["error", {
+                ObjectExpression: { multiline: true, consistent: true },
+                ObjectPattern: { multiline: true, consistent: true },
+                ImportDeclaration: { multiline: true, consistent: true },
+                ExportDeclaration: { multiline: true, consistent: true },
+            }],
+            "class-methods-use-this": ["off", {
+                exceptMethods: [],
+            }],
+            "lines-between-class-members": ["error", "always", {
+                exceptAfterSingleLine: false,
+            }],
+            "padded-blocks": ["error", { 
+                classes: "always"
+            }],
         },
     },
-
-    rules: {
-        "no-empty": "off",
-        "no-var": "error",
-        "no-unused-vars": "warn",
-        "sort-imports": ["error", {
-            ignoreDeclarationSort: true,
-        }],
-        "import/order": ["error", {
-            groups: [["builtin", "external", "internal"]],
-            "newlines-between": "always",
-        }],
-        "no-const-assign": "error",
-        "prefer-const": ["error", {
-            destructuring: "any",
-            ignoreReadBeforeAssign: false,
-        }],
-        "brace-style": ["error", "stroustrup", {
-            allowSingleLine: false,
-        }],
-        "lines-around-comment": ["error", {
-            beforeBlockComment: true,
-        }],
-        indent: ["error", 4],
-        "object-curly-newline": ["error", {
-            ObjectExpression: { multiline: true, consistent: true },
-            ObjectPattern: { multiline: true, consistent: true },
-            ImportDeclaration: { multiline: true, consistent: true },
-            ExportDeclaration: { multiline: true, consistent: true },
-        }],
-        "class-methods-use-this": ["off", {
-            exceptMethods: [],
-        }],
-        "lines-between-class-members": ["error", "always", {
-            exceptAfterSingleLine: false,
-        }],
-        "padded-blocks": ["error", { 
-            classes: "always"
-        }],
+    {
+        files: ["fix-imports.js", "jest.config.js", "webpack.config.js"],
+        languageOptions: {
+            globals: {
+                ...globals.node,
+                require: "readonly",
+                module: "readonly",
+                process: "readonly",
+                console: "readonly",
+            },
+            ecmaVersion: 2020,
+            sourceType: "module",
+        },
     },
-}, {
-    files: ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
-    languageOptions: {
-        parser: tsParser,
-    },
-}];
+];
