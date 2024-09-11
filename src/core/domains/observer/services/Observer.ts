@@ -1,35 +1,99 @@
 import { IObserver, IObserverEvent } from "@src/core/domains/observer/interfaces/IObserver";
 
+/**
+ * Abstract class implementing the Observer pattern.
+ * Classes extending this class will have event handlers for the following events:
+ * - creating
+ * - created
+ * - updating
+ * - updated
+ * - saving
+ * - saved
+ * - deleting
+ * - deleted
+ * 
+ * These event handlers can be overridden to provide custom logic for handling these events.
+ * 
+ * Additionally, the class provides methods for handling custom events that are not part of the predefined set.
+ */
 export default abstract class Observer<ReturnType = any> implements IObserver<ReturnType> {
 
+    /**
+     * Called when a 'creating' event is triggered.
+     * 
+     * @param data - The data associated with the event
+     * @returns The processed data, or the original data if no handler is found
+     */
     creating(data: ReturnType): ReturnType {
         return data;
     }
 
+    /**
+     * Called when a 'created' event is triggered.
+     * 
+     * @param data - The data associated with the event
+     * @returns The processed data, or the original data if no handler is found
+     */
     created(data: ReturnType): ReturnType {
         return data;
     }
 
+    /**
+     * Called when an 'updating' event is triggered.
+     * 
+     * @param data - The data associated with the event
+     * @returns The processed data, or the original data if no handler is found
+     */
     updating(data: ReturnType): ReturnType {
         return data;
     }
 
+    /**
+     * Called when an 'updated' event is triggered.
+     * 
+     * @param data - The data associated with the event
+     * @returns The processed data, or the original data if no handler is found
+     */
     updated(data: ReturnType): ReturnType {
         return data;
     }
 
+    /**
+     * Called when a 'saving' event is triggered.
+     * 
+     * @param data - The data associated with the event
+     * @returns The processed data, or the original data if no handler is found
+     */
     saving(data: ReturnType): ReturnType {
         return data;
     }
 
+    /**
+     * Called when a 'saved' event is triggered.
+     * 
+     * @param data - The data associated with the event
+     * @returns The processed data, or the original data if no handler is found
+     */
     saved(data: ReturnType): ReturnType {
         return data;
     }
 
+    /**
+     * Called when a 'deleting' event is triggered.
+     * 
+     * @param data - The data associated with the event
+     * @returns The processed data, or the original data if no handler is found
+     */
     deleting(data: ReturnType): ReturnType {
         return data;
     }
 
+    /**
+     * Called when a 'deleted' event is triggered.
+     * 
+     * @param data - The data associated with the event
+     * @returns The processed data, or the original data if no handler is found
+     */
     deleted(data: ReturnType): ReturnType {
         return data;
     }
