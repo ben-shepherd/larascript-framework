@@ -38,7 +38,7 @@ For comprehensive guides and detailed explanations of Larascript Node's features
 Below are some examples of how you can use Larascript Node.
 
 
-## Service Providers
+### Service Providers
 
 Here is an example of our ConsoleProvider which boots up the commands system.
 
@@ -53,7 +53,7 @@ export default class ConsoleProvider extends BaseProvider {
     async register(): Promise<void> {
         this.log('Registering ConsoleProvider');
 
-            /**
+        /**
          * Add readline for interacting with the terminal
          */
         App.setContainer('readline', readline.createInterface({
@@ -67,7 +67,7 @@ export default class ConsoleProvider extends BaseProvider {
         App.setContainer('console', new ConsoleService())
 
         /**
-         * Register commands from @src/config/app
+         * Register commands from @src/config/commands
          */
         App.container('console').register().registerAll(commandsConfig)
     }
