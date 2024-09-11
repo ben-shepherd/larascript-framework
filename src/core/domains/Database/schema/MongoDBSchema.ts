@@ -15,7 +15,8 @@ class MongoDBSchema extends BaseDatabaseSchema {
      * @param name 
      * @param args 
      */
-    async createTable(name: string): Promise<void> {
+    // eslint-disable-next-line no-unused-vars
+    async createTable(name: string, ...args: any[]): Promise<void> {
         this.driver.getDb().createCollection(name);
     }
 
@@ -24,7 +25,8 @@ class MongoDBSchema extends BaseDatabaseSchema {
      * @param name 
      * @param args 
      */
-    async dropTable(name: string): Promise<void> {
+    // eslint-disable-next-line no-unused-vars
+    async dropTable(name: string, ...args: any[]): Promise<void> {
         await this.driver.getDb().dropCollection(name);
     }
 
@@ -33,7 +35,8 @@ class MongoDBSchema extends BaseDatabaseSchema {
      * @param name 
      * @returns 
      */
-    async tableExists(name: string): Promise<boolean> {
+    // eslint-disable-next-line no-unused-vars
+    async tableExists(name: string, ...args: any[]): Promise<boolean> {
         return (await this.driver.getDb().listCollections().toArray()).map(c => c.name).includes(name);
     }
 
