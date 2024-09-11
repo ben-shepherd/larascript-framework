@@ -6,8 +6,7 @@ import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
 import TestMigrationProvider from '@src/tests/migration/providers/TestMigrationProvider';
 import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
-
-import TestDatabaseProvider from '../providers/TestDatabaseProvider';
+import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 
 describe('test migrations', () => {
 

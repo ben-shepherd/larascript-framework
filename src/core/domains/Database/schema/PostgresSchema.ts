@@ -1,9 +1,8 @@
 import BaseDatabaseSchema from "@src/core/domains/database/base/BaseDatabaseSchema";
+import { IAlterTableOptions } from "@src/core/domains/database/interfaces/postgres/IPostgresAlterTableOptions";
 import Postgres from "@src/core/domains/database/providers-db/Postgres";
 import { DataTypes, QueryInterfaceCreateTableOptions, QueryInterfaceDropTableOptions } from "sequelize";
 import { ModelAttributes } from 'sequelize/types/model';
-
-import { IAlterTableOptions } from "../interfaces/postgres/IPostgresAlterTableOptions";
 
 class PostgresSchema extends BaseDatabaseSchema<Postgres> {
 

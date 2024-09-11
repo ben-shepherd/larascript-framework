@@ -1,11 +1,10 @@
 /* eslint-disable no-undef */
 import { describe, test } from '@jest/globals';
 import Kernel from '@src/core/Kernel';
+import testAppConfig from '@src/tests/config/testConfig';
 import makeTestHelper from '@src/tests/make/makeTestHelper';
+import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
 import fs from 'fs';
-
-import testAppConfig from '../config/testConfig';
-import TestConsoleProvider from '../providers/TestConsoleProvider';
 
 
 const makeTypes = makeTestHelper.getArrayOfCommandTypes();
