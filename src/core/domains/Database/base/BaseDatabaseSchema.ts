@@ -26,21 +26,21 @@ abstract class BaseDatabaseSchema<Provider extends IDatabaseProvider = IDatabase
      * @param name - Name of the table to drop
      * @param args - Additional arguments for table deletion
      */
-    abstract alterTable(name: string, ...args: any[]): Promise<void>;
+    abstract alterTable(...args: any[]): Promise<void>;
 
     /**
      * Abstract method to create a new table in the database
      * @param name - Name of the table to create
      * @param args - Additional arguments for table creation
      */
-    abstract createTable(name: string, ...args: any[]): void;
+    abstract createTable(...args: any[]): void;
 
     /**
      * Abstract method to drop (delete) a table from the database
      * @param name - Name of the table to drop
      * @param args - Additional arguments for table deletion
      */
-    abstract dropTable(name: string, ...args: any[]): void;
+    abstract dropTable(...args: any[]): void;
 
     /**
      * Abstract method to check if a table exists in the database

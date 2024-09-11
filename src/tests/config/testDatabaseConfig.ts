@@ -4,7 +4,7 @@ import defaultCredentials from "@src/core/domains/setup/utils/defaultCredentials
 const defaultMongoDbCredentials = defaultCredentials.extractDefaultMongoDBCredentials();
 const defaultPostgresCredentials = defaultCredentials.extractDefaultPostgresCredentials();
 
-if(!defaultMongoDbCredentials || !defaultPostgresCredentials) {
+if (!defaultMongoDbCredentials || !defaultPostgresCredentials) {
     throw new Error('Invalid default credentials');
 }
 
@@ -25,6 +25,8 @@ const testDatabaseConfig: IDatabaseConfig = {
     }
 };
 
-export const getTestConnectionNames = () => Object.keys(testDatabaseConfig.connections);
+export const getTestConnectionNames = ({ exclude }: { exclude?: string[] }) => {
+    return Object.keys(testDatabaseConfig.connections).filter(name => !exclude?.includes(name));
+}
 
 export default testDatabaseConfig

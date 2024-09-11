@@ -3,6 +3,8 @@ import Postgres from "@src/core/domains/database/providers-db/Postgres";
 import { DataTypes, QueryInterfaceCreateTableOptions, QueryInterfaceDropTableOptions } from "sequelize";
 import { ModelAttributes } from 'sequelize/types/model';
 
+import { IAlterTableOptions } from "../interfaces/postgres/IPostgresAlterTableOptions";
+
 class PostgresSchema extends BaseDatabaseSchema<Postgres> {
 
     /**
@@ -28,47 +30,91 @@ class PostgresSchema extends BaseDatabaseSchema<Postgres> {
 
     /**
      * Create a table (id property is optional and is automatically added if not present)
-     * @param name 
+     * @param tableName 
      * @param attributes 
      * @param optons 
      */
-    async createTable(name: string, attributes: ModelAttributes, optons?: QueryInterfaceCreateTableOptions): Promise<void> {
+    async createTable(tableName: string, attributes: ModelAttributes, optons?: QueryInterfaceCreateTableOptions): Promise<void> {
         const sequelize = this.driver.getClient();
         const queryInterface = sequelize.getQueryInterface();
-        await queryInterface.createTable(name, this.withIdSchema(attributes), optons);
+        await queryInterface.createTable(tableName, this.withIdSchema(attributes), optons);
     }
 
     /**
      * Drop a table
-     * @param name 
+     * @param tableName 
      * @param options 
      */
-    async dropTable(name: string, options?: QueryInterfaceDropTableOptions): Promise<void> {
+    async dropTable(tableName: string, options?: QueryInterfaceDropTableOptions): Promise<void> {
         const sequelize = this.driver.getClient();
         const queryInterface = sequelize.getQueryInterface();
-        await queryInterface.dropTable(name, options);
+        await queryInterface.dropTable(tableName, options);
     }
 
     /**
-     * Alter a table
-     * @param name - The name of the table to alter
-     * @param args - Additional arguments for table alteration
-     * @returns Promise resolving to void
-     * @throws Error if the method is not implemented
+     * Alters a table
+     * @param tableName 
+     * @param options 
      */
-    alterTable(name: string, ...args: any[]): Promise<void> {
-        throw new Error("Method not implemented.");
+    async alterTable(tableName: IAlterTableOptions['tableName'], options: Omit<IAlterTableOptions, 'tableName'>): Promise<void> {
+        const sequelize = this.driver.getClient();
+    
+        if(options.addColumn) {
+            await sequelize.getQueryInterface().addColumn(
+                tableName,
+                options.addColumn.key,
+                options.addColumn.attribute,
+                options.addColumn.options
+            );
+        }
+        if(options.removeColumn) {
+            await sequelize.getQueryInterface().removeColumn(
+                tableName,
+                options.removeColumn.attribute,
+                options.removeColumn.options
+            )
+        }
+        if(options.changeColumn) {
+            await sequelize.getQueryInterface().changeColumn(
+                tableName,
+                options.changeColumn.attributeName,
+                options.changeColumn.dataTypeOrOptions,
+                options.changeColumn.options
+            );
+        }
+        if(options.renameColumn) {
+            await sequelize.getQueryInterface().renameColumn(
+                tableName,
+                options.renameColumn.attrNameBefore,
+                options.renameColumn.attrNameAfter,
+                options.renameColumn.options
+            );
+        }
+        if(options.addIndex) {
+            await sequelize.getQueryInterface().addIndex(
+                tableName,
+                options.addIndex.attributes,
+                options.addIndex.options
+            );
+        }
+        if(options.removeIndex) {
+            await sequelize.getQueryInterface().removeIndex(
+                tableName,
+                options.removeIndex.indexName,
+                options.removeIndex.options
+            );
+        }
     }
 
     /**
      * Check if table exists
-     * @param name 
+     * @param tableName 
      * @returns 
      */
-    async tableExists(name: string): Promise<boolean> {
+    async tableExists(tableName: string): Promise<boolean> {
         const sequelize = this.driver.getClient();
         const queryInterface = sequelize.getQueryInterface();
-        return await queryInterface.tableExists(name);
+        return await queryInterface.tableExists(tableName);
     }
 
 }
