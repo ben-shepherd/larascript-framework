@@ -19,10 +19,29 @@ export const initialWorkerModalData = {
     createdAt: new Date()
 }
 
+/**
+ * WorkerModel class.
+ *
+ * Represents a worker model that stores data for a background job.
+ *
+ * @class WorkerModel
+ * @extends Model<WorkerModelData>
+ */
 export default class WorkerModel extends Model<WorkerModelData> {
 
+
+    /**
+     * The list of date fields.
+     *
+     * @type {string[]}
+     */
     dates = ['createdAt']
 
+    /**
+     * The list of fields.
+     *
+     * @type {string[]}
+     */
     fields = [
         'queueName',
         'eventName',
@@ -32,6 +51,11 @@ export default class WorkerModel extends Model<WorkerModelData> {
         'createdAt'
     ]
 
+    /**
+     * The list of fields that are JSON.
+     *
+     * @type {string[]}
+     */
     json = [
         'payload'
     ]

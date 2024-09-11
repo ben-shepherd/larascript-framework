@@ -7,17 +7,29 @@ import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload
 import { EventServiceConfig, IEventService } from "@src/core/domains/events/interfaces/IEventService";
 import EventDispatcher from "@src/core/domains/events/services/EventDispatcher";
 
+/**
+ * Event Service
+ *
+ * Provides methods for dispatching events and retrieving event listeners.
+ */
 export default class EventService extends Singleton<EventServiceConfig>  implements IEventService {
 
+    /**
+     * Config.
+     */
     public config!: EventServiceConfig;
 
+    /**
+     * Constructor.
+     * @param config Event service config.
+     */
     constructor(config: EventServiceConfig) {
         super(config);
     }
 
     /**
-     * Dispatch an event
-     * @param event 
+     * Dispatch an event.
+     * @param event Event to dispatch.
      * @returns 
      */
     async dispatch<Payload extends IEventPayload>(event: IEvent<Payload>) {
@@ -25,18 +37,18 @@ export default class EventService extends Singleton<EventServiceConfig>  impleme
     }
 
     /**
-     * Get an array of listeners by the event name
-     * @param eventName 
-     * @returns 
+     * Get an array of listeners by the event name.
+     * @param eventName Event name.
+     * @returns Array of listeners.
      */
     getListenersByEventName(eventName: string): EventListenerConstructor[] {
         return this.config.subscribers[eventName] ?? [];
     }
 
     /**
-     * Get event driver
-     * @param driverName 
-     * @returns 
+     * Get event driver.
+     * @param driverName Driver name.
+     * @returns Driver config.
      */
     getDriver(driverName: string): IDriverConfig {
         if(!this.config.drivers[driverName]) {
@@ -46,3 +58,4 @@ export default class EventService extends Singleton<EventServiceConfig>  impleme
     }
 
 }
+

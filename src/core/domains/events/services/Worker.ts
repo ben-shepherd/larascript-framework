@@ -2,13 +2,18 @@ import Repository from "@src/core/base/Repository";
 import Singleton from "@src/core/base/Singleton";
 import { QueueDriverOptions } from "@src/core/domains/events/drivers/QueueDriver";
 import EventDriverException from "@src/core/domains/events/exceptions/EventDriverException";
+import FailedWorkerModelFactory from "@src/core/domains/events/factory/failedWorkerModelFactory";
 import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
 import WorkerModel from "@src/core/domains/events/models/WorkerModel";
 import EventSubscriber from "@src/core/domains/events/services/EventSubscriber";
 import DriverOptions from "@src/core/domains/events/services/QueueDriverOptions";
 import { App } from "@src/core/services/App";
-import FailedWorkerModelFactory from "@src/core/domains/events/factory/failedWorkerModelFactory";
 
+/**
+ * Worker service
+ *
+ * This service provides methods for working with the worker table.
+ */
 export default class Worker extends Singleton {
 
     /**
@@ -20,7 +25,12 @@ export default class Worker extends Singleton {
      * Sync driver for running events
      */
     private syncDriver: string = 'sync';
-    
+
+    /**
+     * Set the driver for the worker
+     * 
+     * @param driver Driver to set
+     */
     setDriver(driver: string) {
         this.options = this.getOptions(driver)
         this.log(`Driver set to '${driver}'`,)
@@ -28,6 +38,12 @@ export default class Worker extends Singleton {
 
     /**
      * Work the worker
+     * 
+     * This method will fetch all queued items and process them through the
+     * event driver set by the setDriver method. If an error occurs, the
+     * worker will retry up to the number of times specified in the options.
+     * After the number of retries has been exceeded, the worker will move
+     * the item to the failed collection.
      */
     async work() {
         if(!this.options) {
@@ -163,8 +179,13 @@ export default class Worker extends Singleton {
         await model.delete();
     }
 
+    /**
+     * Logs a message to the console
+     * @param message The message to log
+     */
     protected log(message: string) {
         console.log('[Worker]: ', message)
     }
 
 }
+
