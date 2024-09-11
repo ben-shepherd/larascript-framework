@@ -7,7 +7,7 @@ import IService from "@src/core/interfaces/IService";
  * @class Service
  * @implements {IService}
  */
-export default abstract class Service<Config> implements IService {
+export default abstract class Service<Config = any> implements IService {
 
     /**
      * Service configuration

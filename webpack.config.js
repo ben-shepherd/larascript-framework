@@ -19,6 +19,7 @@ module.exports = {
       '@mongodb-js/zstd': false,
       '@aws-sdk/credential-providers': false,
       'gcp-metadata': false,
+      'pg-hstore': false,
       snappy: false,
       socks: false,
       aws4: false,
