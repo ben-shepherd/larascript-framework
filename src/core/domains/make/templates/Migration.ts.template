@@ -7,6 +7,11 @@ export class #name#Migration extends BaseMigration
     // If left commented out, the migration will run only on the default provider.
     // databaseProvider: 'mongodb' | 'postgres' = 'postgres';
 
+    /**
+    * Run the migrations.
+    *
+    * @return {Promise<void>}
+    */
     async up(): Promise<void> 
     {
         // Example:
@@ -18,9 +23,15 @@ export class #name#Migration extends BaseMigration
         // });
     }
 
+    /**
+    * Revert the migrations.
+    *
+    * @return {Promise<void>}
+    */
     async down(): Promise<void> 
     {
         // Example:
         // await this.schema.dropTable('users');
     }
+    
 }

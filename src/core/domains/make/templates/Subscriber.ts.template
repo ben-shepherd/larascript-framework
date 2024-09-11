@@ -1,15 +1,31 @@
 import EventSubscriber from "@src/core/domains/events/services/EventSubscriber";
 
-export type I#name#SubscriberPayload = {
+export type I#name#Data = {
 
 }
 
-export default class #name#Subscriber extends EventSubscriber<I#name#SubscriberPayload> {
-    
-    constructor(payload: I#name#SubscriberPayload) {
-        const eventName = '#name#'
-        const driver = 'snyc';
+/**
+ * <enter description>
+ *
+ * @param payload The payload of the event.
+ */
+export default class #name# extends EventSubscriber<I#name#Data> {
+
+    /**
+     * Constructor
+     * @param payload The payload of the event.
+     */
+    constructor(payload: I#name#Data) {
+
+        // Set the name of the event.
+        const eventName = 'TestSubscriber'
+
+        // Set to 'queue' if you want the event to be added to the worker queue
+        // and processed by the worker command.
+        // Set to 'sync' if you want the event to be processed immediately.
+        const driver = 'queue';
 
         super(eventName, driver, payload)
     }
+
 }

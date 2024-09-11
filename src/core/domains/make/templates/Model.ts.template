@@ -2,15 +2,43 @@
 import Model from '@src/core/base/Model';
 import IModelData from '@src/core/interfaces/IModelData';
 
+/**
+ * Add your models fields here, e.g.
+ *
+ * foo: string;
+ * bar: number;
+ * baz: boolean;
+ */
 interface I#name#Data extends IModelData {
     
 }
 
-export default class #name# extends Model<I#name#Data> {
+class #name# extends Model<I#name#Data> {
 
-    public collection = '#collection#';
+    // Add your models fields here, e.g: ['foo', 'bar', 'baz']
+    fields: string[] = []
 
-    fields: string[] = [
+    // Add your guarded fields here, e.g: ['sensitiveField']
+    guarded: string[] = [];
 
-    ]
+    // Add your JSON fields heere, e.g. ['arrayOfObjects']
+    json: string[] = [];
+
+    // Add your date fields here, e.g: ['postedAt']
+    dates: string[] = [];
+
+    // Enable or disable automatic generation of createdAt, updatedAt fields
+    timestamps: boolean = true;
+
+    /**
+     * Constructs a new instance of the Test model.
+     * 
+     * @param {I#name#Data | null} data - Initial data to populate the model.
+     */
+    constructor(data: I#name#Data | null = null) {
+        super(data)
+    }
+
 }
+
+export default #name#

@@ -7,6 +7,7 @@ export default class MakeModelCommand extends BaseMakeFileCommand {
             signature: 'make:model',
             description: 'Create a new model',
             makeType: 'Model',
+            endsWith: 'Model',
             args: ['name', 'collection'],
             argsOptional: ['collection'],
         })

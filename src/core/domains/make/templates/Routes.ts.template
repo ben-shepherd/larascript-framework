@@ -1,15 +1,22 @@
-import { Request, Response } from 'express';
-
 import Route from "@src/core/domains/express/routing/Route";
 import RouteGroup from "@src/core/domains/express/routing/RouteGroup";
+import { Request, Response } from 'express';
 
+/**
+ * Note:Remember to bind your routes to express in the AppProvider (@src/app/providers/AppProvider)
+ * 
+ * Example:
+ *     App.container('express').bindRoutes(#name#);
+ */
 const #name# = RouteGroup([
     Route({
         name: 'index',
         method: 'get',
         path: '/',
         action: (req: Request, res: Response) => {
-            res.send('Hello world!')
+            res.send({
+                success: true
+            })
         } 
     }),
 ])
