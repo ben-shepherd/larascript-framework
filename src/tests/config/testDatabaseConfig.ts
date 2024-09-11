@@ -25,7 +25,7 @@ const testDatabaseConfig: IDatabaseConfig = {
     }
 };
 
-export const getTestConnectionNames = ({ exclude }: { exclude?: string[] }) => {
+export const getTestConnectionNames = ({ exclude = [] }: { exclude?: string[] } = {}) => {
     return Object.keys(testDatabaseConfig.connections).filter(name => !exclude?.includes(name));
 }
 

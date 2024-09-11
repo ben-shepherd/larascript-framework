@@ -3,8 +3,6 @@ import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocume
 
 /**
  * Provides methods for validating documents in the database.
- *
- * @author Ben Shapiro <ben@benshapiro.me>
  */
 export interface IDocumentValidator
 {
