@@ -2,6 +2,11 @@
 const APP_PATH = '@src/app';
 const TEMPLATE_PATH = '@src/core/domains/make/templates';
 
+/**
+ * Where the generated files should be placed
+ * 
+ * @note This MUST match the structure of the `templates` object
+ */
 export const targetDirectories: Record<string, string> = {
     Repository: `${APP_PATH}/repositories`,
     Model: `${APP_PATH}/models`,
@@ -19,6 +24,11 @@ export const targetDirectories: Record<string, string> = {
     Migration: `${APP_PATH}/migrations`,
 } as const;
 
+/**
+ * Where the template files are located
+ * 
+ * @note This MUST match the structure of the `targetDirectories` object
+ */
 export const templates: Record<string, string> = {
     Repository: `${TEMPLATE_PATH}/Repository.ts.template`,
     Model: `${TEMPLATE_PATH}/Model.ts.template`,
@@ -40,3 +50,4 @@ export default Object.freeze({
     targetDirectories,
     templates
 })
+

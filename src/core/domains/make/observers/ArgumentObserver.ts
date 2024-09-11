@@ -3,6 +3,10 @@ import { IMakeOptions } from "@src/core/domains/make/interfaces/IMakeOptions";
 import Observer from "@src/core/domains/observer/services/Observer";
 import Str from "@src/core/util/str/Str";
 
+/**
+ * ArgumentObserver is responsible for modifying the make file arguments
+ * based on the options
+ */
 class ArgumentObserver<T extends IMakeFileArguments = IMakeFileArguments> extends Observer<IMakeFileArguments> {
 
     /**
