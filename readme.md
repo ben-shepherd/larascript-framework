@@ -1,12 +1,12 @@
 ![Larascript Node Banner](https://raw.githubusercontent.com/ben-shepherd/larascript-node/master/assets/banner2.png)
 
-## 🚧 ALPHA STATUS 🚧
+## 🚀 BETA STATUS 🚀
 
-Please note that Larascript Node is currently in Alpha:
+Larascript Node has now entered Beta:
 
-- Features may be subject to change or removal without prior notice.
-- Some functionalities might not perform as intended.
-- We appreciate your understanding and feedback as we continue development and testing.
+- Features are more stable but may still be subject to change.
+- Most functionalities should work as intended, but some issues may persist.
+- We welcome your feedback and contributions as we prepare for a stable release.
 
 ## About Larascript
 
@@ -129,7 +129,7 @@ class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
 
 ## Repositories
 
-Here is an example of a repository.
+Here is an example of the User repository.
 
 ```typescript
 export default class UserRepository extends Repository<User> implements IUserRepository {
@@ -244,6 +244,10 @@ Our aim is to bring Laravel's "developer happiness" philosophy to Node.js, offer
 LinkedIn: [Visit Benjamin's LinkedIn](https://www.linkedin.com/in/benjamin-programmer/)
 
 Contact Email: [ben.shepherd@gmx.com](mailto:ben.shepherd@gmx.com)
+
+## License
+
+[Larascript](https://www.larascriptnode.com/) © 2024 by [Benjamin Shepherd](https://www.linkedin.com/in/benjamin-programmer/) is licensed under [CC BY 4.0]
 
 ## GitHub Metrics
 
