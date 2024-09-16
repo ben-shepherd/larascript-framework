@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  api:
+    depends_on:
+      - mongodb
+    environment:
+      - MONGODB_URI=mongodb://root:example@localhost:27017/app?authSource=admin
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - app-network
+
+volumes:
+  mongodb_data:

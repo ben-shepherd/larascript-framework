@@ -1,12 +1,12 @@
 services:
   api:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../..
+      dockerfile: docker/dev/Dockerfile
     ports:
       - "5000:5000"
     volumes:
-      - .:/app
+      - ../../:/app
       - /app/node_modules
     working_dir: /app
     networks:
