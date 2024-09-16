@@ -6,8 +6,9 @@ import { IDatabaseProvider } from '@src/core/domains/database/interfaces/IDataba
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import { IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
 import PostgresSchema from '@src/core/domains/database/schema/PostgresSchema';
+import pg from 'pg';
 import { QueryInterface, Sequelize } from 'sequelize';
-import { Options as SequelizeOptions } from 'sequelize/types/sequelize';
+import { Options, Options as SequelizeOptions } from 'sequelize/types/sequelize';
 
 export default class Postgres implements IDatabaseProvider {
 
@@ -22,8 +23,9 @@ export default class Postgres implements IDatabaseProvider {
      * This fixes an issue where a SQL select query string did not keep the casing of the provided table name.
      * When the select query string is buit, it's now wrapped around double quotes which ensures the casing of the table name.
      */
-    protected overrideConfig = {
-        quoteIdentifiers: true
+    protected overrideConfig: Partial<Options> = {
+        quoteIdentifiers: true,
+        dialectModule: pg
     }
  
     /**
@@ -45,7 +47,10 @@ export default class Postgres implements IDatabaseProvider {
      * @returns {Promise<void>} A promise that resolves when the connection is established
      */
     async connect(): Promise<void> {
-        this.sequelize = new Sequelize(this.config.uri, { ...this.config.options, ...this.overrideConfig })
+        this.sequelize = new Sequelize(this.config.uri, { 
+            ...this.config.options, 
+            ...this.overrideConfig
+        })
     }
 
     /**
