@@ -15,7 +15,10 @@
     "test": "jest --runInBand",
     "setup": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register ./src/setup.ts",
     "db:up": "cd ./docker/dev && docker-compose -f docker-compose.mongodb.yml -f docker-compose.postgres.yml -f docker-compose.base.yml up --build -d",
-    "db:down": "cd ./docker/dev && docker-compose -f docker-compose.mongodb.yml -f docker-compose.postgres.yml -f docker-compose.base.yml down"
+    "db:down": "cd ./docker/dev && docker-compose -f docker-compose.mongodb.yml -f docker-compose.postgres.yml -f docker-compose.base.yml down",
+    "prod:up": "cd ./docker/prod && docker-compose -f docker-compose.mongodb.yml -f docker-compose.postgres.yml -f docker-compose.base.yml up --build -d",
+    "prod:down": "cd ./docker/prod && docker-compose -f docker-compose.mongodb.yml -f docker-compose.postgres.yml -f docker-compose.base.yml down",
+    "prod:sh": "docker exec -it prod-api-1 /bin/bash"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
