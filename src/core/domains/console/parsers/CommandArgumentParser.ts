@@ -3,80 +3,73 @@ import CommandArguementParserException from "@src/core/domains/console/exception
 export const KeyPair = 'KeyPair'
 export type KeyPairArguementType = {type: typeof KeyPair, key: string, value: string}
 
-export const OnlyArguement = 'OnlyValue'
-export type OnlyArguementType = {type: typeof OnlyArguement, value: string}
+export const ValueOnly = 'OnlyValue'
+export type OnlyArguementType = {type: typeof ValueOnly, value: string}
 
 export type ParsedArguement = OnlyArguementType | KeyPairArguementType
 export type ParsedArgumentsArray = Array<ParsedArguement>
 
+
+/**
+ * Class for parsing command line arguments
+ * 
+ * @example
+ *      --myArguement --myArguementWithValue="123"
+ *      // Returns 
+ *      [
+ *          {type: OnlyArg, value: 'myArguement'},
+ *          {type: KeyPairArg, value: 'myArguementWithValue'}
+ *      ]
+ */
 export default class CommandArguementParser {
 
     /**
      * Parse the string commands into a readable format and store them
      * in this.parsedArgs
      * 
-     * Example
-     *      commandArguements = [
-     *          '--myArguement',
-     *          '--myArguementWithValue="123"
-     *      ]
-     * 
-     * Returns 
-     *      [
-     *          {type: OnlyArg, value: 'myArguement'},
-     *          {type: KeyPairArg, value: 'myArguementWithValue'}
-     *      ]
+     * @param argv 
+     * @returns 
      */
-    public static parseStringCommands(commands: string[]): ParsedArgumentsArray {
-        const parsedCommands: ParsedArgumentsArray = []
+    public static parseStringCommands(argv: string[]): ParsedArgumentsArray {
+        const parsedArgumentsArr: ParsedArgumentsArray = []
 
-        for(const command of commands) {
-            const parsed = this.parse(command)
+        for(const command of argv) {
+            const parsed = this.parseSingleArgument(command)
 
             if(parsed) {
-                parsedCommands.push(parsed)
+                parsedArgumentsArr.push(parsed)
             }
         }
 
-        return parsedCommands
+        return parsedArgumentsArr
     }
 
     /**
      * Parses command arguments into a readable format
      * 
-     *  Examples
-     *      --myArgument 
-     *      // Outputs: {type: OnlyArg, value: 'myArgument'}
-     * 
-     *      --myAruementWithValue="my value" /
-     *      // Outputs: {type: KeyPairArg, value: 'myArgument'}
-     * 
-     * @param command 
+     * @param argumentStr 
      * @returns 
      */
-    public static parse(command: string): ParsedArguement | null {
-        if(!command.startsWith('--')) {
-            throw new CommandArguementParserException(`Invalid command argment: '${command}'. Did you forget to prefix with --?`)
+    public static parseSingleArgument(argumentStr: string): ParsedArguement | null {
+        if(!argumentStr.startsWith('--')) {
+            throw new CommandArguementParserException(`Invalid command argment: '${argumentStr}'. Did you forget to prefix with --?`)
         }
 
-        /**
-         * --myArguementWithValue="my value"
-         */
-        const regExp = new RegExp(/^--([^=]+)(=|\s)"?([^"]+)"?$/)
-        const matches = regExp.exec(command)
+        const strippedDashes = argumentStr.startsWith('--') ? argumentStr.slice(2) : argumentStr
+        const parts = strippedDashes.split('=')
+        const key = parts[0]
+        const value = parts[1] ?? null
 
-        if(matches?.[1] && matches?.[3]) {
-            const keyWithoutDashes = matches[1].replace('--', '');
-            const value = matches[3];
-
+        if(value) {
             return {
                 type: KeyPair,
-                key: keyWithoutDashes,
-                value: value
+                key,
+                value: value ?? ''
             }
         }
 
-        return {type: OnlyArguement, value: command}
+        return {type: ValueOnly, value: argumentStr}
     }
 
 }
+
