@@ -33,6 +33,67 @@ For comprehensive guides and detailed explanations of Larascript Node's features
 - Code generation templates
 - Comprehensive testing suite (Jest)
 
+##  Quick Setup (~5 minutes)
+
+Follow these steps to quickly set up your project:
+
+1. **Create a new repository**:
+   
+    Use the following link to create a new repository with Larascript as the template:
+
+    https://github.com/new?template_name=larascript-framework&template_owner=ben-shepherd
+
+2. **Install dependencies**:
+   
+    Once you've cloned your new repository, run the following command in your project directory:
+
+   ```
+   yarn install
+   ```
+
+   This will install all the necessary dependencies for your project.
+
+3. **Start Database Containers**:
+
+   To set up your database environment, run:
+
+   ```
+   yarn db:up
+   ```
+
+   This command will start the necessary database containers for your project.
+
+4. **Run the setup command (optional)**:
+
+   If you want to populate the .env file with configured settings, use:
+
+   ```
+   yarn setup
+   ```
+
+   This step is optional but can be helpful for quickly configuring your environment.
+
+5. **Run database migrations**:
+
+   To set up your database schema, run:
+
+   ```
+   yarn dev migrate:up
+   ```
+
+   This command will apply all pending database migrations.
+
+6. **Start developing**:
+
+   To start your development server, use:
+
+   ```
+   yarn dev
+   ```
+
+   This will launch your application in development mode.
+
+
 ## Larascript Node in Action: Real-World Code Examples
 
 Below are some examples of how you can use Larascript Node.
