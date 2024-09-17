@@ -9,6 +9,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+      LARASCRIPT_DEFAULT_CREDENTIALS: mongodb://root:example@localhost:27017/app?authSource=admin
     volumes:
       - mongodb_data:/data/db
     networks:
