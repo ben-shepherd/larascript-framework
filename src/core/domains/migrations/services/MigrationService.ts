@@ -44,7 +44,7 @@ class MigrationService implements IMigrationService {
     async getMigrationDetails({ group, filterByFileName }: IMigrationServiceOptions): Promise<MigrationDetail[]> {
         const result: MigrationDetail[] = [];
 
-        const migrationFileNames = await this.fileService.getMigrationFileNames();
+        const migrationFileNames = this.fileService.getMigrationFileNames();
         
         for(const fileName of migrationFileNames) {
             const migration = await this.fileService.getImportMigrationClass(fileName);

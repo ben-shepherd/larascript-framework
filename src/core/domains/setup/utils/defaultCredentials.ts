@@ -6,10 +6,10 @@ import path from "path"
  */
 const extractDefaultMongoDBCredentials = () => {
     try {
-        const dockerComposePath = path.resolve('@src/../', 'docker-compose.mongodb.yml')
+        const dockerComposePath = path.resolve('@src/../', 'docker/docker-compose.mongodb.yml')
         const contents = fs.readFileSync(dockerComposePath, 'utf8')
 
-        const pattern = /MONGODB_URI=(.+)/
+        const pattern = /LARASCRIPT_DEFAULT_CREDENTIALS:\s?(.+)/
         const match = pattern.exec(contents)
 
         if (match?.[1]) {
@@ -29,10 +29,10 @@ const extractDefaultMongoDBCredentials = () => {
  */
 const extractDefaultPostgresCredentials = () => {
     try {
-        const dockerComposePath = path.resolve('@src/../', 'docker-compose.postgres.yml')
+        const dockerComposePath = path.resolve('@src/../', 'docker/docker-compose.postgres.yml')
         const contents = fs.readFileSync(dockerComposePath, 'utf8')
 
-        const pattern = /POSTGRES_URI=(.+)/
+        const pattern = /LARASCRIPT_DEFAULT_CREDENTIALS:\s?(.+)/
         const match = pattern.exec(contents)
 
         if (match?.[1]) {

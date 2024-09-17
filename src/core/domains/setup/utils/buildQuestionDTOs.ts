@@ -3,7 +3,7 @@ import CopyEnvExampleAction from "@src/core/domains/setup/actions/CopyEnvExample
 import EnableExpress from "@src/core/domains/setup/actions/EnableExpress";
 import GenerateJwtSecretAction from "@src/core/domains/setup/actions/GenerateJwtSecretAction";
 import SetupDefaultDatabase from "@src/core/domains/setup/actions/SetupDefaultDatabase";
-import SetupDockerDatabases from "@src/core/domains/setup/actions/SetupDockerDatabases";
+import SetupDockerDatabaseScripts from "@src/core/domains/setup/actions/SetupDockerDatabaseScripts";
 import { QuestionIDs } from "@src/core/domains/setup/consts/QuestionConsts";
 import QuestionDTO from "@src/core/domains/setup/DTOs/QuestionDTO";
 
@@ -32,7 +32,7 @@ const buildQuestionDTOs = (): QuestionDTO[] => {
             previewText: 'Choose Database Provider to Use',
             defaultValue: 'all',
             acceptedAnswers: acceptedAnswersDatabases,
-            actionCtors: [SetupDockerDatabases, SetupDefaultDatabase]
+            actionCtors: [SetupDockerDatabaseScripts, SetupDefaultDatabase]
         }),
         new QuestionDTO({
             id: QuestionIDs.selectDefaultDb,
