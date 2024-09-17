@@ -44,7 +44,7 @@ class MigrationService implements IMigrationService {
     async getMigrationDetails({ group, filterByFileName }: IMigrationServiceOptions): Promise<MigrationDetail[]> {
         const result: MigrationDetail[] = [];
 
-        const migrationFileNames = await this.fileService.getMigrationFileNames();
+        const migrationFileNames = this.fileService.getMigrationFileNames();
         
         for(const fileName of migrationFileNames) {
             const migration = await this.fileService.getImportMigrationClass(fileName);
@@ -103,8 +103,9 @@ class MigrationService implements IMigrationService {
      * Run the migrations down
      */
     async down({ batch }: Pick<IMigrationServiceOptions, 'batch'>): Promise<void> {
-    // Get the current batch count
-        const batchCount = batch ?? await this.getCurrentBatchCount();    
+        // Get the current batch count
+        let batchCount = typeof batch !== 'undefined' ? batch : await this.getCurrentBatchCount();    
+        batchCount = isNaN(batchCount) ? 1 : batchCount;
 
         // Get the migration results
         const results = await this.getMigrationResults({

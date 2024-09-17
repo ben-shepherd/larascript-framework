@@ -1,4 +1,4 @@
-![Larascript Node Banner](https://raw.githubusercontent.com/ben-shepherd/larascript-node/master/assets/banner2.png)
+![Larascript Node Banner](https://raw.githubusercontent.com/ben-shepherd/larascript-node/master/assets/banner_black.png)
 
 ## 🚀 BETA STATUS 🚀
 
@@ -8,30 +8,110 @@ Larascript Node has now entered Beta:
 - Most functionalities should work as intended, but some issues may persist.
 - We welcome your feedback and contributions as we prepare for a stable release.
 
-## About Larascript
+## Table of Contents
 
-Larascript Node is a powerful backend framework designed to streamline the creation of RESTful APIs in JavaScript. Leveraging TypeScript for enhanced code quality and developer experience, it integrates popular packages such as Express, MongoDB, and Postgres. The framework's architecture draws inspiration from PHP's Laravel, offering a familiar and efficient structure for developers.
+1. [Your Guide to Mastering Larascript Node](#your-guide-to-mastering-larascript-node)
+2. [Project Requirements](#project-requirements)
+3. [Quick Setup (~5 minutes)](#quick-setup-5-minutes)
+4. [Larascript Node in Action: Real-World Code Examples](#larascript-node-in-action-real-world-code-examples)
+   - [Service Providers](#service-providers)
+   - [Models](#models)
+   - [Repositories](#repositories)
+   - [Migration](#migration)
+   - [Validator](#validator)
+   - [Observer](#observer)
+5. [Coding Standards](#coding-standards)
+6. [About Larascript](#about-larascript)
+7. [Framework Foundations](#framework-foundations)
+8. [How Laravel Inspired Our Node.js Journey](#how-laravel-inspired-our-nodejs-journey)
+9. [Author](#author)
+10. [License](#license)
+11. [GitHub Metrics](#github-metrics)
+
 
 ## Your Guide to Mastering Larascript Node
 
 For comprehensive guides and detailed explanations of Larascript Node's features, please visit our official documentation at [https://www.larascriptnode.com](https://www.larascriptnode.com/).
 
-## Framework Foundations
 
-- Service providers
-- Wrappers for ease of use Express.js
-- Authentication built in
-- Multi-database support (MongoDB & Postgres)
-- Migrations for database schema management
-- Eloquent-inspired models
-- Repository pattern
-- Event-driven architecture with queues
-- Background workers
-- Observer pattern
-- Extendable Base Classes
-- Command-line interface (CLI) with customizable commands
-- Code generation templates
-- Comprehensive testing suite (Jest)
+## Project Requirements
+
+Before you begin the installation process, please ensure you have the following software installed on your system:
+
+- **Node.js:** JavaScript runtime for executing code outside a web browser.  
+  [Download Node.js](https://nodejs.org/)
+
+- **Yarn Package Manager:** Fast, reliable, and secure dependency management.  
+  [Install Yarn](https://yarnpkg.com/getting-started/install)
+
+- **Docker:** Platform for developing, shipping, and running applications in containers.  
+  [Get Docker](https://www.docker.com/get-started)
+
+- **Docker Compose:** Tool for defining and running multi-container Docker applications.  
+  [Install Docker Compose](https://docs.docker.com/compose/install/)
+
+Having these tools installed will ensure a smooth setup process for your project.
+
+##  Quick Setup (~5 minutes)
+
+Follow these steps to quickly set up your project:
+
+1. **Create a new repository**:
+   
+    Use the following link to create a new repository with Larascript as the template:
+
+    https://github.com/new?template_name=larascript-framework&template_owner=ben-shepherd
+
+2. **Install dependencies**:
+   
+    Once you've cloned your new repository, run the following command in your project directory:
+
+   ```
+   yarn install
+   ```
+
+   This will install all the necessary dependencies for your project.
+
+3. **Start Database Containers**:
+
+   To set up your database environment, run:
+
+   ```
+   yarn db:up
+   ```
+
+   This command will start the necessary database containers for your project.
+
+4. **Run the setup command (optional)**:
+
+   If you want to populate the .env file with configured settings, use:
+
+   ```
+   yarn setup
+   ```
+
+   This step is optional but can be helpful for quickly configuring your environment.
+
+5. **Run database migrations**:
+
+   To set up your database schema, run:
+
+   ```
+   yarn dev migrate:up
+   ```
+
+   This command will apply all pending database migrations.
+
+6. **Start developing**:
+
+   To start your development server, use:
+
+   ```
+   yarn dev
+   ```
+
+   This will launch your application in development mode.
+
 
 ## Larascript Node in Action: Real-World Code Examples
 
@@ -232,6 +312,27 @@ export default class UserObserver extends Observer<IUserData> {
 ## Coding Standards
 
 To maintain consistency and code quality across the project, we adhere to a set of coding standards. For detailed guidelines and best practices, please refer to our [Coding Standards document](standards.md).
+
+## About Larascript
+
+Larascript Node is a powerful backend framework designed to streamline the creation of RESTful APIs in JavaScript. Leveraging TypeScript for enhanced code quality and developer experience, it integrates popular packages such as Express, MongoDB, and Postgres. The framework's architecture draws inspiration from PHP's Laravel, offering a familiar and efficient structure for developers.
+
+## Framework Foundations
+
+- Service providers
+- Wrappers for ease of use Express.js
+- Authentication built in
+- Multi-database support (MongoDB & Postgres)
+- Migrations for database schema management
+- Eloquent-inspired models
+- Repository pattern
+- Event-driven architecture with queues
+- Background workers
+- Observer pattern
+- Extendable Base Classes
+- Command-line interface (CLI) with customizable commands
+- Code generation templates
+- Comprehensive testing suite (Jest)
 
 ## How Laravel Inspired Our Node.js Journey
 

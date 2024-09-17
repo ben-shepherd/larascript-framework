@@ -14,7 +14,7 @@ export default class ListRoutesCommand extends BaseCommand {
      * Execute the command
      */
     async execute() {
-        const details = this.getArguementByKey('details')?.value ?? false;
+        const showDetails = (this.getArguementByKey('details')?.value ?? false) !== false;
         const expressService = App.container('express')
 
         this.input.clearScreen();
@@ -22,7 +22,7 @@ export default class ListRoutesCommand extends BaseCommand {
         this.input.writeLine();
 
         expressService.getRoutes().forEach(route => {
-            if (details) {
+            if (showDetails) {
                 this.input.writeLine(`Path: ${route.path}`);
                 this.input.writeLine(`  Name: ${route.name}`);
                 this.input.writeLine(`  Method: ${route.method}`);
