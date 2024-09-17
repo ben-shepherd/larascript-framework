@@ -1,13 +1,8 @@
 version: '3'
 
 services:
-  api:
-    depends_on:
-      - postgres
-    environment:
-      - POSTGRES_URI=postgresql://root:example@localhost:5432/app
-
   postgres:
+    container_name: larascript-postgres
     image: postgres:latest
     ports:
       - "5432:5432"

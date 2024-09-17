@@ -2,6 +2,7 @@ version: '3'
 
 services:
   mongodb:
+    container_name: larascript-mongodb
     image: mongo:latest
     ports:
       - "27017:27017"
