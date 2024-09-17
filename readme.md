@@ -1,4 +1,4 @@
-![Larascript Node Banner](https://raw.githubusercontent.com/ben-shepherd/larascript-node/master/assets/banner_black.png)
+![Larascript Node Banner](https://github.com/ben-shepherd/larascript-framework/blob/master/assets/banner_black.png?raw=true)
 
 ## 🚀 BETA STATUS 🚀
 
