@@ -1,6 +1,6 @@
 import CommandExecutionException from "@src/core/domains/console/exceptions/CommandExecutionException";
 import { ICommand } from "@src/core/domains/console/interfaces/ICommand";
-import { KeyPair, KeyPairArguementType, OnlyArguement, ParsedArguement, ParsedArgumentsArray } from "@src/core/domains/console/parsers/CommandArgumentParser";
+import { KeyPair, KeyPairArguementType, ParsedArguement, ParsedArgumentsArray, ValueOnly } from "@src/core/domains/console/parsers/CommandArgumentParser";
 import ConsoleInputService from "@src/core/domains/console/service/ConsoleInputService";
 import { App } from "@src/core/services/App";
 
@@ -105,19 +105,36 @@ export default abstract class BaseCommand implements ICommand {
                 value: this.overwriteArgs[key]
             }
         }
-        
-        return this.parsedArgumenets.find((arguement) => {
 
-            // We can ignore any arguements that are missing a key.
-            if(arguement.type === OnlyArguement) {
-                return {
-                    type: OnlyArguement,
-                    value: true
-                }
+        const foundAsOnlyArguement = this.parsedArgumenets.find((arguement) => {
+            if(arguement.type !== ValueOnly) {
+                return false;
+            }
+
+            if(arguement.value.includes(key)) {
+                return true;
+            }
+
+            return false;
+        })
+
+        if(foundAsOnlyArguement) {
+            return {
+                ...foundAsOnlyArguement,
+                value: ''
+            }
+        }
+
+        const foundParsedArguement = this.parsedArgumenets.find((arguement) => {
+
+            if(arguement.type === ValueOnly) {
+                return false
             }
 
             return arguement.key === key
         }) as KeyPairArguementType ?? null
+
+        return foundParsedArguement
     }
 
     /**
