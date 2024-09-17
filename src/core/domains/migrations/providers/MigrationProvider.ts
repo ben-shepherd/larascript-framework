@@ -21,7 +21,7 @@ class MigrationProvider extends BaseProvider {
      * with the default configuration
      */
     async register(): Promise<void> {
-        console.log('Registering MigrationProvider');   
+        this.log('Registering MigrationProvider');   
 
         App.container('console').register().registerAll([
             MigrateUpCommand,
@@ -38,7 +38,7 @@ class MigrationProvider extends BaseProvider {
      * Currently does nothing
      */
     async boot(): Promise<void> {
-        console.log('Registering MigrationProvider');   
+        this.log('Registering MigrationProvider');   
     }
 
 }

@@ -1,17 +1,13 @@
 services:
   api:
+    container_name: larascript-api
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: docker/Dockerfile
     ports:
       - "5000:5000"
     volumes:
-      - .:/app
       - /app/node_modules
     working_dir: /app
     networks:
       - app-network
-
-networks:
-  app-network:
-    driver: bridge

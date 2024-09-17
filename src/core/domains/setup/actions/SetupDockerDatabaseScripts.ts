@@ -5,7 +5,7 @@ import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand'
 import { IPackageJsonService } from '@src/core/interfaces/IPackageJsonService';
 import PackageJsonService from '@src/core/services/PackageJsonService';
 
-class SetupDockerDatabases implements IAction {
+class SetupDockerDatabaseScripts implements IAction {
 
     packageJson: IPackageJsonService;
 
@@ -32,25 +32,43 @@ class SetupDockerDatabases implements IAction {
      */
     async updatePackageJsonUpScript(dbType: string) {
         const packageJson = await this.packageJson.getJson();
-        let composeScriptsToInclude = '';
-
-        const appendDbType = (db: string) => `-f docker-compose.${db}.yml `;
+        let dockerComposeNames: string[] = [];
 
         if(dbType === 'all') {
-            Object.keys(DatabaseConfig.providers).forEach((type) => {
-                composeScriptsToInclude += appendDbType(type);
-            })
+            dockerComposeNames = ['network', ...Object.keys(DatabaseConfig.providers)];
         }
         else {
-            composeScriptsToInclude = appendDbType(dbType);
+            dockerComposeNames = ['network', dbType];
         }
 
-        packageJson.scripts.up = `docker-compose -f docker-compose.base.yml ${composeScriptsToInclude} up -d`;
-        packageJson.scripts.down = `docker-compose -f docker-compose.base.yml ${composeScriptsToInclude} down`;
+        const dbUp = this.buildDockerComposeString(dockerComposeNames, 'up --build -d');
+        const dbDown = this.buildDockerComposeString(dockerComposeNames, 'down');
+
+        packageJson.scripts['db:up'] = dbUp;
+        packageJson.scripts['db:down'] = dbDown;
 
         await this.packageJson.writeFileContents(JSON.stringify(packageJson, null, 2));
     }
 
+
+    /**
+     * 
+     * @param dockerComposeNames Example: ['network', 'mongodb', 'postgres']
+     * @param dockerParameters Example: up --build -d
+     * @returns 
+     */
+    private buildDockerComposeString(dockerComposeNames: string[], dockerParameters: string) {
+
+        const baseCommand = 'cd ./docker && docker-compose {dockerComposeNames} {dockerParameters}'
+        let composeScriptsStr = '';
+
+        dockerComposeNames.forEach((type: string) => {
+            composeScriptsStr += `-f docker-compose.${type}.yml `;
+        })
+
+        return baseCommand.replace('{dockerComposeNames}', composeScriptsStr).replace('{dockerParameters}', dockerParameters)
+    }
+
 }
 
-export default SetupDockerDatabases
+export default SetupDockerDatabaseScripts
