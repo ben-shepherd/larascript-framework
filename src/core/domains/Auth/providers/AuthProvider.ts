@@ -1,7 +1,9 @@
 import authConfig from "@src/config/auth";
 import BaseProvider from "@src/core/base/Provider";
-import { App } from "@src/core/services/App";
 import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
+import { App } from "@src/core/services/App";
+
+import GenerateJwtSecret from "../commands/GenerateJWTSecret";
 
 export default class AuthProvider extends BaseProvider {
 
@@ -32,6 +34,13 @@ export default class AuthProvider extends BaseProvider {
          * Setup the container
          */
         App.setContainer('auth', authService);
+
+        /**
+         * Register internal commands
+         */
+        App.container('console').register().registerAll([
+            GenerateJwtSecret
+        ])
     }
 
     public async boot(): Promise<void> {}
