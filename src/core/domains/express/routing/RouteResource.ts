@@ -11,6 +11,17 @@ import RouteGroup from "@src/core/domains/express/routing/RouteGroup";
 import routeGroupUtil from "@src/core/domains/express/utils/routeGroupUtil";
 
 /**
+ * Resource types that can be utilized when adding Security to a route
+ */
+export const RouteResourceTypes = {
+    ALL: 'all',
+    SHOW: 'show',
+    CREATE: 'create',
+    UPDATE: 'update',
+    DESTROY: 'destroy'
+} as const
+
+/**
  * Returns a group of routes for a given resource
  * - name.index - GET - /name
  * - name.show - GET - /name/:id
@@ -35,14 +46,18 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
             name: `${name}.index`,
             method: 'get',
             path: `/${name}`,
-            action: resourceAction(options, resourceIndex)
+            action: resourceAction(options, resourceIndex),
+            middlewares: options.middlewares,
+            security: options.security
         }),
         // Get resource by id
         Route({
             name: `${name}.show`,
             method: 'get',
             path: `/${name}/:id`,
-            action: resourceAction(options, resourceShow)
+            action: resourceAction(options, resourceShow),
+            middlewares: options.middlewares,
+            security: options.security
         }),
         // Update resource by id
         Route({
@@ -50,14 +65,18 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
             method: 'put',
             path: `/${name}/:id`,
             action: resourceAction(options, resourceUpdate),
-            validator: options.updateValidator
+            validator: options.updateValidator,
+            middlewares: options.middlewares,
+            security: options.security
         }),
         // Delete resource by id
         Route({
             name: `${name}.destroy`,
             method: 'delete',
             path: `/${name}/:id`,
-            action: resourceAction(options, resourceDelete)
+            action: resourceAction(options, resourceDelete),
+            middlewares: options.middlewares,
+            security: options.security
         }),
         // Create resource
         Route({
@@ -65,7 +84,9 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
             method: 'post',
             path: `/${name}`,
             action: resourceAction(options, resourceCreate),
-            validator: options.createValidator
+            validator: options.createValidator,
+            middlewares: options.middlewares,
+            security: options.security
         })
     ])
 

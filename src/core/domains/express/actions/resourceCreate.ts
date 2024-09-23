@@ -3,6 +3,7 @@ import responseError from '@src/core/domains/express/requests/responseError';
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { Response } from 'express';
 
+
 /**
  * Creates a new instance of the model
  *
@@ -21,6 +22,7 @@ export default async (req: BaseRequest, res: Response, options: IRouteResourceOp
     catch (err) {
         if (err instanceof Error) {
             responseError(req, res, err)
+            return;
         }
 
         res.status(500).send({ error: 'Something went wrong' })

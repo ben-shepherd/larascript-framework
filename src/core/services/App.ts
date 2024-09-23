@@ -19,6 +19,28 @@ export class App extends Singleton<IAppConfig> {
     public env!: string;
 
     /**
+     * Global values
+     */
+    protected values: Record<string, unknown> = {};
+
+    /**
+     * Sets a value
+     * @param key The key of the value
+     * @param value The value to set
+     */
+    public static setValue(key: string, value: unknown): void {
+        this.getInstance().values[key] = value;
+    }
+
+    /**
+     * Gets a value
+     * @param key The key of the value to get
+     */
+    public static getValue<T>(key: string): T | undefined {
+        return this.getInstance().values[key] as T;
+    }
+
+    /**
      * Sets a container
      * @param name The name of the container
      * @param container The container to set

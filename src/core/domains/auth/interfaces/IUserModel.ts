@@ -15,4 +15,5 @@ export interface IUserData extends IModelData {
 
 export default interface IUserModel extends IModel<IUserData> {
     tokens(...args: any[]): Promise<any>;
+    hasRole(...args: any[]): any;
 }

@@ -1,3 +1,4 @@
+import { IdentifiableSecurityCallback } from '@src/core/domains/auth/services/Security';
 import { IRouteAction } from '@src/core/domains/express/interfaces/IRouteAction';
 import { ValidatorCtor } from '@src/core/domains/validator/types/ValidatorCtor';
 import { Middleware } from '@src/core/interfaces/Middleware.t';
@@ -10,4 +11,5 @@ export interface IRoute {
     middlewares?: Middleware[];
     validator?: ValidatorCtor;
     validateBeforeAction?: boolean;
+    security?: IdentifiableSecurityCallback[];
 }

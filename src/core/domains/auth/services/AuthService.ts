@@ -1,3 +1,4 @@
+import User from '@src/app/models/auth/User';
 import Service from '@src/core/base/Service';
 import InvalidJWTSecret from '@src/core/domains/auth/exceptions/InvalidJWTSecret';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
@@ -10,11 +11,13 @@ import { IAuthService } from '@src/core/domains/auth/interfaces/IAuthService';
 import { IJSonWebToken } from '@src/core/domains/auth/interfaces/IJSonWebToken';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import IUserRepository from '@src/core/domains/auth/interfaces/IUserRepository';
+import { securityMiddleware } from '@src/core/domains/auth/middleware/securityMiddleware';
 import authRoutes from '@src/core/domains/auth/routes/auth';
 import comparePassword from '@src/core/domains/auth/utils/comparePassword';
 import createJwt from '@src/core/domains/auth/utils/createJwt';
 import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';
 import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
+import { App } from '@src/core/services/App';
 
 export default class AuthService extends Service<IAuthConfig> implements IAuthService {
 
@@ -161,6 +164,24 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
         }
 
         return routes;
+    }
+
+    /**
+     * Returns the currently authenticated user from the request context.
+     * @returns The user model if the user is authenticated, or null if not.
+     */
+    user(): User | null {
+        return App.getValue<User>('user') ?? null;
+    }
+
+    /**
+     * Returns the security middleware for the AuthService.
+     *
+     * @returns The middleware that will run security checks defined in the route.
+     * @memberof AuthService
+     */
+    securityMiddleware() {
+        return securityMiddleware;
     }
 
 }
