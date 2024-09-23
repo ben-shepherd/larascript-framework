@@ -1,8 +1,23 @@
 import Repository from '@src/core/base/Repository';
+import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
+import { SecurityIdentifiers } from '@src/core/domains/auth/services/Security';
+import SecurityReader from '@src/core/domains/auth/services/SecurityReader';
 import { IRouteResourceOptions } from '@src/core/domains/express/interfaces/IRouteResourceOptions';
+import responseError from '@src/core/domains/express/requests/responseError';
+import { RouteResourceTypes } from '@src/core/domains/express/routing/RouteResource';
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { IModel } from '@src/core/interfaces/IModel';
+import IModelData from '@src/core/interfaces/IModelData';
+import { App } from '@src/core/services/App';
 import { Response } from 'express';
+
+/**
+ * Formats the results by excluding guarded properties
+ * 
+ * @param results 
+ * @returns 
+ */
+const formatResults = (results: IModel<IModelData>[]) => results.map(result => result.getData({ excludeGuarded: true }) as IModel);
 
 /**
  * Finds all records in the resource's repository
@@ -13,11 +28,48 @@ import { Response } from 'express';
  * @returns {Promise<void>}
  */
 export default async (req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void> => {
-    
-    const repository = new Repository(options.resource);
+    try {
+        const resourceOwnerSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.RESOURCE_OWNER, RouteResourceTypes.ALL)
 
-    let results = await repository.findMany();
-    results = results.map(result => result.getData({ excludeGuarded : true }) as IModel);
+        const repository = new Repository(options.resource);
 
-    res.send(results)
+        let results: IModel<IModelData>[] = [];
+
+        /**
+         * When a resourceOwnerSecurity is defined, we need to find all records that are owned by the user
+         */
+        if (resourceOwnerSecurity) {
+            const propertyKey = resourceOwnerSecurity.arguements?.key;
+            const userId = App.container('auth').user()?.getId();
+
+            if (!userId) {
+                responseError(req, res, new UnauthorizedError(), 401);
+                return;
+            }
+
+            if (typeof propertyKey !== 'string') {
+                throw new Error('Malformed resourceOwner security. Expected parameter \'key\' to be a string but received ' + typeof propertyKey);
+            }
+
+            results = await repository.findMany({ [propertyKey]: userId })
+
+            res.send(formatResults(results))
+            return;
+        }
+
+        /**
+         * Finds all results without any restrictions
+         */
+        results = await repository.findMany();
+
+        res.send(formatResults(results))
+    }
+    catch (err) {
+        if (err instanceof Error) {
+            responseError(req, res, err)
+            return;
+        }
+
+        res.status(500).send({ error: 'Something went wrong' })
+    }
 }

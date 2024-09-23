@@ -31,6 +31,8 @@ export const authorize = () => async (req: BaseRequest, res: Response, next: Nex
         req.user = user;
         req.apiToken = apiToken
 
+        App.setValue('user', user)
+
         next();
     }
     catch (error) {

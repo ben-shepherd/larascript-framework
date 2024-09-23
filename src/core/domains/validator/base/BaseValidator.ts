@@ -107,6 +107,14 @@ abstract class BaseValidator<P extends IValidatorPayload = IValidatorPayload> im
         }
     }
 
+    /**
+     * Gets the Joi validation options
+     * @returns The Joi validation options
+     */
+    getJoiOptions(): Joi.ValidationOptions {
+        return {}
+    }
+
 }
 
 export default BaseValidator

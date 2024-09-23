@@ -1,8 +1,10 @@
 /* eslint-disable no-unused-vars */
+import User from "@src/app/models/auth/User";
 import IApiTokenModel from "@src/core/domains/auth/interfaces/IApitokenModel";
 import IApiTokenRepository from "@src/core/domains/auth/interfaces/IApiTokenRepository";
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import IUserRepository from "@src/core/domains/auth/interfaces/IUserRepository";
+import { ISecurityMiddleware } from "@src/core/domains/auth/middleware/securityMiddleware";
 import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
 import IService from "@src/core/interfaces/IService";
 
@@ -102,4 +104,18 @@ export interface IAuthService extends IService {
      * @memberof IAuthService
      */
     getAuthRoutes(): IRoute[] | null;
+
+    /**
+     * Returns the authenticated user.
+     * 
+     * @returns {User | null}
+     */
+    user(): User | null;
+
+    /**
+     * Returns the security middleware
+     * 
+     * @returns {ISecurityMiddleware}
+     */
+    securityMiddleware(): ISecurityMiddleware;
 }

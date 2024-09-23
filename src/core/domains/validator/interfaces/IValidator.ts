@@ -40,6 +40,12 @@ interface IValidator<T = any>
      * @returns The validator instance.
      */
     setErrorMessage(customMessages: Record<string, string>): IValidator<T>;
+
+    /**
+     * Gets the Joi validation options
+     * @returns The Joi validation options
+     */
+    getJoiOptions(): ValidationOptions;
 }
 
 export default IValidator

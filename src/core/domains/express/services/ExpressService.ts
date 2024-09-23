@@ -114,6 +114,14 @@ export default class ExpressService extends Service<IExpressConfig> implements I
             );
         }
 
+        if(route?.security) {
+            const securityMiddleware = App.container('auth').securityMiddleware()
+
+            middlewares.push(
+                securityMiddleware({ route })
+            )
+        }
+
         return middlewares;
     }
 

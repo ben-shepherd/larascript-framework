@@ -60,6 +60,25 @@ export default class User extends Model<IUserData> implements IUserModel {
     ]
 
     /**
+     * Checks if the user has the given role
+     *
+     * @param role The role to check
+     * @returns True if the user has the role, false otherwise
+     */
+    hasRole(roles: string | string[]): boolean {
+        roles = typeof roles === 'string' ? [roles] : roles;
+        const userRoles = this.getAttribute('roles') ?? [];
+
+        for(const role of roles) {
+            if(userRoles.includes(role)) {
+                return true;
+            }
+        }
+
+        return false
+    }
+
+    /**
      * @returns The tokens associated with this user
      *
      * Retrieves the ApiToken models associated with this user.
