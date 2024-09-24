@@ -6,6 +6,10 @@ import { Middleware } from '@src/core/interfaces/Middleware.t';
 import { App } from '@src/core/services/App';
 import express from 'express';
 
+import endCurrentRequestMiddleware from '../middleware/endCurrentRequestMiddleware';
+import requestIdMiddleware from '../middleware/requestIdMiddleware';
+import { securityMiddleware } from '../middleware/securityMiddleware';
+
 /**
  * ExpressService class
  * Responsible for initializing and configuring ExpressJS
@@ -36,6 +40,10 @@ export default class ExpressService extends Service<IExpressConfig> implements I
         if (!this.config) {
             throw new Error('Config not provided');
         }
+
+        this.app.use(requestIdMiddleware())
+        this.app.use(endCurrentRequestMiddleware())
+
         for (const middleware of this.config?.globalMiddlewares ?? []) {
             this.app.use(middleware);
         }
@@ -115,8 +123,6 @@ export default class ExpressService extends Service<IExpressConfig> implements I
         }
 
         if(route?.security) {
-            const securityMiddleware = App.container('auth').securityMiddleware()
-
             middlewares.push(
                 securityMiddleware({ route })
             )

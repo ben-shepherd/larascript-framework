@@ -1,6 +1,7 @@
+import User from '@src/app/models/auth/User';
 import Repository from '@src/core/base/Repository';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
-import { SecurityIdentifiers } from '@src/core/domains/auth/services/Security';
+import { ALWAYS, SecurityIdentifiers } from '@src/core/domains/auth/services/Security';
 import SecurityReader from '@src/core/domains/auth/services/SecurityReader';
 import { IRouteResourceOptions } from '@src/core/domains/express/interfaces/IRouteResourceOptions';
 import responseError from '@src/core/domains/express/requests/responseError';
@@ -8,8 +9,9 @@ import { RouteResourceTypes } from '@src/core/domains/express/routing/RouteResou
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { IModel } from '@src/core/interfaces/IModel';
 import IModelData from '@src/core/interfaces/IModelData';
-import { App } from '@src/core/services/App';
 import { Response } from 'express';
+
+import CurrentRequest from '../services/CurrentRequest';
 
 /**
  * Formats the results by excluding guarded properties
@@ -29,7 +31,15 @@ const formatResults = (results: IModel<IModelData>[]) => results.map(result => r
  */
 export default async (req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void> => {
     try {
-        const resourceOwnerSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.RESOURCE_OWNER, RouteResourceTypes.ALL)
+        const resourceOwnerSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.RESOURCE_OWNER, [RouteResourceTypes.ALL])
+        const authorizationSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.AUTHORIZATION, [RouteResourceTypes.ALL, ALWAYS]);
+
+        if(authorizationSecurity && !authorizationSecurity.callback(req)) {
+            responseError(req, res, new UnauthorizedError(), 401)
+            return;
+        }
+        
+        console.log('resourceIndex CurrentRequest', CurrentRequest.getInstance())
 
         const repository = new Repository(options.resource);
 
@@ -38,9 +48,10 @@ export default async (req: BaseRequest, res: Response, options: IRouteResourceOp
         /**
          * When a resourceOwnerSecurity is defined, we need to find all records that are owned by the user
          */
-        if (resourceOwnerSecurity) {
+        if (resourceOwnerSecurity && authorizationSecurity) {
+
             const propertyKey = resourceOwnerSecurity.arguements?.key;
-            const userId = App.container('auth').user()?.getId();
+            const userId = CurrentRequest.get<User>(req, 'user')?.getId()
 
             if (!userId) {
                 responseError(req, res, new UnauthorizedError(), 401);

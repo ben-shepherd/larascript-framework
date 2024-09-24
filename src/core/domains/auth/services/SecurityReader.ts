@@ -1,5 +1,5 @@
 
-import { IdentifiableSecurityCallback } from "@src/core/domains/auth/services/Security";
+import { ALWAYS, IdentifiableSecurityCallback } from "@src/core/domains/auth/services/Security";
 import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 
@@ -13,7 +13,7 @@ class SecurityReader {
      * @param when - The optional when condition. If specified, the security callback will only be found if it matches this condition.
      * @returns The found security callback, or undefined if not found.
      */
-    public static findFromRouteResourceOptions(options: IRouteResourceOptions, id: string, when?: string): IdentifiableSecurityCallback | undefined {
+    public static findFromRouteResourceOptions(options: IRouteResourceOptions, id: string, when?: string[] | null): IdentifiableSecurityCallback | undefined {
         return this.find(options.security ?? [], id, when);
     }
 
@@ -25,7 +25,7 @@ class SecurityReader {
      * @param when - The optional when condition. If specified, the security callback will only be found if it matches this condition.
      * @returns The found security callback, or undefined if not found.
      */
-    public static findFromRequest(req: BaseRequest, id: string, when?: string): IdentifiableSecurityCallback | undefined {
+    public static findFromRequest(req: BaseRequest, id: string, when?: string[] | null): IdentifiableSecurityCallback | undefined {
         return this.find(req.security ?? [], id, when);
     }
 
@@ -38,12 +38,44 @@ class SecurityReader {
      * @param when - The when condition to match. If not provided, the method will return the first match.
      * @returns The security callback if found, or undefined if not found.
      */
-    public static find(security: IdentifiableSecurityCallback[], id: string, when?: string): IdentifiableSecurityCallback | undefined {
+    public static find(security: IdentifiableSecurityCallback[], id: string, when?: string[] | null): IdentifiableSecurityCallback | undefined {
+        when = when ?? null;
+        when = when && typeof when === 'string' ? [when] : when;
+
+        // Checks if the condition should never be passable
+        const conditionNeverPassable = (conditions: string[] | null, never: string[] | null = null) => {
+            if(!never) return false;
+
+            for(const neverCondition of never) { 
+                if(conditions?.includes(neverCondition)) return true;
+            }
+
+            return false;
+        }
+
+        // Checks if the condition should be passable
+        const conditionPassable = (condition: string[] | null) => {
+            if(!condition) {
+                return true;
+            }
+
+            condition = typeof condition === 'string' ? [condition] : condition;
+
+            if(when?.includes(ALWAYS)) return true;
+
+            for(const conditionString of condition) {
+                if(when?.includes(conditionString)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         return security?.find(security => {
-
-            const matchesWhenCondition = when !== 'always' && security.when === when;
-
-            return security.id === id && matchesWhenCondition;
+            return security.id === id && 
+                conditionNeverPassable(when, security.never) === false &&
+                conditionPassable(security.when);
         });
     }
 
