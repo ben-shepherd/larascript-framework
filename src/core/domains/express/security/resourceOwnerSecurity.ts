@@ -1,8 +1,8 @@
 import User from "@src/app/models/auth/User";
 import { IModel } from "@src/core/interfaces/IModel";
 
-import CurrentRequest from "../../express/services/CurrentRequest";
-import { BaseRequest } from "../../express/types/BaseRequest.t";
+import CurrentRequest from "../services/CurrentRequest";
+import { BaseRequest } from "../types/BaseRequest.t";
 
 /**
  * Checks if the currently logged in user is the owner of the given resource.

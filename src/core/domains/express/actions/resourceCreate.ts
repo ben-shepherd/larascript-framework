@@ -5,11 +5,11 @@ import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { Response } from 'express';
 
 import UnauthorizedError from '../../auth/exceptions/UnauthorizedError';
-import { ALWAYS, SecurityIdentifiers } from '../../auth/services/Security';
-import SecurityReader from '../../auth/services/SecurityReader';
 import MissingSecurityError from '../exceptions/MissingSecurityError';
 import { RouteResourceTypes } from '../routing/RouteResource';
 import CurrentRequest from '../services/CurrentRequest';
+import { ALWAYS, SecurityIdentifiers } from '../services/Security';
+import SecurityReader from '../services/SecurityReader';
 
 
 /**

@@ -1,7 +1,7 @@
-
-import { ALWAYS, IdentifiableSecurityCallback } from "@src/core/domains/auth/services/Security";
 import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
+
+import { ALWAYS, IdentifiableSecurityCallback } from "./Security";
 
 class SecurityReader {
 

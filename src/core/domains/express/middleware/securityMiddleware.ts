@@ -1,14 +1,14 @@
 import ForbiddenResourceError from '@src/core/domains/auth/exceptions/ForbiddenResourceError';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
-import { ALWAYS, SecurityIdentifiers } from '@src/core/domains/auth/services/Security';
 import responseError from '@src/core/domains/express/requests/responseError';
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { NextFunction, Response } from 'express';
 
 import AuthRequest from '../../auth/services/AuthRequest';
-import SecurityReader from '../../auth/services/SecurityReader';
 import { IRoute } from '../interfaces/IRoute';
 import { ISecurityMiddleware } from '../interfaces/ISecurityMiddleware';
+import { ALWAYS, SecurityIdentifiers } from '../services/Security';
+import SecurityReader from '../services/SecurityReader';
 
 const bindSecurityToRequest = (route: IRoute, req: BaseRequest) => {
     req.security = route.security ?? [];

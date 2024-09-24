@@ -1,10 +1,10 @@
 import Singleton from "@src/core/base/Singleton";
 import { IModel } from "@src/core/interfaces/IModel";
 
-import { BaseRequest } from "../../express/types/BaseRequest.t";
-import resourceOwnerSecurity from "../security/ResourceOwnerSecurity";
 import authorizedSecurity from "../security/authorizedSecurity";
 import hasRoleSecurity from "../security/hasRoleSecurity";
+import resourceOwnerSecurity from "../security/ResourceOwnerSecurity";
+import { BaseRequest } from "../types/BaseRequest.t";
 
 // eslint-disable-next-line no-unused-vars
 export type SecurityCallback = (req: BaseRequest, ...args: any[]) => boolean;

@@ -1,7 +1,7 @@
 import User from "@src/app/models/auth/User";
 
-import CurrentRequest from "../../express/services/CurrentRequest";
-import { BaseRequest } from "../../express/types/BaseRequest.t";
+import CurrentRequest from "../services/CurrentRequest";
+import { BaseRequest } from "../types/BaseRequest.t";
 
 /**
  * Checks if the currently logged in user has the given role(s).
