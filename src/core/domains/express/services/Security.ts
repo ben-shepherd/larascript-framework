@@ -1,28 +1,10 @@
 import Singleton from "@src/core/base/Singleton";
+import { IIdentifiableSecurityCallback, SecurityCallback } from "@src/core/domains/express/interfaces/ISecurity";
 import authorizedSecurity from "@src/core/domains/express/security/authorizedSecurity";
 import hasRoleSecurity from "@src/core/domains/express/security/hasRoleSecurity";
 import resourceOwnerSecurity from "@src/core/domains/express/security/resourceOwnerSecurity";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { IModel } from "@src/core/interfaces/IModel";
-
-// eslint-disable-next-line no-unused-vars
-export type SecurityCallback = (req: BaseRequest, ...args: any[]) => boolean;
-
-/**
- * An interface for defining security callbacks with an identifier.
- */
-export type IdentifiableSecurityCallback = {
-    // The identifier for the security callback.
-    id: string;
-    // The condition for when the security check should be executed. Defaults to 'always'.
-    when: string[] | null;
-    // The condition for when the security check should never be executed.
-    never: string[] | null;
-    // The arguments for the security callback.
-    arguements?: Record<string, unknown>;
-    // The security callback function.
-    callback: SecurityCallback;
-}
 
 /**
  * A list of security identifiers.
@@ -104,7 +86,7 @@ class Security extends Singleton {
      * @param attribute - The key of the resource attribute that should contain the user id.
      * @returns A security callback that can be used in the security definition.
      */
-    public static resourceOwner(attribute: string = 'userId'): IdentifiableSecurityCallback {
+    public static resourceOwner(attribute: string = 'userId'): IIdentifiableSecurityCallback {
         return {
             id: SecurityIdentifiers.RESOURCE_OWNER,
             when: Security.getWhenAndReset(),
@@ -132,7 +114,7 @@ class Security extends Singleton {
      *
      * @returns A security callback that can be used in the security definition.
      */
-    public static authorized(): IdentifiableSecurityCallback {
+    public static authorized(): IIdentifiableSecurityCallback {
         return {
             id: SecurityIdentifiers.AUTHORIZATION,
             when: Security.getWhenAndReset(),
@@ -150,7 +132,7 @@ class Security extends Singleton {
      * 
      * @returns A security callback that can be used in the security definition.
      */
-    public static authorizationThrowsException(): IdentifiableSecurityCallback {
+    public static authorizationThrowsException(): IIdentifiableSecurityCallback {
         return {
             id: SecurityIdentifiers.AUTHORIZATION,
             when: Security.getWhenAndReset(),
@@ -167,7 +149,7 @@ class Security extends Singleton {
      * @param role The role to check.
      * @returns A callback function to be used in the security definition.
      */
-    public static hasRole(roles: string | string[]): IdentifiableSecurityCallback {
+    public static hasRole(roles: string | string[]): IIdentifiableSecurityCallback {
         return {
             id: SecurityIdentifiers.HAS_ROLE,
             when: Security.getWhenAndReset(),
@@ -184,7 +166,8 @@ class Security extends Singleton {
      * @param rest - The arguments for the security callback.
      * @returns A callback function to be used in the security definition.
      */
-    public static custom(identifier: string, callback: SecurityCallback, ...rest: any[]): IdentifiableSecurityCallback {
+    // eslint-disable-next-line no-unused-vars
+    public static custom(identifier: string, callback: SecurityCallback, ...rest: any[]): IIdentifiableSecurityCallback {
         return {
             id: identifier,
             never: Security.getNeverAndReset(),

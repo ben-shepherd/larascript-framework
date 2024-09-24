@@ -2,7 +2,7 @@ import ForbiddenResourceError from '@src/core/domains/auth/exceptions/ForbiddenR
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
 import AuthRequest from '@src/core/domains/auth/services/AuthRequest';
 import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
-import { ISecurityMiddleware } from '@src/core/domains/express/interfaces/ISecurityMiddleware';
+import { ISecurityMiddleware } from '@src/core/domains/express/interfaces/ISecurity';
 import responseError from '@src/core/domains/express/requests/responseError';
 import { ALWAYS, SecurityIdentifiers } from '@src/core/domains/express/services/Security';
 import SecurityReader from '@src/core/domains/express/services/SecurityReader';

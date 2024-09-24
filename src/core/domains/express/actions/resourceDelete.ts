@@ -36,7 +36,7 @@ export default async (req: BaseRequest, res: Response, options: IRouteResourceOp
         }
 
         if(resourceOwnerSecurity && !resourceOwnerSecurity.callback(req, result)) {
-            responseError(req, res, new ForbiddenResourceError(), 401)
+            responseError(req, res, new ForbiddenResourceError(), 403)
             return;
         }
 

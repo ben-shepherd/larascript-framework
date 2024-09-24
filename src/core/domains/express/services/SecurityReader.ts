@@ -1,5 +1,6 @@
 import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
-import { ALWAYS, IdentifiableSecurityCallback } from "@src/core/domains/express/services/Security";
+import { IIdentifiableSecurityCallback } from "@src/core/domains/express/interfaces/ISecurity";
+import { ALWAYS } from "@src/core/domains/express/services/Security";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 
 class SecurityReader {
@@ -12,7 +13,7 @@ class SecurityReader {
      * @param when - The optional when condition. If specified, the security callback will only be found if it matches this condition.
      * @returns The found security callback, or undefined if not found.
      */
-    public static findFromRouteResourceOptions(options: IRouteResourceOptions, id: string, when?: string[] | null): IdentifiableSecurityCallback | undefined {
+    public static findFromRouteResourceOptions(options: IRouteResourceOptions, id: string, when?: string[] | null): IIdentifiableSecurityCallback | undefined {
         return this.find(options.security ?? [], id, when);
     }
 
@@ -24,7 +25,7 @@ class SecurityReader {
      * @param when - The optional when condition. If specified, the security callback will only be found if it matches this condition.
      * @returns The found security callback, or undefined if not found.
      */
-    public static findFromRequest(req: BaseRequest, id: string, when?: string[] | null): IdentifiableSecurityCallback | undefined {
+    public static findFromRequest(req: BaseRequest, id: string, when?: string[] | null): IIdentifiableSecurityCallback | undefined {
         return this.find(req.security ?? [], id, when);
     }
 
@@ -37,7 +38,7 @@ class SecurityReader {
      * @param when - The when condition to match. If not provided, the method will return the first match.
      * @returns The security callback if found, or undefined if not found.
      */
-    public static find(security: IdentifiableSecurityCallback[], id: string, when?: string[] | null): IdentifiableSecurityCallback | undefined {
+    public static find(security: IIdentifiableSecurityCallback[], id: string, when?: string[] | null): IIdentifiableSecurityCallback | undefined {
         when = when ?? null;
         when = when && typeof when === 'string' ? [when] : when;
 
