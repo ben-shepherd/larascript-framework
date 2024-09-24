@@ -1,5 +1,3 @@
-import User from "@src/app/models/auth/User";
-import CurrentRequest from "@src/core/domains/express/services/CurrentRequest";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 
 /**
@@ -10,7 +8,7 @@ import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
  * @returns {boolean} True if the user has the role, false otherwise
  */
 const hasRoleSecurity = (req: BaseRequest, roles: string | string[]): boolean => {
-    const user = CurrentRequest.get<User>(req, 'user');
+    const user = req.user;
 
     if(!user) {
         return false;

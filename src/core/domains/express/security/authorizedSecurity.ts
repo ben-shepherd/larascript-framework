@@ -10,7 +10,7 @@ import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
  * @returns True if the user is logged in, false otherwise
  */
 const authorizedSecurity = (req: BaseRequest): boolean => {
-    if(CurrentRequest.get(req, 'user')) {
+    if(CurrentRequest.get(req, 'userId')) {
         return true;
     }
 

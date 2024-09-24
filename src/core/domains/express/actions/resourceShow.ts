@@ -1,4 +1,3 @@
-import User from '@src/app/models/auth/User';
 import Repository from '@src/core/base/Repository';
 import ForbiddenResourceError from '@src/core/domains/auth/exceptions/ForbiddenResourceError';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
@@ -40,7 +39,7 @@ export default async (req: BaseRequest, res: Response, options: IRouteResourceOp
         if(resourceOwnerSecurity && authorizationSecurity) {
 
             const propertyKey = resourceOwnerSecurity.arguements?.key;
-            const userId = CurrentRequest.get<User>(req, 'user')?.getId();
+            const userId = CurrentRequest.get<string>(req, 'userId');
 
             if(!userId) {
                 responseError(req, res, new ForbiddenResourceError(), 403);

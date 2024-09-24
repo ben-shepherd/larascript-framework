@@ -1,5 +1,3 @@
-import User from "@src/app/models/auth/User";
-import CurrentRequest from "@src/core/domains/express/services/CurrentRequest";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { IModel } from "@src/core/interfaces/IModel";
 
@@ -12,7 +10,7 @@ import { IModel } from "@src/core/interfaces/IModel";
  * @returns True if the user is the resource owner, false otherwise
  */
 const resourceOwnerSecurity = (req: BaseRequest, resource: IModel, attribute: string): boolean => {
-    const user = CurrentRequest.get<User>(req, 'user');
+    const user = req.user;
 
     if(!user) {
         return false;
