@@ -56,7 +56,7 @@ export interface IAuthService extends IService {
      * @returns {Promise<string>} The JWT token
      * @memberof IAuthService
      */
-    createJwtFromUser: (user: IUserModel) => Promise<string>;
+    createJwtFromUser: (user: IUserModel, scopes?: string[]) => Promise<string>;
 
     /**
      * Creates a new ApiToken model from the User
@@ -65,7 +65,7 @@ export interface IAuthService extends IService {
      * @returns {Promise<IApiTokenModel>} The new ApiToken model
      * @memberof IAuthService
      */
-    createApiTokenFromUser: (user: IUserModel) => Promise<IApiTokenModel>;
+    createApiTokenFromUser: (user: IUserModel, scopes?: string[]) => Promise<IApiTokenModel>;
 
     /**
      * Revokes a token.
@@ -84,7 +84,7 @@ export interface IAuthService extends IService {
      * @returns {Promise<string>} The JWT token
      * @memberof IAuthService
      */
-    attemptCredentials: (email: string, password: string) => Promise<string>;
+    attemptCredentials: (email: string, password: string, scopes?: string[]) => Promise<string>;
 
     /**
      * Generates a JWT.

@@ -22,10 +22,11 @@ class ApiTokenFactory extends Factory<IApiTokenModel, IApiTokenData> {
      * @param {IUserModel} user
      * @returns {IApiTokenModel}
      */
-    createFromUser(user: IUserModel): IApiTokenModel {
+    createFromUser(user: IUserModel, scopes: string[] = []): IApiTokenModel {
         return new this.modelCtor({
             userId: user.data?.id,
             token: tokenFactory(),
+            scopes: scopes,
             revokedAt: null,
         })
     }

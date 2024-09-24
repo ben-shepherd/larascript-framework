@@ -1,8 +1,34 @@
+import ForbiddenResourceError from '@src/core/domains/auth/exceptions/ForbiddenResourceError';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
 import AuthRequest from '@src/core/domains/auth/services/AuthRequest';
 import responseError from '@src/core/domains/express/requests/responseError';
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { NextFunction, Response } from 'express';
+
+/**
+ * Validates that the scopes in the api token match the required scopes for the request.
+ * If the scopes do not match, it will throw a ForbiddenResourceError.
+ * If no api token is found, it will throw a UnauthorizedError.
+ * @param scopes The scopes required for the request
+ * @param req The request object
+ * @param res The response object
+ */
+const validateScopes = async (scopes: string[], req: BaseRequest, res: Response) => {
+    if(scopes.length === 0) {
+        return;
+    }
+
+    const apiToken = req.apiToken;
+
+    if(!apiToken) {
+        responseError(req, res, new UnauthorizedError(), 401);
+        return;
+    }
+    
+    if(!apiToken.hasScope(scopes)) {
+        responseError(req, res, new ForbiddenResourceError('Required scopes missing from authorization'), 403);
+    }
+}
 
 /**
  * Authorize middleware
@@ -16,7 +42,7 @@ import { NextFunction, Response } from 'express';
  * @param {NextFunction} next - The next function
  * @returns {Promise<void>}
  */
-export const authorizeMiddleware = () => async (req: BaseRequest, res: Response, next: NextFunction): Promise<void> => {
+export const authorizeMiddleware = (scopes: string[] = []) => async (req: BaseRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
 
         // Authorize the request
@@ -25,6 +51,9 @@ export const authorizeMiddleware = () => async (req: BaseRequest, res: Response,
         // and sets the user in the App
         await AuthRequest.attemptAuthorizeRequest(req);
         
+        // Validate the scopes if the authorization was successful
+        validateScopes(scopes, req, res);
+
         next();
     }
     catch (error) {
