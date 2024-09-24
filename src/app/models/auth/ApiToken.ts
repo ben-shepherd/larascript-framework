@@ -20,7 +20,12 @@ class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
     public fields: string[] = [
         'userId',
         'token',
+        'scopes',
         'revokedAt'
+    ]
+
+    public json: string[] = [
+        'scopes'
     ]
 
     /**
@@ -38,6 +43,22 @@ class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
             foreignKey: 'id',
         })
     }   
+
+    /**
+     * Checks if the given scope(s) are present in the scopes of this ApiToken
+     * @param scopes The scope(s) to check
+     * @returns True if all scopes are present, false otherwise
+     */
+    public hasScope(scopes: string | string[]): boolean {
+        const currentScopes = this.getAttribute('scopes') ?? [];
+        scopes = typeof scopes === 'string' ? [scopes] : scopes;
+
+        for(const scope of scopes) {
+            if(!currentScopes.includes(scope)) return false;
+        }
+
+        return true;
+    }
 
 }
 

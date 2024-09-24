@@ -58,8 +58,8 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * @param user 
      * @returns 
      */
-    public async createApiTokenFromUser(user: IUserModel): Promise<IApiTokenModel> {
-        const apiToken = new ApiTokenFactory().createFromUser(user)
+    public async createApiTokenFromUser(user: IUserModel, scopes: string[] = []): Promise<IApiTokenModel> {
+        const apiToken = new ApiTokenFactory().createFromUser(user, scopes)
         await apiToken.save();
         return apiToken
     }
@@ -69,8 +69,8 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * @param user 
      * @returns 
      */
-    async createJwtFromUser(user: IUserModel): Promise<string> {
-        const apiToken = await this.createApiTokenFromUser(user);
+    async createJwtFromUser(user: IUserModel, scopes: string[] = []): Promise<string> {
+        const apiToken = await this.createApiTokenFromUser(user, scopes);
         return this.jwt(apiToken)
     }
 
@@ -139,7 +139,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * @param password 
      * @returns 
      */
-    async attemptCredentials(email: string, password: string): Promise<string> {
+    async attemptCredentials(email: string, password: string, scopes: string[] = []): Promise<string> {
         const user = await this.userRepository.findOneByEmail(email) as IUserModel;
 
         if (!user?.data?.id) {
@@ -150,7 +150,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
             throw new UnauthorizedError()
         }
 
-        return this.createJwtFromUser(user)
+        return this.createJwtFromUser(user, scopes)
     }
 
     /**

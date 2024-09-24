@@ -1,6 +1,6 @@
+import ApiToken from "@src/app/models/auth/ApiToken";
 import BaseMigration from "@src/core/domains/migrations/base/BaseMigration";
 import { DataTypes } from "sequelize";
-import ApiToken from "@src/app/models/auth/ApiToken";
 
 export class CreateApiTokenMigration extends BaseMigration {
 
@@ -17,6 +17,7 @@ export class CreateApiTokenMigration extends BaseMigration {
         await this.schema.createTable(this.table, {
             userId: DataTypes.STRING,
             token: DataTypes.STRING,
+            scopes: DataTypes.JSON,
             revokedAt: DataTypes.DATE
         })
     }
