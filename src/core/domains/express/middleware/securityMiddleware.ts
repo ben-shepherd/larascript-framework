@@ -77,7 +77,8 @@ export const securityMiddleware: ISecurityMiddleware = ({ route }) => async (req
         bindSecurityToRequest(route, req);
 
         /**
-         * Authorizes the user, allow continue processing on failed
+         * Authorizes the user
+         * Depending on option 'throwExceptionOnUnauthorized', can allow continue processing on failed auth
          */
         await applyAuthorizeSecurity(route, req, res)
 
