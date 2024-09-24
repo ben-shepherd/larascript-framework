@@ -1,7 +1,6 @@
+import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { NextFunction, Response } from "express";
-
-import { BaseRequest } from "../types/BaseRequest.t";
 
 type Props = {
     // eslint-disable-next-line no-unused-vars

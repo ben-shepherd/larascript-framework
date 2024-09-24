@@ -1,6 +1,6 @@
 
-import CurrentRequest from "../services/CurrentRequest";
-import { BaseRequest } from "../types/BaseRequest.t";
+import CurrentRequest from "@src/core/domains/express/services/CurrentRequest";
+import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 
 
 /**

@@ -2,13 +2,12 @@ import Service from '@src/core/base/Service';
 import IExpressConfig from '@src/core/domains/express/interfaces/IExpressConfig';
 import IExpressService from '@src/core/domains/express/interfaces/IExpressService';
 import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
+import endCurrentRequestMiddleware from '@src/core/domains/express/middleware/endCurrentRequestMiddleware';
+import requestIdMiddleware from '@src/core/domains/express/middleware/requestIdMiddleware';
+import { securityMiddleware } from '@src/core/domains/express/middleware/securityMiddleware';
 import { Middleware } from '@src/core/interfaces/Middleware.t';
 import { App } from '@src/core/services/App';
 import express from 'express';
-
-import endCurrentRequestMiddleware from '../middleware/endCurrentRequestMiddleware';
-import requestIdMiddleware from '../middleware/requestIdMiddleware';
-import { securityMiddleware } from '../middleware/securityMiddleware';
 
 /**
  * ExpressService class

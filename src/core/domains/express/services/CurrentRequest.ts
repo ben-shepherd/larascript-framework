@@ -1,6 +1,5 @@
 import Singleton from "@src/core/base/Singleton";
-
-import { BaseRequest } from "../types/BaseRequest.t";
+import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 
 class CurrentRequest extends Singleton {
 

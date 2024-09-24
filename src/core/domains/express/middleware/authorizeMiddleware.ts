@@ -1,9 +1,8 @@
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
+import AuthRequest from '@src/core/domains/auth/services/AuthRequest';
 import responseError from '@src/core/domains/express/requests/responseError';
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { NextFunction, Response } from 'express';
-
-import AuthRequest from '../../auth/services/AuthRequest';
 
 /**
  * Authorize middleware

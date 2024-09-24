@@ -1,8 +1,7 @@
+import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
+import CurrentRequest from "@src/core/domains/express/services/CurrentRequest";
+import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { App } from "@src/core/services/App";
-
-import CurrentRequest from "../../express/services/CurrentRequest";
-import { BaseRequest } from "../../express/types/BaseRequest.t";
-import UnauthorizedError from "../exceptions/UnauthorizedError";
 
 class AuthRequest {
 
