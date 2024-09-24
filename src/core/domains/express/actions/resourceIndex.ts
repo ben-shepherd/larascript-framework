@@ -38,8 +38,6 @@ export default async (req: BaseRequest, res: Response, options: IRouteResourceOp
             return;
         }
         
-        console.log('resourceIndex CurrentRequest', CurrentRequest.getInstance())
-
         const repository = new Repository(options.resource);
 
         let results: IModel<IModelData>[] = [];

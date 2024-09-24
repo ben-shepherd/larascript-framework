@@ -31,8 +31,13 @@ class CurrentRequest extends Singleton {
      * @param {string} key - The key of the value to retrieve
      * @returns {T | undefined} - The value associated with the key, or undefined if not found
      */
-    public static get<T = unknown>(req: BaseRequest, key: string): T | undefined {
+    public static get<T = unknown>(req: BaseRequest, key?: string): T | undefined {
         const requestId = req.id as string;
+
+        if(!key) {
+            return this.getInstance().values[requestId] as T ?? undefined;
+        }
+
         return this.getInstance().values[requestId]?.[key] as T ?? undefined
     }
 
