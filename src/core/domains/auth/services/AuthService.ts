@@ -1,4 +1,3 @@
-import User from '@src/app/models/auth/User';
 import Service from '@src/core/base/Service';
 import InvalidJWTSecret from '@src/core/domains/auth/exceptions/InvalidJWTSecret';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
@@ -8,16 +7,14 @@ import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IApiTokenRepository from '@src/core/domains/auth/interfaces/IApiTokenRepository';
 import { IAuthConfig } from '@src/core/domains/auth/interfaces/IAuthConfig';
 import { IAuthService } from '@src/core/domains/auth/interfaces/IAuthService';
-import { IJSonWebToken } from '@src/core/domains/auth/interfaces/IJSonWebToken';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import IUserRepository from '@src/core/domains/auth/interfaces/IUserRepository';
-import { securityMiddleware } from '@src/core/domains/auth/middleware/securityMiddleware';
 import authRoutes from '@src/core/domains/auth/routes/auth';
 import comparePassword from '@src/core/domains/auth/utils/comparePassword';
 import createJwt from '@src/core/domains/auth/utils/createJwt';
 import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';
 import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
-import { App } from '@src/core/services/App';
+import { JsonWebTokenError } from 'jsonwebtoken';
 
 export default class AuthService extends Service<IAuthConfig> implements IAuthService {
 
@@ -30,7 +27,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * Repository for accessing user data
      */
     public userRepository: IUserRepository;
-    
+
     /**
      * Repository for accessing api tokens
      */
@@ -51,7 +48,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * Validate jwt secret
      */
     private validateJwtSecret() {
-        if(!this.config.jwtSecret || this.config.jwtSecret === '') {
+        if (!this.config.jwtSecret || this.config.jwtSecret === '') {
             throw new InvalidJWTSecret();
         }
     }
@@ -66,7 +63,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
         await apiToken.save();
         return apiToken
     }
-    
+
     /**
      * Creates a JWT from a user model
      * @param user 
@@ -83,7 +80,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * @returns 
      */
     jwt(apiToken: IApiTokenModel): string {
-        if(!apiToken?.data?.userId) {
+        if (!apiToken?.data?.userId) {
             throw new Error('Invalid token');
         }
         const payload = JWTTokenFactory.create(apiToken.data?.userId?.toString(), apiToken.data?.token);
@@ -96,7 +93,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * @returns 
      */
     async revokeToken(apiToken: IApiTokenModel): Promise<void> {
-        if(apiToken?.data?.revokedAt) {
+        if (apiToken?.data?.revokedAt) {
             return;
         }
 
@@ -110,21 +107,30 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * @returns 
      */
     async attemptAuthenticateToken(token: string): Promise<IApiTokenModel | null> {
-        const decoded = decodeJwt(this.config.jwtSecret, token) as IJSonWebToken;
+        try {
+            const decoded = decodeJwt(this.config.jwtSecret, token);
 
-        const apiToken = await this.apiTokenRepository.findOneActiveToken(decoded.token)
+            const apiToken = await this.apiTokenRepository.findOneActiveToken(decoded.token)
 
-        if(!apiToken) {
-            throw new UnauthorizedError()
+            if (!apiToken) {
+                throw new UnauthorizedError()
+            }
+
+            const user = await this.userRepository.findById(decoded.uid)
+
+            if (!user) {
+                throw new UnauthorizedError()
+            }
+
+            return apiToken
+        }
+        catch (err) {
+            if(err instanceof JsonWebTokenError) {
+                throw new UnauthorizedError()
+            }
         }
 
-        const user = await this.userRepository.findById(decoded.uid)
-
-        if(!user) {
-            throw new UnauthorizedError()
-        }
-
-        return apiToken
+        return null
     }
 
     /**
@@ -136,11 +142,11 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
     async attemptCredentials(email: string, password: string): Promise<string> {
         const user = await this.userRepository.findOneByEmail(email) as IUserModel;
 
-        if(!user?.data?.id) {
+        if (!user?.data?.id) {
             throw new UnauthorizedError()
         }
 
-        if(user?.data?.hashedPassword && !comparePassword(password, user.data?.hashedPassword)) {
+        if (user?.data?.hashedPassword && !comparePassword(password, user.data?.hashedPassword)) {
             throw new UnauthorizedError()
         }
 
@@ -153,35 +159,17 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * @returns an array of IRoute objects, or null if auth routes are disabled
      */
     getAuthRoutes(): IRoute[] | null {
-        if(!this.config.enableAuthRoutes) {
+        if (!this.config.enableAuthRoutes) {
             return null
         }
 
         const routes = authRoutes(this.config);
 
-        if(!this.config.enableAuthRoutesAllowCreate) {
+        if (!this.config.enableAuthRoutesAllowCreate) {
             return routes.filter((route) => route.name !== 'authCreate');
         }
 
         return routes;
-    }
-
-    /**
-     * Returns the currently authenticated user from the request context.
-     * @returns The user model if the user is authenticated, or null if not.
-     */
-    user(): User | null {
-        return App.getValue<User>('user') ?? null;
-    }
-
-    /**
-     * Returns the security middleware for the AuthService.
-     *
-     * @returns The middleware that will run security checks defined in the route.
-     * @memberof AuthService
-     */
-    securityMiddleware() {
-        return securityMiddleware;
     }
 
 }

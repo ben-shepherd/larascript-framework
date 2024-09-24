@@ -44,6 +44,7 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
     // Get all resources
         Route({
             name: `${name}.index`,
+            resourceType: RouteResourceTypes.ALL,
             method: 'get',
             path: `/${name}`,
             action: resourceAction(options, resourceIndex),
@@ -53,6 +54,7 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
         // Get resource by id
         Route({
             name: `${name}.show`,
+            resourceType: RouteResourceTypes.SHOW,
             method: 'get',
             path: `/${name}/:id`,
             action: resourceAction(options, resourceShow),
@@ -62,6 +64,7 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
         // Update resource by id
         Route({
             name: `${name}.update`,
+            resourceType: RouteResourceTypes.UPDATE,
             method: 'put',
             path: `/${name}/:id`,
             action: resourceAction(options, resourceUpdate),
@@ -72,6 +75,7 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
         // Delete resource by id
         Route({
             name: `${name}.destroy`,
+            resourceType: RouteResourceTypes.DESTROY,
             method: 'delete',
             path: `/${name}/:id`,
             action: resourceAction(options, resourceDelete),
@@ -81,6 +85,7 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
         // Create resource
         Route({
             name: `${name}.create`,
+            resourceType: RouteResourceTypes.CREATE,
             method: 'post',
             path: `/${name}`,
             action: resourceAction(options, resourceCreate),

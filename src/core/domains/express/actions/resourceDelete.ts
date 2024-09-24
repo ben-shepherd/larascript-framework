@@ -1,10 +1,11 @@
 import Repository from '@src/core/base/Repository';
 import ForbiddenResourceError from '@src/core/domains/auth/exceptions/ForbiddenResourceError';
-import { SecurityIdentifiers } from '@src/core/domains/auth/services/Security';
-import SecurityReader from '@src/core/domains/auth/services/SecurityReader';
+import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
 import { IRouteResourceOptions } from '@src/core/domains/express/interfaces/IRouteResourceOptions';
 import responseError from '@src/core/domains/express/requests/responseError';
 import { RouteResourceTypes } from '@src/core/domains/express/routing/RouteResource';
+import { ALWAYS, SecurityIdentifiers } from '@src/core/domains/express/services/Security';
+import SecurityReader from '@src/core/domains/express/services/SecurityReader';
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import ModelNotFound from '@src/core/exceptions/ModelNotFound';
 import { Response } from 'express';
@@ -19,8 +20,13 @@ import { Response } from 'express';
  */
 export default async (req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void> => {
     try {
-        const resourceOwnerSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.RESOURCE_OWNER, RouteResourceTypes.DESTROY);
+        const resourceOwnerSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.RESOURCE_OWNER, [RouteResourceTypes.DESTROY]);
+        const authorizationSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.AUTHORIZATION, [RouteResourceTypes.DESTROY, ALWAYS]);
 
+        if(authorizationSecurity && !authorizationSecurity.callback(req)) {
+            responseError(req, res, new UnauthorizedError(), 401)
+            return;
+        }
         const repository = new Repository(options.resource);
 
         const result = await repository.findById(req.params?.id);
@@ -29,8 +35,8 @@ export default async (req: BaseRequest, res: Response, options: IRouteResourceOp
             throw new ModelNotFound('Resource not found');
         }
 
-        if(resourceOwnerSecurity && !resourceOwnerSecurity.callback(result)) {
-            responseError(req, res, new ForbiddenResourceError(), 401)
+        if(resourceOwnerSecurity && !resourceOwnerSecurity.callback(req, result)) {
+            responseError(req, res, new ForbiddenResourceError(), 403)
             return;
         }
 

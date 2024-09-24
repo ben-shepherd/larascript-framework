@@ -40,6 +40,7 @@ export const validateMiddleware = ({validator, validateBeforeAction}: ValidatorM
     catch (error) {
         if(error instanceof Error) {
             responseError(req, res, error)
+            return;
         }
     }
 };

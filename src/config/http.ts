@@ -1,7 +1,7 @@
-import express from 'express';
 import IExpressConfig from '@src/core/domains/express/interfaces/IExpressConfig';
 import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
 import bodyParser from 'body-parser';
+import express from 'express';
 
 const config: IExpressConfig = {
     enabled: parseBooleanFromString(process.env.ENABLE_EXPRESS, 'true'),

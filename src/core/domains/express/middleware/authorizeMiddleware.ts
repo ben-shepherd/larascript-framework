@@ -1,7 +1,7 @@
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
+import AuthRequest from '@src/core/domains/auth/services/AuthRequest';
 import responseError from '@src/core/domains/express/requests/responseError';
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
-import { App } from '@src/core/services/App';
 import { NextFunction, Response } from 'express';
 
 /**
@@ -16,23 +16,15 @@ import { NextFunction, Response } from 'express';
  * @param {NextFunction} next - The next function
  * @returns {Promise<void>}
  */
-export const authorize = () => async (req: BaseRequest, res: Response, next: NextFunction): Promise<void> => {
+export const authorizeMiddleware = () => async (req: BaseRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const authorization = (req.headers.authorization ?? '').replace('Bearer ', '');
 
-        const apiToken = await App.container('auth').attemptAuthenticateToken(authorization)
-
-        const user = await apiToken?.user()
-
-        if(!user || !apiToken) {
-            throw new UnauthorizedError();
-        }
-
-        req.user = user;
-        req.apiToken = apiToken
-
-        App.setValue('user', user)
-
+        // Authorize the request
+        // Parses the authorization header
+        // If successful, attaches the user and apiToken to the request
+        // and sets the user in the App
+        await AuthRequest.attemptAuthorizeRequest(req);
+        
         next();
     }
     catch (error) {
@@ -43,6 +35,7 @@ export const authorize = () => async (req: BaseRequest, res: Response, next: Nex
 
         if(error instanceof Error) {
             responseError(req, res, error)
+            return;
         }
     }
 };

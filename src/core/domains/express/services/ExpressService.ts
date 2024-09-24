@@ -2,6 +2,9 @@ import Service from '@src/core/base/Service';
 import IExpressConfig from '@src/core/domains/express/interfaces/IExpressConfig';
 import IExpressService from '@src/core/domains/express/interfaces/IExpressService';
 import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
+import endCurrentRequestMiddleware from '@src/core/domains/express/middleware/endCurrentRequestMiddleware';
+import requestIdMiddleware from '@src/core/domains/express/middleware/requestIdMiddleware';
+import { securityMiddleware } from '@src/core/domains/express/middleware/securityMiddleware';
 import { Middleware } from '@src/core/interfaces/Middleware.t';
 import { App } from '@src/core/services/App';
 import express from 'express';
@@ -36,6 +39,10 @@ export default class ExpressService extends Service<IExpressConfig> implements I
         if (!this.config) {
             throw new Error('Config not provided');
         }
+
+        this.app.use(requestIdMiddleware())
+        this.app.use(endCurrentRequestMiddleware())
+
         for (const middleware of this.config?.globalMiddlewares ?? []) {
             this.app.use(middleware);
         }
@@ -115,8 +122,6 @@ export default class ExpressService extends Service<IExpressConfig> implements I
         }
 
         if(route?.security) {
-            const securityMiddleware = App.container('auth').securityMiddleware()
-
             middlewares.push(
                 securityMiddleware({ route })
             )
