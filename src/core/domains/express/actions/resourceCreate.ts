@@ -4,8 +4,9 @@ import { IRouteResourceOptions } from '@src/core/domains/express/interfaces/IRou
 import responseError from '@src/core/domains/express/requests/responseError';
 import { RouteResourceTypes } from '@src/core/domains/express/routing/RouteResource';
 import CurrentRequest from '@src/core/domains/express/services/CurrentRequest';
-import { ALWAYS, SecurityIdentifiers } from '@src/core/domains/express/services/Security';
+import { ALWAYS } from '@src/core/domains/express/services/Security';
 import SecurityReader from '@src/core/domains/express/services/SecurityReader';
+import { SecurityIdentifiers } from '@src/core/domains/express/services/SecurityRules';
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { Response } from 'express';
 
@@ -21,7 +22,7 @@ import { Response } from 'express';
 export default async (req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void> => {
     try {
         const resourceOwnerSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.RESOURCE_OWNER, [RouteResourceTypes.CREATE]);
-        const authorizationSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.AUTHORIZATION, [RouteResourceTypes.CREATE, ALWAYS]);
+        const authorizationSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.AUTHORIZED, [RouteResourceTypes.CREATE, ALWAYS]);
 
         if(authorizationSecurity && !authorizationSecurity.callback(req)) {
             responseError(req, res, new UnauthorizedError(), 401)

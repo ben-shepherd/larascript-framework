@@ -5,10 +5,12 @@ import { Middleware } from '@src/core/interfaces/Middleware.t';
 
 export interface IRoute {
     name: string;
-    resourceType?: string;
     path: string;
     method: 'get' | 'post' | 'put' | 'patch' | 'delete';
     action: IRouteAction;
+    resourceType?: string;
+    scopes?: string[];
+    scopesSecurityEnabled?: boolean;
     middlewares?: Middleware[];
     validator?: ValidatorCtor;
     validateBeforeAction?: boolean;

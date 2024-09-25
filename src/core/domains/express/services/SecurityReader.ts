@@ -1,6 +1,7 @@
 import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
 import { IIdentifiableSecurityCallback } from "@src/core/domains/express/interfaces/ISecurity";
 import { ALWAYS } from "@src/core/domains/express/services/Security";
+import SecurityRules from "@src/core/domains/express/services/SecurityRules";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 
 class SecurityReader {
@@ -39,6 +40,8 @@ class SecurityReader {
      * @returns The security callback if found, or undefined if not found.
      */
     public static find(security: IIdentifiableSecurityCallback[], id: string, when?: string[] | null): IIdentifiableSecurityCallback | undefined {
+        let result: IIdentifiableSecurityCallback | undefined = undefined;
+
         when = when ?? null;
         when = when && typeof when === 'string' ? [when] : when;
 
@@ -72,11 +75,40 @@ class SecurityReader {
             return false;
         }
 
-        return security?.find(security => {
-            return security.id === id && 
+
+        /**
+         * Find by 'id'
+         */
+        result = security?.find(security => {
+            const matchesIdentifier = security.id === id
+
+            return matchesIdentifier && 
                 conditionNeverPassable(when, security.never) === false &&
                 conditionPassable(security.when);
         });
+
+        /**
+         * Includes security rule defined in optional 'also' property
+         * 
+         * Example: hasScope rule requires authorized rule
+         */
+        if(!result)  {
+
+            // We need to find the unrelated security rule that has the ID in 'also' 
+            const unrelatedSecurityRule = security?.find(security => {
+                return security.also === id && 
+                    conditionNeverPassable(when, security.never) === false &&
+                    conditionPassable(security.when);
+            });
+
+            // The 'unrelatedSecurityRule' contains the 'also' property. 
+            // We can use it to fetch the desired security rule.
+            if(unrelatedSecurityRule) {
+                result = SecurityRules[unrelatedSecurityRule.also as string]()
+            }
+        }
+
+        return result
     }
 
 }

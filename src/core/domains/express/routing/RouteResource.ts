@@ -8,6 +8,7 @@ import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
 import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
 import Route from "@src/core/domains/express/routing/Route";
 import RouteGroup from "@src/core/domains/express/routing/RouteGroup";
+import RouteResourceScope from "@src/core/domains/express/routing/RouteResourceScope";
 import routeGroupUtil from "@src/core/domains/express/utils/routeGroupUtil";
 
 /**
@@ -40,11 +41,22 @@ export const RouteResourceTypes = {
 const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
     const name = options.name.startsWith('/') ? options.name.slice(1) : options.name
 
+    const {
+        scopes = [],
+        scopesSecurityEnabled = false
+    } = options;
+
     const routes = RouteGroup([
-    // Get all resources
+        // Get all resources
         Route({
             name: `${name}.index`,
             resourceType: RouteResourceTypes.ALL,
+            scopes: RouteResourceScope.getScopes({
+                name,
+                types: 'read',
+                additionalScopes: scopes
+            }),
+            scopesSecurityEnabled,
             method: 'get',
             path: `/${name}`,
             action: resourceAction(options, resourceIndex),
@@ -55,6 +67,12 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
         Route({
             name: `${name}.show`,
             resourceType: RouteResourceTypes.SHOW,
+            scopes: RouteResourceScope.getScopes({
+                name,
+                types: 'read',
+                additionalScopes: scopes
+            }),
+            scopesSecurityEnabled,
             method: 'get',
             path: `/${name}/:id`,
             action: resourceAction(options, resourceShow),
@@ -65,6 +83,12 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
         Route({
             name: `${name}.update`,
             resourceType: RouteResourceTypes.UPDATE,
+            scopes: RouteResourceScope.getScopes({
+                name,
+                types: 'write',
+                additionalScopes: scopes
+            }),
+            scopesSecurityEnabled,
             method: 'put',
             path: `/${name}/:id`,
             action: resourceAction(options, resourceUpdate),
@@ -76,6 +100,12 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
         Route({
             name: `${name}.destroy`,
             resourceType: RouteResourceTypes.DESTROY,
+            scopes: RouteResourceScope.getScopes({
+                name,
+                types: 'delete',
+                additionalScopes: scopes
+            }),
+            scopesSecurityEnabled,
             method: 'delete',
             path: `/${name}/:id`,
             action: resourceAction(options, resourceDelete),
@@ -86,6 +116,12 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
         Route({
             name: `${name}.create`,
             resourceType: RouteResourceTypes.CREATE,
+            scopes: RouteResourceScope.getScopes({
+                name,
+                types: 'read',
+                additionalScopes: scopes
+            }),
+            scopesSecurityEnabled,
             method: 'post',
             path: `/${name}`,
             action: resourceAction(options, resourceCreate),

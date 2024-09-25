@@ -5,6 +5,7 @@ import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
 import endCurrentRequestMiddleware from '@src/core/domains/express/middleware/endCurrentRequestMiddleware';
 import requestIdMiddleware from '@src/core/domains/express/middleware/requestIdMiddleware';
 import { securityMiddleware } from '@src/core/domains/express/middleware/securityMiddleware';
+import SecurityRules, { SecurityIdentifiers } from '@src/core/domains/express/services/SecurityRules';
 import { Middleware } from '@src/core/interfaces/Middleware.t';
 import { App } from '@src/core/services/App';
 import express from 'express';
@@ -21,7 +22,7 @@ export default class ExpressService extends Service<IExpressConfig> implements I
     private app: express.Express
 
     private registedRoutes: IRoute[] = [];
-    
+
     /**
      * Config defined in @src/config/http/express.ts
      * @param config 
@@ -52,9 +53,9 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      * Starts listening for connections on the port specified in the config.
      * If no port is specified, the service will not start listening.
      */
-    public async listen(): Promise<void> {   
-        const port =  this.config?.port
-        
+    public async listen(): Promise<void> {
+        const port = this.config?.port
+
         return new Promise(resolve => {
             this.app.listen(port, () => resolve())
         })
@@ -75,11 +76,22 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      * @param route 
      */
     public bindSingleRoute(route: IRoute): void {
-        const middlewares = this.addValidatorMiddleware(route);
+        const userDefinedMiddlewares = route.middlewares ?? [];
+
+        // Add security and validator middlewares
+        const middlewares: Middleware[] = [
+            ...userDefinedMiddlewares,
+            ...this.addValidatorMiddleware(route),
+            ...this.addSecurityMiddleware(route),
+        ];
+
+        // Add route handlers
         const handlers = [...middlewares, route?.action]
 
-        console.log(`[Express] binding route ${route.method.toUpperCase()}: '${route.path}' as '${route.name}'`)
+        // Log route
+        this.logRoute(route)
 
+        // Bind route
         switch (route.method) {
         case 'get':
             this.app.get(route.path, handlers);
@@ -98,7 +110,7 @@ export default class ExpressService extends Service<IExpressConfig> implements I
             break;
         default:
             throw new Error(`Unsupported method ${route.method} for path ${route.path}`);
-        }    
+        }
 
         this.registedRoutes.push(route)
     }
@@ -109,8 +121,11 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      * @returns middlewares with added validator middleware
      */
     public addValidatorMiddleware(route: IRoute): Middleware[] {
-        const middlewares = [...route?.middlewares ?? []];
+        const middlewares: Middleware[] = [];
 
+        /**
+         * Add validator middleware
+         */
         if (route?.validator) {
             const validatorMiddleware = App.container('validate').middleware()
             const validator = new route.validator();
@@ -121,7 +136,33 @@ export default class ExpressService extends Service<IExpressConfig> implements I
             );
         }
 
-        if(route?.security) {
+        return middlewares;
+    }
+
+    /**
+     * Adds security middleware to the route. If the route has scopesSecurityEnabled
+     * and scopes is present, it adds the HAS_SCOPE security rule to the route.
+     * Then it adds the security middleware to the route's middleware array.
+     * @param route The route to add the middleware to
+     * @returns The route's middleware array with the security middleware added
+     */
+    public addSecurityMiddleware(route: IRoute): Middleware[] {
+        const middlewares: Middleware[] = [];
+
+        /**
+         * Check if scopes is present, add related security rule
+         */
+        if (route?.scopesSecurityEnabled && route?.scopes?.length) {
+            route.security = [
+                ...(route.security ?? []),
+                SecurityRules[SecurityIdentifiers.HAS_SCOPE](route.scopes)
+            ]
+        }
+
+        /**
+                 * Add security middleware
+                 */
+        if (route?.security) {
             middlewares.push(
                 securityMiddleware({ route })
             )
@@ -151,6 +192,27 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      */
     public getRoutes(): IRoute[] {
         return this.registedRoutes
+    }
+
+    /**
+     * Logs a route binding to the console.
+     * @param route - IRoute instance
+     */
+    private logRoute(route: IRoute): void {
+        let str = `[Express] binding route ${route.method.toUpperCase()}: '${route.path}' as '${route.name}'`;
+
+        if (route.scopes?.length) {
+            str += ` with scopes: [${route.scopes.join(', ')}]`
+
+            if (route?.scopesSecurityEnabled) {
+                str += ' (scopes security ON)'
+            }
+            else {
+                str += ' (scopes security OFF)'
+            }
+        }
+
+        console.log(str)
     }
 
 }

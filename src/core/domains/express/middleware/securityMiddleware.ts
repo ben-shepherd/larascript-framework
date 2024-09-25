@@ -4,8 +4,9 @@ import AuthRequest from '@src/core/domains/auth/services/AuthRequest';
 import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
 import { ISecurityMiddleware } from '@src/core/domains/express/interfaces/ISecurity';
 import responseError from '@src/core/domains/express/requests/responseError';
-import { ALWAYS, SecurityIdentifiers } from '@src/core/domains/express/services/Security';
+import { ALWAYS } from '@src/core/domains/express/services/Security';
 import SecurityReader from '@src/core/domains/express/services/SecurityReader';
+import { SecurityIdentifiers } from '@src/core/domains/express/services/SecurityRules';
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { NextFunction, Response } from 'express';
 
@@ -17,7 +18,7 @@ const bindSecurityToRequest = (route: IRoute, req: BaseRequest) => {
 /**
  * Applies the authorization security check on the request.
  */
-const applyAuthorizeSecurity = async (route: IRoute, req: BaseRequest, res: Response): Promise<void> => {
+const applyAuthorizeSecurity = async (route: IRoute, req: BaseRequest, res: Response): Promise<void | null> => {
 
     const conditions = [ALWAYS]
 
@@ -25,7 +26,7 @@ const applyAuthorizeSecurity = async (route: IRoute, req: BaseRequest, res: Resp
         conditions.push(route.resourceType)
     }
 
-    const authorizeSecurity = SecurityReader.findFromRequest(req, SecurityIdentifiers.AUTHORIZATION, conditions);
+    const authorizeSecurity = SecurityReader.findFromRequest(req, SecurityIdentifiers.AUTHORIZED, conditions);
 
     if (authorizeSecurity) {
         try {
@@ -33,7 +34,7 @@ const applyAuthorizeSecurity = async (route: IRoute, req: BaseRequest, res: Resp
 
             if(!authorizeSecurity.callback(req)) {
                 responseError(req, res, new UnauthorizedError(), 401);
-                return;
+                return null;
             }
         }
         catch (err) {
@@ -62,6 +63,23 @@ const applyHasRoleSecurity = (req: BaseRequest, res: Response): void | null => {
 }
 
 /**
+ * Checks if the hasRole security has been defined and validates it.
+ * If the hasRole security is defined and the validation fails, it will send a 403 response with a ForbiddenResourceError.
+ */
+const applyHasScopeSecurity = (req: BaseRequest, res: Response): void | null => {
+
+    // Check if the hasRole security has been defined and validate
+    const securityHasScope = SecurityReader.findFromRequest(req, SecurityIdentifiers.HAS_SCOPE);
+
+    if (securityHasScope && !securityHasScope.callback(req)) {
+        responseError(req, res, new ForbiddenResourceError(), 403)
+        return null;
+    }
+
+}
+
+
+/**
  * This middleware will check the security definition of the route and validate it.
  * If the security definition is not valid, it will throw an UnauthorizedError.
  *
@@ -80,12 +98,21 @@ export const securityMiddleware: ISecurityMiddleware = ({ route }) => async (req
          * Authorizes the user
          * Depending on option 'throwExceptionOnUnauthorized', can allow continue processing on failed auth
          */
-        await applyAuthorizeSecurity(route, req, res)
+        if(await applyAuthorizeSecurity(route, req, res) === null) {
+            return;
+        }
 
         /**
          * Check if the authorized user passes the has role security
          */
         if(applyHasRoleSecurity(req, res) === null) {
+            return;
+        }
+
+        /**
+         * Check if the authorized user passes the has scope security
+         */
+        if(applyHasScopeSecurity(req, res) === null) {
             return;
         }
 
