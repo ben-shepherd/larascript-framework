@@ -156,8 +156,8 @@ class Security extends Singleton {
      * @returns A callback function to be used in the security definition.
      */
      
-    public static custom(callback: SecurityCallback, ...rest: any[]): IIdentifiableSecurityCallback {
-        return SecurityRules[SecurityIdentifiers.CUSTOM](callback, ...rest);
+    public static custom(identifier: string, callback: SecurityCallback, ...rest: any[]): IIdentifiableSecurityCallback {
+        return SecurityRules[SecurityIdentifiers.CUSTOM](identifier, callback, ...rest);
     }
 
 }

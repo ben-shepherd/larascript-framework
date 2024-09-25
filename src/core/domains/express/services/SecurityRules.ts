@@ -106,8 +106,8 @@ const SecurityRules: ISecurityRules = {
      * @returns 
      */
     // eslint-disable-next-line no-unused-vars
-    [SecurityIdentifiers.CUSTOM]: (callback: SecurityCallback, ...rest: any[]) => ({
-        id: SecurityIdentifiers.CUSTOM,
+    [SecurityIdentifiers.CUSTOM]: (identifier: string, callback: SecurityCallback, ...rest: any[]) => ({
+        id: identifier,
         never: Security.getInstance().getNeverAndReset(),
         when: Security.getInstance().getWhenAndReset(),
         callback: (req: BaseRequest, ...rest: any[]) => {
