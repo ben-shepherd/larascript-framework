@@ -7,6 +7,8 @@ import Security from "@src/core/domains/express/services/Security"
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t"
 import { IModel } from "@src/core/interfaces/IModel"
 
+import rateLimitedSecurity from "../rules/rateLimitedSecurity"
+
 /**
  * Security rules
  */
@@ -24,6 +26,7 @@ export const SecurityIdentifiers = {
     RESOURCE_OWNER: 'resourceOwner',
     HAS_ROLE: 'hasRole',
     HAS_SCOPE: 'hasScope',
+    RATE_LIMITED: 'rateLimited',
     CUSTOM: 'custom'
 } as const;
 
@@ -97,6 +100,18 @@ const SecurityRules: ISecurityRules = {
         when: Security.getInstance().getWhenAndReset(),
         never: Security.getInstance().getNeverAndReset(),
         callback: (req: BaseRequest) => hasScopeSecurity(req, scopes)
+    }),
+
+    /**
+     * Rate limited security
+     * @param limit 
+     * @returns 
+     */
+    [SecurityIdentifiers.RATE_LIMITED]: (limit: number, perMinuteAmount: number) => ({
+        id: SecurityIdentifiers.RATE_LIMITED,
+        never: Security.getInstance().getNeverAndReset(),
+        when: Security.getInstance().getWhenAndReset(),
+        callback: (req: BaseRequest) => rateLimitedSecurity(req, limit, perMinuteAmount),
     }),
 
     /**

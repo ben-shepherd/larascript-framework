@@ -10,6 +10,8 @@ import { SecurityIdentifiers } from '@src/core/domains/express/services/Security
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { NextFunction, Response } from 'express';
 
+import RateLimitedExceededError from '../../auth/exceptions/RateLimitedExceededError';
+
 const bindSecurityToRequest = (route: IRoute, req: BaseRequest) => {
     req.security = route.security ?? [];
 }
@@ -22,7 +24,7 @@ const applyAuthorizeSecurity = async (route: IRoute, req: BaseRequest, res: Resp
 
     const conditions = [ALWAYS]
 
-    if(route.resourceType) {
+    if (route.resourceType) {
         conditions.push(route.resourceType)
     }
 
@@ -32,7 +34,7 @@ const applyAuthorizeSecurity = async (route: IRoute, req: BaseRequest, res: Resp
         try {
             req = await AuthRequest.attemptAuthorizeRequest(req);
 
-            if(!authorizeSecurity.callback(req)) {
+            if (!authorizeSecurity.callback(req)) {
                 responseError(req, res, new UnauthorizedError(), 401);
                 return null;
             }
@@ -41,7 +43,7 @@ const applyAuthorizeSecurity = async (route: IRoute, req: BaseRequest, res: Resp
             if (err instanceof UnauthorizedError && authorizeSecurity.arguements?.throwExceptionOnUnauthorized) {
                 throw err;
             }
-            
+
             // Continue processing    
         }
     }
@@ -78,6 +80,20 @@ const applyHasScopeSecurity = (req: BaseRequest, res: Response): void | null => 
 
 }
 
+/**
+ * Checks if the rate limited security has been defined and validates it.
+ * If the rate limited security is defined and the validation fails, it will send a 429 response with a RateLimitedExceededError.
+ */
+const applyRateLimitSecurity = async (req: BaseRequest, res: Response): Promise<void | null> => {
+    
+    // Find the rate limited security
+    const securityRateLimit = SecurityReader.findFromRequest(req, SecurityIdentifiers.RATE_LIMITED);
+
+    if (securityRateLimit && !securityRateLimit.callback(req)) {
+        responseError(req, res, new RateLimitedExceededError(), 429)
+        return null;
+    }
+}
 
 /**
  * This middleware will check the security definition of the route and validate it.
@@ -91,28 +107,37 @@ export const securityMiddleware: ISecurityMiddleware = ({ route }) => async (req
 
         /**
          * Adds security rules to the Express Request
+         * This is used below to find the defined security rules
          */
         bindSecurityToRequest(route, req);
+
+
+        /**
+         * Check if the rate limit has been exceeded
+         */
+        if(await applyRateLimitSecurity(req, res) === null) {
+            return;
+        }
 
         /**
          * Authorizes the user
          * Depending on option 'throwExceptionOnUnauthorized', can allow continue processing on failed auth
          */
-        if(await applyAuthorizeSecurity(route, req, res) === null) {
+        if (await applyAuthorizeSecurity(route, req, res) === null) {
             return;
         }
 
         /**
          * Check if the authorized user passes the has role security
          */
-        if(applyHasRoleSecurity(req, res) === null) {
+        if (applyHasRoleSecurity(req, res) === null) {
             return;
         }
 
         /**
          * Check if the authorized user passes the has scope security
          */
-        if(applyHasScopeSecurity(req, res) === null) {
+        if (applyHasScopeSecurity(req, res) === null) {
             return;
         }
 

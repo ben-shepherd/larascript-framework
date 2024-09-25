@@ -148,6 +148,16 @@ class Security extends Singleton {
     }
 
     /**
+     * Creates a security callback to check if the currently IP address has not exceeded a given rate limit.
+     * 
+     * @param limit - The maximum number of requests the user can make per minute.* 
+     * @returns A callback function to be used in the security definition.
+     */
+    public static rateLimited(limit: number, perMinuteAmount: number = 1): IIdentifiableSecurityCallback {
+        return SecurityRules[SecurityIdentifiers.RATE_LIMITED](limit, perMinuteAmount);
+    } 
+
+    /**
      * Creates a custom security callback.
      *
      * @param identifier - The identifier for the security callback.
