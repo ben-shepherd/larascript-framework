@@ -30,7 +30,7 @@ const formatResults = (results: IModel<IModelData>[]) => results.map(result => r
 export default async (req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void> => {
     try {
         const resourceOwnerSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.RESOURCE_OWNER, [RouteResourceTypes.ALL])
-        const authorizationSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.AUTHORIZATION, [RouteResourceTypes.ALL, ALWAYS]);
+        const authorizationSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.AUTHORIZED, [RouteResourceTypes.ALL, ALWAYS]);
 
         if(authorizationSecurity && !authorizationSecurity.callback(req)) {
             responseError(req, res, new UnauthorizedError(), 401)

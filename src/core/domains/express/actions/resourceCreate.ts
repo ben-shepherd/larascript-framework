@@ -21,7 +21,7 @@ import { Response } from 'express';
 export default async (req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void> => {
     try {
         const resourceOwnerSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.RESOURCE_OWNER, [RouteResourceTypes.CREATE]);
-        const authorizationSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.AUTHORIZATION, [RouteResourceTypes.CREATE, ALWAYS]);
+        const authorizationSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.AUTHORIZED, [RouteResourceTypes.CREATE, ALWAYS]);
 
         if(authorizationSecurity && !authorizationSecurity.callback(req)) {
             responseError(req, res, new UnauthorizedError(), 401)
