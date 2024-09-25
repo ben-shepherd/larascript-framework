@@ -41,7 +41,7 @@ export default async (req: BaseRequest, res: Response, options: IRouteResourceOp
             }
 
             const propertyKey = resourceOwnerSecurity.arguements?.key;
-            const userId = CurrentRequest.get<string>(req, 'userId');
+            const userId = CurrentRequest.getByRequest<string>(req, 'userId');
 
             if(typeof propertyKey !== 'string') {
                 throw new Error('Malformed resourceOwner security. Expected parameter \'key\' to be a string but received ' + typeof propertyKey);

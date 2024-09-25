@@ -8,6 +8,8 @@ import { NextFunction, Response } from "express";
  */
 const endCurrentRequestMiddleware = () => (req: BaseRequest, res: Response, next: NextFunction) => {
     res.once('finish', () => {
+        console.log('Request finished: ', CurrentRequest.getInstance().values)
+    
         CurrentRequest.end(req)
     })
 
