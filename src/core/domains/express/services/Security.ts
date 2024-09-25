@@ -83,6 +83,10 @@ class Security extends Singleton {
      * 
      * Example usage within an Action/Controller:
      * 
+     *     // Instance of a model (resource)
+     *     const result =  await repository.findById(id) 
+     * 
+     *     // Check if resourceOwner is applicable
      *     const resourceOwnerSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.RESOURCE_OWNER, ['SomeConditionValue']);
      *
      *     // The callback checks the attribute on the resource model matches the authorized user
