@@ -1,18 +1,11 @@
 import Singleton from "@src/core/base/Singleton";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
+import getIpAddress from "@src/core/domains/express/utils/getIpAddress";
 
-import getIpAddress from "../utils/getIpAddress";
-
-const example = {
-    'uuid': {
-        'key': 'value',
-        'key2': 'value2'
-    },
-    '127.0.0.1': {
-        'key': 'value',
-    }
-}
-
+/**
+ * Allows you to store information during the duration of a request. Information is linked to the Request's UUID and is cleaned up after the request is finished.
+ * You can also store information linked to an IP Address.
+ */
 class CurrentRequest extends Singleton {
 
     /**
@@ -27,7 +20,7 @@ class CurrentRequest extends Singleton {
      *     }
      * }
      */
-    public values: Record<string, Record<string, unknown>> = {};
+    protected context: Record<string, Record<string, unknown>> = {};
 
     /**
      * Sets a value in the current request context
@@ -37,14 +30,14 @@ class CurrentRequest extends Singleton {
      * @param {unknown} value - The value associated with the key
      * @returns {typeof CurrentRequest} - The CurrentRequest class itself to enable chaining
      */
-    public static setByRequest(req: BaseRequest, key: string, value: unknown): typeof CurrentRequest {
+    public setByRequest(req: BaseRequest, key: string, value: unknown): this {
         const requestId = req.id as string;
 
-        if (!this.getInstance().values[requestId]) {
-            this.getInstance().values[requestId] = {}
+        if (!this.context[requestId]) {
+            this.context[requestId] = {}
         }
 
-        this.getInstance().values[requestId][key] = value;
+        this.context[requestId][key] = value;
         return this;
     }
 
@@ -55,14 +48,14 @@ class CurrentRequest extends Singleton {
      * @param {string} key - The key of the value to retrieve
      * @returns {T | undefined} - The value associated with the key, or undefined if not found
      */
-    public static getByRequest<T = unknown>(req: BaseRequest, key?: string): T | undefined {
+    public getByRequest<T = unknown>(req: BaseRequest, key?: string): T | undefined {
         const requestId = req.id as string;
 
         if (!key) {
-            return this.getInstance().values[requestId] as T ?? undefined;
+            return this.context[requestId] as T ?? undefined;
         }
 
-        return this.getInstance().values[requestId]?.[key] as T ?? undefined
+        return this.context[requestId]?.[key] as T ?? undefined
     }
 
     /**
@@ -73,14 +66,14 @@ class CurrentRequest extends Singleton {
      * @param {unknown} value - The value associated with the key
      * @returns {typeof CurrentRequest} - The CurrentRequest class itself to enable chaining
      */
-    public static setByIpAddress(req: BaseRequest, key: string, value: unknown): typeof CurrentRequest {
+    public setByIpAddress(req: BaseRequest, key: string, value: unknown): this {
         const ip = getIpAddress(req);
 
-        if (!this.getInstance().values[ip]) {
-            this.getInstance().values[ip] = {}
+        if (!this.context[ip]) {
+            this.context[ip] = {}
         }
 
-        this.getInstance().values[ip][key] = value;
+        this.context[ip][key] = value;
         return this;
     }
 
@@ -91,14 +84,14 @@ class CurrentRequest extends Singleton {
      * @param {string} [key] - The key of the value to retrieve
      * @returns {T | undefined} - The value associated with the key, or undefined if not found
      */
-    public static getByIpAddress<T = unknown>(req: BaseRequest, key?: string): T | undefined {
+    public getByIpAddress<T = unknown>(req: BaseRequest, key?: string): T | undefined {
         const ip = getIpAddress(req);
 
         if (!key) {
-            return this.getInstance().values[ip] as T ?? undefined;
+            return this.context[ip] as T ?? undefined;
         }
 
-        return this.getInstance().values[ip]?.[key] as T ?? undefined
+        return this.context[ip]?.[key] as T ?? undefined
     }
 
     /**
@@ -107,12 +100,18 @@ class CurrentRequest extends Singleton {
      * @param {BaseRequest} req - The Express Request object
      * @returns {void}
      */
-    public static end(req: BaseRequest) {
+    public endRequest(req: BaseRequest) {
         const requestId = req.id as string;
-        delete this.getInstance().values[requestId];
+        delete this.context[requestId];
+    }
 
-        // const ip = getIpAddress(req);
-        // delete this.getInstance().values[ip];
+    /**
+     * Returns the current request context data
+     *
+     * @returns {Record<string, unknown>} - The current request context data
+     */
+    public getContext() {
+        return this.context
     }
 
 }

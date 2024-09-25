@@ -3,13 +3,13 @@ import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedErr
 import { IRouteResourceOptions } from '@src/core/domains/express/interfaces/IRouteResourceOptions';
 import responseError from '@src/core/domains/express/requests/responseError';
 import { RouteResourceTypes } from '@src/core/domains/express/routing/RouteResource';
-import CurrentRequest from '@src/core/domains/express/services/CurrentRequest';
 import { ALWAYS } from '@src/core/domains/express/services/Security';
 import SecurityReader from '@src/core/domains/express/services/SecurityReader';
 import { SecurityIdentifiers } from '@src/core/domains/express/services/SecurityRules';
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { IModel } from '@src/core/interfaces/IModel';
 import IModelData from '@src/core/interfaces/IModelData';
+import { App } from '@src/core/services/App';
 import { Response } from 'express';
 
 /**
@@ -48,7 +48,7 @@ export default async (req: BaseRequest, res: Response, options: IRouteResourceOp
         if (resourceOwnerSecurity && authorizationSecurity) {
 
             const propertyKey = resourceOwnerSecurity.arguements?.key;
-            const userId = CurrentRequest.getByRequest<string>(req, 'userId');
+            const userId = App.container('currentRequest').getByRequest<string>(req, 'userId');
 
             if (!userId) {
                 responseError(req, res, new UnauthorizedError(), 401);

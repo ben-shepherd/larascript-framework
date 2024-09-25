@@ -1,5 +1,4 @@
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
-import CurrentRequest from "@src/core/domains/express/services/CurrentRequest";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { App } from "@src/core/services/App";
 
@@ -28,7 +27,7 @@ class AuthRequest {
         req.user = user;
         req.apiToken = apiToken
         
-        CurrentRequest.setByRequest(req, 'userId', user?.getId())
+        App.container('currentRequest').setByRequest(req, 'userId', user?.getId())
 
         return req;
     }

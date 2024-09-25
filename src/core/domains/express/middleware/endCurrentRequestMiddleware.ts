@@ -1,5 +1,5 @@
-import CurrentRequest from "@src/core/domains/express/services/CurrentRequest";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
+import { App } from "@src/core/services/App";
 import { NextFunction, Response } from "express";
 
 
@@ -8,9 +8,9 @@ import { NextFunction, Response } from "express";
  */
 const endCurrentRequestMiddleware = () => (req: BaseRequest, res: Response, next: NextFunction) => {
     res.once('finish', () => {
-        console.log('Request finished: ', CurrentRequest.getInstance().values)
+        console.log('Request finished: ', App.container('currentRequest').getContext())
     
-        CurrentRequest.end(req)
+        App.container('currentRequest').endRequest(req)
     })
 
     next()

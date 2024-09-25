@@ -1,8 +1,7 @@
+import RateLimitedExceededError from "@src/core/domains/auth/exceptions/RateLimitedExceededError";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
+import { App } from "@src/core/services/App";
 import { Request } from "express";
-
-import RateLimitedExceededError from "../../auth/exceptions/RateLimitedExceededError";
-import CurrentRequest from "../services/CurrentRequest";
 
 /**
  * Handles a new request by adding the current time to the request's hit log.
@@ -11,7 +10,7 @@ import CurrentRequest from "../services/CurrentRequest";
  * @param {Request} req - The express request object.
  */
 const handleNewRequest = (id: string, req: Request) => {
-    CurrentRequest.setByIpAddress(req, id, [
+    App.container('currentRequest').setByIpAddress(req, id, [
         ...getCurrentDates(id, req),
         new Date()
     ]);
@@ -26,7 +25,7 @@ const handleNewRequest = (id: string, req: Request) => {
 const undoNewRequest = (id: string, req: Request) => {
     const dates = [...getCurrentDates(id, req)];
     dates.pop();
-    CurrentRequest.setByIpAddress(req, id, dates);
+    App.container('currentRequest').setByIpAddress(req, id, dates);
 }
 
 /**
@@ -37,7 +36,7 @@ const undoNewRequest = (id: string, req: Request) => {
  * @returns The array of dates of the hits, or an empty array if not found.
  */
 const getCurrentDates = (id: string, req: Request): Date[] => {
-    return CurrentRequest.getByIpAddress<Date[]>(req, id) ?? [];
+    return App.container('currentRequest').getByIpAddress<Date[]>(req, id) ?? [];
 }
 
 /**

@@ -2,6 +2,7 @@ import { IAuthService } from '@src/core/domains/auth/interfaces/IAuthService';
 import ICommandService from '@src/core/domains/console/interfaces/ICommandService';
 import { IDatabaseService } from '@src/core/domains/database/interfaces/IDatabaseService';
 import { IEventService } from '@src/core/domains/events/interfaces/IEventService';
+import { ICurrentRequest } from '@src/core/domains/express/interfaces/ICurrentRequest';
 import IExpressService from '@src/core/domains/express/interfaces/IExpressService';
 import IValidatorService from '@src/core/domains/validator/interfaces/IValidatorService';
 import readline from 'node:readline';
@@ -32,6 +33,12 @@ export interface ICoreContainers {
      * Provided by '@src/core/domains/express/providers/ExpressProvider'
      */
     express: IExpressService;
+
+    /**
+     * Current Request Service
+     * Provided by '@src/core/domains/express/providers/ExpressProvider'
+     */
+    currentRequest: ICurrentRequest;
 
     /**
      * Console service

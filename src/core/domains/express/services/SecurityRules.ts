@@ -2,12 +2,11 @@ import { IIdentifiableSecurityCallback, SecurityCallback } from "@src/core/domai
 import authorizedSecurity from "@src/core/domains/express/rules/authorizedSecurity"
 import hasRoleSecurity from "@src/core/domains/express/rules/hasRoleSecurity"
 import hasScopeSecurity from "@src/core/domains/express/rules/hasScopeSecurity"
+import rateLimitedSecurity from "@src/core/domains/express/rules/rateLimitedSecurity"
 import resourceOwnerSecurity from "@src/core/domains/express/rules/resourceOwnerSecurity"
 import Security from "@src/core/domains/express/services/Security"
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t"
 import { IModel } from "@src/core/interfaces/IModel"
-
-import rateLimitedSecurity from "../rules/rateLimitedSecurity"
 
 /**
  * Security rules

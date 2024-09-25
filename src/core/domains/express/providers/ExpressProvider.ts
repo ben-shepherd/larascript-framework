@@ -1,8 +1,9 @@
 import httpConfig from '@src/config/http';
 import BaseProvider from "@src/core/base/Provider";
 import IExpressConfig from "@src/core/domains/express/interfaces/IExpressConfig";
-import { App } from "@src/core/services/App";
+import CurrentRequest from '@src/core/domains/express/services/CurrentRequest';
 import ExpressService from '@src/core/domains/express/services/ExpressService';
+import { App } from "@src/core/services/App";
 
 export default class ExpressProvider extends BaseProvider {
 
@@ -27,6 +28,12 @@ export default class ExpressProvider extends BaseProvider {
         // Register the Express service in the container
         // This will be available in any provider or service as App.container('express')
         App.setContainer('express', new ExpressService(this.config));
+
+        // Register the CurrentRequest service in the container
+        // This will be available in any provider or service as App.container('currentRequest')
+        // The CurrentRequest class can be used to store data over a request's life cycle
+        // Additionally, data can be stored which can be linked to the requests IP Address
+        App.setContainer('currentRequest', new CurrentRequest());
     }
 
     /**

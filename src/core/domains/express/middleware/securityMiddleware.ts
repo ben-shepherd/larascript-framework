@@ -1,4 +1,5 @@
 import ForbiddenResourceError from '@src/core/domains/auth/exceptions/ForbiddenResourceError';
+import RateLimitedExceededError from '@src/core/domains/auth/exceptions/RateLimitedExceededError';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
 import AuthRequest from '@src/core/domains/auth/services/AuthRequest';
 import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
@@ -9,8 +10,6 @@ import SecurityReader from '@src/core/domains/express/services/SecurityReader';
 import { SecurityIdentifiers } from '@src/core/domains/express/services/SecurityRules';
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { NextFunction, Response } from 'express';
-
-import RateLimitedExceededError from '../../auth/exceptions/RateLimitedExceededError';
 
 const bindSecurityToRequest = (route: IRoute, req: BaseRequest) => {
     req.security = route.security ?? [];
