@@ -3,11 +3,6 @@ import { IIdentifiableSecurityCallback, SecurityCallback } from "@src/core/domai
 import SecurityRules, { SecurityIdentifiers } from "@src/core/domains/express/services/SecurityRules";
 
 /**
- * A list of security identifiers.
- */
-
-
-/**
  * The default condition for when the security check should be executed.
  */
 export const ALWAYS = 'always';
@@ -161,7 +156,7 @@ class Security extends Singleton {
      * @returns A callback function to be used in the security definition.
      */
      
-    public static custom(identifier: string, callback: SecurityCallback, ...rest: any[]): IIdentifiableSecurityCallback {
+    public static custom(callback: SecurityCallback, ...rest: any[]): IIdentifiableSecurityCallback {
         return SecurityRules[SecurityIdentifiers.CUSTOM](callback, ...rest);
     }
 
