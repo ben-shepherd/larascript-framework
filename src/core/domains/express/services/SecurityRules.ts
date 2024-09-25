@@ -50,7 +50,7 @@ const SecurityRules: ISecurityRules = {
      * @returns 
      */
     [SecurityIdentifiers.AUTHORIZED_THROW_EXCEPTION]: () => ({
-        id: SecurityIdentifiers.AUTHORIZED,
+        id: SecurityIdentifiers.AUTHORIZED_THROW_EXCEPTION,
         when: Security.getInstance().getWhenAndReset(),
         never: Security.getInstance().getNeverAndReset(),
         arguements: {
@@ -66,6 +66,7 @@ const SecurityRules: ISecurityRules = {
      */
     [SecurityIdentifiers.RESOURCE_OWNER]: (attribute: string = 'userId') => ({
         id: SecurityIdentifiers.RESOURCE_OWNER,
+        also: SecurityIdentifiers.AUTHORIZED,
         when: Security.getInstance().getWhenAndReset(),
         never: Security.getInstance().getNeverAndReset(),
         arguements: { key: attribute },
@@ -79,6 +80,7 @@ const SecurityRules: ISecurityRules = {
      */
     [SecurityIdentifiers.HAS_ROLE]: (roles: string | string[]) => ({
         id: SecurityIdentifiers.HAS_ROLE,
+        also: SecurityIdentifiers.AUTHORIZED,
         when: Security.getInstance().getWhenAndReset(),
         never: Security.getInstance().getNeverAndReset(),
         callback: (req: BaseRequest) => hasRoleSecurity(req, roles)
