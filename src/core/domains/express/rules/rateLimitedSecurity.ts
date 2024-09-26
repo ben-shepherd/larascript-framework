@@ -1,54 +1,68 @@
 import RateLimitedExceededError from "@src/core/domains/auth/exceptions/RateLimitedExceededError";
+import { IPDatesArrayTTL } from "@src/core/domains/express/interfaces/ICurrentRequest";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { App } from "@src/core/services/App";
 import { Request } from "express";
 
 /**
- * Handles a new request by adding the current time to the request's hit log.
- *
- * @param {string} id - The id of the request.
- * @param {Request} req - The express request object.
+ * Adds a new date to the rate limited context.
+ * 
+ * @param ipContextIdentifier - The rate limited context id.
+ * @param req - The express request object.
+ * @param ttlSeconds - The ttl in seconds of the context.
  */
-const handleNewRequest = (id: string, req: Request) => {
-    App.container('currentRequest').setByIpAddress(req, id, [
-        ...getCurrentDates(id, req),
+const addDate = (ipContextIdentifier: string, req: Request, ttlSeconds: number) => {
+    const context = getContext(ipContextIdentifier, req);
+    const dates = context.value
+
+    App.container('requestContext').setByIpAddress<Date[]>(req, ipContextIdentifier, [
+        ...dates,
         new Date()
-    ]);
+    ], ttlSeconds)
 }
 
 /**
- * Reverts the last request hit by removing the latest date from the hit log.
- *
- * @param {string} id - The id of the request.
- * @param {Request} req - The express request object.
+ * Removes the last date from the rate limited context.
+ * 
+ * @param ipContextIdentifier - The rate limited context id.
+ * @param req - The express request object.
  */
-const undoNewRequest = (id: string, req: Request) => {
-    const dates = [...getCurrentDates(id, req)];
-    dates.pop();
-    App.container('currentRequest').setByIpAddress(req, id, dates);
+const removeLastDate = (ipContextIdentifier: string, req: Request) => {
+    const context = getContext(ipContextIdentifier, req);
+    const dates = context.value;
+    const ttlSeconds = context.ttlSeconds ?? undefined;
+    const newDates = [...dates];
+    newDates.pop();
+
+    App.container('requestContext').setByIpAddress<Date[]>(req, ipContextIdentifier, newDates, ttlSeconds)
 }
 
+
 /**
- * Gets the current hits as an array of dates for the given request and id.
- *
- * @param id The id of the hits to retrieve.
- * @param req The request object.
- * @returns The array of dates of the hits, or an empty array if not found.
+ * Gets the current rate limited context for the given id and request.
+ * 
+ * Returns an object with a "value" property containing an array of Date objects and a "ttlSeconds" property containing the TTL in seconds.
+ * Example: { value: [Date, Date], ttlSeconds: 60 }
+ * 
+ * @param id - The rate limited context id.
+ * @param req - The express request object.
+ * @returns The current rate limited context value with the given id, or an empty array if none exists.
  */
-const getCurrentDates = (id: string, req: Request): Date[] => {
-    return App.container('currentRequest').getByIpAddress<Date[]>(req, id) ?? [];
+const getContext = (id: string, req: Request): IPDatesArrayTTL<Date[]> => {
+    return App.container('requestContext').getByIpAddress<IPDatesArrayTTL<Date[]>>(req, id) || { value: [], ttlSeconds: null };
 }
 
 /**
  * Finds the number of dates in the given array that are within the given start and end date range.
+ * 
  * @param start The start date of the range.
  * @param end The end date of the range.
- * @param hits The array of dates to search through.
+ * @param dates The array of dates to search through.
  * @returns The number of dates in the array that fall within the given range.
  */
-const findDatesWithinTimeRange = (start: Date, end: Date, hits: Date[]): number => {
-    return hits.filter((hit) => {
-        return hit >= start && hit <= end;
+const findDatesWithinTimeRange = (start: Date, end: Date, dates: Date[]): number => {
+    return dates.filter((date) => {
+        return date >= start && date <= end;
     }).length;
 }
 
@@ -62,12 +76,14 @@ const findDatesWithinTimeRange = (start: Date, end: Date, hits: Date[]): number 
  */
 const rateLimitedSecurity = (req: BaseRequest, limit: number, perMinuteAmount: number = 1): boolean => {
 
-    // The identifier is the request method and url
-    const identifier = `rateLimited:${req.method}:${req.url}`
+    // Get pathname from request
+    const url = new URL(req.url, `http${req.secure ? 's' : ''}://${req.headers.host}`);
 
-    // Handle a new request
-    // Stores dates in CurrentRequest linked by the IP address
-    handleNewRequest(identifier, req);
+    // The id for the rate limited context
+    const ipContextIdentifier = `rateLimited:${req.method}:${url.pathname}`
+
+    // Update the context with a new date
+    addDate(ipContextIdentifier, req, perMinuteAmount * 60);
 
     // Get the current date
     const now = new Date();
@@ -76,16 +92,17 @@ const rateLimitedSecurity = (req: BaseRequest, limit: number, perMinuteAmount: n
     const dateInPast = new Date();
     dateInPast.setMinutes(dateInPast.getMinutes() - perMinuteAmount);
 
-    // Get current requests as an array of dates
-    const requestAttemptsAsDateArray = getCurrentDates(identifier, req);
+    // Get an array of dates that represents that hit log
+    const datesArray = getContext(ipContextIdentifier, req).value;
 
-    // Get the number of requests within the time range
-    const requestAttemptCount = findDatesWithinTimeRange(dateInPast, now, requestAttemptsAsDateArray);
+    // Filter down the array of dates that match our specified time from past to now
+    const attemptCount = findDatesWithinTimeRange(dateInPast, now, datesArray);
 
     // If the number of requests is greater than the limit, throw an error
-    if(requestAttemptCount > limit) {
-        // Undo the new request, we won't consider this request as part of the limit
-        undoNewRequest(identifier, req);
+    if(attemptCount > limit) {
+
+        // Undo the last added date, we won't consider this failed request as part of the limit
+        removeLastDate(ipContextIdentifier, req);
 
         // Throw the error
         throw new RateLimitedExceededError()

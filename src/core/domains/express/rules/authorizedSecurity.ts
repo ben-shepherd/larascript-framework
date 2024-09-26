@@ -10,7 +10,7 @@ import { App } from "@src/core/services/App";
  * @returns True if the user is logged in, false otherwise
  */
 const authorizedSecurity = (req: BaseRequest): boolean => {
-    if(App.container('currentRequest').getByRequest(req, 'userId')) {
+    if(App.container('requestContext').getByRequest(req, 'userId')) {
         return true;
     }
 

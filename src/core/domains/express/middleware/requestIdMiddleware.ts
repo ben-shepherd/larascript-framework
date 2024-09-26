@@ -33,7 +33,6 @@ const requestIdMiddleware = ({ generator, setHeader, headerName }: Props = defau
     }
 
     req.id = id
-
     next()
 }
 

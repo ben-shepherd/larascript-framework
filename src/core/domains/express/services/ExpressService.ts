@@ -2,7 +2,7 @@ import Service from '@src/core/base/Service';
 import IExpressConfig from '@src/core/domains/express/interfaces/IExpressConfig';
 import IExpressService from '@src/core/domains/express/interfaces/IExpressService';
 import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
-import endCurrentRequestMiddleware from '@src/core/domains/express/middleware/endCurrentRequestMiddleware';
+import endRequestContextMiddleware from '@src/core/domains/express/middleware/endRequestContextMiddleware';
 import requestIdMiddleware from '@src/core/domains/express/middleware/requestIdMiddleware';
 import { securityMiddleware } from '@src/core/domains/express/middleware/securityMiddleware';
 import SecurityRules, { SecurityIdentifiers } from '@src/core/domains/express/services/SecurityRules';
@@ -41,9 +41,16 @@ export default class ExpressService extends Service<IExpressConfig> implements I
             throw new Error('Config not provided');
         }
 
+        // Adds an identifier to the request object
+        // This id is used in the requestContext service to store information over a request life cycle
         this.app.use(requestIdMiddleware())
-        this.app.use(endCurrentRequestMiddleware())
 
+        // End the request context
+        // This will be called when the request is finished
+        // Deletes the request context and associated values
+        this.app.use(endRequestContextMiddleware())
+
+        // Apply global middlewares
         for (const middleware of this.config?.globalMiddlewares ?? []) {
             this.app.use(middleware);
         }
@@ -160,8 +167,8 @@ export default class ExpressService extends Service<IExpressConfig> implements I
         }
 
         /**
-                 * Add security middleware
-                 */
+         * Add security middleware
+         */
         if (route?.security) {
             middlewares.push(
                 securityMiddleware({ route })

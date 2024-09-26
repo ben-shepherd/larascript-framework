@@ -40,7 +40,7 @@ export default async (req: BaseRequest, res: Response, options: IRouteResourceOp
         if(resourceOwnerSecurity && authorizationSecurity) {
 
             const propertyKey = resourceOwnerSecurity.arguements?.key;
-            const userId = App.container('currentRequest').getByRequest<string>(req, 'userId');
+            const userId = App.container('requestContext').getByRequest<string>(req, 'userId');
 
             if(!userId) {
                 responseError(req, res, new ForbiddenResourceError(), 403);

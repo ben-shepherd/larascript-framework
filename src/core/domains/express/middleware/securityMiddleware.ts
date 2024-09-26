@@ -27,18 +27,23 @@ const applyAuthorizeSecurity = async (route: IRoute, req: BaseRequest, res: Resp
         conditions.push(route.resourceType)
     }
 
+    // Check if the authorize security has been defined for this route
     const authorizeSecurity = SecurityReader.findFromRequest(req, SecurityIdentifiers.AUTHORIZED, conditions);
 
     if (authorizeSecurity) {
         try {
+            // Authorize the request
             req = await AuthRequest.attemptAuthorizeRequest(req);
 
+            // Validate the authentication
             if (!authorizeSecurity.callback(req)) {
                 responseError(req, res, new UnauthorizedError(), 401);
                 return null;
             }
         }
         catch (err) {
+
+            // Conditionally throw error
             if (err instanceof UnauthorizedError && authorizeSecurity.arguements?.throwExceptionOnUnauthorized) {
                 throw err;
             }
@@ -148,6 +153,16 @@ export const securityMiddleware: ISecurityMiddleware = ({ route }) => async (req
     catch (error) {
         if (error instanceof UnauthorizedError) {
             responseError(req, res, error, 401)
+            return;
+        }
+
+        if (error instanceof RateLimitedExceededError) {
+            responseError(req, res, error, 429)
+            return;
+        }
+
+        if (error instanceof ForbiddenResourceError) {
+            responseError(req, res, error, 403)
             return;
         }
 

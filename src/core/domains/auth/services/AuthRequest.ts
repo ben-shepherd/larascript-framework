@@ -27,7 +27,7 @@ class AuthRequest {
         req.user = user;
         req.apiToken = apiToken
         
-        App.container('currentRequest').setByRequest(req, 'userId', user?.getId())
+        App.container('requestContext').setByRequest(req, 'userId', user?.getId())
 
         return req;
     }

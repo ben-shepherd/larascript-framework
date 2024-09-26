@@ -3,6 +3,6 @@ import { NextFunction, Response } from 'express';
 
 
 export const basicLoggerMiddleware = () => async (req: BaseRequest, res: Response, next: NextFunction): Promise<void> => {
-    console.log('Request', `${req.method} ${req.url}`, 'Headers: ', req.headers);
+    console.log('New request: ', `${req.method} ${req.url}`, 'Headers: ', req.headers);
     next();
 };
