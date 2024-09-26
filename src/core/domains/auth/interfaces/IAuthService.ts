@@ -6,6 +6,8 @@ import IUserRepository from "@src/core/domains/auth/interfaces/IUserRepository";
 import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
 import IService from "@src/core/interfaces/IService";
 
+import { IAuthConfig } from "./IAuthConfig";
+
 
 /**
  * The service that handles authentication.
@@ -22,7 +24,7 @@ export interface IAuthService extends IService {
      * @type {any}
      * @memberof IAuthService
      */
-    config: any;
+    config: IAuthConfig;
 
     /**
      * The user repository

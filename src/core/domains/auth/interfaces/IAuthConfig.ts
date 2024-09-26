@@ -8,6 +8,8 @@ import { ModelConstructor } from "@src/core/interfaces/IModel";
 import { RepositoryConstructor } from "@src/core/interfaces/IRepository";
 import { ServiceConstructor } from "@src/core/interfaces/IService";
 
+import { IPermissionsConfig } from "./IPermissionsConfig";
+
 export interface IAuthConfig {
     service: {
         authService: ServiceConstructor<IAuthService>;
@@ -27,4 +29,5 @@ export interface IAuthConfig {
     jwtSecret: string,
     enableAuthRoutes: boolean;
     enableAuthRoutesAllowCreate: boolean;
+    permissions: IPermissionsConfig;
 }

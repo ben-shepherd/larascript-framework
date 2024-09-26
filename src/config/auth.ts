@@ -8,6 +8,25 @@ import { IAuthConfig } from '@src/core/domains/auth/interfaces/IAuthConfig';
 import AuthService from '@src/core/domains/auth/services/AuthService';
 import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
 
+/**
+ * Available groups
+ */
+export const GROUPS = {
+    User: 'user',
+    Admin: 'admin',
+} as const
+
+/**
+ * Available roles
+ */
+export const ROLES = {
+    USER: 'user',
+    ADMIN: 'admin'
+} as const
+
+/**
+ * Auth configuration
+ */
 const config: IAuthConfig = {
     service: {
         authService: AuthService
@@ -39,6 +58,38 @@ const config: IAuthConfig = {
      * Enable or disable create a new user endpoint
      */
     enableAuthRoutesAllowCreate: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES_ALLOW_CREATE, 'true'),
+
+    /**
+     * Permissions configuration
+     * - user.defaultGroup will be the default group for new user accounts
+     * - groups can be added to the user property 'groups' 
+     *   these will automatically populate the roles property
+     */
+    permissions: {
+
+        /**
+         * The default user group
+         */
+        user: {
+            defaultGroup: GROUPS.User,
+        },
+
+        /**
+         * The list of groups
+         */
+        groups: [
+            {
+                name: GROUPS.User,
+                roles: [ROLES.USER],
+                scopes: []
+            },
+            {
+                name: GROUPS.Admin,
+                roles: [ROLES.ADMIN],
+                scopes: []
+            }
+        ]
+    }
 }
 
 export default config;

@@ -66,11 +66,13 @@ export default class BaseMakeFileCommand extends BaseCommand {
         }
 
         // Set a default collection, if required
-        this.makeFileArguments = this.argumentObserver.onCustom('setDefaultCollection', this.makeFileArguments, this.options);
+        this.argumentObserver.onCustom('setDefaultCollection', this.makeFileArguments, this.options).then(data => this.makeFileArguments = data);
+
         // Set name the name (lower or upper depending on options)
-        this.makeFileArguments = this.argumentObserver.onCustom('setName', this.makeFileArguments, this.options);        
+        this.argumentObserver.onCustom('setName', this.makeFileArguments, this.options).then(data => this.makeFileArguments = data);
+        
         // Ensure the file ends with the specified value
-        this.makeFileArguments = this.argumentObserver.onCustom('setEndsWith', this.makeFileArguments, this.options);
+        this.argumentObserver.onCustom('setEndsWith', this.makeFileArguments, this.options).then(data => this.makeFileArguments = data);
 
         this.setOverwriteArg('name', this.makeFileArguments.name);
 
