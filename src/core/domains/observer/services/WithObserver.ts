@@ -37,11 +37,11 @@ export abstract class WithObserver<ReturnType> implements IWithObserve<ReturnTyp
      * @param data The data associated with the event.
      * @returns The processed data, or the original data if no observer is defined.
      */
-    observeData (name: IObserverEvent, data: any): ReturnType {
+    async observeData (name: IObserverEvent, data: any): Promise<ReturnType> {
         if(!this.observer) {
             return data
         }
-        return this.observer.on(name, data)
+        return await this.observer.on(name, data)
     }
 
     /**
@@ -54,7 +54,7 @@ export abstract class WithObserver<ReturnType> implements IWithObserve<ReturnTyp
      * @param data The data associated with the event.
      * @returns The processed data, or the original data if no observer is defined.
      */
-    observeDataCustom(customName: keyof IObserver, data: any): ReturnType {
+    async observeDataCustom(customName: keyof IObserver, data: any): Promise<ReturnType> {
         if(!this.observer) {
             return data
         }
