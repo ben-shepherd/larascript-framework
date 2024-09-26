@@ -100,11 +100,17 @@ const applyRateLimitSecurity = async (req: BaseRequest, res: Response): Promise<
 }
 
 /**
- * This middleware will check the security definition of the route and validate it.
- * If the security definition is not valid, it will throw an UnauthorizedError.
+ * Security middleware for Express routes.
+ * 
+ * This middleware check for defined security rules defined on the route.
+ * - Authorized (allow continue of processing, this is particular useful for RouteResource actions)
+ * - Authorized throw exceptions (Returns a 401 immediately if authorization fails)
+ * - Checks rate limits
+ * - Check authorized scopes
+ * - Check authorized roles
  *
- * @param {{ route: IRoute }} - The route object
- * @returns {(req: BaseRequest, res: Response, next: NextFunction) => Promise<void>}
+ * @param {IRoute} route - The Express route
+ * @return {(req: BaseRequest, res: Response, next: NextFunction) => Promise<void>}
  */
 export const securityMiddleware: ISecurityMiddleware = ({ route }) => async (req: BaseRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -146,7 +152,7 @@ export const securityMiddleware: ISecurityMiddleware = ({ route }) => async (req
         }
 
         /**
-         * Security is OK, continue
+         * All security checks have passed
          */
         next();
     }
