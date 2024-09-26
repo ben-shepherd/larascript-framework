@@ -6,6 +6,7 @@ import MigrationRepository from "@src/core/domains/migrations/repository/Migrati
 import createMongoDBSchema from "@src/core/domains/migrations/schema/createMongoDBSchema";
 import createPostgresSchema from "@src/core/domains/migrations/schema/createPostgresSchema";
 import MigrationFileService from "@src/core/domains/migrations/services/MigrationFilesService";
+import FileNotFoundError from "@src/core/exceptions/FileNotFoundError";
 import { App } from "@src/core/services/App";
 
 interface MigrationDetail {
@@ -33,7 +34,7 @@ class MigrationService implements IMigrationService {
     }
 
     async boot() {
-    // Create the migrations schema
+        // Create the migrations schema
         await this.createSchema();
     }
 
@@ -45,19 +46,26 @@ class MigrationService implements IMigrationService {
         const result: MigrationDetail[] = [];
 
         const migrationFileNames = this.fileService.getMigrationFileNames();
-        
-        for(const fileName of migrationFileNames) {
-            const migration = await this.fileService.getImportMigrationClass(fileName);
 
-            if(filterByFileName && fileName !== filterByFileName) {
-                continue;
+        for (const fileName of migrationFileNames) {
+            try {
+                const migration = await this.fileService.getImportMigrationClass(fileName);
+
+                if (filterByFileName && fileName !== filterByFileName) {
+                    continue;
+                }
+
+                if (group && migration.group !== group) {
+                    continue;
+                }
+
+                result.push({ fileName, migration });
             }
-
-            if(group && migration.group !== group) {
-                continue;
+            catch (err) {
+                if (err instanceof FileNotFoundError) {
+                    continue;
+                }
             }
-
-            result.push({fileName, migration});
         }
 
         return result;
@@ -77,7 +85,7 @@ class MigrationService implements IMigrationService {
             const aDate = this.fileService.parseDate(a.fileName);
             const bDate = this.fileService.parseDate(b.fileName);
 
-            if(!aDate || !bDate) {
+            if (!aDate || !bDate) {
                 return 0;
             }
 
@@ -87,14 +95,14 @@ class MigrationService implements IMigrationService {
         // Get the current batch count
         const newBatchCount = (await this.getCurrentBatchCount()) + 1;
 
-        if(!migrationsDetails.length) {
+        if (!migrationsDetails.length) {
             console.log('[Migration] No migrations to run');
         }
 
         // Run the migrations for every file
         for (const migrationDetail of migrationsDetails) {
             console.log('[Migration] up -> ' + migrationDetail.fileName);
-            
+
             await this.handleFileUp(migrationDetail, newBatchCount);
         }
     }
@@ -104,7 +112,7 @@ class MigrationService implements IMigrationService {
      */
     async down({ batch }: Pick<IMigrationServiceOptions, 'batch'>): Promise<void> {
         // Get the current batch count
-        let batchCount = typeof batch !== 'undefined' ? batch : await this.getCurrentBatchCount();    
+        let batchCount = typeof batch !== 'undefined' ? batch : await this.getCurrentBatchCount();
         batchCount = isNaN(batchCount) ? 1 : batchCount;
 
         // Get the migration results
@@ -117,28 +125,35 @@ class MigrationService implements IMigrationService {
             const aDate = a.getAttribute('appliedAt') as Date;
             const bDate = b.getAttribute('appliedAt') as Date;
 
-            if(!aDate || !bDate) {
+            if (!aDate || !bDate) {
                 return 0;
             }
 
             return aDate.getTime() - bDate.getTime();
         });
 
-        if(!results.length) {
+        if (!results.length) {
             console.log('[Migration] No migrations to run');
         }
 
         // Run the migrations
-        for(const result of results) {
-            const fileName = result.getAttribute('name') as string;
-            const migration = await this.fileService.getImportMigrationClass(fileName);
+        for (const result of results) {
+            try {
+                const fileName = result.getAttribute('name') as string;
+                const migration = await this.fileService.getImportMigrationClass(fileName);
 
-            // Run the down method
-            console.log(`[Migration] down -> ${fileName}`);
-            await migration.down();
+                // Run the down method
+                console.log(`[Migration] down -> ${fileName}`);
+                await migration.down();
 
-            // Delete the migration document
-            await result.delete();
+                // Delete the migration document
+                await result.delete();
+            }
+            catch (err) {
+                if (err instanceof FileNotFoundError) {
+                    continue;
+                }
+            }
         }
     }
 
@@ -163,7 +178,7 @@ class MigrationService implements IMigrationService {
             return;
         }
 
-        if(!migration.shouldUp()) {
+        if (!migration.shouldUp()) {
             console.log(`[Migration] Skipping (Provider mismatch) -> ${fileName}`);
             return;
         }
@@ -225,7 +240,7 @@ class MigrationService implements IMigrationService {
             /**
              * Handle Postgres driver
              */
-            if(App.container('db').isProvider('postgres')) {
+            if (App.container('db').isProvider('postgres')) {
                 await createPostgresSchema();
             }
         }
