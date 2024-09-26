@@ -1,4 +1,5 @@
 import { IMigration } from '@src/core/domains/migrations/interfaces/IMigration';
+import FileNotFoundError from '@src/core/exceptions/FileNotFoundError';
 import checksumFile from '@src/core/util/checksum';
 import Str from '@src/core/util/str/Str';
 import fs from 'fs';
@@ -43,7 +44,7 @@ class MigrationFileService {
         const absolutePath = path.resolve(this.appMigrationsDir, fileName);
 
         if(!fs.existsSync(absolutePath)) {
-            throw new Error(`File ${absolutePath} does not exist`);
+            throw new FileNotFoundError(`File ${absolutePath} does not exist`);
         }
 
         const importedModule = await import(absolutePath);
