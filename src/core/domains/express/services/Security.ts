@@ -150,15 +150,6 @@ class Security extends Singleton {
     }
 
     /**
-     * Checks if the currently logged in user has the given scope(s).
-     * @param scopes The scope(s) to check.
-     * @returns A callback function to be used in the security definition.
-     */
-    public static hasScope(scopes: string | string[]): IIdentifiableSecurityCallback {
-        return SecurityRules[SecurityIdentifiers.HAS_SCOPE](scopes);
-    }
-
-    /**
      * Creates a security callback to check if the currently IP address has not exceeded a given rate limit.
      * 
      * @param limit - The maximum number of requests the user can make per minute.* 
