@@ -10,7 +10,6 @@ class ModelScopes {
      * - all - All scopes
      * - read - Read scopes
      * - write - Write scopes
-     * - update - Update scopes
      * - delete - Delete scopes
      * - create - Create scopes
      * 
