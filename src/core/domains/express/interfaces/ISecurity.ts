@@ -34,8 +34,7 @@ export type SecurityCallback = (req: BaseRequest, ...args: any[]) => boolean;
  */
 export type IIdentifiableSecurityCallback = {
     id: string;
-    also?: string[] | string | null;
-    alsoArguments?: Record<string, unknown>;
+    also?: string | null;
     when: string[] | null;
     never: string[] | null;
     arguements?: Record<string, unknown>;
