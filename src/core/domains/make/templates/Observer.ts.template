@@ -11,7 +11,7 @@ export default class #name# extends Observer<I#name#Data> {
      * @param data The model data being created.
      * @returns The processed model data.
      */
-    created(data: I#name#Data): I#name#Data {
+    async created(data: I#name#Data): Promise<I#name#Data> {
         return data
     }
 
@@ -20,7 +20,7 @@ export default class #name# extends Observer<I#name#Data> {
      * @param data The model data being created.
      * @returns The processed model data.
      */
-    creating(data: I#name#Data): I#name#Data {
+    async creating(data: I#name#Data): Promise<I#name#Data> {
         return data
     }
 
@@ -29,7 +29,7 @@ export default class #name# extends Observer<I#name#Data> {
      * @param data The model data being updated.
      * @returns The processed model data.
      */
-    updating(data: I#name#Data): I#name#Data {
+    async updating(data: I#name#Data): Promise<I#name#Data> {
         return data
     }
 
@@ -38,7 +38,7 @@ export default class #name# extends Observer<I#name#Data> {
      * @param data The model data that has been updated.
      * @returns The processed model data.
      */
-    updated(data: I#name#Data): I#name#Data {
+    async updated(data: I#name#Data): Promise<I#name#Data> {
         return data
     }
 
@@ -47,7 +47,7 @@ export default class #name# extends Observer<I#name#Data> {
      * @param data The model data being deleted.
      * @returns The processed model data.
      */
-    deleting(data: I#name#Data): I#name#Data {
+    async deleting(data: I#name#Data): Promise<I#name#Data> {
         return data
     }
 
@@ -56,7 +56,7 @@ export default class #name# extends Observer<I#name#Data> {
      * @param data The model data that has been deleted.
      * @returns The processed model data.
      */
-    deleted(data: I#name#Data): I#name#Data {
+    async deleted(data: I#name#Data): Promise<I#name#Data> {
         return data
     }
     

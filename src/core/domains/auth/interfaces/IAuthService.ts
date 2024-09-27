@@ -1,12 +1,11 @@
 /* eslint-disable no-unused-vars */
 import IApiTokenModel from "@src/core/domains/auth/interfaces/IApitokenModel";
 import IApiTokenRepository from "@src/core/domains/auth/interfaces/IApiTokenRepository";
+import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import IUserRepository from "@src/core/domains/auth/interfaces/IUserRepository";
 import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
 import IService from "@src/core/interfaces/IService";
-
-import { IAuthConfig } from "./IAuthConfig";
 
 
 /**

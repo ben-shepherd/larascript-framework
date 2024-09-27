@@ -12,7 +12,6 @@ export type ModelConstructor<M extends IModel = IModel> = new (...args: any[]) =
 
 export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>
 
-
 /**
  * @interface IModel
  * @description Abstract base class for database models.

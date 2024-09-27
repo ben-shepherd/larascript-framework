@@ -147,7 +147,7 @@ export default class ExpressService extends Service<IExpressConfig> implements I
     }
 
     /**
-     * Adds security middleware to the route. If the route has scopesSecurityEnabled
+     * Adds security middleware to the route. If the route has enableScopes
      * and scopes is present, it adds the HAS_SCOPE security rule to the route.
      * Then it adds the security middleware to the route's middleware array.
      * @param route The route to add the middleware to
@@ -159,7 +159,7 @@ export default class ExpressService extends Service<IExpressConfig> implements I
         /**
          * Check if scopes is present, add related security rule
          */
-        if (route?.scopesSecurityEnabled && route?.scopes?.length) {
+        if (route?.enableScopes && route?.scopes?.length) {
             route.security = [
                 ...(route.security ?? []),
                 SecurityRules[SecurityIdentifiers.HAS_SCOPE](route.scopes)
@@ -211,7 +211,7 @@ export default class ExpressService extends Service<IExpressConfig> implements I
         if (route.scopes?.length) {
             str += ` with scopes: [${route.scopes.join(', ')}]`
 
-            if (route?.scopesSecurityEnabled) {
+            if (route?.enableScopes) {
                 str += ' (scopes security ON)'
             }
             else {

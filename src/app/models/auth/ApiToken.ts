@@ -1,4 +1,5 @@
 import User from '@src/app/models/auth/User';
+import ApiTokenObserver from '@src/app/observers/ApiTokenObserver';
 import Model from '@src/core/base/Model';
 import IApiTokenModel, { IApiTokenData } from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
@@ -27,6 +28,18 @@ class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
     public json: string[] = [
         'scopes'
     ]
+
+    /**
+     * Construct an ApiToken model from the given data.
+     *
+     * @param {IApiTokenData} [data=null] The data to construct the model from.
+     *
+     * @constructor
+     */
+    constructor(data: IApiTokenData | null = null) {
+        super(data)
+        this.observeWith(ApiTokenObserver)
+    }
 
     /**
      * Disable createdAt and updatedAt timestamps

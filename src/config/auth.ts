@@ -12,16 +12,16 @@ import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
  * Available groups
  */
 export const GROUPS = {
-    User: 'user',
-    Admin: 'admin',
+    User: 'group_user',
+    Admin: 'group_admin',
 } as const
 
 /**
  * Available roles
  */
 export const ROLES = {
-    USER: 'user',
-    ADMIN: 'admin'
+    USER: 'role_user',
+    ADMIN: 'role_admin'
 } as const
 
 /**
@@ -61,9 +61,23 @@ const config: IAuthConfig = {
 
     /**
      * Permissions configuration
-     * - user.defaultGroup will be the default group for new user accounts
-     * - groups can be added to the user property 'groups' 
-     *   these will automatically populate the roles property
+     * - user.defaultGroup - The group will be the default group for new user accounts
+     * - groups - The list of groups
+     *   - groups.roles will auto populate the roles on creation
+     *   - groups.scopes will be automatically added to new ApiTokenModels
+     * 
+     * 
+     * You can use ModelScopes to generate scopes for models. These scopes will be
+     * added to any routes created with RouteResource. For example:
+     * 
+     * Example:
+     *    {
+     *        name: GROUPS.User,
+     *        roles: [ROLES.USER],
+     *        scopes: [
+     *            ...ModelScopes.getScopes(ExampleModel, ['read', 'write'])
+     *        ]
+     *    },
      */
     permissions: {
 

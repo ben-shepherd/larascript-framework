@@ -26,6 +26,7 @@ export const SecurityIdentifiers = {
     HAS_ROLE: 'hasRole',
     HAS_SCOPE: 'hasScope',
     RATE_LIMITED: 'rateLimited',
+    ENABLE_SCOPES: 'enableScopes',
     CUSTOM: 'custom'
 } as const;
 
@@ -73,6 +74,18 @@ const SecurityRules: ISecurityRules = {
         never: Security.getInstance().getNeverAndReset(),
         arguements: { key: attribute },
         callback: (req: BaseRequest, resource: IModel) => resourceOwnerSecurity(req, resource, attribute)
+    }),
+
+    /**
+     * Enable scopes on the resource
+     * @returns 
+     */
+    [SecurityIdentifiers.ENABLE_SCOPES]: () => ({
+        id: SecurityIdentifiers.ENABLE_SCOPES,
+        when: Security.getInstance().getWhenAndReset(),
+        never: Security.getInstance().getNeverAndReset(),
+        // eslint-disable-next-line no-unused-vars
+        callback: (_req: BaseRequest, _resource: IModel) => true,
     }),
 
     /**

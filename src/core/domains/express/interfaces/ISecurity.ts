@@ -23,7 +23,7 @@ export type IIdentifiableSecurityCallback = {
     id: string;
     // Include another security rule in the callback.
     //  TODO: We could add another type here 'alsoArguments' if extra parameters are required
-    also?: string;
+    also?: string[] | string | null;
     // The condition for when the security check should be executed. Defaults to 'always'.
     when: string[] | null;
     // The condition for when the security check should never be executed.

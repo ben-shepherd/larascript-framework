@@ -22,7 +22,7 @@ export class CreateUserModelMigration extends BaseMigration {
         await this.schema.createTable(this.table, {
             email: DataTypes.STRING,
             hashedPassword: DataTypes.STRING,
-            group: DataTypes.JSON,
+            groups: DataTypes.JSON,
             roles: DataTypes.JSON,
             firstName: stringNullable,
             lastName: stringNullable,

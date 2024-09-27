@@ -47,7 +47,8 @@ export default class User extends Model<IUserData> implements IUserModel {
     guarded: string[] = [
         'hashedPassword',
         'password',
-        'roles'
+        'roles',
+        'groups',
     ];
 
     /**
