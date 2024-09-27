@@ -56,7 +56,8 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
         Route({
             name: `${name}.index`,
             resourceType: RouteResourceTypes.ALL,
-            scopes: ModelScopes.getScopes(resource, ['read'], scopes),
+            scopes,
+            scopesPartial: ModelScopes.getScopes(resource, ['read', 'all']),
             enableScopes,
             method: 'get',
             path: `/${name}`,
@@ -68,7 +69,8 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
         Route({
             name: `${name}.show`,
             resourceType: RouteResourceTypes.SHOW,
-            scopes: ModelScopes.getScopes(resource, ['read'], scopes),
+            scopes,
+            scopesPartial: ModelScopes.getScopes(resource, ['read', 'all']),
             enableScopes,
             method: 'get',
             path: `/${name}/:id`,
@@ -80,7 +82,8 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
         Route({
             name: `${name}.update`,
             resourceType: RouteResourceTypes.UPDATE,
-            scopes: ModelScopes.getScopes(resource, ['write'], scopes),
+            scopes,
+            scopesPartial: ModelScopes.getScopes(resource, ['write', 'all']),
             enableScopes,
             method: 'put',
             path: `/${name}/:id`,
@@ -93,7 +96,8 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
         Route({
             name: `${name}.destroy`,
             resourceType: RouteResourceTypes.DESTROY,
-            scopes: ModelScopes.getScopes(resource, ['delete'], scopes),
+            scopes,
+            scopesPartial: ModelScopes.getScopes(resource, ['delete', 'all']),
             enableScopes,
             method: 'delete',
             path: `/${name}/:id`,
@@ -105,7 +109,8 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
         Route({
             name: `${name}.create`,
             resourceType: RouteResourceTypes.CREATE,
-            scopes: ModelScopes.getScopes(resource, ['create'], scopes),
+            scopes,
+            scopesPartial: ModelScopes.getScopes(resource, ['create', 'all']),
             enableScopes,
             method: 'post',
             path: `/${name}`,

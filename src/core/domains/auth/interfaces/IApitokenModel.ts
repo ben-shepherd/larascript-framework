@@ -11,5 +11,5 @@ export interface IApiTokenData extends IModelData {
 
 export default interface IApiTokenModel extends IModel<IApiTokenData> {
     user(): Promise<any>;
-    hasScope(scopes: string | string[]): boolean;
+    hasScope(scopes: string | string[], exactMatch?: boolean): boolean;
 }
