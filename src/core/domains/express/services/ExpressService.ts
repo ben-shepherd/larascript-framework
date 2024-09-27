@@ -157,6 +157,18 @@ export default class ExpressService extends Service<IExpressConfig> implements I
         const middlewares: Middleware[] = [];
 
         /**
+         * Enabling Scopes Security
+          * - If enableScopes has not been defined in the route, check if it has been defined in the security rules
+         *  - If yes, set enableScopes to true
+         */
+        const hasEnableScopesSecurity = route.security?.find(security => security.id === SecurityIdentifiers.ENABLE_SCOPES);
+        const enableScopes = route.enableScopes ?? typeof hasEnableScopesSecurity !== 'undefined';
+
+        if(enableScopes) {
+            route.enableScopes = true
+        }
+        
+        /**
          * Check if scopes is present, add related security rule
          */
         if (route?.enableScopes && route?.scopes?.length) {

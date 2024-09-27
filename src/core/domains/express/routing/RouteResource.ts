@@ -9,7 +9,6 @@ import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
 import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
 import Route from "@src/core/domains/express/routing/Route";
 import RouteGroup from "@src/core/domains/express/routing/RouteGroup";
-import { SecurityIdentifiers } from "@src/core/domains/express/services/SecurityRules";
 import routeGroupUtil from "@src/core/domains/express/utils/routeGroupUtil";
 
 /**
@@ -46,14 +45,8 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
     const {
         resource,
         scopes = [],
-        enableScopes: enableScopesOption
+        enableScopes,
     } = options;
-
-    /**
-     * Check if scopes are enabled
-     */
-    const hasEnableScopesSecurity = options.security?.find(security => security.id === SecurityIdentifiers.ENABLE_SCOPES);
-    const enableScopes = enableScopesOption ?? typeof hasEnableScopesSecurity !== 'undefined';
 
     /**
      * Define all the routes for the resource

@@ -105,7 +105,10 @@ class SecurityReader {
             // The 'unrelatedSecurityRule' contains the 'also' property. 
             // We can use it to fetch the desired security rule.
             if(unrelatedSecurityRule) {
-                result = SecurityRules[unrelatedSecurityRule.also as string]()
+                const alsoArguments = unrelatedSecurityRule.alsoArguments ?? {};
+                const alsoSecurity = SecurityRules[unrelatedSecurityRule.also as string](Object.values(alsoArguments));
+
+                return alsoSecurity;
             }
         }
 
