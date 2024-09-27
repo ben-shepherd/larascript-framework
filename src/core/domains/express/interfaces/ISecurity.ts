@@ -20,14 +20,6 @@ export type SecurityCallback = (req: BaseRequest, ...args: any[]) => boolean;
  * 
  * id - The identifier for the security callback.
  * also - The security rule to include in the callback.
- * alsoArguments - The arguments for the security rule to include in the callback.
- *   Example:
- *     alsoArguments: {
- *         [SecurityIdentifiers.CUSTOM]: {
- *              paramName: 'value',
- *              paramName2: 'value2',
- *         },
- *     }
  * when - The condition for when the security check should be executed. Defaults to 'always'.
  * never - The condition for when the security check should never be executed.
  * callback - The security callback function.
