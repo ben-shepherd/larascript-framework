@@ -3,6 +3,7 @@ import ApiTokenObserver from '@src/app/observers/ApiTokenObserver';
 import Model from '@src/core/base/Model';
 import IApiTokenModel, { IApiTokenData } from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
+import Scopes from '@src/core/domains/auth/services/Scopes';
 
 /**
  * ApiToken model
@@ -62,15 +63,14 @@ class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
      * @param scopes The scope(s) to check
      * @returns True if all scopes are present, false otherwise
      */
-    public hasScope(scopes: string | string[]): boolean {
+    public hasScope(scopes: string | string[], exactMatch: boolean = true): boolean {
         const currentScopes = this.getAttribute('scopes') ?? [];
-        scopes = typeof scopes === 'string' ? [scopes] : scopes;
-
-        for(const scope of scopes) {
-            if(!currentScopes.includes(scope)) return false;
+       
+        if(exactMatch) {
+            return Scopes.exactMatch(currentScopes, scopes);
         }
 
-        return true;
+        return Scopes.partialMatch(currentScopes, scopes);
     }
 
 }

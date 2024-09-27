@@ -17,20 +17,19 @@ export type SecurityCallback = (req: BaseRequest, ...args: any[]) => boolean;
 
 /**
  * An interface for defining security callbacks with an identifier.
+ * 
+ * id - The identifier for the security callback.
+ * also - The security rule to include in the callback.
+ * when - The condition for when the security check should be executed. Defaults to 'always'.
+ * never - The condition for when the security check should never be executed.
+ * callback - The security callback function.
  */
 export type IIdentifiableSecurityCallback = {
-    // The identifier for the security callback.
     id: string;
-    // Include another security rule in the callback.
-    //  TODO: We could add another type here 'alsoArguments' if extra parameters are required
-    also?: string[] | string | null;
-    // The condition for when the security check should be executed. Defaults to 'always'.
+    also?: string | null;
     when: string[] | null;
-    // The condition for when the security check should never be executed.
     never: string[] | null;
-    // The arguments for the security callback.
     arguements?: Record<string, unknown>;
-    // The security callback function.
     callback: SecurityCallback;
 }
 

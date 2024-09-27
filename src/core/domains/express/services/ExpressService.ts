@@ -157,12 +157,24 @@ export default class ExpressService extends Service<IExpressConfig> implements I
         const middlewares: Middleware[] = [];
 
         /**
+         * Enabling Scopes Security
+          * - If enableScopes has not been defined in the route, check if it has been defined in the security rules
+         *  - If yes, set enableScopes to true
+         */
+        const hasEnableScopesSecurity = route.security?.find(security => security.id === SecurityIdentifiers.ENABLE_SCOPES);
+        const enableScopes = route.enableScopes ?? typeof hasEnableScopesSecurity !== 'undefined';
+
+        if (enableScopes) {
+            route.enableScopes = true
+        }
+
+        /**
          * Check if scopes is present, add related security rule
          */
-        if (route?.enableScopes && route?.scopes?.length) {
+        if (route?.enableScopes && (route?.scopes?.length || route?.scopesPartial?.length)) {
             route.security = [
                 ...(route.security ?? []),
-                SecurityRules[SecurityIdentifiers.HAS_SCOPE](route.scopes)
+                SecurityRules[SecurityIdentifiers.HAS_SCOPE](route.scopes, route.scopesPartial)
             ]
         }
 
@@ -208,14 +220,22 @@ export default class ExpressService extends Service<IExpressConfig> implements I
     private logRoute(route: IRoute): void {
         let str = `[Express] binding route ${route.method.toUpperCase()}: '${route.path}' as '${route.name}'`;
 
-        if (route.scopes?.length) {
-            str += ` with scopes: [${route.scopes.join(', ')}]`
+        if (route.scopes?.length || route.scopesPartial?.length) {
+            str += "\r\n SECURITY: ";
+
+            if (route.scopes?.length) {
+                str += ` with exact scopes: [${(route.scopes ?? []).join(', ')}]`
+            }
+
+            if (route.scopesPartial?.length) {
+                str += ` with partial scopes: [${route.scopesPartial.join(', ')}]`
+            }
 
             if (route?.enableScopes) {
-                str += ' (scopes security ON)'
+                str += ' (scopes enabled)'
             }
             else {
-                str += ' (scopes security OFF)'
+                str += ' (scopes disabled)'
             }
         }
 

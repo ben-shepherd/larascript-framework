@@ -96,8 +96,7 @@ class SecurityReader {
 
             // We need to find the unrelated security rule that has the ID in 'also' 
             const unrelatedSecurityRule = security?.find(security => {
-                const also = typeof security.also === 'string' ? [security.also] : security.also;
-                return also?.includes(id) && 
+                return security.also === id && 
                     conditionNeverPassable(when, security.never) === false &&
                     conditionPassable(security.when);
             });
@@ -105,7 +104,7 @@ class SecurityReader {
             // The 'unrelatedSecurityRule' contains the 'also' property. 
             // We can use it to fetch the desired security rule.
             if(unrelatedSecurityRule) {
-                result = SecurityRules[unrelatedSecurityRule.also as string]()
+                return SecurityRules[unrelatedSecurityRule.also as string]();
             }
         }
 

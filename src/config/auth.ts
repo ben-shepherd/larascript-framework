@@ -99,7 +99,7 @@ const config: IAuthConfig = {
             },
             {
                 name: GROUPS.Admin,
-                roles: [ROLES.ADMIN],
+                roles: [ROLES.USER, ROLES.ADMIN],
                 scopes: []
             }
         ]

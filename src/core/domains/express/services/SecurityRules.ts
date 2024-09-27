@@ -76,17 +76,6 @@ const SecurityRules: ISecurityRules = {
         callback: (req: BaseRequest, resource: IModel) => resourceOwnerSecurity(req, resource, attribute)
     }),
 
-    /**
-     * Enable scopes on the resource
-     * @returns 
-     */
-    [SecurityIdentifiers.ENABLE_SCOPES]: () => ({
-        id: SecurityIdentifiers.ENABLE_SCOPES,
-        when: Security.getInstance().getWhenAndReset(),
-        never: Security.getInstance().getNeverAndReset(),
-        // eslint-disable-next-line no-unused-vars
-        callback: (_req: BaseRequest, _resource: IModel) => true,
-    }),
 
     /**
      * Checks if the currently logged in user has the given role.
@@ -102,16 +91,29 @@ const SecurityRules: ISecurityRules = {
     }),
 
     /**
-     * Checks if the currently logged in user has the given scope(s).
-     * @param scopes 
+     * Enable scopes on the resource
      * @returns 
      */
-    [SecurityIdentifiers.HAS_SCOPE]: (scopes: string | string[]) => ({
-        id: SecurityIdentifiers.HAS_SCOPE,
-        also: SecurityIdentifiers.AUTHORIZED,
+    [SecurityIdentifiers.ENABLE_SCOPES]: () => ({
+        id: SecurityIdentifiers.ENABLE_SCOPES,
         when: Security.getInstance().getWhenAndReset(),
         never: Security.getInstance().getNeverAndReset(),
-        callback: (req: BaseRequest) => hasScopeSecurity(req, scopes)
+        // eslint-disable-next-line no-unused-vars
+        callback: (_req: BaseRequest, _resource: IModel) => true,
+    }),
+
+    /**
+     * Checks if the currently logged in user has the given scope(s).
+     * @param scopesExactMatch 
+     * @returns 
+     */
+    [SecurityIdentifiers.HAS_SCOPE]: (scopesExactMatch: string | string[] = [], scopesPartialMatch: string | string[] = []) => ({
+        id: SecurityIdentifiers.HAS_SCOPE,
+        also: SecurityIdentifiers.AUTHORIZED,
+        arguements: { scopesExactMatch, scopesPartialMatch },
+        when: Security.getInstance().getWhenAndReset(),
+        never: Security.getInstance().getNeverAndReset(),
+        callback: (req: BaseRequest) => hasScopeSecurity(req, scopesExactMatch, scopesPartialMatch)
     }),
 
     /**
