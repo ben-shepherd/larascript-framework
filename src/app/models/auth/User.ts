@@ -1,7 +1,23 @@
 import ApiToken from "@src/app/models/auth/ApiToken";
 import UserObserver from "@src/app/observers/UserObserver";
 import Model from "@src/core/base/Model";
-import IUserModel, { IUserData } from "@src/core/domains/auth/interfaces/IUserModel";
+import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
+import IModelData from "@src/core/interfaces/IModelData";
+
+/**
+ * User structure
+ */
+export interface IUserData extends IModelData {
+    email: string;
+    password?: string;
+    hashedPassword: string;
+    roles: string[];
+    groups: string[];
+    firstName?: string;
+    lastName?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+}
 
 /**
  * User model
@@ -31,7 +47,8 @@ export default class User extends Model<IUserData> implements IUserModel {
     guarded: string[] = [
         'hashedPassword',
         'password',
-        'roles'
+        'roles',
+        'groups',
     ];
 
     /**
@@ -56,6 +73,7 @@ export default class User extends Model<IUserData> implements IUserModel {
      * These fields will be returned as JSON when the model is serialized.
      */
     json = [
+        'groups',
         'roles'
     ]
 
@@ -70,12 +88,27 @@ export default class User extends Model<IUserData> implements IUserModel {
         const userRoles = this.getAttribute('roles') ?? [];
 
         for(const role of roles) {
-            if(userRoles.includes(role)) {
-                return true;
-            }
+            if(!userRoles.includes(role)) return false;
         }
 
-        return false
+        return true;
+    }
+
+    /**
+     * Checks if the user has the given role
+     *
+     * @param role The role to check
+     * @returns True if the user has the role, false otherwise
+     */
+    hasGroup(groups: string | string[]): boolean {
+        groups = typeof groups === 'string' ? [groups] : groups;
+        const userGroups = this.getAttribute('groups') ?? [];
+
+        for(const group of groups) {
+            if(!userGroups.includes(group)) return false;
+        }
+
+        return true;
     }
 
     /**

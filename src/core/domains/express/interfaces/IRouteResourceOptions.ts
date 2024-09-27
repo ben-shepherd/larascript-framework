@@ -3,6 +3,7 @@ import { IIdentifiableSecurityCallback } from "@src/core/domains/express/interfa
 import { ValidatorCtor } from "@src/core/domains/validator/types/ValidatorCtor";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
+
 export type ResourceType = 'index' | 'create' | 'update' | 'show' | 'delete';
 
 export interface IRouteResourceOptions extends Pick<IRoute, 'middlewares'> {
@@ -14,5 +15,5 @@ export interface IRouteResourceOptions extends Pick<IRoute, 'middlewares'> {
     updateValidator?: ValidatorCtor;
     security?: IIdentifiableSecurityCallback[];
     scopes?: string[];
-    scopesSecurityEnabled?: boolean;
+    enableScopes?: boolean;
 }

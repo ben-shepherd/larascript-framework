@@ -8,6 +8,25 @@ import { IAuthConfig } from '@src/core/domains/auth/interfaces/IAuthConfig';
 import AuthService from '@src/core/domains/auth/services/AuthService';
 import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
 
+/**
+ * Available groups
+ */
+export const GROUPS = {
+    User: 'group_user',
+    Admin: 'group_admin',
+} as const
+
+/**
+ * Available roles
+ */
+export const ROLES = {
+    USER: 'role_user',
+    ADMIN: 'role_admin'
+} as const
+
+/**
+ * Auth configuration
+ */
 const config: IAuthConfig = {
     service: {
         authService: AuthService
@@ -39,6 +58,52 @@ const config: IAuthConfig = {
      * Enable or disable create a new user endpoint
      */
     enableAuthRoutesAllowCreate: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES_ALLOW_CREATE, 'true'),
+
+    /**
+     * Permissions configuration
+     * - user.defaultGroup - The group will be the default group for new user accounts
+     * - groups - The list of groups
+     *   - groups.roles will auto populate the roles on creation
+     *   - groups.scopes will be automatically added to new ApiTokenModels
+     * 
+     * 
+     * You can use ModelScopes to generate scopes for models. These scopes will be
+     * added to any routes created with RouteResource. For example:
+     * 
+     * Example:
+     *    {
+     *        name: GROUPS.User,
+     *        roles: [ROLES.USER],
+     *        scopes: [
+     *            ...ModelScopes.getScopes(ExampleModel, ['read', 'write'])
+     *        ]
+     *    },
+     */
+    permissions: {
+
+        /**
+         * The default user group
+         */
+        user: {
+            defaultGroup: GROUPS.User,
+        },
+
+        /**
+         * The list of groups
+         */
+        groups: [
+            {
+                name: GROUPS.User,
+                roles: [ROLES.USER],
+                scopes: []
+            },
+            {
+                name: GROUPS.Admin,
+                roles: [ROLES.ADMIN],
+                scopes: []
+            }
+        ]
+    }
 }
 
 export default config;

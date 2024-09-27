@@ -10,7 +10,7 @@ export interface IRoute {
     action: IRouteAction;
     resourceType?: string;
     scopes?: string[];
-    scopesSecurityEnabled?: boolean;
+    enableScopes?: boolean;
     middlewares?: Middleware[];
     validator?: ValidatorCtor;
     validateBeforeAction?: boolean;

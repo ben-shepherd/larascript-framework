@@ -98,6 +98,17 @@ class Security extends Singleton {
     }
 
     /**
+     * Enable scope security checks.
+     * 
+     * This will include scope security checks for all route resources.
+     * 
+     * @returns A security callback that can be used in the security definition.
+     */
+    public static enableScopes(): IIdentifiableSecurityCallback {
+        return SecurityRules[SecurityIdentifiers.ENABLE_SCOPES]();
+    }
+
+    /**
      * Checks if the request is authorized, i.e. if the user is logged in.
      * 
      * Authorization failure does not throw any exceptions, this method allows the middleware to pass regarldess of authentication failure.

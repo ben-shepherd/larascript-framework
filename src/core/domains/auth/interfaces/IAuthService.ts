@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import IApiTokenModel from "@src/core/domains/auth/interfaces/IApitokenModel";
 import IApiTokenRepository from "@src/core/domains/auth/interfaces/IApiTokenRepository";
+import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import IUserRepository from "@src/core/domains/auth/interfaces/IUserRepository";
 import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
@@ -22,7 +23,7 @@ export interface IAuthService extends IService {
      * @type {any}
      * @memberof IAuthService
      */
-    config: any;
+    config: IAuthConfig;
 
     /**
      * The user repository

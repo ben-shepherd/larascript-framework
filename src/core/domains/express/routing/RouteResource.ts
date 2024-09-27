@@ -1,4 +1,5 @@
-import resourceAction from "@src/core/domains/express/actions/resourceAction";
+import ModelScopes from "@src/core/domains/auth/services/ModelScopes";
+import baseAction from "@src/core/domains/express/actions/baseAction";
 import resourceCreate from "@src/core/domains/express/actions/resourceCreate";
 import resourceDelete from "@src/core/domains/express/actions/resourceDelete";
 import resourceIndex from "@src/core/domains/express/actions/resourceIndex";
@@ -8,7 +9,7 @@ import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
 import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
 import Route from "@src/core/domains/express/routing/Route";
 import RouteGroup from "@src/core/domains/express/routing/RouteGroup";
-import RouteResourceScope from "@src/core/domains/express/routing/RouteResourceScope";
+import { SecurityIdentifiers } from "@src/core/domains/express/services/SecurityRules";
 import routeGroupUtil from "@src/core/domains/express/utils/routeGroupUtil";
 
 /**
@@ -36,30 +37,37 @@ export const RouteResourceTypes = {
  * @param options.except - An array of resource types to exclude from the routes
  * @param options.createValidator - A validator to use for the create route
  * @param options.updateValidator - A validator to use for the update route
+ * @param options.enableScopes - Enable scopes security for these routes
  * @returns A group of routes that can be used to handle requests for the resource
  */
 const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
     const name = options.name.startsWith('/') ? options.name.slice(1) : options.name
 
     const {
+        resource,
         scopes = [],
-        scopesSecurityEnabled = false
+        enableScopes: enableScopesOption
     } = options;
 
+    /**
+     * Check if scopes are enabled
+     */
+    const hasEnableScopesSecurity = options.security?.find(security => security.id === SecurityIdentifiers.ENABLE_SCOPES);
+    const enableScopes = enableScopesOption ?? typeof hasEnableScopesSecurity !== 'undefined';
+
+    /**
+     * Define all the routes for the resource
+     */
     const routes = RouteGroup([
         // Get all resources
         Route({
             name: `${name}.index`,
             resourceType: RouteResourceTypes.ALL,
-            scopes: RouteResourceScope.getScopes({
-                name,
-                types: 'read',
-                additionalScopes: scopes
-            }),
-            scopesSecurityEnabled,
+            scopes: ModelScopes.getScopes(resource, ['read'], scopes),
+            enableScopes,
             method: 'get',
             path: `/${name}`,
-            action: resourceAction(options, resourceIndex),
+            action: baseAction(options, resourceIndex),
             middlewares: options.middlewares,
             security: options.security
         }),
@@ -67,15 +75,11 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
         Route({
             name: `${name}.show`,
             resourceType: RouteResourceTypes.SHOW,
-            scopes: RouteResourceScope.getScopes({
-                name,
-                types: 'read',
-                additionalScopes: scopes
-            }),
-            scopesSecurityEnabled,
+            scopes: ModelScopes.getScopes(resource, ['read'], scopes),
+            enableScopes,
             method: 'get',
             path: `/${name}/:id`,
-            action: resourceAction(options, resourceShow),
+            action: baseAction(options, resourceShow),
             middlewares: options.middlewares,
             security: options.security
         }),
@@ -83,15 +87,11 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
         Route({
             name: `${name}.update`,
             resourceType: RouteResourceTypes.UPDATE,
-            scopes: RouteResourceScope.getScopes({
-                name,
-                types: 'write',
-                additionalScopes: scopes
-            }),
-            scopesSecurityEnabled,
+            scopes: ModelScopes.getScopes(resource, ['write'], scopes),
+            enableScopes,
             method: 'put',
             path: `/${name}/:id`,
-            action: resourceAction(options, resourceUpdate),
+            action: baseAction(options, resourceUpdate),
             validator: options.updateValidator,
             middlewares: options.middlewares,
             security: options.security
@@ -100,15 +100,11 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
         Route({
             name: `${name}.destroy`,
             resourceType: RouteResourceTypes.DESTROY,
-            scopes: RouteResourceScope.getScopes({
-                name,
-                types: 'delete',
-                additionalScopes: scopes
-            }),
-            scopesSecurityEnabled,
+            scopes: ModelScopes.getScopes(resource, ['delete'], scopes),
+            enableScopes,
             method: 'delete',
             path: `/${name}/:id`,
-            action: resourceAction(options, resourceDelete),
+            action: baseAction(options, resourceDelete),
             middlewares: options.middlewares,
             security: options.security
         }),
@@ -116,15 +112,11 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
         Route({
             name: `${name}.create`,
             resourceType: RouteResourceTypes.CREATE,
-            scopes: RouteResourceScope.getScopes({
-                name,
-                types: 'read',
-                additionalScopes: scopes
-            }),
-            scopesSecurityEnabled,
+            scopes: ModelScopes.getScopes(resource, ['create'], scopes),
+            enableScopes,
             method: 'post',
             path: `/${name}`,
-            action: resourceAction(options, resourceCreate),
+            action: baseAction(options, resourceCreate),
             validator: options.createValidator,
             middlewares: options.middlewares,
             security: options.security
