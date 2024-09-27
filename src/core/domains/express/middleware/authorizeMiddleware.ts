@@ -13,7 +13,8 @@ import { NextFunction, Response } from 'express';
  * @param req The request object
  * @param res The response object
  */
-const validateScopes = async (scopes: string[], req: BaseRequest, res: Response) => {
+// eslint-disable-next-line no-unused-vars
+const validateScopes = (scopes: string[], req: BaseRequest, res: Response): void | null => {
     if(scopes.length === 0) {
         return;
     }
@@ -21,12 +22,11 @@ const validateScopes = async (scopes: string[], req: BaseRequest, res: Response)
     const apiToken = req.apiToken;
 
     if(!apiToken) {
-        responseError(req, res, new UnauthorizedError(), 401);
-        return;
+        throw new UnauthorizedError();
     }
     
     if(!apiToken.hasScope(scopes)) {
-        responseError(req, res, new ForbiddenResourceError('Required scopes missing from authorization'), 403);
+        throw new ForbiddenResourceError();
     }
 }
 
@@ -52,7 +52,7 @@ export const authorizeMiddleware = (scopes: string[] = []) => async (req: BaseRe
         await AuthRequest.attemptAuthorizeRequest(req);
         
         // Validate the scopes if the authorization was successful
-        validateScopes(scopes, req, res);
+        validateScopes(scopes, req, res)
 
         next();
     }
@@ -60,6 +60,10 @@ export const authorizeMiddleware = (scopes: string[] = []) => async (req: BaseRe
         if(error instanceof UnauthorizedError) {
             responseError(req, res, error, 401)
             return;
+        }
+
+        if(error instanceof ForbiddenResourceError) {
+            responseError(req, res, error, 403)
         }
 
         if(error instanceof Error) {
