@@ -12,6 +12,8 @@ import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
 
+import TestConsoleProvider from '../providers/TestConsoleProvider';
+
 describe('attempt to run app with normal appConfig', () => {
 
     let testUser: User;
@@ -25,6 +27,7 @@ describe('attempt to run app with normal appConfig', () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
+                new TestConsoleProvider(),
                 new DatabaseProvider(),
                 new AuthProvider()
             ]
@@ -37,6 +40,7 @@ describe('attempt to run app with normal appConfig', () => {
             email,
             hashedPassword,
             roles: [],
+            groups: [],
             firstName: 'Tony',
             lastName: 'Stark'
         })
