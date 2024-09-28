@@ -7,7 +7,7 @@ import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 export type ResourceType = 'index' | 'create' | 'update' | 'show' | 'delete';
 
 export interface IRouteResourceOptions extends Pick<IRoute, 'middlewares'> {
-    name: string;
+    path: string;
     resource: ModelConstructor<IModel>;
     except?: ResourceType[];
     only?: ResourceType[];

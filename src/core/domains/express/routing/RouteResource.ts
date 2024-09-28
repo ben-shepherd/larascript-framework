@@ -40,7 +40,7 @@ export const RouteResourceTypes = {
  * @returns A group of routes that can be used to handle requests for the resource
  */
 const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
-    const name = options.name.startsWith('/') ? options.name.slice(1) : options.name
+    const path = options.path.startsWith('/') ? options.path.slice(1) : options.path
 
     const {
         resource,
@@ -54,39 +54,39 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
     const routes = RouteGroup([
         // Get all resources
         Route({
-            name: `${name}.index`,
+            name: `${path}.index`,
             resourceType: RouteResourceTypes.ALL,
             scopes,
             scopesPartial: ModelScopes.getScopes(resource, ['read', 'all']),
             enableScopes,
             method: 'get',
-            path: `/${name}`,
+            path: `/${path}`,
             action: baseAction(options, resourceIndex),
             middlewares: options.middlewares,
             security: options.security
         }),
         // Get resource by id
         Route({
-            name: `${name}.show`,
+            name: `${path}.show`,
             resourceType: RouteResourceTypes.SHOW,
             scopes,
             scopesPartial: ModelScopes.getScopes(resource, ['read', 'all']),
             enableScopes,
             method: 'get',
-            path: `/${name}/:id`,
+            path: `/${path}/:id`,
             action: baseAction(options, resourceShow),
             middlewares: options.middlewares,
             security: options.security
         }),
         // Update resource by id
         Route({
-            name: `${name}.update`,
+            name: `${path}.update`,
             resourceType: RouteResourceTypes.UPDATE,
             scopes,
             scopesPartial: ModelScopes.getScopes(resource, ['write', 'all']),
             enableScopes,
             method: 'put',
-            path: `/${name}/:id`,
+            path: `/${path}/:id`,
             action: baseAction(options, resourceUpdate),
             validator: options.updateValidator,
             middlewares: options.middlewares,
@@ -94,26 +94,26 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
         }),
         // Delete resource by id
         Route({
-            name: `${name}.destroy`,
+            name: `${path}.destroy`,
             resourceType: RouteResourceTypes.DESTROY,
             scopes,
             scopesPartial: ModelScopes.getScopes(resource, ['delete', 'all']),
             enableScopes,
             method: 'delete',
-            path: `/${name}/:id`,
+            path: `/${path}/:id`,
             action: baseAction(options, resourceDelete),
             middlewares: options.middlewares,
             security: options.security
         }),
         // Create resource
         Route({
-            name: `${name}.create`,
+            name: `${path}.create`,
             resourceType: RouteResourceTypes.CREATE,
             scopes,
             scopesPartial: ModelScopes.getScopes(resource, ['create', 'all']),
             enableScopes,
             method: 'post',
-            path: `/${name}`,
+            path: `/${path}`,
             action: baseAction(options, resourceCreate),
             validator: options.createValidator,
             middlewares: options.middlewares,
