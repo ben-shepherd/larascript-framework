@@ -26,6 +26,7 @@ export interface IAuthConfig {
         updateUser: IInterfaceCtor;
     };
     jwtSecret: string,
+    expiresInMinutes: number;
     enableAuthRoutes: boolean;
     enableAuthRoutesAllowCreate: boolean;
     permissions: IPermissionsConfig;

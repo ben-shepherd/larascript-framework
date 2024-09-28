@@ -50,6 +50,11 @@ const config: IAuthConfig = {
     jwtSecret: process.env.JWT_SECRET as string ?? '',
 
     /**
+     * JWT expiration time in minutes
+     */
+    expiresInMinutes: process.env.JWT_EXPIRES_IN_MINUTES ? parseInt(process.env.JWT_EXPIRES_IN_MINUTES) : 60,
+
+    /**
      * Enable or disable auth routes
      */
     enableAuthRoutes: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES, 'true'),
