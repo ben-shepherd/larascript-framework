@@ -15,7 +15,7 @@ export class #name#Migration extends BaseMigration {
     */
     async up(): Promise<void> {
         // Example:
-        // await this.schema.createTable('users', (table) => {
+        // await this.schema.createTable('users', {
         //    userId: DataTypes.STRING,
         //    createdAt: DataTypes.DATE,
         //    updatedAt: DataTypes.DATE
