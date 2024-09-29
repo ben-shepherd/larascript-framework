@@ -4,7 +4,7 @@ import { ValidatorCtor } from "@src/core/domains/validator/types/ValidatorCtor";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
 
-export type ResourceType = 'index' | 'create' | 'update' | 'show' | 'delete';
+export type ResourceType = 'all' | 'create' | 'update' | 'show' | 'destroy';
 
 export interface IRouteResourceOptions extends Pick<IRoute, 'middlewares'> {
     path: string;
@@ -18,4 +18,7 @@ export interface IRouteResourceOptions extends Pick<IRoute, 'middlewares'> {
     enableScopes?: boolean;
     showFilters?: object;
     allFilters?: object;
+    paginate?: {
+        pageSize: number;
+    }
 }

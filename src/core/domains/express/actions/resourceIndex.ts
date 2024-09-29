@@ -1,8 +1,9 @@
-import Repository from '@src/core/base/Repository';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
+import { IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
 import { IRouteResourceOptions } from '@src/core/domains/express/interfaces/IRouteResourceOptions';
 import responseError from '@src/core/domains/express/requests/responseError';
 import { RouteResourceTypes } from '@src/core/domains/express/routing/RouteResource';
+import Paginate from '@src/core/domains/express/services/Paginate';
 import { ALWAYS } from '@src/core/domains/express/services/Security';
 import SecurityReader from '@src/core/domains/express/services/SecurityReader';
 import { SecurityIdentifiers } from '@src/core/domains/express/services/SecurityRules';
@@ -30,6 +31,11 @@ const formatResults = (results: IModel<IModelData>[]) => results.map(result => r
  */
 export default async (req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void> => {
     try {
+        const paginate = new Paginate().parseRequest(req);
+        const page = paginate.getPage(1);
+        const pageSize =  paginate.getPageSize() ?? options?.paginate?.pageSize;
+        const skip = pageSize ? (page - 1) * pageSize : undefined;
+
         const resourceOwnerSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.RESOURCE_OWNER, [RouteResourceTypes.ALL])
         const authorizationSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.AUTHORIZED, [RouteResourceTypes.ALL, ALWAYS]);
 
@@ -37,8 +43,10 @@ export default async (req: BaseRequest, res: Response, options: IRouteResourceOp
             responseError(req, res, new UnauthorizedError(), 401)
             return;
         }
-        
-        const repository = new Repository(options.resource);
+
+        const tableName = (new options.resource(null)).table;
+
+        const documentManager = App.container('db').documentManager().table(tableName) as IDocumentManager;
 
         let results: IModel<IModelData>[] = [];
 
@@ -61,9 +69,13 @@ export default async (req: BaseRequest, res: Response, options: IRouteResourceOp
                 throw new Error('Malformed resourceOwner security. Expected parameter \'key\' to be a string but received ' + typeof propertyKey);
             }
 
-            results = await repository.findMany({ 
-                ...filters,
-                [propertyKey]: userId 
+            results = await documentManager.findMany({
+                filter: {
+                    ...filters,
+                    [propertyKey]: userId
+                },
+                limit: pageSize,
+                skip,
             })
 
             res.send(formatResults(results))
@@ -73,9 +85,15 @@ export default async (req: BaseRequest, res: Response, options: IRouteResourceOp
         /**
          * Finds all results without any restrictions
          */
-        results = await repository.findMany(filters);
+        results = await documentManager.findMany({
+            filter: filters,
+            limit: pageSize,
+            skip,
+        })
 
-        res.send(formatResults(results))
+        const resultsAsModels = results.map((result) => new options.resource(result));
+
+        res.send(formatResults(resultsAsModels))
     }
     catch (err) {
         if (err instanceof Error) {
