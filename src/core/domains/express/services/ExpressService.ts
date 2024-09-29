@@ -218,24 +218,37 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      * @param route - IRoute instance
      */
     private logRoute(route: IRoute): void {
+        const indent = '  ';
         let str = `[Express] binding route ${route.method.toUpperCase()}: '${route.path}' as '${route.name}'`;
 
         if (route.scopes?.length || route.scopesPartial?.length) {
-            str += "\r\n SECURITY: ";
+            str += `\r\n${indent}SECURITY:`;
 
             if (route.scopes?.length) {
-                str += ` with exact scopes: [${(route.scopes ?? []).join(', ')}]`
+                str += indent + `with exact scopes: [${(route.scopes ?? []).join(', ')}]`
             }
 
             if (route.scopesPartial?.length) {
-                str += ` with partial scopes: [${route.scopesPartial.join(', ')}]`
+                str += indent + `with partial scopes: [${route.scopesPartial.join(', ')}]`
             }
 
             if (route?.enableScopes) {
-                str += ' (scopes enabled)'
+                str += indent + '(scopes enabled)'
             }
             else {
-                str += ' (scopes disabled)'
+                str += indent + '(scopes disabled)'
+            }
+        }
+
+        for(const security of (route?.security ?? [])) {
+            str += `\r\n${indent}SECURITY:${indent}${security.id}`
+
+            if(Array.isArray(security.when)) {
+                str += indent + `with when: [${security.when.join(', ')}]`
+            }
+
+            if(Array.isArray(security.never)) {
+                str += indent + `with never: [${security.never.join(', ')}]`
             }
         }
 

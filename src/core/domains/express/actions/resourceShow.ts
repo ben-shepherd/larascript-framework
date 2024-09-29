@@ -33,6 +33,12 @@ export default async (req: BaseRequest, res: Response, options: IRouteResourceOp
         const repository = new Repository(options.resource);
 
         let result: IModel | null = null;
+
+        // Define our query filters
+        const filters: object = {
+            ...(options.showFilters ?? {}),
+            id: req.params?.id
+        };
         
         /**
          * When a resourceOwnerSecurity is defined, we need to find the record that is owned by the user
@@ -52,7 +58,7 @@ export default async (req: BaseRequest, res: Response, options: IRouteResourceOp
             }
 
             result = await repository.findOne({
-                id: req.params?.id,
+                ...filters,
                 [propertyKey]: userId
             })
 
@@ -68,7 +74,7 @@ export default async (req: BaseRequest, res: Response, options: IRouteResourceOp
         /**
          * Find resource without restrictions
          */
-        result = await repository.findById(req.params?.id);
+        result = await repository.findOne(filters);
 
         if (!result) {
             throw new ModelNotFound('Resource not found');
