@@ -120,13 +120,15 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param filter 
      * @returns 
      */
-    async findMany<T>({ filter, order }: FindOptions): Promise<T> {
+    async findMany<T>({ filter, order, limit, skip }: FindOptions): Promise<T> {
         return this.captureError(async() => {
             const documents = await this.driver
                 .getDb()
                 .collection(this.getTable())
                 .find(filter as object, {
                     sort: order ? this.convertOrderToSort(order ?? []) : undefined,
+                    limit,
+                    skip
                 })
                 .toArray();
     

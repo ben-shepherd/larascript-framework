@@ -32,6 +32,11 @@ export type SelectOptions = {
      * Limit
      */
     limit?: number
+
+    /**
+     * Skip
+     */
+    skip?: number
 }
 
 /**
@@ -44,7 +49,7 @@ class PostgresQueryBuilder {
      * @param options Select options
      * @returns Query string
      */
-    select({ fields, tableName, filter = {}, order = [], limit = undefined }: SelectOptions): string {
+    select({ fields, tableName, filter = {}, order = [], limit = undefined, skip = undefined }: SelectOptions): string {
         let queryStr = `SELECT ${this.selectColumnsClause(fields)} FROM "${tableName}"`;
 
         if(Object.keys(filter ?? {}).length > 0) {
@@ -55,8 +60,12 @@ class PostgresQueryBuilder {
             queryStr += ` ORDER BY ${this.orderByClause(order)}`
         }
 
-        if(limit) {
+        if(limit && !skip) {
             queryStr += ` LIMIT ${limit}`
+        }
+
+        if(skip && limit) {
+            queryStr += ` OFFSET ${skip} LIMIT ${limit}`
         }
 
         return queryStr;
