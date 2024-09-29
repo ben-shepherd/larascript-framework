@@ -101,7 +101,14 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
         if (this.table) {
             return;
         }
-        this.table = Str.plural(Str.startLowerCase(this.constructor.name));
+        this.table = this.constructor.name;
+
+        if(this.table.endsWith('Model')) {
+            this.table = this.table.slice(0, -5);
+        }
+        
+        this.table = Str.plural(Str.startLowerCase(this.table))
+
     }
 
     /**
