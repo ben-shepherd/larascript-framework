@@ -1,4 +1,5 @@
 import BaseMigration from "@src/core/domains/migrations/base/BaseMigration";
+import { DataTypes } from "sequelize";
 
 export class #name#Migration extends BaseMigration 
 {
@@ -12,14 +13,12 @@ export class #name#Migration extends BaseMigration
     *
     * @return {Promise<void>}
     */
-    async up(): Promise<void> 
-    {
+    async up(): Promise<void> {
         // Example:
         // await this.schema.createTable('users', (table) => {
-        //     table.increments('id').primary();
-        //     table.string('username').unique().notNullable();
-        //     table.string('email').unique().notNullable();
-        //     table.timestamps(true, true);
+        //    userId: DataTypes.STRING,
+        //    createdAt: DataTypes.DATE,
+        //    updatedAt: DataTypes.DATE
         // });
     }
 
@@ -28,8 +27,7 @@ export class #name#Migration extends BaseMigration
     *
     * @return {Promise<void>}
     */
-    async down(): Promise<void> 
-    {
+    async down(): Promise<void> {
         // Example:
         // await this.schema.dropTable('users');
     }
