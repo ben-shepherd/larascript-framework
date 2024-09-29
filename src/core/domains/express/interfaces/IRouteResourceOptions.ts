@@ -16,4 +16,6 @@ export interface IRouteResourceOptions extends Pick<IRoute, 'middlewares'> {
     security?: IIdentifiableSecurityCallback[];
     scopes?: string[];
     enableScopes?: boolean;
+    showFilters?: object;
+    allFilters?: object;
 }

@@ -42,6 +42,8 @@ export default async (req: BaseRequest, res: Response, options: IRouteResourceOp
 
         let results: IModel<IModelData>[] = [];
 
+        const filters = options.allFilters ?? {};
+
         /**
          * When a resourceOwnerSecurity is defined, we need to find all records that are owned by the user
          */
@@ -59,7 +61,10 @@ export default async (req: BaseRequest, res: Response, options: IRouteResourceOp
                 throw new Error('Malformed resourceOwner security. Expected parameter \'key\' to be a string but received ' + typeof propertyKey);
             }
 
-            results = await repository.findMany({ [propertyKey]: userId })
+            results = await repository.findMany({ 
+                ...filters,
+                [propertyKey]: userId 
+            })
 
             res.send(formatResults(results))
             return;
@@ -68,7 +73,7 @@ export default async (req: BaseRequest, res: Response, options: IRouteResourceOp
         /**
          * Finds all results without any restrictions
          */
-        results = await repository.findMany();
+        results = await repository.findMany(filters);
 
         res.send(formatResults(results))
     }
