@@ -1,6 +1,6 @@
 {
   "name": "larascript-framework",
-  "version": "1.0.1",
+  "version": "1.1.1",
   "description": "A Node.js framework inspired by Laravel made with TypeScript",
   "main": "index.js",
   "scripts": {
