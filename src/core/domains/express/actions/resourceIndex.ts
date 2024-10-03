@@ -31,7 +31,7 @@ const formatResults = (results: IModel<IModelData>[]) => results.map(result => r
  */
 export default async (req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void> => {
     try {
-        const paginate = new Paginate().parseRequest(req);
+        const paginate = new Paginate().parseRequest(req, options.paginate);
         const page = paginate.getPage(1);
         const pageSize =  paginate.getPageSize() ?? options?.paginate?.pageSize;
         const skip = pageSize ? (page - 1) * pageSize : undefined;

@@ -20,5 +20,6 @@ export interface IRouteResourceOptions extends Pick<IRoute, 'middlewares'> {
     allFilters?: object;
     paginate?: {
         pageSize: number;
+        allowPageSizeOverride?: boolean;
     }
 }
