@@ -21,7 +21,12 @@ export type SelectOptions = {
     /**
      * Filter for query
      */
-    filter?: object
+    filter?: object;
+
+    /**
+     * Allow partial search
+     */
+    allowPartialSearch?: boolean
 
     /**
      * Order by
@@ -49,11 +54,11 @@ class PostgresQueryBuilder {
      * @param options Select options
      * @returns Query string
      */
-    select({ fields, tableName, filter = {}, order = [], limit = undefined, skip = undefined }: SelectOptions): string {
+    select({ fields, tableName, filter = {}, order = [], limit = undefined, skip = undefined, allowPartialSearch = false }: SelectOptions): string {
         let queryStr = `SELECT ${this.selectColumnsClause(fields)} FROM "${tableName}"`;
 
         if(Object.keys(filter ?? {}).length > 0) {
-            queryStr += ` WHERE ${this.whereClause(filter)}`;
+            queryStr += ` WHERE ${this.whereClause(filter, { allowPartialSearch })}` ;
         }
 
         if(order.length > 0) {
@@ -99,12 +104,16 @@ class PostgresQueryBuilder {
      * @param filter Filter
      * @returns Where clause
      */
-    whereClause(filter: object = {}): string {
+    whereClause(filter: object = {}, { allowPartialSearch = false } = {}): string {
         return Object.keys(filter).map((key) => {
             const value = filter[key];
 
             if(value === null) {
                 return `"${key}" IS NULL`;
+            }
+
+            if(allowPartialSearch && value.startsWith('%') || value.endsWith('%')) {
+                return `"${key}" LIKE :${key}`
             }
             
             return `"${key}" = :${key}`
