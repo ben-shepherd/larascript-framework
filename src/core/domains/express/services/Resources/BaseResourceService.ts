@@ -1,3 +1,4 @@
+import { IModel } from "@src/core/interfaces/IModel";
 import { Response } from "express";
 
 import { IPartialRouteResourceOptions, IResourceService } from "../../interfaces/IResourceService";
@@ -33,6 +34,24 @@ abstract class BaseResourceService implements IResourceService {
             return true;
         }
     
+        return false;
+    }
+
+    /**
+     * Checks if the request is authorized to perform the action and if the resource owner security is set on the given resource instance
+     * 
+     * @param {BaseRequest} req - The request object
+     * @param {IRouteResourceOptions} options - The options object
+     * @param {IModel} resourceInstance - The resource instance
+     * @returns {boolean} - Whether the request is authorized and resource owner security is set on the given resource instance
+     */
+    validateResourceOwnerCallback(req: BaseRequest, options: IRouteResourceOptions, resourceInstance: IModel): boolean {
+        const resourceOwnerSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.RESOURCE_OWNER, [this.routeResourceType])
+        
+        if(this.validateAuthorization(req, options) && resourceOwnerSecurity?.callback(req, resourceInstance)) {
+            return true;
+        }
+        
         return false;
     }
         
