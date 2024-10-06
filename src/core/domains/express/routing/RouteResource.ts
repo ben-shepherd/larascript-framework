@@ -1,8 +1,8 @@
 import ModelScopes from "@src/core/domains/auth/services/ModelScopes";
 import baseAction from "@src/core/domains/express/actions/baseAction";
+import resourceAll from "@src/core/domains/express/actions/resourceAll";
 import resourceCreate from "@src/core/domains/express/actions/resourceCreate";
 import resourceDelete from "@src/core/domains/express/actions/resourceDelete";
-import resourceIndex from "@src/core/domains/express/actions/resourceIndex";
 import resourceShow from "@src/core/domains/express/actions/resourceShow";
 import resourceUpdate from "@src/core/domains/express/actions/resourceUpdate";
 import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
@@ -54,14 +54,14 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
     const routes = RouteGroup([
         // Get all resources
         Route({
-            name: `${path}.index`,
+            name: `${path}.all`,
             resourceType: RouteResourceTypes.ALL,
             scopes,
             scopesPartial: ModelScopes.getScopes(resource, ['read', 'all']),
             enableScopes,
             method: 'get',
             path: `/${path}`,
-            action: baseAction(options, resourceIndex),
+            action: baseAction(options, resourceAll),
             middlewares: options.middlewares,
             security: options.security
         }),
