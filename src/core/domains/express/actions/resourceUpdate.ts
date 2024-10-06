@@ -1,16 +1,7 @@
-import Repository from '@src/core/base/Repository';
-import ForbiddenResourceError from '@src/core/domains/auth/exceptions/ForbiddenResourceError';
-import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
-import MissingSecurityError from '@src/core/domains/express/exceptions/MissingSecurityError';
 import { IRouteResourceOptions } from '@src/core/domains/express/interfaces/IRouteResourceOptions';
-import responseError from '@src/core/domains/express/requests/responseError';
-import { RouteResourceTypes } from '@src/core/domains/express/routing/RouteResource';
-import { ALWAYS } from '@src/core/domains/express/services/Security';
-import SecurityReader from '@src/core/domains/express/services/SecurityReader';
-import { SecurityIdentifiers } from '@src/core/domains/express/services/SecurityRules';
+import ResourceErrorService from '@src/core/domains/express/services/Resources/ResourceErrorService';
+import ResourceUpdateService from '@src/core/domains/express/services/Resources/ResourceUpdateService';
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
-import ModelNotFound from '@src/core/exceptions/ModelNotFound';
-import { IModel } from '@src/core/interfaces/IModel';
 import { Response } from 'express';
 
 /**
@@ -23,45 +14,10 @@ import { Response } from 'express';
  */
 export default async (req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void> => {
     try {
-        const resourceOwnerSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.RESOURCE_OWNER, [RouteResourceTypes.UPDATE]);
-        const authorizationSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.AUTHORIZED, [RouteResourceTypes.UPDATE, ALWAYS]);
-
-        if(authorizationSecurity && !authorizationSecurity.callback(req)) {
-            responseError(req, res, new UnauthorizedError(), 401)
-            return;
-        }
-        const repository = new Repository(options.resource);
-
-        const result = await repository.findById(req.params?.id);
-
-        if (!result) {
-            throw new ModelNotFound('Resource not found');
-        }
-
-        if(resourceOwnerSecurity && !authorizationSecurity) {
-            responseError(req, res, new MissingSecurityError('Expected authorized security for this route, recieved: ' + typeof authorizationSecurity), 401);
-        }
-
-        if(resourceOwnerSecurity && !resourceOwnerSecurity.callback(req, result)) {
-            responseError(req, res, new ForbiddenResourceError(), 403)
-            return;
-        }
-
-        result.fill(req.body);
-        await result.save();
-
-        res.send(result?.getData({ excludeGuarded: true }) as IModel);
+        const resourceUpdateService = new ResourceUpdateService();
+        await resourceUpdateService.handler(req, res, options);
     }
     catch (err) {
-        if(err instanceof ModelNotFound) {
-            responseError(req, res, err, 404)
-            return;
-        }
-        if (err instanceof Error) {
-            responseError(req, res, err)
-            return;
-        }
-
-        res.status(500).send({ error: 'Something went wrong' })
+        ResourceErrorService.handleError(req, res, err)
     }
 }

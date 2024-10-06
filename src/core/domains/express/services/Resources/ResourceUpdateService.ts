@@ -5,13 +5,14 @@ import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRou
 import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResource";
 import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
+import stripGuardedResourceProperties from "@src/core/domains/express/utils/stripGuardedResourceProperties";
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { Response } from "express";
 
 
-class ResourceDeleteService extends BaseResourceService {
+class ResourceUpdateService extends BaseResourceService {
 
-    routeResourceType: string = RouteResourceTypes.DESTROY
+    routeResourceType: string = RouteResourceTypes.UPDATE
 
     /**
      * Handles the resource delete action
@@ -35,8 +36,8 @@ class ResourceDeleteService extends BaseResourceService {
 
         const result = await repository.findById(req.params?.id)
 
-        if(!result) {
-            throw new ModelNotFound()
+        if (!result) {
+            throw new ModelNotFound();
         }
 
         // Check if the resource owner security applies to this route and it is valid
@@ -44,10 +45,13 @@ class ResourceDeleteService extends BaseResourceService {
             throw new ForbiddenResourceError()
         }
 
+        result.fill(req.body);
+        await result.save();
+
         // Send the results
-        res.send({ success: true })
+        res.send(stripGuardedResourceProperties(result))
     }
         
 }
 
-export default ResourceDeleteService;
+export default ResourceUpdateService;

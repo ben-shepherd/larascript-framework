@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
+import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
+import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { Response } from "express";
-
-import { BaseRequest } from "../types/BaseRequest.t";
-import { IRouteResourceOptions } from "./IRouteResourceOptions";
 
 export type IPartialRouteResourceOptions = Omit<IRouteResourceOptions, 'path' | 'except' | 'only'>
 

@@ -1,14 +1,13 @@
+import { IPartialRouteResourceOptions, IResourceService } from "@src/core/domains/express/interfaces/IResourceService";
+import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
+import { IIdentifiableSecurityCallback } from "@src/core/domains/express/interfaces/ISecurity";
+import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResource";
+import { ALWAYS } from "@src/core/domains/express/services/Security";
+import SecurityReader from "@src/core/domains/express/services/SecurityReader";
+import { SecurityIdentifiers } from "@src/core/domains/express/services/SecurityRules";
+import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { IModel } from "@src/core/interfaces/IModel";
 import { Response } from "express";
-
-import { IPartialRouteResourceOptions, IResourceService } from "../../interfaces/IResourceService";
-import { IRouteResourceOptions } from "../../interfaces/IRouteResourceOptions";
-import { IIdentifiableSecurityCallback } from "../../interfaces/ISecurity";
-import { RouteResourceTypes } from "../../routing/RouteResource";
-import { BaseRequest } from "../../types/BaseRequest.t";
-import { ALWAYS } from "../Security";
-import SecurityReader from "../SecurityReader";
-import { SecurityIdentifiers } from "../SecurityRules";
 
 abstract class BaseResourceService implements IResourceService {
 
@@ -27,8 +26,8 @@ abstract class BaseResourceService implements IResourceService {
      * @param {IRouteResourceOptions} options - The options object
      * @returns {boolean} - Whether the request is authorized and resource owner security is set
      */
-    validateResourceOwner(req: BaseRequest, options: IRouteResourceOptions, when: string[] = [this.routeResourceType]): boolean {
-        const resourceOwnerSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.RESOURCE_OWNER, when)
+    validateResourceOwner(req: BaseRequest, options: IRouteResourceOptions): boolean {
+        const resourceOwnerSecurity = this.getResourceOwnerSecurity(options);
     
         if(this.validateAuthorization(req, options) && resourceOwnerSecurity ) {
             return true;
@@ -46,7 +45,7 @@ abstract class BaseResourceService implements IResourceService {
      * @returns {boolean} - Whether the request is authorized and resource owner security is set on the given resource instance
      */
     validateResourceOwnerCallback(req: BaseRequest, options: IRouteResourceOptions, resourceInstance: IModel): boolean {
-        const resourceOwnerSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.RESOURCE_OWNER, [this.routeResourceType])
+        const resourceOwnerSecurity = this.getResourceOwnerSecurity(options);
         
         if(this.validateAuthorization(req, options) && resourceOwnerSecurity?.callback(req, resourceInstance)) {
             return true;

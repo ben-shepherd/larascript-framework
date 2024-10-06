@@ -1,12 +1,9 @@
-import { EnvironmentDevelopment } from "@src/core/consts/Environment";
 import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
+import responseError from "@src/core/domains/express/requests/responseError";
+import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
-import { App } from "@src/core/services/App";
 import { Response } from "express";
-
-import responseError from "../../requests/responseError";
-import { BaseRequest } from "../../types/BaseRequest.t";
 
 class ResourceErrorService {
 
@@ -44,13 +41,7 @@ class ResourceErrorService {
             return;
         }
 
-        let error = 'Something went wrong.'
-
-        if(App.env() === EnvironmentDevelopment) {
-            error = (err as Error)?.message ?? error
-        }
-
-        res.status(500).send({ error })
+        res.status(500).send({ error: 'Something went wrong.' })
     }
 
 }
