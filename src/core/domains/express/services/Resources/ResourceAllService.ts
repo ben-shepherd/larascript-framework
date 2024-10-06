@@ -10,12 +10,12 @@ import { RouteResourceTypes } from "../../routing/RouteResource";
 import { BaseRequest } from "../../types/BaseRequest.t";
 import stripGuardedResourceProperties from "../../utils/stripGuardedResourceProperties";
 import Paginate from "../Paginate";
-import SecurityReader from "../SecurityReader";
-import { SecurityIdentifiers } from "../SecurityRules";
 import BaseResourceService from "./BaseResourceService";
 
 
 class ResourceAllService extends BaseResourceService {
+
+    routeResourceType: string = RouteResourceTypes.ALL
 
     /**
      * Handles the resource all action
@@ -43,7 +43,7 @@ class ResourceAllService extends BaseResourceService {
         // Check if the resource owner security applies to this route and it is valid
         // If it is valid, we add the owner's id to the filters
         if(this.validateResourceOwner(req, options)) {
-            const resourceOwnerSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.RESOURCE_OWNER, [RouteResourceTypes.ALL])
+            const resourceOwnerSecurity = this.getResourceOwnerSecurity(options)
             const propertyKey = resourceOwnerSecurity?.arguements?.key as string;
             const userId = App.container('requestContext').getByRequest<string>(req, 'userId');
 

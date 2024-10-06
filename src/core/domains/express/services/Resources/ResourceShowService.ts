@@ -5,19 +5,18 @@ import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { Response } from "express";
 
-import { IPageOptions, IResourceService } from "../../interfaces/IResourceService";
+import { IPageOptions } from "../../interfaces/IResourceService";
 import { IRouteResourceOptions } from "../../interfaces/IRouteResourceOptions";
 import { RouteResourceTypes } from "../../routing/RouteResource";
 import { BaseRequest } from "../../types/BaseRequest.t";
 import stripGuardedResourceProperties from "../../utils/stripGuardedResourceProperties";
-import { ALWAYS } from "../Security";
-import SecurityReader from "../SecurityReader";
-import { SecurityIdentifiers } from "../SecurityRules";
+import BaseResourceService from "./BaseResourceService";
 
 
-class ResourceShowService implements IResourceService {
+class ResourceShowService extends BaseResourceService {
 
-    
+    routeResourceType: string = RouteResourceTypes.SHOW
+
     /**
      * Handles the resource show action
      * - Validates that the request is authorized
@@ -43,7 +42,7 @@ class ResourceShowService implements IResourceService {
         // Check if the resource owner security applies to this route and it is valid
         // If it is valid, we add the owner's id to the filters
         if(this.validateResourceOwner(req, options)) {
-            const resourceOwnerSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.RESOURCE_OWNER, [RouteResourceTypes.ALL])
+            const resourceOwnerSecurity = this.getResourceOwnerSecurity(options)
             const propertyKey = resourceOwnerSecurity?.arguements?.key as string;
             const userId = App.container('requestContext').getByRequest<string>(req, 'userId');
             
@@ -88,40 +87,6 @@ class ResourceShowService implements IResourceService {
         return await documentManager.findOne({
             filter: filters,
         })
-    }
-
-    /**
-     * Checks if the request is authorized to perform the action and if the resource owner security is set
-     * 
-     * @param {BaseRequest} req - The request object
-     * @param {IRouteResourceOptions} options - The options object
-     * @returns {boolean} - Whether the request is authorized and resource owner security is set
-     */
-    validateResourceOwner(req: BaseRequest, options: IRouteResourceOptions): boolean {
-        const resourceOwnerSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.RESOURCE_OWNER, [RouteResourceTypes.ALL])
-
-        if(this.validateAuthorization(req, options) && resourceOwnerSecurity ) {
-            return true;
-        }
-
-        return false;
-    }
-    
-    /**
-     * Checks if the request is authorized to perform the action
-     * 
-     * @param {BaseRequest} req - The request object
-     * @param {IRouteResourceOptions} options - The options object
-     * @returns {boolean} - Whether the request is authorized
-     */
-    validateAuthorization(req: BaseRequest, options: IRouteResourceOptions): boolean {
-        const authorizationSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.AUTHORIZED, [RouteResourceTypes.ALL, ALWAYS]);
-
-        if(authorizationSecurity && !authorizationSecurity.callback(req)) {
-            return false;
-        }
-        
-        return true;
     }
 
     /**
