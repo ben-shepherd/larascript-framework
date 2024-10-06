@@ -1,6 +1,5 @@
 import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
-import { IPageOptions } from "@src/core/domains/express/interfaces/IResourceService";
 import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
 import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResource";
 import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
