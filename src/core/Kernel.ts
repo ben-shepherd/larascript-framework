@@ -43,6 +43,8 @@ export default class Kernel<Config extends IAppConfig> extends Singleton<Config>
 
         const { appConfig } = kernel;
 
+        App.getInstance().env = appConfig.environment;
+
         for (const provider of appConfig.providers) {
             if(withoutProviders.includes(provider.constructor.name)) {
                 continue;
@@ -60,7 +62,7 @@ export default class Kernel<Config extends IAppConfig> extends Singleton<Config>
             kernel.preparedProviders.push(provider.constructor.name);
         }
 
-        App.getInstance().env = appConfig.environment;
+        
         Kernel.getInstance().readyProviders = [...kernel.preparedProviders];
     }
 

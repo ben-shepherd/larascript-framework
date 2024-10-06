@@ -1,6 +1,10 @@
 import Singleton from "@src/core/base/Singleton";
 import { Request } from "express";
 
+export type ParseRequestOptions = {
+    allowPageSizeOverride?: boolean
+}
+
 class Paginate extends Singleton {
 
     protected page: number | undefined = undefined
@@ -13,12 +17,12 @@ class Paginate extends Singleton {
      * @param {Request} req - The Express Request object
      * @returns {this} - The Paginate class itself to enable chaining
      */
-    parseRequest(req: Request): this {
+    parseRequest(req: Request, options: ParseRequestOptions = { allowPageSizeOverride: true }): this {
         if(req.query?.page) {
             this.page = parseInt(req.query?.page as string);
         }       
 
-        if(req.query?.pageSize) {
+        if(options.allowPageSizeOverride && req.query?.pageSize) {
             this.pageSize = parseInt(req.query?.pageSize as string);
         }       
 
