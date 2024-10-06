@@ -6,9 +6,13 @@ import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 import MongoDBBelongsTo from "@src/core/domains/database/relationships/mongodb/MongoDBBelongsTo";
 import { BulkWriteOptions, ObjectId, Sort, UpdateOptions } from "mongodb";
 
+import MongoDbQueryBuilder from "../builder/MongoDbQueryBuilder";
+
 class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager, MongoDB> {
 
     protected driver!: MongoDB;
+
+    protected builder = new MongoDbQueryBuilder()
 
     constructor(driver: MongoDB) {
         super(driver);
@@ -102,8 +106,11 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
      * @param filter 
      * @returns 
      */
-    async findOne<T>({ filter = {} }: { filter?: object }): Promise<T | null> {
+    async findOne<T>({ filter = {}, allowPartialSearch = false, useFuzzySearch = false }: Pick<FindOptions, 'filter' | 'allowPartialSearch' | 'useFuzzySearch'>): Promise<T | null> {
         return this.captureError(async() => {
+
+            filter = this.builder.select({ filter, allowPartialSearch, useFuzzySearch })
+
             let document = await this.driver.getDb().collection(this.getTable()).findOne(filter) as T | null;
     
             if (document) {
@@ -117,11 +124,15 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
     /**
      * Find multiple documents
      * 
-     * @param filter 
-     * @returns 
+     * @param options The options for selecting the documents
+     * @returns The found documents
      */
-    async findMany<T>({ filter, order, limit, skip }: FindOptions): Promise<T> {
+    
+    async findMany<T>({ filter, order, limit, skip, allowPartialSearch = false, useFuzzySearch = false }: FindOptions): Promise<T> {
         return this.captureError(async() => {
+
+            filter = this.builder.select({ filter, allowPartialSearch, useFuzzySearch })
+
             const documents = await this.driver
                 .getDb()
                 .collection(this.getTable())
