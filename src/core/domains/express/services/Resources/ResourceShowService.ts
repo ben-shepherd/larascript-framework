@@ -1,30 +1,31 @@
 import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
+import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { Response } from "express";
 
-import { IPageOptions } from "../../interfaces/IResourceService";
+import { IPageOptions, IResourceService } from "../../interfaces/IResourceService";
 import { IRouteResourceOptions } from "../../interfaces/IRouteResourceOptions";
 import { RouteResourceTypes } from "../../routing/RouteResource";
 import { BaseRequest } from "../../types/BaseRequest.t";
 import stripGuardedResourceProperties from "../../utils/stripGuardedResourceProperties";
-import Paginate from "../Paginate";
+import { ALWAYS } from "../Security";
 import SecurityReader from "../SecurityReader";
 import { SecurityIdentifiers } from "../SecurityRules";
-import BaseResourceService from "./BaseResourceService";
 
 
-class ResourceAllService extends BaseResourceService {
+class ResourceShowService implements IResourceService {
 
+    
     /**
-     * Handles the resource all action
+     * Handles the resource show action
      * - Validates that the request is authorized
      * - If the resource owner security is enabled, adds the owner's id to the filters
-     * - Fetches the results using the filters and page options
-     * - Maps the results to models
-     * - Strips the guarded properties from the results
-     * - Sends the results back to the client
+     * - Fetches the result using the filters
+     * - Maps the result to a model
+     * - Strips the guarded properties from the result
+     * - Sends the result back to the client
      * @param req The request object
      * @param res The response object
      * @param options The resource options
@@ -37,7 +38,6 @@ class ResourceAllService extends BaseResourceService {
         }
         
         // Build the page options, filters
-        const pageOptions = this.buildPageOptions(req, options);
         let filters = this.buildFilters(options);
 
         // Check if the resource owner security applies to this route and it is valid
@@ -46,8 +46,8 @@ class ResourceAllService extends BaseResourceService {
             const resourceOwnerSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.RESOURCE_OWNER, [RouteResourceTypes.ALL])
             const propertyKey = resourceOwnerSecurity?.arguements?.key as string;
             const userId = App.container('requestContext').getByRequest<string>(req, 'userId');
-
-            if(!userId) { 
+            
+            if(!userId) {
                 throw new ForbiddenResourceError()
             }
 
@@ -62,11 +62,16 @@ class ResourceAllService extends BaseResourceService {
         }
 
         // Fetch the results
-        const results = await this.fetchResults(options, filters, pageOptions)
-        const resultsAsModels = results.map((result) => new options.resource(result));
+        const result = await this.fetchRecord(options, filters)
+
+        if (!result) {
+            throw new ModelNotFound();
+        }
+        
+        const resultAsModel = new options.resource(result)
 
         // Send the results
-        res.send(stripGuardedResourceProperties(resultsAsModels))
+        res.send(stripGuardedResourceProperties(resultAsModel))
     }
 
     /**
@@ -76,15 +81,47 @@ class ResourceAllService extends BaseResourceService {
      * @param {IPageOptions} pageOptions - The page options to use when fetching the results
      * @returns {Promise<IModel[]>} - A promise that resolves to the fetched results as an array of models
      */
-    async fetchResults(options: IRouteResourceOptions, filters: object, pageOptions: IPageOptions): Promise<IModel[]> {
+    async fetchRecord(options: IRouteResourceOptions, filters: object): Promise<IModel | null> {
         const tableName = (new options.resource).table;
         const documentManager = App.container('db').documentManager().table(tableName);
 
-        return await documentManager.findMany({
+        return await documentManager.findOne({
             filter: filters,
-            limit: pageOptions.pageSize,
-            skip: pageOptions.skip,
         })
+    }
+
+    /**
+     * Checks if the request is authorized to perform the action and if the resource owner security is set
+     * 
+     * @param {BaseRequest} req - The request object
+     * @param {IRouteResourceOptions} options - The options object
+     * @returns {boolean} - Whether the request is authorized and resource owner security is set
+     */
+    validateResourceOwner(req: BaseRequest, options: IRouteResourceOptions): boolean {
+        const resourceOwnerSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.RESOURCE_OWNER, [RouteResourceTypes.ALL])
+
+        if(this.validateAuthorization(req, options) && resourceOwnerSecurity ) {
+            return true;
+        }
+
+        return false;
+    }
+    
+    /**
+     * Checks if the request is authorized to perform the action
+     * 
+     * @param {BaseRequest} req - The request object
+     * @param {IRouteResourceOptions} options - The options object
+     * @returns {boolean} - Whether the request is authorized
+     */
+    validateAuthorization(req: BaseRequest, options: IRouteResourceOptions): boolean {
+        const authorizationSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.AUTHORIZED, [RouteResourceTypes.ALL, ALWAYS]);
+
+        if(authorizationSecurity && !authorizationSecurity.callback(req)) {
+            return false;
+        }
+        
+        return true;
     }
 
     /**
@@ -94,25 +131,9 @@ class ResourceAllService extends BaseResourceService {
      * @returns {object} - The filters object
      */
     buildFilters(options: IRouteResourceOptions): object {
-        return options.allFilters ?? {};
+        return options.showFilters ?? {};
     }
-
-    /**
-     * Builds the page options
-     * 
-     * @param {BaseRequest} req - The request object
-     * @param {IRouteResourceOptions} options - The options object
-     * @returns {IPageOptions} - An object containing the page number, page size, and skip
-     */
-    buildPageOptions(req: BaseRequest, options: IRouteResourceOptions): IPageOptions  {
-        const paginate = new Paginate().parseRequest(req, options.paginate);
-        const page = paginate.getPage(1);
-        const pageSize =  paginate.getPageSize() ?? options?.paginate?.pageSize;
-        const skip = pageSize ? (page - 1) * pageSize : undefined;
-
-        return { skip, page, pageSize };
-    }
-
+            
 }
 
-export default ResourceAllService;
+export default ResourceShowService;
