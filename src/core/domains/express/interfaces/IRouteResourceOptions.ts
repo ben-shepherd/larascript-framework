@@ -6,6 +6,11 @@ import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
 export type ResourceType = 'all' | 'create' | 'update' | 'show' | 'destroy';
 
+export type SearchOptions = {
+    fields: string[];
+    useFuzzySearch?: boolean; // Only applies to MongoDB provider
+}
+
 export interface IRouteResourceOptions extends Pick<IRoute, 'middlewares'> {
     path: string;
     resource: ModelConstructor<IModel>;
@@ -21,5 +26,6 @@ export interface IRouteResourceOptions extends Pick<IRoute, 'middlewares'> {
     paginate?: {
         pageSize: number;
         allowPageSizeOverride?: boolean;
-    }
+    },
+    searching?: SearchOptions
 }

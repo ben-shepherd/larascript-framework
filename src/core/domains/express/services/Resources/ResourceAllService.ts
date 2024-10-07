@@ -4,6 +4,7 @@ import { IPageOptions } from "@src/core/domains/express/interfaces/IResourceServ
 import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
 import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResource";
 import Paginate from "@src/core/domains/express/services/Paginate";
+import QueryFilters from "@src/core/domains/express/services/QueryFilters";
 import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import stripGuardedResourceProperties from "@src/core/domains/express/utils/stripGuardedResourceProperties";
@@ -37,7 +38,7 @@ class ResourceAllService extends BaseResourceService {
         
         // Build the page options, filters
         const pageOptions = this.buildPageOptions(req, options);
-        let filters = this.buildFilters(options);
+        let filters = this.buildFilters(req, options);
 
         // Check if the resource owner security applies to this route and it is valid
         // If it is valid, we add the owner's id to the filters
@@ -83,6 +84,7 @@ class ResourceAllService extends BaseResourceService {
             filter: filters,
             limit: pageOptions.pageSize,
             skip: pageOptions.skip,
+            useFuzzySearch: options.searching?.useFuzzySearch,
         })
     }
 
@@ -92,8 +94,13 @@ class ResourceAllService extends BaseResourceService {
      * @param {IRouteResourceOptions} options - The options object
      * @returns {object} - The filters object
      */
-    buildFilters(options: IRouteResourceOptions): object {
-        return options.allFilters ?? {};
+    buildFilters(req: BaseRequest, options: IRouteResourceOptions): object {
+        const baseFilters = options.allFilters ?? {};
+
+        return this.filtersWithPercentSigns({
+            ...baseFilters,
+            ...(new QueryFilters).parseRequest(req, options?.searching).getFilters()
+        })
     }
 
     /**

@@ -80,6 +80,26 @@ abstract class BaseResourceService implements IResourceService {
         return SecurityReader.findFromRouteResourceOptions(options as IRouteResourceOptions, SecurityIdentifiers.RESOURCE_OWNER, [this.routeResourceType]);
     }
 
+
+    /**
+     * Returns a new object with the same key-value pairs as the given object, but
+     * with an additional key-value pair for each key, where the key is wrapped in
+     * percent signs (e.g. "foo" becomes "%foo%"). This is useful for building
+     * filters in MongoDB queries.
+     * @param {object} filters - The object to transform
+     * @returns {object} - The transformed object
+     */
+    filtersWithPercentSigns(filters: object): object {
+        return {
+            ...filters,
+            ...Object.keys(filters).reduce((acc, curr) => {
+                const value = filters[curr];
+                acc[curr] = `%${value}%`;
+                return acc;
+            }, {})
+        }
+    }
+
 }
 
 export default BaseResourceService

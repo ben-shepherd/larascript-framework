@@ -11,6 +11,7 @@ import { App } from "@src/core/services/App";
 import { Response } from "express";
 
 
+
 class ResourceShowService extends BaseResourceService {
 
     routeResourceType: string = RouteResourceTypes.SHOW
@@ -33,9 +34,9 @@ class ResourceShowService extends BaseResourceService {
         if(!this.validateAuthorization(req, options)) {
             throw new UnauthorizedError()
         }
-        
-        // Build the page options, filters
-        let filters = this.buildFilters(options);
+
+        // Build the filters
+        let filters: object = {}
 
         // Check if the resource owner security applies to this route and it is valid
         // If it is valid, we add the owner's id to the filters
@@ -86,17 +87,7 @@ class ResourceShowService extends BaseResourceService {
             filter: filters,
         })
     }
-
-    /**
-     * Builds the filters object
-     * 
-     * @param {IRouteResourceOptions} options - The options object
-     * @returns {object} - The filters object
-     */
-    buildFilters(options: IRouteResourceOptions): object {
-        return options.showFilters ?? {};
-    }
-            
+      
 }
 
 export default ResourceShowService;
