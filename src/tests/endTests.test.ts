@@ -29,7 +29,7 @@ describe('clean up tables', () => {
             (new TestAuthorModel(null)).table,
             (new TestWorkerModel(null)).table,
             (new TestModel(null)).table,
-            (new TestMigrationModel).table
+            (new TestMigrationModel(null)).table
         ].filter((value, index, self) => self.indexOf(value) === index);
 
         for (const connectionName of getTestConnectionNames()) {

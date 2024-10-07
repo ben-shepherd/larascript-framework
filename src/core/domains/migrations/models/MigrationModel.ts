@@ -32,7 +32,7 @@ export interface MigrationModelData extends IModelData {
  */
 class MigrationModel extends Model<MigrationModelData> {
 
-    constructor(data: MigrationModelData, tableName = 'migrations') {
+    constructor(data: MigrationModelData | null, tableName = 'migrations') {
         super(data);
         this.table = tableName
     }
