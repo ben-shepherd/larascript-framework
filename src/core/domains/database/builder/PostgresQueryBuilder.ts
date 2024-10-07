@@ -112,7 +112,7 @@ class PostgresQueryBuilder {
                 return `"${key}" IS NULL`;
             }
 
-            if(allowPartialSearch && value.startsWith('%') || value.endsWith('%')) {
+            if(allowPartialSearch && typeof value === 'string' && (value.startsWith('%') || value.endsWith('%'))) {
                 return `"${key}" LIKE :${key}`
             }
             
