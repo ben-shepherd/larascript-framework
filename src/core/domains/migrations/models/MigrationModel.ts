@@ -32,10 +32,10 @@ export interface MigrationModelData extends IModelData {
  */
 class MigrationModel extends Model<MigrationModelData> {
 
-    /**
-     * The name of the table in the database.
-     */
-    table = 'migrations';
+    constructor(data: MigrationModelData, tableName = 'migrations') {
+        super(data);
+        this.table = tableName
+    }
 
     /**
      * The fields that are dates.

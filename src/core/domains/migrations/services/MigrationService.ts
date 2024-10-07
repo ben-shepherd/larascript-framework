@@ -1,12 +1,15 @@
+import Repository from "@src/core/base/Repository";
 import MigrationFactory from "@src/core/domains/migrations/factory/MigrationFactory";
 import { IMigration } from "@src/core/domains/migrations/interfaces/IMigration";
 import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
 import { IMigrationService, IMigrationServiceOptions } from "@src/core/domains/migrations/interfaces/IMigrationService";
-import MigrationRepository from "@src/core/domains/migrations/repository/MigrationRepository";
+import MigrationModel from "@src/core/domains/migrations/models/MigrationModel";
 import createMongoDBSchema from "@src/core/domains/migrations/schema/createMongoDBSchema";
 import createPostgresSchema from "@src/core/domains/migrations/schema/createPostgresSchema";
 import MigrationFileService from "@src/core/domains/migrations/services/MigrationFilesService";
 import FileNotFoundError from "@src/core/exceptions/FileNotFoundError";
+import { ModelConstructor } from "@src/core/interfaces/IModel";
+import { IRepository } from "@src/core/interfaces/IRepository";
 import { App } from "@src/core/services/App";
 
 interface MigrationDetail {
@@ -21,16 +24,19 @@ interface MigrationDetail {
  */
 class MigrationService implements IMigrationService {
 
-    private fileService!: MigrationFileService;
+    private readonly fileService!: MigrationFileService;
 
-    private repository!: MigrationRepository;
+    private readonly repository!: IRepository;
 
     protected config!: IMigrationConfig;
+
+    protected modelCtor!: ModelConstructor;
 
     constructor(config: IMigrationConfig = {}) {
         this.config = config;
         this.fileService = new MigrationFileService(config.appMigrationsDir);
-        this.repository = new MigrationRepository();
+        this.modelCtor = config.modelCtor ?? MigrationModel;
+        this.repository = new Repository(this.modelCtor);
     }
 
     async boot() {
@@ -191,7 +197,7 @@ class MigrationService implements IMigrationService {
             batch: newBatchCount,
             checksum: fileChecksum,
             appliedAt: new Date(),
-        })
+        }, this.modelCtor)
         await model.save();
     }
 
@@ -218,7 +224,7 @@ class MigrationService implements IMigrationService {
      * @returns 
      */
     protected async getMigrationResults(filters?: object) {
-        return await (new MigrationRepository).findMany({
+        return await this.repository.findMany({
             ...(filters ?? {})
         })
     }
@@ -229,19 +235,20 @@ class MigrationService implements IMigrationService {
      */
     protected async createSchema(): Promise<void> {
         try {
+            const tableName = (new this.modelCtor).table
 
             /**
              * Handle MongoDB driver
              */
             if (App.container('db').isProvider('mongodb')) {
-                await createMongoDBSchema();
+                await createMongoDBSchema(tableName);
             }
 
             /**
              * Handle Postgres driver
              */
             if (App.container('db').isProvider('postgres')) {
-                await createPostgresSchema();
+                await createPostgresSchema(tableName);
             }
         }
         catch (err) {

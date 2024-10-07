@@ -3,6 +3,7 @@ import MigrateUpCommand from "@src/core/domains/migrations/commands/MigrateUpCom
 import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
 import MigrationProvider from "@src/core/domains/migrations/providers/MigrationProvider";
 import { App } from "@src/core/services/App";
+import TestMigrationModel from "@src/tests/migration/models/TestMigrationModel";
 
 class TestMigrationProvider extends MigrationProvider {
 
@@ -17,6 +18,7 @@ class TestMigrationProvider extends MigrationProvider {
         const config: IMigrationConfig = {
             keepProcessAlive: true,
             appMigrationsDir: '@src/../src/tests/migration/migrations',
+            modelCtor: TestMigrationModel
         }
 
         App.container('console').register().addCommandConfig([
