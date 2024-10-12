@@ -33,7 +33,7 @@ export default class Worker extends Singleton {
      */
     setDriver(driver: string) {
         this.options = this.getOptions(driver)
-        this.log(`Driver set to '${driver}'`,)
+        this.logToConsole(`Driver set to '${driver}'`,)
     }
 
     /**
@@ -57,8 +57,8 @@ export default class Worker extends Singleton {
         // Fetch the current list of queued results
         const workerResults: WorkerModel[] = await worker.getWorkerResults(this.options.queueName)
     
-        this.log('collection: ' + new this.options.workerModelCtor().table)
-        this.log(`${workerResults.length} queued items with queue name '${this.options.queueName}'`)
+        this.logToConsole('collection: ' + new this.options.workerModelCtor().table)
+        this.logToConsole(`${workerResults.length} queued items with queue name '${this.options.queueName}'`)
     
         for(const workerModel of workerResults) {
             // We set the model here to pass it to the failedWorkerModel method,
@@ -66,12 +66,12 @@ export default class Worker extends Singleton {
             model = workerModel
 
             try {
-                console.log('Worker processing model', model.getId()?.toString())
+                App.container('logger').console('Worker processing model', model.getId()?.toString())
                 await worker.processWorkerModel(model)
             }
             catch (err) {
                 if(!(err instanceof Error)) {
-                    console.error(err)
+                    App.container('logger').error(err)
                     return;
                 }
     
@@ -124,7 +124,7 @@ export default class Worker extends Singleton {
         // Delete record as it was a success
         await model.delete();
 
-        this.log(`Processed: ${eventName}`)
+        this.logToConsole(`Processed: ${eventName}`)
     }
 
     /**
@@ -141,7 +141,7 @@ export default class Worker extends Singleton {
         const currentAttempt = (model.getAttribute('attempt') ?? 0)
         const nextCurrentAttempt = currentAttempt + 1
 
-        this.log(`Failed ${model.getAttribute('eventName')} attempts ${currentAttempt + 1} out of ${retries}, ID: ${model.getId()?.toString()}`)
+        this.logToConsole(`Failed ${model.getAttribute('eventName')} attempts ${currentAttempt + 1} out of ${retries}, ID: ${model.getId()?.toString()}`)
 
         // If reached max, move to failed collection
         if(nextCurrentAttempt >= retries) {
@@ -160,7 +160,7 @@ export default class Worker extends Singleton {
      * @param err 
      */
     async moveFailedWorkerModel(model: WorkerModel, err: Error) {
-        this.log('Moved to failed')
+        this.logToConsole('Moved to failed')
         
         const failedWorkerModel = (new FailedWorkerModelFactory).create(
             this.options.failedCollection, 
@@ -183,8 +183,8 @@ export default class Worker extends Singleton {
      * Logs a message to the console
      * @param message The message to log
      */
-    protected log(message: string) {
-        console.log('[Worker]: ', message)
+    protected logToConsole(message: string) {
+        App.container('logger').console('[Worker]: ', message)
     }
 
 }

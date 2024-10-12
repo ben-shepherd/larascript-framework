@@ -10,6 +10,7 @@ import { IHasManyOptions } from "@src/core/domains/database/interfaces/relations
 import BelongsTo from "@src/core/domains/database/relationships/BelongsTo";
 import HasMany from "@src/core/domains/database/relationships/HasMany";
 import DocumentValidator from "@src/core/domains/database/validator/DocumentValidator";
+import { App } from "@src/core/services/App";
 
 /**
  * Abstract base class for document management operations
@@ -131,7 +132,7 @@ abstract class BaseDocumentManager<Query extends IDocumentManager = IDocumentMan
         }
         catch (err) {
             if(err instanceof Error && err?.message) {
-                console.log(`Database error(${this.driver.connectionName}): `, err.message, err.stack)
+                App.container('logger').error(`Database error(${this.driver.connectionName}): `, err.message, err.stack)
             }
             throw err
         }

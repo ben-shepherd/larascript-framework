@@ -56,7 +56,7 @@ describe('test hasMany', () => {
     
     test('hasMany', async () => {
         for(const connectionName of connections) {
-            console.log('[Connection]', connectionName)
+            App.container('logger').info('[Connection]', connectionName)
             App.container('db').setDefaultConnectionName(connectionName);
 
             await truncate(connectionName);

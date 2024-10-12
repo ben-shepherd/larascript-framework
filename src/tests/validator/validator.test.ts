@@ -46,6 +46,6 @@ describe('test validation', () => {
         expect(result.success).toBeFalsy();
         expect(result.joi.error).toBeTruthy();
 
-        console.log('failed validation', result.joi.error)
+        App.container('logger').warn('failed validation', result.joi.error)
     })
 });

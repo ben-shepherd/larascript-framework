@@ -80,7 +80,6 @@ class RequestContextCleaner extends Singleton {
 
             // If the context is empty, remove it from the store
             if(context.size === 0) {
-                console.log('Removed ipContext', ip)
                 context.delete(ip)
             }
         }

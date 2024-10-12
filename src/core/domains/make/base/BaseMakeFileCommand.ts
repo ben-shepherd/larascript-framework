@@ -4,6 +4,7 @@ import { IMakeFileArguments } from "@src/core/domains/make/interfaces/IMakeFileA
 import { IMakeOptions } from "@src/core/domains/make/interfaces/IMakeOptions";
 import ArgumentObserver from "@src/core/domains/make/observers/ArgumentObserver";
 import MakeFileService from "@src/core/domains/make/services/MakeFileService";
+import { App } from "@src/core/services/App";
 import Str from "@src/core/util/str/Str";
 
 const DefaultOptions: Partial<IMakeOptions> = {
@@ -108,7 +109,7 @@ export default class BaseMakeFileCommand extends BaseCommand {
         // Write the new file
         this.makeFileService.writeContent(template);
 
-        console.log(`Created ${this.options.makeType}: ` + this.makeFileService.getTargetDirFullPath());
+        App.container('logger').info(`Created ${this.options.makeType}: ` + this.makeFileService.getTargetDirFullPath());
     }
     
     /**

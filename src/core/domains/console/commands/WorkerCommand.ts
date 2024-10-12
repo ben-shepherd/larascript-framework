@@ -25,7 +25,7 @@ export default class WorkerCommand extends BaseCommand {
         const worker = Worker.getInstance()
         worker.setDriver(driver)
 
-        console.log('Running worker...', worker.options)
+        App.container('logger').console('Running worker...', worker.options)
 
         await worker.work();
 
@@ -35,7 +35,7 @@ export default class WorkerCommand extends BaseCommand {
 
         setInterval(async () => {
             await worker.work()
-            console.log('Running worker again in ' + worker.options.runAfterSeconds.toString() + ' seconds')
+            App.container('logger').console('Running worker again in ' + worker.options.runAfterSeconds.toString() + ' seconds')
         }, worker.options.runAfterSeconds * 1000)
     }
 

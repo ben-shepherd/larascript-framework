@@ -1,7 +1,6 @@
 import BaseProvider from "@src/core/base/Provider";
+import LoggerService from "@src/core/domains/logger/services/LoggerService";
 import { App } from "@src/core/services/App";
-
-import LoggerService from "../services/LoggerService";
 
 class LoggerProvider extends BaseProvider {
 

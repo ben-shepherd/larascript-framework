@@ -252,7 +252,7 @@ export default class ExpressService extends Service<IExpressConfig> implements I
             }
         }
 
-        console.log(str)
+        App.container('logger').info(str)
     }
 
 }

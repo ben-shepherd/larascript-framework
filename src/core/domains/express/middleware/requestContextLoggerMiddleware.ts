@@ -14,8 +14,8 @@ const requestContextLoggerMiddleware = () => (req: BaseRequest, res: Response, n
     }
 
     res.once('finish', () => {        
-        console.log('requestContext: ', App.container('requestContext').getRequestContext())
-        console.log('ipContext: ', App.container('requestContext').getIpContext())
+        App.container('logger').info('requestContext: ', App.container('requestContext').getRequestContext())
+        App.container('logger').info('ipContext: ', App.container('requestContext').getIpContext())
     })
 
     next()

@@ -1,3 +1,4 @@
+import { App } from "@src/core/services/App"
 import fs from "fs"
 import path from "path"
 
@@ -17,7 +18,7 @@ const extractDefaultMongoDBCredentials = () => {
         }
     }
     catch (err) {
-        console.error(err)
+        App.container('logger').error(err)
     }
 
     return null;
@@ -40,7 +41,7 @@ const extractDefaultPostgresCredentials = () => {
         }
     }
     catch (err) {
-        console.error(err)
+        App.container('logger').error(err)
     }
 
     return null;

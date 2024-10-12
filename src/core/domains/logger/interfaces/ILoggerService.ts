@@ -10,4 +10,5 @@ export interface ILoggerService
     error(...args: any[]): void;
     debug(...args: any[]): void;
     verbose(...args: any[]): void;
+    console(...args: any[]): void;
 }
