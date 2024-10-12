@@ -126,7 +126,27 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      * @returns {string | undefined} The primary key value or undefined if not set.
      */
     getId(): string | undefined {
-        return this.data?.[this.primaryKey];
+        return this.data?.[this.primaryKey] as string | undefined;
+    }
+
+    /**
+     * Sets or retrieves the value of a specific attribute from the model's data.
+     * If called with a single argument, returns the value of the attribute.
+     * If called with two arguments, sets the value of the attribute.
+     * If the value is not set, returns null.
+     * 
+     * @template K Type of the attribute key.
+     * @param {K} key - The key of the attribute to retrieve or set.
+     * @param {any} [value] - The value to set for the attribute.
+     * @returns {Data[K] | null | undefined} The value of the attribute or null if not found, or undefined if setting.
+     */
+    attr<K extends keyof Data = keyof Data>(key: K, value?: unknown): Data[K] | null | undefined {
+        if(value === undefined) {
+            return this.getAttribute(key) as Data[K] ?? null;
+        }
+
+        this.setAttribute(key, value);
+        return undefined;
     }
 
     /**
@@ -148,7 +168,11 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
      * @param {any} value - The value to set for the attribute.
      * @throws {Error} If the attribute is not in the allowed fields or if a date field is set with a non-Date value.
      */
-    setAttribute<K extends keyof Data = keyof Data>(key: K, value: any): void {
+    setAttribute<K extends keyof Data = keyof Data>(key: K, value?: unknown): void {
+        if(this.data === null) {
+            this.data = {} as Data;
+        }
+
         if (!this.fields.includes(key as string)) {
             throw new Error(`Attribute ${key as string} not found in model ${this.constructor.name}`);
         }
@@ -156,7 +180,7 @@ export default abstract class Model<Data extends IModelData> extends WithObserve
             throw new Error(`Attribute '${key as string}' is a date and can only be set with a Date object in model ${this.table}`);
         }
         if (this.data) {
-            this.data[key] = value;
+            this.data[key] = value as Data[K];
         }
 
         if (Object.keys(this.observeProperties).includes(key as string)) {
