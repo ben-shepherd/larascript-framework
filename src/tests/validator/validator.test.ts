@@ -13,6 +13,7 @@ describe('test validation', () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
+                ...testAppConfig.providers,
                 new ValidationProvider()
             ]
         }, {})

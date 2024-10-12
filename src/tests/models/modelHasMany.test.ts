@@ -44,6 +44,7 @@ describe('test hasMany', () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
+                ...testAppConfig.providers,
                 new TestDatabaseProvider()
             ]
         }, {})

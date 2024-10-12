@@ -36,6 +36,7 @@ describe('test model crud', () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
+                ...testAppConfig.providers,
                 new TestDatabaseProvider()
             ]
         }, {})

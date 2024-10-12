@@ -36,6 +36,7 @@ describe('Combined DocumentManager Interface Test', () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
+                ...testAppConfig.providers,
                 new TestDatabaseProvider()
             ]
         }, {});

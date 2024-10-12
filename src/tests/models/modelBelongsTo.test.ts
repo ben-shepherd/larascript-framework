@@ -42,6 +42,7 @@ describe('test belongsTo by fetching an author from a movie', () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
+                ...testAppConfig.providers,
                 new TestDatabaseProvider()
             ]
         }, {})

@@ -26,6 +26,7 @@ describe('attempt to run app with normal appConfig', () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
+                ...testAppConfig.providers,
                 new TestConsoleProvider(),
                 new DatabaseProvider(),
                 new AuthProvider()

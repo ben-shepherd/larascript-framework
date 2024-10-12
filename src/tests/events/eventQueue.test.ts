@@ -46,6 +46,7 @@ describe('mock event service', () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
+                ...testAppConfig.providers,
                 new TestDatabaseProvider(),
                 new TestConsoleProvider(),
                 new TestEventProvider()
