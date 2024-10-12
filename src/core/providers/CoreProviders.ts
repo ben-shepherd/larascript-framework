@@ -9,6 +9,8 @@ import SetupProvider from "@src/core/domains/setup/providers/SetupProvider";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 import { IProvider } from "@src/core/interfaces/IProvider";
 
+import LoggerProvider from "../domains/logger/providers/LoggerProvider";
+
 /**
  * Core providers for the framework
  *
@@ -17,6 +19,13 @@ import { IProvider } from "@src/core/interfaces/IProvider";
  * @see {@link IProvider} for more information about providers
  */
 const CoreProviders: IProvider[] = [
+
+    /**
+     * Logger provider
+     * 
+     * Provides logging services by utilising winston
+     */
+    new LoggerProvider(),
 
     /**
      * Console provider
@@ -80,6 +89,8 @@ const CoreProviders: IProvider[] = [
      * Provides setup commands and helpers
      */
     new SetupProvider(),
+
+
 ];
 
 export default CoreProviders

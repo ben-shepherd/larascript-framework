@@ -7,6 +7,8 @@ import IExpressService from '@src/core/domains/express/interfaces/IExpressServic
 import IValidatorService from '@src/core/domains/validator/interfaces/IValidatorService';
 import readline from 'node:readline';
 
+import { ILoggerService } from '../domains/logger/interfaces/ILoggerService';
+
 export interface ICoreContainers {
     [key: string]: any;
 
@@ -57,4 +59,10 @@ export interface ICoreContainers {
      * Provided by '@src/core/domains/validator/providers/ValidatorProvider'
      */
     validate: IValidatorService;
+
+    /**
+     * Logger service
+     * Provided by '@src/core/domains/logger/providers/LoggerProvider'
+     */
+    logger: ILoggerService;
 }
