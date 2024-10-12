@@ -11,7 +11,6 @@ import { DataTypes } from 'sequelize';
 
 const tableName = 'tests';
 const connections = getTestConnectionNames()
-console.log('modelBelongsTo', connections)
 
 const createTable = async (connectionName: string) => {
     const schema = App.container('db').schema(connectionName);
@@ -54,7 +53,7 @@ describe('test belongsTo by fetching an author from a movie', () => {
     test('belongsTo', async () => {
 
         for(const connectionName of connections) {
-            console.log('[Connection]', connectionName)
+            App.container('logger').info('[Connection]', connectionName)
 
             await dropTable(connectionName)
             await createTable(connectionName)

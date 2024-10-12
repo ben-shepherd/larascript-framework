@@ -78,7 +78,7 @@ describe('attempt to run app with normal appConfig', () => {
         });
 
         if(!result.success) {
-            console.error(result.joi.error);
+            App.container('logger').error(result.joi.error);
         }
 
         expect(result.success).toBeTruthy();
@@ -94,7 +94,7 @@ describe('attempt to run app with normal appConfig', () => {
         });
 
         if(!result.success) {
-            console.error(result.joi.error);
+            App.container('logger').error(result.joi.error);
         }
 
         expect(result.success).toBeTruthy();

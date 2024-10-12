@@ -50,7 +50,7 @@ describe('test model crud', () => {
     test('CRUD', async () => {
         
         for(const connectionName of connections) {
-            console.log('[Connection]', connectionName)
+            App.container('logger').info('[Connection]', connectionName)
             App.container('db').setDefaultConnectionName(connectionName);
 
             const documentManager = App.container('db').documentManager(connectionName).table('tests');

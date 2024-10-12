@@ -1,5 +1,6 @@
 import Singleton from "@src/core/base/Singleton";
 import { SearchOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
+import { App } from "@src/core/services/App";
 import { Request } from "express";
 
 class QueryFilters extends Singleton {
@@ -33,7 +34,7 @@ class QueryFilters extends Singleton {
         }
          
         catch (err) { 
-            console.error(err)
+            App.container('logger').error(err)
         }
 
         return this;

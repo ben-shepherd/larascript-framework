@@ -102,12 +102,12 @@ class MigrationService implements IMigrationService {
         const newBatchCount = (await this.getCurrentBatchCount()) + 1;
 
         if (!migrationsDetails.length) {
-            console.log('[Migration] No migrations to run');
+            App.container('logger').info('[Migration] No migrations to run');
         }
 
         // Run the migrations for every file
         for (const migrationDetail of migrationsDetails) {
-            console.log('[Migration] up -> ' + migrationDetail.fileName);
+            App.container('logger').info('[Migration] up -> ' + migrationDetail.fileName);
 
             await this.handleFileUp(migrationDetail, newBatchCount);
         }
@@ -139,7 +139,7 @@ class MigrationService implements IMigrationService {
         });
 
         if (!results.length) {
-            console.log('[Migration] No migrations to run');
+            App.container('logger').info('[Migration] No migrations to run');
         }
 
         // Run the migrations
@@ -149,7 +149,7 @@ class MigrationService implements IMigrationService {
                 const migration = await this.fileService.getImportMigrationClass(fileName);
 
                 // Run the down method
-                console.log(`[Migration] down -> ${fileName}`);
+                App.container('logger').info(`[Migration] down -> ${fileName}`);
                 await migration.down();
 
                 // Delete the migration document
@@ -180,16 +180,16 @@ class MigrationService implements IMigrationService {
         });
 
         if (migrationDocument) {
-            console.log(`[Migration] ${fileName} already applied`);
+            App.container('logger').info(`[Migration] ${fileName} already applied`);
             return;
         }
 
         if (!migration.shouldUp()) {
-            console.log(`[Migration] Skipping (Provider mismatch) -> ${fileName}`);
+            App.container('logger').info(`[Migration] Skipping (Provider mismatch) -> ${fileName}`);
             return;
         }
 
-        console.log(`[Migration] up -> ${fileName}`);
+        App.container('logger').info(`[Migration] up -> ${fileName}`);
         await migration.up();
 
         const model = (new MigrationFactory).create({
@@ -252,10 +252,10 @@ class MigrationService implements IMigrationService {
             }
         }
         catch (err) {
-            console.log('[Migration] createSchema', err)
+            App.container('logger').info('[Migration] createSchema', err)
 
             if (err instanceof Error) {
-                console.error(err)
+                App.container('logger').error(err)
             }
         }
     }

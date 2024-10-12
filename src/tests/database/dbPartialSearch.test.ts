@@ -51,7 +51,7 @@ describe('test partial search', () => {
         for(const connectionName of connections) {
             const documentManager = App.container('db').documentManager(connectionName).table('tests') as IDocumentManager
 
-            console.log('connectionName', connectionName)
+            App.container('logger').info('connectionName', connectionName)
 
             const recordOneData = {
                 name: 'Test One',
@@ -70,7 +70,7 @@ describe('test partial search', () => {
             const recordOne = await documentManager.findOne({ filter: { name: 'Test One'} })
             const recordTwo = await documentManager.findOne({ filter: { name: 'Test Two'} })
 
-            console.log('Created two records', recordOne, recordTwo)
+            App.container('logger').info('Created two records', recordOne, recordTwo)
             
             expect(recordOne.id).toBeTruthy()
             expect(recordTwo.id).toBeTruthy()
@@ -78,17 +78,17 @@ describe('test partial search', () => {
             const recordBothPartial = await documentManager.findMany({ filter: { name: '%Test%' }, allowPartialSearch: true })
             expect(recordBothPartial.length).toEqual(2)
 
-            console.log('recordBothPartial', recordBothPartial)
+            App.container('logger').info('recordBothPartial', recordBothPartial)
 
             const recordOnePartial = await documentManager.findOne({ filter: { name: '%One' }, allowPartialSearch: true })
             expect(recordOnePartial?.id === recordOne.id).toBeTruthy()
 
-            console.log('recordOnePartial', recordOnePartial)
+            App.container('logger').info('recordOnePartial', recordOnePartial)
 
             const recordTwoPartial = await documentManager.findOne({ filter: { name: '%Two' }, allowPartialSearch: true })
             expect(recordTwoPartial?.id === recordTwo.id).toBeTruthy()
 
-            console.log('recordTwoPartial', recordTwoPartial)
+            App.container('logger').info('recordTwoPartial', recordTwoPartial)
         }
 
     

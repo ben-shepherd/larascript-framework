@@ -1,4 +1,5 @@
 import { IProvider } from "@src/core/interfaces/IProvider";
+import { App } from "@src/core/services/App";
 
 /**
  * Base class for providers
@@ -45,12 +46,7 @@ export default abstract class BaseProvider implements IProvider {
      * @param {...any[]} args - Additional arguments to log
      */
     protected log(message: string, ...args: any[]): void {
-        const str = `[Provider] ${message}`;
-        if(args.length > 0) {
-            console.log(str, ...args);
-            return;
-        }
-        console.log(`[Provider] ${message}`);
+        App.container('logger').info(message, ...args);
     }
 
     /**
