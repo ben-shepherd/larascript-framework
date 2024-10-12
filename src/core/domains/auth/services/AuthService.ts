@@ -80,10 +80,10 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * @returns 
      */
     jwt(apiToken: IApiTokenModel): string {
-        if (!apiToken?.data?.userId) {
+        if (!apiToken?.attributes?.userId) {
             throw new Error('Invalid token');
         }
-        const payload = JWTTokenFactory.create(apiToken.data?.userId?.toString(), apiToken.data?.token);
+        const payload = JWTTokenFactory.create(apiToken.attributes?.userId?.toString(), apiToken.attributes?.token);
         return createJwt(this.config.jwtSecret, payload, `${this.config.expiresInMinutes}m`);
     }
 
@@ -93,7 +93,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * @returns 
      */
     async revokeToken(apiToken: IApiTokenModel): Promise<void> {
-        if (apiToken?.data?.revokedAt) {
+        if (apiToken?.attributes?.revokedAt) {
             return;
         }
 
@@ -142,11 +142,11 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
     async attemptCredentials(email: string, password: string, scopes: string[] = []): Promise<string> {
         const user = await this.userRepository.findOneByEmail(email) as IUserModel;
 
-        if (!user?.data?.id) {
+        if (!user?.attributes?.id) {
             throw new UnauthorizedError()
         }
 
-        if (user?.data?.hashedPassword && !comparePassword(password, user.data?.hashedPassword)) {
+        if (user?.attributes?.hashedPassword && !comparePassword(password, user.attributes?.hashedPassword)) {
             throw new UnauthorizedError()
         }
 

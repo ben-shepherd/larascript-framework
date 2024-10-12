@@ -129,7 +129,7 @@ describe('attempt to run app with normal appConfig', () => {
         apiToken && await App.container('auth').revokeToken(apiToken);
 
         await apiToken?.refresh();
-        expect(apiToken?.data?.revokedAt).toBeTruthy();
+        expect(apiToken?.attributes?.revokedAt).toBeTruthy();
     })
 
 })

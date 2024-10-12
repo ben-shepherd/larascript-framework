@@ -1,10 +1,10 @@
 import Model from "@src/core/base/Model";
-import IModelData from "@src/core/interfaces/IModelData";
+import IModelAttributes from "@src/core/interfaces/IModelData";
 
 /**
  * Represents a migration stored in the database.
  */
-export interface MigrationModelData extends IModelData {
+export interface MigrationModelData extends IModelAttributes {
 
     /**
      * The name of the migration.

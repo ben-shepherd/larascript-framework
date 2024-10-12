@@ -1,6 +1,6 @@
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IBelongsTo, IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
-import IModelData from "@src/core/interfaces/IModelData";
+import IModelAttributes from "@src/core/interfaces/IModelData";
 import { App } from "@src/core/services/App";
 
 /**
@@ -18,7 +18,7 @@ export default class BelongsTo implements IBelongsTo {
      * @param options - The relationship options.
      * @returns The related document or null if not found.
      */
-    public async handle<T = IModelData>(connection: string, document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null> {
+    public async handle<T = IModelAttributes>(connection: string, document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null> {
 
         /**
          * Get the local key and foreign key from the options.

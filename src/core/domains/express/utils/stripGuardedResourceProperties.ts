@@ -1,7 +1,7 @@
 import { IModel } from "@src/core/interfaces/IModel";
-import IModelData from "@src/core/interfaces/IModelData";
+import IModelAttributes from "@src/core/interfaces/IModelData";
 
-const stripGuardedResourceProperties = (results: IModel<IModelData>[] | IModel<IModelData>) => {
+const stripGuardedResourceProperties = (results: IModel<IModelAttributes>[] | IModel<IModelAttributes>) => {
     if(!Array.isArray(results)) {
         return results.getData({ excludeGuarded: true }) as IModel
     }

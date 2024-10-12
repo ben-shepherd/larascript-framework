@@ -1,6 +1,6 @@
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IHasMany, IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
-import IModelData from "@src/core/interfaces/IModelData";
+import IModelAttributes from "@src/core/interfaces/IModelData";
 import { App } from "@src/core/services/App";
 
 /**
@@ -17,9 +17,9 @@ export default class HasMany implements IHasMany {
      * @param {string} connection - The connection name.
      * @param {IDatabaseDocument} document - The source document.
      * @param {IHasManyOptions} options - The relationship options.
-     * @returns {Promise<IModelData[]>} The related documents.
+     * @returns {Promise<IModelAttributes[]>} The related documents.
      */
-    public async handle<T = IModelData>(connection: string, document: IDatabaseDocument, options: IHasManyOptions): Promise<T[]> {
+    public async handle<T = IModelAttributes>(connection: string, document: IDatabaseDocument, options: IHasManyOptions): Promise<T[]> {
         // Get the local key, foreign key, foreign table, and filters from the options.
         const {
             localKey,

@@ -2,12 +2,12 @@ import ApiToken from "@src/app/models/auth/ApiToken";
 import UserObserver from "@src/app/observers/UserObserver";
 import Model from "@src/core/base/Model";
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
-import IModelData from "@src/core/interfaces/IModelData";
+import IModelAttributes from "@src/core/interfaces/IModelData";
 
 /**
  * User structure
  */
-export interface IUserData extends IModelData {
+export interface IUserData extends IModelAttributes {
     email: string;
     password?: string;
     hashedPassword: string;

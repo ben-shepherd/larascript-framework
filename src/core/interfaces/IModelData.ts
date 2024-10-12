@@ -6,7 +6,7 @@
  * @property {Date} [updatedAt] - The date and time the model was updated.
  * @property {any} [key] - Any other property that is not explicitly defined.
  */
-export default interface IModelData {
+export default interface IModelAttributes {
     id?: string;
     createdAt?: Date;
     updatedAt?: Date;

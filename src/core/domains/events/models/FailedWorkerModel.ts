@@ -1,13 +1,13 @@
 import Model from "@src/core/base/Model";
-import IModelData from "@src/core/interfaces/IModelData";
+import IModelAttributes from "@src/core/interfaces/IModelData";
 
 /**
  * Represents a failed worker model.
  *
  * @interface FailedWorkerModelData
- * @extends IModelData
+ * @extends IModelAttributes
  */
-export interface FailedWorkerModelData extends IModelData {
+export interface FailedWorkerModelData extends IModelAttributes {
 
     /**
      * The name of the event that failed.

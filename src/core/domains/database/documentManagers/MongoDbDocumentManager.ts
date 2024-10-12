@@ -2,6 +2,7 @@ import BaseDocumentManager from "@src/core/domains/database/base/BaseDocumentMan
 import MongoDbQueryBuilder from "@src/core/domains/database/builder/MongoDbQueryBuilder";
 import InvalidObjectId from "@src/core/domains/database/exceptions/InvalidObjectId";
 import { FindOptions, IDatabaseDocument, OrderOptions } from "@src/core/domains/database/interfaces/IDocumentManager";
+import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
 import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 import MongoDBBelongsTo from "@src/core/domains/database/relationships/mongodb/MongoDBBelongsTo";
@@ -16,6 +17,19 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
     constructor(driver: MongoDB) {
         super(driver);
         this.driver = driver;
+    }
+
+    /**
+     * Prepare a document for insertion or update.
+     * 
+     * @param document The document to prepare.
+     * @param options Optional preparation options.
+     * @returns The prepared document.
+     */
+    // eslint-disable-next-line no-unused-vars
+    prepareDocument(document: IDatabaseDocument, options?: IPrepareOptions): IDatabaseDocument {
+        // We don't need to prepare the document into a stringified JSON for MongoDB documents
+        return document
     }
 
     /**
