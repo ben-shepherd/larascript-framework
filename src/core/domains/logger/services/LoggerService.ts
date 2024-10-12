@@ -1,8 +1,6 @@
-import { EnvironmentProduction } from "@src/core/consts/Environment";
 import { ILoggerService } from "@src/core/domains/logger/interfaces/ILoggerService";
-import { App } from "@src/core/services/App";
 import path from "path";
-import winston from "winston";
+import winston, { format } from "winston";
 
 class LoggerService implements ILoggerService {
 
@@ -20,17 +18,21 @@ class LoggerService implements ILoggerService {
             return;
         }
 
+        const formatPrintf = (info: winston.Logform.TransformableInfo) => {
+            return `${info.timestamp} ${info.level}: ${info.message}`+(info.splat!==undefined?`${info.splat}`:" ")
+        }
+
         const logger = winston.createLogger({
             level:'info',
-            format: winston.format.json(),
+            format: winston.format.combine(
+                format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+                format.printf(formatPrintf)
+            ),
             transports: [
+                new winston.transports.Console({ format: winston.format.printf(formatPrintf) }),
                 new winston.transports.File({ filename: path.resolve('@src/../', 'storage/logs/larascript.log') })
             ]
         })
-
-        if(App.env() !== EnvironmentProduction) {
-            logger.add(new winston.transports.Console({ format: winston.format.simple() }));
-        }
 
         this.logger = logger
     }
