@@ -44,6 +44,9 @@ class ResourceDeleteService extends BaseResourceService {
             throw new ForbiddenResourceError()
         }
 
+        // Delete the resource item
+        await result.delete()
+
         // Send the results
         res.send({ success: true })
     }
