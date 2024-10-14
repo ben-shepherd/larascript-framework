@@ -44,6 +44,7 @@ describe('test hasMany', () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
+                ...testAppConfig.providers,
                 new TestDatabaseProvider()
             ]
         }, {})
@@ -56,7 +57,7 @@ describe('test hasMany', () => {
     
     test('hasMany', async () => {
         for(const connectionName of connections) {
-            console.log('[Connection]', connectionName)
+            App.container('logger').info('[Connection]', connectionName)
             App.container('db').setDefaultConnectionName(connectionName);
 
             await truncate(connectionName);
@@ -69,7 +70,7 @@ describe('test hasMany', () => {
             })
             await authorModel.save();
             expect(typeof authorModel.getId() === 'string').toBe(true)
-            expect(authorModel.data?.name).toEqual('John');
+            expect(authorModel.attributes?.name).toEqual('John');
     
             /**
              * Create movie model one and two
@@ -81,8 +82,8 @@ describe('test hasMany', () => {
             })
             await movieModelOne.save();
             expect(typeof movieModelOne.getId() === 'string').toBe(true);
-            expect(movieModelOne.data?.name).toEqual('Movie One');
-            expect(movieModelOne.data?.yearReleased).toEqual(1970);
+            expect(movieModelOne.attributes?.name).toEqual('Movie One');
+            expect(movieModelOne.attributes?.yearReleased).toEqual(1970);
     
             const movieModelTwo = new TestMovieModel({
                 authorId: authorModel.getId()?.toString() as string,
@@ -91,23 +92,23 @@ describe('test hasMany', () => {
             })
             await movieModelTwo.save();
             expect(typeof movieModelTwo.getId() === 'string').toBe(true);
-            expect(movieModelTwo.data?.name).toEqual('Movie Two');
-            expect(movieModelTwo.data?.yearReleased).toEqual(1980);
+            expect(movieModelTwo.attributes?.name).toEqual('Movie Two');
+            expect(movieModelTwo.attributes?.yearReleased).toEqual(1980);
     
             /**
              * Get related movies from author
              */
             const relatedMovies = await authorModel.movies();
             expect(relatedMovies.length).toEqual(2);
-            expect(relatedMovies.find((m) => m.data?.name === movieModelOne.data?.name)).toBeTruthy()
-            expect(relatedMovies.find((m) => m.data?.name === movieModelTwo.data?.name)).toBeTruthy()
+            expect(relatedMovies.find((m) => m.attributes?.name === movieModelOne.attributes?.name)).toBeTruthy()
+            expect(relatedMovies.find((m) => m.attributes?.name === movieModelTwo.attributes?.name)).toBeTruthy()
 
             /**
              * Get related movies from author from year 1970
              */
             const relatedMoviesWithFilters = await authorModel.moviesFromYear(1970);
             expect(relatedMoviesWithFilters.length).toEqual(1);
-            expect(relatedMovies.find((m) => m.data?.name === movieModelOne.data?.name)).toBeTruthy()
+            expect(relatedMovies.find((m) => m.attributes?.name === movieModelOne.attributes?.name)).toBeTruthy()
         }
     })
 });

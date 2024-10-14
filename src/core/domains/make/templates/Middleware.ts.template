@@ -23,6 +23,7 @@ export const #name# = () => async (req: BaseRequest, res: Response, next: NextFu
     catch (error) {
         if(error instanceof Error) {
             responseError(req, res, error)
+            return;
         }
     }
 };

@@ -72,7 +72,17 @@ Follow these steps to quickly set up your project:
 
    This will install all the necessary dependencies for your project.
 
-3. **Start Database Containers**:
+3. **Add write permissions to logs directory**
+
+    After installing dependencies, you need to add write permissions to the logs directory:
+
+    ```
+    chmod -R 755 /path/to/larascript/storage/logs
+    ```
+
+    This ensures that your application can write log files as needed.
+
+4. **Start Database Containers**:
 
    To set up your database environment, run:
 
@@ -82,7 +92,7 @@ Follow these steps to quickly set up your project:
 
    This command will start the necessary database containers for your project.
 
-4. **Run the setup command (optional)**:
+5. **Run the setup command (optional)**:
 
    If you want to populate the .env file with configured settings, use:
 
@@ -92,7 +102,7 @@ Follow these steps to quickly set up your project:
 
    This step is optional but can be helpful for quickly configuring your environment.
 
-5. **Run database migrations**:
+6. **Run database migrations**:
 
    To set up your database schema, run:
 
@@ -102,7 +112,7 @@ Follow these steps to quickly set up your project:
 
    This command will apply all pending database migrations.
 
-6. **Start developing**:
+7. **Start developing**:
 
    To start your development server, use:
 

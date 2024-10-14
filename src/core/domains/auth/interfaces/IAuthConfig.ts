@@ -1,6 +1,7 @@
 import IApiTokenModel from "@src/core/domains/auth/interfaces/IApitokenModel";
 import IApiTokenRepository from "@src/core/domains/auth/interfaces/IApiTokenRepository";
 import { IAuthService } from "@src/core/domains/auth/interfaces/IAuthService";
+import { IPermissionsConfig } from "@src/core/domains/auth/interfaces/IPermissionsConfig";
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import IUserRepository from "@src/core/domains/auth/interfaces/IUserRepository";
 import { IInterfaceCtor } from "@src/core/domains/validator/interfaces/IValidator";
@@ -25,6 +26,8 @@ export interface IAuthConfig {
         updateUser: IInterfaceCtor;
     };
     jwtSecret: string,
+    expiresInMinutes: number;
     enableAuthRoutes: boolean;
     enableAuthRoutesAllowCreate: boolean;
+    permissions: IPermissionsConfig;
 }

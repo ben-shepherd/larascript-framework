@@ -19,17 +19,23 @@ export default class CommandRegister extends Singleton implements ICommandRegist
     /**
      * Register multiple commands
      * @param cmds 
+     * @param config The configuration for the commands.
      */
-    registerAll(cmds: Array<ICommandConstructor>) {
+    registerAll(cmds: Array<ICommandConstructor>, config?: object) {
         cmds.forEach(cmdCtor => this.register(cmdCtor))
+        
+        if(config) {
+            const signatures = cmds.map(cmdCtor => (new cmdCtor).signature);
+            this.addCommandConfig(signatures, config);
+        }
     }
 
     /**
      * Register a new command
-     * @param key 
      * @param cmdCtor 
+     * @param config The configuration for the commands.
      */
-    register(cmdCtor: ICommandConstructor) {
+    register(cmdCtor: ICommandConstructor, config?: object) {
         const signature = (new cmdCtor).signature
 
         if(this.commands.has(signature)) {
@@ -37,6 +43,10 @@ export default class CommandRegister extends Singleton implements ICommandRegist
         }
 
         this.commands.set(signature, cmdCtor);
+
+        if(config) {
+            this.addCommandConfig([signature], config);
+        }
     }
 
     /**

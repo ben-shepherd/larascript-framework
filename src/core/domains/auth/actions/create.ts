@@ -1,6 +1,5 @@
-import Roles from '@src/core/domains/auth/enums/RolesEnum';
+import { IUserData } from '@src/app/models/auth/User';
 import UserFactory from '@src/core/domains/auth/factory/userFactory';
-import { IUserData } from '@src/core/domains/auth/interfaces/IUserModel';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';
 import responseError from '@src/core/domains/express/requests/responseError';
 import ValidationError from '@src/core/exceptions/ValidationError';
@@ -33,7 +32,10 @@ export default async (req: Request, res: Response): Promise<void> => {
             email,
             password,
             hashedPassword: hashPassword(password ?? ''),
-            roles: [Roles.USER],
+            groups: [
+                App.container('auth').config.permissions.user.defaultGroup
+            ],
+            roles: [],
             firstName,
             lastName
         });
@@ -61,6 +63,7 @@ export default async (req: Request, res: Response): Promise<void> => {
         // Handle other errors
         if (error instanceof Error) {
             responseError(req, res, error);
+            return;
         }
     }
 

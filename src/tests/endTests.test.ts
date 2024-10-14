@@ -4,6 +4,7 @@ import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
 import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
+import TestMigrationModel from '@src/tests/migration/models/TestMigrationModel';
 import { TestAuthorModel } from '@src/tests/models/models/TestAuthor';
 import TestModel from '@src/tests/models/models/TestModel';
 import { TestMovieModel } from '@src/tests/models/models/TestMovie';
@@ -16,6 +17,7 @@ describe('clean up tables', () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
+                ...testAppConfig.providers,
                 new TestDatabaseProvider()
             ]
         }, {})
@@ -28,6 +30,7 @@ describe('clean up tables', () => {
             (new TestAuthorModel(null)).table,
             (new TestWorkerModel(null)).table,
             (new TestModel(null)).table,
+            (new TestMigrationModel(null)).table
         ].filter((value, index, self) => self.indexOf(value) === index);
 
         for (const connectionName of getTestConnectionNames()) {

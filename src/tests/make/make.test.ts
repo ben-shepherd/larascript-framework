@@ -15,6 +15,7 @@ describe(`testing make commands (total ${makeTypes.length})`, () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
+                ...testAppConfig.providers,
                 new TestConsoleProvider()
             ]
         }, {})

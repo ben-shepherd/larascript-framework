@@ -1,7 +1,9 @@
 import User from '@src/app/models/auth/User';
+import ApiTokenObserver from '@src/app/observers/ApiTokenObserver';
 import Model from '@src/core/base/Model';
 import IApiTokenModel, { IApiTokenData } from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
+import Scopes from '@src/core/domains/auth/services/Scopes';
 
 /**
  * ApiToken model
@@ -20,8 +22,25 @@ class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
     public fields: string[] = [
         'userId',
         'token',
+        'scopes',
         'revokedAt'
     ]
+
+    public json: string[] = [
+        'scopes'
+    ]
+
+    /**
+     * Construct an ApiToken model from the given data.
+     *
+     * @param {IApiTokenData} [data=null] The data to construct the model from.
+     *
+     * @constructor
+     */
+    constructor(data: IApiTokenData | null = null) {
+        super(data)
+        this.observeWith(ApiTokenObserver)
+    }
 
     /**
      * Disable createdAt and updatedAt timestamps
@@ -38,6 +57,21 @@ class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
             foreignKey: 'id',
         })
     }   
+
+    /**
+     * Checks if the given scope(s) are present in the scopes of this ApiToken
+     * @param scopes The scope(s) to check
+     * @returns True if all scopes are present, false otherwise
+     */
+    public hasScope(scopes: string | string[], exactMatch: boolean = true): boolean {
+        const currentScopes = this.getAttribute('scopes') ?? [];
+       
+        if(exactMatch) {
+            return Scopes.exactMatch(currentScopes, scopes);
+        }
+
+        return Scopes.partialMatch(currentScopes, scopes);
+    }
 
 }
 

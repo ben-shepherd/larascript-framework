@@ -16,7 +16,7 @@ export class #name# extends EventListener<I#name#Data> {
      */
     handle = async (payload: I#name#Data) => {
 
-        console.log('[TestListener]', payload);
+        // Handle the logic
 
     }
 

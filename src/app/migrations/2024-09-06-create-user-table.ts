@@ -1,6 +1,6 @@
+import User from "@src/app/models/auth/User";
 import BaseMigration from "@src/core/domains/migrations/base/BaseMigration";
 import { DataTypes } from "sequelize";
-import User from "@src/app/models/auth/User";
 
 export class CreateUserModelMigration extends BaseMigration {
 
@@ -22,6 +22,7 @@ export class CreateUserModelMigration extends BaseMigration {
         await this.schema.createTable(this.table, {
             email: DataTypes.STRING,
             hashedPassword: DataTypes.STRING,
+            groups: DataTypes.JSON,
             roles: DataTypes.JSON,
             firstName: stringNullable,
             lastName: stringNullable,

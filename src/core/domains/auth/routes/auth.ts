@@ -6,7 +6,7 @@ import user from "@src/core/domains/auth/actions/user";
 import authConsts from "@src/core/domains/auth/consts/authConsts";
 import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
 import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
-import { authorize } from "@src/core/domains/express/middleware/authorize";
+import { authorizeMiddleware } from "@src/core/domains/express/middleware/authorizeMiddleware";
 import Route from "@src/core/domains/express/routing/Route";
 import RouteGroup from "@src/core/domains/express/routing/RouteGroup";
 
@@ -31,7 +31,7 @@ export const routes = (config: IAuthConfig): IRoute[] => {
             method: 'patch',
             path: '/auth/user',
             action: update,
-            middlewares: [authorize()],
+            middlewares: [authorizeMiddleware()],
             validator: config.validators.updateUser,
             validateBeforeAction: true
         }),
@@ -40,14 +40,14 @@ export const routes = (config: IAuthConfig): IRoute[] => {
             method: 'get',
             path: '/auth/user',
             action: user,
-            middlewares: [authorize()]
+            middlewares: [authorizeMiddleware()]
         }),
         Route({
             name: authConsts.routes.authRevoke,
             method: 'post',
             path: '/auth/revoke',
             action: revoke,
-            middlewares: [authorize()]
+            middlewares: [authorizeMiddleware()]
         })
     ])
 }

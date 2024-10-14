@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
-import IModelData from "@src/core/interfaces/IModelData";
+import IModelAttributes from "@src/core/interfaces/IModelData";
 
 export type IBelongsToCtor = new () => IBelongsTo;
 
 export interface IBelongsToOptions {
-    localKey: keyof IModelData;
-    foreignKey: keyof IModelData;
+    localKey: keyof IModelAttributes;
+    foreignKey: keyof IModelAttributes;
     foreignTable: string;
     filters?: object;
 }
@@ -16,5 +16,5 @@ export interface IBelongsTo {
         connection: string,
         document: IDatabaseDocument,
         options: IBelongsToOptions
-    ): Promise<IModelData | null>;
+    ): Promise<IModelAttributes | null>;
 }

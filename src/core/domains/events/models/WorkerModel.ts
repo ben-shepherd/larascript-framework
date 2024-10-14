@@ -1,7 +1,7 @@
 import Model from "@src/core/base/Model";
-import IModelData from "@src/core/interfaces/IModelData";
+import IModelAttributes from "@src/core/interfaces/IModelData";
 
-export interface WorkerModelData extends IModelData {
+export interface WorkerModelData extends IModelAttributes {
     queueName: string;
     eventName: string;
     payload: any;

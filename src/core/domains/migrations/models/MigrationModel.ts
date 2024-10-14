@@ -1,10 +1,10 @@
 import Model from "@src/core/base/Model";
-import IModelData from "@src/core/interfaces/IModelData";
+import IModelAttributes from "@src/core/interfaces/IModelData";
 
 /**
  * Represents a migration stored in the database.
  */
-export interface MigrationModelData extends IModelData {
+export interface MigrationModelData extends IModelAttributes {
 
     /**
      * The name of the migration.
@@ -32,10 +32,10 @@ export interface MigrationModelData extends IModelData {
  */
 class MigrationModel extends Model<MigrationModelData> {
 
-    /**
-     * The name of the table in the database.
-     */
-    table = 'migrations';
+    constructor(data: MigrationModelData | null, tableName = 'migrations') {
+        super(data);
+        this.table = tableName
+    }
 
     /**
      * The fields that are dates.

@@ -1,7 +1,9 @@
 import { IRouteResourceOptions } from '@src/core/domains/express/interfaces/IRouteResourceOptions';
-import responseError from '@src/core/domains/express/requests/responseError';
+import ResourceCreateService from '@src/core/domains/express/services/Resources/ResourceCreateService';
+import ResourceErrorService from '@src/core/domains/express/services/Resources/ResourceErrorService';
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { Response } from 'express';
+
 
 /**
  * Creates a new instance of the model
@@ -13,16 +15,10 @@ import { Response } from 'express';
  */
 export default async (req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void> => {
     try {
-        const modelInstance = new options.resource(req.body);
-        await modelInstance.save();
-
-        res.status(201).send(modelInstance.getData({ excludeGuarded: true }) as IRouteResourceOptions['resource'])
+        const resourceCreateService = new ResourceCreateService();
+        await resourceCreateService.handler(req, res, options);
     }
     catch (err) {
-        if (err instanceof Error) {
-            responseError(req, res, err)
-        }
-
-        res.status(500).send({ error: 'Something went wrong' })
+        ResourceErrorService.handleError(req, res, err)
     }
 }

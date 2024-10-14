@@ -45,6 +45,7 @@ describe('Combined DocumentManager Interface Test', () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
+                ...testAppConfig.providers,
                 new TestDatabaseProvider()
             ]
         }, {});
@@ -63,13 +64,13 @@ describe('Combined DocumentManager Interface Test', () => {
 
     test('All DocumentManager operations', async () => {
         for (const connectionName of connections) {
-            console.log('[Connection]', connectionName);
+            App.container('logger').info('[Connection]', connectionName);
 
             const documentManager = App.container('db').documentManager(connectionName).table(tableName);
             await documentManager.truncate();
 
             // Test insertOne and findById
-            console.log('--- Testing insertOne and findById ---');
+            App.container('logger').info('--- Testing insertOne and findById ---');
             await documentManager.truncate()
             const data = createDocument();
             const insertedDoc = await documentManager.insertOne<Data>(data);
@@ -84,7 +85,7 @@ describe('Combined DocumentManager Interface Test', () => {
             expect(nonExistentDoc).toBeNull();
 
             // Test findOne
-            console.log('--- Testing findOne ---');
+            App.container('logger').info('--- Testing findOne ---');
             await documentManager.truncate()
             const findOneData = createDocument()
             await documentManager.insertOne(findOneData)
@@ -97,7 +98,7 @@ describe('Combined DocumentManager Interface Test', () => {
             expect(nonExistentOneDoc).toBeNull();
 
             // Test insertMany and findMany
-            console.log('--- Testing insertMany and findMany ---');
+            App.container('logger').info('--- Testing insertMany and findMany ---');
             await documentManager.truncate()
             const data1 = createDocument();
             const data2 = createDocument();
@@ -113,7 +114,7 @@ describe('Combined DocumentManager Interface Test', () => {
             expect(noResults.length).toBe(0);
 
             // Test updateOne
-            console.log('--- Testing updateOne ---');
+            App.container('logger').info('--- Testing updateOne ---');
             await documentManager.truncate()
             const updateOneData = createDocument()
             const updateOneInsertedDocument = await documentManager.insertOne<Data>(updateOneData);
@@ -124,7 +125,7 @@ describe('Combined DocumentManager Interface Test', () => {
             expect(updatedDoc?.age).toEqual(updateOneData.age);
 
             // Test updateMany
-            console.log('--- Testing updateMany ---');
+            App.container('logger').info('--- Testing updateMany ---');
             await documentManager.truncate()
             await documentManager.insertMany<Data[]>([createDocument(), createDocument(), createDocument()]);
             const allDocs = await documentManager.findMany<Data[]>({});
@@ -135,7 +136,7 @@ describe('Combined DocumentManager Interface Test', () => {
             expect(updatedDocs.length).toBeGreaterThanOrEqual(3);
 
             // Test belongsTo
-            console.log('--- Testing belongsTo ---');
+            App.container('logger').info('--- Testing belongsTo ---');
             const parentDoc = await documentManager.insertOne<Data>({
                 name: 'Parent',
                 age: 50
@@ -156,7 +157,7 @@ describe('Combined DocumentManager Interface Test', () => {
             expect(relatedChildDoc?.age).toEqual(childDoc.age);
 
             // Test deleteOne
-            console.log('--- Testing deleteOne ---');
+            App.container('logger').info('--- Testing deleteOne ---');
             await documentManager.truncate()
             const docToDelete = await documentManager.insertOne<Data>(createDocument());
             await documentManager.deleteOne<Data>(docToDelete);
@@ -167,7 +168,7 @@ describe('Combined DocumentManager Interface Test', () => {
             expect(deletedDoc).toBeNull();
 
             // Test deleteMany
-            console.log('--- Testing deleteMany ---');
+            App.container('logger').info('--- Testing deleteMany ---');
             await documentManager.truncate()
             await documentManager.insertMany<Data[]>([createDocument(), createDocument(), createDocument()]);
             const docsBeforeDelete = await documentManager.findMany<Data[]>({});
@@ -177,7 +178,7 @@ describe('Combined DocumentManager Interface Test', () => {
             expect(remainingDocs.length).toBe(0);
 
             // Test truncate
-            console.log('--- Testing truncate ---');
+            App.container('logger').info('--- Testing truncate ---');
             await documentManager.insertMany<Data[]>([createDocument(), createDocument()]);
             await documentManager.truncate();
             await documentManager.findMany<Data[]>({});

@@ -6,14 +6,14 @@ import { App } from "@src/core/services/App";
  *
  * @returns {Promise<void>}
  */
-const createMongoDBSchema = async () => {
+const createMongoDBSchema = async (tableName: string = 'migrations') => {
     const db = App.container('db').provider<MongoDB>().getDb();
 
-    if ((await db.listCollections().toArray()).map(c => c.name).includes('migrations')) {
+    if ((await db.listCollections().toArray()).map(c => c.name).includes(tableName)) {
         return;
     }
 
-    await db.createCollection('migrations');
+    await db.createCollection(tableName);
 }
 
 export default createMongoDBSchema

@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
-import IModelData from "@src/core/interfaces/IModelData";
+import IModelAttributes from "@src/core/interfaces/IModelData";
 
 export type IHasManyCtor = new () => IHasMany;
 
 export interface IHasManyOptions {
-    localKey: keyof IModelData;
-    foreignKey: keyof IModelData;
+    localKey: keyof IModelAttributes;
+    foreignKey: keyof IModelAttributes;
     foreignTable: string;
     filters?: object;
 }
@@ -16,5 +16,5 @@ export interface IHasMany {
         connection: string,
         document: IDatabaseDocument,
         options: IHasManyOptions
-    ): Promise<IModelData[]>;
+    ): Promise<IModelAttributes[]>;
 }

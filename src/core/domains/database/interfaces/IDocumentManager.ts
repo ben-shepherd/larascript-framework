@@ -10,7 +10,7 @@ export interface IDatabaseDocument {
 }
 
 export type OrderOptions = Record<string, 'ASC' | 'DESC'>[];
-export type FindOptions = { filter?: object, order?: OrderOptions }
+export type FindOptions = { filter?: object, order?: OrderOptions, limit?: number, skip?: number, allowPartialSearch?: boolean, useFuzzySearch?: boolean };
 
 /**
  * Provides methods for interacting with a database table.

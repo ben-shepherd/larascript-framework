@@ -13,7 +13,7 @@ export default class EventDispatcher extends Singleton implements IEventDispatch
      * @param event 
      */
     public async dispatch<Payload extends IEventPayload>(event: IEvent<Payload>) {
-        console.log(`[EventDispatcher:dispatch] Event '${event.name}' with driver '${event.driver}'`)
+        App.container('logger').info(`[EventDispatcher:dispatch] Event '${event.name}' with driver '${event.driver}'`)
 
         const driverOptions = this.getDriverOptionsFromEvent(event)
         const driverCtor = driverOptions.driver

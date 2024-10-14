@@ -24,7 +24,7 @@ export default abstract class Observer<ReturnType = any> implements IObserver<Re
      * @param data - The data associated with the event
      * @returns The processed data, or the original data if no handler is found
      */
-    creating(data: ReturnType): ReturnType {
+    async creating(data: ReturnType): Promise<ReturnType> {
         return data;
     }
 
@@ -34,7 +34,7 @@ export default abstract class Observer<ReturnType = any> implements IObserver<Re
      * @param data - The data associated with the event
      * @returns The processed data, or the original data if no handler is found
      */
-    created(data: ReturnType): ReturnType {
+    async created(data: ReturnType): Promise<ReturnType> {
         return data;
     }
 
@@ -44,7 +44,7 @@ export default abstract class Observer<ReturnType = any> implements IObserver<Re
      * @param data - The data associated with the event
      * @returns The processed data, or the original data if no handler is found
      */
-    updating(data: ReturnType): ReturnType {
+    async updating(data: ReturnType): Promise<ReturnType> {
         return data;
     }
 
@@ -54,7 +54,7 @@ export default abstract class Observer<ReturnType = any> implements IObserver<Re
      * @param data - The data associated with the event
      * @returns The processed data, or the original data if no handler is found
      */
-    updated(data: ReturnType): ReturnType {
+    async updated(data: ReturnType): Promise<ReturnType> {
         return data;
     }
 
@@ -64,7 +64,7 @@ export default abstract class Observer<ReturnType = any> implements IObserver<Re
      * @param data - The data associated with the event
      * @returns The processed data, or the original data if no handler is found
      */
-    saving(data: ReturnType): ReturnType {
+    async saving(data: ReturnType): Promise<ReturnType> {
         return data;
     }
 
@@ -74,7 +74,7 @@ export default abstract class Observer<ReturnType = any> implements IObserver<Re
      * @param data - The data associated with the event
      * @returns The processed data, or the original data if no handler is found
      */
-    saved(data: ReturnType): ReturnType {
+    async saved(data: ReturnType): Promise<ReturnType> {
         return data;
     }
 
@@ -84,7 +84,7 @@ export default abstract class Observer<ReturnType = any> implements IObserver<Re
      * @param data - The data associated with the event
      * @returns The processed data, or the original data if no handler is found
      */
-    deleting(data: ReturnType): ReturnType {
+    async deleting(data: ReturnType): Promise<ReturnType> {
         return data;
     }
 
@@ -94,7 +94,7 @@ export default abstract class Observer<ReturnType = any> implements IObserver<Re
      * @param data - The data associated with the event
      * @returns The processed data, or the original data if no handler is found
      */
-    deleted(data: ReturnType): ReturnType {
+    async deleted(data: ReturnType): Promise<ReturnType> {
         return data;
     }
 
@@ -111,11 +111,11 @@ export default abstract class Observer<ReturnType = any> implements IObserver<Re
      * // Inside some method of a class extending Observer
      * this.data = this.on('updating', this.data);
      */
-    on(name: IObserverEvent, data: ReturnType): ReturnType {
+    async on(name: IObserverEvent, data: ReturnType): Promise<ReturnType> {
         if (this[name] && typeof this[name] === 'function') {
             // Call the method associated with the event name
             // eslint-disable-next-line no-unused-vars
-            return (this[name] as (data: ReturnType, ...args: any[]) => ReturnType)(data);
+            return await (this[name] as (data: ReturnType, ...args: any[]) => ReturnType)(data);
         }
         // If no method is found or it's not a function, return the original data
         return data;
@@ -133,7 +133,7 @@ export default abstract class Observer<ReturnType = any> implements IObserver<Re
      * // Inside some method of a class extending Observer
      * this.data = this.onCustom('onPasswordChange', this.data, optionalParameter);
      */
-    onCustom(customName: string, data: ReturnType, ...args: any[]): ReturnType {
+    async onCustom(customName: string, data: ReturnType, ...args: any[]): Promise<ReturnType> {
     // Attempt to find a method on this instance with the given custom name
         // eslint-disable-next-line no-unused-vars
         const method = this[customName as keyof this] as ((data: ReturnType, ...args: any[]) => ReturnType) | undefined;

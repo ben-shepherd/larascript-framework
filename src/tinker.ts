@@ -3,6 +3,7 @@ import 'tsconfig-paths/register';
 
 import appConfig from '@src/config/app';
 import Kernel from "@src/core/Kernel";
+import { App } from '@src/core/services/App';
 
 
 (async () => {
@@ -17,5 +18,5 @@ import Kernel from "@src/core/Kernel";
 
     // Add your tinkers below
 
-    
+    App.container('logger').info('Tinkers are ready!')
 })(); 

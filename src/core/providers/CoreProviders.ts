@@ -3,6 +3,7 @@ import ConsoleProvider from "@src/core/domains/console/providers/ConsoleProvider
 import DatabaseProvider from "@src/core/domains/database/providers/DatabaseProvider";
 import EventProvider from "@src/core/domains/events/providers/EventProvider";
 import ExpressProvider from "@src/core/domains/express/providers/ExpressProvider";
+import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
 import MakeProvider from "@src/core/domains/make/providers/MakeProvider";
 import MigrationProvider from "@src/core/domains/migrations/providers/MigrationProvider";
 import SetupProvider from "@src/core/domains/setup/providers/SetupProvider";
@@ -17,6 +18,13 @@ import { IProvider } from "@src/core/interfaces/IProvider";
  * @see {@link IProvider} for more information about providers
  */
 const CoreProviders: IProvider[] = [
+
+    /**
+     * Logger provider
+     * 
+     * Provides logging services by utilising winston
+     */
+    new LoggerProvider(),
 
     /**
      * Console provider
@@ -80,6 +88,8 @@ const CoreProviders: IProvider[] = [
      * Provides setup commands and helpers
      */
     new SetupProvider(),
+
+
 ];
 
 export default CoreProviders

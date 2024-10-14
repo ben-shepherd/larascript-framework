@@ -11,6 +11,7 @@ import DatabaseProvider from '@src/core/domains/database/providers/DatabaseProvi
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
+import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
 
 describe('attempt to run app with normal appConfig', () => {
 
@@ -25,6 +26,8 @@ describe('attempt to run app with normal appConfig', () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
+                ...testAppConfig.providers,
+                new TestConsoleProvider(),
                 new DatabaseProvider(),
                 new AuthProvider()
             ]
@@ -37,6 +40,7 @@ describe('attempt to run app with normal appConfig', () => {
             email,
             hashedPassword,
             roles: [],
+            groups: [],
             firstName: 'Tony',
             lastName: 'Stark'
         })
@@ -75,7 +79,7 @@ describe('attempt to run app with normal appConfig', () => {
         });
 
         if(!result.success) {
-            console.error(result.joi.error);
+            App.container('logger').error(result.joi.error);
         }
 
         expect(result.success).toBeTruthy();
@@ -91,7 +95,7 @@ describe('attempt to run app with normal appConfig', () => {
         });
 
         if(!result.success) {
-            console.error(result.joi.error);
+            App.container('logger').error(result.joi.error);
         }
 
         expect(result.success).toBeTruthy();
@@ -125,7 +129,7 @@ describe('attempt to run app with normal appConfig', () => {
         apiToken && await App.container('auth').revokeToken(apiToken);
 
         await apiToken?.refresh();
-        expect(apiToken?.data?.revokedAt).toBeTruthy();
+        expect(apiToken?.attributes?.revokedAt).toBeTruthy();
     })
 
 })

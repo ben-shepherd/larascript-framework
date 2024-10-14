@@ -18,6 +18,7 @@ export default async (req: IAuthorizedRequest, res: Response) => {
         // If there is an error, send the error response
         if (error instanceof Error) {
             responseError(req, res, error);
+            return;
         }
     }
 };
