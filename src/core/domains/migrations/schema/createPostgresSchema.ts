@@ -7,15 +7,15 @@ import { DataTypes } from "sequelize";
  *
  * @returns {Promise<void>}
  */
-const createPostgresSchema = async () => {
+const createPostgresSchema = async (tableName: string = 'migrations') => {
     const sequelize = App.container('db').provider<Postgres>().getSequelize();
     const queryInterface = sequelize.getQueryInterface();
 
-    if ((await queryInterface.showAllTables())?.includes('migrations')) {
+    if ((await queryInterface.showAllTables())?.includes(tableName)) {
         return;
     }
 
-    await queryInterface.createTable('migrations', {
+    await queryInterface.createTable(tableName, {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,

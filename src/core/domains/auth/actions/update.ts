@@ -1,5 +1,4 @@
-import User from '@src/app/models/auth/User';
-import { IUserData } from '@src/core/domains/auth/interfaces/IUserModel';
+import User, { IUserData } from '@src/app/models/auth/User';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';
 import responseError from '@src/core/domains/express/requests/responseError';
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
@@ -38,6 +37,7 @@ export default async (req: BaseRequest, res: Response) => {
         // If there is an error, send the error response
         if(error instanceof Error) {
             responseError(req, res, error)   
+            return;
         }
     }
 }

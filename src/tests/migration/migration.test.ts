@@ -16,6 +16,7 @@ describe('test migrations', () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
+                ...testAppConfig.providers,
                 new TestConsoleProvider(),
                 new TestDatabaseProvider(),
                 new TestMigrationProvider(),

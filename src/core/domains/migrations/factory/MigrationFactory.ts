@@ -1,4 +1,6 @@
 import MigrationModel from "@src/core/domains/migrations/models/MigrationModel";
+import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
+
 
 type Props = {
     name: string;
@@ -14,13 +16,13 @@ class MigrationFactory {
      * @param param0 
      * @returns 
      */
-    create({ name, batch, checksum, appliedAt }: Props): MigrationModel {
-        return new MigrationModel({
+    create({ name, batch, checksum, appliedAt }: Props, modelCtor: ModelConstructor = MigrationModel): IModel {
+        return new modelCtor({
             name,
             batch,
             checksum,
             appliedAt
-        })
+        });
     }
 
 }

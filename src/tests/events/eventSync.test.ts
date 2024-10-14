@@ -2,6 +2,7 @@
 import { describe } from '@jest/globals';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
+import testAppConfig from '@src/tests/config/testConfig';
 import TestSubscriber from '@src/tests/events/subscribers/TestSyncSubscriber';
 import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
 import TestEventProvider from '@src/tests/providers/TestEventProvider';
@@ -13,12 +14,12 @@ describe('mock event service', () => {
    */
     beforeAll(async () => {
         await Kernel.boot({
-            environment: 'testing',
+            ...testAppConfig,
             providers: [
+                ...testAppConfig.providers,
                 new TestConsoleProvider(),
                 new TestEventProvider()
-            ],
-            commands: []
+            ]
         }, {})
     })
 

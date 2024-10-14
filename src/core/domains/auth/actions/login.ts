@@ -38,6 +38,7 @@ export default async (req: Request, res: Response): Promise<void> => {
         // Handle other errors
         if (error instanceof Error) {
             responseError(req, res, error)
+            return;
         }
     }
 }

@@ -11,14 +11,16 @@ export interface ICommandRegister {
     /**
      * Registers a new command.
      * @param cmdCtor The command to register.
+     * @param config The configuration for the commands.
      */
-    register: (cmdCtor: ICommandConstructor)  => void;
+    register: (cmdCtor: ICommandConstructor, config?: object)  => void;
 
     /**
      * Registers multiple commands.
      * @param cmds The commands to register.
+     * @param config The configuration for the commands.
      */
-    registerAll: (cmds: Array<ICommandConstructor>) => void;
+    registerAll: (cmds: Array<ICommandConstructor>, config?: object) => void;
 
     /**
      * Adds configuration for commands.

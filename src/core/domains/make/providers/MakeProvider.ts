@@ -18,7 +18,7 @@ import { App } from "@src/core/services/App";
 export default class MakeProvider extends BaseProvider {
 
     async register(): Promise<void> {
-        console.log('[Provider] Registering MakeProvider')    
+        this.log('Registering MakeProvider')    
 
         App.container('console').register().registerAll([
             MakeCmdCommand,

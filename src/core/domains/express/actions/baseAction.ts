@@ -11,10 +11,6 @@ import { Response } from 'express';
  * @param {IAction} action The action function that will be called with the BaseRequest, Response, and options.
  * @return {(req: BaseRequest, res: Response) => Promise<void>} A new action function that calls the given action with the given options.
  */
-const ResourceAction = (options: IRouteResourceOptions, action: IAction) => {
-    return (req: BaseRequest, res: Response) => {
-        return action(req, res, options)
-    }
-}
+const baseAction = (options: IRouteResourceOptions, action: IAction) => (req: BaseRequest, res: Response) => action(req, res, options)
 
-export default ResourceAction
+export default baseAction

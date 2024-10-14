@@ -1,6 +1,6 @@
 {
   "name": "larascript-framework",
-  "version": "1.0.1",
+  "version": "1.1.1",
   "description": "A Node.js framework inspired by Laravel made with TypeScript",
   "main": "index.js",
   "scripts": {
@@ -35,6 +35,7 @@
     "sequelize": "^6.37.3",
     "sqlite3": "^5.1.7",
     "uuid": "^10.0.0",
+    "winston": "^3.15.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

@@ -26,11 +26,6 @@ class MigrationProvider extends BaseProvider {
         App.container('console').register().registerAll([
             MigrateUpCommand,
             MigrateDownCommand
-        ])
-
-        App.container('console').register().addCommandConfig([
-            (new MigrateUpCommand).signature,
-            (new MigrateDownCommand).signature
         ], this.config)
     }
 

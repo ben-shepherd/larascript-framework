@@ -33,7 +33,6 @@ export default async (req: Request, res: Response) => {
         }
     }
     catch (error) {
-        console.error(error)
         // If there is an error, send the error response
         responseError(req, res, error as Error)
         return;

@@ -1,9 +1,8 @@
 import authConfig from "@src/config/auth";
 import BaseProvider from "@src/core/base/Provider";
+import GenerateJwtSecret from "@src/core/domains/auth/commands/GenerateJWTSecret";
 import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
 import { App } from "@src/core/services/App";
-
-import GenerateJwtSecret from "../commands/GenerateJWTSecret";
 
 export default class AuthProvider extends BaseProvider {
 

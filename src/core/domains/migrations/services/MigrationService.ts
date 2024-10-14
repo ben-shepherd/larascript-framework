@@ -1,11 +1,15 @@
+import Repository from "@src/core/base/Repository";
 import MigrationFactory from "@src/core/domains/migrations/factory/MigrationFactory";
 import { IMigration } from "@src/core/domains/migrations/interfaces/IMigration";
 import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
 import { IMigrationService, IMigrationServiceOptions } from "@src/core/domains/migrations/interfaces/IMigrationService";
-import MigrationRepository from "@src/core/domains/migrations/repository/MigrationRepository";
+import MigrationModel from "@src/core/domains/migrations/models/MigrationModel";
 import createMongoDBSchema from "@src/core/domains/migrations/schema/createMongoDBSchema";
 import createPostgresSchema from "@src/core/domains/migrations/schema/createPostgresSchema";
 import MigrationFileService from "@src/core/domains/migrations/services/MigrationFilesService";
+import FileNotFoundError from "@src/core/exceptions/FileNotFoundError";
+import { ModelConstructor } from "@src/core/interfaces/IModel";
+import { IRepository } from "@src/core/interfaces/IRepository";
 import { App } from "@src/core/services/App";
 
 interface MigrationDetail {
@@ -20,20 +24,23 @@ interface MigrationDetail {
  */
 class MigrationService implements IMigrationService {
 
-    private fileService!: MigrationFileService;
+    private readonly fileService!: MigrationFileService;
 
-    private repository!: MigrationRepository;
+    private readonly repository!: IRepository;
 
     protected config!: IMigrationConfig;
+
+    protected modelCtor!: ModelConstructor;
 
     constructor(config: IMigrationConfig = {}) {
         this.config = config;
         this.fileService = new MigrationFileService(config.appMigrationsDir);
-        this.repository = new MigrationRepository();
+        this.modelCtor = config.modelCtor ?? MigrationModel;
+        this.repository = new Repository(this.modelCtor);
     }
 
     async boot() {
-    // Create the migrations schema
+        // Create the migrations schema
         await this.createSchema();
     }
 
@@ -45,19 +52,26 @@ class MigrationService implements IMigrationService {
         const result: MigrationDetail[] = [];
 
         const migrationFileNames = this.fileService.getMigrationFileNames();
-        
-        for(const fileName of migrationFileNames) {
-            const migration = await this.fileService.getImportMigrationClass(fileName);
 
-            if(filterByFileName && fileName !== filterByFileName) {
-                continue;
+        for (const fileName of migrationFileNames) {
+            try {
+                const migration = await this.fileService.getImportMigrationClass(fileName);
+
+                if (filterByFileName && fileName !== filterByFileName) {
+                    continue;
+                }
+
+                if (group && migration.group !== group) {
+                    continue;
+                }
+
+                result.push({ fileName, migration });
             }
-
-            if(group && migration.group !== group) {
-                continue;
+            catch (err) {
+                if (err instanceof FileNotFoundError) {
+                    continue;
+                }
             }
-
-            result.push({fileName, migration});
         }
 
         return result;
@@ -77,7 +91,7 @@ class MigrationService implements IMigrationService {
             const aDate = this.fileService.parseDate(a.fileName);
             const bDate = this.fileService.parseDate(b.fileName);
 
-            if(!aDate || !bDate) {
+            if (!aDate || !bDate) {
                 return 0;
             }
 
@@ -87,14 +101,14 @@ class MigrationService implements IMigrationService {
         // Get the current batch count
         const newBatchCount = (await this.getCurrentBatchCount()) + 1;
 
-        if(!migrationsDetails.length) {
-            console.log('[Migration] No migrations to run');
+        if (!migrationsDetails.length) {
+            App.container('logger').info('[Migration] No migrations to run');
         }
 
         // Run the migrations for every file
         for (const migrationDetail of migrationsDetails) {
-            console.log('[Migration] up -> ' + migrationDetail.fileName);
-            
+            App.container('logger').info('[Migration] up -> ' + migrationDetail.fileName);
+
             await this.handleFileUp(migrationDetail, newBatchCount);
         }
     }
@@ -104,7 +118,7 @@ class MigrationService implements IMigrationService {
      */
     async down({ batch }: Pick<IMigrationServiceOptions, 'batch'>): Promise<void> {
         // Get the current batch count
-        let batchCount = typeof batch !== 'undefined' ? batch : await this.getCurrentBatchCount();    
+        let batchCount = typeof batch !== 'undefined' ? batch : await this.getCurrentBatchCount();
         batchCount = isNaN(batchCount) ? 1 : batchCount;
 
         // Get the migration results
@@ -117,28 +131,35 @@ class MigrationService implements IMigrationService {
             const aDate = a.getAttribute('appliedAt') as Date;
             const bDate = b.getAttribute('appliedAt') as Date;
 
-            if(!aDate || !bDate) {
+            if (!aDate || !bDate) {
                 return 0;
             }
 
             return aDate.getTime() - bDate.getTime();
         });
 
-        if(!results.length) {
-            console.log('[Migration] No migrations to run');
+        if (!results.length) {
+            App.container('logger').info('[Migration] No migrations to run');
         }
 
         // Run the migrations
-        for(const result of results) {
-            const fileName = result.getAttribute('name') as string;
-            const migration = await this.fileService.getImportMigrationClass(fileName);
+        for (const result of results) {
+            try {
+                const fileName = result.getAttribute('name') as string;
+                const migration = await this.fileService.getImportMigrationClass(fileName);
 
-            // Run the down method
-            console.log(`[Migration] down -> ${fileName}`);
-            await migration.down();
+                // Run the down method
+                App.container('logger').info(`[Migration] down -> ${fileName}`);
+                await migration.down();
 
-            // Delete the migration document
-            await result.delete();
+                // Delete the migration document
+                await result.delete();
+            }
+            catch (err) {
+                if (err instanceof FileNotFoundError) {
+                    continue;
+                }
+            }
         }
     }
 
@@ -159,16 +180,16 @@ class MigrationService implements IMigrationService {
         });
 
         if (migrationDocument) {
-            console.log(`[Migration] ${fileName} already applied`);
+            App.container('logger').info(`[Migration] ${fileName} already applied`);
             return;
         }
 
-        if(!migration.shouldUp()) {
-            console.log(`[Migration] Skipping (Provider mismatch) -> ${fileName}`);
+        if (!migration.shouldUp()) {
+            App.container('logger').info(`[Migration] Skipping (Provider mismatch) -> ${fileName}`);
             return;
         }
 
-        console.log(`[Migration] up -> ${fileName}`);
+        App.container('logger').info(`[Migration] up -> ${fileName}`);
         await migration.up();
 
         const model = (new MigrationFactory).create({
@@ -176,7 +197,7 @@ class MigrationService implements IMigrationService {
             batch: newBatchCount,
             checksum: fileChecksum,
             appliedAt: new Date(),
-        })
+        }, this.modelCtor)
         await model.save();
     }
 
@@ -203,7 +224,7 @@ class MigrationService implements IMigrationService {
      * @returns 
      */
     protected async getMigrationResults(filters?: object) {
-        return await (new MigrationRepository).findMany({
+        return await this.repository.findMany({
             ...(filters ?? {})
         })
     }
@@ -214,26 +235,27 @@ class MigrationService implements IMigrationService {
      */
     protected async createSchema(): Promise<void> {
         try {
+            const tableName = (new this.modelCtor).table
 
             /**
              * Handle MongoDB driver
              */
             if (App.container('db').isProvider('mongodb')) {
-                await createMongoDBSchema();
+                await createMongoDBSchema(tableName);
             }
 
             /**
              * Handle Postgres driver
              */
-            if(App.container('db').isProvider('postgres')) {
-                await createPostgresSchema();
+            if (App.container('db').isProvider('postgres')) {
+                await createPostgresSchema(tableName);
             }
         }
         catch (err) {
-            console.log('[Migration] createSchema', err)
+            App.container('logger').info('[Migration] createSchema', err)
 
             if (err instanceof Error) {
-                console.error(err)
+                App.container('logger').error(err)
             }
         }
     }

@@ -1,9 +1,7 @@
-import Repository from '@src/core/base/Repository';
 import { IRouteResourceOptions } from '@src/core/domains/express/interfaces/IRouteResourceOptions';
-import responseError from '@src/core/domains/express/requests/responseError';
+import ResourceErrorService from '@src/core/domains/express/services/Resources/ResourceErrorService';
+import ResourceUpdateService from '@src/core/domains/express/services/Resources/ResourceUpdateService';
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
-import ModelNotFound from '@src/core/exceptions/ModelNotFound';
-import { IModel } from '@src/core/interfaces/IModel';
 import { Response } from 'express';
 
 /**
@@ -16,27 +14,10 @@ import { Response } from 'express';
  */
 export default async (req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void> => {
     try {
-        const repository = new Repository(options.resource);
-
-        const result = await repository.findById(req.params?.id);
-
-        if (!result) {
-            throw new ModelNotFound('Resource not found');
-        }
-
-        result.fill(req.body);
-        await result.save();
-
-        res.send(result?.getData({ excludeGuarded: true }) as IModel);
+        const resourceUpdateService = new ResourceUpdateService();
+        await resourceUpdateService.handler(req, res, options);
     }
     catch (err) {
-        if(err instanceof ModelNotFound) {
-            responseError(req, res, err, 404)
-        }
-        if (err instanceof Error) {
-            responseError(req, res, err)
-        }
-
-        res.status(500).send({ error: 'Something went wrong' })
+        ResourceErrorService.handleError(req, res, err)
     }
 }

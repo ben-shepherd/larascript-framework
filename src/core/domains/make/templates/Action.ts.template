@@ -16,6 +16,7 @@ export const #name# = (req: BaseRequest, res: Response) => {
     catch (error) {
         if(error instanceof Error) {
             responseError(req, res, error)   
+            return;
         }
     }
 }

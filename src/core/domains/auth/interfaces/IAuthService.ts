@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import IApiTokenModel from "@src/core/domains/auth/interfaces/IApitokenModel";
 import IApiTokenRepository from "@src/core/domains/auth/interfaces/IApiTokenRepository";
+import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import IUserRepository from "@src/core/domains/auth/interfaces/IUserRepository";
 import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
@@ -22,7 +23,7 @@ export interface IAuthService extends IService {
      * @type {any}
      * @memberof IAuthService
      */
-    config: any;
+    config: IAuthConfig;
 
     /**
      * The user repository
@@ -56,7 +57,7 @@ export interface IAuthService extends IService {
      * @returns {Promise<string>} The JWT token
      * @memberof IAuthService
      */
-    createJwtFromUser: (user: IUserModel) => Promise<string>;
+    createJwtFromUser: (user: IUserModel, scopes?: string[]) => Promise<string>;
 
     /**
      * Creates a new ApiToken model from the User
@@ -65,7 +66,7 @@ export interface IAuthService extends IService {
      * @returns {Promise<IApiTokenModel>} The new ApiToken model
      * @memberof IAuthService
      */
-    createApiTokenFromUser: (user: IUserModel) => Promise<IApiTokenModel>;
+    createApiTokenFromUser: (user: IUserModel, scopes?: string[]) => Promise<IApiTokenModel>;
 
     /**
      * Revokes a token.
@@ -84,7 +85,7 @@ export interface IAuthService extends IService {
      * @returns {Promise<string>} The JWT token
      * @memberof IAuthService
      */
-    attemptCredentials: (email: string, password: string) => Promise<string>;
+    attemptCredentials: (email: string, password: string, scopes?: string[]) => Promise<string>;
 
     /**
      * Generates a JWT.

@@ -9,7 +9,7 @@ import IModelData from '@src/core/interfaces/IModelData';
  * bar: number;
  * baz: boolean;
  */
-interface I#name#Data extends IModelData {
+export interface I#name#Data extends IModelData {
     
 }
 

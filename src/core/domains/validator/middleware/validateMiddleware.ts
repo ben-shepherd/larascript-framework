@@ -18,7 +18,13 @@ export const validateMiddleware = ({validator, validateBeforeAction}: ValidatorM
         req.validator = validator;
 
         if(validateBeforeAction) {
-            const result = await validator.validate(req.body);
+            const result = await validator.validate(
+                req.body,
+                { 
+                    stripUnknown: true,
+                    ...validator.getJoiOptions() 
+                }
+            );
 
             if(!result.success) {
                 res.send({
@@ -34,6 +40,7 @@ export const validateMiddleware = ({validator, validateBeforeAction}: ValidatorM
     catch (error) {
         if(error instanceof Error) {
             responseError(req, res, error)
+            return;
         }
     }
 };

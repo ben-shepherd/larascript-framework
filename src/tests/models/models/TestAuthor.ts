@@ -1,8 +1,8 @@
 import Model from "@src/core/base/Model";
-import IModelData from "@src/core/interfaces/IModelData";
+import IModelAttributes from "@src/core/interfaces/IModelData";
 import { TestMovieModel } from "@src/tests/models/models/TestMovie";
 
-export interface TestAuthorModelData extends IModelData {
+export interface TestAuthorModelData extends IModelAttributes {
     name: string
 }
 export class TestAuthorModel extends Model<TestAuthorModelData> {

@@ -4,6 +4,7 @@ import appConfig from '@src/config/app';
 import CommandNotFoundException from '@src/core/domains/console/exceptions/CommandNotFoundException';
 import CommandBootService from '@src/core/domains/console/service/CommandBootService';
 import Kernel, { KernelOptions } from '@src/core/Kernel';
+import { App } from '@src/core/services/App';
 
 (async () => {
     try {
@@ -16,7 +17,7 @@ import Kernel, { KernelOptions } from '@src/core/Kernel';
          */
         await Kernel.boot(appConfig, options);
 
-        console.log('[App]: Started');
+        App.container('logger').info('[App]: Started');
 
         /**
          * Execute commands
@@ -31,7 +32,7 @@ import Kernel, { KernelOptions } from '@src/core/Kernel';
             return;
         }
 
-        console.error('[App]: Failed to start', err);
+        App.container('logger').error('[App]: Failed to start', err);
         throw err;
     }
 })();

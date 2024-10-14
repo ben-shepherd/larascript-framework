@@ -14,6 +14,7 @@ describe('attempt to connect to MongoDB database', () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
+                ...testAppConfig.providers,
                 new DatabaseProvider()
             ]
         }, {})

@@ -1,4 +1,5 @@
 
+import { EnvironmentProduction } from '@src/core/consts/Environment';
 import PostgresDocumentManager from '@src/core/domains/database/documentManagers/PostgresDocumentManager';
 import InvalidSequelize from '@src/core/domains/database/exceptions/InvalidSequelize';
 import { IDatabaseGenericConnectionConfig } from '@src/core/domains/database/interfaces/IDatabaseGenericConnectionConfig';
@@ -6,6 +7,7 @@ import { IDatabaseProvider } from '@src/core/domains/database/interfaces/IDataba
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import { IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
 import PostgresSchema from '@src/core/domains/database/schema/PostgresSchema';
+import { App } from '@src/core/services/App';
 import pg from 'pg';
 import { QueryInterface, Sequelize } from 'sequelize';
 import { Options, Options as SequelizeOptions } from 'sequelize/types/sequelize';
@@ -48,6 +50,7 @@ export default class Postgres implements IDatabaseProvider {
      */
     async connect(): Promise<void> {
         this.sequelize = new Sequelize(this.config.uri, { 
+            logging: App.env() !== EnvironmentProduction,
             ...this.config.options, 
             ...this.overrideConfig
         })

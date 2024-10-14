@@ -1,7 +1,7 @@
-import Repository from '@src/core/base/Repository';
 import { IRouteResourceOptions } from '@src/core/domains/express/interfaces/IRouteResourceOptions';
+import ResourceAllService from '@src/core/domains/express/services/Resources/ResourceAllService';
+import ResourceErrorService from '@src/core/domains/express/services/Resources/ResourceErrorService';
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
-import { IModel } from '@src/core/interfaces/IModel';
 import { Response } from 'express';
 
 /**
@@ -13,11 +13,11 @@ import { Response } from 'express';
  * @returns {Promise<void>}
  */
 export default async (req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void> => {
-    
-    const repository = new Repository(options.resource);
-
-    let results = await repository.findMany();
-    results = results.map(result => result.getData({ excludeGuarded : true }) as IModel);
-
-    res.send(results)
+    try {
+        const resourceAllService = new ResourceAllService();
+        await resourceAllService.handler(req, res, options);
+    }
+    catch (err) {
+        ResourceErrorService.handleError(req, res, err)
+    }
 }

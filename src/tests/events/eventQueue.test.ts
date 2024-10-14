@@ -46,6 +46,7 @@ describe('mock event service', () => {
         await Kernel.boot({
             ...testAppConfig,
             providers: [
+                ...testAppConfig.providers,
                 new TestDatabaseProvider(),
                 new TestConsoleProvider(),
                 new TestEventProvider()
@@ -75,7 +76,7 @@ describe('mock event service', () => {
         expect(movie?.getAttribute('name')).toBe(movieName);
 
         await movie?.delete();
-        expect(movie?.data).toBeNull();
+        expect(movie?.attributes).toBeNull();
     });
 
 
