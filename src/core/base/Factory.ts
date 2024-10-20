@@ -1,5 +1,9 @@
-import IFactory from "@src/core/interfaces/IFactory";
+import { faker } from "@faker-js/faker";
 import { ICtor } from "@src/core/interfaces/ICtor";
+import IFactory from "@src/core/interfaces/IFactory";
+
+import { IModel } from "../interfaces/IModel";
+import IModelAttributes from "../interfaces/IModelData";
 
 /**
  * Abstract base class for factories that create instances of a specific model.
@@ -7,7 +11,12 @@ import { ICtor } from "@src/core/interfaces/ICtor";
  * @template Model The type of model to create.
  * @template Data The type of data to pass to the model constructor.
  */
-export default abstract class Factory<Model, Data> implements IFactory {
+export default abstract class Factory<Model extends IModel = IModel> implements IFactory {
+
+    /**
+     * The faker instance to use.
+     */
+    protected faker = faker;
 
     /**
      * The constructor of the model to create.
@@ -29,7 +38,7 @@ export default abstract class Factory<Model, Data> implements IFactory {
      * @param data The data to pass to the model constructor.
      * @returns A new instance of the model.
      */
-    create(data: Data): Model {
+    createWithData<Data extends IModelAttributes = IModelAttributes>(data: Data | null = null): Model {
         return new this.modelCtor(data)
     }
 

@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@eslint/compat": "^1.1.1",
+    "@faker-js/faker": "^9.0.3",
     "@jest/test-sequencer": "^29.7.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/body-parser": "^1.19.5",

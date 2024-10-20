@@ -7,7 +7,7 @@ import Factory from '@src/core/base/Factory';
  * @class UserFactory
  * @extends {Factory<User, IUserData>}
  */
-export default class UserFactory extends Factory<User, IUserData> {
+export default class UserFactory extends Factory<User> {
 
     /**
      * Constructor
