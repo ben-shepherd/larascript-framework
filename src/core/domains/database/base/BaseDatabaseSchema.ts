@@ -49,6 +49,11 @@ abstract class BaseDatabaseSchema<Provider extends IDatabaseProvider = IDatabase
      */
     abstract tableExists(name: string): Promise<boolean>;
 
+    /**
+     * Abstract method to drop all tables in the database
+     */
+    abstract dropAllTables(): Promise<void>;
+
 }
 
 export default BaseDatabaseSchema
