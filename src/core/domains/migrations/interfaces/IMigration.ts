@@ -1,3 +1,8 @@
+/**
+ * The type of migration
+ */
+export type MigrationType = 'schema' | 'seeder';
+
 export interface IMigration {
 
     /**
@@ -9,6 +14,11 @@ export interface IMigration {
      * Specify the group this migration belongs to
      */
     group?: string;
+
+    /**
+     * Specify the type of migration
+     */
+    migrationType: 'schema' | 'seeder';
 
     /**
      * Run the migrations up

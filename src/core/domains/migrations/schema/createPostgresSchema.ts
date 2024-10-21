@@ -34,6 +34,10 @@ const createPostgresSchema = async (tableName: string = 'migrations') => {
             type: 'VARCHAR',
             allowNull: false
         },
+        type: {
+            type: 'VARCHAR',
+            allowNull: false
+        },
         appliedAt: {
             type: 'TIMESTAMPTZ',
             allowNull: false

@@ -1,11 +1,10 @@
-import BaseCommand from "@src/core/domains/console/base/BaseCommand";
-import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
-import MigrationService from "@src/core/domains/migrations/services/MigrationService";
+
+import BaseMigrationCommand from "../base/BaseMigrationCommand";
 
 /**
  * MigrateUpCommand class handles running up migrations
  */
-class MigrateUpCommand extends BaseCommand {
+class MigrateUpCommand extends BaseMigrationCommand {
 
     /**
      * The signature of the command
@@ -14,15 +13,6 @@ class MigrateUpCommand extends BaseCommand {
 
     description = 'Run up migrations';
 
-    /**
-     * Constructor
-     * @param config
-     */
-    constructor(config: IMigrationConfig = {}) {
-        super(config);
-        // Allow for configurable keepProcessAlive for testing purposes
-        this.keepProcessAlive = config?.keepProcessAlive ?? this.keepProcessAlive;
-    }
 
     /**
      * Execute the command
@@ -33,9 +23,9 @@ class MigrateUpCommand extends BaseCommand {
         const group = this.getArguementByKey('group')?.value;
 
         // Run the migrations
-        const service = new MigrationService(this.config);
-        await service.boot();
-        await service.up({ filterByFileName: file, group });
+        const schemaMigrationService = this.getSchemaMigrationService();
+        await schemaMigrationService.boot();
+        await schemaMigrationService.up({ filterByFileName: file, group: group });
     }
 
 }

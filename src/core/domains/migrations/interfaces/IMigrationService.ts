@@ -1,3 +1,5 @@
+import { MigrationType } from "./IMigration";
+
 /* eslint-disable no-unused-vars */
 export interface IMigrationServiceOptions {
     filterByFileName?: string
@@ -6,6 +8,8 @@ export interface IMigrationServiceOptions {
 }
 
 export interface IMigrationService {
+    boot(): Promise<void>;
     up(options: IMigrationServiceOptions): Promise<void>;
     down(options: IMigrationServiceOptions): Promise<void>;
+    getMigrationType(): MigrationType;
 }

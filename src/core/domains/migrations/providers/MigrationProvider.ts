@@ -4,6 +4,8 @@ import MigrateUpCommand from "@src/core/domains/migrations/commands/MigrateUpCom
 import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
 import { App } from "@src/core/services/App";
 
+import MigrateFreshCommand from "../commands/MigrateFreshCommand";
+
 /**
  * MigrationProvider class handles all migration related tasks
  */
@@ -13,7 +15,8 @@ class MigrationProvider extends BaseProvider {
      * The default configuration for the migrations
      */
     protected config: IMigrationConfig = {
-        appMigrationsDir: '@src/../src/app/migrations',
+        schemaMigrationDir: '@src/../src/app/migrations',
+        seederMigrationDir: '@src/../src/app/seeders',
     };
     
     /**
@@ -25,7 +28,8 @@ class MigrationProvider extends BaseProvider {
 
         App.container('console').register().registerAll([
             MigrateUpCommand,
-            MigrateDownCommand
+            MigrateDownCommand,
+            MigrateFreshCommand
         ], this.config)
     }
 
