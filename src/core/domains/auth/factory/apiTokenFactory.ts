@@ -1,16 +1,13 @@
 import ApiToken from '@src/app/models/auth/ApiToken'
 import Factory from '@src/core/base/Factory'
-import IApiTokenModel, { IApiTokenData } from '@src/core/domains/auth/interfaces/IApitokenModel'
+import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel'
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel'
 import tokenFactory from '@src/core/domains/auth/utils/generateToken'
 
 /**
  * Factory for creating ApiToken models.
- *
- * @class ApiTokenFactory
- * @extends {Factory<IApiTokenModel, IApiTokenData>}
  */
-class ApiTokenFactory extends Factory<IApiTokenModel, IApiTokenData> {
+class ApiTokenFactory extends Factory<IApiTokenModel> {
 
     constructor() {
         super(ApiToken)
@@ -23,7 +20,7 @@ class ApiTokenFactory extends Factory<IApiTokenModel, IApiTokenData> {
      * @returns {IApiTokenModel}
      */
     createFromUser(user: IUserModel, scopes: string[] = []): IApiTokenModel {
-        return new this.modelCtor({
+        return this.createWithData({
             userId: user.attributes?.id,
             token: tokenFactory(),
             scopes: scopes,
