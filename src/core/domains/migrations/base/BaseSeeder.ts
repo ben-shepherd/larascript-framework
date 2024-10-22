@@ -12,6 +12,15 @@ abstract class BaseSeeder extends BaseMigration {
      */
     migrationType = 'seeder' as MigrationType;
 
+    /**
+     * Optional down method.
+     *
+     * @return {Promise<void>}
+     */
+    down(): Promise<void> {
+        return Promise.resolve();
+    }
+
 }
 
 export default BaseSeeder;

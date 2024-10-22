@@ -88,8 +88,8 @@ class MigrationService implements IMigrationService {
                 result.push({ fileName, migration });
             }
             catch (err) {
-                if (err instanceof FileNotFoundError) {
-                    continue;
+                if (err instanceof FileNotFoundError === false) {
+                    throw err;
                 }
             }
         }
@@ -143,6 +143,7 @@ class MigrationService implements IMigrationService {
 
         // Get the migration results
         const results = await this.getMigrationResults({
+            type: this.migrationType,
             batch: batchCount
         });
 

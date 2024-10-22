@@ -5,6 +5,7 @@ import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigra
 import { App } from "@src/core/services/App";
 
 import MigrateFreshCommand from "../commands/MigrateFreshCommand";
+import SeedCommand from "../commands/SeedCommand";
 
 /**
  * MigrationProvider class handles all migration related tasks
@@ -29,7 +30,8 @@ class MigrationProvider extends BaseProvider {
         App.container('console').register().registerAll([
             MigrateUpCommand,
             MigrateDownCommand,
-            MigrateFreshCommand
+            MigrateFreshCommand,
+            SeedCommand,
         ], this.config)
     }
 
