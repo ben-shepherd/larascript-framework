@@ -1,7 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import IFactory from "@src/core/interfaces/IFactory";
-
 import { IModel } from "@src/core/interfaces/IModel";
 import IModelAttributes from "@src/core/interfaces/IModelData";
 
