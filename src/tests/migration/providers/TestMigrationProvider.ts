@@ -17,12 +17,14 @@ class TestMigrationProvider extends MigrationProvider {
          */
         const config: IMigrationConfig = {
             keepProcessAlive: true,
-            appMigrationsDir: '@src/../src/tests/migration/migrations',
+            schemaMigrationDir: '@src/../src/tests/migration/migrations',
+            seederMigrationDir: '@src/../src/tests/migration/seeders',
             modelCtor: TestMigrationModel
         }
 
         App.container('console').register().addCommandConfig([
             (new MigrateUpCommand).signature,
+            (new MigrateDownCommand).signature,
             (new MigrateDownCommand).signature
         ], config)
     }

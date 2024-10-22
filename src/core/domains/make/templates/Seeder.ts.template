@@ -1,0 +1,32 @@
+import { faker } from "@faker-js/faker";
+import hashPassword from "@src/core/domains/auth/utils/hashPassword";
+import BaseSeeder from "@src/core/domains/migrations/base/BaseSeeder";
+
+import User, { IUserData } from "../models/auth/User";
+
+export class #name# extends BaseSeeder {
+
+    async up(): Promise<void> {
+
+        // Example:
+        // for (let i = 0; i < 10; i++) {
+
+        //     const data: IUserData = {
+        //         email: faker.internet.email(),
+        //         password: faker.internet.password(),
+        //         hashedPassword: hashPassword(faker.internet.password()),
+        //         roles: ['user'],
+        //         groups: [],
+        //         firstName: faker.person.firstName(),
+        //         lastName: faker.person.lastName(),
+        //     }
+
+        //     const user = new User(data);
+        //     await user.save();
+        // }
+
+    }
+
+}
+
+export default #name#

@@ -1,6 +1,5 @@
 import Factory from "@src/core/base/Factory";
-
-import { TestMovieModel } from "../models/models/TestMovie";
+import { TestMovieModel } from "@src/tests/models/models/TestMovie";
 
 class TestMovieFactory extends Factory<TestMovieModel> {
 

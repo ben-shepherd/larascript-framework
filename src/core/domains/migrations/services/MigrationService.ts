@@ -1,6 +1,6 @@
 import Repository from "@src/core/base/Repository";
 import MigrationFactory from "@src/core/domains/migrations/factory/MigrationFactory";
-import { IMigration } from "@src/core/domains/migrations/interfaces/IMigration";
+import { IMigration, MigrationType } from "@src/core/domains/migrations/interfaces/IMigration";
 import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
 import { IMigrationService, IMigrationServiceOptions } from "@src/core/domains/migrations/interfaces/IMigrationService";
 import MigrationModel from "@src/core/domains/migrations/models/MigrationModel";
@@ -15,6 +15,11 @@ import { App } from "@src/core/services/App";
 interface MigrationDetail {
     fileName: string,
     migration: IMigration
+}
+type ConstructorProps = {
+    directory: string;
+    modelCtor?: ModelConstructor;
+    migrationType: MigrationType;
 }
 
 /**
@@ -32,16 +37,27 @@ class MigrationService implements IMigrationService {
 
     protected modelCtor!: ModelConstructor;
 
-    constructor(config: IMigrationConfig = {}) {
+    protected migrationType!: MigrationType;
+
+    constructor(config: ConstructorProps = {} as ConstructorProps) {
         this.config = config;
-        this.fileService = new MigrationFileService(config.appMigrationsDir);
+        this.fileService = new MigrationFileService(config.directory);
         this.modelCtor = config.modelCtor ?? MigrationModel;
         this.repository = new Repository(this.modelCtor);
+        this.migrationType = config.migrationType;
     }
 
     async boot() {
         // Create the migrations schema
         await this.createSchema();
+    }
+
+    /**
+     * Get the migration type of this service
+     * @returns The migration type
+     */
+    getMigrationType(): MigrationType {
+        return this.migrationType
     }
 
     /**
@@ -57,6 +73,10 @@ class MigrationService implements IMigrationService {
             try {
                 const migration = await this.fileService.getImportMigrationClass(fileName);
 
+                if(migration.migrationType !== this.migrationType) {
+                    continue;
+                }
+
                 if (filterByFileName && fileName !== filterByFileName) {
                     continue;
                 }
@@ -68,8 +88,8 @@ class MigrationService implements IMigrationService {
                 result.push({ fileName, migration });
             }
             catch (err) {
-                if (err instanceof FileNotFoundError) {
-                    continue;
+                if (err instanceof FileNotFoundError === false) {
+                    throw err;
                 }
             }
         }
@@ -123,6 +143,7 @@ class MigrationService implements IMigrationService {
 
         // Get the migration results
         const results = await this.getMigrationResults({
+            type: this.migrationType,
             batch: batchCount
         });
 
@@ -196,6 +217,7 @@ class MigrationService implements IMigrationService {
             name: fileName,
             batch: newBatchCount,
             checksum: fileChecksum,
+            type: this.migrationType,
             appliedAt: new Date(),
         }, this.modelCtor)
         await model.save();

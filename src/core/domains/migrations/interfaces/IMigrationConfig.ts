@@ -2,7 +2,8 @@ import { ModelConstructor } from "@src/core/interfaces/IModel";
 
 export interface IMigrationConfig
 {
-    appMigrationsDir?: string;
+    schemaMigrationDir?: string;
+    seederMigrationDir?: string;
     keepProcessAlive?: boolean;
     modelCtor?: ModelConstructor;
 }

@@ -1,4 +1,4 @@
-import { IMigration } from "@src/core/domains/migrations/interfaces/IMigration";
+import { IMigration, MigrationType } from "@src/core/domains/migrations/interfaces/IMigration";
 import { App } from "@src/core/services/App";
 
 /**
@@ -19,6 +19,11 @@ abstract class BaseMigration implements IMigration {
      * It handles inserting, updating, fetching, and deleting database documents.
      */
     protected readonly documentManager = App.container('db').documentManager()
+
+    /**
+     * Define the type of migration.
+     */
+    migrationType = 'schema' as MigrationType;
 
     /**
      * databaseProvider specifies which database system this migration is designed for.

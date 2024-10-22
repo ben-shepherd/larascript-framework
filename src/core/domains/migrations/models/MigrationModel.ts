@@ -22,6 +22,12 @@ export interface MigrationModelData extends IModelAttributes {
     checksum: string;
 
     /**
+     * The type of the migration. 
+     * eg. 'seeder' | 'schema'
+     */
+    type: string;
+
+    /**
      * The time when the migration was applied.
      */
     appliedAt: Date;
@@ -51,6 +57,7 @@ class MigrationModel extends Model<MigrationModelData> {
         'name',
         'batch',
         'checksum',
+        'type',
         'appliedAt'
     ]
 
