@@ -102,7 +102,7 @@ class DocumentValidator implements IDocumentValidator {
             if(document.id) {
                 const response = returnOrThrow<boolean>({
                     shouldThrow: this.throwExceptions,
-                    throwable: new InvalidDocument(`An id property was not expected but found at index ${i}`),
+                    throwable: new InvalidDocument(`An id property was NOT expected but found at index ${i}`),
                     returns: false
                 })
 
