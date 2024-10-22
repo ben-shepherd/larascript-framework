@@ -116,6 +116,15 @@ class PostgresSchema extends BaseDatabaseSchema<Postgres> {
         return await queryInterface.tableExists(tableName);
     }
 
+    /**
+     * Drop all tables in the database
+     */
+    async dropAllTables(): Promise<void> {
+        const sequelize = this.driver.getClient();
+        const queryInterface = sequelize.getQueryInterface();
+        await queryInterface.dropAllTables();
+    }
+
 }
 
 export default PostgresSchema

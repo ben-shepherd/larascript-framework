@@ -28,7 +28,7 @@ export default async (req: Request, res: Response): Promise<void> => {
         }
 
         // Create a new user
-        const user = new UserFactory().create({
+        const user = new UserFactory().createWithData({
             email,
             password,
             hashedPassword: hashPassword(password ?? ''),

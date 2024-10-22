@@ -1,4 +1,5 @@
+
 export default interface IFactory {
     // eslint-disable-next-line no-unused-vars
-    create(...args: any[]): any;
+    createWithData(...args: any[]): any;
 }

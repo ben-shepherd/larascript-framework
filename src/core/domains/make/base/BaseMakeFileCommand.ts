@@ -103,7 +103,7 @@ export default class BaseMakeFileCommand extends BaseCommand {
         const name = this.getArguementByKey('name')?.value as string;   
 
         if(this.makeFileService.existsInTargetDirectory()) {
-            throw new CommandExecutionException(`File already exists with name '${name}'`);
+            throw new CommandExecutionException(`File already exists with name '${name}', full path: ${this.makeFileService.getTargetDirFullPath()}`);
         }
 
         // Write the new file

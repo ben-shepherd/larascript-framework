@@ -33,4 +33,9 @@ export interface IDatabaseSchema {
      * @throws Error if the method is not implemented
      */
     alterTable(name: string, ...args: any[]): Promise<void>
+
+    /**
+     * Drop all tables in the database
+     */
+    dropAllTables(): Promise<void>;
 }

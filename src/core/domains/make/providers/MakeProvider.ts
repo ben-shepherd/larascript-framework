@@ -14,6 +14,7 @@ import MakeSingletonCommand from "@src/core/domains/make/commands/MakeSingletonC
 import MakeSubscriberCommand from "@src/core/domains/make/commands/MakeSubscriberCommand";
 import MakeValidatorCommand from "@src/core/domains/make/commands/MakeValidatorCommand";
 import { App } from "@src/core/services/App";
+import MakeSeederCommand from "@src/core/domains/make/commands/MakeSeederCommand";
 
 export default class MakeProvider extends BaseProvider {
 
@@ -35,6 +36,7 @@ export default class MakeProvider extends BaseProvider {
             MakeActionCommand,
             MakeValidatorCommand,
             MakeMigrationCommand,
+            MakeSeederCommand
         ])
     }
 

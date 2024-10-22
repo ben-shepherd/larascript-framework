@@ -50,6 +50,23 @@ class MongoDBSchema extends BaseDatabaseSchema {
         throw new Error("Method not implemented.");
     }
 
+    /**
+     * Drop all tables in the database
+     *
+     * @returns A promise resolving when all tables have been dropped
+     */
+    async dropAllTables(): Promise<void> {
+        const mongoClient = this.driver.getClient();
+        const db = mongoClient.db();
+
+        const collections = await db.listCollections().toArray();
+
+        for(const collection of collections) {
+            await db.dropCollection(collection.name);
+        }
+
+    }
+
 }
 
 export default MongoDBSchema

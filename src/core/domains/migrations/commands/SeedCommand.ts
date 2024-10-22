@@ -1,17 +1,14 @@
 
 import BaseMigrationCommand from "@src/core/domains/migrations/base/BaseMigrationCommand";
 
-/**
- * MigrateUpCommand class handles running up migrations
- */
-class MigrateUpCommand extends BaseMigrationCommand {
+class SeedCommand extends BaseMigrationCommand {
 
     /**
      * The signature of the command
      */
-    public signature: string = 'migrate:up';
+    public signature: string = 'db:seed';
 
-    description = 'Run up migrations';
+    description = 'Run all seeders';
 
 
     /**
@@ -23,11 +20,11 @@ class MigrateUpCommand extends BaseMigrationCommand {
         const group = this.getArguementByKey('group')?.value;
 
         // Run the migrations
-        const schemaMigrationService = this.getSchemaMigrationService();
+        const schemaMigrationService = this.getSeederMigrationService();
         await schemaMigrationService.boot();
         await schemaMigrationService.up({ filterByFileName: file, group: group });
     }
 
 }
 
-export default MigrateUpCommand
+export default SeedCommand

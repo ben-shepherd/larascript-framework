@@ -44,7 +44,7 @@ class ArgumentObserver<T extends IMakeFileArguments = IMakeFileArguments> extend
             return data
         }
 
-        if(!data.name.endsWith(options.endsWith)) { 
+        if(!data.name.toLowerCase().endsWith(options.endsWith.toLowerCase())) { 
             data.name = `${data.name}${options.endsWith}`
         }
 
