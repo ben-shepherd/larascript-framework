@@ -1,7 +1,6 @@
 
+import BaseMigrationCommand from "@src/core/domains/migrations/base/BaseMigrationCommand";
 import { App } from "@src/core/services/App";
-
-import BaseMigrationCommand from "../base/BaseMigrationCommand";
 
 /**
  * MigrateFresh class handles running fresh migrations

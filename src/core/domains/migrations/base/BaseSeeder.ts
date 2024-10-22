@@ -1,6 +1,5 @@
+import BaseMigration from "@src/core/domains/migrations/base/BaseMigration";
 import { MigrationType } from "@src/core/domains/migrations/interfaces/IMigration";
-
-import BaseMigration from "./BaseMigration";
 
 /**
  * BaseSeeder class serves as the foundation for all database seeders.

@@ -1,10 +1,9 @@
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
+import MigrationTypeEnum from "@src/core/domains/migrations/enums/MigrationTypeEnum";
+import MigrationError from "@src/core/domains/migrations/exceptions/MigrationError";
 import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
+import { IMigrationService } from "@src/core/domains/migrations/interfaces/IMigrationService";
 import MigrationService from "@src/core/domains/migrations/services/MigrationService";
-
-import MigrationTypeEnum from "../enums/MigrationTypeEnum";
-import MigrationError from "../exceptions/MigrationError";
-import { IMigrationService } from "../interfaces/IMigrationService";
 
 
 abstract class BaseMigrationCommand extends BaseCommand {

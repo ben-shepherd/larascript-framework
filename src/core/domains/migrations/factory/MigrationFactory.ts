@@ -1,7 +1,6 @@
+import { MigrationType } from "@src/core/domains/migrations/interfaces/IMigration";
 import MigrationModel from "@src/core/domains/migrations/models/MigrationModel";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
-
-import { MigrationType } from "../interfaces/IMigration";
 
 
 type Props = {

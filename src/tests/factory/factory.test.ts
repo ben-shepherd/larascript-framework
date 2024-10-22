@@ -2,9 +2,8 @@
 import { describe } from '@jest/globals';
 import Kernel from '@src/core/Kernel';
 import testAppConfig from '@src/tests/config/testConfig';
-
-import TestDatabaseProvider from '../providers/TestDatabaseProvider';
-import TestMovieFactory from './TestMovieFaker';
+import TestMovieFactory from '@src/tests/factory/TestMovieFaker';
+import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 
 describe('test migrations', () => {
 

@@ -1,5 +1,5 @@
 
-import BaseMigrationCommand from "../base/BaseMigrationCommand";
+import BaseMigrationCommand from "@src/core/domains/migrations/base/BaseMigrationCommand";
 
 class MigrateDownCommand extends BaseMigrationCommand {
 

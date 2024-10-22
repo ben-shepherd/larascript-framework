@@ -1,11 +1,10 @@
 import BaseProvider from "@src/core/base/Provider";
 import MigrateDownCommand from "@src/core/domains/migrations/commands/MigrateDownCommand";
+import MigrateFreshCommand from "@src/core/domains/migrations/commands/MigrateFreshCommand";
 import MigrateUpCommand from "@src/core/domains/migrations/commands/MigrateUpCommand";
+import SeedCommand from "@src/core/domains/migrations/commands/SeedCommand";
 import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
 import { App } from "@src/core/services/App";
-
-import MigrateFreshCommand from "../commands/MigrateFreshCommand";
-import SeedCommand from "../commands/SeedCommand";
 
 /**
  * MigrationProvider class handles all migration related tasks

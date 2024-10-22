@@ -2,8 +2,8 @@ import { faker } from "@faker-js/faker";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import IFactory from "@src/core/interfaces/IFactory";
 
-import { IModel } from "../interfaces/IModel";
-import IModelAttributes from "../interfaces/IModelData";
+import { IModel } from "@src/core/interfaces/IModel";
+import IModelAttributes from "@src/core/interfaces/IModelData";
 
 /**
  * Abstract base class for factories that create instances of a specific model.
