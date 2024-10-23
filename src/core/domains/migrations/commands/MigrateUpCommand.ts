@@ -21,6 +21,13 @@ class MigrateUpCommand extends BaseMigrationCommand {
         // Read the arguments
         const file = this.getArguementByKey('file')?.value;
         const group = this.getArguementByKey('group')?.value;
+        const keepAlive = typeof this.getArguementByKey('keep-alive')?.value === 'string';
+
+        // If this command is called with --keep-alive, then keep the process alive
+        // For example, migrate:fresh --seed will also to keep the process alive to run the seeds
+        if(keepAlive) {
+            this.keepProcessAlive = true;
+        }
 
         // Run the migrations
         const schemaMigrationService = this.getSchemaMigrationService();

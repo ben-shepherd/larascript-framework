@@ -23,6 +23,9 @@ class MigrateFreshCommand extends BaseMigrationCommand {
             return;
         }
 
+        // Check if the user wants to run seeds
+        const seed: boolean = typeof this.getArguementByKey('seed')?.value === 'string';
+
         // Get the db schema helper
         const schema = App.container('db').schema();
 
@@ -31,12 +34,16 @@ class MigrateFreshCommand extends BaseMigrationCommand {
 
         // Handle migrate:up
         const console = App.container('console');
-        await console.reader(['migrate:up']).handle();
+        await console.reader(['migrate:up','--keep-alivey']).handle();
+
+        if(seed) {
+            await console.reader(['db:seed']).handle();
+        }
     }
 
     private async confirm(): Promise<boolean> {
         this.input.writeLine('--- Confirm Action ---');
-        const answer = await this.input.askQuestion('Are you sure you want to drop all tables and run fresh migrations? (y/n)');
+        const answer = await this.input.askQuestion('Are you sure you want to drop all tables and run fresh migrations? (y/n)\n');
         return answer === 'y';
 
     }
