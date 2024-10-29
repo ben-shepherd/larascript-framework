@@ -1,6 +1,6 @@
-const roles = Object.freeze({
+const ROLES = Object.freeze({
     USER: 'user',
     ADMIN: 'admin'
 })
 
-export default roles
+export default ROLES

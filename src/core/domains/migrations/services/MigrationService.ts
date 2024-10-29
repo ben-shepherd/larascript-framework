@@ -12,6 +12,8 @@ import { ModelConstructor } from "@src/core/interfaces/IModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
 import { App } from "@src/core/services/App";
 
+import MigrationTypeEnum from "../enums/MigrationTypeEnum";
+
 interface MigrationDetail {
     fileName: string,
     migration: IMigration
@@ -39,12 +41,15 @@ class MigrationService implements IMigrationService {
 
     protected migrationType!: MigrationType;
 
+    protected emptyMigrationsMessage!: string;
+
     constructor(config: ConstructorProps = {} as ConstructorProps) {
         this.config = config;
         this.fileService = new MigrationFileService(config.directory);
         this.modelCtor = config.modelCtor ?? MigrationModel;
         this.repository = new Repository(this.modelCtor);
         this.migrationType = config.migrationType;
+        this.emptyMigrationsMessage = `[Migration] No ${this.migrationType === MigrationTypeEnum.schema ? 'migrations' : 'seeders'} to run`;
     }
 
     async boot() {
@@ -122,7 +127,7 @@ class MigrationService implements IMigrationService {
         const newBatchCount = (await this.getCurrentBatchCount()) + 1;
 
         if (!migrationsDetails.length) {
-            App.container('logger').info('[Migration] No migrations to run');
+            App.container('logger').info(this.emptyMigrationsMessage);
         }
 
         // Run the migrations for every file
@@ -160,7 +165,7 @@ class MigrationService implements IMigrationService {
         });
 
         if (!results.length) {
-            App.container('logger').info('[Migration] No migrations to run');
+            App.container('logger').info(this.emptyMigrationsMessage);
         }
 
         // Run the migrations
