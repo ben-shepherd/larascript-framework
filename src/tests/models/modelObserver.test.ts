@@ -4,10 +4,9 @@ import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
 import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
+import TestObserverModel from '@src/tests/models/models/TestObserverModel';
 import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 import { DataTypes } from 'sequelize';
-
-import TestObserverModel from '@src/tests/models/models/TestObserverModel';
 
 const connections = getTestConnectionNames()
 

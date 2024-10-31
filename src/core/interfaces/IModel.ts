@@ -4,7 +4,6 @@ import { IHasManyOptions } from "@src/core/domains/database/interfaces/relations
 import IHasObserver from "@src/core/domains/observer/interfaces/IHasObserver";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import IModelAttributes from "@src/core/interfaces/IModelData";
-
 import { IHasAttributes } from "@src/core/interfaces/concerns/IHasAttributes";
 import { IHasDatabaseConnection } from "@src/core/interfaces/concerns/IHasDatabaseConnection";
 import { IHasPrepareDocument } from "@src/core/interfaces/concerns/IHasPrepareDocument";

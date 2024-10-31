@@ -1,17 +1,16 @@
 /* eslint-disable no-unused-vars */
+import BaseModel from '@src/core/base/BaseModel';
+import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import { IDatabaseDocument, IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
 import { IBelongsToOptions } from '@src/core/domains/database/interfaces/relationships/IBelongsTo';
 import { IHasManyOptions } from '@src/core/domains/database/interfaces/relationships/IHasMany';
+import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
+import { IObserver } from '@src/core/domains/observer/interfaces/IObserver';
 import { ICtor } from '@src/core/interfaces/ICtor';
 import { GetDataOptions, IModel } from '@src/core/interfaces/IModel';
 import IModelAttributes from '@src/core/interfaces/IModelData';
 import { App } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
-
-import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
-import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
-import { IObserver } from '@src/core/domains/observer/interfaces/IObserver';
-import BaseModel from '@src/core/base/BaseModel';
  
 
 /**

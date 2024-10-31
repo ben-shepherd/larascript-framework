@@ -1,5 +1,4 @@
 import { IHasPrepareDocument } from "@src/core/interfaces/concerns/IHasPrepareDocument";
-
 import { ICtor } from "@src/core/interfaces/ICtor";
 
 const HasPrepareDocumentConcern = (Base: ICtor) => {

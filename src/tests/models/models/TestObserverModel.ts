@@ -1,6 +1,5 @@
 import Model from "@src/core/base/Model";
 import IModelAttributes from "@src/core/interfaces/IModelData";
-
 import TestObserver from "@src/tests/models/observers/TestObserver";
 
 export interface TestObserverModelData extends IModelAttributes {
