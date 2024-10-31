@@ -1,4 +1,4 @@
-import { IBroadcastEvent } from "../interfaces/IBroadcastEvent";
+import { IBroadcastEvent } from "@src/core/domains/broadcast/interfaces/IBroadcastEvent";
 
 abstract class BroadcastEvent implements IBroadcastEvent {
 

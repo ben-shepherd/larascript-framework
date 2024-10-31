@@ -12,7 +12,7 @@ import { ModelConstructor } from "@src/core/interfaces/IModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
 import { App } from "@src/core/services/App";
 
-import MigrationTypeEnum from "../enums/MigrationTypeEnum";
+import MigrationTypeEnum from "@src/core/domains/migrations/enums/MigrationTypeEnum";
 
 interface MigrationDetail {
     fileName: string,

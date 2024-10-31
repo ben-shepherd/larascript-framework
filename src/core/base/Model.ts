@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { IDatabaseDocument, IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
 import { IBelongsToOptions } from '@src/core/domains/database/interfaces/relationships/IBelongsTo';
 import { IHasManyOptions } from '@src/core/domains/database/interfaces/relationships/IHasMany';
@@ -7,8 +8,11 @@ import IModelAttributes from '@src/core/interfaces/IModelData';
 import { App } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
 
-import BaseModel from './BaseModel';
-
+import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
+import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
+import { IObserver } from '@src/core/domains/observer/interfaces/IObserver';
+import BaseModel from '@src/core/base/BaseModel';
+ 
 
 /**
  * Abstract base class for database models.
@@ -17,15 +21,9 @@ import BaseModel from './BaseModel';
  * 
  * @template Attributes Type extending IModelData, representing the structure of the model's data.
  */
-export default abstract class Model<Attributes extends IModelAttributes> extends BaseModel {
+export default abstract class Model<Attributes extends IModelAttributes> extends BaseModel implements IModel<Attributes> {
 
     public name!: string;
-
-    /**
-     * The name of the database connection to use.
-     * Defaults to the application's default connection name.
-     */
-    public connection: string = App.container('db').getDefaultConnectionName();
 
     /**
      * The primary key field name for the model.
@@ -33,12 +31,6 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
      */
     public primaryKey: string = 'id';
     
-    /**
-     * The name of the MongoDB collection associated with this model.
-     * Must be set by child classes or will be automatically generated.
-     */
-    public table!: string;
-
     /**
      * List of fields that are allowed to be set on the model.
      * Acts as a whitelist for mass assignment.
@@ -64,13 +56,6 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
     public timestamps: boolean = true;
 
     /**
-     * List of fields that should be treated as JSON.
-     * These fields will be automatically stringified when saving to the database.
-     */
-    public json: string[] = [];
-
-
-    /**
      * Constructs a new instance of the Model class.
      * 
      * @param {Attributes | null} data - Initial data to populate the model.
@@ -83,21 +68,60 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         this.original = { ...data } as Attributes;
     }
 
-    // getAttribute<K extends keyof Attributes = keyof Attributes>(key: K): Attributes[K] | null {
-    //     return super.getAttribute(key as string) as Attributes[K] ?? null;
-    // }
+    /**
+     * Declare HasDatabaseConnection concern
+     */
+    declare connection: string;
 
-    // getOriginal<K extends keyof Attributes = keyof Attributes>(key: K): Attributes[K] | null {
-    //     return super.getOriginal(key as string) as Attributes[K] ?? null;
-    // }
+    declare table: string;
 
-    // setAttribute<K extends keyof Attributes = keyof Attributes>(key: K, value: Attributes[K]) {
-    //     super.setAttribute(key as string, value);
-    // }
+    declare getDocumentManager: () => IDocumentManager;
 
-    // getDirty<K extends keyof Attributes = keyof Attributes>(): Record<keyof IModelAttributes, any> | null {
-    //     return super.getDirty() as Attributes[K] ?? null;
-    // }
+    declare getSchema: () => IDatabaseSchema;
+
+    /**
+     * Declare HasPrepareDocument concern
+     */
+    declare json: string[];
+    
+    declare prepareDocument: <T>() => T;
+
+    /**
+     * Declare HasAttributes concern
+     */
+    declare attributes: Attributes | null;
+
+    declare original: Attributes | null;
+
+    declare attr: <T extends keyof Attributes>(key: T, value?: unknown) => Attributes[T] | null | undefined;
+
+    declare getAttribute: <T extends keyof Attributes>(key: T) => Attributes[T] | null
+
+    declare getAttributes: () => Attributes | null;
+
+    declare getOriginal: <T extends keyof Attributes>(key: T) => Attributes[T] | null
+
+    declare setAttribute: <T extends keyof Attributes>(key: T, value: Attributes[T]) => Promise<void>;
+
+    declare getDirty: () => Record<keyof Attributes, any> | null;
+
+    declare isDirty: () => boolean;
+    
+    /**
+     * Delcare HasObserver concern
+     */
+    declare observer?: IObserver;
+
+    declare observe: () => void;
+
+    declare observeProperties: Record<string, string>;
+
+    declare observeWith: (observedBy: ObserveConstructor) => any;
+
+    declare observeData: <T>(name: string, data: T) => Promise<T>
+
+    declare observeDataCustom: <T>(name: keyof any, data: T) => Promise<T>
+
 
     /**
      * Sets the default table name if not explicitly defined.
@@ -115,15 +139,6 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
 
         this.table = Str.plural(Str.startLowerCase(this.table))
 
-    }
-
-    /**
-     * Gets the document manager for database operations.
-     * 
-     * @returns {IDocumentManager} The document manager instance.
-     */
-    getDocumentManager(): IDocumentManager {
-        return App.container('db').documentManager(this.connection).table(this.table);
     }
 
     /**
@@ -145,7 +160,7 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         if (!this.timestamps || !this.dates.includes(dateTimeField)) {
             return;
         }
-        super.setAttribute(dateTimeField, value);
+        this.setAttribute(dateTimeField, value as Attributes[string]);
     }
 
     /**
@@ -170,7 +185,7 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
      * @returns {Attributes | null} The model's data, potentially excluding guarded fields.
      */
     async getData(options: GetDataOptions = { excludeGuarded: true }): Promise<Attributes | null> {
-        let data = this.attributes;
+        let data = this.getAttributes();
 
         if (data && options.excludeGuarded) {
             data = Object.fromEntries(
@@ -208,18 +223,6 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         await this.getDocumentManager().updateOne(this.prepareDocument());
     }
 
-    /**
-     * Prepares the document for saving to the database.
-     * Handles JSON stringification for specified fields.
-     * 
-     * @template T The type of the prepared document.
-     * @returns {T} The prepared document.
-     */
-    prepareDocument<T>(): T {
-        return this.getDocumentManager().prepareDocument({ ...this.attributes }, {
-            jsonStringify: this.json
-        }) as T;
-    }
 
     /**
      * Saves the model to the database.

@@ -1,6 +1,5 @@
 import Observer from "@src/core/domains/observer/services/Observer";
-
-import { TestObserverModelData } from "../models/TestObserverModel";
+import { TestObserverModelData } from "@src/tests/models/models/TestObserverModel";
 
 class TestObserver extends Observer {
 
@@ -9,6 +8,7 @@ class TestObserver extends Observer {
         return data
     }
 
+    // eslint-disable-next-line no-unused-vars
     onNameChange = (data: TestObserverModelData['name']) => {
         return 'Bob'
     }

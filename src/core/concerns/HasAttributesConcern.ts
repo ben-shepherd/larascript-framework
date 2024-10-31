@@ -1,12 +1,12 @@
-import { IBroadcaster } from "../../domains/broadcast/interfaces/IBroadcaster";
-import { IHasAttributes, IHasAttributesSetAttributeOptions as SetAttributeOptions } from "../../interfaces/concerns/IHasAttributes";
-import { ICtor } from "../../interfaces/ICtor";
-import IModelAttributes from "../../interfaces/IModelData";
-import OnAttributeChangeBroadcastEvent from "./OnAttributeChangeBroadcastEvent";
-import SetAttributeBroadcastEvent, { SetAttributeBroadcastEventPayload } from "./SetAttributeBroadcastEvent";
+import { IBroadcaster } from "@src/core/domains/broadcast/interfaces/IBroadcaster";
+import OnAttributeChangeBroadcastEvent from "@src/core/events/concerns/HasAttribute/OnAttributeChangeBroadcastEvent";
+import SetAttributeBroadcastEvent, { SetAttributeBroadcastEventPayload } from "@src/core/events/concerns/HasAttribute/SetAttributeBroadcastEvent";
+import { IHasAttributes, IHasAttributesSetAttributeOptions as SetAttributeOptions } from "@src/core/interfaces/concerns/IHasAttributes";
+import { ICtor } from "@src/core/interfaces/ICtor";
+import IModelAttributes from "@src/core/interfaces/IModelData";
 
-const HasAttributes = <Attributes extends IModelAttributes>(Base: ICtor<IBroadcaster>) => {
-    return class HasAttributesMixin extends Base implements IHasAttributes {
+const HasAttributesConcern = <Attributes extends IModelAttributes>(Base: ICtor<IBroadcaster>) => {
+    return class HasAttributes extends Base implements IHasAttributes {
 
         constructor() {
             super();
@@ -99,6 +99,15 @@ const HasAttributes = <Attributes extends IModelAttributes>(Base: ICtor<IBroadca
         getAttribute<K extends keyof Attributes = keyof Attributes>(key: K): Attributes[K] | null {
             return this.attributes?.[key] ?? null;
         }
+
+        /**
+         * Retrieves the entire model's data as an object.
+         * 
+         * @returns {IModelAttributes | null} The model's data as an object, or null if no data is set.
+         */
+        getAttributes(): IModelAttributes | null {
+            return this.attributes;
+        }
     
         /**
          * Retrieves the original value of a specific attribute from the model's original data.
@@ -155,4 +164,4 @@ const HasAttributes = <Attributes extends IModelAttributes>(Base: ICtor<IBroadca
     }
 }
 
-export default HasAttributes
+export default HasAttributesConcern

@@ -1,26 +1,28 @@
 /* eslint-disable no-unused-vars */
-import IModelAttributes from "../IModelData";
+import IModelAttributes from "@src/core/interfaces/IModelData";
 
 
 export interface IHasAttributesSetAttributeOptions {
     broadcast: boolean;
 }
 
-export interface IHasAttributes {
+export interface IHasAttributes<Attributes extends IModelAttributes = IModelAttributes> {
 
-    attributes: IModelAttributes | null;
+    attributes: Attributes | null;
 
-    original: IModelAttributes | null;
+    original: Attributes | null;
 
-    attr(key: keyof IModelAttributes, value?: unknown): IModelAttributes[keyof IModelAttributes] | null | undefined;
+    attr(key: keyof Attributes, value?: unknown): Attributes[keyof Attributes] | null | undefined;
 
-    setAttribute(key: keyof IModelAttributes, value?: unknown): Promise<void>;
+    setAttribute(key: keyof Attributes, value?: unknown): Promise<void>;
 
-    getAttribute(key: keyof IModelAttributes): IModelAttributes[keyof IModelAttributes] | null
+    getAttribute(key: keyof Attributes): Attributes[keyof Attributes] | null
 
-    getOriginal(key: keyof IModelAttributes): IModelAttributes[keyof IModelAttributes] | null
+    getAttributes(...args: any[]): Attributes | null;
 
-    getDirty(): Record<keyof IModelAttributes, any> | null
+    getOriginal(key: keyof Attributes): Attributes[keyof Attributes] | null
+
+    getDirty(): Record<keyof Attributes, any> | null
 
     isDirty(): boolean;
 }

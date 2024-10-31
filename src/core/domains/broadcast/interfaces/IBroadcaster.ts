@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { IBroadcastEvent } from "./IBroadcastEvent";
+import { IBroadcastEvent } from "@src/core/domains/broadcast/interfaces/IBroadcastEvent";
 
 export type BroadcastEvent = Map<string, any[]>
 export type BroadcastCallback = (...args: any[]) => Promise<void>;

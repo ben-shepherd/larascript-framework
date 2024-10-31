@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { IObserver, IObserverEvent } from "@src/core/domains/observer/interfaces/IObserver";
 
-export type ObserveConstructor<ReturnType> = new () => IObserver<ReturnType>
+export type ObserveConstructor<ReturnType = any> = new () => IObserver<ReturnType>
 
 export default interface IHasObserver<ReturnType = any, ObserverType = IObserver<ReturnType>> {
 

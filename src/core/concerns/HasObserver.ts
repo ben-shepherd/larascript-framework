@@ -1,10 +1,10 @@
-import { IBroadcaster } from "../domains/broadcast/interfaces/IBroadcaster";
-import IHasObserver, { ObserveConstructor } from "../domains/observer/interfaces/IHasObserver";
-import { IObserver, IObserverEvent } from "../domains/observer/interfaces/IObserver";
-import { ICtor } from "../interfaces/ICtor";
-import IModelAttributes from "../interfaces/IModelData";
-import OnAttributeChangeBroadcastEvent, { OnAttributeChangeBroadcastEventPayload } from "./HasAttributes/OnAttributeChangeBroadcastEvent";
-import SetAttributeBroadcastEvent from "./HasAttributes/SetAttributeBroadcastEvent";
+import { IBroadcaster } from "@src/core/domains/broadcast/interfaces/IBroadcaster";
+import IHasObserver, { ObserveConstructor } from "@src/core/domains/observer/interfaces/IHasObserver";
+import { IObserver, IObserverEvent } from "@src/core/domains/observer/interfaces/IObserver";
+import OnAttributeChangeBroadcastEvent, { OnAttributeChangeBroadcastEventPayload } from "@src/core/events/concerns/HasAttribute/OnAttributeChangeBroadcastEvent";
+import SetAttributeBroadcastEvent from "@src/core/events/concerns/HasAttribute/SetAttributeBroadcastEvent";
+import { ICtor } from "@src/core/interfaces/ICtor";
+import IModelAttributes from "@src/core/interfaces/IModelData";
 
 const HasObserver = (Broadcaster: ICtor<IBroadcaster>) => {
     return class HasObserverMixin extends Broadcaster implements IHasObserver {

@@ -1,14 +1,17 @@
 
-import HasAttributes from '../concerns/HasAttributes/HasAttributes';
-import HasObserver from '../concerns/HasObserver';
-import Broadcaster from '../domains/broadcast/abstract/Broadcaster';
-import { ICtor } from '../interfaces/ICtor';
-import { IModel } from '../interfaces/IModel';
-import compose from '../util/compose';
+import HasAttributesConcern from '@src/core/concerns/HasAttributesConcern';
+import HasDatabaseConnectionConcern from '@src/core/concerns/HasDatabaseConnectionConcern';
+import HasObserver from '@src/core/concerns/HasObserver';
+import HasPrepareDocumentConcern from '@src/core/concerns/HasPrepareDocumentConcern';
+import Broadcaster from '@src/core/domains/broadcast/abstract/Broadcaster';
+import { ICtor } from '@src/core/interfaces/ICtor';
+import compose from '@src/core/util/compose';
 
-const BaseModel: ICtor<IModel> = compose(
+const BaseModel: ICtor = compose(
     class extends Broadcaster {},
-    HasAttributes,
+    HasDatabaseConnectionConcern,
+    HasPrepareDocumentConcern,
+    HasAttributesConcern,
     HasObserver
 )
 

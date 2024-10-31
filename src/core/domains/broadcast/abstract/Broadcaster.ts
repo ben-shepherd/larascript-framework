@@ -1,5 +1,5 @@
-import { BroadcastCallback, IBroadcastListener, IBroadcaster } from "../interfaces/IBroadcaster";
-import { IBroadcastEvent } from "../interfaces/IBroadcastEvent";
+import { BroadcastCallback, IBroadcastListener, IBroadcaster } from "@src/core/domains/broadcast/interfaces/IBroadcaster";
+import { IBroadcastEvent } from "@src/core/domains/broadcast/interfaces/IBroadcastEvent";
 
 /**
  * Abstract base class for broadcasting events and subscribing to them.

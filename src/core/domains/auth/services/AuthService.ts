@@ -83,6 +83,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
         if (!apiToken?.attributes?.userId) {
             throw new Error('Invalid token');
         }
+
         const payload = JWTTokenFactory.create(apiToken.attributes?.userId?.toString(), apiToken.attributes?.token);
         return createJwt(this.config.jwtSecret, payload, `${this.config.expiresInMinutes}m`);
     }
