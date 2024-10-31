@@ -71,7 +71,7 @@ describe('test model crud', () => {
             /**
              * Change name attribute
              */
-            createdModel.setAttribute('name', 'Jane');
+            await createdModel.setAttribute('name', 'Jane');
             await createdModel.update();
             await createdModel.refresh();
             expect(typeof createdModel.getId() === 'string').toBe(true);
@@ -94,7 +94,7 @@ describe('test model crud', () => {
              */
             await createdModel.delete();
             expect(createdModel.getId()).toBeFalsy();
-            expect(createdModel.getData()).toBeFalsy();
+            expect(await createdModel.getData()).toBeFalsy();
         }
 
     

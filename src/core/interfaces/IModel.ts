@@ -2,9 +2,11 @@
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
-import IWithObserve from "@src/core/domains/observer/interfaces/IWithObserve";
+import IHasObserver from "@src/core/domains/observer/interfaces/IHasObserver";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import IModelAttributes from "@src/core/interfaces/IModelData";
+
+import { IHasAttributes } from "./concerns/IHasAttributes";
 
 export type GetDataOptions = {excludeGuarded: boolean}
 
@@ -40,29 +42,21 @@ export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MC
  * @method belongsTo Handle "belongs to" relationship.
  * @method hasMany Handle "has many" relationship.
  */
-export interface IModel<Attributes extends IModelAttributes = IModelAttributes> extends IWithObserve {
+export interface IModel<Attributes extends IModelAttributes = IModelAttributes> extends IHasObserver, IHasAttributes {
     connection: string;
     primaryKey: string;
     table: string;
     fields: string[];
     guarded: string[];
-    attributes: Attributes | null;
     dates: string[];
     timestamps: boolean;
     json: string[];
-    observeProperties: Record<string, string>;
     prepareDocument<T = object>(): T;
     getDocumentManager(): IDocumentManager;
     getId(): string | undefined;
-    attr<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Attributes[K] | null | undefined
-    setAttribute(key: keyof Attributes, value: any): void;
-    getAttribute(key: keyof Attributes): any;
-    getOriginal<K extends keyof Attributes = keyof Attributes>(key: K): Attributes[K] | null
-    isDirty(): boolean;
-    getDirty(): Record<keyof Attributes, any> | null
-    setTimestamp(dateTimeField: string, value: Date): void;
-    fill(data: Partial<Attributes>): void;
-    getData(options: GetDataOptions): Attributes | null;
+    setTimestamp(dateTimeField: string, value: Date): Promise<void>;
+    fill(data: Partial<Attributes>): Promise<void>;
+    getData(options: GetDataOptions): Promise<Attributes | null>;
     refresh(): Promise<Attributes | null>;
     update(): Promise<void>;
     save(): Promise<void>;
