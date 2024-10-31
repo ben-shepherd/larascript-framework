@@ -51,10 +51,10 @@ describe('attempt to run app with normal appConfig', () => {
 
     afterAll(async () => {
         await testUser?.delete();
-        expect(testUser?.getData({ excludeGuarded: false })).toBeNull();
+        expect(await testUser?.getData({ excludeGuarded: false })).toBeNull();
 
         await apiToken?.delete();
-        expect(apiToken?.getData({ excludeGuarded: false })).toBeNull();  
+        expect(await apiToken?.getData({ excludeGuarded: false })).toBeNull();  
     })
 
     test('test create user validator (email already exists, validator should fail)', async () => {
