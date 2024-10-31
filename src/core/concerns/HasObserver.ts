@@ -12,7 +12,11 @@ const HasObserver = (Broadcaster: ICtor<IBroadcaster>) => {
         constructor() {
             super()
 
-            this.subscribeToBroadcastListener(this.constructor.name, OnAttributeChangeBroadcastEvent.eventName, async (payload) => await this.onAttributeChange(payload))
+            this.subscribeToBroadcastListener(
+                this.constructor.name,
+                OnAttributeChangeBroadcastEvent.eventName,
+                async (payload) => await this.onAttributeChange(payload)
+            )
         }
 
         /**

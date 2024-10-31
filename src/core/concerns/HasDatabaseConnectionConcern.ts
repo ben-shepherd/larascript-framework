@@ -1,11 +1,10 @@
-import { IBroadcaster } from "@src/core/domains/broadcast/interfaces/IBroadcaster";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IHasDatabaseConnection } from "@src/core/interfaces/concerns/IHasDatabaseConnection";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
-const HasDatabaseConnectionConcern = (Base: ICtor<IBroadcaster>) => {
+const HasDatabaseConnectionConcern = (Base: ICtor) => {
     return class HasDatabaseConnection extends Base implements IHasDatabaseConnection {
 
         /**

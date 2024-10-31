@@ -10,7 +10,12 @@ const HasAttributesConcern = <Attributes extends IModelAttributes>(Base: ICtor<I
 
         constructor() {
             super();
-            this.subscribeToBroadcastListener(this.constructor.name, SetAttributeBroadcastEvent.eventName, async (payload) => await this.onSetAttributeEvent(payload) );
+            
+            this.subscribeToBroadcastListener(
+                this.constructor.name,
+                SetAttributeBroadcastEvent.eventName,
+                async (payload) => await this.onSetAttributeEvent(payload)
+            );
         }
 
         /**
