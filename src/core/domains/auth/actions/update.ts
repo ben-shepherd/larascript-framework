@@ -18,11 +18,11 @@ export default async (req: BaseRequest, res: Response) => {
 
         // If the user provided a new password, hash it and update the user object
         if(password) {
-            user.setAttribute('hashedPassword', hashPassword(password));
+            await user.setAttribute('hashedPassword', hashPassword(password));
         }
 
         // Update the user object with the new first and last name
-        user.fill({
+        await user.fill({
             firstName,
             lastName
         });
@@ -31,7 +31,7 @@ export default async (req: BaseRequest, res: Response) => {
         await user.save();
 
         // Return the updated user data
-        res.send({ success: true, user: req.user?.getData({ excludeGuarded: true }) })
+        res.send({ success: true, user: await req.user?.getData({ excludeGuarded: true }) })
     }
     catch (error) {
         // If there is an error, send the error response

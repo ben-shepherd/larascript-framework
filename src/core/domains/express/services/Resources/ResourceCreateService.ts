@@ -56,7 +56,7 @@ class ResourceCreateService extends BaseResourceService {
         await modalInstance.save();
 
         // Send the results
-        res.status(201).send(stripGuardedResourceProperties(modalInstance))
+        res.status(201).send(await stripGuardedResourceProperties(modalInstance))
     }
       
 }

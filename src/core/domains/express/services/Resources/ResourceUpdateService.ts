@@ -45,11 +45,11 @@ class ResourceUpdateService extends BaseResourceService {
             throw new ForbiddenResourceError()
         }
 
-        result.fill(req.body);
+        await result.fill(req.body);
         await result.save();
 
         // Send the results
-        res.send(stripGuardedResourceProperties(result))
+        res.send(await stripGuardedResourceProperties(result))
     }
         
 }
