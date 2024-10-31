@@ -3,7 +3,7 @@ import { IObserver, IObserverEvent } from "@src/core/domains/observer/interfaces
 
 export type ObserveConstructor<ReturnType> = new () => IObserver<ReturnType>
 
-export default interface IWithObserve<ReturnType = any, ObserverType = IObserver<ReturnType>> {
+export default interface IHasObserver<ReturnType = any, ObserverType = IObserver<ReturnType>> {
 
     /**
      * Observer instance
@@ -11,11 +11,17 @@ export default interface IWithObserve<ReturnType = any, ObserverType = IObserver
     observer?: ObserverType;
 
     /**
+     * Custom observation methods for specific properties.
+     * Key is the property name, value is the name of the custom observation method.
+     */
+    observeProperties: Record<string, string>;
+
+    /**
      * Register an instance of an Observer
      * [usage]
      *      [class extends IWithObserve].observeWith(MyObserver)
      */
-    observeWith?: (observedBy: ObserveConstructor<ReturnType>) => any;
+    observeWith: (observedBy: ObserveConstructor<ReturnType>) => any;
 
     /**
      * Call an observer event method
