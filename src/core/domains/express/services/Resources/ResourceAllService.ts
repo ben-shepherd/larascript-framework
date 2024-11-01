@@ -66,7 +66,7 @@ class ResourceAllService extends BaseResourceService {
         const resultsAsModels = results.map((result) => new options.resource(result));
 
         // Send the results
-        res.send(stripGuardedResourceProperties(resultsAsModels))
+        res.send(await stripGuardedResourceProperties(resultsAsModels))
     }
 
     /**

@@ -9,10 +9,10 @@ import { Response } from 'express';
  * @param {Response} res - The response object
  * @returns {Promise<void>}
  */
-export default (req: IAuthorizedRequest, res: Response) => {
+export default async (req: IAuthorizedRequest, res: Response) => {
     try {
         // Send the user data without the password
-        res.send({ success: true, user: req.user?.getData({ excludeGuarded: true }) });
+        res.send({ success: true, user: await req.user?.getData({ excludeGuarded: true }) });
     }
     catch (error) {
         // Handle any errors

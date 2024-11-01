@@ -69,7 +69,7 @@ class ResourceShowService extends BaseResourceService {
         const resultAsModel = new options.resource(result)
 
         // Send the results
-        res.send(stripGuardedResourceProperties(resultAsModel))
+        res.send(await stripGuardedResourceProperties(resultAsModel))
     }
 
     /**

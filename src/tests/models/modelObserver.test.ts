@@ -4,6 +4,7 @@ import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
 import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
+import TestObserverModel from '@src/tests/models/models/TestObserverModel';
 import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 import { DataTypes } from 'sequelize';
 
@@ -13,6 +14,7 @@ const createTable = async (connectionName: string) => {
     const schema = App.container('db').schema(connectionName)
 
     schema.createTable('tests', {
+        number: DataTypes.INTEGER,
         name: DataTypes.STRING,
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE
@@ -28,7 +30,7 @@ const dropTable = async (connectionName: string) => {
 }
 
 
-describe('test partial search', () => {
+describe('test model crud', () => {
 
     beforeAll(async () => {
         await Kernel.boot({
@@ -46,20 +48,36 @@ describe('test partial search', () => {
         }
     })
 
-    test('test clearing schema', async () => {
-
+    test('CRUD', async () => {
+        
         for(const connectionName of connections) {
-            const schema = App.container('db').schema(connectionName)
+            App.container('logger').info('[Connection]', connectionName)
+            App.container('db').setDefaultConnectionName(connectionName);
 
-            await createTable(connectionName);
+            const documentManager = App.container('db').documentManager(connectionName).table('tests');
+            await documentManager.truncate();
 
-            const tableExists = await schema.tableExists('tests');
-            expect(tableExists).toBe(true);
+            /**
+             * Create a model
+             * 
+             * The 'TestModelObserver' will modify the following attributes:
+             * - On creating, it will set  'number' to 1
+             * = On setting the name, it will set the name to 'Bob'
+             */ 
+            const createdModel = new TestObserverModel({
+                name: 'John',
+                number: 0
+            });
+            await createdModel.save();
+            expect(createdModel.getAttribute('name')).toEqual('John');
+            expect(createdModel.getAttribute('number')).toEqual(1);
 
-            await schema.dropAllTables()
+            await createdModel.setAttribute('name', 'Jane');
+            expect(createdModel.getAttribute('name')).toEqual('Bob');
 
-            const tableExistsPostDropAllTables = await schema.tableExists('tests');
-            expect(tableExistsPostDropAllTables).toBe(false);
+
         }
+
+    
     })
 });

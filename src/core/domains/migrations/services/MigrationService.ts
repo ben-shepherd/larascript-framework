@@ -1,4 +1,5 @@
 import Repository from "@src/core/base/Repository";
+import MigrationTypeEnum from "@src/core/domains/migrations/enums/MigrationTypeEnum";
 import MigrationFactory from "@src/core/domains/migrations/factory/MigrationFactory";
 import { IMigration, MigrationType } from "@src/core/domains/migrations/interfaces/IMigration";
 import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
@@ -11,8 +12,6 @@ import FileNotFoundError from "@src/core/exceptions/FileNotFoundError";
 import { ModelConstructor } from "@src/core/interfaces/IModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
 import { App } from "@src/core/services/App";
-
-import MigrationTypeEnum from "../enums/MigrationTypeEnum";
 
 interface MigrationDetail {
     fileName: string,

@@ -11,6 +11,7 @@ import MakeObserverCommand from '@src/core/domains/make/commands/MakeObserverCom
 import MakeProviderCommand from '@src/core/domains/make/commands/MakeProviderCommand';
 import MakeRepositoryCommand from '@src/core/domains/make/commands/MakeRepositoryCommand';
 import MakeRoutesCommand from '@src/core/domains/make/commands/MakeRoutesCommand';
+import MakeSeederCommand from '@src/core/domains/make/commands/MakeSeederCommand';
 import MakeServiceCommand from '@src/core/domains/make/commands/MakeServiceCommand';
 import MakeSingletonCommand from '@src/core/domains/make/commands/MakeSingletonCommand';
 import MakeSubscriberCommand from '@src/core/domains/make/commands/MakeSubscriberCommand';
@@ -88,6 +89,8 @@ const getCommandCtorByType = (type: typeof targetDirectories[string]): CommandCt
         return MakeValidatorCommand;
     case 'Migration':
         return MakeMigrationCommand;
+    case 'Seeder':
+        return MakeSeederCommand;
     default:
         throw new Error(`Unknown command type '${type}'`)
     }

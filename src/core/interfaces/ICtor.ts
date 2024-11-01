@@ -18,4 +18,4 @@
  * const instance = createInstance(MyClass);
  */
 // eslint-disable-next-line no-unused-vars
-export type ICtor<T> = new (...args: any[]) => T
+export type ICtor<T = any> = new (...args: any[]) => T

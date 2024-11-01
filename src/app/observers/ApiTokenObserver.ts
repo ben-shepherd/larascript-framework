@@ -1,6 +1,5 @@
 import UserRepository from "@src/app/repositories/auth/UserRepository";
 import { IApiTokenData } from "@src/core/domains/auth/interfaces/IApitokenModel";
-import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import Observer from "@src/core/domains/observer/services/Observer";
 import { App } from "@src/core/services/App";
 
@@ -29,7 +28,7 @@ export default class ApiTokenObserver extends Observer<IApiTokenObserverData> {
      */
 
     async addGroupScopes(data: IApiTokenObserverData): Promise<IApiTokenObserverData> {
-        const user = await this.userRepository.findById(data.userId) as IUserModel;
+        const user = await this.userRepository.findById(data.userId);
 
         if(!user) {
             return data

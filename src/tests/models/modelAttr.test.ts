@@ -21,13 +21,13 @@ describe('test model attr', () => {
         const model = new TestModel({
             name: 'John'
         });
-        expect(model.attr('name')).toEqual('John');
+        expect(await model.attr('name')).toEqual('John');
 
-        model.attr('name', 'Jane');
-        expect(model.attr('name')).toEqual('Jane');
+        await model.attr('name', 'Jane');
+        expect(await model.attr('name')).toEqual('Jane');
 
         const modelNoProperties = new TestModel(null);
-        modelNoProperties.attr('name', 'John')
-        expect(modelNoProperties.attr('name')).toEqual('John');
+        await modelNoProperties.attr('name', 'John')
+        expect(await modelNoProperties.attr('name')).toEqual('John');
     })
 });

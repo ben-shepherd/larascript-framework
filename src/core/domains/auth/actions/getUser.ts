@@ -12,7 +12,7 @@ import { Response } from 'express';
 export default async (req: IAuthorizedRequest, res: Response) => {
     try {
         // Send the user data without the password
-        res.send({ success: true, user: req.user?.getData({ excludeGuarded: true }) });
+        res.send({ success: true, user: await req.user?.getData({ excludeGuarded: true }) });
     }
     catch (error) {
         // If there is an error, send the error response

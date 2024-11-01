@@ -25,7 +25,7 @@ export default async (req: Request, res: Response): Promise<void> => {
         res.send({
             success: true,
             token,
-            user: user?.getData({ excludeGuarded: true })
+            user: await user?.getData({ excludeGuarded: true })
         })
     }
     catch (error) {
