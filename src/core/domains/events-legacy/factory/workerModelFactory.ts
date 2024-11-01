@@ -1,4 +1,4 @@
-import WorkerModel, { initialWorkerModalData } from "@src/core/domains/events/models/WorkerModel";
+import WorkerModel, { initialWorkerModalData } from "@src/core/domains/events-legacy/models/WorkerModel";
 import { ModelConstructor } from "@src/core/interfaces/IModel";
 
 type Params = {

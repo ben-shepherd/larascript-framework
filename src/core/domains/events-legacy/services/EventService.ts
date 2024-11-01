@@ -1,11 +1,11 @@
 import Singleton from "@src/core/base/Singleton";
-import EventDriverException from "@src/core/domains/events/exceptions/EventDriverException";
-import { IEvent } from "@src/core/domains/events/interfaces/IEvent";
-import { IDriverConfig } from "@src/core/domains/events/interfaces/IEventConfig";
-import { EventListenerConstructor } from "@src/core/domains/events/interfaces/IEventListener";
-import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
-import { EventServiceConfig, IEventService } from "@src/core/domains/events/interfaces/IEventService";
-import EventDispatcher from "@src/core/domains/events/services/EventDispatcher";
+import EventDriverException from "@src/core/domains/events-legacy/exceptions/EventDriverException";
+import { IEvent } from "@src/core/domains/events-legacy/interfaces/IEvent";
+import { IDriverConfig } from "@src/core/domains/events-legacy/interfaces/IEventConfig";
+import { EventListenerConstructor } from "@src/core/domains/events-legacy/interfaces/IEventListener";
+import { IEventPayload } from "@src/core/domains/events-legacy/interfaces/IEventPayload";
+import { EventServiceConfig, IEventService } from "@src/core/domains/events-legacy/interfaces/IEventService";
+import EventDispatcher from "@src/core/domains/events-legacy/services/EventDispatcher";
 
 /**
  * Event Service

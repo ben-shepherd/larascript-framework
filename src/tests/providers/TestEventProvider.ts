@@ -1,10 +1,10 @@
-import QueueDriver, { QueueDriverOptions } from '@src/core/domains/events/drivers/QueueDriver';
-import SynchronousDriver from "@src/core/domains/events/drivers/SynchronousDriver";
-import { EventServiceConfig } from "@src/core/domains/events/interfaces/IEventService";
-import EventProvider from "@src/core/domains/events/providers/EventProvider";
-import { default as DriverOptions } from '@src/core/domains/events/services/QueueDriverOptions';
-import { TestListener } from "@src/tests/events/listeners/TestListener";
-import { TestQueueListener } from "@src/tests/events/listeners/TestQueueListener";
+import QueueDriver, { QueueDriverOptions } from '@src/core/domains/events-legacy/drivers/QueueDriver';
+import SynchronousDriver from "@src/core/domains/events-legacy/drivers/SynchronousDriver";
+import { EventServiceConfig } from "@src/core/domains/events-legacy/interfaces/IEventService";
+import EventProvider from "@src/core/domains/events-legacy/providers/EventProvider";
+import { default as DriverOptions } from '@src/core/domains/events-legacy/services/QueueDriverOptions';
+import { TestListener } from "@src/tests/events/listeners/TestListenerLegacy";
+import { TestQueueListener } from "@src/tests/events/listeners/TestQueueListenerLegacy";
 import TestWorkerModel from "@src/tests/models/models/TestWorkerModel";
 
 class TestEventProvider extends EventProvider {

@@ -1,4 +1,4 @@
-import FailedWorkerModel, { initialFailedWorkerModalData } from "@src/core/domains/events/models/FailedWorkerModel";
+import FailedWorkerModel, { initialFailedWorkerModalData } from "@src/core/domains/events-legacy/models/FailedWorkerModel";
 
 type Params = {
     eventName: string;

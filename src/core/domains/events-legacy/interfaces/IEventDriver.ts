@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { IEvent } from "@src/core/domains/events/interfaces/IEvent";
-import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
+import { IEvent } from "@src/core/domains/events-legacy/interfaces/IEvent";
+import { IEventPayload } from "@src/core/domains/events-legacy/interfaces/IEventPayload";
 
 export type IDriverConstructor<
 Payload extends IEventPayload = IEventPayload,

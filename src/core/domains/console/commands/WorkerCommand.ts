@@ -1,8 +1,8 @@
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
-import Worker from "@src/core/domains/events/services/Worker";
+import Worker from "@src/core/domains/events-legacy/services/Worker";
 import { App } from "@src/core/services/App";
 
-export default class WorkerCommand extends BaseCommand {
+export default class WorkerLegacyCommand extends BaseCommand {
 
     /**
      * The signature of the command

@@ -1,4 +1,4 @@
-import WorkerModel, { WorkerModelData } from "@src/core/domains/events/models/WorkerModel";
+import WorkerModel, { WorkerModelData } from "@src/core/domains/events-legacy/models/WorkerModel";
 import BaseMigration from "@src/core/domains/migrations/base/BaseMigration";
 import { DataTypes } from "sequelize";
 

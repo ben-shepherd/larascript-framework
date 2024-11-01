@@ -1,4 +1,4 @@
-import EventListener from "@src/core/domains/events/services/EventListener";
+import EventListener from "@src/core/domains/events-legacy/services/EventListener";
 import { App } from "@src/core/services/App";
  
 export class TestListener extends EventListener<any> {

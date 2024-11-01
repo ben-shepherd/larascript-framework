@@ -1,7 +1,7 @@
-import WorkerModelFactory from '@src/core/domains/events/factory/workerModelFactory';
-import { IEvent } from '@src/core/domains/events/interfaces/IEvent';
-import IEventDriver from '@src/core/domains/events/interfaces/IEventDriver';
-import WorkerModel from '@src/core/domains/events/models/WorkerModel';
+import WorkerModelFactory from '@src/core/domains/events-legacy/factory/workerModelFactory';
+import { IEvent } from '@src/core/domains/events-legacy/interfaces/IEvent';
+import IEventDriver from '@src/core/domains/events-legacy/interfaces/IEventDriver';
+import WorkerModel from '@src/core/domains/events-legacy/models/WorkerModel';
 import { ModelConstructor } from '@src/core/interfaces/IModel';
 
 /**

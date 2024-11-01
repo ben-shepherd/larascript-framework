@@ -1,4 +1,4 @@
-import FailedWorkerModel, { FailedWorkerModelData } from "@src/core/domains/events/models/FailedWorkerModel";
+import FailedWorkerModel, { FailedWorkerModelData } from "@src/core/domains/events-legacy/models/FailedWorkerModel";
 import BaseMigration from "@src/core/domains/migrations/base/BaseMigration";
 import { DataTypes } from "sequelize";
 

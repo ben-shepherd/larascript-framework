@@ -3,7 +3,7 @@ import appConfig from '@src/config/app';
 import AuthService from '@src/core/domains/auth/services/AuthService';
 import ConsoleService from '@src/core/domains/console/service/ConsoleService';
 import DatabaseService from '@src/core/domains/database/services/DatabaseService';
-import EventService from '@src/core/domains/events/services/EventService';
+import EventService from '@src/core/domains/events-legacy/services/EventService';
 import ExpressService from '@src/core/domains/express/services/ExpressService';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';

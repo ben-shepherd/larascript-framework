@@ -4,7 +4,7 @@ import Repository from '@src/core/base/Repository';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
-import TestQueueSubscriber from '@src/tests/events/subscribers/TestQueueSubscriber';
+import TestQueueSubscriber from '@src/tests/events/subscribers/TestQueueSubscriberLegacy';
 import { TestMovieModel } from '@src/tests/models/models/TestMovie';
 import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
 import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';

@@ -1,4 +1,4 @@
-import EventSubscriber from "@src/core/domains/events/services/EventSubscriber";
+import EventSubscriber from "@src/core/domains/events-legacy/services/EventSubscriber";
 
 export default class TestSubscriber extends EventSubscriber<any> {
     

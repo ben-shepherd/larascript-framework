@@ -1,7 +1,7 @@
-import EventSubscriberException from "@src/core/domains/events/exceptions/EventSubscriberException";
-import { IEvent } from "@src/core/domains/events/interfaces/IEvent";
-import { IEventDrivers, ISubscribers } from '@src/core/domains/events/interfaces/IEventConfig';
-import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
+import EventSubscriberException from "@src/core/domains/events-legacy/exceptions/EventSubscriberException";
+import { IEvent } from "@src/core/domains/events-legacy/interfaces/IEvent";
+import { IEventDrivers, ISubscribers } from '@src/core/domains/events-legacy/interfaces/IEventConfig';
+import { IEventPayload } from "@src/core/domains/events-legacy/interfaces/IEventPayload";
 
 /**
  * EventSubscriber

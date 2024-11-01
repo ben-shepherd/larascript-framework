@@ -1,9 +1,9 @@
 import { ExampleListener } from "@src/app/events/listeners/ExampleListener";
-import QueueDriver, { QueueDriverOptions } from "@src/core/domains/events/drivers/QueueDriver";
-import SynchronousDriver from "@src/core/domains/events/drivers/SynchronousDriver";
-import { IEventDrivers, ISubscribers } from "@src/core/domains/events/interfaces/IEventConfig";
-import WorkerModel from "@src/core/domains/events/models/WorkerModel";
-import DriverOptions from "@src/core/domains/events/services/QueueDriverOptions";
+import QueueDriver, { QueueDriverOptions } from "@src/core/domains/events-legacy/drivers/QueueDriver";
+import SynchronousDriver from "@src/core/domains/events-legacy/drivers/SynchronousDriver";
+import { IEventDrivers, ISubscribers } from "@src/core/domains/events-legacy/interfaces/IEventConfig";
+import WorkerModel from "@src/core/domains/events-legacy/models/WorkerModel";
+import DriverOptions from "@src/core/domains/events-legacy/services/QueueDriverOptions";
 
 /**
  * Default Event Driver Configuration
