@@ -6,8 +6,8 @@ import SetAttributeBroadcastEvent from "@src/core/events/concerns/HasAttribute/S
 import { ICtor } from "@src/core/interfaces/ICtor";
 import IModelAttributes from "@src/core/interfaces/IModelData";
 
-const HasObserver = (Broadcaster: ICtor<IBroadcaster>) => {
-    return class HasObserverMixin extends Broadcaster implements IHasObserver {
+const HasObserverConcern = (Broadcaster: ICtor<IBroadcaster>) => {
+    return class HasObserver extends Broadcaster implements IHasObserver {
 
         constructor() {
             super()
@@ -110,4 +110,4 @@ const HasObserver = (Broadcaster: ICtor<IBroadcaster>) => {
     
 }
 
-export default HasObserver
+export default HasObserverConcern

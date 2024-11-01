@@ -1,7 +1,7 @@
 
 import HasAttributesConcern from '@src/core/concerns/HasAttributesConcern';
 import HasDatabaseConnectionConcern from '@src/core/concerns/HasDatabaseConnectionConcern';
-import HasObserver from '@src/core/concerns/HasObserver';
+import HasObserverConcern from '@src/core/concerns/HasObserverConcern';
 import HasPrepareDocumentConcern from '@src/core/concerns/HasPrepareDocumentConcern';
 import Broadcaster from '@src/core/domains/broadcast/abstract/Broadcaster';
 import { ICtor } from '@src/core/interfaces/ICtor';
@@ -12,7 +12,7 @@ const BaseModel: ICtor = compose(
     HasDatabaseConnectionConcern,
     HasPrepareDocumentConcern,
     HasAttributesConcern,
-    HasObserver
+    HasObserverConcern
 )
 
 export default BaseModel
