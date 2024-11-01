@@ -56,7 +56,7 @@ describe('test partial search', () => {
             const tableExists = await schema.tableExists('tests');
             expect(tableExists).toBe(true);
 
-            schema.dropAllTables()
+            await schema.dropAllTables()
 
             const tableExistsPostDropAllTables = await schema.tableExists('tests');
             expect(tableExistsPostDropAllTables).toBe(false);
