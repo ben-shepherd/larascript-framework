@@ -3,9 +3,10 @@ import BaseService from "@src/core/domains/events/base/BaseService";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
+import { TMockableEventCallback } from "@src/core/domains/events/interfaces/IMockableConcern";
 import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventConfig";
 import { IEventDriversConfigOption } from "@src/core/domains/events/interfaces/config/IEventDriversConfig";
-import { IEventListenersConfig, TListenersConfigOption } from "@src/core/domains/events/interfaces/config/IEventListenersConfig";
+import { IEventListenersConfig, TListenersConfigOption, TListenersMap } from "@src/core/domains/events/interfaces/config/IEventListenersConfig";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IRegsiterList, TRegisterMap } from "@src/core/interfaces/concerns/IHasRegisterableConcern";
 
@@ -13,12 +14,17 @@ class EventService extends BaseService implements IEventService {
 
     static readonly REGISTERED_DRIVERS = "registeredDrivers";
 
-    static readonly REGISTERED_LISTENERS = "registeredListeners";
+    static readonly REGISTERED_LISTENERS = "registeredListeners"; 
+
+    static readonly REGISTERED_MOCK_EVENTS = "mockEvents";
+
+    static readonly REGISTERED_MOCK_DISPATCHED = "mockDispatched";
 
     protected config!: IEventConfig;
 
     constructor(config: IEventConfig) {
-        super(config)
+        super()
+        this.config = config;
     }
 
     /**
@@ -41,13 +47,22 @@ class EventService extends BaseService implements IEventService {
 
     declare registerByList: (listName: string, key: string, value: unknown) => void;
     
-    declare setRegisteredByList: (listName: string, registered: Map<string, unknown>) => void;
+    declare setRegisteredByList: (listName: string, registered: TRegisterMap) => void;
     
     declare getRegisteredByList: <T extends TRegisterMap = TRegisterMap>(listName: string) => T;
     
     declare getRegisteredList: <T extends TRegisterMap = TRegisterMap>() => T;
     
     declare getRegisteredObject: () => IRegsiterList;
+
+    /**
+     * Declare EventMockableConcern methods.
+     */
+    declare mockEvent: (event: ICtor<IBaseEvent>) => void;
+
+    declare mockEventDispatched: (event: IBaseEvent) => void;
+
+    declare assertDispatched: <T = unknown>(eventCtor: ICtor<IBaseEvent>, callback: TMockableEventCallback<T>) => boolean
 
     /**
      * Create an event listeners config.
@@ -62,11 +77,16 @@ class EventService extends BaseService implements IEventService {
      * Dispatch an event using its registered driver.
      * @param event The event to be dispatched.
      */
-    async dispatch(event: IBaseEvent): Promise<void> {            
+    async dispatch(event: IBaseEvent): Promise<void> {     
+
         const eventDriverCtor = event.getDriverCtor()
         const eventDriver = new eventDriverCtor(this)
         await eventDriver.dispatch(event)
+
+        this.mockEventDispatched(event)
     }
+
+
 
     /**
      * Register a driver with the event service
@@ -102,6 +122,22 @@ class EventService extends BaseService implements IEventService {
      */
     getDefaultDriverCtor(): ICtor<IEventDriver> {
         return this.config.defaultDriver
+    }
+
+    /**
+     * Returns an array of event subscriber constructors that are listening to this event.
+     * @returns An array of event subscriber constructors.
+     */
+    getSubscribers(eventName: string): ICtor<IBaseEvent>[] {
+        const registeredListeners = this.getRegisteredByList<TListenersMap>(EventService.REGISTERED_LISTENERS);
+    
+        const listenerConfig = registeredListeners.get(eventName)?.[0];
+            
+        if(!listenerConfig) {
+            return [];
+        }
+    
+        return listenerConfig.subscribers;
     }
 
 }

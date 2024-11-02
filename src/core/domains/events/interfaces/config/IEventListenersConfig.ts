@@ -1,7 +1,6 @@
+import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import { IEventListener } from "@src/core/domains/events/interfaces/IEventListener";
 import { ICtor } from "@src/core/interfaces/ICtor";
-
-import { IBaseEvent } from "../IBaseEvent";
 
 export type TListenersConfigOption = {
     listener: ICtor<IEventListener>;

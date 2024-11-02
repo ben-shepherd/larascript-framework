@@ -26,10 +26,18 @@ describe('mock event service', () => {
     /**
    * Dispatch a synchronus event
    */
-    test('test dispatch event sync', () => {
+    test('test dispatch event sync', async () => {
+
+        const eventService = App.container('events');
         
-        App.container('events').dispatch(new TestEventSyncEvent({ hello: 'world' }));
+        eventService.mockEvent(TestEventSyncEvent)
+
+        await eventService.dispatch(new TestEventSyncEvent({ hello: 'world' }));
         
-        // todo: check something has changed.
+        expect(
+            eventService.assertDispatched<{ hello: string }>(TestEventSyncEvent, (payload) => {
+                return payload.hello === 'world'
+            })
+        ).toBeTruthy()
     })
 }); 

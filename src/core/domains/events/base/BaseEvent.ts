@@ -1,13 +1,9 @@
-import SyncDriver from "@src/core/domains/events/drivers/SyncDriver";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
+import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
-
-import { TListenersMap } from "../interfaces/config/IEventListenersConfig";
-import { IEventService } from "../interfaces/IEventService";
-import EventService from "../services/EventService";
 
 abstract class BaseEvent implements IBaseEvent {
 
@@ -15,14 +11,17 @@ abstract class BaseEvent implements IBaseEvent {
 
     protected driver!: ICtor<IEventDriver>;
 
+    protected defaultDriver!: ICtor<IEventDriver>;
+
     /**
      * Constructor
      * @param payload The payload of the event
      * @param driver The class of the event driver
      */
-    constructor(driver: ICtor<IEventDriver> = SyncDriver, payload: IEventPayload | null = null) {
+    constructor(payload: IEventPayload | null = null, driver?: ICtor<IEventDriver>) {
         this.payload = payload;
-        this.driver = driver;
+        this.defaultDriver = App.container('events').getDefaultDriverCtor();
+        this.driver = driver ?? this.defaultDriver;
     }
 
     /**
@@ -55,24 +54,7 @@ abstract class BaseEvent implements IBaseEvent {
      * @returns The event driver constructor.
      */
     getDriverCtor(): ICtor<IEventDriver> {        
-        return this.driver;
-    }
-
-    /**
-     * Returns an array of event subscriber constructors that are listening to this event.
-     * @returns An array of event subscriber constructors.
-     */
-    getSubscribers(): ICtor<IBaseEvent>[] {
-        const eventService = this.getEventService();
-        const registeredListeners = eventService.getRegisteredByList<TListenersMap>(EventService.REGISTERED_LISTENERS);
-
-        const listenerConfig = registeredListeners.get(this.getName())?.[0];
-        
-        if(!listenerConfig) {
-            return [];
-        }
-
-        return listenerConfig.subscribers;
+        return this.driver ?? this.defaultDriver;
     }
 
 }

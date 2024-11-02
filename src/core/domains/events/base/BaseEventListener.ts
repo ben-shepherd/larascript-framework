@@ -1,23 +1,41 @@
 import BaseEvent from "@src/core/domains/events/base/BaseEvent";
 import { IEventListener } from "@src/core/domains/events/interfaces/IEventListener";
+import { ICtor } from "@src/core/interfaces/ICtor";
+
+import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
+import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
 
 class BaseEventListener extends BaseEvent implements IEventListener {
 
-    constructor() {
-        super();
+    /**
+     * Constructor
+     *
+     * Creates a new instance of the event listener and dispatches the event to
+     * all subscribers.
+     *
+     * @param payload The payload of the event to dispatch
+     */
+    constructor(payload?: IEventPayload, driver?: ICtor<IEventDriver>) {
+        super(payload, driver);
         this.notifySubscribers();
     }
 
-
-    // eslint-disable-next-line no-unused-vars
-    async dispatch(...arg: any[]): Promise<void> { /* Nothing to dispatch */ }
-
+    /**
+     * Notifies all subscribers of this event that the event has been dispatched.
+     *
+     * Retrieves all subscribers of this event from the event service, creates
+     * a new instance of each subscriber, passing the payload of this event to
+     * the subscriber's constructor, and then dispatches the subscriber event
+     * using the event service.
+     */
     protected notifySubscribers() {
         const eventService = this.getEventService();
-        const subscribers = this.getSubscribers();
+        const subscribers = eventService.getSubscribers(this.getName());
 
         for (const subscriber of subscribers) {
-            eventService.dispatch(new subscriber);
+            const subscriberEvent = new subscriber(this.getPayload());
+
+            eventService.dispatch(subscriberEvent);
         }
     }
 
