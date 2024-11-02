@@ -1,40 +1,39 @@
-import QueueDriver, { QueueDriverOptions } from '@src/core/domains/events-legacy/drivers/QueueDriver';
-import SynchronousDriver from "@src/core/domains/events-legacy/drivers/SynchronousDriver";
-import { EventServiceConfig } from "@src/core/domains/events-legacy/interfaces/IEventService";
-import EventProvider from "@src/core/domains/events-legacy/providers/EventProvider";
-import { default as DriverOptions } from '@src/core/domains/events-legacy/services/QueueDriverOptions';
-import { TestListener } from "@src/tests/events/listeners/TestListenerLegacy";
-import { TestQueueListener } from "@src/tests/events/listeners/TestQueueListenerLegacy";
+import { EVENT_DRIVERS } from '@src/config/events';
+import QueueableDriver from '@src/core/domains/events/drivers/QueableDriver';
+import SyncDriver from '@src/core/domains/events/drivers/SyncDriver';
+import { IEventConfig } from '@src/core/domains/events/interfaces/config/IEventConfig';
+import EventProvider from '@src/core/domains/events/providers/EventProvider';
+import EventService from '@src/core/domains/events/services/EventService';
+import TestListener from '@src/tests/events/listeners/TestListener';
+import TestSubscriber from '@src/tests/events/subscribers/TestSubscriber';
 import TestWorkerModel from "@src/tests/models/models/TestWorkerModel";
 
 class TestEventProvider extends EventProvider {
 
-    protected config: EventServiceConfig = {
-        defaultDriver: 'sync',
+    protected config: IEventConfig = {
+        
+        defaultDriver: SyncDriver,
+
         drivers: {
-            testing: {
-                driver: QueueDriver,
-                options: new DriverOptions<QueueDriverOptions>({
-                    queueName: 'testQueue',
-                    retries: 3,
-                    failedCollection: 'testFailedWorkers',
-                    runAfterSeconds: 0,
-                    workerModelCtor: TestWorkerModel,
-                    runOnce: true
-                })
-            },
-            sync: {
-                driver: SynchronousDriver
-            }
+            [EVENT_DRIVERS.SYNC]: EventService.createConfig(SyncDriver, {}),
+            [EVENT_DRIVERS.QUEABLE]: EventService.createConfig(QueueableDriver, {
+                queueName: 'testQueue',
+                retries: 3,
+                failedCollection: 'testFailedWorkers',
+                runAfterSeconds: 0,
+                workerModelCtor: TestWorkerModel,
+                runOnce: true
+            })
         },
-        subscribers: {
-            'TestQueueEvent': [
-                TestQueueListener
-            ],
-            'TestEvent': [
-                TestListener
-            ]
-        }
+
+        listeners: EventService.createListeners([
+            {
+                listener: TestListener,
+                subscribers: [
+                    TestSubscriber
+                ]
+            }
+        ])
     }
 
 }

@@ -1,7 +1,8 @@
 import { IAuthService } from '@src/core/domains/auth/interfaces/IAuthService';
 import ICommandService from '@src/core/domains/console/interfaces/ICommandService';
 import { IDatabaseService } from '@src/core/domains/database/interfaces/IDatabaseService';
-import { IEventService } from '@src/core/domains/events-legacy/interfaces/IEventService';
+import { IEventLegacyService } from '@src/core/domains/events-legacy/interfaces/IEventService';
+import { IEventService } from '@src/core/domains/events/interfaces/IEventService';
 import { IRequestContext } from '@src/core/domains/express/interfaces/ICurrentRequest';
 import IExpressService from '@src/core/domains/express/interfaces/IExpressService';
 import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerService';
@@ -15,6 +16,8 @@ export interface ICoreContainers {
      * Event Dispatcher Service
      * Provided by '@src/core/domains/events/providers/EventProvider'
      */
+    eventsLegacy: IEventLegacyService;
+
     events: IEventService;
 
     /**

@@ -3,7 +3,7 @@ import { EventListenerConstructor } from "@src/core/domains/events-legacy/interf
 import DriverOptions from "@src/core/domains/events-legacy/services/QueueDriverOptions";
 
 export interface IDriverConfig {
-    driver: IDriverConstructor
+    driverCtor: IDriverConstructor
     options?: DriverOptions
 }
 

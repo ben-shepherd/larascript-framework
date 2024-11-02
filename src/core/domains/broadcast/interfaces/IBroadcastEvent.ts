@@ -1,6 +1,6 @@
 export interface IBroadcastEvent 
 {
-    getEventName(): string;
+    getName(): string;
 
     getPayload<T = unknown>(): T;
 }

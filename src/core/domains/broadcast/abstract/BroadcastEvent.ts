@@ -18,7 +18,7 @@ abstract class BroadcastEvent implements IBroadcastEvent {
      *
      * @returns The name of the event.
      */
-    abstract getEventName(): string;
+    abstract getName(): string;
 
     /**
      * Returns the payload of the event.

@@ -85,7 +85,7 @@ export default class Worker extends Singleton {
      * @returns 
      */
     getOptions(driver: string): QueueDriverOptions {
-        const eventDriver = App.container('events').getDriver(driver)
+        const eventDriver = App.container('eventsLegacy').getDriver(driver)
 
         if(!eventDriver) {
             throw new EventDriverException(`Driver '${driver}' not found`)
@@ -119,7 +119,7 @@ export default class Worker extends Singleton {
         const event = new EventSubscriber(eventName as string, this.syncDriver, payload)
 
         // Dispatch the event
-        await App.container('events').dispatch(event)
+        await App.container('eventsLegacy').dispatch(event)
 
         // Delete record as it was a success
         await model.delete();

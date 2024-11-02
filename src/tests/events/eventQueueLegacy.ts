@@ -8,7 +8,7 @@ import TestQueueSubscriber from '@src/tests/events/subscribers/TestQueueSubscrib
 import { TestMovieModel } from '@src/tests/models/models/TestMovie';
 import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
 import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
-import TestEventProvider from '@src/tests/providers/TestEventProvider';
+import TestEventProvider from '@src/tests/providers/TestEventLegacyProvider';
 import 'dotenv/config';
 import { DataTypes } from 'sequelize';
 

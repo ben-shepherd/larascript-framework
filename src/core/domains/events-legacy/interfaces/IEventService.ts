@@ -4,14 +4,14 @@ import { IDriverConfig, IEventDrivers, ISubscribers } from "@src/core/domains/ev
 import { EventListenerConstructor } from "@src/core/domains/events-legacy/interfaces/IEventListener";
 import { IEventPayload } from "@src/core/domains/events-legacy/interfaces/IEventPayload";
 
-export interface EventServiceConfig {
+export interface EventLegacyServiceConfig {
     defaultDriver: string;
     drivers: IEventDrivers;
     subscribers: ISubscribers;
 }
 
-export interface IEventService {
-    config: EventServiceConfig;
+export interface IEventLegacyService {
+    config: EventLegacyServiceConfig;
     dispatch<Payload extends IEventPayload>(event: IEvent<Payload>): Promise<void>;
     getListenersByEventName(eventName: string): EventListenerConstructor[];
     getDriver(driverName: string): IDriverConfig;

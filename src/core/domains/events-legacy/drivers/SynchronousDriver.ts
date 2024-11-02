@@ -18,7 +18,7 @@ export default class SynchronousDriver implements IEventDriver {
         const eventName = event.name
 
         // Get all the listeners with this eventName
-        const listenerConstructors = App.container('events').getListenersByEventName(eventName)
+        const listenerConstructors = App.container('eventsLegacy').getListenersByEventName(eventName)
 
         // Process each listener synchronously
         for (const listenerCtor of listenerConstructors) {

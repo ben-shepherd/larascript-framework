@@ -1,14 +1,14 @@
 
-import { defaultEventDriver, eventDrivers, eventSubscribers } from "@src/config/events";
+import { defaultEventDriver, eventDrivers, eventSubscribers } from "@src/config/eventsLegacy";
 import BaseProvider from "@src/core/base/Provider";
 import WorkerLegacyCommand from "@src/core/domains/console/commands/WorkerCommand";
-import { EventServiceConfig } from "@src/core/domains/events-legacy/interfaces/IEventService";
+import { EventLegacyServiceConfig } from "@src/core/domains/events-legacy/interfaces/IEventService";
 import EventService from "@src/core/domains/events-legacy/services/EventService";
 import { App } from "@src/core/services/App";
 
-export default class EventProvider extends BaseProvider {
+export default class EventLegacyProvider extends BaseProvider {
 
-    protected config: EventServiceConfig = {
+    protected config: EventLegacyServiceConfig = {
         defaultDriver: defaultEventDriver,
         drivers: eventDrivers,
         subscribers: eventSubscribers
@@ -20,7 +20,7 @@ export default class EventProvider extends BaseProvider {
         /**
          * Register event service
          */
-        App.setContainer('events', new EventService(this.config));
+        App.setContainer('eventsLegacy', new EventService(this.config));
 
         /**
          * Register system provided commands

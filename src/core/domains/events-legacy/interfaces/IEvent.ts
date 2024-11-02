@@ -1,4 +1,4 @@
-import { eventSubscribers } from "@src/config/events";
+import { eventSubscribers } from "@src/config/eventsLegacy";
 import { IEventDrivers, ISubscribers } from "@src/core/domains/events-legacy/interfaces/IEventConfig";
 import { IEventPayload } from "@src/core/domains/events-legacy/interfaces/IEventPayload";
 

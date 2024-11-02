@@ -16,7 +16,7 @@ export default class EventDispatcher extends Singleton implements IEventDispatch
         App.container('logger').info(`[EventDispatcher:dispatch] Event '${event.name}' with driver '${event.driver}'`)
 
         const driverOptions = this.getDriverOptionsFromEvent(event)
-        const driverCtor = driverOptions.driver
+        const driverCtor = driverOptions.driverCtor
         
         const instance = new driverCtor();
         await instance.handle(event, driverOptions.options?.getOptions());
@@ -28,7 +28,7 @@ export default class EventDispatcher extends Singleton implements IEventDispatch
      * @returns 
      */
     protected getDriverOptionsFromEvent(event: IEvent): IDriverConfig {
-        const driver = App.container('events').config.drivers[event.driver]
+        const driver = App.container('eventsLegacy').config.drivers[event.driver]
 
         if(!driver) {
             throw new Error('Driver not found \'' + event.driver + '\'')

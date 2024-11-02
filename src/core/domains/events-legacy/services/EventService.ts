@@ -4,7 +4,7 @@ import { IEvent } from "@src/core/domains/events-legacy/interfaces/IEvent";
 import { IDriverConfig } from "@src/core/domains/events-legacy/interfaces/IEventConfig";
 import { EventListenerConstructor } from "@src/core/domains/events-legacy/interfaces/IEventListener";
 import { IEventPayload } from "@src/core/domains/events-legacy/interfaces/IEventPayload";
-import { EventServiceConfig, IEventService } from "@src/core/domains/events-legacy/interfaces/IEventService";
+import { EventLegacyServiceConfig, IEventLegacyService } from "@src/core/domains/events-legacy/interfaces/IEventService";
 import EventDispatcher from "@src/core/domains/events-legacy/services/EventDispatcher";
 
 /**
@@ -12,18 +12,18 @@ import EventDispatcher from "@src/core/domains/events-legacy/services/EventDispa
  *
  * Provides methods for dispatching events and retrieving event listeners.
  */
-export default class EventService extends Singleton<EventServiceConfig>  implements IEventService {
+export default class EventService extends Singleton<EventLegacyServiceConfig>  implements IEventLegacyService {
 
     /**
      * Config.
      */
-    public config!: EventServiceConfig;
+    public config!: EventLegacyServiceConfig;
 
     /**
      * Constructor.
      * @param config Event service config.
      */
-    constructor(config: EventServiceConfig) {
+    constructor(config: EventLegacyServiceConfig) {
         super(config);
     }
 
