@@ -11,11 +11,11 @@ export interface IHasRegisterableConcern
 
     registerByList(listName: string, key: string, value: unknown): void;
 
-    setRegisteredByList(listName: string, registered: Map<string, unknown>): void;
+    setRegisteredByList(listName: string, registered: TRegisterMap): void;
 
-    getRegisteredByList(listName: string): Map<unknown, unknown>;
+    getRegisteredByList<T extends TRegisterMap = TRegisterMap>(listName: string): T;
 
-    getRegisteredList(): TRegisterMap;
+    getRegisteredList<T extends TRegisterMap = TRegisterMap>(): T;
 
     getRegisteredObject(): IRegsiterList;
 }

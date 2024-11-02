@@ -1,5 +1,7 @@
 import { INameable } from "@src/core/domains/events/interfaces/INameable";
 
-export interface IEventListener extends INameable {
+import { IBaseEvent } from "./IBaseEvent";
+
+export interface IEventListener extends INameable, IBaseEvent {
 
 }

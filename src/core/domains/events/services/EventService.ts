@@ -43,9 +43,9 @@ class EventService extends BaseService implements IEventService {
     
     declare setRegisteredByList: (listName: string, registered: Map<string, unknown>) => void;
     
-    declare getRegisteredByList: (listName: string) => Map<unknown, unknown>;
+    declare getRegisteredByList: <T extends TRegisterMap = TRegisterMap>(listName: string) => T;
     
-    declare getRegisteredList: () => TRegisterMap;
+    declare getRegisteredList: <T extends TRegisterMap = TRegisterMap>() => T;
     
     declare getRegisteredObject: () => IRegsiterList;
 
@@ -87,7 +87,7 @@ class EventService extends BaseService implements IEventService {
      * @param listenerConfig the listener configuration
      */
     registerListener(listenerConfig: TListenersConfigOption): void {
-        const listenerIdentifier = new listenerConfig.listener().getName()
+        const listenerIdentifier = listenerConfig.listener.name
 
         this.registerByList(
             EventService.REGISTERED_LISTENERS,

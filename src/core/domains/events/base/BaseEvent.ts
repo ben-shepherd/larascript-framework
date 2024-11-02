@@ -3,6 +3,11 @@ import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
 import { ICtor } from "@src/core/interfaces/ICtor";
+import { App } from "@src/core/services/App";
+
+import { TListenersMap } from "../interfaces/config/IEventListenersConfig";
+import { IEventService } from "../interfaces/IEventService";
+import EventService from "../services/EventService";
 
 abstract class BaseEvent implements IBaseEvent {
 
@@ -19,20 +24,27 @@ abstract class BaseEvent implements IBaseEvent {
         this.payload = payload;
         this.driver = driver;
     }
+
+    /**
+     * Gets the event service that handles event dispatching and listener registration.
+     * @returns The event service.
+     */
+    getEventService(): IEventService {
+        return App.container('events');
+    }
     
     // eslint-disable-next-line no-unused-vars
-    async execute(...args: any[]): Promise<void> {
+    async execute(...args: any[]): Promise<void> {/* Nothing to execute */}
 
-        /* Nothing to execute*/
-    }
-
+    /**
+     * @template T The type of the payload to return.
+     * @returns The payload of the event.
+     */
     getPayload<T = unknown>(): T {
         return this.payload as T
     }
 
     /**
-     * Returns the name of the event.
-     * 
      * @returns The name of the event as a string.
      */
     getName(): string {
@@ -44,6 +56,23 @@ abstract class BaseEvent implements IBaseEvent {
      */
     getDriverCtor(): ICtor<IEventDriver> {        
         return this.driver;
+    }
+
+    /**
+     * Returns an array of event subscriber constructors that are listening to this event.
+     * @returns An array of event subscriber constructors.
+     */
+    getSubscribers(): ICtor<IBaseEvent>[] {
+        const eventService = this.getEventService();
+        const registeredListeners = eventService.getRegisteredByList<TListenersMap>(EventService.REGISTERED_LISTENERS);
+
+        const listenerConfig = registeredListeners.get(this.getName())?.[0];
+        
+        if(!listenerConfig) {
+            return [];
+        }
+
+        return listenerConfig.subscribers;
     }
 
 }

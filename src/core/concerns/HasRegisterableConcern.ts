@@ -34,12 +34,12 @@ const HasRegisterableConcern = (Broadcaster: ICtor) => {
             return this.registerObject;
         }
 
-        getRegisteredList(): TRegisterMap {
-            return this.getRegisteredByList(HasRegisterable.defaultList);
+        getRegisteredList<T extends TRegisterMap = TRegisterMap>(): T {
+            return this.getRegisteredByList(HasRegisterable.defaultList) as T;
         }
 
-        getRegisteredByList(listName: string): TRegisterMap {
-            return this.registerObject[listName] ?? new Map();
+        getRegisteredByList<T extends TRegisterMap = TRegisterMap>(listName: string): T {
+            return this.registerObject[listName] as T ?? new Map();
         }
     
     }
