@@ -29,6 +29,7 @@ export const initialWorkerModalData = {
  */
 export default class WorkerModel extends Model<WorkerModelData> {
 
+    table: string = 'worker_queue';
 
     /**
      * The list of date fields.
@@ -61,7 +62,7 @@ export default class WorkerModel extends Model<WorkerModelData> {
     ]
 
     constructor(data: WorkerModelData) {
-        super(data); 
+        super({...initialWorkerModalData, ...data}); 
     }
 
     public getPayload(): unknown {

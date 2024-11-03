@@ -12,7 +12,9 @@ class EventProvider extends BaseProvider {
     async register(): Promise<void> {
         
         const eventService = new EventService(this.config);
+        
         this.registerDrivers(eventService);
+        this.registerEvents(eventService);
         this.registerListeners(eventService);
 
         App.setContainer('events', eventService);
@@ -22,22 +24,26 @@ class EventProvider extends BaseProvider {
 
     /**
      * Registers all event drivers defined in the configuration with the provided event service.
-     * Iterates over the event driver configuration and registers each driver 
-     * using its identifier constant and configuration.
-     * 
      * @param eventService The event service to register drivers with.
      */
     private registerDrivers(eventService: IEventService) {
-        for(const driverIdentifierConstant of Object.keys(this.config.drivers)) {
-            eventService.registerDriver(driverIdentifierConstant, this.config.drivers[driverIdentifierConstant]);
+        for(const driverKey of Object.keys(this.config.drivers)) {
+            eventService.registerDriver(this.config.drivers[driverKey]);
+        }
+    }
+
+    /**
+     * Registers all event constructors defined in the configuration with the provided event service.
+     * @param eventService The event service to register events with.
+     */
+    private registerEvents(eventService: IEventService) {
+        for(const event of this.config.events) {
+            eventService.registerEvent(event);
         }
     }
 
     /**
      * Registers all event listeners defined in the configuration with the provided event service.
-     * Iterates over the event listeners configuration and registers each listener
-     * using its identifier constant and configuration.
-     * 
      * @param eventService The event service to register listeners with.
      */
     private registerListeners(eventService: IEventService) {

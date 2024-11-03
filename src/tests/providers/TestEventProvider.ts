@@ -8,6 +8,10 @@ import TestListener from '@src/tests/events/listeners/TestListener';
 import TestSubscriber from '@src/tests/events/subscribers/TestSubscriber';
 import TestWorkerModel from "@src/tests/models/models/TestWorkerModel";
 
+import TestEventQueueEvent from '../events/events/TestEventQueueEvent';
+import TestEventSyncBadPayloadEvent from '../events/events/TestEventSyncBadPayloadEvent';
+import TestEventSyncEvent from '../events/events/TestEventSyncEvent';
+
 class TestEventProvider extends EventProvider {
 
     protected config: IEventConfig = {
@@ -25,6 +29,12 @@ class TestEventProvider extends EventProvider {
                 runOnce: true
             })
         },
+
+        events: [
+            TestEventSyncEvent,
+            TestEventSyncBadPayloadEvent,
+            TestEventQueueEvent
+        ],
 
         listeners: EventService.createListeners([
             {

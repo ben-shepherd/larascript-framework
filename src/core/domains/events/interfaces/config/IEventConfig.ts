@@ -3,8 +3,11 @@ import { IEventDriversConfig } from "@src/core/domains/events/interfaces/config/
 import { IEventListenersConfig } from "@src/core/domains/events/interfaces/config/IEventListenersConfig";
 import { ICtor } from "@src/core/interfaces/ICtor";
 
+import { IBaseEvent } from "../IBaseEvent";
+
 export interface IEventConfig {
     defaultDriver: ICtor<IEventDriver>;
-    drivers: IEventDriversConfig,
-    listeners: IEventListenersConfig
+    drivers: IEventDriversConfig;
+    events: ICtor<IBaseEvent>[];
+    listeners: IEventListenersConfig;
 }

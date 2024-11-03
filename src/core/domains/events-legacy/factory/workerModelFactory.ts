@@ -1,4 +1,4 @@
-import WorkerModel, { initialWorkerModalData } from "@src/core/domains/events-legacy/models/WorkerModel";
+import WorkerLegacyModel, { initialWorkerModalData } from "@src/core/domains/events-legacy/models/WorkerLegacyModel";
 import { ModelConstructor } from "@src/core/interfaces/IModel";
 
 type Params = {
@@ -6,7 +6,7 @@ type Params = {
     eventName: string;
     payload: any,
     retries: number,
-    workerModelCtor: ModelConstructor<WorkerModel>
+    workerModelCtor: ModelConstructor<WorkerLegacyModel>
 }
 export default class WorkerModelFactory {
 
@@ -20,7 +20,7 @@ export default class WorkerModelFactory {
      * @param workerModelCtor The constructor for the WorkerModel to create
      * @returns A new instance of WorkerModel
      */
-    create(collection: string, { queueName, eventName, payload, retries, workerModelCtor }: Params): WorkerModel {
+    create(collection: string, { queueName, eventName, payload, retries, workerModelCtor }: Params): WorkerLegacyModel {
         return new workerModelCtor({
             ...initialWorkerModalData,
             queueName,

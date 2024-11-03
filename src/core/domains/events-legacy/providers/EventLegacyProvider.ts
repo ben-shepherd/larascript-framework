@@ -1,7 +1,7 @@
 
 import { defaultEventDriver, eventDrivers, eventSubscribers } from "@src/config/eventsLegacy";
 import BaseProvider from "@src/core/base/Provider";
-import WorkerLegacyCommand from "@src/core/domains/console/commands/WorkerCommand";
+import WorkerLegacyCommand from "@src/core/domains/console/commands/WorkerLegacyCommand";
 import { EventLegacyServiceConfig } from "@src/core/domains/events-legacy/interfaces/IEventService";
 import EventService from "@src/core/domains/events-legacy/services/EventService";
 import { App } from "@src/core/services/App";

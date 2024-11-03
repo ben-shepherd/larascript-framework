@@ -1,4 +1,4 @@
-import MockException from "@src/core/domains/events/exceptions/MockException";
+import EventMockException from "@src/core/domains/events/exceptions/EventMockException";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import { IMockableConcern, TMockableEventCallback } from "@src/core/domains/events/interfaces/IMockableConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
@@ -54,12 +54,16 @@ const EventMockableConcern = (Base: ICtor) => {
          * @throws Will throw an error if the event was not dispatched or if the dispatched event's 
          *         payload does not satisfy the given condition.
          */
-        assertDispatched<T = unknown>(eventCtor: ICtor<IBaseEvent>, callback: TMockableEventCallback<T>): boolean {
+        assertDispatched<TPayload = unknown>(eventCtor: ICtor<IBaseEvent>, callback?: TMockableEventCallback<TPayload>): boolean {
             const eventCtorName = (new eventCtor(null)).getName()
             const dispatchedEvent = this.mockEventsDispatched.find(e => e.getName() === eventCtorName)
 
             if(!dispatchedEvent) {
-                throw new MockException(`Event ${eventCtorName} was not dispatched`)
+                throw new EventMockException(`Event ${eventCtorName} was not dispatched`)
+            }
+
+            if(typeof callback !== 'function') {
+                return true;
             }
 
             return callback(dispatchedEvent.getPayload())

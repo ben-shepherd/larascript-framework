@@ -1,7 +1,7 @@
 import WorkerModelFactory from '@src/core/domains/events-legacy/factory/workerModelFactory';
 import { IEvent } from '@src/core/domains/events-legacy/interfaces/IEvent';
 import IEventDriver from '@src/core/domains/events-legacy/interfaces/IEventDriver';
-import WorkerModel from '@src/core/domains/events-legacy/models/WorkerModel';
+import WorkerLegacyModel from '@src/core/domains/events-legacy/models/WorkerLegacyModel';
 import { ModelConstructor } from '@src/core/interfaces/IModel';
 
 /**
@@ -9,7 +9,7 @@ import { ModelConstructor } from '@src/core/interfaces/IModel';
  *
  * Saves events for background processing
  */
-export type WorkerModelCtor = ModelConstructor<WorkerModel>
+export type WorkerModelCtor = ModelConstructor<WorkerLegacyModel>
 
 export type QueueDriverOptions<WMCtor extends WorkerModelCtor = WorkerModelCtor> = {
 

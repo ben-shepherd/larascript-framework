@@ -4,7 +4,7 @@ import { QueueDriverOptions } from "@src/core/domains/events-legacy/drivers/Queu
 import EventDriverException from "@src/core/domains/events-legacy/exceptions/EventDriverException";
 import FailedWorkerModelFactory from "@src/core/domains/events-legacy/factory/failedWorkerModelFactory";
 import { IEventPayload } from "@src/core/domains/events-legacy/interfaces/IEventPayload";
-import WorkerModel from "@src/core/domains/events-legacy/models/WorkerModel";
+import WorkerLegacyModel from "@src/core/domains/events-legacy/models/WorkerLegacyModel";
 import EventSubscriber from "@src/core/domains/events-legacy/services/EventSubscriber";
 import DriverOptions from "@src/core/domains/events-legacy/services/QueueDriverOptions";
 import { App } from "@src/core/services/App";
@@ -14,7 +14,7 @@ import { App } from "@src/core/services/App";
  *
  * This service provides methods for working with the worker table.
  */
-export default class Worker extends Singleton {
+export default class WorkerLegacy extends Singleton {
 
     /**
      * Queue driver options
@@ -51,11 +51,11 @@ export default class Worker extends Singleton {
         }
 
         // Worker service
-        const worker = Worker.getInstance();
-        let model: WorkerModel;
+        const worker = WorkerLegacy.getInstance();
+        let model: WorkerLegacyModel;
 
         // Fetch the current list of queued results
-        const workerResults: WorkerModel[] = await worker.getWorkerResults(this.options.queueName)
+        const workerResults: WorkerLegacyModel[] = await worker.getWorkerResults(this.options.queueName)
     
         this.logToConsole('collection: ' + new this.options.workerModelCtor().table)
         this.logToConsole(`${workerResults.length} queued items with queue name '${this.options.queueName}'`)
@@ -99,7 +99,7 @@ export default class Worker extends Singleton {
      * @returns 
      */
     async getWorkerResults(queueName: string) {
-        const workerRepository = new Repository<WorkerModel>(this.options.workerModelCtor)
+        const workerRepository = new Repository<WorkerLegacyModel>(this.options.workerModelCtor)
 
         return await workerRepository.findMany({
             queueName
@@ -110,7 +110,7 @@ export default class Worker extends Singleton {
      * Proces the worker by dispatching it through the event driver 'sync'
      * @param model 
      */
-    async processWorkerModel(model: WorkerModel) {
+    async processWorkerModel(model: WorkerLegacyModel) {
         model.table = new this.options.workerModelCtor().table
         const eventName = model.getAttribute('eventName')
         const payload = model.getPayload() as IEventPayload
@@ -133,7 +133,7 @@ export default class Worker extends Singleton {
      * @param err 
      * @returns 
      */
-    async failedWorkerModel(model: WorkerModel, err: Error) {
+    async failedWorkerModel(model: WorkerLegacyModel, err: Error) {
         model.table = new this.options.workerModelCtor().table;
 
         // Get attempts and max retreis
@@ -159,7 +159,7 @@ export default class Worker extends Singleton {
      * @param model 
      * @param err 
      */
-    async moveFailedWorkerModel(model: WorkerModel, err: Error) {
+    async moveFailedWorkerModel(model: WorkerLegacyModel, err: Error) {
         this.logToConsole('Moved to failed')
         
         const failedWorkerModel = (new FailedWorkerModelFactory).create(

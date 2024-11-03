@@ -14,13 +14,19 @@ abstract class BaseEvent implements IBaseEvent {
     protected defaultDriver!: ICtor<IEventDriver>;
 
     /**
+     * Provide a namespace to avoid conflicts with other events.
+     */
+    protected namespace: string = '';
+
+    /**
      * Constructor
      * @param payload The payload of the event
      * @param driver The class of the event driver
      */
     constructor(payload: IEventPayload | null = null, driver?: ICtor<IEventDriver>) {
         this.payload = payload;
-        this.defaultDriver = App.container('events').getDefaultDriverCtor();
+        // Use safeContainer here to avoid errors during registering which runs during boot up.
+        this.defaultDriver = App.safeContainer('events')?.getDefaultDriverCtor() as ICtor<IEventDriver>; 
         this.driver = driver ?? this.defaultDriver;
     }
 
@@ -36,6 +42,13 @@ abstract class BaseEvent implements IBaseEvent {
     async execute(...args: any[]): Promise<void> {/* Nothing to execute */}
 
     /**
+     * @returns The name of the queue as a string.
+     */
+    getQueueName(): string {
+        return 'default';
+    }
+
+    /**
      * @template T The type of the payload to return.
      * @returns The payload of the event.
      */
@@ -47,7 +60,8 @@ abstract class BaseEvent implements IBaseEvent {
      * @returns The name of the event as a string.
      */
     getName(): string {
-        return this.constructor.name
+        const prefix = this.namespace === '' ? '' : (this.namespace + '/')
+        return prefix + this.constructor.name
     }
 
     /**

@@ -1,5 +1,5 @@
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
-import Worker from "@src/core/domains/events-legacy/services/Worker";
+import WorkerLegacy from "@src/core/domains/events-legacy/services/WorkerLegacy";
 import { App } from "@src/core/services/App";
 
 export default class WorkerLegacyCommand extends BaseCommand {
@@ -22,7 +22,7 @@ export default class WorkerLegacyCommand extends BaseCommand {
 
     async execute() {
         const driver = this.getDriverName();
-        const worker = Worker.getInstance()
+        const worker = WorkerLegacy.getInstance()
         worker.setDriver(driver)
 
         App.container('logger').console('Running worker...', worker.options)

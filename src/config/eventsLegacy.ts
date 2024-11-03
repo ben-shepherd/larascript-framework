@@ -2,7 +2,7 @@ import { ExampleListener } from "@src/app/events/listeners/ExampleListener";
 import QueueDriver, { QueueDriverOptions } from "@src/core/domains/events-legacy/drivers/QueueDriver";
 import SynchronousDriver from "@src/core/domains/events-legacy/drivers/SynchronousDriver";
 import { IEventDrivers, ISubscribers } from "@src/core/domains/events-legacy/interfaces/IEventConfig";
-import WorkerModel from "@src/core/domains/events-legacy/models/WorkerModel";
+import WorkerLegacyModel from "@src/core/domains/events-legacy/models/WorkerLegacyModel";
 import DriverOptions from "@src/core/domains/events-legacy/services/QueueDriverOptions";
 
 /**
@@ -45,7 +45,7 @@ export const eventDrivers: IEventDrivers = {
             retries: 3,               // Number of retry attempts for failed events
             failedCollection: 'failedWorkers',  // Collection to store failed events
             runAfterSeconds: 10,      // Delay before processing queued events
-            workerModelCtor: WorkerModel  // Constructor for the Worker model
+            workerModelCtor: WorkerLegacyModel  // Constructor for the Worker model
         })
     }
 } as const;

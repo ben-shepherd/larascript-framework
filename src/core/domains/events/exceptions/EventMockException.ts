@@ -1,4 +1,4 @@
-export default class MockException extends Error {
+export default class EventMockException extends Error {
 
     constructor(message: string = 'Mock Exception') {
         super(message);

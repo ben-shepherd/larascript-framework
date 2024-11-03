@@ -7,6 +7,8 @@ import TestEventSyncEvent from '@src/tests/events/events/TestEventSyncEvent';
 import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
 import TestEventProvider from '@src/tests/providers/TestEventProvider';
 
+import TestEventSyncBadPayloadEvent from './events/TestEventSyncBadPayloadEvent';
+
 describe('mock event service', () => {
 
     /**
@@ -26,7 +28,7 @@ describe('mock event service', () => {
     /**
    * Dispatch a synchronus event
    */
-    test('test dispatch event sync', async () => {
+    test('test dispatch event sync with valid payload', async () => {
 
         const eventService = App.container('events');
         
@@ -39,5 +41,25 @@ describe('mock event service', () => {
                 return payload.hello === 'world'
             })
         ).toBeTruthy()
+    })
+
+    /**
+   * Dispatch a synchronus event
+   */
+    test('test dispatch event sync with invalid payload', async () => {
+
+        const eventService = App.container('events');
+            
+        eventService.mockEvent(TestEventSyncBadPayloadEvent)
+    
+        await eventService.dispatch(new TestEventSyncBadPayloadEvent({ unexpectedProperty: 123 }));
+            
+        expect(eventService.assertDispatched(TestEventSyncBadPayloadEvent)).toBeTruthy()
+        
+        expect(
+            eventService.assertDispatched<{ hello: string }>(TestEventSyncBadPayloadEvent, (payload) => {
+                return payload.hello === 'world'
+            })
+        ).toBeFalsy()
     })
 }); 

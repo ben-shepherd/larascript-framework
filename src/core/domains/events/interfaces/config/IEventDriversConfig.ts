@@ -6,6 +6,8 @@ export interface IEventDriversConfigOption {
     options?: Record<string, unknown>;
 }
 
+export type TEventDriversRegister = Record<string, IEventDriversConfigOption>;
+
 export interface IEventDriversConfig
 {
     [key: string]: IEventDriversConfigOption

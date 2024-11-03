@@ -7,6 +7,8 @@ class TestEventSyncEvent extends BaseEvent {
 
     static readonly eventName = 'TestEventSyncEvent';
 
+    protected namespace: string = 'testing';
+
     constructor(payload: IEventPayload) {
         super(payload);
     }

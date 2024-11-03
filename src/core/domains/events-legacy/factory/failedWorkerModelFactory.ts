@@ -1,4 +1,4 @@
-import FailedWorkerModel, { initialFailedWorkerModalData } from "@src/core/domains/events-legacy/models/FailedWorkerModel";
+import FailedWorkerLegacyModel, { initialFailedWorkerModalData } from "@src/core/domains/events-legacy/models/FailedWorkerLegacyModel";
 
 type Params = {
     eventName: string;
@@ -15,8 +15,8 @@ export default class FailedWorkerModelFactory {
      * @param error The error that caused the event to fail
      * @returns A new instance of FailedWorkerModel
      */
-    create(collection: string, { eventName, payload, error }: Params): FailedWorkerModel {
-        return new FailedWorkerModel({
+    create(collection: string, { eventName, payload, error }: Params): FailedWorkerLegacyModel {
+        return new FailedWorkerLegacyModel({
             ...initialFailedWorkerModalData,
             eventName,
             payload,

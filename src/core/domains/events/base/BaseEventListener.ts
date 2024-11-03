@@ -1,9 +1,9 @@
 import BaseEvent from "@src/core/domains/events/base/BaseEvent";
-import { IEventListener } from "@src/core/domains/events/interfaces/IEventListener";
-import { ICtor } from "@src/core/interfaces/ICtor";
-
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
+import { IEventListener } from "@src/core/domains/events/interfaces/IEventListener";
 import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
+import { ICtor } from "@src/core/interfaces/ICtor";
+import { App } from "@src/core/services/App";
 
 class BaseEventListener extends BaseEvent implements IEventListener {
 
@@ -17,6 +17,11 @@ class BaseEventListener extends BaseEvent implements IEventListener {
      */
     constructor(payload?: IEventPayload, driver?: ICtor<IEventDriver>) {
         super(payload, driver);
+
+        if(!App.containerReady('events')) {
+            return;
+        }
+
         this.notifySubscribers();
     }
 

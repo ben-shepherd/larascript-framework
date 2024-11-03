@@ -11,11 +11,15 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 
 export interface IEventService extends IHasRegisterableConcern, IHasDispatcherConcern, IHasListenerConcern, IMockableConcern
 {
-    registerDriver(driverIdentifierConstant: string, driverConfig: IEventDriversConfigOption): void;
+    registerEvent(event: ICtor<IBaseEvent>): void;
+
+    registerDriver(driverConfig: IEventDriversConfigOption): void;
 
     registerListener(listenerConfig: TListenersConfigOption): void;
 
     getDefaultDriverCtor(): ICtor<IEventDriver>;
+
+    getDriverOptions(driver: IEventDriver): IEventDriversConfigOption | undefined;
 
     getSubscribers(eventName: string): ICtor<IBaseEvent>[];
 }

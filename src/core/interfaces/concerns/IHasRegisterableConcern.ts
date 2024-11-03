@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-export type TRegisterMap = Map<string, unknown>;
+export type TRegisterMap<K extends string = string, V = unknown> = Map<K, V>;
 
 export interface IRegsiterList {
     [key: string]: TRegisterMap

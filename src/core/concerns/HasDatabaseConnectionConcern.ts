@@ -4,6 +4,21 @@ import { IHasDatabaseConnection } from "@src/core/interfaces/concerns/IHasDataba
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
+/**
+ * A concern that provides database connection capabilities to a class.
+ * 
+ * Automatically injects the `connection` and `table` properties, as well as
+ * the `getDocumentManager` and `getSchema` methods.
+ * 
+ * To use this concern, simply call it in the class definition, like so:
+ * 
+ * class MyModel extends HasDatabaseConnection(Base) {
+ *     
+ * }
+ * 
+ * @param Base The class to extend.
+ * @returns A class that extends Base and implements IHasDatabaseConnection.
+ */
 const HasDatabaseConnectionConcern = (Base: ICtor) => {
     return class HasDatabaseConnection extends Base implements IHasDatabaseConnection {
 
