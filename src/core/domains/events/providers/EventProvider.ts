@@ -5,6 +5,8 @@ import { IEventService } from "@src/core/domains/events/interfaces/IEventService
 import EventService from "@src/core/domains/events/services/EventService";
 import { App } from "@src/core/services/App";
 
+import WorkerCommand from "../commands/WorkerCommand";
+
 class EventProvider extends BaseProvider {
 
     protected config: IEventConfig = eventConfig;
@@ -18,6 +20,10 @@ class EventProvider extends BaseProvider {
         this.registerListeners(eventService);
 
         App.setContainer('events', eventService);
+
+        App.container('console').register().registerAll([
+            WorkerCommand
+        ])
     }
 
     async boot(): Promise<void> {}

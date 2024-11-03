@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import EventDriverException from "../exceptions/EventDriverException";
 import { IBaseEvent } from "../interfaces/IBaseEvent";
+import { IWorkerModel, TFailedWorkerModelData } from "../interfaces/IEventWorkerConcern";
 
 
 export type TQueueDriverOptions = {
@@ -32,12 +33,12 @@ export type TQueueDriverOptions = {
     /**
      * Constructor for the Worker model
      */
-    workerModelCtor: ICtor<IModel>;
+    workerModelCtor: ICtor<IWorkerModel>;
 
     /**
      * Constructor for the Worker model for failed events
      */
-    failedWorkerModelCtor: ICtor<IModel>;
+    failedWorkerModelCtor: ICtor<IModel<TFailedWorkerModelData>>;
 
     /**
      * Run the worker only once, defaults to false
@@ -66,7 +67,7 @@ class QueueableDriver extends BaseDriver  {
 
         this.validateOptions(options)
 
-        this.updateWorkerQueueTable(options as TQueueDriverOptions, event)
+        await this.updateWorkerQueueTable(options as TQueueDriverOptions, event)
     }
 
     /**
@@ -85,7 +86,8 @@ class QueueableDriver extends BaseDriver  {
         const workerModel = new options.workerModelCtor({
             queueName: event.getQueueName(),
             eventName: event.getName(),
-            payload: JSON.stringify(event.getPayload()),
+            retries: options.retries,
+            payload: JSON.stringify(event.getPayload() ?? {}),
         })
         await workerModel.save();
     }

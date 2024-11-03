@@ -11,7 +11,7 @@ class SyncDriver extends BaseDriver  {
     getName(): string {
         return EVENT_DRIVERS.SYNC;
     }
-
+    
 }
 
 export default SyncDriver

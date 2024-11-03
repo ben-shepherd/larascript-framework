@@ -23,6 +23,16 @@ const EventMockableConcern = (Base: ICtor) => {
          */
         mockEvent(event: ICtor<IBaseEvent>): void {
             this.mockEvents.push(event)
+            this.removeMockEventDispatched(event)
+        }
+
+        /**
+         * Removes the given event from the {@link mockEvents} array.
+         * 
+         * @param event - The event to remove from the {@link mockEvents} array.
+         */
+        removeMockEvent(event: ICtor<IBaseEvent>): void {
+            this.mockEvents = this.mockEvents.filter(e => (new e).getName() !== (new event).getName())
         }
 
         /**
@@ -41,6 +51,15 @@ const EventMockableConcern = (Base: ICtor) => {
             }
             
             this.mockEventsDispatched.push(event)
+        }
+
+        /**
+         * Removes all events from the {@link mockEventsDispatched} array that match the given event constructor.
+         * 
+         * @param event - The event to remove from the {@link mockEventsDispatched} array.
+         */
+        removeMockEventDispatched(event: ICtor<IBaseEvent>): void {
+            this.mockEventsDispatched = this.mockEventsDispatched.filter(e => e.getName() !== (new event).getName())
         }
 
 

@@ -3,9 +3,12 @@ import EventMockableConcern from "@src/core/domains/events/concerns/EventMockabl
 import { ICtor } from "@src/core/interfaces/ICtor";
 import compose from "@src/core/util/compose";
 
+import EventWorkerConcern from "../concerns/EventWorkerConcern";
+
 const BaseService: ICtor = compose(
     class {},
     HasRegisterableConcern,
+    EventWorkerConcern,
     EventMockableConcern,
 );
 

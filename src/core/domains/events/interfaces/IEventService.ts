@@ -9,8 +9,13 @@ import { IMockableConcern } from "@src/core/domains/events/interfaces/IMockableC
 import { IHasRegisterableConcern } from "@src/core/interfaces/concerns/IHasRegisterableConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
 
-export interface IEventService extends IHasRegisterableConcern, IHasDispatcherConcern, IHasListenerConcern, IMockableConcern
+import { IEventConfig } from "./config/IEventConfig";
+import { IEventWorkerConcern } from "./IEventWorkerConcern";
+
+export interface IEventService extends IHasRegisterableConcern, IHasDispatcherConcern, IHasListenerConcern, IEventWorkerConcern, IMockableConcern
 {
+    getConfig(): IEventConfig;
+
     registerEvent(event: ICtor<IBaseEvent>): void;
 
     registerDriver(driverConfig: IEventDriversConfigOption): void;
@@ -20,6 +25,10 @@ export interface IEventService extends IHasRegisterableConcern, IHasDispatcherCo
     getDefaultDriverCtor(): ICtor<IEventDriver>;
 
     getDriverOptions(driver: IEventDriver): IEventDriversConfigOption | undefined;
+
+    getDriverOptionsByName(driverName: string): IEventDriversConfigOption | undefined;
+
+    getEventCtorByName(eventName: string): ICtor<IBaseEvent> | undefined;
 
     getSubscribers(eventName: string): ICtor<IBaseEvent>[];
 }

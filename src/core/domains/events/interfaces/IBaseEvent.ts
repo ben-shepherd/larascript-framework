@@ -5,10 +5,9 @@ import { IExecutable } from "@src/core/interfaces/concerns/IExecutable";
 import { INameable } from "@src/core/interfaces/concerns/INameable";
 import { ICtor } from "@src/core/interfaces/ICtor";
 
-import { IQueueName } from "./IQueueName";
-
-export interface IBaseEvent extends INameable, IExecutable, IQueueName
+export interface IBaseEvent extends INameable, IExecutable
 {
+    getQueueName(): string;
     getEventService(): IEventService;
     getDriverCtor(): ICtor<IEventDriver>;
     getPayload<T = unknown>(): T;

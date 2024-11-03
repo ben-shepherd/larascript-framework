@@ -11,6 +11,7 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { IRegsiterList, TRegisterMap } from "@src/core/interfaces/concerns/IHasRegisterableConcern";
 
 import EventDispatchException from "../exceptions/EventDispatchException";
+import { TEventWorkerOptions } from "../interfaces/IEventWorkerConcern";
 
 class EventService extends BaseService implements IEventService {
 
@@ -29,6 +30,15 @@ class EventService extends BaseService implements IEventService {
     constructor(config: IEventConfig) {
         super()
         this.config = config;
+    }
+
+    /**
+     * Retrieves the name of the event driver from its constructor.
+     * @param driver The constructor of the event driver.
+     * @returns The name of the event driver as a string.
+     */
+    public static getDriverName(driver: ICtor<IEventDriver>): string {
+        return driver.name
     }
 
     /**
@@ -60,7 +70,14 @@ class EventService extends BaseService implements IEventService {
     }
 
     /**
- * Declare HasRegisterableConcern methods.
+     * @returns The current event configuration as an instance of IEventConfig.
+     */
+    getConfig(): IEventConfig {
+        return this.config
+    }
+
+    /**
+     * Declare HasRegisterableConcern methods.
      */
     declare register: (key: string, value: unknown) => void;
 
@@ -81,7 +98,12 @@ class EventService extends BaseService implements IEventService {
 
     declare mockEventDispatched: (event: IBaseEvent) => void;
 
-    declare assertDispatched: <T = unknown>(eventCtor: ICtor<IBaseEvent>, callback?: TMockableEventCallback<T>) => boolean
+    declare assertDispatched: <TPayload = unknown>(eventCtor: ICtor<IBaseEvent>, callback?: TMockableEventCallback<TPayload>) => boolean
+
+    /**
+     * Delcare EventWorkerConcern methods.
+     */
+    declare runWorker: (options: TEventWorkerOptions) => Promise<void>;
 
     /**
      * Dispatch an event using its registered driver.
@@ -93,11 +115,13 @@ class EventService extends BaseService implements IEventService {
             throw new EventDispatchException(`Event '${event.getName()}' not registered. The event must be added to the \`events\` array in the config. See @src/config/events.ts`)
         }
 
+        // Mock the dispatch before dispatching the event, as any errors thrown during the dispatch will not be caught
+        this.mockEventDispatched(event)
+
         const eventDriverCtor = event.getDriverCtor()
         const eventDriver = new eventDriverCtor(this)
         await eventDriver.dispatch(event)
 
-        this.mockEventDispatched(event)
     }
 
     /**
@@ -127,7 +151,7 @@ class EventService extends BaseService implements IEventService {
      * @param driverConfig the driver configuration
      */
     registerDriver(driverConfig: IEventDriversConfigOption): void {
-        const driverIdentifier = driverConfig.driverCtor.name
+        const driverIdentifier = EventService.getDriverName(driverConfig.driverCtor)
 
         this.registerByList(
             EventService.REGISTERED_DRIVERS,
@@ -143,7 +167,6 @@ class EventService extends BaseService implements IEventService {
      */
     registerListener(listenerConfig: TListenersConfigOption): void {
         const listenerIdentifier = listenerConfig.listener.name
-
 
         // Update registered listeners
         this.registerByList(
@@ -190,6 +213,28 @@ class EventService extends BaseService implements IEventService {
         const driverConfig = registeredDrivers.get(driver.getName())?.[0];
 
         return driverConfig ?? undefined
+    }
+
+    /**
+     * Retrieves the configuration options for a given event driver by name.
+     * @param driverName The name of the event driver.
+     * @returns The configuration options for the specified event driver, or undefined if not found.
+     */
+    getDriverOptionsByName(driverName: string): IEventDriversConfigOption | undefined {
+        const registeredDrivers = this.getRegisteredByList<TRegisterMap<string, IEventDriversConfigOption>>(EventService.REGISTERED_DRIVERS);
+        const driverConfig = registeredDrivers.     get(driverName)?.[0];
+
+        return driverConfig ?? undefined
+    }
+
+    /**
+     * Retrieves the event constructor for a given event name.
+     * @param eventName The name of the event.
+     * @returns The event constructor for the specified event, or undefined if not found.
+     */
+    getEventCtorByName(eventName: string): ICtor<IBaseEvent> | undefined {
+        const registeredEvents = this.getRegisteredByList<TRegisterMap<string, ICtor<IBaseEvent>>>(EventService.REGISTERED_EVENTS);
+        return registeredEvents.get(eventName)?.[0]
     }
 
     /**

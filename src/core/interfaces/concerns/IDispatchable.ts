@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
 export interface IDispatchable
 {
-    dispatch(...arg: any[]): Promise<void>;
+    dispatch(...args: unknown[]): Promise<unknown>;
 }

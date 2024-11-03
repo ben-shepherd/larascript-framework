@@ -1,14 +1,8 @@
 import Model from "@src/core/base/Model";
-import IModelAttributes from "@src/core/interfaces/IModelData";
 
-export interface WorkerModelData extends IModelAttributes {
-    queueName: string;
-    eventName: string;
-    payload: any;
-    attempt: number;
-    retries: number;
-    createdAt: Date;
-}
+import { IWorkerModel, TWorkerModelData } from "../interfaces/IEventWorkerConcern";
+
+export interface WorkerModelData extends TWorkerModelData {}
 
 export const initialWorkerModalData = {
     queueName: '',
@@ -27,7 +21,7 @@ export const initialWorkerModalData = {
  * @class WorkerModel
  * @extends Model<WorkerModelData>
  */
-export default class WorkerModel extends Model<WorkerModelData> {
+export default class WorkerModel extends Model<WorkerModelData> implements IWorkerModel {
 
     table: string = 'worker_queue';
 
@@ -65,10 +59,10 @@ export default class WorkerModel extends Model<WorkerModelData> {
         super({...initialWorkerModalData, ...data}); 
     }
 
-    public getPayload(): unknown {
+    getPayload<T = unknown>(): T | null {
         try {
             const payload = this.getAttribute('payload');
-            return JSON.parse(payload)
+            return JSON.parse(payload) as T
         }
         // eslint-disable-next-line no-unused-vars
         catch (err) {

@@ -5,6 +5,8 @@ import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload
 
 class TestEventSyncBadPayloadEvent extends BaseEvent {
 
+    protected namespace: string = 'testing';
+
     constructor(payload: unknown) {
         super(payload as IEventPayload);
     }

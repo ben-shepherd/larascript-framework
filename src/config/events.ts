@@ -13,8 +13,8 @@ import TestSubscriber from "@src/tests/events/subscribers/TestSubscriber";
  * Event Drivers Constants
  */
 export const EVENT_DRIVERS = {
-    SYNC: 'sync',
-    QUEABLE: 'queueable'
+    SYNC: EventService.getDriverName(SyncDriver),
+    QUEABLE: EventService.getDriverName(QueueableDriver)
 }
 
 export const eventConfig: IEventConfig = {
@@ -46,6 +46,9 @@ export const eventConfig: IEventConfig = {
         
     },
 
+    /**
+     * Register Events
+     */
     events: EventService.createEvents([
         TestEventQueueEvent,
         TestEventSyncEvent
@@ -53,6 +56,9 @@ export const eventConfig: IEventConfig = {
 
     /**
      * Event Listeners Configuration
+     * 
+     * These are automatically registered with the event service
+     *  and do not need to be added to 'events' array.
      */
     listeners: EventService.createListeners([
         {

@@ -7,7 +7,7 @@ export default class WorkerLegacyCommand extends BaseCommand {
     /**
      * The signature of the command
      */
-    signature: string = 'worker';
+    signature: string = 'worker:legacy';
 
     description = 'Run the worker to process queued event items';
 
