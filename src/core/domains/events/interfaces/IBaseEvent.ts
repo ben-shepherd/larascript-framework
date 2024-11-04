@@ -5,9 +5,8 @@ import { IExecutable } from "@src/core/interfaces/concerns/IExecutable";
 import { INameable } from "@src/core/interfaces/concerns/INameable";
 import { ICtor } from "@src/core/interfaces/ICtor";
 
-import { TISerializablePayload } from "./IEventPayload";
 
-export interface IBaseEvent<TPayload = TISerializablePayload> extends INameable, IExecutable
+export interface IBaseEvent<TPayload = unknown> extends INameable, IExecutable
 {
     getQueueName(): string;
     getEventService(): IEventService;

@@ -5,9 +5,8 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
 import EventInvalidPayloadException from "../exceptions/EventInvalidPayloadException";
-import { TISerializablePayload } from "../interfaces/IEventPayload";
 
-abstract class BaseEvent<TPayload = TISerializablePayload> implements IBaseEvent<TPayload> {
+abstract class BaseEvent<TPayload = unknown> implements IBaseEvent<TPayload> {
 
     protected payload: TPayload | null = null;
 

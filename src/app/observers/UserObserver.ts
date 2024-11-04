@@ -3,7 +3,7 @@ import hashPassword from "@src/core/domains/auth/utils/hashPassword";
 import Observer from "@src/core/domains/observer/services/Observer";
 import { App } from "@src/core/services/App";
 
-import { UserRegisteredListener } from "../events/listeners/UserRegisteredListener";
+import { UserCreatedListener } from "../events/listeners/UserCreatedListener";
 
 /**
  * Observer for the User model.
@@ -31,7 +31,7 @@ export default class UserObserver extends Observer<IUserData> {
      * @returns The processed User data.
      */
     async created(data: IUserData): Promise<IUserData> {
-        App.container('events').dispatch(new UserRegisteredListener(data))
+        await App.container('events').dispatch(new UserCreatedListener(data))
         return data
     }
 

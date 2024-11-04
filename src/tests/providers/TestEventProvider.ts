@@ -1,3 +1,5 @@
+import { UserCreatedListener } from '@src/app/events/listeners/UserCreatedListener';
+import UserCreatedSubscriber from '@src/app/events/subscribers/UserCreatedSubscriber';
 import { EVENT_DRIVERS } from '@src/config/events';
 import QueueableDriver, { TQueueDriverOptions } from '@src/core/domains/events/drivers/QueableDriver';
 import SyncDriver from '@src/core/domains/events/drivers/SyncDriver';
@@ -34,12 +36,16 @@ class TestEventProvider extends EventProvider {
         },
 
         events: [
+            // Sync events
             TestEventSyncEvent,
             TestEventSyncBadPayloadEvent,
+
+            // Queable (worker events)
             TestEventQueueEvent,
             TestEventQueueCalledFromWorkerEvent,
             TestEventQueueAddAlwaysFailsEventToQueue,
-            TestEventQueueAlwaysFailsEvent
+            TestEventQueueAlwaysFailsEvent,
+
         ],
 
         listeners: EventService.createConfigListeners([
@@ -47,6 +53,12 @@ class TestEventProvider extends EventProvider {
                 listener: TestListener,
                 subscribers: [
                     TestSubscriber
+                ]
+            },
+            {
+                listener: UserCreatedListener,
+                subscribers: [
+                    UserCreatedSubscriber
                 ]
             }
         ])

@@ -12,7 +12,8 @@ import { IEventListenersConfig, TListenersConfigOption, TListenersMap } from "@s
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IRegsiterList, TRegisterMap } from "@src/core/interfaces/concerns/IHasRegisterableConcern";
 
-import { TISerializablePayload } from "../interfaces/IEventPayload";
+import BaseEventListener from "../base/BaseEventListener";
+
 
 class EventService extends BaseService implements IEventService {
 
@@ -99,7 +100,7 @@ class EventService extends BaseService implements IEventService {
 
     declare mockEventDispatched: (event: IBaseEvent) => void;
 
-    declare assertDispatched: <TPayload extends TISerializablePayload = TISerializablePayload>(eventCtor: ICtor<IBaseEvent>, callback?: TMockableEventCallback<TPayload>) => boolean
+    declare assertDispatched: <TPayload = unknown>(eventCtor: ICtor<IBaseEvent>, callback?: TMockableEventCallback<TPayload>) => boolean
 
     /**
      * Delcare EventWorkerConcern methods.
@@ -123,6 +124,10 @@ class EventService extends BaseService implements IEventService {
         const eventDriver = new eventDriverCtor(this)
         await eventDriver.dispatch(event)
 
+        // Notify all subscribers of the event
+        if(event instanceof BaseEventListener) {
+            await this.notifySubscribers(event); 
+        }
     }
 
     /**
@@ -236,6 +241,23 @@ class EventService extends BaseService implements IEventService {
     getEventCtorByName(eventName: string): ICtor<IBaseEvent> | undefined {
         const registeredEvents = this.getRegisteredByList<TRegisterMap<string, ICtor<IBaseEvent>>>(EventService.REGISTERED_EVENTS);
         return registeredEvents.get(eventName)?.[0]
+    }
+
+    /**
+     * Notifies all subscribers of this event that the event has been dispatched.
+     *
+     * Retrieves all subscribers of this event from the event service, creates
+     * a new instance of each subscriber, passing the payload of this event to
+     * the subscriber's constructor, and then dispatches the subscriber event
+     * using the event service.
+     */
+    async notifySubscribers(eventListener: BaseEventListener) {
+        const subscribers = this.getSubscribers(eventListener.getName());
+    
+        for (const subscriber of subscribers) {
+            const eventSubscriber = new subscriber(eventListener.getPayload());
+            await this.dispatch(eventSubscriber);
+        }
     }
 
     /**

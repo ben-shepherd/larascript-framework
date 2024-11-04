@@ -20,27 +20,6 @@ class BaseEventListener<TPayload = unknown> extends BaseEvent<TPayload> implemen
         if(!App.containerReady('events')) {
             return;
         }
-
-        this.notifySubscribers();
-    }
-
-    /**
-     * Notifies all subscribers of this event that the event has been dispatched.
-     *
-     * Retrieves all subscribers of this event from the event service, creates
-     * a new instance of each subscriber, passing the payload of this event to
-     * the subscriber's constructor, and then dispatches the subscriber event
-     * using the event service.
-     */
-    protected notifySubscribers() {
-        const eventService = this.getEventService();
-        const subscribers = eventService.getSubscribers(this.getName());
-
-        for (const subscriber of subscribers) {
-            const subscriberEvent = new subscriber(this.getPayload());
-
-            eventService.dispatch(subscriberEvent);
-        }
     }
 
 }
