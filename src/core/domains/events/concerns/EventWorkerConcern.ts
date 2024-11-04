@@ -79,14 +79,18 @@ const EventWorkerConcern = (Base: ICtor) => {
         private async handleUpdateWorkerModelAttempts(workerModel: IWorkerModel, options: TEventWorkerOptions) {
 
             const attempt = workerModel.getAttribute('attempt') ?? 0
+            const newAttempt = attempt + 1
             const retries = workerModel.getAttribute('retries') ?? 0
 
-            if(attempt >= retries) {
+            console.log('Handle update attempts', {attempt, newAttempt, retries})
+            
+            await workerModel.attr('attempt', attempt + 1)
+
+            if(newAttempt >= retries) {
                 await this.handleFailedWorkerModel(workerModel, options)
                 return;
             }
 
-            await workerModel.attr('attempt', attempt + 1)
             await workerModel.save();
         }
 
@@ -101,6 +105,7 @@ const EventWorkerConcern = (Base: ICtor) => {
          * @private
          */
         private async handleFailedWorkerModel(workerModel: IWorkerModel, options: TEventWorkerOptions) {
+            console.log('handle failed worker model', {eventName: workerModel.getAttribute('eventName'), queueName: workerModel.getAttribute('queueName'), payload: workerModel.getAttribute('payload')})
             const FailedWorkerModel = new options.failedWorkerModelCtor({
                 eventName: workerModel.getAttribute('eventName'),
                 queueName: workerModel.getAttribute('queueName'),

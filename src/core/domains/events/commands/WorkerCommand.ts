@@ -40,7 +40,6 @@ export default class WorkerCommand extends BaseCommand {
         if(options.runOnce) {
             clearInterval(intervalId);
             App.container('logger').console('runOnce enabled. Quitting...');
-            return;
         }
     }
 
