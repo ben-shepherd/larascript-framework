@@ -1,11 +1,10 @@
 import BaseDriver from "@src/core/domains/events/base/BaseDriver";
+import EventDriverException from "@src/core/domains/events/exceptions/EventDriverException";
+import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
+import { IWorkerModel, TFailedWorkerModelData } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import { z } from "zod";
-
-import EventDriverException from "../exceptions/EventDriverException";
-import { IBaseEvent } from "../interfaces/IBaseEvent";
-import { IWorkerModel, TFailedWorkerModelData } from "../interfaces/IEventWorkerConcern";
 
 
 export type TQueueDriverOptions = {

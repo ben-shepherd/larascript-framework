@@ -1,6 +1,5 @@
 import Model from "@src/core/base/Model";
-
-import { IWorkerModel, TWorkerModelData } from "../interfaces/IEventWorkerConcern";
+import { IWorkerModel, TWorkerModelData } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
 
 export interface WorkerModelData extends TWorkerModelData {}
 

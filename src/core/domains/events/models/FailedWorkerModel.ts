@@ -1,6 +1,5 @@
 import Model from "@src/core/base/Model";
-
-import { TFailedWorkerModelData } from "../interfaces/IEventWorkerConcern";
+import { TFailedWorkerModelData } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
 
 
 export interface FailedWorkerModelData extends TFailedWorkerModelData {}

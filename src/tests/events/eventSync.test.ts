@@ -7,7 +7,7 @@ import TestEventSyncEvent from '@src/tests/events/events/TestEventSyncEvent';
 import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
 import TestEventProvider from '@src/tests/providers/TestEventProvider';
 
-import TestEventSyncBadPayloadEvent from './events/TestEventSyncBadPayloadEvent';
+import TestEventSyncBadPayloadEvent from '@src/tests/events/events/TestEventSyncBadPayloadEvent';
 
 describe('mock event service', () => {
 

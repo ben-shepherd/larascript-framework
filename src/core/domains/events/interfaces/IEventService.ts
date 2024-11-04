@@ -1,16 +1,15 @@
 /* eslint-disable no-unused-vars */
+import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventConfig";
 import { IEventDriversConfigOption } from "@src/core/domains/events/interfaces/config/IEventDriversConfig";
 import { TListenersConfigOption } from "@src/core/domains/events/interfaces/config/IEventListenersConfig";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
+import { IEventWorkerConcern } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
 import { IHasDispatcherConcern } from "@src/core/domains/events/interfaces/IHasDispatcherConcern";
 import { IHasListenerConcern } from "@src/core/domains/events/interfaces/IHasListenerConcern";
 import { IMockableConcern } from "@src/core/domains/events/interfaces/IMockableConcern";
 import { IHasRegisterableConcern } from "@src/core/interfaces/concerns/IHasRegisterableConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
-
-import { IEventConfig } from "./config/IEventConfig";
-import { IEventWorkerConcern } from "./IEventWorkerConcern";
 
 export interface IEventService extends IHasRegisterableConcern, IHasDispatcherConcern, IHasListenerConcern, IEventWorkerConcern, IMockableConcern
 {

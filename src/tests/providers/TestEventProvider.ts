@@ -4,17 +4,16 @@ import SyncDriver from '@src/core/domains/events/drivers/SyncDriver';
 import { IEventConfig } from '@src/core/domains/events/interfaces/config/IEventConfig';
 import EventProvider from '@src/core/domains/events/providers/EventProvider';
 import EventService from '@src/core/domains/events/services/EventService';
+import TestEventQueueAddAlwaysFailsEventToQueue from '@src/tests/events/events/TestEventQueueAddAlwaysFailsEventToQueue';
+import TestEventQueueAlwaysFailsEvent from '@src/tests/events/events/TestEventQueueAlwaysFailsEvent';
+import TestEventQueueCalledFromWorkerEvent from '@src/tests/events/events/TestEventQueueCalledFromWorkerEvent';
+import TestEventQueueEvent from '@src/tests/events/events/TestEventQueueEvent';
+import TestEventSyncBadPayloadEvent from '@src/tests/events/events/TestEventSyncBadPayloadEvent';
+import TestEventSyncEvent from '@src/tests/events/events/TestEventSyncEvent';
 import TestListener from '@src/tests/events/listeners/TestListener';
 import TestSubscriber from '@src/tests/events/subscribers/TestSubscriber';
+import TestFailedWorkerModel from '@src/tests/models/models/TestFailedWorkerModel';
 import TestWorkerModel from "@src/tests/models/models/TestWorkerModel";
-
-import TestEventQueueAddAlwaysFailsEventToQueue from '../events/events/TestEventQueueAddAlwaysFailsEventToQueue';
-import TestEventQueueAlwaysFailsEvent from '../events/events/TestEventQueueAlwaysFailsEvent';
-import TestEventQueueCalledFromWorkerEvent from '../events/events/TestEventQueueCalledFromWorkerEvent';
-import TestEventQueueEvent from '../events/events/TestEventQueueEvent';
-import TestEventSyncBadPayloadEvent from '../events/events/TestEventSyncBadPayloadEvent';
-import TestEventSyncEvent from '../events/events/TestEventSyncEvent';
-import TestFailedWorkerModel from '../models/models/TestFailedWorkerModel';
 
 class TestEventProvider extends EventProvider {
 

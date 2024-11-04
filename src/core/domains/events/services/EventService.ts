@@ -1,17 +1,16 @@
 /* eslint-disable no-unused-vars */
 import BaseService from "@src/core/domains/events/base/BaseService";
+import EventDispatchException from "@src/core/domains/events/exceptions/EventDispatchException";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
+import { TEventWorkerOptions } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
 import { TMockableEventCallback } from "@src/core/domains/events/interfaces/IMockableConcern";
 import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventConfig";
 import { IEventDriversConfigOption } from "@src/core/domains/events/interfaces/config/IEventDriversConfig";
 import { IEventListenersConfig, TListenersConfigOption, TListenersMap } from "@src/core/domains/events/interfaces/config/IEventListenersConfig";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IRegsiterList, TRegisterMap } from "@src/core/interfaces/concerns/IHasRegisterableConcern";
-
-import EventDispatchException from "../exceptions/EventDispatchException";
-import { TEventWorkerOptions } from "../interfaces/IEventWorkerConcern";
 
 class EventService extends BaseService implements IEventService {
 

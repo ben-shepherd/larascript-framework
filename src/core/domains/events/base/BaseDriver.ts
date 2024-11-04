@@ -2,8 +2,7 @@
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
-
-import { IEventDriversConfigOption } from "../interfaces/config/IEventDriversConfig";
+import { IEventDriversConfigOption } from "@src/core/domains/events/interfaces/config/IEventDriversConfig";
 
 
 abstract class BaseDriver implements IEventDriver {

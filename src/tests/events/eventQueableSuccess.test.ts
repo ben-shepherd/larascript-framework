@@ -4,14 +4,13 @@ import { IModel } from '@src/core/interfaces/IModel';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
+import TestEventQueueCalledFromWorkerEvent from '@src/tests/events/events/TestEventQueueCalledFromWorkerEvent';
+import TestEventQueueEvent from '@src/tests/events/events/TestEventQueueEvent';
+import createWorkerTables, { dropWorkerTables } from '@src/tests/events/helpers/createWorketTables';
+import TestWorkerModel from '@src/tests/models/models/TestWorkerModel';
 import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
+import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 import TestEventProvider from '@src/tests/providers/TestEventProvider';
-
-import TestWorkerModel from '../models/models/TestWorkerModel';
-import TestDatabaseProvider from '../providers/TestDatabaseProvider';
-import TestEventQueueCalledFromWorkerEvent from './events/TestEventQueueCalledFromWorkerEvent';
-import TestEventQueueEvent from './events/TestEventQueueEvent';
-import createWorkerTables, { dropWorkerTables } from './helpers/createWorketTables';
 
 
 describe('mock queable event', () => {

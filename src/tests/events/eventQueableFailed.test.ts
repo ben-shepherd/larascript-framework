@@ -6,15 +6,14 @@ import { IModel } from '@src/core/interfaces/IModel';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
+import TestEventQueueAddAlwaysFailsEventToQueue from '@src/tests/events/events/TestEventQueueAddAlwaysFailsEventToQueue';
+import TestEventQueueAlwaysFailsEvent from '@src/tests/events/events/TestEventQueueAlwaysFailsEvent';
+import createWorkerTables, { dropWorkerTables } from '@src/tests/events/helpers/createWorketTables';
+import TestFailedWorkerModel from '@src/tests/models/models/TestFailedWorkerModel';
+import TestWorkerModel from '@src/tests/models/models/TestWorkerModel';
 import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
+import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 import TestEventProvider from '@src/tests/providers/TestEventProvider';
-
-import TestFailedWorkerModel from '../models/models/TestFailedWorkerModel';
-import TestWorkerModel from '../models/models/TestWorkerModel';
-import TestDatabaseProvider from '../providers/TestDatabaseProvider';
-import TestEventQueueAddAlwaysFailsEventToQueue from './events/TestEventQueueAddAlwaysFailsEventToQueue';
-import TestEventQueueAlwaysFailsEvent from './events/TestEventQueueAlwaysFailsEvent';
-import createWorkerTables, { dropWorkerTables } from './helpers/createWorketTables';
 
 
 describe('mock queable event failed', () => {

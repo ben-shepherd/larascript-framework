@@ -1,10 +1,9 @@
 import Repository from "@src/core/base/Repository";
+import EventWorkerException from "@src/core/domains/events/exceptions/EventWorkerException";
+import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
+import { IEventWorkerConcern, IWorkerModel, TEventWorkerOptions } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
-
-import EventWorkerException from "../exceptions/EventWorkerException";
-import { IEventPayload } from "../interfaces/IEventPayload";
-import { IEventWorkerConcern, IWorkerModel, TEventWorkerOptions } from "../interfaces/IEventWorkerConcern";
 
 const EventWorkerConcern = (Base: ICtor) => {
     return class EventWorkerConcern extends Base implements IEventWorkerConcern {
@@ -82,8 +81,6 @@ const EventWorkerConcern = (Base: ICtor) => {
             const newAttempt = attempt + 1
             const retries = workerModel.getAttribute('retries') ?? 0
 
-            console.log('Handle update attempts', {attempt, newAttempt, retries})
-            
             await workerModel.attr('attempt', attempt + 1)
 
             if(newAttempt >= retries) {
@@ -105,7 +102,6 @@ const EventWorkerConcern = (Base: ICtor) => {
          * @private
          */
         private async handleFailedWorkerModel(workerModel: IWorkerModel, options: TEventWorkerOptions) {
-            console.log('handle failed worker model', {eventName: workerModel.getAttribute('eventName'), queueName: workerModel.getAttribute('queueName'), payload: workerModel.getAttribute('payload')})
             const FailedWorkerModel = new options.failedWorkerModelCtor({
                 eventName: workerModel.getAttribute('eventName'),
                 queueName: workerModel.getAttribute('queueName'),
