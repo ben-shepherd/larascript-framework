@@ -33,10 +33,10 @@ export const eventConfig: IEventConfig = {
     drivers: {
 
         // Synchronous Driver: Processes events immediately
-        [EVENT_DRIVERS.SYNC]: EventService.createConfig(SyncDriver, {}),
+        [EVENT_DRIVERS.SYNC]: EventService.createConfigDriver(SyncDriver, {}),
     
         // Queue Driver: Saves events for background processing
-        [EVENT_DRIVERS.QUEABLE]: EventService.createConfig<TQueueDriverOptions>(QueueableDriver, {
+        [EVENT_DRIVERS.QUEABLE]: EventService.createConfigDriver<TQueueDriverOptions>(QueueableDriver, {
             queueName: 'default',                    // Name of the queue
             retries: 3,                              // Number of retry attempts for failed events
             runAfterSeconds: 10,                     // Delay before processing queued events
@@ -49,7 +49,7 @@ export const eventConfig: IEventConfig = {
     /**
      * Register Events
      */
-    events: EventService.createEvents([
+    events: EventService.createConfigEvents([
         TestEventQueueEvent,
         TestEventSyncEvent
     ]),
@@ -60,7 +60,7 @@ export const eventConfig: IEventConfig = {
      * These are automatically registered with the event service
      *  and do not need to be added to 'events' array.
      */
-    listeners: EventService.createListeners([
+    listeners: EventService.createConfigListeners([
         {
             listener: TestListener,
             subscribers: [

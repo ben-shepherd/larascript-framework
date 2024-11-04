@@ -45,7 +45,7 @@ class EventService extends BaseService implements IEventService {
      * @param options The event driver options.
      * @returns The event driver config.
      */
-    public static createConfig<T extends IEventDriversConfigOption['options'] = {}>(driverCtor: ICtor<IEventDriver>, options?: T): IEventDriversConfigOption {
+    public static createConfigDriver<T extends IEventDriversConfigOption['options'] = {}>(driverCtor: ICtor<IEventDriver>, options?: T): IEventDriversConfigOption {
         return {
             driverCtor,
             options
@@ -56,7 +56,7 @@ class EventService extends BaseService implements IEventService {
      * @param events An array of event constructors to be registered.
      * @returns The same array of event constructors.
      */
-    public static createEvents(events: ICtor<IBaseEvent>[]): ICtor<IBaseEvent>[] {
+    public static createConfigEvents(events: ICtor<IBaseEvent>[]): ICtor<IBaseEvent>[] {
         return events
     }
 
@@ -64,7 +64,7 @@ class EventService extends BaseService implements IEventService {
      * @param config The event listeners config.
      * @returns The event listeners config.
      */
-    public static createListeners(config: IEventListenersConfig): IEventListenersConfig {
+    public static createConfigListeners(config: IEventListenersConfig): IEventListenersConfig {
         return config
     }
 

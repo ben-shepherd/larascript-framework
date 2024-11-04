@@ -22,8 +22,8 @@ class TestEventProvider extends EventProvider {
         defaultDriver: SyncDriver,
 
         drivers: {
-            [EVENT_DRIVERS.SYNC]: EventService.createConfig(SyncDriver, {}),
-            [EVENT_DRIVERS.QUEABLE]: EventService.createConfig<TQueueDriverOptions>(QueueableDriver, {
+            [EVENT_DRIVERS.SYNC]: EventService.createConfigDriver(SyncDriver, {}),
+            [EVENT_DRIVERS.QUEABLE]: EventService.createConfigDriver<TQueueDriverOptions>(QueueableDriver, {
                 queueName: 'testQueue',
                 retries: 3,
                 runAfterSeconds: 0,
@@ -42,7 +42,7 @@ class TestEventProvider extends EventProvider {
             TestEventQueueAlwaysFailsEvent
         ],
 
-        listeners: EventService.createListeners([
+        listeners: EventService.createConfigListeners([
             {
                 listener: TestListener,
                 subscribers: [
