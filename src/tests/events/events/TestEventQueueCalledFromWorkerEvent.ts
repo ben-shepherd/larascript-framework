@@ -1,7 +1,6 @@
 
 import BaseEvent from "@src/core/domains/events/base/BaseEvent";
 import SyncDriver from "@src/core/domains/events/drivers/SyncDriver";
-import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
 
 class TestEventQueueCalledFromWorkerEvent extends BaseEvent {
 
@@ -9,7 +8,7 @@ class TestEventQueueCalledFromWorkerEvent extends BaseEvent {
 
     static readonly eventName = 'TestEventQueueCalledFromWorkerEvent';
 
-    constructor(payload: IEventPayload) {
+    constructor(payload) {
         super(payload, SyncDriver)
     }
 

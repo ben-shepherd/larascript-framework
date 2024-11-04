@@ -1,6 +1,6 @@
 import Repository from "@src/core/base/Repository";
 import EventWorkerException from "@src/core/domains/events/exceptions/EventWorkerException";
-import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
+import { TISerializablePayload } from "@src/core/domains/events/interfaces/IEventPayload";
 import { IEventWorkerConcern, IWorkerModel, TEventWorkerOptions } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
@@ -55,7 +55,7 @@ const EventWorkerConcern = (Base: ICtor) => {
                     throw new EventWorkerException(`Event '${eventName}' not found`);
                 }
 
-                const payload = workerModel.getPayload<IEventPayload | null>()
+                const payload = workerModel.getPayload<TISerializablePayload | null>()
                 
                 const eventInstance = new eventCtor(payload);
                 await eventInstance.execute();

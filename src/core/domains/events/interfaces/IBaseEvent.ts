@@ -5,10 +5,12 @@ import { IExecutable } from "@src/core/interfaces/concerns/IExecutable";
 import { INameable } from "@src/core/interfaces/concerns/INameable";
 import { ICtor } from "@src/core/interfaces/ICtor";
 
-export interface IBaseEvent extends INameable, IExecutable
+import { TISerializablePayload } from "./IEventPayload";
+
+export interface IBaseEvent<TPayload = TISerializablePayload> extends INameable, IExecutable
 {
     getQueueName(): string;
     getEventService(): IEventService;
     getDriverCtor(): ICtor<IEventDriver>;
-    getPayload<T = unknown>(): T;
+    getPayload<T extends TPayload>(): T;
 }

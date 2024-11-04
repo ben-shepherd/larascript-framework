@@ -3,6 +3,8 @@ import hashPassword from "@src/core/domains/auth/utils/hashPassword";
 import Observer from "@src/core/domains/observer/services/Observer";
 import { App } from "@src/core/services/App";
 
+import { UserRegisteredListener } from "../events/listeners/UserRegisteredListener";
+
 /**
  * Observer for the User model.
  * 
@@ -19,6 +21,17 @@ export default class UserObserver extends Observer<IUserData> {
     async creating(data: IUserData): Promise<IUserData> {
         data = this.onPasswordChange(data)
         data = await this.updateRoles(data)
+        return data
+    }
+
+    /**
+     * Called after the User model has been created.
+     * Dispatches the UserRegisteredEvent event to trigger related subscribers.
+     * @param data The User data that has been created.
+     * @returns The processed User data.
+     */
+    async created(data: IUserData): Promise<IUserData> {
+        App.container('events').dispatch(new UserRegisteredListener(data))
         return data
     }
 

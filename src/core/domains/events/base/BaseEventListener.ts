@@ -1,11 +1,10 @@
 import BaseEvent from "@src/core/domains/events/base/BaseEvent";
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventListener } from "@src/core/domains/events/interfaces/IEventListener";
-import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
-class BaseEventListener extends BaseEvent implements IEventListener {
+class BaseEventListener<TPayload = unknown> extends BaseEvent<TPayload> implements IEventListener<TPayload> {
 
     /**
      * Constructor
@@ -15,7 +14,7 @@ class BaseEventListener extends BaseEvent implements IEventListener {
      *
      * @param payload The payload of the event to dispatch
      */
-    constructor(payload?: IEventPayload, driver?: ICtor<IEventDriver>) {
+    constructor(payload?: TPayload, driver?: ICtor<IEventDriver>) {
         super(payload, driver);
 
         if(!App.containerReady('events')) {

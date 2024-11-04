@@ -1,4 +1,3 @@
-import { ExampleListener } from "@src/app/events/listeners/ExampleListener";
 import QueueDriver, { QueueDriverOptions } from "@src/core/domains/events-legacy/drivers/QueueDriver";
 import SynchronousDriver from "@src/core/domains/events-legacy/drivers/SynchronousDriver";
 import { IEventDrivers, ISubscribers } from "@src/core/domains/events-legacy/interfaces/IEventConfig";
@@ -66,6 +65,6 @@ export const eventDrivers: IEventDrivers = {
  */
 export const eventSubscribers: ISubscribers = {
     'OnExample': [
-        ExampleListener
+        
     ]   
 }

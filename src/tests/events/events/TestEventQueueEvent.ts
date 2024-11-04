@@ -1,7 +1,6 @@
 
 import BaseEvent from "@src/core/domains/events/base/BaseEvent";
 import QueueableDriver from "@src/core/domains/events/drivers/QueableDriver";
-import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
 import { App } from "@src/core/services/App";
 import TestEventQueueCalledFromWorkerEvent from "@src/tests/events/events/TestEventQueueCalledFromWorkerEvent";
 
@@ -11,7 +10,7 @@ class TestEventQueueEvent extends BaseEvent {
 
     static readonly eventName = 'TestEventQueueEvent';
 
-    constructor(payload: IEventPayload) {
+    constructor(payload) {
         super(payload, QueueableDriver)
     }
 

@@ -1,13 +1,12 @@
+import { UserRegisteredListener } from "@src/app/events/listeners/UserRegisteredListener";
+import UserRegisteredEvent from "@src/app/events/subscribers/UserRegisteredEvent";
 import QueueableDriver, { TQueueDriverOptions } from "@src/core/domains/events/drivers/QueableDriver";
 import SyncDriver from "@src/core/domains/events/drivers/SyncDriver";
 import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventConfig";
 import FailedWorkerModel from "@src/core/domains/events/models/FailedWorkerModel";
 import WorkerModel from "@src/core/domains/events/models/WorkerModel";
 import EventService from "@src/core/domains/events/services/EventService";
-import TestEventQueueEvent from "@src/tests/events/events/TestEventQueueEvent";
 import TestEventSyncEvent from "@src/tests/events/events/TestEventSyncEvent";
-import TestListener from "@src/tests/events/listeners/TestListener";
-import TestSubscriber from "@src/tests/events/subscribers/TestSubscriber";
 
 /**
  * Event Drivers Constants
@@ -50,7 +49,6 @@ export const eventConfig: IEventConfig = {
      * Register Events
      */
     events: EventService.createConfigEvents([
-        TestEventQueueEvent,
         TestEventSyncEvent
     ]),
 
@@ -62,9 +60,9 @@ export const eventConfig: IEventConfig = {
      */
     listeners: EventService.createConfigListeners([
         {
-            listener: TestListener,
+            listener: UserRegisteredListener,
             subscribers: [
-                TestSubscriber 
+                UserRegisteredEvent
             ]
         }
     ]),

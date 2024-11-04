@@ -3,6 +3,8 @@ import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import { IMockableConcern, TMockableEventCallback } from "@src/core/domains/events/interfaces/IMockableConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
 
+import { TISerializablePayload } from "../interfaces/IEventPayload";
+
 const EventMockableConcern = (Base: ICtor) => {
     return class EventMockable extends Base implements IMockableConcern {
 
@@ -73,7 +75,7 @@ const EventMockableConcern = (Base: ICtor) => {
          * @throws Will throw an error if the event was not dispatched or if the dispatched event's 
          *         payload does not satisfy the given condition.
          */
-        assertDispatched<TPayload = unknown>(eventCtor: ICtor<IBaseEvent>, callback?: TMockableEventCallback<TPayload>): boolean {
+        assertDispatched<TPayload extends TISerializablePayload = TISerializablePayload>(eventCtor: ICtor<IBaseEvent>, callback?: TMockableEventCallback<TPayload>): boolean {
             const eventCtorName = (new eventCtor(null)).getName()
             const dispatchedEvent = this.mockEventsDispatched.find(e => e.getName() === eventCtorName)
 

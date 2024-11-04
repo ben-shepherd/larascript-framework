@@ -1,14 +1,13 @@
 
 import BaseEvent from "@src/core/domains/events/base/BaseEvent";
-import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
 
 
 class TestEventSyncBadPayloadEvent extends BaseEvent {
 
     protected namespace: string = 'testing';
 
-    constructor(payload: unknown) {
-        super(payload as IEventPayload);
+    constructor(payload) {
+        super(payload);
     }
 
     async execute(): Promise<void> {

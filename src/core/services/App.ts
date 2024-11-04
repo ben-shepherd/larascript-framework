@@ -51,7 +51,7 @@ export class App extends Singleton<IAppConfig> {
         if (kernel.booted()) {
             throw new Error('Kernel is already booted');
         }
-        if (!name) {
+        if (!name || name === '') {
             throw new Error('Container name cannot be empty');
         }
         if (kernel.containers.has(name)) {

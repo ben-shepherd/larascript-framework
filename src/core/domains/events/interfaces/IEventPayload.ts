@@ -1,10 +1,8 @@
-export type TSerializableTypes = number | string | boolean | undefined;
+export type TSerializableValues = number | string | boolean | undefined | null;
 
-export interface IEventPayload {
-    [key: string | number | symbol]: TSerializableTypes
-}
+export type TISerializablePayload = Record<string | number | symbol, unknown> | TSerializableValues;
 
 export interface IEventPayloadWithDriver {
     driver: string;
-    payload: IEventPayload
+    payload: TISerializablePayload
 }

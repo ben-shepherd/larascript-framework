@@ -1,13 +1,15 @@
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
-import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
-abstract class BaseEvent implements IBaseEvent {
+import EventInvalidPayloadException from "../exceptions/EventInvalidPayloadException";
+import { TISerializablePayload } from "../interfaces/IEventPayload";
 
-    protected payload: IEventPayload | null = null;
+abstract class BaseEvent<TPayload = TISerializablePayload> implements IBaseEvent<TPayload> {
+
+    protected payload: TPayload | null = null;
 
     protected driver!: ICtor<IEventDriver>;
 
@@ -23,11 +25,34 @@ abstract class BaseEvent implements IBaseEvent {
      * @param payload The payload of the event
      * @param driver The class of the event driver
      */
-    constructor(payload: IEventPayload | null = null, driver?: ICtor<IEventDriver>) {
+    constructor(payload: TPayload | null = null, driver?: ICtor<IEventDriver>) {
         this.payload = payload;
+
         // Use safeContainer here to avoid errors during registering which runs during boot up.
         this.defaultDriver = App.safeContainer('events')?.getDefaultDriverCtor() as ICtor<IEventDriver>; 
         this.driver = driver ?? this.defaultDriver;
+
+        // Ensure the payload is valid
+        if(!this.validatePayload()) {
+            throw new EventInvalidPayloadException('Invalid payload. Must be JSON serializable.');
+        }
+    }
+
+    /**
+     * Validates the payload of the event. Ensures that the payload is an object with types that match:
+     * string, number, boolean, object, array, null.
+     * @throws {EventInvalidPayloadException} If the payload is invalid.
+     */
+    validatePayload(): boolean {
+        try {
+            JSON.stringify(this.payload);
+        }
+        // eslint-disable-next-line no-unused-vars
+        catch (err) {
+            return false   
+        }
+        
+        return true
     }
 
     /**
@@ -52,7 +77,7 @@ abstract class BaseEvent implements IBaseEvent {
      * @template T The type of the payload to return.
      * @returns The payload of the event.
      */
-    getPayload<T = unknown>(): T {
+    getPayload<T extends TPayload>(): T {
         return this.payload as T
     }
 

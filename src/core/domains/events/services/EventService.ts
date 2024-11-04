@@ -12,6 +12,8 @@ import { IEventListenersConfig, TListenersConfigOption, TListenersMap } from "@s
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IRegsiterList, TRegisterMap } from "@src/core/interfaces/concerns/IHasRegisterableConcern";
 
+import { TISerializablePayload } from "../interfaces/IEventPayload";
+
 class EventService extends BaseService implements IEventService {
 
     static readonly REGISTERED_EVENTS = "registeredEvents";
@@ -97,7 +99,7 @@ class EventService extends BaseService implements IEventService {
 
     declare mockEventDispatched: (event: IBaseEvent) => void;
 
-    declare assertDispatched: <TPayload = unknown>(eventCtor: ICtor<IBaseEvent>, callback?: TMockableEventCallback<TPayload>) => boolean
+    declare assertDispatched: <TPayload extends TISerializablePayload = TISerializablePayload>(eventCtor: ICtor<IBaseEvent>, callback?: TMockableEventCallback<TPayload>) => boolean
 
     /**
      * Delcare EventWorkerConcern methods.
