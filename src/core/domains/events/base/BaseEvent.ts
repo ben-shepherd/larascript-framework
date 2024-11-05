@@ -2,7 +2,7 @@ import BaseCastable from "@src/core/base/BaseCastable";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
-import { TCastableType } from "@src/core/interfaces/concerns/IHasCastableConcern";
+import { TCastableType, TCasts } from "@src/core/interfaces/concerns/IHasCastableConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
@@ -16,9 +16,9 @@ abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBa
 
     protected defaultDriver!: ICtor<IEventDriver>;
 
-    abstract casts: Record<string, TCastableType>;
-
     protected namespace: string = '';
+
+    casts: TCasts = {};
 
     /**
      * Constructor
@@ -43,7 +43,7 @@ abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBa
      * Declare HasCastableConcern methods.
      */
     // eslint-disable-next-line no-unused-vars
-    declare getCastFromObject: <ReturnType = unknown>(data: Record<string, unknown>) => ReturnType;
+    declare getCastFromObject: <ReturnType = unknown>(data: Record<string, unknown>, casts: TCasts) => ReturnType;
 
     // eslint-disable-next-line no-unused-vars
     declare getCast: <T = unknown>(data: unknown, type: TCastableType) => T;
@@ -93,7 +93,7 @@ abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBa
      * @returns The payload of the event.
      */
     getPayload<T extends TPayload>(): T {
-        return this.payload as T
+        return this.getCastFromObject<T>(this.payload as Record<string, unknown>, this.casts)
     }
 
     /**

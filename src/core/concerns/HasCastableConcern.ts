@@ -1,11 +1,11 @@
 import CastException from "../exceptions/CastException";
-import { IHasCastableConcern, TCastableType } from "../interfaces/concerns/IHasCastableConcern";
+import { IHasCastableConcern, TCastableType, TCasts } from "../interfaces/concerns/IHasCastableConcern";
 import { ICtor } from "../interfaces/ICtor";
 
 const HasCastableConcernMixin = (Base: ICtor) => {
     return class HasCastableConcern extends Base implements IHasCastableConcern {
 
-        casts: Record<string, TCastableType> = {};
+        casts: TCasts = {};
 
         /**
          * Casts each property of the given data object according to the types specified in the casts record.
@@ -13,8 +13,8 @@ const HasCastableConcernMixin = (Base: ICtor) => {
          * @param {Record<string, unknown>} data - The object containing data to be casted
          * @returns {ReturnType} The object with its properties casted to the specified types
          */
-        getCastFromObject<ReturnType = unknown>(data: Record<string, unknown>): ReturnType {
-            for(const [key, type] of Object.entries(this.casts)) {
+        getCastFromObject<ReturnType = unknown>(data: Record<string, unknown>, casts: TCasts = this.casts ): ReturnType {
+            for(const [key, type] of Object.entries(casts)) {
                 if (key in data) {
                     data[key] = this.getCast(data[key], type);
                 }
