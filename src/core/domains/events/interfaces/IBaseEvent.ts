@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
  
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
@@ -12,4 +13,5 @@ export interface IBaseEvent<TPayload = unknown> extends INameable, IExecutable
     getEventService(): IEventService;
     getDriverCtor(): ICtor<IEventDriver>;
     getPayload<T extends TPayload>(): T;
+    setPayload(payload: TPayload): void;
 }

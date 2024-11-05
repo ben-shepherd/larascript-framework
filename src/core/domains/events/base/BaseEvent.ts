@@ -38,6 +38,11 @@ abstract class BaseEvent<TPayload = unknown> implements IBaseEvent<TPayload> {
     }
 
     /**
+     * Executes the event.
+     */
+    async execute(): Promise<void> {/* Nothing to execute */}
+
+    /**
      * Validates the payload of the event. Ensures that the payload is an object with types that match:
      * string, number, boolean, object, array, null.
      * @throws {EventInvalidPayloadException} If the payload is invalid.
@@ -61,9 +66,6 @@ abstract class BaseEvent<TPayload = unknown> implements IBaseEvent<TPayload> {
     getEventService(): IEventService {
         return App.container('events');
     }
-    
-    // eslint-disable-next-line no-unused-vars
-    async execute(...args: any[]): Promise<void> {/* Nothing to execute */}
 
     /**
      * @returns The name of the queue as a string.
@@ -78,6 +80,14 @@ abstract class BaseEvent<TPayload = unknown> implements IBaseEvent<TPayload> {
      */
     getPayload<T extends TPayload>(): T {
         return this.payload as T
+    }
+
+    /**
+     * Sets the payload of the event.
+     * @param payload The payload of the event to set.
+     */
+    setPayload(payload: TPayload): void {
+        this.payload = payload
     }
 
     /**

@@ -7,8 +7,8 @@ class TestListener extends BaseEventListener {
         super(payload, SyncDriver);
     }
     
-    // eslint-disable-next-line no-unused-vars
-    async execute(...args: any[]): Promise<void> {
+     
+    async execute(): Promise<void> {
         console.log('Executed TestListener', this.getPayload(), this.getName());
     }
 

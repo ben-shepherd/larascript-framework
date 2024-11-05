@@ -51,7 +51,7 @@ describe('mock queable event', () => {
         eventService.mockEvent(TestEventQueueEvent)
         eventService.mockEvent(TestEventQueueCalledFromWorkerEvent);
 
-        await eventService.dispatch(new TestEventQueueEvent({ hello: 'world' }));
+        await eventService.dispatch(new TestEventQueueEvent({ hello: 'world', createdAt: new Date() }));
         
         expect(
             eventService.assertDispatched<{ hello: string }>(TestEventQueueEvent, (payload) => {
@@ -63,8 +63,8 @@ describe('mock queable event', () => {
         await App.container('console').reader(['worker', '--queue=testQueue']).handle();
 
         expect(
-            eventService.assertDispatched<{ hello: string }>(TestEventQueueCalledFromWorkerEvent, (payload) => {
-                return payload.hello === 'world'
+            eventService.assertDispatched<{ hello: string, createdAt: Date }>(TestEventQueueCalledFromWorkerEvent, (payload) => {
+                return payload.hello === 'world' && payload.createdAt instanceof Date
             })
         ).toBeTruthy()
 

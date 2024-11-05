@@ -255,7 +255,9 @@ class EventService extends BaseService implements IEventService {
         const subscribers = this.getSubscribers(eventListener.getName());
     
         for (const subscriber of subscribers) {
-            const eventSubscriber = new subscriber(eventListener.getPayload());
+            const eventSubscriber = new subscriber(null);
+            eventSubscriber.setPayload(eventListener.getPayload());
+            
             await this.dispatch(eventSubscriber);
         }
     }

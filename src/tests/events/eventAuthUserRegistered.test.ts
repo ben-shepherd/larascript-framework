@@ -1,7 +1,5 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import { UserCreatedListener } from '@src/app/events/listeners/UserCreatedListener';
-import UserCreatedSubscriber from '@src/app/events/subscribers/UserCreatedSubscriber';
 import { IUserData } from '@src/app/models/auth/User';
 import UserFactory from '@src/core/domains/auth/factory/userFactory';
 import Kernel from '@src/core/Kernel';
@@ -10,6 +8,9 @@ import testAppConfig from '@src/tests/config/testConfig';
 import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
 import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 import TestEventProvider from '@src/tests/providers/TestEventProvider';
+
+import { TestUserCreatedListener } from './events/auth/TestUserCreatedListener';
+import TestUserCreatedSubscriber from './events/auth/TestUserCreatedSubscriber';
 
 
 describe('mock queable event', () => {
@@ -44,8 +45,8 @@ describe('mock queable event', () => {
 
         const eventService = App.container('events');
         
-        eventService.mockEvent(UserCreatedListener)
-        eventService.mockEvent(UserCreatedSubscriber)
+        eventService.mockEvent(TestUserCreatedListener)
+        eventService.mockEvent(TestUserCreatedSubscriber)
 
         const testUser = new UserFactory().createWithData({
             email: 'test@example.com',
@@ -60,16 +61,17 @@ describe('mock queable event', () => {
         expect(testUser.getId()).toBeTruthy();
 
         const expectedPayloadCallback = (payload: IUserData) => {
-            return payload.email === 'test@example.com'
+            return payload.id === testUser.getId() && payload.email === 'test@example.com'
         }
 
         expect(
-            eventService.assertDispatched<IUserData>(UserCreatedListener, expectedPayloadCallback)
+            eventService.assertDispatched<IUserData>(TestUserCreatedListener, expectedPayloadCallback)
         ).toBeTruthy()
 
-        // expect(
-        //     eventService.assertDispatched<IUserData>(UserCreatedSubscriber, expectedPayloadCallback)
-        // ).toBeTruthy()
+        expect(
+            eventService.assertDispatched<IUserData>(TestUserCreatedSubscriber, expectedPayloadCallback)
+        ).toBeTruthy()
     })
+
 
 }); 

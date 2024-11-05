@@ -16,8 +16,8 @@ class TestEventQueueAlwaysFailsEvent extends BaseEvent {
         return TestEventQueueAlwaysFailsEvent.eventName;
     }
 
-    async execute(...args: any[]): Promise<void> {
-        console.log('Executed TestEventQueueAlwaysFailsEvent', this.getPayload(), this.getName(), {args})
+    async execute(): Promise<void> {
+        console.log('Executed TestEventQueueAlwaysFailsEvent', this.getPayload(), this.getName())
         throw new Error('Always fails');
     }
 

@@ -22,8 +22,8 @@ class TestEventQueueEvent extends BaseEvent {
         return TestEventQueueEvent.eventName;
     }
 
-    async execute(...args: any[]): Promise<void> {
-        console.log('Executed TestEventQueueEvent', this.getPayload(), this.getName(), {args})
+    async execute(): Promise<void> {
+        console.log('Executed TestEventQueueEvent', this.getPayload(), this.getName())
 
         App.container('events').dispatch(new TestEventQueueCalledFromWorkerEvent(this.getPayload()))
     }
