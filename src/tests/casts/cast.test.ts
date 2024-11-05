@@ -1,11 +1,9 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import HasCastableConcern from '@src/core/concerns/HasCastableConcern';
+import BaseCastable from '@src/core/base/BaseCastable';
 import CastException from '@src/core/exceptions/CastException';
-import { IHasCastableConcern } from '@src/core/interfaces/concerns/IHasCastableConcern';
-import { ICtor } from '@src/core/interfaces/ICtor';
+import { IHasCastableConcern, TCastableType } from '@src/core/interfaces/concerns/IHasCastableConcern';
 import Kernel from '@src/core/Kernel';
-import compose from '@src/core/util/compose';
 import testAppConfig from '@src/tests/config/testConfig';
 
 describe('HasCastableConcern Tests', () => {
@@ -19,144 +17,166 @@ describe('HasCastableConcern Tests', () => {
             ]
         }, {});
 
-        const CastableClass = compose(class {}, HasCastableConcern) as ICtor<IHasCastableConcern>;
-        castable = new CastableClass();
+        
+        castable = new BaseCastable();
     });
+
+    describe('getCastFromObject', () => {
+        class TestClass extends BaseCastable {
+
+            casts: Record<string, TCastableType> = {
+                test: 'string',
+            }
+
+            data = {
+                age: "18",
+                name: "John",
+                books: [
+                    "Book 1",
+                ],
+                createdAt: new Date()
+            }
+        
+        };
+
+        const testClass = new TestClass();
+        testClass.data = testClass.getCastFromObject(testClass.data);
+    })
 
     describe('String Casting Tests', () => {
         it('should cast various types to string', () => {
-            expect(castable.cast(123, 'string')).toBe('123');
-            expect(castable.cast(true, 'string')).toBe('true');
-            expect(castable.cast([1, 2, 3], 'string')).toBe('[1,2,3]');
-            expect(castable.cast({ a: 1 }, 'string')).toBe('{"a":1}');
+            expect(castable.getCast(123, 'string')).toBe('123');
+            expect(castable.getCast(true, 'string')).toBe('true');
+            expect(castable.getCast([1, 2, 3], 'string')).toBe('[1,2,3]');
+            expect(castable.getCast({ a: 1 }, 'string')).toBe('{"a":1}');
             
             const date = new Date('2024-01-01');
-            expect(castable.cast(date, 'string')).toBe(date.toISOString());
+            expect(castable.getCast(date, 'string')).toBe(date.toISOString());
         });
     });
 
     describe('Number Casting Tests', () => {
         it('should cast valid values to number', () => {
-            expect(castable.cast('123', 'number')).toBe(123);
-            expect(castable.cast('123.45', 'number')).toBe(123.45);
-            expect(castable.cast(true, 'number')).toBe(1);
-            expect(castable.cast(false, 'number')).toBe(0);
+            expect(castable.getCast('123', 'number')).toBe(123);
+            expect(castable.getCast('123.45', 'number')).toBe(123.45);
+            expect(castable.getCast(true, 'number')).toBe(1);
+            expect(castable.getCast(false, 'number')).toBe(0);
         });
 
         it('should throw CastException for invalid number strings', () => {
-            expect(() => castable.cast('abc', 'number')).toThrow(CastException);
+            expect(() => castable.getCast('abc', 'number')).toThrow(CastException);
         });
     });
 
     describe('Boolean Casting Tests', () => {
         it('should cast strings to boolean', () => {
-            expect(castable.cast('true', 'boolean')).toBe(true);
-            expect(castable.cast('false', 'boolean')).toBe(false);
-            expect(castable.cast('1', 'boolean')).toBe(true);
-            expect(castable.cast('0', 'boolean')).toBe(false);
-            expect(castable.cast('yes', 'boolean')).toBe(true);
-            expect(castable.cast('no', 'boolean')).toBe(false);
+            expect(castable.getCast('true', 'boolean')).toBe(true);
+            expect(castable.getCast('false', 'boolean')).toBe(false);
+            expect(castable.getCast('1', 'boolean')).toBe(true);
+            expect(castable.getCast('0', 'boolean')).toBe(false);
+            expect(castable.getCast('yes', 'boolean')).toBe(true);
+            expect(castable.getCast('no', 'boolean')).toBe(false);
         });
 
         it('should cast numbers to boolean', () => {
-            expect(castable.cast(1, 'boolean')).toBe(true);
-            expect(castable.cast(0, 'boolean')).toBe(false);
+            expect(castable.getCast(1, 'boolean')).toBe(true);
+            expect(castable.getCast(0, 'boolean')).toBe(false);
         });
 
         it('should throw CastException for invalid boolean strings', () => {
-            expect(() => castable.cast('invalid', 'boolean')).toThrow(CastException);
+            expect(() => castable.getCast('invalid', 'boolean')).toThrow(CastException);
         });
     });
 
     describe('Array Casting Tests', () => {
         it('should cast to array', () => {
-            expect(castable.cast('["a","b"]', 'array')).toEqual(['a', 'b']);
-            expect(castable.cast(new Set([1, 2]), 'array')).toEqual([1, 2]);
-            expect(castable.cast(123, 'array')).toEqual([123]);
-            expect(castable.cast('invalid json', 'array')).toEqual(['invalid json']);
+            expect(castable.getCast('["a","b"]', 'array')).toEqual(['a', 'b']);
+            expect(castable.getCast(new Set([1, 2]), 'array')).toEqual([1, 2]);
+            expect(castable.getCast(123, 'array')).toEqual([123]);
+            expect(castable.getCast('invalid json', 'array')).toEqual(['invalid json']);
         });
     });
 
     describe('Object Casting Tests', () => {
         it('should cast to object', () => {
-            expect(castable.cast('{"a":1}', 'object')).toEqual({ a: 1 });
-            expect(castable.cast([1, 2], 'object')).toEqual({ '0': 1, '1': 2 });
+            expect(castable.getCast('{"a":1}', 'object')).toEqual({ a: 1 });
+            expect(castable.getCast([1, 2], 'object')).toEqual({ '0': 1, '1': 2 });
         });
 
         it('should throw CastException for invalid JSON strings', () => {
-            expect(() => castable.cast('invalid json', 'object')).toThrow(CastException);
+            expect(() => castable.getCast('invalid json', 'object')).toThrow(CastException);
         });
     });
 
     describe('Date Casting Tests', () => {
         it('should cast to date', () => {
             const date = new Date('2024-01-01');
-            expect(castable.cast('2024-01-01', 'date')).toEqual(date);
-            expect(castable.cast(date.getTime(), 'date')).toEqual(date);
-            expect(castable.cast(date, 'date')).toEqual(date);
+            expect(castable.getCast('2024-01-01', 'date')).toEqual(date);
+            expect(castable.getCast(date.getTime(), 'date')).toEqual(date);
+            expect(castable.getCast(date, 'date')).toEqual(date);
         });
 
         it('should throw CastException for invalid dates', () => {
-            expect(() => castable.cast('invalid date', 'date')).toThrow(CastException);
+            expect(() => castable.getCast('invalid date', 'date')).toThrow(CastException);
         });
     });
 
     describe('Integer Casting Tests', () => {
         it('should cast to integer', () => {
-            expect(castable.cast('123', 'integer')).toBe(123);
-            expect(castable.cast('123.45', 'integer')).toBe(123);
-            expect(castable.cast(123.45, 'integer')).toBe(123);
+            expect(castable.getCast('123', 'integer')).toBe(123);
+            expect(castable.getCast('123.45', 'integer')).toBe(123);
+            expect(castable.getCast(123.45, 'integer')).toBe(123);
         });
 
         it('should throw CastException for invalid integers', () => {
-            expect(() => castable.cast('abc', 'integer')).toThrow(CastException);
+            expect(() => castable.getCast('abc', 'integer')).toThrow(CastException);
         });
     });
 
     describe('Float Casting Tests', () => {
         it('should cast to float', () => {
-            expect(castable.cast('123.45', 'float')).toBe(123.45);
-            expect(castable.cast(123, 'float')).toBe(123.0);
+            expect(castable.getCast('123.45', 'float')).toBe(123.45);
+            expect(castable.getCast(123, 'float')).toBe(123.0);
         });
 
         it('should throw CastException for invalid floats', () => {
-            expect(() => castable.cast('abc', 'float')).toThrow(CastException);
+            expect(() => castable.getCast('abc', 'float')).toThrow(CastException);
         });
     });
 
     describe('BigInt Casting Tests', () => {
         it('should cast to BigInt', () => {
-            expect(castable.cast('123', 'bigint')).toBe(BigInt(123));
-            expect(castable.cast(123, 'bigint')).toBe(BigInt(123));
+            expect(castable.getCast('123', 'bigint')).toBe(BigInt(123));
+            expect(castable.getCast(123, 'bigint')).toBe(BigInt(123));
         });
 
         it('should throw CastException for invalid BigInt values', () => {
-            expect(() => castable.cast('abc', 'bigint')).toThrow(CastException);
-            expect(() => castable.cast({}, 'bigint')).toThrow(CastException);
+            expect(() => castable.getCast('abc', 'bigint')).toThrow(CastException);
+            expect(() => castable.getCast({}, 'bigint')).toThrow(CastException);
         });
     });
 
     describe('Map Casting Tests', () => {
         it('should handle Map casting', () => {
             const map = new Map([['a', 1]]);
-            expect(castable.cast(map, 'map')).toBe(map);
+            expect(castable.getCast(map, 'map')).toBe(map);
         });
 
         it('should throw CastException for invalid Map conversions', () => {
-            expect(() => castable.cast({}, 'map')).toThrow(CastException);
+            expect(() => castable.getCast({}, 'map')).toThrow(CastException);
         });
     });
 
     describe('Set Casting Tests', () => {
         it('should cast to Set', () => {
-            expect(castable.cast([1, 2, 3], 'set')).toEqual(new Set([1, 2, 3]));
-            expect(castable.cast(1, 'set')).toEqual(new Set([1]));
+            expect(castable.getCast([1, 2, 3], 'set')).toEqual(new Set([1, 2, 3]));
+            expect(castable.getCast(1, 'set')).toEqual(new Set([1]));
         });
     });
 
     describe('Symbol Casting Tests', () => {
         it('should cast to Symbol', () => {
-            const sym = castable.cast<Symbol>('test', 'symbol')
+            const sym = castable.getCast<Symbol>('test', 'symbol')
             expect(typeof sym).toBe('symbol');
             expect(sym.toString()).toBe('Symbol(test)');
         });
@@ -164,31 +184,31 @@ describe('HasCastableConcern Tests', () => {
 
     describe('Null and Undefined Handling Tests', () => {
         it('should handle null values correctly', () => {
-            expect(castable.cast(null, 'null')).toBeNull();
-            expect(() => castable.cast(null, 'string')).toThrow(CastException);
+            expect(castable.getCast(null, 'null')).toBeNull();
+            expect(() => castable.getCast(null, 'string')).toThrow(CastException);
         });
 
         it('should handle undefined values correctly', () => {
-            expect(castable.cast(undefined, 'undefined')).toBeUndefined();
-            expect(() => castable.cast(undefined, 'string')).toThrow(CastException);
+            expect(castable.getCast(undefined, 'undefined')).toBeUndefined();
+            expect(() => castable.getCast(undefined, 'string')).toThrow(CastException);
         });
     });
 
     describe('Invalid Type Tests', () => {
         it('should throw CastException for invalid types', () => {
-            expect(() => castable.cast('test', 'invalid' as any)).toThrow(CastException);
+            expect(() => castable.getCast('test', 'invalid' as any)).toThrow(CastException);
         });
     });
 
     describe('Edge Cases', () => {
         it('should handle empty values', () => {
-            expect(castable.cast('', 'string')).toBe('');
-            expect(castable.cast([], 'array')).toEqual([]);
-            expect(castable.cast({}, 'object')).toEqual({});
+            expect(castable.getCast('', 'string')).toBe('');
+            expect(castable.getCast([], 'array')).toEqual([]);
+            expect(castable.getCast({}, 'object')).toEqual({});
         });
 
         it('should handle special characters', () => {
-            expect(castable.cast('§±!@#$%^&*()', 'string')).toBe('§±!@#$%^&*()');
+            expect(castable.getCast('§±!@#$%^&*()', 'string')).toBe('§±!@#$%^&*()');
         });
     });
 });

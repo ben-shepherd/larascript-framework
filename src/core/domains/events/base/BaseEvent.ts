@@ -1,12 +1,14 @@
+import BaseCastable from "@src/core/base/BaseCastable";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
+import { TCastableType } from "@src/core/interfaces/concerns/IHasCastableConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
 import EventInvalidPayloadException from "../exceptions/EventInvalidPayloadException";
 
-abstract class BaseEvent<TPayload = unknown> implements IBaseEvent<TPayload> {
+abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBaseEvent<TPayload> {
 
     protected payload: TPayload | null = null;
 
@@ -14,9 +16,8 @@ abstract class BaseEvent<TPayload = unknown> implements IBaseEvent<TPayload> {
 
     protected defaultDriver!: ICtor<IEventDriver>;
 
-    /**
-     * Provide a namespace to avoid conflicts with other events.
-     */
+    abstract casts: Record<string, TCastableType>;
+
     protected namespace: string = '';
 
     /**
@@ -25,6 +26,7 @@ abstract class BaseEvent<TPayload = unknown> implements IBaseEvent<TPayload> {
      * @param driver The class of the event driver
      */
     constructor(payload: TPayload | null = null, driver?: ICtor<IEventDriver>) {
+        super()
         this.payload = payload;
 
         // Use safeContainer here to avoid errors during registering which runs during boot up.
@@ -36,6 +38,18 @@ abstract class BaseEvent<TPayload = unknown> implements IBaseEvent<TPayload> {
             throw new EventInvalidPayloadException('Invalid payload. Must be JSON serializable.');
         }
     }
+
+    /**
+     * Declare HasCastableConcern methods.
+     */
+    // eslint-disable-next-line no-unused-vars
+    declare getCastFromObject: <ReturnType = unknown>(data: Record<string, unknown>) => ReturnType;
+
+    // eslint-disable-next-line no-unused-vars
+    declare getCast: <T = unknown>(data: unknown, type: TCastableType) => T;
+
+    // eslint-disable-next-line no-unused-vars
+    declare isValidType: (type: TCastableType) => boolean;
 
     /**
      * Executes the event.

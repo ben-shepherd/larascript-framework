@@ -16,6 +16,8 @@ export type TCastableType =
   | 'set';
   
 export interface IHasCastableConcern {
-    cast<T = unknown>(data: unknown, type: TCastableType): T;
+    casts: Record<string, TCastableType>;
+    getCastFromObject<ReturnType = unknown>(data: Record<string, unknown>): ReturnType;
+    getCast<T = unknown>(data: unknown, type: TCastableType): T;
     isValidType(type: TCastableType): boolean;
 }
