@@ -25,7 +25,6 @@ export default class UserObserver extends Observer<IUserData> {
 
     /**
      * Called after the User model has been created.
-     * Dispatches the UserRegisteredEvent event to trigger related subscribers.
      * @param data The User data that has been created.
      * @returns The processed User data.
      */

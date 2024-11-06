@@ -4,7 +4,7 @@ import SyncDriver from "@src/core/domains/events/drivers/SyncDriver";
 
 export default class TestUserCreatedSubscriber extends BaseEvent {
 
-    static readonly eventName = 'UserRegisteredEvent';
+    static readonly eventName = 'TestUserCreatedSubscriber';
     
     protected namespace: string = 'testing';
 

@@ -39,6 +39,10 @@ const HasRegisterableConcern = (Broadcaster: ICtor) => {
          * @returns {void}
          */
         register(key: string, ...args: unknown[]): void {
+            if(this.isRegisteredInList(HasRegisterable.defaultList, key)) {
+                return;
+            }
+
             if(!this.registerObject[HasRegisterable.defaultList]) {
                 this.registerObject[HasRegisterable.defaultList] = new Map();
             }
@@ -56,6 +60,10 @@ const HasRegisterableConcern = (Broadcaster: ICtor) => {
          * @returns {void}
          */
         registerByList(listName: string, key: string, ...args: unknown[]): void {
+            if(this.isRegisteredInList(listName, key)) {
+                return;
+            }
+            
             this.registerObject[listName] = this.registerObject[listName] ?? new Map();
             this.registerObject[listName].set(key, args);
         }
@@ -99,6 +107,17 @@ const HasRegisterableConcern = (Broadcaster: ICtor) => {
          */
         getRegisteredByList<T extends TRegisterMap = TRegisterMap>(listName: string): T {
             return this.registerObject[listName] as T ?? new Map();
+        }
+
+        /**
+         * Checks if a key is registered in a specific list.
+         * @private
+         * @param {string} listName - The name of the list to check for the key.
+         * @param {string} key - The key to check for in the list.
+         * @returns {boolean} True if the key is registered in the list, false otherwise.
+         */
+        isRegisteredInList(listName: string, key: string): boolean {
+            return this.getRegisteredByList(listName).has(key)
         }
     
     }

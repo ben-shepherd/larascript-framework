@@ -18,4 +18,6 @@ export interface IHasRegisterableConcern
     getRegisteredList<T extends TRegisterMap = TRegisterMap>(): T;
 
     getRegisteredObject(): IRegsiterList;
+
+    isRegisteredInList(listName: string, key: string): boolean;
 }

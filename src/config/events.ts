@@ -6,7 +6,6 @@ import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventC
 import FailedWorkerModel from "@src/core/domains/events/models/FailedWorkerModel";
 import WorkerModel from "@src/core/domains/events/models/WorkerModel";
 import EventService from "@src/core/domains/events/services/EventService";
-import TestEventSyncEvent from "@src/tests/events/events/TestEventSyncEvent";
 
 /**
  * Event Drivers Constants
@@ -49,7 +48,7 @@ export const eventConfig: IEventConfig = {
      * Register Events
      */
     events: EventService.createConfigEvents([
-        TestEventSyncEvent
+        UserCreatedListener
     ]),
 
     /**

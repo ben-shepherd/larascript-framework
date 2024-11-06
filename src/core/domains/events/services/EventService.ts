@@ -92,6 +92,8 @@ class EventService extends BaseService implements IEventService {
     
     declare getRegisteredObject: () => IRegsiterList;
 
+    declare isRegisteredInList: (listName: string, key: string) => boolean;
+
     /**
      * Declare EventMockableConcern methods.
      */
