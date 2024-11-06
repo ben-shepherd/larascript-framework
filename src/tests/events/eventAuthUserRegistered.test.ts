@@ -6,12 +6,11 @@ import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
 import { TestUserCreatedListener } from '@src/tests/events/events/auth/TestUserCreatedListener';
 import TestUserCreatedSubscriber from '@src/tests/events/events/auth/TestUserCreatedSubscriber';
+import { dropWorkerTables } from '@src/tests/events/helpers/createWorketTables';
+import TestUserFactory from '@src/tests/factory/factories/TestUserFactory';
 import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
 import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 import TestEventProvider from '@src/tests/providers/TestEventProvider';
-
-import TestUserFactory from '../factory/factories/TestUserFactory';
-import { dropWorkerTables } from './helpers/createWorketTables';
 
 
 describe('mock queable event', () => {

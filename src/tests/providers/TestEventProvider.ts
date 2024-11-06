@@ -4,6 +4,8 @@ import SyncDriver from '@src/core/domains/events/drivers/SyncDriver';
 import { IEventConfig } from '@src/core/domains/events/interfaces/config/IEventConfig';
 import EventProvider from '@src/core/domains/events/providers/EventProvider';
 import EventService from '@src/core/domains/events/services/EventService';
+import { TestUserCreatedListener } from '@src/tests/events/events/auth/TestUserCreatedListener';
+import TestUserCreatedSubscriber from '@src/tests/events/events/auth/TestUserCreatedSubscriber';
 import TestEventQueueAddAlwaysFailsEventToQueue from '@src/tests/events/events/TestEventQueueAddAlwaysFailsEventToQueue';
 import TestEventQueueAlwaysFailsEvent from '@src/tests/events/events/TestEventQueueAlwaysFailsEvent';
 import TestEventQueueCalledFromWorkerEvent from '@src/tests/events/events/TestEventQueueCalledFromWorkerEvent';
@@ -14,9 +16,6 @@ import TestListener from '@src/tests/events/listeners/TestListener';
 import TestSubscriber from '@src/tests/events/subscribers/TestSubscriber';
 import TestFailedWorkerModel from '@src/tests/models/models/TestFailedWorkerModel';
 import TestWorkerModel from "@src/tests/models/models/TestWorkerModel";
-
-import { TestUserCreatedListener } from '../events/events/auth/TestUserCreatedListener';
-import TestUserCreatedSubscriber from '../events/events/auth/TestUserCreatedSubscriber';
 
 class TestEventProvider extends EventProvider {
 
