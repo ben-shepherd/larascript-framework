@@ -1,5 +1,3 @@
-import { UserCreatedListener } from '@src/app/events/listeners/UserCreatedListener';
-import UserCreatedSubscriber from '@src/app/events/subscribers/UserCreatedSubscriber';
 import { EVENT_DRIVERS } from '@src/config/events';
 import QueueableDriver, { TQueueDriverOptions } from '@src/core/domains/events/drivers/QueableDriver';
 import SyncDriver from '@src/core/domains/events/drivers/SyncDriver';
@@ -16,6 +14,9 @@ import TestListener from '@src/tests/events/listeners/TestListener';
 import TestSubscriber from '@src/tests/events/subscribers/TestSubscriber';
 import TestFailedWorkerModel from '@src/tests/models/models/TestFailedWorkerModel';
 import TestWorkerModel from "@src/tests/models/models/TestWorkerModel";
+
+import { TestUserCreatedListener } from '../events/events/auth/TestUserCreatedListener';
+import TestUserCreatedSubscriber from '../events/events/auth/TestUserCreatedSubscriber';
 
 class TestEventProvider extends EventProvider {
 
@@ -56,9 +57,9 @@ class TestEventProvider extends EventProvider {
                 ]
             },
             {
-                listener: UserCreatedListener,
+                listener: TestUserCreatedListener,
                 subscribers: [
-                    UserCreatedSubscriber
+                    TestUserCreatedSubscriber
                 ]
             }
         ])

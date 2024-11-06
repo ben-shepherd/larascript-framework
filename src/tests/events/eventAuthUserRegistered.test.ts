@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
 import { IUserData } from '@src/app/models/auth/User';
-import UserFactory from '@src/core/domains/auth/factory/userFactory';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
@@ -11,6 +10,7 @@ import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
 import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 import TestEventProvider from '@src/tests/providers/TestEventProvider';
 
+import TestUserFactory from '../factory/factories/TestUserFactory';
 import { dropWorkerTables } from './helpers/createWorketTables';
 
 
@@ -26,7 +26,7 @@ describe('mock queable event', () => {
                 ...testAppConfig.providers,
                 new TestConsoleProvider(),
                 new TestDatabaseProvider(),
-                new TestEventProvider()
+                new TestEventProvider(),
             ]
         }, {})
     })
@@ -49,7 +49,7 @@ describe('mock queable event', () => {
         eventService.mockEvent(TestUserCreatedListener)
         eventService.mockEvent(TestUserCreatedSubscriber)
 
-        const testUser = new UserFactory().createWithData({
+        const testUser = new TestUserFactory().createWithData({
             email: 'test@example.com',
             hashedPassword: 'password',
             roles: [],
