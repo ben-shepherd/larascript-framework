@@ -62,7 +62,6 @@ describe('mock queable event failed', () => {
         for(let i = 0; i < attempts; i++) {
             App.container('events').mockEvent(TestEventQueueAlwaysFailsEvent);
 
-            // todo: missing await within this logic I think
             await App.container('console').reader(['worker', '--queue=testQueue']).handle();
 
             expect(App.container('events').assertDispatched(TestEventQueueAlwaysFailsEvent)).toBeTruthy()
