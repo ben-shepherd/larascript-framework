@@ -1,12 +1,11 @@
 import BaseCastable from "@src/core/base/BaseCastable";
+import EventInvalidPayloadException from "@src/core/domains/events/exceptions/EventInvalidPayloadException";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
 import { TCastableType, TCasts } from "@src/core/interfaces/concerns/IHasCastableConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
-
-import EventInvalidPayloadException from "../exceptions/EventInvalidPayloadException";
 
 abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBaseEvent<TPayload> {
 

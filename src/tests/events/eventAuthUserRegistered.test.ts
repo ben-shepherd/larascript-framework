@@ -5,12 +5,11 @@ import UserFactory from '@src/core/domains/auth/factory/userFactory';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
+import { TestUserCreatedListener } from '@src/tests/events/events/auth/TestUserCreatedListener';
+import TestUserCreatedSubscriber from '@src/tests/events/events/auth/TestUserCreatedSubscriber';
 import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
 import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 import TestEventProvider from '@src/tests/providers/TestEventProvider';
-
-import { TestUserCreatedListener } from './events/auth/TestUserCreatedListener';
-import TestUserCreatedSubscriber from './events/auth/TestUserCreatedSubscriber';
 
 
 describe('mock queable event', () => {

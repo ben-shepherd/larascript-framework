@@ -1,6 +1,6 @@
-import CastException from "../exceptions/CastException";
-import { IHasCastableConcern, TCastableType, TCasts } from "../interfaces/concerns/IHasCastableConcern";
-import { ICtor } from "../interfaces/ICtor";
+import CastException from "@src/core/exceptions/CastException";
+import { IHasCastableConcern, TCastableType, TCasts } from "@src/core/interfaces/concerns/IHasCastableConcern";
+import { ICtor } from "@src/core/interfaces/ICtor";
 
 const HasCastableConcernMixin = (Base: ICtor) => {
     return class HasCastableConcern extends Base implements IHasCastableConcern {

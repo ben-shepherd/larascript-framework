@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import BaseEventListener from "@src/core/domains/events/base/BaseEventListener";
 import BaseService from "@src/core/domains/events/base/BaseService";
 import EventDispatchException from "@src/core/domains/events/exceptions/EventDispatchException";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
@@ -11,8 +12,6 @@ import { IEventDriversConfigOption } from "@src/core/domains/events/interfaces/c
 import { IEventListenersConfig, TListenersConfigOption, TListenersMap } from "@src/core/domains/events/interfaces/config/IEventListenersConfig";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IRegsiterList, TRegisterMap } from "@src/core/interfaces/concerns/IHasRegisterableConcern";
-
-import BaseEventListener from "../base/BaseEventListener";
 
 
 class EventService extends BaseService implements IEventService {
