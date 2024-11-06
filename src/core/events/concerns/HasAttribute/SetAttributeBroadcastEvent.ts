@@ -13,7 +13,7 @@ class SetAttributeBroadcastEvent extends BroadcastEvent {
         super(data);
     }
 
-    getEventName(): string {
+    getName(): string {
         return SetAttributeBroadcastEvent.eventName;
     }
 

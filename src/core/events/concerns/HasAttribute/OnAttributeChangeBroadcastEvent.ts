@@ -15,7 +15,7 @@ class OnAttributeChangeBroadcastEvent extends BroadcastEvent {
         super(data);
     }
 
-    getEventName(): string {
+    getName(): string {
         return OnAttributeChangeBroadcastEvent.eventName;
     }
 

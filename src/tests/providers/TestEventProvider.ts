@@ -1,40 +1,68 @@
-import QueueDriver, { QueueDriverOptions } from '@src/core/domains/events/drivers/QueueDriver';
-import SynchronousDriver from "@src/core/domains/events/drivers/SynchronousDriver";
-import { EventServiceConfig } from "@src/core/domains/events/interfaces/IEventService";
-import EventProvider from "@src/core/domains/events/providers/EventProvider";
-import { default as DriverOptions } from '@src/core/domains/events/services/QueueDriverOptions';
-import { TestListener } from "@src/tests/events/listeners/TestListener";
-import { TestQueueListener } from "@src/tests/events/listeners/TestQueueListener";
+import { EVENT_DRIVERS } from '@src/config/events';
+import QueueableDriver, { TQueueDriverOptions } from '@src/core/domains/events/drivers/QueableDriver';
+import SyncDriver from '@src/core/domains/events/drivers/SyncDriver';
+import { IEventConfig } from '@src/core/domains/events/interfaces/config/IEventConfig';
+import EventProvider from '@src/core/domains/events/providers/EventProvider';
+import EventService from '@src/core/domains/events/services/EventService';
+import TestEventQueueAddAlwaysFailsEventToQueue from '@src/tests/events/events/TestEventQueueAddAlwaysFailsEventToQueue';
+import TestEventQueueAlwaysFailsEvent from '@src/tests/events/events/TestEventQueueAlwaysFailsEvent';
+import TestEventQueueCalledFromWorkerEvent from '@src/tests/events/events/TestEventQueueCalledFromWorkerEvent';
+import TestEventQueueEvent from '@src/tests/events/events/TestEventQueueEvent';
+import TestEventSyncBadPayloadEvent from '@src/tests/events/events/TestEventSyncBadPayloadEvent';
+import TestEventSyncEvent from '@src/tests/events/events/TestEventSyncEvent';
+import TestListener from '@src/tests/events/listeners/TestListener';
+import TestSubscriber from '@src/tests/events/subscribers/TestSubscriber';
+import TestFailedWorkerModel from '@src/tests/models/models/TestFailedWorkerModel';
 import TestWorkerModel from "@src/tests/models/models/TestWorkerModel";
+
+import { TestUserCreatedListener } from '../events/events/auth/TestUserCreatedListener';
+import TestUserCreatedSubscriber from '../events/events/auth/TestUserCreatedSubscriber';
 
 class TestEventProvider extends EventProvider {
 
-    protected config: EventServiceConfig = {
-        defaultDriver: 'sync',
+    protected config: IEventConfig = {
+        
+        defaultDriver: SyncDriver,
+
         drivers: {
-            testing: {
-                driver: QueueDriver,
-                options: new DriverOptions<QueueDriverOptions>({
-                    queueName: 'testQueue',
-                    retries: 3,
-                    failedCollection: 'testFailedWorkers',
-                    runAfterSeconds: 0,
-                    workerModelCtor: TestWorkerModel,
-                    runOnce: true
-                })
-            },
-            sync: {
-                driver: SynchronousDriver
-            }
+            [EVENT_DRIVERS.SYNC]: EventService.createConfigDriver(SyncDriver, {}),
+            [EVENT_DRIVERS.QUEABLE]: EventService.createConfigDriver<TQueueDriverOptions>(QueueableDriver, {
+                queueName: 'testQueue',
+                retries: 3,
+                runAfterSeconds: 0,
+                failedWorkerModelCtor: TestFailedWorkerModel,
+                workerModelCtor: TestWorkerModel,
+                runOnce: true
+            })
         },
-        subscribers: {
-            'TestQueueEvent': [
-                TestQueueListener
-            ],
-            'TestEvent': [
-                TestListener
-            ]
-        }
+
+        events: [
+            // Sync events
+            TestEventSyncEvent,
+            TestEventSyncBadPayloadEvent,
+
+            // Queable (worker events)
+            TestEventQueueEvent,
+            TestEventQueueCalledFromWorkerEvent,
+            TestEventQueueAddAlwaysFailsEventToQueue,
+            TestEventQueueAlwaysFailsEvent,
+
+        ],
+
+        listeners: EventService.createConfigListeners([
+            {
+                listener: TestListener,
+                subscribers: [
+                    TestSubscriber
+                ]
+            },
+            {
+                listener: TestUserCreatedListener,
+                subscribers: [
+                    TestUserCreatedSubscriber
+                ]
+            }
+        ])
     }
 
 }

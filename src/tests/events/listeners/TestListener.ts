@@ -1,10 +1,17 @@
-import EventListener from "@src/core/domains/events/services/EventListener";
-import { App } from "@src/core/services/App";
- 
-export class TestListener extends EventListener<any> {
+import BaseEventListener from "@src/core/domains/events/base/BaseEventListener";
+import SyncDriver from "@src/core/domains/events/drivers/SyncDriver";
+
+class TestListener extends BaseEventListener {
+
+    constructor(payload: { hello: string }) {
+        super(payload, SyncDriver);
+    }
     
-    handle = async (payload: any) => {
-        App.container('logger').info('[TestListener]', payload)
+     
+    async execute(): Promise<void> {
+        console.log('Executed TestListener', this.getPayload(), this.getName());
     }
 
 }
+
+export default TestListener

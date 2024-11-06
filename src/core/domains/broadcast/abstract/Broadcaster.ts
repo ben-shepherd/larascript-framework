@@ -19,7 +19,7 @@ abstract class Broadcaster implements IBroadcaster {
      * @param args The arguments to pass to the listeners.
      */
     async broadcast(event: IBroadcastEvent): Promise<void> {
-        const eventName = event.getEventName()
+        const eventName = event.getName()
 
         if(!this.broadcastListeners.has(eventName)) {
             this.createBroadcastListener(eventName)

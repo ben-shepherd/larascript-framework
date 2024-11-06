@@ -1,6 +1,19 @@
 import { IHasPrepareDocument } from "@src/core/interfaces/concerns/IHasPrepareDocument";
 import { ICtor } from "@src/core/interfaces/ICtor";
 
+/**
+ * Concern providing a method to prepare a document for saving to the database.
+ * 
+ * Automatically stringifies any fields specified in the `json` property.
+ * 
+ * @example
+ * class MyModel extends BaseModel {
+ *     json = ['options'];
+ * }
+ * 
+ * @template T The type of the prepared document.
+ * @returns {T} The prepared document.
+ */
 const HasPrepareDocumentConcern = (Base: ICtor) => {
     return class HasPrepareDocument extends Base implements IHasPrepareDocument {
 

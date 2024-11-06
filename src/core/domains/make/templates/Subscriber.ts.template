@@ -1,31 +1,30 @@
-import EventSubscriber from "@src/core/domains/events/services/EventSubscriber";
+import BaseEvent from "@src/core/domains/events/base/BaseEvent";
+import SyncDriver from "@src/core/domains/events/drivers/SyncDriver";
 
-export type I#name#Data = {
+class #name# extends BaseEvent {
 
-}
+    static readonly eventName = '#name';
+    
+    protected namespace: string = 'default';
 
-/**
- * <enter description>
- *
- * @param payload The payload of the event.
- */
-export default class #name# extends EventSubscriber<I#name#Data> {
+    constructor(payload) {
+        super(payload, SyncDriver);
+    }
 
-    /**
-     * Constructor
-     * @param payload The payload of the event.
-     */
-    constructor(payload: I#name#Data) {
+    getName(): string {
+        return #name#.eventName;
+    }
 
-        // Set the name of the event.
-        const eventName = 'TestSubscriber'
+    getQueueName(): string {
+        return 'default';
+    }
 
-        // Set to 'queue' if you want the event to be added to the worker queue
-        // and processed by the worker command.
-        // Set to 'sync' if you want the event to be processed immediately.
-        const driver = 'queue';
-
-        super(eventName, driver, payload)
+    async execute(): Promise<void> {
+        const payload = this.getPayload<unknown>();
+        
+        // Handle logic
     }
 
 }
+
+export default #name#

@@ -1,13 +1,5 @@
-/* eslint-disable no-unused-vars */
-import { IEvent } from "@src/core/domains/events/interfaces/IEvent";
-import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
+ 
+import { IDispatchable } from "@src/core/interfaces/concerns/IDispatchable";
+import { INameable } from "@src/core/interfaces/concerns/INameable";
 
-export type IDriverConstructor<
-Payload extends IEventPayload = IEventPayload,
-Options extends object = object,
-Driver extends IEventDriver = IEventDriver<Payload, Options>
-> = new (...args: any[]) => Driver;
-
-export default interface IEventDriver<Payload extends IEventPayload = IEventPayload, Options extends object = object> {
-    handle(event: IEvent<Payload>, options?: Options): any;
-}
+export default interface IEventDriver extends INameable, IDispatchable {}

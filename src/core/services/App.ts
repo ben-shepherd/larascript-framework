@@ -51,7 +51,7 @@ export class App extends Singleton<IAppConfig> {
         if (kernel.booted()) {
             throw new Error('Kernel is already booted');
         }
-        if (!name) {
+        if (!name || name === '') {
             throw new Error('Container name cannot be empty');
         }
         if (kernel.containers.has(name)) {
@@ -74,6 +74,41 @@ export class App extends Singleton<IAppConfig> {
         }
 
         return kernel.containers.get(name);
+    }
+
+    /**
+     * Safely retrieves a container by its name.
+     * Attempts to get the specified container from the kernel.
+     * If the container is not initialized, it returns undefined.
+     * Throws an error for other exceptions.
+     *
+     * @template K - The type of the container key.
+     * @param {K} name - The name of the container to retrieve.
+     * @returns {IContainers[K] | undefined} The container if found, otherwise undefined.
+     * @throws {Error} If an unexpected error occurs.
+     */
+    public static safeContainer<K extends keyof IContainers = keyof IContainers>(name: K): IContainers[K] | undefined {
+        try {
+            return this.container(name);
+        }
+        catch (err) {
+            if(err instanceof UninitializedContainerError) {
+                return undefined;
+            }
+
+            throw err
+        }
+    }
+
+    /**
+     * Checks if a container is ready.
+     * A container is considered ready if it has been set using the setContainer method.
+     * @template K - The type of the container key.
+     * @param {K} name - The name of the container to check.
+     * @returns {boolean} Whether the container is ready or not.
+     */
+    public static containerReady<K extends keyof IContainers = keyof IContainers>(name: K): boolean {
+        return this.safeContainer(name) !== undefined
     }
 
     /**

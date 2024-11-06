@@ -5,7 +5,7 @@ export default class MakeListenerCommand extends BaseMakeFileCommand {
     constructor() {
         super({
             signature: 'make:listener',
-            description: 'Create a new listener',
+            description: 'Create a new listener event',
             makeType: 'Listener',
             args: ['name'],
             endsWith: 'Listener'

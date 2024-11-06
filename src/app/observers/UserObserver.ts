@@ -1,3 +1,4 @@
+import { UserCreatedListener } from "@src/app/events/listeners/UserCreatedListener";
 import { IUserData } from "@src/app/models/auth/User";
 import hashPassword from "@src/core/domains/auth/utils/hashPassword";
 import Observer from "@src/core/domains/observer/services/Observer";
@@ -19,6 +20,16 @@ export default class UserObserver extends Observer<IUserData> {
     async creating(data: IUserData): Promise<IUserData> {
         data = this.onPasswordChange(data)
         data = await this.updateRoles(data)
+        return data
+    }
+
+    /**
+     * Called after the User model has been created.
+     * @param data The User data that has been created.
+     * @returns The processed User data.
+     */
+    async created(data: IUserData): Promise<IUserData> {
+        await App.container('events').dispatch(new UserCreatedListener(data))
         return data
     }
 

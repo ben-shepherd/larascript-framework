@@ -6,6 +6,22 @@ import SetAttributeBroadcastEvent from "@src/core/events/concerns/HasAttribute/S
 import { ICtor } from "@src/core/interfaces/ICtor";
 import IModelAttributes from "@src/core/interfaces/IModelData";
 
+/**
+ * Attaches an observer to a model.
+ * 
+ * The observer is an instance of a class that implements the IObserver interface.
+ * The observer is responsible for handling events that are broadcasted from the model.
+ * The observer can also be used to handle custom events that are not part of the predefined set.
+ * 
+ * The HasObserverConcern adds the following methods to the model:
+ * - onAttributeChange: Called when a HasAttributeBroadcastEvent is triggered from a model with the HasAttributes concern.
+ * - observeWith: Attatch the Observer to this instance.
+ * - observeData: Data has changed, pass it through the appropriate method, return the data.
+ * - observeDataCustom: A custom observer method.
+ * 
+ * @param Broadcaster The class that implements the IBroadcaster interface. This class is responsible for broadcasting events to the observer.
+ * @returns A class that extends the Broadcaster class and implements the IHasObserver interface.
+ */
 const HasObserverConcern = (Broadcaster: ICtor<IBroadcaster>) => {
     return class HasObserver extends Broadcaster implements IHasObserver {
 

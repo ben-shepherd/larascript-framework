@@ -5,6 +5,16 @@ import { IHasAttributes, IHasAttributesSetAttributeOptions as SetAttributeOption
 import { ICtor } from "@src/core/interfaces/ICtor";
 import IModelAttributes from "@src/core/interfaces/IModelData";
 
+/**
+ * Concern that adds the ability to set and retrieve attributes from a model, and to broadcast when attributes change.
+ * The concern is a mixin and can be applied to any class that implements the IBroadcaster interface.
+ * The concern adds the following methods to the class: setAttribute, getAttribute, getAttributes, getOriginal, isDirty, and getDirty.
+ * The concern also adds a constructor that subscribes to the SetAttributeBroadcastEvent and calls the onSetAttributeEvent method when the event is triggered.
+ * The concern is generic and can be used with any type of model attributes.
+ * @template Attributes The type of the model's attributes.
+ * @param {ICtor<IBroadcaster>} Base The base class to extend with the concern.
+ * @returns {ICtor<IBroadcaster & IHasAttributes>} A class that extends the base class with the concern.
+ */
 const HasAttributesConcern = <Attributes extends IModelAttributes>(Base: ICtor<IBroadcaster>) => {
     return class HasAttributes extends Base implements IHasAttributes {
 
