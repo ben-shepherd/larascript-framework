@@ -48,7 +48,7 @@ export const eventConfig: IEventConfig = {
      * Register Events
      */
     events: EventService.createConfigEvents([
-        UserCreatedListener
+        
     ]),
 
     /**
