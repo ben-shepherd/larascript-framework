@@ -34,7 +34,7 @@ describe('mock queable event failed', () => {
     })
 
     afterAll(async () => {
-        // await dropWorkerTables();
+        await dropWorkerTables();
     })
 
 

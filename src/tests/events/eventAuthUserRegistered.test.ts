@@ -11,6 +11,8 @@ import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
 import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 import TestEventProvider from '@src/tests/providers/TestEventProvider';
 
+import { dropWorkerTables } from './helpers/createWorketTables';
+
 
 describe('mock queable event', () => {
 
@@ -30,7 +32,7 @@ describe('mock queable event', () => {
     })
 
     afterAll(async () => {
-        // await dropWorkerTables();
+        await dropWorkerTables();
     })
 
 
