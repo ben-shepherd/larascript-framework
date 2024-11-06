@@ -81,7 +81,7 @@ const EventWorkerConcern = (Base: ICtor) => {
             const newAttempt = attempt + 1
             const retries = workerModel.getAttribute('retries') ?? 0
 
-            await workerModel.attr('attempt', attempt + 1)
+            await workerModel.attr('attempt', newAttempt)
 
             if(newAttempt >= retries) {
                 await this.handleFailedWorkerModel(workerModel, options)
