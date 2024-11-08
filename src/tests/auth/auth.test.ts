@@ -3,15 +3,12 @@ import { describe } from '@jest/globals';
 import ApiToken from '@src/app/models/auth/ApiToken';
 import User from '@src/app/models/auth/User';
 import authConfig from '@src/config/auth';
-import UserFactory from '@src/core/domains/auth/factory/userFactory';
 import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
-import AuthProvider from '@src/core/domains/auth/providers/AuthProvider';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';
-import DatabaseProvider from '@src/core/domains/database/providers/DatabaseProvider';
-import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
-import testAppConfig from '@src/tests/config/testConfig';
-import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
+
+import TestUserFactory from '../factory/factories/TestUserFactory';
+import testBootApp from '../setup/testBootApp';
 
 describe('attempt to run app with normal appConfig', () => {
 
@@ -23,20 +20,12 @@ describe('attempt to run app with normal appConfig', () => {
     let apiToken: IApiTokenModel | null; 
 
     beforeAll(async () => {
-        await Kernel.boot({
-            ...testAppConfig,
-            providers: [
-                ...testAppConfig.providers,
-                new TestConsoleProvider(),
-                new DatabaseProvider(),
-                new AuthProvider()
-            ]
-        }, {});
+        await testBootApp();
 
         /**
          * Create a test user
          */
-        testUser = new UserFactory().createWithData({
+        testUser = new TestUserFactory().createWithData({
             email,
             hashedPassword,
             roles: [],
