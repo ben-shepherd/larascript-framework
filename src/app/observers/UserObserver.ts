@@ -1,8 +1,14 @@
 import { UserCreatedListener } from "@src/app/events/listeners/UserCreatedListener";
 import { IUserData } from "@src/app/models/auth/User";
 import hashPassword from "@src/core/domains/auth/utils/hashPassword";
+import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import Observer from "@src/core/domains/observer/services/Observer";
+import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
+
+export type TUserObserverOptions = {
+    userCreatedListener: ICtor<IBaseEvent>;
+}
 
 /**
  * Observer for the User model.
@@ -10,6 +16,17 @@ import { App } from "@src/core/services/App";
  * Automatically hashes the password on create/update if it is provided.
  */
 export default class UserObserver extends Observer<IUserData> {
+
+    protected userCreatedListener: ICtor<IBaseEvent> = UserCreatedListener;
+
+    /**
+     * Sets the listener to use after a User has been created.
+     * @param listener The listener to use after a User has been created.
+     * @returns The UserObserver instance.
+     */
+    setUserCreatedListener(listener: ICtor<IBaseEvent>) {
+        this.userCreatedListener = listener
+    }
 
     /**
      * Called when the User model is being created.
@@ -29,7 +46,7 @@ export default class UserObserver extends Observer<IUserData> {
      * @returns The processed User data.
      */
     async created(data: IUserData): Promise<IUserData> {
-        await App.container('events').dispatch(new UserCreatedListener(data))
+        await App.container('events').dispatch(new this.userCreatedListener(data))
         return data
     }
 

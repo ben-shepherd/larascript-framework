@@ -19,17 +19,17 @@ describe('mock queable event', () => {
         await testHelper.testBootApp()
 
         try {
-            await testHelper.dropTestUserTable();
+            await testHelper.dropAuthTables();
         }
         // eslint-disable-next-line no-unused-vars
         catch (err) {}
         
-        await testHelper.createTestUserTable();
+        await testHelper.createAuthTables();
     })
 
     afterAll(async () => {
         await dropWorkerTables();
-        await testHelper.dropTestUserTable();
+        await testHelper.dropAuthTables();
     })
 
 

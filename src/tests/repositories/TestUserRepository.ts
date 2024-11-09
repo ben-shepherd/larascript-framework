@@ -1,22 +1,13 @@
-import User from "@src/app/models/auth/User";
-import Repository from "@src/core/base/Repository";
-import IUserRepository from "@src/core/domains/auth/interfaces/IUserRepository";
+import UserRepository from "@src/app/repositories/auth/UserRepository";
 
 import TestUser from "../models/models/TestUser";
 
-export default class TestUserRepository extends Repository<User> implements IUserRepository {
+
+export default class TestUserRepository extends UserRepository {
 
     constructor() {
-        super(TestUser)
-    }
-
-    /**
-     * Finds a User by their email address
-     * @param email 
-     * @returns 
-     */
-    public async findOneByEmail(email: string): Promise<User | null> {
-        return await this.findOne({ email })
+        super()
+        this.setModelCtor(TestUser)
     }
 
 }
