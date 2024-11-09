@@ -43,6 +43,14 @@ class ParsePostgresConnectionUrl {
         });
     }
 
+    /**
+     * Returns a Postgres connection URL string based on the properties of the instance
+     * @returns A Postgres connection URL string
+     */
+    toString() {
+        return `postgres://${this.username}:${this.password}@${this.host}:${this.port}/${this.database}`;
+    }
+
 }
 
 
