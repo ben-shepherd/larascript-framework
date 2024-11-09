@@ -11,6 +11,37 @@ class MongoDBSchema extends BaseDatabaseSchema {
     }
 
     /**
+     * Creates a new database schema.
+     * @param name The name of the database to create
+     * @returns A promise that resolves when the database schema has been created
+     */
+    async createDatabase(name: string): Promise<void> {
+        await this.driver.getClient().db(name).createCollection("schema");
+    }
+
+    /**
+     * Checks if a database exists
+     * @param name The name of the database to check
+     * @returns A promise that resolves to a boolean indicating whether the database exists
+     */
+    async databaseExists(name: string): Promise<boolean> {
+        const adminDb = this.driver.getClient().db().admin();
+        const dbList = await adminDb.listDatabases();
+        return dbList.databases.some(db => db.name === name);
+    }
+
+    /**
+     * Drops the specified database.
+     * 
+     * @param name - The name of the database to drop.
+     * @returns A promise that resolves when the database has been dropped.
+     */
+    async dropDatabase(name: string): Promise<void> {
+        const client = this.driver.getClient();
+        await client.db(name).dropDatabase();
+    }
+
+    /**
      * Create a table
      * @param name 
      * @param args 
