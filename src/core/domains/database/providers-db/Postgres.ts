@@ -92,8 +92,22 @@ export default class Postgres implements IDatabaseProvider {
         return this.sequelize
     }
 
+    /**
+     * Get a new PostgreSQL client instance.
+     * 
+     * @returns {pg.Client} A new instance of PostgreSQL client.
+     */
+    getPgClient(): pg.Client {
+        return new pg.Client(this.config.uri);
+    }
+
+    /**
+     * Get the query interface for the database
+     * @returns {QueryInterface} The query interface
+     */
     getQueryInterface(): QueryInterface {
         return this.getSequelize().getQueryInterface();
     }
+
 
 }

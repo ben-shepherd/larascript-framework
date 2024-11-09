@@ -10,7 +10,7 @@ describe('test parsing a postgres connection string', () => {
     
         expect(parsedConnectionString).toEqual({
             host: 'localhost',
-            port: '5432',
+            port: 5432,
             username: 'username',
             password: 'password',
             database: 'database'
