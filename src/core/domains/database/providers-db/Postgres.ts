@@ -1,5 +1,4 @@
 
-import { EnvironmentProduction } from '@src/core/consts/Environment';
 import PostgresDocumentManager from '@src/core/domains/database/documentManagers/PostgresDocumentManager';
 import InvalidSequelize from '@src/core/domains/database/exceptions/InvalidSequelize';
 import { IDatabaseGenericConnectionConfig } from '@src/core/domains/database/interfaces/IDatabaseGenericConnectionConfig';
@@ -11,6 +10,8 @@ import { App } from '@src/core/services/App';
 import pg from 'pg';
 import { QueryInterface, Sequelize } from 'sequelize';
 import { Options, Options as SequelizeOptions } from 'sequelize/types/sequelize';
+
+import ParsePostgresConnectionUrl from '../helper/ParsePostgresConnectionUrl';
 
 export default class Postgres implements IDatabaseProvider {
 
@@ -49,11 +50,43 @@ export default class Postgres implements IDatabaseProvider {
      * @returns {Promise<void>} A promise that resolves when the connection is established
      */
     async connect(): Promise<void> {
+        await this.createDefaultDatabase();
+        
         this.sequelize = new Sequelize(this.config.uri, { 
-            logging: App.env() !== EnvironmentProduction,
+            // logging: App.env() !== EnvironmentProduction,
+            logging: false,
             ...this.config.options, 
             ...this.overrideConfig
         })
+    }
+
+    /**
+     * Creates the default database if it does not exist
+     * @returns {Promise<void>} A promise that resolves when the default database has been created
+     * @throws {Error} If an error occurs while creating the default database
+     * @private
+     */
+    private async createDefaultDatabase(): Promise<void> {
+        const credentials = ParsePostgresConnectionUrl.parsePostgresConnectionUrl(this.config.uri);
+        
+        const client = new pg.Client({
+            user: credentials.username,
+            password: credentials.password,
+            host: credentials.host,
+            port: credentials.port,
+            database: 'postgres'
+        });
+        
+        try {
+            await client.connect();
+            await client.query('CREATE DATABASE ' + credentials.database);
+        }
+        catch (err) {
+            App.container('logger').error(err);
+        }
+        finally {
+            await client.end();
+        }
     }
 
     /**
