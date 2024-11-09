@@ -10,6 +10,7 @@ import { DataTypes } from "sequelize";
 import TestApiTokenModel from "./models/models/TestApiTokenModel";
 import TestUser from "./models/models/TestUser";
 import TestAuthProvider from "./providers/TestAuthProvider";
+import TestMigrationProvider from "./providers/TestMigrationProvider";
 
 export const getTestDbName = () => testDbName
 
@@ -22,6 +23,7 @@ const testBootApp = async () => {
             new TestDatabaseProvider(),
             new TestEventProvider(),
             new TestAuthProvider(),
+            new TestMigrationProvider()
         ]
     }, {});
 }

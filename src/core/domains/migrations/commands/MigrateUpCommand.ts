@@ -26,7 +26,7 @@ class MigrateUpCommand extends BaseMigrationCommand {
         // If this command is called with --keep-alive, then keep the process alive
         // For example, migrate:fresh --seed will also to keep the process alive to run the seeds
         if(keepAlive) {
-            this.keepProcessAlive = true;
+            this.config.keepProcessAlive = true;
         }
 
         // Run the migrations

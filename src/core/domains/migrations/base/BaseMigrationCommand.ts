@@ -8,7 +8,7 @@ import MigrationService from "@src/core/domains/migrations/services/MigrationSer
 
 abstract class BaseMigrationCommand extends BaseCommand {
 
-    config!: IMigrationConfig;
+    protected config!: IMigrationConfig;
 
     /**
      * Constructor
