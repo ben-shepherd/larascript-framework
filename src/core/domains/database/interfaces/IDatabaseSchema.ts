@@ -4,6 +4,29 @@
  */
 export interface IDatabaseSchema {
 
+
+    /**
+     * Creates a new database schema.
+     * If the database already exists, this method does nothing.
+     * If the database does not exist, this method creates a new database schema.
+     * @returns A promise that resolves when the database schema has been created.
+     */
+    createDatabase(name: string): Promise<void>;
+
+    /**
+     * Checks if a database exists
+     * @param name The name of the database
+     */
+    databaseExists(name: string): Promise<boolean>;
+
+    /**
+     * Drops the database schema.
+     * If the database does not exist, this method does nothing.
+     * If the database exists, this method drops the database schema.
+     * @returns A promise that resolves when the database schema has been dropped.
+     */
+    dropDatabase(name: string): Promise<void>;
+
     /**
      * Create a table in the database
      * @param name - Name of the table to create
