@@ -1,5 +1,6 @@
 class ParsePostgresConnectionUrl {
 
+    // eslint-disable-next-line no-useless-escape
     static readonly pattern = new RegExp(/postgres:\/\/([^:]+):([^@]+)@([^:]+):([^\/]+)\/(.+)/);
 
     public host!: string;

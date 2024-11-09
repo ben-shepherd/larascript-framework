@@ -183,6 +183,7 @@ const HasCastableConcernMixin = (Base: ICtor) => {
                 try {
                     return JSON.parse(data) as T;
                 }
+                // eslint-disable-next-line no-unused-vars
                 catch (error) {
                     throw new CastException('Invalid JSON string for object conversion');
                 }
