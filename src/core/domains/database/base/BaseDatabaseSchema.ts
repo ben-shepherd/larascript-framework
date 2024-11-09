@@ -26,9 +26,6 @@ abstract class BaseDatabaseSchema<Provider extends IDatabaseProvider = IDatabase
      * 
      * @returns A promise that resolves when the database is created
      */
-    /**
-     * 
-     */
     abstract createDatabase(name: string): Promise<void>;
 
     /**

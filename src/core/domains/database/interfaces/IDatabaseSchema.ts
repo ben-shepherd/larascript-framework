@@ -25,9 +25,6 @@ export interface IDatabaseSchema {
      * If the database exists, this method drops the database schema.
      * @returns A promise that resolves when the database schema has been dropped.
      */
-    /**
-     * 
-     */
     dropDatabase(name: string): Promise<void>;
 
     /**
