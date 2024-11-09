@@ -1,18 +1,20 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import ApiToken from '@src/app/models/auth/ApiToken';
-import User from '@src/app/models/auth/User';
 import authConfig from '@src/config/auth';
 import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
+import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';
 import { App } from '@src/core/services/App';
 
 import TestUserFactory from '../factory/TestUserFactory';
+import TestApiTokenModel from '../models/models/TestApiTokenModel';
+import TestUser from '../models/models/TestUser';
 import testHelper from '../testHelper';
+
 
 describe('attempt to run app with normal appConfig', () => {
 
-    let testUser: User;
+    let testUser: IUserModel;
     const email = 'testUser@test.com';
     const password = 'testPassword';
     const hashedPassword = hashPassword(password);
@@ -21,6 +23,14 @@ describe('attempt to run app with normal appConfig', () => {
 
     beforeAll(async () => {
         await testHelper.testBootApp();
+
+        try {
+            await testHelper.dropAuthTables();
+        }
+        // eslint-disable-next-line no-unused-vars
+        catch (err) {}
+        
+        await testHelper.createAuthTables();
 
         /**
          * Create a test user
@@ -97,7 +107,7 @@ describe('attempt to run app with normal appConfig', () => {
 
     test('create api token from user', async () => {
         apiToken = await App.container('auth').createApiTokenFromUser(testUser);
-        expect(apiToken).toBeInstanceOf(ApiToken);
+        expect(apiToken).toBeInstanceOf(TestApiTokenModel);
     })
 
     test('create jwt from user', async () => {
@@ -107,14 +117,14 @@ describe('attempt to run app with normal appConfig', () => {
 
     test('verify token', async () => {
         apiToken = await App.container('auth').attemptAuthenticateToken(jwtToken);
-        expect(apiToken).toBeInstanceOf(ApiToken);
+        expect(apiToken).toBeInstanceOf(TestApiTokenModel);
 
         const user = await apiToken?.user();
-        expect(user).toBeInstanceOf(User);
+        expect(user).toBeInstanceOf(TestUser);
     })
 
     test('revoke token', async () => {
-        expect(apiToken).toBeInstanceOf(ApiToken);
+        expect(apiToken).toBeInstanceOf(TestApiTokenModel);
         apiToken && await App.container('auth').revokeToken(apiToken);
 
         await apiToken?.refresh();

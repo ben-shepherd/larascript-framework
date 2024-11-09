@@ -1,11 +1,15 @@
 import { EnvironmentTesting } from "@src/core/consts/Environment";
-import AuthProvider from "@src/core/domains/auth/providers/AuthProvider";
 import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
 import Kernel from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
 import TestConsoleProvider from "@src/tests/providers/TestConsoleProvider";
 import TestDatabaseProvider, { testDbName } from "@src/tests/providers/TestDatabaseProvider";
 import TestEventProvider from "@src/tests/providers/TestEventProvider";
+import { DataTypes } from "sequelize";
+
+import TestApiTokenModel from "./models/models/TestApiTokenModel";
+import TestUser from "./models/models/TestUser";
+import TestAuthProvider from "./providers/TestAuthProvider";
 
 export const getTestDbName = () => testDbName
 
@@ -17,9 +21,50 @@ const testBootApp = async () => {
             new TestConsoleProvider(),
             new TestDatabaseProvider(),
             new TestEventProvider(),
-            new AuthProvider(),
+            new TestAuthProvider(),
         ]
     }, {});
+}
+
+
+export const createAuthTables = async(connectionName?: string) => {
+    const schema = App.container('db').schema(connectionName)
+
+    const userTable = (new TestUser).table;
+    const apiTokenTable = (new TestApiTokenModel).table;
+
+    const stringNullable = {
+        type: DataTypes.STRING,
+        allowNull: true
+    }
+
+    await schema.createTable(userTable, {
+        email: DataTypes.STRING,
+        hashedPassword: DataTypes.STRING,
+        groups: DataTypes.JSON,
+        roles: DataTypes.JSON,
+        firstName: stringNullable,
+        lastName: stringNullable,
+        createdAt: DataTypes.DATE,
+        updatedAt: DataTypes.DATE
+    })
+
+    await schema.createTable(apiTokenTable, {
+        userId: DataTypes.STRING,
+        token: DataTypes.STRING,
+        scopes: DataTypes.JSON,
+        revokedAt: DataTypes.DATE
+    })
+}
+
+export const dropAuthTables = async(connectionName?: string) => {
+    const schema = App.container('db').schema(connectionName)
+
+    const userTable = (new TestUser).table;
+    const apiTokenTable = (new TestApiTokenModel).table;
+
+    await schema.dropTable(userTable);
+    await schema.dropTable(apiTokenTable);
 }
 
 const runFreshMigrations = async () => {
@@ -39,7 +84,9 @@ const testHelper = {
     runFreshMigrations,
     clearMigrations,
     getTestDbName,
-    getTestConnectionNames
+    getTestConnectionNames,
+    createAuthTables,
+    dropAuthTables
 } as const
 
 export default testHelper

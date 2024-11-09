@@ -4,6 +4,8 @@ import ApiTokenRepository from '@src/app/repositories/auth/ApiTokenRepository';
 import UserRepository from '@src/app/repositories/auth/UserRepository';
 import CreateUserValidator from '@src/app/validators/user/CreateUserValidator';
 import UpdateUserValidator from '@src/app/validators/user/UpdateUserValidator';
+import ApiTokenFactory from '@src/core/domains/auth/factory/apiTokenFactory';
+import UserFactory from '@src/core/domains/auth/factory/userFactory';
 import { IAuthConfig } from '@src/core/domains/auth/interfaces/IAuthConfig';
 import AuthService from '@src/core/domains/auth/services/AuthService';
 import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
@@ -38,6 +40,10 @@ const config: IAuthConfig = {
     repositories: {
         user: UserRepository,
         apiToken: ApiTokenRepository
+    },
+    factory: {
+        userFactory: UserFactory,
+        apiTokenFactory: ApiTokenFactory
     },
     validators: {
         createUser: CreateUserValidator,

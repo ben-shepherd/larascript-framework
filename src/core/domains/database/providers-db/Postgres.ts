@@ -79,6 +79,14 @@ export default class Postgres implements IDatabaseProvider {
         
         try {
             await client.connect();
+
+            const result = await client.query(`SELECT FROM pg_database WHERE datname = '${credentials.database}'`)
+            const dbExists = typeof result.rowCount === 'number' && result.rowCount > 0
+
+            if(dbExists) {
+                return;
+            }
+
             await client.query('CREATE DATABASE ' + credentials.database);
         }
         catch (err) {
