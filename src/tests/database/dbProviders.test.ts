@@ -3,11 +3,13 @@ import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
-import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
 import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 import { DataTypes } from 'sequelize';
 
-const connections = getTestConnectionNames()
+import testHelper from '../testHelper';
+
+const connections = testHelper.getTestConnectionNames()
+
 const tableName = 'testTable';
 type Data = { id?: string, name: string, age: number, relatedId?: string };
 

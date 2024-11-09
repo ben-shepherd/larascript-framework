@@ -1,27 +1,16 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
-import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
-import testAppConfig from '@src/tests/config/testConfig';
-import TestMigrationProvider from '@src/tests/migration/providers/TestMigrationProvider';
-import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
-import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 
-describe('test migrations', () => {
+import testHelper from '../testHelper';
+
+describe('test seeders', () => {
 
     let schema: IDatabaseSchema;
 
     beforeAll(async () => {
-        await Kernel.boot({
-            ...testAppConfig,
-            providers: [
-                ...testAppConfig.providers,
-                new TestConsoleProvider(),
-                new TestDatabaseProvider(),
-                new TestMigrationProvider(),
-            ]
-        }, {})
+        await testHelper.testBootApp()
 
         /**
          * Drop the test table if it exists
@@ -37,7 +26,7 @@ describe('test migrations', () => {
         await App.container('db').schema().dropTable('tests');
     })
 
-    test('test up migration', async () => {
+    test('test up seeder', async () => {
 
         await App.container('console').reader(['migrate:up']).handle();
 
@@ -46,7 +35,7 @@ describe('test migrations', () => {
         expect(tableExists).toBe(true);
     });
 
-    test('test down migration', async () => {
+    test('test down seeder', async () => {
 
         await App.container('console').reader(['migrate:down']).handle();
 

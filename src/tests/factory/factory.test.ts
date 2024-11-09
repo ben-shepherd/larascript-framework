@@ -1,27 +1,18 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import Kernel from '@src/core/Kernel';
-import testAppConfig from '@src/tests/config/testConfig';
-import TestMovieFactory from '@src/tests/factory/TestMovieFaker';
-import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
+import TestMovieFactory from '@src/tests/factory/TestMovieFakerFactory';
 
-describe('test migrations', () => {
+import testHelper from '../testHelper';
+
+describe('create a movie model using factories', () => {
 
 
     beforeAll(async () => {
-        await Kernel.boot({
-            ...testAppConfig,
-            providers: [
-                ...testAppConfig.providers,
-                new TestDatabaseProvider()
-            ]
-        }, {})
-
-
+        await testHelper.testBootApp()
     });
 
 
-    test('test factory', async () => {
+    test('create a movie', async () => {
         const factory = new TestMovieFactory();
         const movie = factory.createFakeMovie();
 

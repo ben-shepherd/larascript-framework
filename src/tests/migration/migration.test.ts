@@ -1,27 +1,16 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
-import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
-import testAppConfig from '@src/tests/config/testConfig';
-import TestMigrationProvider from '@src/tests/migration/providers/TestMigrationProvider';
-import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
-import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
+
+import testHelper from '../testHelper';
 
 describe('test migrations', () => {
 
     let schema: IDatabaseSchema;
 
     beforeAll(async () => {
-        await Kernel.boot({
-            ...testAppConfig,
-            providers: [
-                ...testAppConfig.providers,
-                new TestConsoleProvider(),
-                new TestDatabaseProvider(),
-                new TestMigrationProvider(),
-            ]
-        }, {})
+        await testHelper.testBootApp()
 
         /**
          * Drop the test table if it exists

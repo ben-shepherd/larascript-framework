@@ -7,8 +7,8 @@ import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';
 import { App } from '@src/core/services/App';
 
-import TestUserFactory from '../factory/factories/TestUserFactory';
-import testBootApp from '../setup/testBootApp';
+import TestUserFactory from '../factory/TestUserFactory';
+import testHelper from '../testHelper';
 
 describe('attempt to run app with normal appConfig', () => {
 
@@ -20,7 +20,7 @@ describe('attempt to run app with normal appConfig', () => {
     let apiToken: IApiTokenModel | null; 
 
     beforeAll(async () => {
-        await testBootApp();
+        await testHelper.testBootApp();
 
         /**
          * Create a test user

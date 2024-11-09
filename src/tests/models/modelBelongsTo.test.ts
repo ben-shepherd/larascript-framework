@@ -1,16 +1,15 @@
 /* eslint-disable no-undef */
 import { describe, expect, test } from '@jest/globals';
-import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
-import testAppConfig from '@src/tests/config/testConfig';
-import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
 import { TestAuthorModel } from '@src/tests/models/models/TestAuthor';
 import { TestMovieModel } from '@src/tests/models/models/TestMovie';
-import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 import { DataTypes } from 'sequelize';
 
+import testHelper from '../testHelper';
+
 const tableName = 'tests';
-const connections = getTestConnectionNames()
+
+const connections = testHelper.getTestConnectionNames()
 
 const createTable = async (connectionName: string) => {
     const schema = App.container('db').schema(connectionName);
@@ -39,13 +38,7 @@ const truncate = async (connectionName: string) => {
 
 describe('test belongsTo by fetching an author from a movie', () => {
     beforeAll(async () => {
-        await Kernel.boot({
-            ...testAppConfig,
-            providers: [
-                ...testAppConfig.providers,
-                new TestDatabaseProvider()
-            ]
-        }, {})
+        await testHelper.testBootApp()
     })
 
     /**

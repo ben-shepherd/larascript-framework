@@ -1,16 +1,13 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
 import { IUserData } from '@src/app/models/auth/User';
-import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
-import testAppConfig from '@src/tests/config/testConfig';
 import { TestUserCreatedListener } from '@src/tests/events/events/auth/TestUserCreatedListener';
 import TestUserCreatedSubscriber from '@src/tests/events/events/auth/TestUserCreatedSubscriber';
 import { dropWorkerTables } from '@src/tests/events/helpers/createWorketTables';
-import TestUserFactory from '@src/tests/factory/factories/TestUserFactory';
-import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
-import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
-import TestEventProvider from '@src/tests/providers/TestEventProvider';
+import TestUserFactory from '@src/tests/factory/TestUserFactory';
+
+import testHelper from '../testHelper';
 
 
 describe('mock queable event', () => {
@@ -19,15 +16,7 @@ describe('mock queable event', () => {
    * Register the test event provider
    */
     beforeAll(async () => {
-        await Kernel.boot({
-            ...testAppConfig,
-            providers: [
-                ...testAppConfig.providers,
-                new TestConsoleProvider(),
-                new TestDatabaseProvider(),
-                new TestEventProvider(),
-            ]
-        }, {})
+        await testHelper.testBootApp()
     })
 
     afterAll(async () => {

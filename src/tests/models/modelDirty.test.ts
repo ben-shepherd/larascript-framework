@@ -2,15 +2,13 @@
 import { describe, expect, test } from '@jest/globals';
 import Repository from '@src/core/base/Repository';
 import { IModel } from '@src/core/interfaces/IModel';
-import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
-import testAppConfig from '@src/tests/config/testConfig';
-import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
 import TestDirtyModel from '@src/tests/models/models/TestDirtyModel';
-import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 import { DataTypes } from 'sequelize';
 
-const connections = getTestConnectionNames()
+import testHelper from '../testHelper';
+
+const connections = testHelper.getTestConnectionNames()
 
 const createTable = async (connectionName: string) => {
     const schema = App.container('db').schema(connectionName)
@@ -42,13 +40,7 @@ describe('test dirty', () => {
      * Boot the MongoDB provider
      */
     beforeAll(async () => {
-        await Kernel.boot({
-            ...testAppConfig,
-            providers: [
-                ...testAppConfig.providers,
-                new TestDatabaseProvider()
-            ]
-        }, {})
+        await testHelper.testBootApp()
 
         for(const connection of connections) {
             await dropTable(connection)

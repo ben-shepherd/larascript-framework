@@ -1,22 +1,23 @@
+import { EnvironmentTesting } from "@src/core/consts/Environment";
 import AuthProvider from "@src/core/domains/auth/providers/AuthProvider";
+import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
 import Kernel from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
-import testAppConfig from "@src/tests/config/testConfig";
 import TestConsoleProvider from "@src/tests/providers/TestConsoleProvider";
-import TestDatabaseProvider from "@src/tests/providers/TestDatabaseProvider";
+import TestDatabaseProvider, { testDbName } from "@src/tests/providers/TestDatabaseProvider";
 import TestEventProvider from "@src/tests/providers/TestEventProvider";
 
-const testDbName = 'test_db';
+export const getTestDbName = () => testDbName
 
 const testBootApp = async () => {
     await Kernel.boot({
-        ...testAppConfig,
+        environment: EnvironmentTesting,
         providers: [
-            ...testAppConfig.providers,
+            new LoggerProvider(),
             new TestConsoleProvider(),
             new TestDatabaseProvider(),
             new TestEventProvider(),
-            new AuthProvider()
+            new AuthProvider(),
         ]
     }, {});
 }
@@ -29,11 +30,16 @@ const clearMigrations = async () => {
     await App.container('console').reader(['migrate:down', '--group=testing']).handle();
 }
 
+export const getTestConnectionNames = ({ exclude = [] }: { exclude?: string[] } = {}) => {
+    return ['mongodb', 'postgres'].filter(connectionName => !exclude.includes(connectionName));
+}
+
 const testHelper = {
     testBootApp,
     runFreshMigrations,
     clearMigrations,
-    testDbName
+    getTestDbName,
+    getTestConnectionNames
 } as const
 
 export default testHelper

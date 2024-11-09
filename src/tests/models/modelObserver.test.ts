@@ -1,14 +1,12 @@
 /* eslint-disable no-undef */
 import { describe, expect, test } from '@jest/globals';
-import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
-import testAppConfig from '@src/tests/config/testConfig';
-import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
 import TestObserverModel from '@src/tests/models/models/TestObserverModel';
-import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 import { DataTypes } from 'sequelize';
 
-const connections = getTestConnectionNames()
+import testHelper from '../testHelper';
+
+const connections = testHelper.getTestConnectionNames()
 
 const createTable = async (connectionName: string) => {
     const schema = App.container('db').schema(connectionName)
@@ -33,14 +31,7 @@ const dropTable = async (connectionName: string) => {
 describe('test model crud', () => {
 
     beforeAll(async () => {
-        await Kernel.boot({
-            ...testAppConfig,
-            providers: [
-                ...testAppConfig.providers,
-                new TestDatabaseProvider()
-            ]
-        }, {})
-
+        await testHelper.testBootApp()
         
         for(const connectionName of connections) {
             await dropTable(connectionName)
