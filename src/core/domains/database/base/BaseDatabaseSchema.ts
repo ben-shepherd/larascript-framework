@@ -22,6 +22,29 @@ abstract class BaseDatabaseSchema<Provider extends IDatabaseProvider = IDatabase
     }
 
     /**
+     * Create a new database on the server
+     * 
+     * @returns A promise that resolves when the database is created
+     */
+    /**
+     * 
+     */
+    abstract createDatabase(name: string): Promise<void>;
+
+    /**
+     * Checks if a database exists
+     * @param name The name of the database
+     */
+    abstract databaseExists(name: string): Promise<boolean>;
+
+    /**
+     * Drop (delete) a database from the server
+     * @param name - Name of the database to drop
+     * @returns A promise that resolves when the database is dropped
+     */
+    abstract dropDatabase(name: string): Promise<void>;
+
+    /**
      * Abstract method to alter (modify) a table from the database
      * @param name - Name of the table to drop
      * @param args - Additional arguments for table deletion

@@ -4,7 +4,7 @@ class ParsePostgresConnectionUrl {
 
     public host!: string;
 
-    public port!: string;
+    public port!: number;
 
     public username!: string;
 
@@ -12,7 +12,7 @@ class ParsePostgresConnectionUrl {
 
     public database!: string;
 
-    constructor(options: { host: string; port: string; username: string; password: string; database: string; }) {
+    constructor(options: { host: string; port: number; username: string; password: string; database: string; }) {
         this.host = options.host;
         this.port = options.port;
         this.username = options.username;
@@ -30,14 +30,14 @@ class ParsePostgresConnectionUrl {
         const matches = this.pattern.exec(connectionUrl);
 
         if (!matches) {
-            throw new Error('Invalid connection URL');
+            throw new Error('Invalid Postgres Connection URL');
         }
 
         return new ParsePostgresConnectionUrl({
             username: matches[1],
             password: matches[2],
             host: matches[3],
-            port: matches[4],
+            port: parseInt(matches[4]),
             database: matches[5],
         });
     }

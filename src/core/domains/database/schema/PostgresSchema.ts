@@ -7,6 +7,41 @@ import { ModelAttributes } from 'sequelize/types/model';
 class PostgresSchema extends BaseDatabaseSchema<Postgres> {
 
     /**
+     * Creates a new database schema.
+     * @param name The name of the database to create
+     * @returns A promise that resolves when the database schema has been created
+     */
+    async createDatabase(name: string): Promise<void> {
+        const client = this.driver.getPgClient()
+        await client.connect()
+        await client.query(`CREATE DATABASE ${name}`)
+    }
+    
+    /**
+         * Checks if a database exists
+         * @param name The name of the database to check
+         * @returns A promise that resolves to a boolean indicating whether the database exists
+         */
+    async databaseExists(name: string): Promise<boolean> {
+        const client = this.driver.getPgClient()
+        await client.connect()
+        const result = await client.query(`SELECT FROM pg_database WHERE datname = '${name}'`)
+        return typeof result.rowCount === 'number' && result.rowCount > 0
+    }
+    
+    /**
+         * Drops the specified database.
+         * 
+         * @param name - The name of the database to drop.
+         * @returns A promise that resolves when the database has been dropped.
+         */
+    async dropDatabase(name: string): Promise<void> {
+        const client = this.driver.getPgClient()
+        await client.connect()
+        await client.query(`DROP DATABASE ${name}`)
+    }
+
+    /**
      * Ensure id property is added to attributes
      * @param attributes 
      * @returns 
