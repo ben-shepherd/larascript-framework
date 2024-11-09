@@ -1,3 +1,4 @@
+import BaseConfig from "@src/core/base/BaseConfig";
 import CommandExecutionException from "@src/core/domains/console/exceptions/CommandExecutionException";
 import { ICommand } from "@src/core/domains/console/interfaces/ICommand";
 import { KeyPair, KeyPairArguementType, ParsedArguement, ParsedArgumentsArray, ValueOnly } from "@src/core/domains/console/parsers/CommandArgumentParser";
@@ -9,7 +10,7 @@ import { App } from "@src/core/services/App";
  *
  * @abstract
  */
-export default abstract class BaseCommand implements ICommand {
+export default abstract class BaseCommand extends BaseConfig implements ICommand {
 
     /**
      * Command signature
@@ -39,7 +40,7 @@ export default abstract class BaseCommand implements ICommand {
     /**
      * Config
      */
-    protected config: object = {};
+    protected config: { keepProcessAlive?: boolean } = {};
 
     /**
      * Input service
@@ -52,9 +53,18 @@ export default abstract class BaseCommand implements ICommand {
      * @param config
      */
     constructor(config: object = {}) {
+        super()
         this.config = config;
         this.input = new ConsoleInputService();
     }
+
+    /**
+     * Declare HasConfig
+     */
+    declare getConfig: <T = unknown>() => T;
+
+    // eslint-disable-next-line no-unused-vars
+    declare setConfig: (config: object) => void
 
     /**
      * Execute the command
@@ -146,13 +156,13 @@ export default abstract class BaseCommand implements ICommand {
     /**
      * End the process
      */
-    end(): void {
+    end(success: boolean = true): void {
         // Close the readline
         App.container('readline').close();
 
         // End the process
-        if(!this.keepProcessAlive) {
-            process.exit();
+        if(!this.config.keepProcessAlive) {
+            process.exit(success ? 0 : 1);
         }
     }
 
