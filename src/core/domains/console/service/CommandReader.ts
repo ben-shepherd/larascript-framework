@@ -47,7 +47,8 @@ export default class CommandReader implements ICommandReader {
 
         const cmdConfig = App.container('console').register().getCommandConfig(signature);
 
-        const cmd = new commandCtor(cmdConfig)
+        const cmd = new commandCtor()
+        cmd.setConfig(cmdConfig);
 
         cmd.setParsedArguments(this.runParser())
         await cmd.execute()
