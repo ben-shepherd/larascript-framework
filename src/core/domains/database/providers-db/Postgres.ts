@@ -1,4 +1,5 @@
 
+import { EnvironmentProduction } from '@src/core/consts/Environment';
 import PostgresDocumentManager from '@src/core/domains/database/documentManagers/PostgresDocumentManager';
 import InvalidSequelize from '@src/core/domains/database/exceptions/InvalidSequelize';
 import { IDatabaseGenericConnectionConfig } from '@src/core/domains/database/interfaces/IDatabaseGenericConnectionConfig';
@@ -53,8 +54,7 @@ export default class Postgres implements IDatabaseProvider {
         await this.createDefaultDatabase();
         
         this.sequelize = new Sequelize(this.config.uri, { 
-            // logging: App.env() !== EnvironmentProduction,
-            logging: false,
+            logging: App.env() !== EnvironmentProduction,
             ...this.config.options, 
             ...this.overrideConfig
         })
@@ -140,6 +140,18 @@ export default class Postgres implements IDatabaseProvider {
      */
     getPgClient(): pg.Client {
         return new pg.Client(this.config.uri);
+    }
+
+    getPgClientDatabase(database: string = 'postgres'): pg.Client {
+        const { username: user, password, host, port} = ParsePostgresConnectionUrl.parsePostgresConnectionUrl(this.config.uri);
+
+        return new pg.Client({
+            user,
+            password,
+            host,
+            port,
+            database
+        });
     }
 
     /**

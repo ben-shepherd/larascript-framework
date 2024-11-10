@@ -4,6 +4,8 @@ import Postgres from "@src/core/domains/database/providers-db/Postgres";
 import { DataTypes, QueryInterfaceCreateTableOptions, QueryInterfaceDropTableOptions } from "sequelize";
 import { ModelAttributes } from 'sequelize/types/model';
 
+
+
 class PostgresSchema extends BaseDatabaseSchema<Postgres> {
 
     /**
@@ -12,9 +14,16 @@ class PostgresSchema extends BaseDatabaseSchema<Postgres> {
      * @returns A promise that resolves when the database schema has been created
      */
     async createDatabase(name: string): Promise<void> {
-        const client = this.driver.getPgClient()
-        await client.connect()
-        await client.query(`CREATE DATABASE ${name}`)
+        const client = this.driver.getPgClientDatabase('postgres');
+        try {
+            await client.connect()
+            await client.query(`CREATE DATABASE ${name}`)
+        }
+        // eslint-disable-next-line no-unused-vars
+        catch (err) {}
+        finally {
+            await client.end()
+        }
     }
     
     /**
@@ -23,10 +32,12 @@ class PostgresSchema extends BaseDatabaseSchema<Postgres> {
          * @returns A promise that resolves to a boolean indicating whether the database exists
          */
     async databaseExists(name: string): Promise<boolean> {
-        const client = this.driver.getPgClient()
+        const client = this.driver.getPgClientDatabase('postgres');
         await client.connect()
         const result = await client.query(`SELECT FROM pg_database WHERE datname = '${name}'`)
-        return typeof result.rowCount === 'number' && result.rowCount > 0
+        const dbExists = typeof result.rowCount === 'number' && result.rowCount > 0
+        await client.end()
+        return dbExists
     }
     
     /**
@@ -36,9 +47,28 @@ class PostgresSchema extends BaseDatabaseSchema<Postgres> {
          * @returns A promise that resolves when the database has been dropped.
          */
     async dropDatabase(name: string): Promise<void> {
-        const client = this.driver.getPgClient()
-        await client.connect()
-        await client.query(`DROP DATABASE ${name}`)
+        const client = this.driver.getPgClientDatabase('postgres');
+
+        try {
+            await client.connect();
+            
+            // Terminate any remaining connections to the target database
+            await client.query(`
+                SELECT pg_terminate_backend(pg_stat_activity.pid)
+                FROM pg_stat_activity 
+                WHERE pg_stat_activity.datname = $1
+                AND pid <> pg_backend_pid()
+            `, [name]);
+    
+            await client.query(`DROP DATABASE IF EXISTS "${name}"`);
+        }
+        catch (err) {
+            throw new Error(`Failed to drop database ${name}: ${(err as Error).message}`);
+        }
+        finally {
+            // Clean up the pg client
+            await client.end();
+        }
     }
 
     /**

@@ -2,6 +2,7 @@
 import { describe, test } from '@jest/globals';
 import { App } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
+import { Sequelize } from 'sequelize';
 
 const connections = testHelper.getTestConnectionNames()
 
@@ -24,7 +25,18 @@ describe('create and drop a database', () => {
     test('test creating db', async () => {
 
         for(const connectionName of connections) {
+            console.log('Connection', connectionName)
+
             const schema = App.container('db').schema(connectionName)
+
+            if(connectionName === 'postgres') {
+                const sequelize = App.container('db').getClient<Sequelize>(connectionName)
+                
+                await Promise.all([
+                    sequelize.close(),
+                    sequelize.connectionManager.close()
+                ]);
+            }
          
             await schema.createDatabase(testHelper.getTestDbName())
 
