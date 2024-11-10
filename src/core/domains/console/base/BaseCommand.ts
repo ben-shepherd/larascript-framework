@@ -148,9 +148,21 @@ export default abstract class BaseCommand extends BaseConfig implements ICommand
     }
 
     /**
+     * Set an overwrite arguement
      */
     setOverwriteArg(key: string, value: string) {
         this.overwriteArgs[key] = value
+    }
+
+    /**
+     * @returns {boolean} Whether the command should keep the process alive
+     */
+    shouldKeepProcessAlive(): boolean {
+        if(typeof this.getConfig<{keepProcessAlive : boolean}>()?.keepProcessAlive !== 'undefined') {
+            return this.getConfig<{keepProcessAlive : boolean}>()?.keepProcessAlive
+        }
+
+        return this?.keepProcessAlive ?? false
     }
 
     /**
@@ -161,7 +173,7 @@ export default abstract class BaseCommand extends BaseConfig implements ICommand
         App.container('readline').close();
 
         // End the process
-        if(!this.config.keepProcessAlive) {
+        if(!this.shouldKeepProcessAlive()) {
             process.exit(success ? 0 : 1);
         }
     }
