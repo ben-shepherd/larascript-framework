@@ -41,22 +41,20 @@ describe('mock queable event', () => {
         eventService.mockEvent(TestEventQueueCalledFromWorkerEvent);
 
         await eventService.dispatch(new TestEventQueueEvent({ hello: 'world', createdAt: new Date() }));
-        
-        expect(
-            eventService.assertDispatched<{ hello: string }>(TestEventQueueEvent, (payload) => {
-                return payload.hello === 'world'
-            })
-        ).toBeTruthy()
 
-        // run the worker
+        type TPayload = {
+            hello: string,
+            createdAt: Date
+        }
+        const validatePayload = (payload: TPayload) => {
+            return payload.hello === 'world' && payload.createdAt instanceof Date
+        }
+        
+        expect(eventService.assertDispatched<TPayload>(TestEventQueueEvent, validatePayload)).toBeTruthy()
+
         await App.container('console').reader(['worker', '--queue=testQueue']).handle();
 
-        expect(
-            eventService.assertDispatched<{ hello: string, createdAt: Date }>(TestEventQueueCalledFromWorkerEvent, (payload) => {
-                return payload.hello === 'world' && payload.createdAt instanceof Date
-            })
-        ).toBeTruthy()
-
+        expect(eventService.assertDispatched<TPayload>(TestEventQueueCalledFromWorkerEvent, validatePayload)).toBeTruthy()
 
         const results = await App.container('db').documentManager().table(new TestWorkerModel().table).findMany<IModel[]>({})
         expect(results.length).toBe(0)
