@@ -18,9 +18,10 @@ describe('attempt to run app with normal appConfig', () => {
         await testHelper.testBootApp()
         expect(App.container('events')).toBeInstanceOf(EventService);
         expect(App.container('db')).toBeInstanceOf(DatabaseService);
-        // expect(App.container('express')).toBeInstanceOf(ExpressService);
         expect(App.container('console')).toBeInstanceOf(ConsoleService);
         expect(App.container('auth')).toBeInstanceOf(AuthService);
         expect(Kernel.getInstance().booted()).toBe(true);
+
+
     }, 10000)
 });

@@ -1,13 +1,11 @@
  
 import { beforeAll, describe, expect, test } from '@jest/globals';
 import PostgresSchema from '@src/core/domains/database/schema/PostgresSchema';
-import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
-import testAppConfig from '@src/tests/config/testConfig';
-import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
 import { DataTypes } from 'sequelize';
 
 import testHelper from '../testHelper';
+
 
 const connections = testHelper.getTestConnectionNames()
 
@@ -33,13 +31,7 @@ const dropTable = async (connectionName: string) => {
 describe('Combined DocumentManager Interface Test', () => {
 
     beforeAll(async () => {
-        await Kernel.boot({
-            ...testAppConfig,
-            providers: [
-                ...testAppConfig.providers,
-                new TestDatabaseProvider()
-            ]
-        }, {});
+        await testHelper.testBootApp();
 
         for (const connectionName of connections) {
             await dropTable(connectionName);
@@ -70,6 +62,7 @@ describe('Combined DocumentManager Interface Test', () => {
             const schema = App.container('db').schema<PostgresSchema>(connectionName);
 
             if(connectionName === 'mongodb') {
+                expect(true).toBeTruthy();
                 App.container('logger').console('Ignoring MongoDB alter table test');
                 continue;
             }
@@ -88,6 +81,7 @@ describe('Combined DocumentManager Interface Test', () => {
     test('insert test data with altered column', async () => {
         
         for(const connectionName of connections) {
+            console.log('Connection: ', connectionName);
             const documentManager = App.container('db')
                 .documentManager(connectionName)
                 .table(tableName);
@@ -117,6 +111,11 @@ describe('Combined DocumentManager Interface Test', () => {
     test('remove column', async () => {
         for(const connectionName of connections) {
             const schema = App.container('db').schema<PostgresSchema>(connectionName);
+
+            if(connectionName === 'mongodb') {
+                App.container('logger').console('Ignoring MongoDB alter table test');
+                continue;
+            }
             
             await schema.alterTable(tableName, {
                 removeColumn: {

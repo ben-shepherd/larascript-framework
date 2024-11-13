@@ -25,7 +25,7 @@ describe('create and drop a database', () => {
     test('test creating db', async () => {
 
         for(const connectionName of connections) {
-            console.log('Connection', connectionName)
+            console.log('Connection', connectionName, testHelper.getTestDbName())
 
             const schema = App.container('db').schema(connectionName)
 
@@ -40,7 +40,8 @@ describe('create and drop a database', () => {
          
             await schema.createDatabase(testHelper.getTestDbName())
 
-            expect(await schema.databaseExists(testHelper.getTestDbName())).toBe(true)
+            const exists = await schema.databaseExists(testHelper.getTestDbName())
+            expect(exists).toBe(true)
 
             await schema.dropDatabase(testHelper.getTestDbName())
 

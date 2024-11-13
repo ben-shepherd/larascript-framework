@@ -1,3 +1,4 @@
+import ParseMongoDBConnectionString from '@src/core/domains/database/helper/ParseMongoDBConnectionUrl';
 import ParsePostgresConnectionUrl from '@src/core/domains/database/helper/ParsePostgresConnectionUrl';
 import { IDatabaseConfig } from '@src/core/domains/database/interfaces/IDatabaseConfig';
 import DatabaseProvider from '@src/core/domains/database/providers/DatabaseProvider';
@@ -12,8 +13,14 @@ if (!defaultMongoDbCredentials || !defaultPostgresCredentials) {
     throw new Error('Invalid default credentials');
 }
 
-const getPostgresConnectionStringWithTestDb: string = (() => {
-    const parsed = ParsePostgresConnectionUrl.parsePostgresConnectionUrl(defaultPostgresCredentials)
+const postgresConnectionStringWithTestDb: string = (() => {
+    const parsed = ParsePostgresConnectionUrl.parse(defaultPostgresCredentials)
+    parsed.database = testDbName;
+    return parsed.toString()
+})();
+
+const mongoDbConnectionStringWithTestDb: string = (() => {
+    const parsed = ParseMongoDBConnectionString.parse(defaultMongoDbCredentials)
     parsed.database = testDbName;
     return parsed.toString()
 })();
@@ -22,16 +29,16 @@ export default class TestDatabaseProvider extends DatabaseProvider {
 
     protected config: IDatabaseConfig = {
         defaultConnectionName: 'postgres',
-        keepAliveConnections: 'postgres',
+        keepAliveConnections: 'mongodb',
         connections: {
             mongodb: {
                 driver: 'mongodb',
-                uri: defaultMongoDbCredentials!,
+                uri: mongoDbConnectionStringWithTestDb,
                 options: {}
             },
             postgres: {
                 driver: 'postgres',
-                uri: getPostgresConnectionStringWithTestDb,
+                uri: postgresConnectionStringWithTestDb,
                 options: {}
             }
         }
