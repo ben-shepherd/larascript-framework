@@ -2,9 +2,8 @@
 import { describe } from '@jest/globals';
 import ValidatorService from '@src/core/domains/validator/services/ValidatorService';
 import { App } from '@src/core/services/App';
+import testHelper from '@src/tests/testHelper';
 import testValidatorHelper from '@src/tests/validator/testValidatorHelper';
-
-import testHelper from '../testHelper';
 
 describe('test validation', () => {
 

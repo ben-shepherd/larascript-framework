@@ -2,6 +2,7 @@
 import { EnvironmentProduction } from '@src/core/consts/Environment';
 import PostgresDocumentManager from '@src/core/domains/database/documentManagers/PostgresDocumentManager';
 import InvalidSequelize from '@src/core/domains/database/exceptions/InvalidSequelize';
+import ParsePostgresConnectionUrl from '@src/core/domains/database/helper/ParsePostgresConnectionUrl';
 import { IDatabaseGenericConnectionConfig } from '@src/core/domains/database/interfaces/IDatabaseGenericConnectionConfig';
 import { IDatabaseProvider } from '@src/core/domains/database/interfaces/IDatabaseProvider';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
@@ -11,8 +12,6 @@ import { App } from '@src/core/services/App';
 import pg from 'pg';
 import { QueryInterface, Sequelize } from 'sequelize';
 import { Options, Options as SequelizeOptions } from 'sequelize/types/sequelize';
-
-import ParsePostgresConnectionUrl from '../helper/ParsePostgresConnectionUrl';
 
 export default class Postgres implements IDatabaseProvider {
 

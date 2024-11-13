@@ -1,3 +1,4 @@
+import { IApiTokenFactory } from "@src/core/domains/auth/interfaces/IApiTokenFactory";
 import IApiTokenModel from "@src/core/domains/auth/interfaces/IApitokenModel";
 import IApiTokenRepository from "@src/core/domains/auth/interfaces/IApiTokenRepository";
 import { IAuthService } from "@src/core/domains/auth/interfaces/IAuthService";
@@ -10,8 +11,6 @@ import IFactory from "@src/core/interfaces/IFactory";
 import { ModelConstructor } from "@src/core/interfaces/IModel";
 import { RepositoryConstructor } from "@src/core/interfaces/IRepository";
 import { ServiceConstructor } from "@src/core/interfaces/IService";
-
-import { IApiTokenFactory } from "./IApiTokenFactory";
 
 export interface IAuthConfig {
     service: {

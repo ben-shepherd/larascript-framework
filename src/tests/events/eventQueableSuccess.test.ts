@@ -6,8 +6,7 @@ import TestEventQueueCalledFromWorkerEvent from '@src/tests/events/events/TestEv
 import TestEventQueueEvent from '@src/tests/events/events/TestEventQueueEvent';
 import createWorkerTables, { dropWorkerTables } from '@src/tests/events/helpers/createWorketTables';
 import TestWorkerModel from '@src/tests/models/models/TestWorkerModel';
-
-import testHelper from '../testHelper';
+import testHelper from '@src/tests/testHelper';
 
 
 describe('mock queable event', () => {

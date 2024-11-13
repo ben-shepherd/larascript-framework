@@ -1,6 +1,5 @@
 import ApiTokenFactory from '@src/core/domains/auth/factory/apiTokenFactory'
-
-import TestApiTokenModel from '../models/models/TestApiTokenModel'
+import TestApiTokenModel from '@src/tests/models/models/TestApiTokenModel'
 
 /**
  * Factory for creating ApiToken models.

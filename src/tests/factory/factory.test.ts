@@ -1,8 +1,7 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
 import TestMovieFactory from '@src/tests/factory/TestMovieFakerFactory';
-
-import testHelper from '../testHelper';
+import testHelper from '@src/tests/testHelper';
 
 describe('create a movie model using factories', () => {
 

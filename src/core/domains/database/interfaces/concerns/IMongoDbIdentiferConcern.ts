@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
+import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { ObjectId } from "mongodb";
-
-import { IDatabaseDocument } from "../IDocumentManager";
 
 export interface IMongoDbIdentiferConcern {
 

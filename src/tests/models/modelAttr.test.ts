@@ -1,8 +1,7 @@
 /* eslint-disable no-undef */
 import { describe, expect, test } from '@jest/globals';
 import TestModel from '@src/tests/models/models/TestModel';
-
-import testHelper from '../testHelper';
+import testHelper from '@src/tests/testHelper';
 
 describe('test model attr', () => {
 

@@ -1,9 +1,8 @@
 /* eslint-disable no-undef */
 import { describe, test } from '@jest/globals';
 import makeTestHelper from '@src/tests/make/makeTestHelper';
+import testHelper from '@src/tests/testHelper';
 import fs from 'fs';
-
-import testHelper from '../testHelper';
 
 
 const makeTypes = makeTestHelper.getArrayOfCommandTypes();

@@ -1,6 +1,5 @@
 import UserRepository from "@src/app/repositories/auth/UserRepository";
-
-import TestUser from "../models/models/TestUser";
+import TestUser from "@src/tests/models/models/TestUser";
 
 
 export default class TestUserRepository extends UserRepository {

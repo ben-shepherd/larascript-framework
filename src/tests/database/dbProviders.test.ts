@@ -4,9 +4,8 @@ import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import testAppConfig from '@src/tests/config/testConfig';
 import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
+import testHelper from '@src/tests/testHelper';
 import { DataTypes } from 'sequelize';
-
-import testHelper from '../testHelper';
 
 const connections = testHelper.getTestConnectionNames()
 

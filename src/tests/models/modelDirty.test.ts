@@ -4,9 +4,8 @@ import Repository from '@src/core/base/Repository';
 import { IModel } from '@src/core/interfaces/IModel';
 import { App } from '@src/core/services/App';
 import TestDirtyModel from '@src/tests/models/models/TestDirtyModel';
+import testHelper from '@src/tests/testHelper';
 import { DataTypes } from 'sequelize';
-
-import testHelper from '../testHelper';
 
 const connections = testHelper.getTestConnectionNames()
 

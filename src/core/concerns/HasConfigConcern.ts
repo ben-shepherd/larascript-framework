@@ -1,5 +1,5 @@
-import { IHasConfigConcern } from "../interfaces/concerns/IHasConfigConcern";
-import { ICtor } from "../interfaces/ICtor";
+import { IHasConfigConcern } from "@src/core/interfaces/concerns/IHasConfigConcern";
+import { ICtor } from "@src/core/interfaces/ICtor";
 
 const HasConfigConcern = (Base: ICtor) => {
     return class extends Base implements IHasConfigConcern {

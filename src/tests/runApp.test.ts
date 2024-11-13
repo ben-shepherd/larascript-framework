@@ -5,8 +5,7 @@ import DatabaseService from '@src/core/domains/database/services/DatabaseService
 import EventService from '@src/core/domains/events/services/EventService';
 import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
-
-import testHelper from './testHelper';
+import testHelper from '@src/tests/testHelper';
 
 describe('attempt to run app with normal appConfig', () => {
 

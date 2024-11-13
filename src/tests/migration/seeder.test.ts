@@ -2,8 +2,7 @@
 import { describe } from '@jest/globals';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import { App } from '@src/core/services/App';
-
-import testHelper from '../testHelper';
+import testHelper from '@src/tests/testHelper';
 
 describe('test seeders', () => {
 

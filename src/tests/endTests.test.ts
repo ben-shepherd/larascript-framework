@@ -1,7 +1,6 @@
 import { beforeAll, describe, test } from '@jest/globals';
 import { App } from '@src/core/services/App';
-
-import testHelper from './testHelper';
+import testHelper from '@src/tests/testHelper';
 
 const connections = testHelper.getTestConnectionNames()
 

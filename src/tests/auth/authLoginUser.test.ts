@@ -5,11 +5,10 @@ import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';
 import { App } from '@src/core/services/App';
-
-import TestUserFactory from '../factory/TestUserFactory';
-import TestApiTokenModel from '../models/models/TestApiTokenModel';
-import TestUser from '../models/models/TestUser';
-import testHelper from '../testHelper';
+import TestUserFactory from '@src/tests/factory/TestUserFactory';
+import TestApiTokenModel from '@src/tests/models/models/TestApiTokenModel';
+import TestUser from '@src/tests/models/models/TestUser';
+import testHelper from '@src/tests/testHelper';
 
 
 describe('attempt to run app with normal appConfig', () => {

@@ -6,8 +6,7 @@ import { TestUserCreatedListener } from '@src/tests/events/events/auth/TestUserC
 import TestUserCreatedSubscriber from '@src/tests/events/events/auth/TestUserCreatedSubscriber';
 import { dropWorkerTables } from '@src/tests/events/helpers/createWorketTables';
 import TestUserFactory from '@src/tests/factory/TestUserFactory';
-
-import testHelper from '../testHelper';
+import testHelper from '@src/tests/testHelper';
 
 
 describe('mock queable event', () => {

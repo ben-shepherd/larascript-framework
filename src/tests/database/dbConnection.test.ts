@@ -1,8 +1,7 @@
 /* eslint-disable no-undef */
 import { describe, expect } from '@jest/globals';
 import { App } from '@src/core/services/App';
-
-import testHelper from '../testHelper';
+import testHelper from '@src/tests/testHelper';
 
 describe('attempt to connect to MongoDB database', () => {
 

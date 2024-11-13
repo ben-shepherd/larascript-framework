@@ -9,8 +9,7 @@ import TestEventQueueAlwaysFailsEvent from '@src/tests/events/events/TestEventQu
 import createWorkerTables, { dropWorkerTables } from '@src/tests/events/helpers/createWorketTables';
 import TestFailedWorkerModel from '@src/tests/models/models/TestFailedWorkerModel';
 import TestWorkerModel from '@src/tests/models/models/TestWorkerModel';
-
-import testHelper from '../testHelper';
+import testHelper from '@src/tests/testHelper';
 
 
 describe('mock queable event failed', () => {

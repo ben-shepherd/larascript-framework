@@ -1,4 +1,6 @@
 import MongoDbDocumentManager from '@src/core/domains/database/documentManagers/MongoDbDocumentManager';
+import CreateDatabaseException from '@src/core/domains/database/exceptions/CreateDatabaseException';
+import ParseMongoDBConnectionString from '@src/core/domains/database/helper/ParseMongoDBConnectionUrl';
 import { IDatabaseGenericConnectionConfig } from '@src/core/domains/database/interfaces/IDatabaseGenericConnectionConfig';
 import { IDatabaseProvider } from '@src/core/domains/database/interfaces/IDatabaseProvider';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
@@ -6,9 +8,6 @@ import { IDocumentManager } from '@src/core/domains/database/interfaces/IDocumen
 import MongoDBSchema from '@src/core/domains/database/schema/MongoDBSchema';
 import { App } from '@src/core/services/App';
 import { Db, MongoClient, MongoClientOptions, MongoServerError } from 'mongodb';
-
-import CreateDatabaseException from '../exceptions/CreateDatabaseException';
-import ParseMongoDBConnectionString from '../helper/ParseMongoDBConnectionUrl';
 
 export default class MongoDB implements IDatabaseProvider {
 

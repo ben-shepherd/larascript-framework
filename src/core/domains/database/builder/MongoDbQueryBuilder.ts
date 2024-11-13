@@ -1,4 +1,4 @@
-import MongoDbIdentiferConcern from "../concerns/MongoDbIdentiferConcern";
+import MongoDbIdentiferConcern from "@src/core/domains/database/concerns/MongoDbIdentiferConcern";
 
 /**
  * Order array type

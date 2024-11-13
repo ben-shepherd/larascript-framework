@@ -3,8 +3,7 @@ import { describe } from '@jest/globals';
 import { App } from '@src/core/services/App';
 import TestEventSyncBadPayloadEvent from '@src/tests/events/events/TestEventSyncBadPayloadEvent';
 import TestEventSyncEvent from '@src/tests/events/events/TestEventSyncEvent';
-
-import testHelper from '../testHelper';
+import testHelper from '@src/tests/testHelper';
 
 describe('mock event service', () => {
 

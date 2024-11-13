@@ -1,9 +1,8 @@
 /* eslint-disable no-undef */
 import { describe, expect, test } from '@jest/globals';
 import { App } from '@src/core/services/App';
+import testHelper from '@src/tests/testHelper';
 import { DataTypes } from 'sequelize';
-
-import testHelper from '../testHelper';
 
 const connections = testHelper.getTestConnectionNames()
 

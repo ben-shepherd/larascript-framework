@@ -3,8 +3,7 @@ import { describe } from '@jest/globals';
 import BaseCastable from '@src/core/base/BaseCastable';
 import CastException from '@src/core/exceptions/CastException';
 import { TCastableType } from '@src/core/interfaces/concerns/IHasCastableConcern';
-
-import testHelper from '../testHelper';
+import testHelper from '@src/tests/testHelper';
 
 describe('HasCastableConcern Tests', () => {
     beforeAll(async () => {

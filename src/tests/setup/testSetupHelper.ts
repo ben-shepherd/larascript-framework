@@ -1,11 +1,10 @@
 import AuthProvider from "@src/core/domains/auth/providers/AuthProvider";
 import Kernel from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
-
-import testAppConfig from "../config/testConfig";
-import TestConsoleProvider from "../providers/TestConsoleProvider";
-import TestDatabaseProvider from "../providers/TestDatabaseProvider";
-import TestEventProvider from "../providers/TestEventProvider";
+import testAppConfig from "@src/tests/config/testConfig";
+import TestConsoleProvider from "@src/tests/providers/TestConsoleProvider";
+import TestDatabaseProvider from "@src/tests/providers/TestDatabaseProvider";
+import TestEventProvider from "@src/tests/providers/TestEventProvider";
 
 const testBootApp = async () => {
     await Kernel.boot({

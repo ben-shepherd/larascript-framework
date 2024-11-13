@@ -1,7 +1,6 @@
+import InvalidObjectId from "@src/core/domains/database/exceptions/InvalidObjectId";
+import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { ObjectId } from "mongodb";
-
-import InvalidObjectId from "../exceptions/InvalidObjectId";
-import { IDatabaseDocument } from "../interfaces/IDocumentManager";
 
 class MongoDbIdentiferConcern {
 

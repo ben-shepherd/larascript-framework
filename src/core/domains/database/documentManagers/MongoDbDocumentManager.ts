@@ -1,5 +1,6 @@
 import BaseDocumentManager from "@src/core/domains/database/base/BaseDocumentManager";
 import MongoDbQueryBuilder from "@src/core/domains/database/builder/MongoDbQueryBuilder";
+import MongoDbIdentiferConcern from "@src/core/domains/database/concerns/MongoDbIdentiferConcern";
 import InvalidObjectId from "@src/core/domains/database/exceptions/InvalidObjectId";
 import { FindOptions, IDatabaseDocument, OrderOptions } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
@@ -7,8 +8,6 @@ import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relatio
 import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 import MongoDBBelongsTo from "@src/core/domains/database/relationships/mongodb/MongoDBBelongsTo";
 import { BulkWriteOptions, Sort, UpdateOptions } from "mongodb";
-
-import MongoDbIdentiferConcern from "../concerns/MongoDbIdentiferConcern";
 
 class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager, MongoDB> {
 

@@ -2,15 +2,14 @@ import { EnvironmentTesting } from "@src/core/consts/Environment";
 import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
 import Kernel from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
+import TestApiTokenModel from "@src/tests/models/models/TestApiTokenModel";
+import TestUser from "@src/tests/models/models/TestUser";
+import TestAuthProvider from "@src/tests/providers/TestAuthProvider";
 import TestConsoleProvider from "@src/tests/providers/TestConsoleProvider";
 import TestDatabaseProvider, { testDbName } from "@src/tests/providers/TestDatabaseProvider";
 import TestEventProvider from "@src/tests/providers/TestEventProvider";
+import TestMigrationProvider from "@src/tests/providers/TestMigrationProvider";
 import { DataTypes } from "sequelize";
-
-import TestApiTokenModel from "./models/models/TestApiTokenModel";
-import TestUser from "./models/models/TestUser";
-import TestAuthProvider from "./providers/TestAuthProvider";
-import TestMigrationProvider from "./providers/TestMigrationProvider";
 
 export const getTestDbName = () => testDbName
 

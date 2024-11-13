@@ -1,9 +1,8 @@
 /* eslint-disable no-unused-vars */
+import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import IModelAttributes from "@src/core/interfaces/IModelData";
-
-import IUserModel from "./IUserModel";
 
 export interface IApiTokenData extends IModelAttributes {
     userId: string;
