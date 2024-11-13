@@ -27,7 +27,7 @@ class ParsePostgresConnectionUrl {
      * @returns A new instance of ParsePostgresConnectionUrl
      * @throws Error if the connection URL is invalid
      */
-    static parsePostgresConnectionUrl(connectionUrl: string) {
+    static parse(connectionUrl: string) {
         const matches = this.pattern.exec(connectionUrl);
 
         if (!matches) {
@@ -49,6 +49,26 @@ class ParsePostgresConnectionUrl {
      */
     toString() {
         return `postgres://${this.username}:${this.password}@${this.host}:${this.port}/${this.database}`;
+    }
+    
+    getHost(): string {
+        return this.host;
+    }
+
+    getPort(): number {
+        return this.port;
+    }
+
+    getUsername(): string {
+        return this.username;
+    }
+
+    getPassword(): string {
+        return this.password;
+    }
+
+    getDatabase(): string {
+        return this.database;
     }
 
 }
