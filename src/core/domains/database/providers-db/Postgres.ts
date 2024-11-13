@@ -67,7 +67,7 @@ export default class Postgres implements IDatabaseProvider {
      * @private
      */
     private async createDefaultDatabase(): Promise<void> {
-        const credentials = ParsePostgresConnectionUrl.parsePostgresConnectionUrl(this.config.uri);
+        const credentials = ParsePostgresConnectionUrl.parse(this.config.uri);
         
         const client = new pg.Client({
             user: credentials.username,
@@ -143,7 +143,7 @@ export default class Postgres implements IDatabaseProvider {
     }
 
     getPgClientDatabase(database: string = 'postgres'): pg.Client {
-        const { username: user, password, host, port} = ParsePostgresConnectionUrl.parsePostgresConnectionUrl(this.config.uri);
+        const { username: user, password, host, port} = ParsePostgresConnectionUrl.parse(this.config.uri);
 
         return new pg.Client({
             user,

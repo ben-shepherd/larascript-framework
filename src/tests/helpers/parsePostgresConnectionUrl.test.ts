@@ -6,7 +6,7 @@ describe('test parsing a postgres connection string', () => {
     test('parse a postgres connection string', () => {
         const exampleConnectionString = 'postgres://username:password@localhost:5432/database';
 
-        const parsedConnectionString = ParsePostgresConnectionUrl.parsePostgresConnectionUrl(exampleConnectionString);
+        const parsedConnectionString = ParsePostgresConnectionUrl.parse(exampleConnectionString);
     
         expect(parsedConnectionString).toEqual({
             host: 'localhost',
