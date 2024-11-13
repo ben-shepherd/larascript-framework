@@ -11,12 +11,10 @@ describe('end test', () => {
     })
 
     test('drop test db', async () => {
-
         for(const connectionName of connections) {
             const schema = App.container('db').schema(connectionName)
-
             await schema.dropDatabase(testHelper.getTestDbName());
         }
-        
+    
     })
 });
