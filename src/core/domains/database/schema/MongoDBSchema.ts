@@ -1,5 +1,8 @@
 import BaseDatabaseSchema from "@src/core/domains/database/base/BaseDatabaseSchema";
 import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
+import { App } from "@src/core/services/App";
+
+import CreateDatabaseException from "../exceptions/CreateDatbaseException";
 
 class MongoDBSchema extends BaseDatabaseSchema {
 
@@ -16,7 +19,29 @@ class MongoDBSchema extends BaseDatabaseSchema {
      * @returns A promise that resolves when the database schema has been created
      */
     async createDatabase(name: string): Promise<void> {
-        await this.driver.getClient().db(name).createCollection("schema");
+        const client = await this.driver.connectToDatabase('app')
+
+        try {
+            const db = client.db(name);
+            
+            await db.createCollection("_schema");
+        
+            await db.collection("_schema").insertOne({
+                databaseName: name
+            });
+            
+            const exists = await this.databaseExists(name);
+
+            if (!exists) {
+                throw new CreateDatabaseException(`Failed to create database ${name}`);
+            }
+        }
+        catch (err) {
+            throw new CreateDatabaseException(`Error creating database ${name}: ${(err as Error).message}`);
+        }
+        finally {
+            await client.close();
+        }
     }
 
     /**
@@ -25,9 +50,21 @@ class MongoDBSchema extends BaseDatabaseSchema {
      * @returns A promise that resolves to a boolean indicating whether the database exists
      */
     async databaseExists(name: string): Promise<boolean> {
-        const adminDb = this.driver.getClient().db().admin();
-        const dbList = await adminDb.listDatabases();
-        return dbList.databases.some(db => db.name === name);
+        const client = await this.driver.connectToDatabase('app')
+
+        try {
+            const adminDb = client.db().admin()
+            const dbList = await adminDb.listDatabases();
+            return dbList.databases.some(db => db.name === name);
+        }
+        catch (err) {
+            App.container('logger').error(err);
+        }
+        finally {
+            client.close()
+        }
+
+        return false;
     }
 
     /**
@@ -37,8 +74,17 @@ class MongoDBSchema extends BaseDatabaseSchema {
      * @returns A promise that resolves when the database has been dropped.
      */
     async dropDatabase(name: string): Promise<void> {
-        const client = this.driver.getClient();
-        await client.db(name).dropDatabase();
+        const client = await this.driver.connectToDatabase('app');
+
+        try {
+            await client.db(name).dropDatabase();
+        }
+        catch (err) {
+            App.container('logger').error(err);
+        }
+        finally {
+            client.close()
+        }
     }
 
     /**
@@ -48,7 +94,13 @@ class MongoDBSchema extends BaseDatabaseSchema {
      */
     // eslint-disable-next-line no-unused-vars
     async createTable(name: string, ...args: any[]): Promise<void> {
-        this.driver.getDb().createCollection(name);
+        await this.driver.getDb().createCollection(name);
+        await this.driver.getDb().collection(name).insertOne({
+            _create_table: true
+        });
+        await this.driver.getDb().collection(name).deleteMany({
+            _create_table: true
+        });
     }
 
     /**
