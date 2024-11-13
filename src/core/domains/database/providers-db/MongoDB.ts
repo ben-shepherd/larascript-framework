@@ -47,7 +47,7 @@ export default class MongoDB implements IDatabaseProvider {
             return;
         }
 
-        // await this.createDefaultDatabase()
+        await this.createDefaultDatabase()
         await this.client.connect();
         this.db = this.client.db();
     }
