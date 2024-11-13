@@ -14,6 +14,14 @@ import { DataTypes } from "sequelize";
 
 export const getTestDbName = () => testDbName
 
+/**
+ * Boot the kernel in a test environment
+ * @remarks
+ * This function boots the kernel with the providers required for tests
+ * @example
+ * const testBootApp = await testBootApp()
+ * expect(App.container('db')).toBeInstanceOf(TestDatabaseProvider)
+ */
 const testBootApp = async () => {
     await Kernel.boot({
         environment: EnvironmentTesting,
@@ -30,6 +38,12 @@ const testBootApp = async () => {
 }
 
 
+/**
+ * Creates the auth tables in the database
+ * @remarks
+ * This function creates the `users` and `api_tokens` tables in the database
+ * @param connectionName The name of the database connection to use
+ */
 export const createAuthTables = async(connectionName?: string) => {
     const schema = App.container('db').schema(connectionName)
 
@@ -60,6 +74,12 @@ export const createAuthTables = async(connectionName?: string) => {
     })
 }
 
+/**
+ * Drops the `users` and `api_tokens` tables in the database
+ * @remarks
+ * This function removes the `users` and `api_tokens` tables from the database
+ * @param connectionName The name of the database connection to use
+ */
 export const dropAuthTables = async(connectionName?: string) => {
     const schema = App.container('db').schema(connectionName)
 
@@ -70,14 +90,34 @@ export const dropAuthTables = async(connectionName?: string) => {
     await schema.dropTable(apiTokenTable);
 }
 
+/**
+     * Run fresh migrations with the testing group and seed the database
+     * @remarks
+     * This function is used to run fresh migrations with the testing group and seed the database
+     * @example
+     * await runFreshMigrations()
+     */
 const runFreshMigrations = async () => {
     await App.container('console').reader(['migrate:fresh', '--group=testing', '--seed']).handle();
 }
 
+/**
+ * Revert all migrations with the testing group
+ * @remarks
+ * This function is used to clear all migrations with the testing group. It is used
+ * to reset the database to its original state after running tests.
+ * @example
+ * await clearMigrations()
+ */
 const clearMigrations = async () => {
     await App.container('console').reader(['migrate:down', '--group=testing']).handle();
 }
 
+/**
+ * Retrieves a list of test database connection names, excluding any specified.
+ * @param exclude An array of connection names to exclude from the result.
+ * @returns An array of connection names, excluding those specified in the `exclude` parameter.
+ */
 export const getTestConnectionNames = ({ exclude = [] }: { exclude?: string[] } = {}) => {
     return ['mongodb', 'postgres'].filter(connectionName => !exclude.includes(connectionName));
 }
