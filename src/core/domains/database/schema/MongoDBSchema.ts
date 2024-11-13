@@ -2,7 +2,7 @@ import BaseDatabaseSchema from "@src/core/domains/database/base/BaseDatabaseSche
 import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 import { App } from "@src/core/services/App";
 
-import CreateDatabaseException from "../exceptions/CreateDatbaseException";
+import CreateDatabaseException from "../exceptions/CreateDatabaseException";
 
 class MongoDBSchema extends BaseDatabaseSchema {
 

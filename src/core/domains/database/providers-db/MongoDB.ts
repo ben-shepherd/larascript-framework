@@ -7,7 +7,7 @@ import MongoDBSchema from '@src/core/domains/database/schema/MongoDBSchema';
 import { App } from '@src/core/services/App';
 import { Db, MongoClient, MongoClientOptions, MongoServerError } from 'mongodb';
 
-import CreateDatabaseException from '../exceptions/CreateDatbaseException';
+import CreateDatabaseException from '../exceptions/CreateDatabaseException';
 import ParseMongoDBConnectionString from '../helper/ParseMongoDBConnectionUrl';
 
 export default class MongoDB implements IDatabaseProvider {
