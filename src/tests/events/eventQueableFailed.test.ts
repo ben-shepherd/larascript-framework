@@ -3,17 +3,13 @@ import { describe } from '@jest/globals';
 import QueueableDriver, { TQueueDriverOptions } from '@src/core/domains/events/drivers/QueableDriver';
 import EventService from '@src/core/domains/events/services/EventService';
 import { IModel } from '@src/core/interfaces/IModel';
-import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
-import testAppConfig from '@src/tests/config/testConfig';
 import TestEventQueueAddAlwaysFailsEventToQueue from '@src/tests/events/events/TestEventQueueAddAlwaysFailsEventToQueue';
 import TestEventQueueAlwaysFailsEvent from '@src/tests/events/events/TestEventQueueAlwaysFailsEvent';
 import createWorkerTables, { dropWorkerTables } from '@src/tests/events/helpers/createWorketTables';
 import TestFailedWorkerModel from '@src/tests/models/models/TestFailedWorkerModel';
 import TestWorkerModel from '@src/tests/models/models/TestWorkerModel';
-import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
-import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
-import TestEventProvider from '@src/tests/providers/TestEventProvider';
+import testHelper from '@src/tests/testHelper';
 
 
 describe('mock queable event failed', () => {
@@ -22,15 +18,7 @@ describe('mock queable event failed', () => {
    * Register the test event provider
    */
     beforeAll(async () => {
-        await Kernel.boot({
-            ...testAppConfig,
-            providers: [
-                ...testAppConfig.providers,
-                new TestConsoleProvider(),
-                new TestDatabaseProvider(),
-                new TestEventProvider()
-            ]
-        }, {})
+        await testHelper.testBootApp()
     })
 
     afterAll(async () => {

@@ -1,3 +1,5 @@
+import MongoDbIdentiferConcern from "@src/core/domains/database/concerns/MongoDbIdentiferConcern";
+
 /**
  * Order array type
  */
@@ -27,6 +29,8 @@ export type SelectOptions = {
 
 class MongoDbQueryBuilder {
 
+    protected identifierConcern = new MongoDbIdentiferConcern()
+
     /**
      * Build select query
      * @param options Select options
@@ -39,6 +43,11 @@ class MongoDbQueryBuilder {
 
             if(typeof value !== 'string') {
                 continue;
+            }
+
+            if(key === 'id') {
+                filter['_id'] = this.identifierConcern.convertToObjectId(value)
+                delete filter['id']
             }
 
             if(allowPartialSearch && value.startsWith('%') || value.endsWith('%')) {

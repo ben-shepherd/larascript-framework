@@ -1,15 +1,12 @@
 /* eslint-disable no-undef */
 import { describe, expect, test } from '@jest/globals';
-import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
-import testAppConfig from '@src/tests/config/testConfig';
-import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
 import { TestAuthorModel } from '@src/tests/models/models/TestAuthor';
 import { TestMovieModel } from '@src/tests/models/models/TestMovie';
-import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
+import testHelper from '@src/tests/testHelper';
 import { DataTypes } from 'sequelize';
 
-const connections = getTestConnectionNames()
+const connections = testHelper.getTestConnectionNames()
 
 const createTable = async (connectionName: string) => {
     const schema = App.container('db').schema(connectionName)
@@ -41,13 +38,7 @@ describe('test hasMany', () => {
      * Boot the MongoDB provider
      */
     beforeAll(async () => {
-        await Kernel.boot({
-            ...testAppConfig,
-            providers: [
-                ...testAppConfig.providers,
-                new TestDatabaseProvider()
-            ]
-        }, {})
+        await testHelper.testBootApp()
 
         for(const connection of connections) {
             await dropTable(connection)

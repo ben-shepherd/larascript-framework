@@ -145,6 +145,11 @@ class DatabaseService implements IDatabaseService {
         const connections = (this.config?.keepAliveConnections ?? '').split(',');
 
         for (const connectionName of connections) {
+
+            if(connectionName === this.config.defaultConnectionName) {
+                continue
+            }
+
             if (this.store[connectionName]) {
                 await this.store[connectionName].connect();
             }

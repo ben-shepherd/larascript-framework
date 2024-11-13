@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-vars */
+import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
+import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import IModelAttributes from "@src/core/interfaces/IModelData";
 
@@ -10,6 +12,8 @@ export interface IApiTokenData extends IModelAttributes {
 }
 
 export default interface IApiTokenModel extends IModel<IApiTokenData> {
-    user(): Promise<any>;
+    setUserModelCtor(userModelCtor: ICtor<IUserModel>): void;
+    getUserModelCtor(): ICtor<IUserModel>;
+    user(): Promise<IUserModel | null>;
     hasScope(scopes: string | string[], exactMatch?: boolean): boolean;
 }

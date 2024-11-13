@@ -1,14 +1,11 @@
 /* eslint-disable no-undef */
 import { describe, expect, test } from '@jest/globals';
-import Kernel from '@src/core/Kernel';
 import { IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
 import { App } from '@src/core/services/App';
-import testAppConfig from '@src/tests/config/testConfig';
-import { getTestConnectionNames } from '@src/tests/config/testDatabaseConfig';
-import TestDatabaseProvider from '@src/tests/providers/TestDatabaseProvider';
+import testHelper from '@src/tests/testHelper';
 import { DataTypes } from 'sequelize';
 
-const connections = getTestConnectionNames()
+const connections = testHelper.getTestConnectionNames()
 
 const createTable = async (connectionName: string) => {
     const schema = App.container('db').schema(connectionName)
@@ -32,13 +29,7 @@ const dropTable = async (connectionName: string) => {
 describe('test partial search', () => {
 
     beforeAll(async () => {
-        await Kernel.boot({
-            ...testAppConfig,
-            providers: [
-                ...testAppConfig.providers,
-                new TestDatabaseProvider()
-            ]
-        }, {})
+        await testHelper.testBootApp()
 
         
         for(const connectionName of connections) {

@@ -1,7 +1,6 @@
 import Service from '@src/core/base/Service';
 import InvalidJWTSecret from '@src/core/domains/auth/exceptions/InvalidJWTSecret';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
-import ApiTokenFactory from '@src/core/domains/auth/factory/apiTokenFactory';
 import JWTTokenFactory from '@src/core/domains/auth/factory/jwtTokenFactory';
 import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IApiTokenRepository from '@src/core/domains/auth/interfaces/IApiTokenRepository';
@@ -59,7 +58,8 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * @returns 
      */
     public async createApiTokenFromUser(user: IUserModel, scopes: string[] = []): Promise<IApiTokenModel> {
-        const apiToken = new ApiTokenFactory().createFromUser(user, scopes)
+        const factory = new this.config.factory.apiTokenFactory;
+        const apiToken = factory.createFromUser(user, scopes)
         await apiToken.save();
         return apiToken
     }

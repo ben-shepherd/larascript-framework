@@ -1,18 +1,21 @@
 import BaseDocumentManager from "@src/core/domains/database/base/BaseDocumentManager";
 import MongoDbQueryBuilder from "@src/core/domains/database/builder/MongoDbQueryBuilder";
+import MongoDbIdentiferConcern from "@src/core/domains/database/concerns/MongoDbIdentiferConcern";
 import InvalidObjectId from "@src/core/domains/database/exceptions/InvalidObjectId";
 import { FindOptions, IDatabaseDocument, OrderOptions } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
 import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 import MongoDBBelongsTo from "@src/core/domains/database/relationships/mongodb/MongoDBBelongsTo";
-import { BulkWriteOptions, ObjectId, Sort, UpdateOptions } from "mongodb";
+import { BulkWriteOptions, Sort, UpdateOptions } from "mongodb";
 
 class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager, MongoDB> {
 
     protected driver!: MongoDB;
 
     protected builder = new MongoDbQueryBuilder()
+
+    protected identifierConcern = new MongoDbIdentiferConcern()
 
     constructor(driver: MongoDB) {
         super(driver);
@@ -50,39 +53,6 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
         return data
     }
 
-    /**
-     * Convert string id to ObjectId
-     * 
-     * @param id 
-     * @returns 
-     */
-    protected convertToObjectId(id: string | ObjectId): ObjectId {
-        if (id instanceof ObjectId) {
-            return id
-        }
-
-        if (!ObjectId.isValid(id)) {
-            throw new InvalidObjectId(`Invalid ObjectId: ${id}`)
-        }
-
-        return new ObjectId(id)
-    }
-
-    /**
-     * Replaces `_id: ObjectId` with `id: string`
-     * 
-     * @param document 
-     * @returns 
-     */
-    protected convertObjectIdToStringInDocument(document: IDatabaseDocument): IDatabaseDocument {
-        if ('_id' in document && document._id instanceof ObjectId) {
-            document = { ...document, id: document._id.toString() }
-            delete document._id
-        }
-
-        return document
-    }
-
     protected convertOrderToSort(order: OrderOptions): Sort {
         const sort = {}
         Object.keys(order).forEach((key: string) => {
@@ -102,7 +72,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
     async findById<T = IDatabaseDocument>(id: string): Promise<T | null> {
         return this.captureError(async() => {
             try {
-                return this.findOne({ filter: { _id: this.convertToObjectId(id) } })
+                return this.findOne({ filter: { _id: this.identifierConcern.convertToObjectId(id) } })
             }
             catch (err) {
                 if (!(err instanceof InvalidObjectId)) {
@@ -127,7 +97,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
             let document = await this.driver.getDb().collection(this.getTable()).findOne(filter) as T | null;
     
             if (document) {
-                document = this.convertObjectIdToStringInDocument(document) as T;
+                document = this.identifierConcern.convertObjectIdToStringInDocument(document) as T;
             }
     
             return document
@@ -156,7 +126,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
                 })
                 .toArray();
     
-            return documents.map((d: any) => this.convertObjectIdToStringInDocument(d)) as T
+            return documents.map((d: any) => this.identifierConcern.convertObjectIdToStringInDocument(d)) as T
         })
     }
 
@@ -180,7 +150,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
              * After the document is inserted, MongoDB will automatically add `_id: ObjectId` to the document object.
              * We will need to convert this to our standard `id: string` format
              */
-            return this.convertObjectIdToStringInDocument(document) as T
+            return this.identifierConcern.convertObjectIdToStringInDocument(document) as T
         })
     }
 
@@ -205,7 +175,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
              * After the document is inserted, MongoDB will automatically add `_id: ObjectId` to the document object.
              * We will need to convert this to our standard `id: string` format
              */
-            return documentsArray.map((d: IDatabaseDocument) => this.convertObjectIdToStringInDocument(d)) as T
+            return documentsArray.map((d: IDatabaseDocument) => this.identifierConcern.convertObjectIdToStringInDocument(d)) as T
         })
     }
 
@@ -221,12 +191,12 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
             this.validator.validateSingleDocument(document)
             this.validator.validateContainsId(document)
             
-            const objectId =  this.convertToObjectId(document.id)
+            const objectId =  this.identifierConcern.convertToObjectId(document.id)
             const data = this.stripIds(document)
     
             await this.driver.getDb().collection(this.getTable()).updateOne({ _id: objectId }, { $set: data }, options) as T
             
-            return this.convertObjectIdToStringInDocument(document) as T;
+            return this.identifierConcern.convertObjectIdToStringInDocument(document) as T;
         })
     }
 
@@ -263,7 +233,9 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
             this.validator.validateSingleDocument(document)
             this.validator.validateContainsId(document)
     
-            return await this.driver.getDb().collection(this.getTable()).deleteOne({ _id: this.convertToObjectId(document.id) }) as T
+            return await this.driver.getDb().collection(this.getTable()).deleteOne({ 
+                _id: this.identifierConcern.convertToObjectId(document.id)
+            }) as T
         })
     }
 

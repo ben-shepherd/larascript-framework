@@ -80,8 +80,8 @@ const HasObserverConcern = (Broadcaster: ICtor<IBroadcaster>) => {
          * @param observedBy The constructor of the observer to attach.
          * @throws {Error} If the observer is already attached.
          */
-        observeWith (observedBy: ObserveConstructor<unknown>): void {
-            if(this.observer) {
+        observeWith (observedBy: ObserveConstructor<unknown>, allowOverride: boolean = false): void {
+            if(!allowOverride && this.observer) {
                 throw new Error('Observer is already defined')
             }
             this.observer = new observedBy();

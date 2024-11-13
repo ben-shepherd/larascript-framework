@@ -1,21 +1,19 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import ApiToken from '@src/app/models/auth/ApiToken';
-import User from '@src/app/models/auth/User';
 import authConfig from '@src/config/auth';
-import UserFactory from '@src/core/domains/auth/factory/userFactory';
 import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
-import AuthProvider from '@src/core/domains/auth/providers/AuthProvider';
+import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';
-import DatabaseProvider from '@src/core/domains/database/providers/DatabaseProvider';
-import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
-import testAppConfig from '@src/tests/config/testConfig';
-import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
+import TestUserFactory from '@src/tests/factory/TestUserFactory';
+import TestApiTokenModel from '@src/tests/models/models/TestApiTokenModel';
+import TestUser from '@src/tests/models/models/TestUser';
+import testHelper from '@src/tests/testHelper';
+
 
 describe('attempt to run app with normal appConfig', () => {
 
-    let testUser: User;
+    let testUser: IUserModel;
     const email = 'testUser@test.com';
     const password = 'testPassword';
     const hashedPassword = hashPassword(password);
@@ -23,20 +21,20 @@ describe('attempt to run app with normal appConfig', () => {
     let apiToken: IApiTokenModel | null; 
 
     beforeAll(async () => {
-        await Kernel.boot({
-            ...testAppConfig,
-            providers: [
-                ...testAppConfig.providers,
-                new TestConsoleProvider(),
-                new DatabaseProvider(),
-                new AuthProvider()
-            ]
-        }, {});
+        await testHelper.testBootApp();
+
+        try {
+            await testHelper.dropAuthTables();
+        }
+        // eslint-disable-next-line no-unused-vars
+        catch (err) {}
+        
+        await testHelper.createAuthTables();
 
         /**
          * Create a test user
          */
-        testUser = new UserFactory().createWithData({
+        testUser = new TestUserFactory().createWithData({
             email,
             hashedPassword,
             roles: [],
@@ -108,7 +106,7 @@ describe('attempt to run app with normal appConfig', () => {
 
     test('create api token from user', async () => {
         apiToken = await App.container('auth').createApiTokenFromUser(testUser);
-        expect(apiToken).toBeInstanceOf(ApiToken);
+        expect(apiToken).toBeInstanceOf(TestApiTokenModel);
     })
 
     test('create jwt from user', async () => {
@@ -118,14 +116,14 @@ describe('attempt to run app with normal appConfig', () => {
 
     test('verify token', async () => {
         apiToken = await App.container('auth').attemptAuthenticateToken(jwtToken);
-        expect(apiToken).toBeInstanceOf(ApiToken);
+        expect(apiToken).toBeInstanceOf(TestApiTokenModel);
 
         const user = await apiToken?.user();
-        expect(user).toBeInstanceOf(User);
+        expect(user).toBeInstanceOf(TestUser);
     })
 
     test('revoke token', async () => {
-        expect(apiToken).toBeInstanceOf(ApiToken);
+        expect(apiToken).toBeInstanceOf(TestApiTokenModel);
         apiToken && await App.container('auth').revokeToken(apiToken);
 
         await apiToken?.refresh();

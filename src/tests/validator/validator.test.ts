@@ -1,22 +1,14 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import ValidationProvider from '@src/core/domains/validator/providers/ValidatorProvider';
 import ValidatorService from '@src/core/domains/validator/services/ValidatorService';
-import Kernel from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
-import testAppConfig from '@src/tests/config/testConfig';
+import testHelper from '@src/tests/testHelper';
 import testValidatorHelper from '@src/tests/validator/testValidatorHelper';
 
 describe('test validation', () => {
 
     beforeAll(async () => {
-        await Kernel.boot({
-            ...testAppConfig,
-            providers: [
-                ...testAppConfig.providers,
-                new ValidationProvider()
-            ]
-        }, {})
+        await testHelper.testBootApp()
     })
 
     const userValidator = new testValidatorHelper.UserValidator();

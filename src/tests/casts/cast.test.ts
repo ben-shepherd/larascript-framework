@@ -3,20 +3,13 @@ import { describe } from '@jest/globals';
 import BaseCastable from '@src/core/base/BaseCastable';
 import CastException from '@src/core/exceptions/CastException';
 import { IHasCastableConcern, TCastableType } from '@src/core/interfaces/concerns/IHasCastableConcern';
-import Kernel from '@src/core/Kernel';
-import testAppConfig from '@src/tests/config/testConfig';
+import testHelper from '@src/tests/testHelper';
 
 describe('HasCastableConcern Tests', () => {
     let castable: IHasCastableConcern;
 
     beforeAll(async () => {
-        await Kernel.boot({
-            ...testAppConfig,
-            providers: [
-                ...testAppConfig.providers,
-            ]
-        }, {});
-
+        await testHelper.testBootApp()
         
         castable = new BaseCastable();
     });

@@ -36,6 +36,14 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
     }
 
     /**
+     * Set the model constructor
+     * @param modelCtor The model constructor
+     */
+    protected setModelCtor(modelCtor: ModelConstructor<Model>) {
+        this.modelCtor = modelCtor;
+    }
+
+    /**
      * Get the query builder
      * @returns The query builder
      */

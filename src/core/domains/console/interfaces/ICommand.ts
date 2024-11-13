@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { ParsedArgumentsArray } from "@src/core/domains/console/parsers/CommandArgumentParser";
+import { IHasConfigConcern } from "@src/core/interfaces/concerns/IHasConfigConcern";
 
 export type ICommandConstructor<T extends ICommand = ICommand> = new (...args: any[]) => T
 
@@ -8,7 +9,7 @@ export type ICommandConstructor<T extends ICommand = ICommand> = new (...args: a
  *
  * @interface ICommand
  */
-export interface ICommand {
+export interface ICommand extends IHasConfigConcern {
 
     /**
      * The signature of the command
@@ -51,6 +52,6 @@ export interface ICommand {
      *
      * @returns {Promise<void>}
      */
-    end(): void;
+    end(success?: boolean): void;
 }
 

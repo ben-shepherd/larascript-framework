@@ -115,7 +115,7 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
 
     declare observeProperties: Record<string, string>;
 
-    declare observeWith: (observedBy: ObserveConstructor) => any;
+    declare observeWith: (observedBy: ObserveConstructor, allowOverride?: boolean) => any;
 
     declare observeData: <T>(name: string, data: T) => Promise<T>
 

@@ -4,6 +4,7 @@ import Model from '@src/core/base/Model';
 import IApiTokenModel, { IApiTokenData } from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import Scopes from '@src/core/domains/auth/services/Scopes';
+import { ICtor } from '@src/core/interfaces/ICtor';
 
 /**
  * ApiToken model
@@ -11,6 +12,11 @@ import Scopes from '@src/core/domains/auth/services/Scopes';
  * Represents an API token that can be used to authenticate a user.
  */
 class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
+
+    /**
+     * The user model constructor
+     */
+    protected userModelCtor: ICtor<IUserModel> = User
 
     /**
      * Required ApiToken fields
@@ -30,6 +36,8 @@ class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
         'scopes'
     ]
 
+    public timestamps: boolean = false;
+
     /**
      * Construct an ApiToken model from the given data.
      *
@@ -43,16 +51,27 @@ class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
     }
 
     /**
-     * Disable createdAt and updatedAt timestamps
+     * Sets the user model constructor to use for fetching the user of this ApiToken
+     * @param {ICtor<IUserModel>} userModelCtor The user model constructor
      */
-    public timestamps: boolean = false;
+    setUserModelCtor(userModelCtor: ICtor<IUserModel>): void {
+        this.userModelCtor = userModelCtor
+    }
+
+    /**
+     * Retrieves the constructor for the user model associated with this ApiToken.
+     * @returns {ICtor<IUserModel>} The user model constructor.
+     */
+    getUserModelCtor(): ICtor<IUserModel> {
+        return this.userModelCtor
+    }
 
     /**
      * Finds the related user for this ApiToken
      * @returns The user model if found, or null if not
      */
-    public async user(): Promise<IUserModel | null> {
-        return this.belongsTo(User, {
+    async user(): Promise<IUserModel | null> {
+        return this.belongsTo(this.userModelCtor, {
             localKey: 'userId',
             foreignKey: 'id',
         })
@@ -63,7 +82,7 @@ class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
      * @param scopes The scope(s) to check
      * @returns True if all scopes are present, false otherwise
      */
-    public hasScope(scopes: string | string[], exactMatch: boolean = true): boolean {
+    hasScope(scopes: string | string[], exactMatch: boolean = true): boolean {
         const currentScopes = this.getAttribute('scopes') ?? [];
        
         if(exactMatch) {

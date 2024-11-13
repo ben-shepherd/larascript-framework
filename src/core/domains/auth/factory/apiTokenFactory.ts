@@ -1,16 +1,17 @@
-import ApiToken from '@src/app/models/auth/ApiToken'
 import Factory from '@src/core/base/Factory'
+import { IApiTokenFactory } from '@src/core/domains/auth/interfaces/IApiTokenFactory'
 import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel'
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel'
 import tokenFactory from '@src/core/domains/auth/utils/generateToken'
+import { ICtor } from '@src/core/interfaces/ICtor'
 
 /**
  * Factory for creating ApiToken models.
  */
-class ApiTokenFactory extends Factory<IApiTokenModel> {
+class ApiTokenFactory extends Factory<IApiTokenModel> implements IApiTokenFactory {
 
-    constructor() {
-        super(ApiToken)
+    constructor(modelCtor: ICtor<IApiTokenModel>) {
+        super(modelCtor)
     }
 
     /**

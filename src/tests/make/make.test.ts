@@ -1,9 +1,7 @@
 /* eslint-disable no-undef */
 import { describe, test } from '@jest/globals';
-import Kernel from '@src/core/Kernel';
-import testAppConfig from '@src/tests/config/testConfig';
 import makeTestHelper from '@src/tests/make/makeTestHelper';
-import TestConsoleProvider from '@src/tests/providers/TestConsoleProvider';
+import testHelper from '@src/tests/testHelper';
 import fs from 'fs';
 
 
@@ -12,13 +10,7 @@ const makeTypes = makeTestHelper.getArrayOfCommandTypes();
 describe(`testing make commands (total ${makeTypes.length})`, () => {
 
     beforeAll(async () => {
-        await Kernel.boot({
-            ...testAppConfig,
-            providers: [
-                ...testAppConfig.providers,
-                new TestConsoleProvider()
-            ]
-        }, {})
+        await testHelper.testBootApp()
     })
 
     const fileName = 'Test';
