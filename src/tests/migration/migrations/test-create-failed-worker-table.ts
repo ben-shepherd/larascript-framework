@@ -9,7 +9,7 @@ export class CreateFailedWorkerTableMigration extends BaseMigration {
     // If left commented out, the migration will run only on the default provider.
     // databaseProvider: 'mongodb' | 'postgres' = 'postgres';
 
-    group?: string = 'app:setup';
+    group?: string = 'testing';
 
     table = (new FailedWorkerModel({} as FailedWorkerModelData)).table
 

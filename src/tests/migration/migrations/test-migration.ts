@@ -5,6 +5,8 @@ import { DataTypes } from "sequelize";
 
 class TestMigration extends BaseMigration {
 
+    group?: string = 'testing';
+
     async up(): Promise<void> {
         await App.container('db').schema<PostgresSchema>().createTable('tests', {
             name: DataTypes.STRING,

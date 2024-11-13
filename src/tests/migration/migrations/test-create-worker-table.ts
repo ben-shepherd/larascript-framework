@@ -9,7 +9,7 @@ export class CreateWorkerTableMigration extends BaseMigration {
     // If left commented out, the migration will run only on the default provider.
     // databaseProvider: 'mongodb' | 'postgres' = 'postgres';
 
-    group?: string = 'app:setup';
+    group?: string = 'testing';
 
     table = (new WorkerModel({} as WorkerModelData)).table
 
