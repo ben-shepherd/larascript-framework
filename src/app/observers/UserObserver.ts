@@ -6,10 +6,6 @@ import Observer from "@src/core/domains/observer/services/Observer";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
-export type TUserObserverOptions = {
-    userCreatedListener: ICtor<IBaseEvent>;
-}
-
 /**
  * Observer for the User model.
  * 
