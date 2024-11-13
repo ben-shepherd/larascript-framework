@@ -1,5 +1,6 @@
 import { EnvironmentTesting } from "@src/core/consts/Environment";
 import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
+import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 import Kernel from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
 import TestApiTokenModel from "@src/tests/models/models/TestApiTokenModel";
@@ -22,7 +23,8 @@ const testBootApp = async () => {
             new TestDatabaseProvider(),
             new TestEventProvider(),
             new TestAuthProvider(),
-            new TestMigrationProvider()
+            new TestMigrationProvider(),
+            new ValidatorProvider()
         ]
     }, {});
 }
