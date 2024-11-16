@@ -4,7 +4,7 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { IDatabaseSchema } from "./IDatabaseSchema";
 import { IDocumentManager } from "./IDocumentManager";
 
-export interface IDatabaseAdapter {
+export interface  IDatabaseAdapter {
 
     getClient(...args: any[]): unknown;
 

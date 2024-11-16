@@ -82,8 +82,7 @@ export default class MongoDBBelongsTo implements IBelongsTo {
          * Get the document manager instance for the foreign table.
          */
         const documentManager = App.container('db')
-            .provider(connection)
-            .documentManager()
+            .documentManager(connection)
             .table(foreignTable);
 
         /**

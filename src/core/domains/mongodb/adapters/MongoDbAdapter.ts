@@ -8,6 +8,8 @@ import ParseMongoDBConnectionString from "../../database/helper/ParseMongoDBConn
 import { IDatabaseSchema } from "../../database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "../../database/interfaces/IDocumentManager";
 import { IMongoConfig } from "../interfaces/IMongoConfig";
+import MongoDbDocumentManager from "../MongoDbDocumentManager";
+import MongoDbSchema from "../MongoDbSchema";
 
 class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
 
@@ -21,6 +23,17 @@ class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
         super()
         this.setConnectionName(connectionName);
         this.setConfig(config);
+    }
+
+    /**
+     * Get the MongoDB database instance
+     * @returns {Db} The MongoDB database instance
+     */
+    getDb(): Db {
+        if(!this.client) {
+            throw new Error('MongoDB client is not connected');
+        }
+        return this.client.db();
     }
 
     /**
@@ -111,27 +124,16 @@ class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
     }
  
     getDocumentManager(): IDocumentManager {
-        throw new Error("Method not implemented.");
+        return new MongoDbDocumentManager(this)
     }
 
     getSchema(): IDatabaseSchema {
-        throw new Error("Method not implemented.");
+        return new MongoDbSchema(this)
     }
 
     getQueryBuilderCtor(): ICtor<unknown> {
         throw new Error("Method not implemented.");
     }   
-
-    /**
-     * Get the MongoDB database instance
-     * @returns {Db} The MongoDB database instance
-     */
-    getDb(): Db {
-        if(!this.client) {
-            throw new Error('MongoDB client is not connected');
-        }
-        return this.client.db();
-    }
 
 }
 

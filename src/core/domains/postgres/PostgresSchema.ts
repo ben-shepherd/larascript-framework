@@ -27,7 +27,7 @@ class PostgresSchema implements IDatabaseAdapterSchema {
      * @returns A promise that resolves when the database schema has been created
      */
     async createDatabase(name: string): Promise<void> {
-        const client = this.adapter.getPgClientDatabase('postgres');
+        const client = await this.adapter.getPgClientDatabase('postgres');
         try {
             await client.connect()
             await client.query(`CREATE DATABASE ${name}`)
@@ -45,7 +45,7 @@ class PostgresSchema implements IDatabaseAdapterSchema {
          * @returns A promise that resolves to a boolean indicating whether the database exists
          */
     async databaseExists(name: string): Promise<boolean> {
-        const client = this.adapter.getPgClientDatabase('postgres');
+        const client = await this.adapter.getPgClientDatabase('postgres');
         await client.connect()
         const result = await client.query(`SELECT FROM pg_database WHERE datname = '${name}'`)
         const dbExists = typeof result.rowCount === 'number' && result.rowCount > 0
@@ -60,7 +60,7 @@ class PostgresSchema implements IDatabaseAdapterSchema {
          * @returns A promise that resolves when the database has been dropped.
          */
     async dropDatabase(name: string): Promise<void> {
-        const client = this.adapter.getPgClientDatabase('postgres');
+        const client = await this.adapter.getPgClientDatabase('postgres');
 
         try {
             await client.connect();

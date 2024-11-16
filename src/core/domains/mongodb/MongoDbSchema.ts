@@ -1,15 +1,15 @@
-import BaseDatabaseSchema from "@src/core/domains/database/base/BaseDatabaseSchema";
 import CreateDatabaseException from "@src/core/domains/database/exceptions/CreateDatabaseException";
-import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 import { App } from "@src/core/services/App";
 
-class MongoDBSchema extends BaseDatabaseSchema {
+import { IDatabaseSchema } from "../database/interfaces/IDatabaseSchema";
+import MongoDbAdapter from "./adapters/MongoDbAdapter";
 
-    protected driver!: MongoDB;
+class MongoDBSchema implements IDatabaseSchema{
 
-    constructor(driver: MongoDB) {
-        super(driver);
-        this.driver = driver;
+    protected adapter!: MongoDbAdapter;
+
+    constructor(adapter: MongoDbAdapter) {
+        this.adapter = adapter;
     }
 
     /**
@@ -18,7 +18,7 @@ class MongoDBSchema extends BaseDatabaseSchema {
      * @returns A promise that resolves when the database schema has been created
      */
     async createDatabase(name: string): Promise<void> {
-        const client = await this.driver.connectToDatabase('app')
+        const client = await this.adapter.connectToDatabase('app')
 
         try {
             const db = client.db(name);
@@ -49,7 +49,7 @@ class MongoDBSchema extends BaseDatabaseSchema {
      * @returns A promise that resolves to a boolean indicating whether the database exists
      */
     async databaseExists(name: string): Promise<boolean> {
-        const client = await this.driver.connectToDatabase('app')
+        const client = await this.adapter.connectToDatabase('app')
 
         try {
             const adminDb = client.db().admin()
@@ -73,7 +73,7 @@ class MongoDBSchema extends BaseDatabaseSchema {
      * @returns A promise that resolves when the database has been dropped.
      */
     async dropDatabase(name: string): Promise<void> {
-        const client = await this.driver.connectToDatabase('app');
+        const client = await this.adapter.connectToDatabase('app');
 
         try {
             await client.db(name).dropDatabase();
@@ -93,11 +93,11 @@ class MongoDBSchema extends BaseDatabaseSchema {
      */
     // eslint-disable-next-line no-unused-vars
     async createTable(name: string, ...args: any[]): Promise<void> {
-        await this.driver.getDb().createCollection(name);
-        await this.driver.getDb().collection(name).insertOne({
+        await this.adapter.getDb().createCollection(name);
+        await this.adapter.getDb().collection(name).insertOne({
             _create_table: true
         });
-        await this.driver.getDb().collection(name).deleteMany({
+        await this.adapter.getDb().collection(name).deleteMany({
             _create_table: true
         });
     }
@@ -109,7 +109,7 @@ class MongoDBSchema extends BaseDatabaseSchema {
      */
     // eslint-disable-next-line no-unused-vars
     async dropTable(name: string, ...args: any[]): Promise<void> {
-        await this.driver.getDb().dropCollection(name);
+        await this.adapter.getDb().dropCollection(name);
     }
 
     /**
@@ -119,7 +119,7 @@ class MongoDBSchema extends BaseDatabaseSchema {
      */
     // eslint-disable-next-line no-unused-vars
     async tableExists(name: string, ...args: any[]): Promise<boolean> {
-        return (await this.driver.getDb().listCollections().toArray()).map(c => c.name).includes(name);
+        return (await this.adapter.getDb().listCollections().toArray()).map(c => c.name).includes(name);
     }
 
     /**
@@ -138,7 +138,7 @@ class MongoDBSchema extends BaseDatabaseSchema {
      * @returns A promise resolving when all tables have been dropped
      */
     async dropAllTables(): Promise<void> {
-        const mongoClient = this.driver.getClient();
+        const mongoClient = this.adapter.getClient();
         const db = mongoClient.db();
 
         const collections = await db.listCollections().toArray();

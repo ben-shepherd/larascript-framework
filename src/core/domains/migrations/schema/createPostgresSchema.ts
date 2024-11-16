@@ -1,6 +1,7 @@
-import Postgres from "@src/core/domains/database/providers-db/Postgres";
 import { App } from "@src/core/services/App";
 import { DataTypes } from "sequelize";
+
+import PostgresAdapter from "../../postgres/adapters/PostgresAdapter";
 
 /**
  * Creates the migrations table in Postgres if it does not already exist
@@ -8,7 +9,7 @@ import { DataTypes } from "sequelize";
  * @returns {Promise<void>}
  */
 const createPostgresSchema = async (tableName: string = 'migrations') => {
-    const sequelize = App.container('db').provider<Postgres>().getSequelize();
+    const sequelize = App.container('db').provider<PostgresAdapter>().getSequelize();
     const queryInterface = sequelize.getQueryInterface();
 
     if ((await queryInterface.showAllTables())?.includes(tableName)) {

@@ -120,7 +120,7 @@ const clearMigrations = async () => {
  */
 export const getTestConnectionNames = ({ exclude = [] }: { exclude?: string[] } = {}) => {
     // return ['mongodb', 'postgres'].filter(connectionName => !exclude.includes(connectionName));
-    return ['postgres'].filter(connectionName => !exclude.includes(connectionName));
+    return ['mongodb', 'postgres']
 }
 
 const testHelper = {

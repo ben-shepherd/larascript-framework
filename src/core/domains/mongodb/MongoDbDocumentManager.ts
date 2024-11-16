@@ -1,25 +1,23 @@
-import BaseDocumentManagerLegacy from "@src/core/domains/database/base/BaseDocumentManagerLegacy";
 import MongoDbQueryBuilder from "@src/core/domains/database/builder/MongoDbQueryBuilder";
 import MongoDbIdentiferConcern from "@src/core/domains/database/concerns/MongoDbIdentiferConcern";
 import InvalidObjectId from "@src/core/domains/database/exceptions/InvalidObjectId";
 import { FindOptions, IDatabaseDocument, OrderOptions } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
 import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
-import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 import MongoDBBelongsTo from "@src/core/domains/database/relationships/mongodb/MongoDBBelongsTo";
 import { BulkWriteOptions, Sort, UpdateOptions } from "mongodb";
 
-class MongoDbDocumentManager extends BaseDocumentManagerLegacy<MongoDbDocumentManager, MongoDB> {
+import BaseDocumentManager from "../database/base/BaseDocumentManager";
+import MongoDbAdapter from "./adapters/MongoDbAdapter";
 
-    protected driver!: MongoDB;
+class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager, MongoDbAdapter> {
 
     protected builder = new MongoDbQueryBuilder()
 
     protected identifierConcern = new MongoDbIdentiferConcern()
 
-    constructor(driver: MongoDB) {
-        super(driver);
-        this.driver = driver;
+    constructor(adapter: MongoDbAdapter) {
+        super(adapter)
     }
 
     /**
@@ -94,7 +92,7 @@ class MongoDbDocumentManager extends BaseDocumentManagerLegacy<MongoDbDocumentMa
 
             filter = this.builder.select({ filter, allowPartialSearch, useFuzzySearch })
 
-            let document = await this.driver.getDb().collection(this.getTable()).findOne(filter) as T | null;
+            let document = await this.adapter.getDb().collection(this.getTable()).findOne(filter) as T | null;
     
             if (document) {
                 document = this.identifierConcern.convertObjectIdToStringInDocument(document) as T;
@@ -116,7 +114,7 @@ class MongoDbDocumentManager extends BaseDocumentManagerLegacy<MongoDbDocumentMa
 
             filter = this.builder.select({ filter, allowPartialSearch, useFuzzySearch })
 
-            const documents = await this.driver
+            const documents = await this.adapter
                 .getDb()
                 .collection(this.getTable())
                 .find(filter as object, {
@@ -144,7 +142,7 @@ class MongoDbDocumentManager extends BaseDocumentManagerLegacy<MongoDbDocumentMa
             /**
              * Insert the document
              */
-            await this.driver.getDb().collection(this.getTable()).insertOne(document);
+            await this.adapter.getDb().collection(this.getTable()).insertOne(document);
     
             /**
              * After the document is inserted, MongoDB will automatically add `_id: ObjectId` to the document object.
@@ -169,7 +167,7 @@ class MongoDbDocumentManager extends BaseDocumentManagerLegacy<MongoDbDocumentMa
             /**
              * Insert the documents
              */
-            await this.driver.getDb().collection(this.getTable()).insertMany(documentsArray, options);
+            await this.adapter.getDb().collection(this.getTable()).insertMany(documentsArray, options);
     
             /**
              * After the document is inserted, MongoDB will automatically add `_id: ObjectId` to the document object.
@@ -194,7 +192,7 @@ class MongoDbDocumentManager extends BaseDocumentManagerLegacy<MongoDbDocumentMa
             const objectId =  this.identifierConcern.convertToObjectId(document.id)
             const data = this.stripIds(document)
     
-            await this.driver.getDb().collection(this.getTable()).updateOne({ _id: objectId }, { $set: data }, options) as T
+            await this.adapter.getDb().collection(this.getTable()).updateOne({ _id: objectId }, { $set: data }, options) as T
             
             return this.identifierConcern.convertObjectIdToStringInDocument(document) as T;
         })
@@ -233,7 +231,7 @@ class MongoDbDocumentManager extends BaseDocumentManagerLegacy<MongoDbDocumentMa
             this.validator.validateSingleDocument(document)
             this.validator.validateContainsId(document)
     
-            return await this.driver.getDb().collection(this.getTable()).deleteOne({ 
+            return await this.adapter.getDb().collection(this.getTable()).deleteOne({ 
                 _id: this.identifierConcern.convertToObjectId(document.id)
             }) as T
         })
@@ -263,7 +261,7 @@ class MongoDbDocumentManager extends BaseDocumentManagerLegacy<MongoDbDocumentMa
      */
     async truncate(): Promise<void> {
         return this.captureError(async() => {
-            await this.driver.getDb().collection(this.getTable()).deleteMany({})
+            await this.adapter.getDb().collection(this.getTable()).deleteMany({})
         })
     }
 
@@ -271,7 +269,7 @@ class MongoDbDocumentManager extends BaseDocumentManagerLegacy<MongoDbDocumentMa
     async belongsTo<T>(document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null> {
         return this.captureError(async() => {
             return new MongoDBBelongsTo().handle(
-                this.driver.connectionName,
+                this.adapter.getConnectionName(),
                 document,
                 options
             ) as T ?? null

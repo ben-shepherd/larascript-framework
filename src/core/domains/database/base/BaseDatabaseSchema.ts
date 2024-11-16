@@ -11,14 +11,14 @@ abstract class BaseDatabaseSchema<Provider extends IDatabaseProvider = IDatabase
     /**
      * Protected property to hold the database driver instance
      */
-    protected driver!: Provider;
+    protected adapter!: Provider;
 
     /**
      * Constructor for BaseDatabaseSchema
      * @param driver - Database provider instance
      */
     constructor(driver: Provider) {
-        this.driver = driver;
+        this.adapter = driver;
     }
 
     /**

@@ -54,13 +54,12 @@ const config: IDatabaseConfig = {
      * Define multiple connections here if needed.
      */
     connections: DatabaseConfig.createConnections([
-        {
-            name: DEFAULT_CONNECTION,
-            config: DatabaseConfig.createConfig(PostgresAdapter, {
-                uri: process.env.DATABASE_DEFAULT_URI as string,
-                options: {} // Additional connection options can be specified here
-            })
-        }
+        DatabaseConfig.createConfig({
+            connectionName: DEFAULT_CONNECTION,
+            adapter: DatabaseAdapter.getName(PostgresAdapter),
+            uri: process.env.DATABASE_DEFAULT_URI as string,
+            options: {} // Additional connection options can be specified here
+        })
     ]),
 
     /**

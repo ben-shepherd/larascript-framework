@@ -45,6 +45,26 @@ class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
         return this.getClient()
     }
 
+
+    /**
+     * Get a new PostgreSQL client instance.
+     * 
+     * @returns {pg.Client} A new instance of PostgreSQL client.
+     */
+    getPgClient(): pg.Client {
+        return new pg.Client(this.config.uri);
+    }
+
+    /**
+     * Get a new PostgreSQL client instance connected to a specific database.
+     * 
+     * @param database - The name of the database to connect to. Defaults to 'postgres'
+     * @returns {pg.Client} A new instance of PostgreSQL client.
+     */
+    async getPgClientDatabase(database: string = 'postgres'): Promise<pg.Client> {
+        return this.connectToDatabase(database)
+    }
+
     /**
      * Connect to the PostgreSQL database
      *

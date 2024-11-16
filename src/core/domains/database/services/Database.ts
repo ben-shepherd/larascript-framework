@@ -111,8 +111,8 @@ class Database extends BaseRegister implements IDatabaseService {
      * Register connections
      */
     private registerConnections(): void {
-        for(const connectionName of Object.keys(this.config.connections)) {
-            this.registerByList(Database.REGISTERED_CONNECTIONS_CONFIG, connectionName, this.config.connections[connectionName])
+        for(const connectionConfig of this.config.connections) {
+            this.registerByList(Database.REGISTERED_CONNECTIONS_CONFIG, connectionConfig.connectionName, connectionConfig)
         }
         
     }
@@ -135,7 +135,7 @@ class Database extends BaseRegister implements IDatabaseService {
      * @returns 
      */
     isProvider(adapterName: string, connectionName: string = this.getDefaultConnectionName()): boolean {
-        return this.getConnectionConfig(connectionName).driver === adapterName
+        return this.getConnectionConfig(connectionName).adapter === adapterName
     }
     
     /**
@@ -186,7 +186,7 @@ class Database extends BaseRegister implements IDatabaseService {
             throw new Error('Connection not found: ' + connectionName)
         }
 
-        const adapterName = connectionConfig.driver
+        const adapterName = connectionConfig.adapter
 
         const adapterConfig = this.getRegisteredByList(Database.REGISTERED_ADAPTERS_CONFIG).get(adapterName)?.[0]
 

@@ -147,6 +147,7 @@ describe('Combined DocumentManager Interface Test', () => {
                 age: 25,
                 relatedId: parentDoc.id
             });
+            
 
             const relatedChildDoc = await documentManager.belongsTo<Data>(parentDoc, {
                 localKey: 'id',
