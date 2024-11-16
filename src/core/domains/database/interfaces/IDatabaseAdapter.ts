@@ -7,6 +7,8 @@ export interface IDatabaseAdapter {
 
     getClient(): unknown;
 
+    connect(): Promise<unknown>;
+
     connectToDatabase(...args: any[]): Promise<unknown>;
 
     getDocumentManager(): IDocumentManager;

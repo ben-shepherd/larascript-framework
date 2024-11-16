@@ -1,65 +1,147 @@
 
-import { IRegsiterList, TRegisterMap } from "@src/core/interfaces/concerns/IHasRegisterableConcern";
 
-import BaseDatabase from "../base/BaseDatabase";
-import { IBaseDatabase } from "../interfaces/IBaseDatabase";
+import BaseRegister from "@src/core/base/BaseRegister";
+import { ICtor } from "@src/core/interfaces/ICtor";
+
 import { IDatabaseAdapter } from "../interfaces/IDatabaseAdapter";
-import { IDatabaseAdapterConfig, IDatabaseGenericConnectionConfig } from "../interfaces/IDatabaseConfig";
+import { IDatabaseAdapterConfig, IDatabaseConfig, IDatabaseGenericConnectionConfig } from "../interfaces/IDatabaseConfig";
 import { IDatabaseService } from "../interfaces/IDatabaseService";
 
 
-class Database extends BaseDatabase implements IDatabaseService, IBaseDatabase {
+class Database extends BaseRegister implements IDatabaseService {
 
-    static readonly REGISTERED_ADAPTERS = 'registeredAdapters'
+    static readonly REGISTERED_ADAPTERS_CONFIG = 'registeredAdaptersConfig'
 
-    static readonly REGISTERED_CONNECTIONS = 'registeredConnections'
+    static readonly REGISTERED_CONNECTIONS_CONFIG = 'registeredConnectionsConfig'
 
-    /**
-     * Override the default connection name (Testing purposes)
-     */
+    static readonly REGISTERED_ADAPTERS_BY_CONNECTION = 'registeredAdaptersByConnection'
+
+    protected config!: IDatabaseConfig;
+
     protected overrideDefaultConnectionName?: string;
 
     /**
-     * Has registerable concern
+     * Constructs an instance of the Database class.
+     * 
+     * @param config - The database configuration object implementing IDatabaseConfig interface.
      */
-    declare register: (key: string, value: unknown) => void;
+    constructor(config: IDatabaseConfig) {
+        super()
+        this.config = config
+    }
+
     
-    declare registerByList: (listName: string, key: string, value: unknown) => void;
+    /**
+     * Boot method
+     * Called after all providers have been registered
+     * Use this method to perform any actions that require other services to be available
+     *
+     * @returns {Promise<void>}
+     */
+    async boot(): Promise<void> {
+        this.registerAdapters()
+        this.registerConnections()
+        
+        await this.connectDefault()
+        await this.connectKeepAlive()
+    }
+
+    /**
+     * Connects to all keep alive connections
+     */
+    protected async connectKeepAlive() {
+        const connections = (this.config?.keepAliveConnections ?? '').split(',');
     
-    declare setRegisteredByList: (listName: string, registered: TRegisterMap) => void;
+        for (const connectionName of connections) {
     
-    declare getRegisteredByList: <T extends TRegisterMap = TRegisterMap>(listName: string) => T;
+            if(connectionName.length === 0) {
+                continue
+            }
+            if(connectionName === this.config.defaultConnectionName) {
+                continue
+            }
     
-    declare getRegisteredList: <T extends TRegisterMap = TRegisterMap>() => T;
-    
-    declare getRegisteredObject: () => IRegsiterList;
-    
-    declare isRegisteredInList: (listName: string, key: string) => boolean;
+            await this.connectAdapter(connectionName)
+        }
+    }
+
+    /**
+     * Connects to the default database connection.
+     * 
+     * This method checks if an adapter for the default connection has already been registered.
+     * If not, it retrieves the adapter constructor for the connection, creates a new instance,
+     * and connects it. The connected adapter is then registered for the default connection.
+     * 
+     * @returns {Promise<void>}
+     */
+    async connectDefault() {
+        await this.connectAdapter(this.getDefaultConnectionName())
+    }
+
+    /**
+     * Connects to the adapter for a given connection name.
+     * 
+     * If the adapter has already been connected and registered, this method does nothing.
+     * Otherwise, it creates a new instance of the adapter, connects it, and registers it for the given connection name.
+     * 
+     * @param connectionName The name of the connection to connect to.
+     * @returns {Promise<void>}
+     * @private
+     */
+    private async connectAdapter(connectionName: string = this.getDefaultConnectionName()): Promise<void> {
+        const connectionConfig = this.getConnectionConfig(connectionName)
+        const adapterCtor = this.getAdapterConstructor(connectionName)
+
+        const adapterAlreadyDefined = this.getRegisteredByList(Database.REGISTERED_ADAPTERS_BY_CONNECTION).get(connectionName)?.[0]
+
+        if(adapterAlreadyDefined) {
+            return;
+        }
+
+        const adapter = new adapterCtor(connectionConfig);
+        await adapter.connect()
+        
+        this.registerByList(Database.REGISTERED_ADAPTERS_BY_CONNECTION, connectionName, adapter)
+    }
 
     /**
      * Register adapters
      */
-    registerAdapter(adapterConfig: IDatabaseAdapterConfig): void {
-        this.registerByList(Database.REGISTERED_ADAPTERS, adapterConfig.name, adapterConfig)
+    private registerAdapters(): void {
+        for(const adapterConfig of this.config.adapters) {
+            this.registerByList(Database.REGISTERED_ADAPTERS_CONFIG, adapterConfig.name, adapterConfig)
+        }   
     }
 
     /**
      * Register connections
      */
-    registerConnection(connectionCofig: IDatabaseGenericConnectionConfig): void {
-        this.registerByList(Database.REGISTERED_CONNECTIONS, connectionCofig.driver, connectionCofig)
+    private registerConnections(): void {
+        for(const connectionName of Object.keys(this.config.connections)) {
+            this.registerByList(Database.REGISTERED_CONNECTIONS_CONFIG, connectionName, this.config.connections[connectionName])
+        }
+        
     }
 
-    boot(): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-
+    /**
+     * Alias of getAdapter.
+     * Get the provider for the given connection name.
+     * 
+     * @param connectionName The name of the connection to get the provider for. If not specified, the default connection is used.
+     * @returns The provider instance for the given connection.
+     */
     provider<T = unknown>(connectionName?: string): T {
-        return null as unknown as T;
+        return this.getAdapter(connectionName) as T
     }
 
-    isProvider(driver: string, connectionName?: string): boolean {
-        return false
+    /**
+     * Checks if a connection is a specified provider (adapter)
+     * @param adapterName 
+     * @param connectionName 
+     * @returns 
+     */
+    isProvider(adapterName: string, connectionName: string = this.getDefaultConnectionName()): boolean {
+        return this.getConnectionConfig(connectionName).driver === adapterName
     }
     
     /**
@@ -78,8 +160,56 @@ class Database extends BaseDatabase implements IDatabaseService, IBaseDatabase {
         this.overrideDefaultConnectionName = name ?? undefined
     }
 
-    getAdapter(connectionName: string = this.getDefaultConnectionName()): IDatabaseAdapter {
-        return null as unknown as IDatabaseAdapter
+    getConnectionConfig<T extends object = object>(connectionName: string): IDatabaseGenericConnectionConfig<T> {
+        const connectionConfig: IDatabaseGenericConnectionConfig = this.getRegisteredByList(Database.REGISTERED_CONNECTIONS_CONFIG).get(connectionName)?.[0]
+
+        if(!connectionConfig) {
+            throw new Error('Connection not found: ' + connectionName)
+        }
+
+        return connectionConfig as IDatabaseGenericConnectionConfig<T>
+    }
+
+    /**
+     * Get the adapter constructor for the given connection name.
+     * 
+     * @param connectionName The name of the connection to get the adapter for.
+     * @returns The constructor for the adapter.
+     * @throws {Error} If the connection or adapter is not registered.
+     */
+    getAdapterConstructor<T extends ICtor<IDatabaseAdapter> = ICtor<IDatabaseAdapter>>(connectionName: string = this.getDefaultConnectionName()): T {
+        const connectionConfig: IDatabaseGenericConnectionConfig = this.getRegisteredByList(Database.REGISTERED_CONNECTIONS_CONFIG).get(connectionName)?.[0]
+
+        if(!connectionConfig) {
+            throw new Error('Connection not found: ' + connectionName)
+        }
+
+        const adapterName = connectionConfig.driver
+
+        const adapterConfig = this.getRegisteredByList(Database.REGISTERED_ADAPTERS_CONFIG).get(adapterName)?.[0]
+
+        if(!adapterConfig) {
+            throw new Error('Adapter not found: ' + adapterName)
+        }
+
+        return (adapterConfig as IDatabaseAdapterConfig).adapter as T 
+    }
+
+    /**
+     * Get the adapter for the given connection name.
+     * 
+     * @param connectionName The name of the connection to get the adapter for.
+     * @returns The adapter instance for the given connection.
+     * @throws {Error} If the connection or adapter is not registered.
+     */
+    getAdapter<T extends IDatabaseAdapter = IDatabaseAdapter>(connectionName: string = this.getDefaultConnectionName()): T {
+        const adapter = this.getRegisteredByList(Database.REGISTERED_ADAPTERS_BY_CONNECTION).get(connectionName)?.[0]
+
+        if(!adapter) {
+            throw new Error('Adapter not found: ' + connectionName)
+        }
+
+        return adapter as T
     }
 
     /**

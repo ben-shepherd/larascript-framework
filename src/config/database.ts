@@ -1,5 +1,6 @@
 import { MongoDBTypes } from "@src/core/domains/database/interfaces/DatabaseProviderTypes";
 import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
+import DatabaseAdapter from "@src/core/domains/database/services/DatabaseAdapter";
 import DatabaseConfig from "@src/core/domains/database/services/DatabaseConfig";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 
@@ -58,11 +59,10 @@ const config: IDatabaseConfig = {
          * Default connection configuration.
          * Uses environment variables for flexible deployment across different environments.
          */
-        [DEFAULT_CONNECTION]: {
-            driver: DEFAULT_PROVIDER,
+        [DEFAULT_CONNECTION]: DatabaseConfig.createConfig(PostgresAdapter, {
             uri: process.env.DATABASE_DEFAULT_URI as string,
             options: {} // Additional connection options can be specified here
-        },
+        }),
     // Add more connection configurations as needed
     },
 
@@ -70,8 +70,7 @@ const config: IDatabaseConfig = {
      * Database adapters configuration.
      */
     adapters: [
-        DatabaseConfig.createAdapter({
-            name: 'postgres',
+        DatabaseAdapter.createAdapter({
             package: 'pg',
             adapter: PostgresAdapter
         })

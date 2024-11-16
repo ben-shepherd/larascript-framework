@@ -2,9 +2,9 @@
 import compose from "@src/core/util/compose";
 
 import HasRegisterableConcern from "../concerns/HasRegisterableConcern";
-import { IRegsiterList, TRegisterMap } from "../interfaces/concerns/IHasRegisterableConcern";
+import { IHasRegisterableConcern, IRegsiterList, TRegisterMap } from "../interfaces/concerns/IHasRegisterableConcern";
 
-export default class BaseRegister extends compose(class {}, HasRegisterableConcern) {
+export default class BaseRegister extends compose(class {}, HasRegisterableConcern) implements IHasRegisterableConcern {
 
     declare register: (key: string, value: unknown) => void;
 

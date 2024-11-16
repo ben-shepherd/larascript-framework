@@ -59,14 +59,6 @@ export default abstract class BaseCommand extends BaseConfig implements ICommand
     }
 
     /**
-     * Declare HasConfig
-     */
-    declare getConfig: <T = unknown>() => T;
-
-    // eslint-disable-next-line no-unused-vars
-    declare setConfig: (config: object) => void
-
-    /**
      * Execute the command
      *
      * @param args

@@ -2,6 +2,9 @@ import ParseMongoDBConnectionString from '@src/core/domains/database/helper/Pars
 import ParsePostgresConnectionUrl from '@src/core/domains/database/helper/ParsePostgresConnectionUrl';
 import { IDatabaseConfig } from '@src/core/domains/database/interfaces/IDatabaseConfig';
 import DatabaseProvider from '@src/core/domains/database/providers/DatabaseProvider';
+import DatabaseAdapter from '@src/core/domains/database/services/DatabaseAdapter';
+import DatabaseConfig from '@src/core/domains/database/services/DatabaseConfig';
+import PostgresAdapter from '@src/core/domains/postgres/adapters/PostgresAdapter';
 import defaultCredentials from '@src/core/domains/setup/utils/defaultCredentials';
 
 export const testDbName = 'test_db';
@@ -29,19 +32,25 @@ export default class TestDatabaseProvider extends DatabaseProvider {
 
     protected config: IDatabaseConfig = {
         defaultConnectionName: 'postgres',
-        keepAliveConnections: 'mongodb',
+        // keepAliveConnections: 'mongodb',
+        keepAliveConnections: '',
         connections: {
-            mongodb: {
-                driver: 'mongodb',
-                uri: mongoDbConnectionStringWithTestDb,
-                options: {}
-            },
-            postgres: {
-                driver: 'postgres',
+            // mongodb: {
+            //     driver: 'mongodb',
+            //     uri: mongoDbConnectionStringWithTestDb,
+            //     options: {}
+            // },
+            postgres: DatabaseConfig.createConfig(PostgresAdapter, {
                 uri: postgresConnectionStringWithTestDb,
                 options: {}
-            }
-        }
+            })
+        },
+        adapters: [
+            DatabaseAdapter.createAdapter({
+                package: 'pg',
+                adapter: PostgresAdapter
+            })
+        ]
     };
     ;
 
