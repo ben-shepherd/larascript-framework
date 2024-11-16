@@ -1,30 +1,31 @@
 import BaseConfig from "@src/core/base/BaseConfig";
-import { EnvironmentProduction } from "@src/core/consts/Environment";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
-import pg from 'pg';
-import { Sequelize } from "sequelize";
+import { Db, MongoClient, MongoServerError } from "mongodb";
 
-import ParsePostgresConnectionUrl from "../../database/helper/ParsePostgresConnectionUrl";
+import CreateDatabaseException from "../../database/exceptions/CreateDatabaseException";
+import ParseMongoDBConnectionString from "../../database/helper/ParseMongoDBConnectionUrl";
 import { IDatabaseAdapter } from "../../database/interfaces/IDatabaseAdapter";
 import { IDatabaseSchema } from "../../database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "../../database/interfaces/IDocumentManager";
-import { IPostgresConfig } from "../interfaces/IPostgresConfig";
+import { IMongoConfig } from "../interfaces/IMongoConfig";
 
-class PostgresAdapter extends BaseConfig implements IDatabaseAdapter  {
+class MongoDbAdapter extends BaseConfig implements IDatabaseAdapter  {
 
-    protected config!: IPostgresConfig;
+    protected config!: IMongoConfig;
 
     /**
      * todo: future refactor this to pg.Client
      */
-    protected client!: Sequelize;
+    protected client!: MongoClient;
+
+    protected db!: Db;
 
     /**
      * Constructor for PostgresAdapter
      * @param config The configuration object containing the uri and options for the PostgreSQL connection
      */
-    constructor(config: IPostgresConfig) {
+    constructor(config: IMongoConfig) {
         super()
         this.setConfig(config);   
     }
@@ -39,13 +40,15 @@ class PostgresAdapter extends BaseConfig implements IDatabaseAdapter  {
      */
     
     async connect(): Promise<void> {
+        if (this.isConnected()) {
+            return;
+        }
+
         await this.createDefaultDatabase()
         
-        this.client = new Sequelize(this.config.uri, { 
-            logging: App.env() !== EnvironmentProduction,
-            ...this.config.options, 
-            ...this.overrideConfig
-        })
+        const { uri, options } = this.config
+        this.client = new MongoClient(uri, options);
+        this.db = this.client.db();
     }
 
     /**
@@ -54,16 +57,34 @@ class PostgresAdapter extends BaseConfig implements IDatabaseAdapter  {
      * @param database - The name of the database to connect to.
      * @returns {Promise<pg.Client>} A promise that resolves with a new instance of PostgreSQL client.
      */
-    async connectToDatabase(database: string): Promise<pg.Client> {
-        const { username: user, password, host, port} = ParsePostgresConnectionUrl.parse(this.config.uri);
+    async connectToDatabase(database: string = 'app', options: object = {}): Promise<MongoClient> {
+        const { host, port, username, password, options: mongoOptions } = ParseMongoDBConnectionString.parse(this.config.uri); 
 
-        return new pg.Client({
-            user,
-            password,
+        const newCredentials = new ParseMongoDBConnectionString({
             host,
             port,
-            database
-        });
+            username,
+            password,
+            database,
+            options: mongoOptions
+        })
+
+        const uri = newCredentials.toString();
+        
+        const client = new MongoClient(uri, options)
+
+        try {
+            await client.connect();
+        }
+        catch (err) {
+            App.container('logger').error('Error connecting to database: ' + (err as Error).message);
+
+            if(err instanceof MongoServerError === false) {
+                throw err
+            }
+        }
+
+        return client
     }
 
     /**
@@ -73,33 +94,17 @@ class PostgresAdapter extends BaseConfig implements IDatabaseAdapter  {
      * @private
      */
     private async createDefaultDatabase(): Promise<void> {
-        const credentials = ParsePostgresConnectionUrl.parse(this.config.uri);
-            
-        const client = new pg.Client({
-            user: credentials.username,
-            password: credentials.password,
-            host: credentials.host,
-            port: credentials.port,
-            database: 'postgres'
-        });
-            
         try {
-            await client.connect();
-    
-            const result = await client.query(`SELECT FROM pg_database WHERE datname = '${credentials.database}'`)
-            const dbExists = typeof result.rowCount === 'number' && result.rowCount > 0
-    
-            if(dbExists) {
-                return;
+            const { database } = ParseMongoDBConnectionString.parse(this.config.uri);
+
+            if(!database) {
+                throw new CreateDatabaseException('Database name not found in connection string');
             }
-    
-            await client.query('CREATE DATABASE ' + credentials.database);
+
+            await this.schema().createDatabase(database);
         }
         catch (err) {
             App.container('logger').error(err);
-        }
-        finally {
-            await client.end();
         }
     }
         
@@ -108,7 +113,7 @@ class PostgresAdapter extends BaseConfig implements IDatabaseAdapter  {
      * @returns {boolean} True if connected, false otherwise
      */
     isConnected(): boolean {
-        return this.client instanceof Sequelize;
+        return this.db instanceof Db;
     }
  
     getDocumentManager(): IDocumentManager {
@@ -127,6 +132,17 @@ class PostgresAdapter extends BaseConfig implements IDatabaseAdapter  {
         throw new Error("Method not implemented.");
     }   
 
+    /**
+     * Get the MongoDB database instance
+     * @returns {Db} The MongoDB database instance
+     */
+    getDb(): Db {
+        if(!this.client) {
+            throw new Error('MongoDB client is not connected');
+        }
+        return this.client.db();
+    }
+
 }
 
-export default PostgresAdapter
+export default MongoDbAdapter

@@ -70,9 +70,8 @@ const config: IDatabaseConfig = {
      * Database adapters configuration.
      */
     adapters: [
-        DatabaseAdapter.createAdapter({
-            package: 'pg',
-            adapter: PostgresAdapter
+        DatabaseAdapter.createAdapter(PostgresAdapter, {
+            package: 'pg'
         })
     ]
 };

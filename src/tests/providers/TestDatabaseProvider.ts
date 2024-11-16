@@ -4,6 +4,7 @@ import { IDatabaseConfig } from '@src/core/domains/database/interfaces/IDatabase
 import DatabaseProvider from '@src/core/domains/database/providers/DatabaseProvider';
 import DatabaseAdapter from '@src/core/domains/database/services/DatabaseAdapter';
 import DatabaseConfig from '@src/core/domains/database/services/DatabaseConfig';
+import MongoDbAdapter from '@src/core/domains/mongodb/adapters/MongoDbAdapter';
 import PostgresAdapter from '@src/core/domains/postgres/adapters/PostgresAdapter';
 import defaultCredentials from '@src/core/domains/setup/utils/defaultCredentials';
 
@@ -32,23 +33,23 @@ export default class TestDatabaseProvider extends DatabaseProvider {
 
     protected config: IDatabaseConfig = {
         defaultConnectionName: 'postgres',
-        // keepAliveConnections: 'mongodb',
-        keepAliveConnections: '',
+        keepAliveConnections: 'mongodb',
         connections: {
-            // mongodb: {
-            //     driver: 'mongodb',
-            //     uri: mongoDbConnectionStringWithTestDb,
-            //     options: {}
-            // },
+            mongodb: DatabaseConfig.createConfig(MongoDbAdapter, {
+                uri: mongoDbConnectionStringWithTestDb,
+                options: {}
+            }),
             postgres: DatabaseConfig.createConfig(PostgresAdapter, {
                 uri: postgresConnectionStringWithTestDb,
                 options: {}
             })
         },
         adapters: [
-            DatabaseAdapter.createAdapter({
+            DatabaseAdapter.createAdapter(PostgresAdapter, {
                 package: 'pg',
-                adapter: PostgresAdapter
+            }),
+            DatabaseAdapter.createAdapter(MongoDbAdapter, {
+                package: 'mongodb',
             })
         ]
     };

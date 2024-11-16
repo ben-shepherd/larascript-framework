@@ -1,5 +1,6 @@
 import { ICtor } from "@src/core/interfaces/ICtor";
 
+import { IDatabaseAdapter } from "../interfaces/IDatabaseAdapter";
 import { IDatabaseAdapterConfig } from "../interfaces/IDatabaseConfig";
 
 
@@ -21,10 +22,11 @@ class DatabaseAdapter {
      * @param config The adapter config object to create, with the 'name' property set to undefined.
      * @returns The created adapter config object with the 'name' property set to the name of the adapter constructor.
      */
-    public static createAdapter(config: Omit<IDatabaseAdapterConfig, 'name'>): IDatabaseAdapterConfig {
+    public static createAdapter(adapter: ICtor<IDatabaseAdapter>, config: Omit<IDatabaseAdapterConfig, 'name' | 'adapter'>): IDatabaseAdapterConfig {
         return {
             ...config,
-            name: DatabaseAdapter.getName(config.adapter)
+            adapter,
+            name: DatabaseAdapter.getName(adapter),
         }
     }
 
