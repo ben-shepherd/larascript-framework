@@ -25,6 +25,7 @@ import { ICtor } from "@src/core/interfaces/ICtor";
  */
 const HasRegisterableConcern = (Broadcaster: ICtor) => {
     return class HasRegisterable extends Broadcaster implements IHasRegisterableConcern {
+
         
         protected registerObject: IRegsiterList = {}
 
@@ -67,7 +68,7 @@ const HasRegisterableConcern = (Broadcaster: ICtor) => {
             this.registerObject[listName] = this.registerObject[listName] ?? new Map();
             this.registerObject[listName].set(key, args);
         }
-    
+
         /**
          * Sets the registered values for the given list name.
          * If the list does not exist, it initializes it as a new Map.
