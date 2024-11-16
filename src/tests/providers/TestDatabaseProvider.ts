@@ -34,16 +34,22 @@ export default class TestDatabaseProvider extends DatabaseProvider {
     protected config: IDatabaseConfig = {
         defaultConnectionName: 'postgres',
         keepAliveConnections: 'mongodb',
-        connections: {
-            mongodb: DatabaseConfig.createConfig(MongoDbAdapter, {
-                uri: mongoDbConnectionStringWithTestDb,
-                options: {}
-            }),
-            postgres: DatabaseConfig.createConfig(PostgresAdapter, {
-                uri: postgresConnectionStringWithTestDb,
-                options: {}
-            })
-        },
+        connections: DatabaseConfig.createConnections([
+            {
+                name: 'mongodb',
+                config: DatabaseConfig.createConfig(MongoDbAdapter, {
+                    uri: mongoDbConnectionStringWithTestDb,
+                    options: {} // Additional connection options can be specified here
+                })
+            },
+            {
+                name: 'postgres',
+                config: DatabaseConfig.createConfig(PostgresAdapter, {
+                    uri: postgresConnectionStringWithTestDb,
+                    options: {} // Additional connection options can be specified here
+                })
+            }
+        ]),
         adapters: [
             DatabaseAdapter.createAdapter(PostgresAdapter, {
                 package: 'pg',

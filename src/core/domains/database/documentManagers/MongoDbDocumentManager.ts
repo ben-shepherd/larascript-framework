@@ -1,4 +1,4 @@
-import BaseDocumentManager from "@src/core/domains/database/base/BaseDocumentManager";
+import BaseDocumentManagerLegacy from "@src/core/domains/database/base/BaseDocumentManagerLegacy";
 import MongoDbQueryBuilder from "@src/core/domains/database/builder/MongoDbQueryBuilder";
 import MongoDbIdentiferConcern from "@src/core/domains/database/concerns/MongoDbIdentiferConcern";
 import InvalidObjectId from "@src/core/domains/database/exceptions/InvalidObjectId";
@@ -9,7 +9,7 @@ import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
 import MongoDBBelongsTo from "@src/core/domains/database/relationships/mongodb/MongoDBBelongsTo";
 import { BulkWriteOptions, Sort, UpdateOptions } from "mongodb";
 
-class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager, MongoDB> {
+class MongoDbDocumentManager extends BaseDocumentManagerLegacy<MongoDbDocumentManager, MongoDB> {
 
     protected driver!: MongoDB;
 

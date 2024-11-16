@@ -67,14 +67,8 @@ class Database extends BaseRegister implements IDatabaseService {
 
     /**
      * Connects to the default database connection.
-     * 
-     * This method checks if an adapter for the default connection has already been registered.
-     * If not, it retrieves the adapter constructor for the connection, creates a new instance,
-     * and connects it. The connected adapter is then registered for the default connection.
-     * 
-     * @returns {Promise<void>}
      */
-    async connectDefault() {
+    async connectDefault(): Promise<void> {
         await this.connectAdapter(this.getDefaultConnectionName())
     }
 
@@ -98,7 +92,7 @@ class Database extends BaseRegister implements IDatabaseService {
             return;
         }
 
-        const adapter = new adapterCtor(connectionConfig);
+        const adapter = new adapterCtor(connectionName, connectionConfig);
         await adapter.connect()
         
         this.registerByList(Database.REGISTERED_ADAPTERS_BY_CONNECTION, connectionName, adapter)
@@ -160,6 +154,14 @@ class Database extends BaseRegister implements IDatabaseService {
         this.overrideDefaultConnectionName = name ?? undefined
     }
 
+    /**
+     * Retrieves the connection configuration for a specified connection name.
+     * 
+     * @template T - The type of the connection configuration object.
+     * @param {string} connectionName - The name of the connection to retrieve the configuration for.
+     * @returns {IDatabaseGenericConnectionConfig<T>} The configuration object for the specified connection.
+     * @throws {Error} If the connection is not found.
+     */
     getConnectionConfig<T extends object = object>(connectionName: string): IDatabaseGenericConnectionConfig<T> {
         const connectionConfig: IDatabaseGenericConnectionConfig = this.getRegisteredByList(Database.REGISTERED_CONNECTIONS_CONFIG).get(connectionName)?.[0]
 
@@ -219,7 +221,7 @@ class Database extends BaseRegister implements IDatabaseService {
      * @returns 
      */
     documentManager<T>(connectionName: string = this.config.defaultConnectionName): T {
-        return this.store[connectionName].documentManager() as T;
+        return this.getAdapter(connectionName).getDocumentManager() as T
     }
     
     /**
@@ -229,18 +231,18 @@ class Database extends BaseRegister implements IDatabaseService {
          * @returns 
          */
     schema<T>(connectionName: string = this.config.defaultConnectionName): T {
-        return this.store[connectionName].schema() as T;
+        return this.getAdapter(connectionName).getSchema() as T
     }
     
     /**
-         * Get the database raw client
-         * Example
-         *  getClient() // MongoClient
-         * 
-         * @returns 
-         */
+     * Get the database raw client
+     * Example
+     *  getClient() // MongoClient
+     * 
+     * @returns 
+     */
     getClient<T = unknown>(connectionName: string = this.config.defaultConnectionName): T {
-        return this.store[connectionName].getClient();
+        return this.getAdapter(connectionName).getClient() as T
     }
 
 }

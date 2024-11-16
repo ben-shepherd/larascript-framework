@@ -1,16 +1,17 @@
-import BaseDocumentManagerLegacy from "@src/core/domains/database/base/BaseDocumentManagerLegacy";
 import PostgresQueryBuilder, { SelectOptions } from "@src/core/domains/database/builder/PostgresQueryBuilder";
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
-import Postgres from "@src/core/domains/database/providers-db/Postgres";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { BindOrReplacements, QueryOptions, QueryTypes } from "sequelize";
+
+import BaseDocumentManager from "../database/base/BaseDocumentManager";
+import PostgresAdapter from "./adapters/PostgresAdapter";
 
 /**
  * PostgreSQL document manager
  *
  * Provides methods for interacting with a PostgreSQL database
  */
-class PostgresDocumentManager extends BaseDocumentManagerLegacy<PostgresDocumentManager, Postgres> {
+class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManager, PostgresAdapter> {
 
     protected builder = new PostgresQueryBuilder()
 
@@ -70,7 +71,7 @@ class PostgresDocumentManager extends BaseDocumentManagerLegacy<PostgresDocument
      */
     async findOne<T>(selectOptions: Partial<SelectOptions>): Promise<T | null> {
         return this.captureError(async () => {
-            const sequelize = this.driver.getClient();
+            const sequelize = this.adapter.getClient();
             const queryString = this.builder.select({
                 ...selectOptions,
                 tableName: this.getTable(),
@@ -96,7 +97,7 @@ class PostgresDocumentManager extends BaseDocumentManagerLegacy<PostgresDocument
      */
     async findMany<T>(options: Partial<SelectOptions>): Promise<T> {
         return this.captureError(async () => {
-            const sequelize = this.driver.getClient()
+            const sequelize = this.adapter.getClient()
 
             const queryString = this.builder.select({
                 ...options,
@@ -127,7 +128,7 @@ class PostgresDocumentManager extends BaseDocumentManagerLegacy<PostgresDocument
             document = this.documentWithUuid(document)
             document = this.documentStripUndefinedProperties(document)
 
-            const queryInterface = this.driver.getQueryInterface();
+            const queryInterface = this.adapter.getQueryInterface();
             await queryInterface.insert(null, this.getTable(), document, options) as T
 
             return document as T
@@ -148,7 +149,7 @@ class PostgresDocumentManager extends BaseDocumentManagerLegacy<PostgresDocument
             documents = documents.map(d => this.documentWithUuid(d))
             documents = documents.map(d => this.documentStripUndefinedProperties(d))
 
-            const queryInterface = this.driver.getQueryInterface();
+            const queryInterface = this.adapter.getQueryInterface();
             await queryInterface.bulkInsert(this.getTable(), documents, options) as T[];
 
             return documents as T
@@ -165,7 +166,7 @@ class PostgresDocumentManager extends BaseDocumentManagerLegacy<PostgresDocument
             this.validator.validateSingleDocument(document)
             this.validator.validateContainsId(document)
 
-            const queryInterface = this.driver.getQueryInterface();
+            const queryInterface = this.adapter.getQueryInterface();
             await queryInterface.bulkUpdate(this.getTable(), document, { id: document.id })
 
             return document as T
@@ -200,7 +201,7 @@ class PostgresDocumentManager extends BaseDocumentManagerLegacy<PostgresDocument
             this.validator.validateSingleDocument(document)
             this.validator.validateContainsId(document)
 
-            const queryInterface = this.driver.getQueryInterface();
+            const queryInterface = this.adapter.getQueryInterface();
 
             return await queryInterface.bulkDelete(this.getTable(), {
                 id: document.id
@@ -229,7 +230,7 @@ class PostgresDocumentManager extends BaseDocumentManagerLegacy<PostgresDocument
      */
     async truncate(): Promise<void> {
         return this.captureError(async () => {
-            const queryInterface = this.driver.getQueryInterface();
+            const queryInterface = this.adapter.getQueryInterface();
             await queryInterface.bulkDelete(this.getTable(), {});
         })
     }

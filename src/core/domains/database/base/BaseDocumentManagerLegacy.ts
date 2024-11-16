@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 // Import necessary interfaces and classes
 import MissingTable from "@src/core/domains/database/exceptions/InvalidTable";
+import { IDatabaseProvider } from "@src/core/domains/database/interfaces/IDatabaseProvider";
 import { IDatabaseDocument, IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IDocumentValidator } from "@src/core/domains/database/interfaces/IDocumentValidator";
 import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
@@ -11,17 +12,15 @@ import HasMany from "@src/core/domains/database/relationships/HasMany";
 import DocumentValidator from "@src/core/domains/database/validator/DocumentValidator";
 import { App } from "@src/core/services/App";
 
-import { IDatabaseAdapter } from "../interfaces/IDatabaseAdapter";
-
 /**
  * Abstract base class for document management operations
- * @template TDocMan - Type extending IDocumentManager
- * @template TAdapter - Type extending IDatabaseProvider
+ * @template Query - Type extending IDocumentManager
+ * @template Provider - Type extending IDatabaseProvider
  */
-abstract class BaseDocumentManager<TDocMan extends IDocumentManager = IDocumentManager, TAdapter extends IDatabaseAdapter = IDatabaseAdapter> implements IDocumentManager {
+abstract class BaseDocumentManagerLegacy<Query extends IDocumentManager = IDocumentManager, Provider extends IDatabaseProvider = IDatabaseProvider> implements IDocumentManager {
 
     // Protected properties
-    protected adapter!: TAdapter;
+    protected driver!: Provider;
 
     protected tableName!: string;
     
@@ -30,10 +29,10 @@ abstract class BaseDocumentManager<TDocMan extends IDocumentManager = IDocumentM
     
     /**
      * Constructor for BaseDocumentManager
-     * @param adapter - Database provider instance
+     * @param driver - Database provider instance
      */
-    constructor(adapter: TAdapter) {
-        this.adapter = adapter;
+    constructor(driver: Provider) {
+        this.driver = driver;
     }
 
     /**
@@ -62,7 +61,7 @@ abstract class BaseDocumentManager<TDocMan extends IDocumentManager = IDocumentM
      * @param table - Name of the table
      * @returns Current instance cast as Query type
      */
-    table(table: string): TDocMan {
+    table(table: string): Query {
         this.tableName = table;
         return this as any;
     } 
@@ -108,7 +107,7 @@ abstract class BaseDocumentManager<TDocMan extends IDocumentManager = IDocumentM
      * @returns Promise resolving to related document or null
      */
     async belongsTo<T>(document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null> {
-        return new BelongsTo().handle(this.adapter.getConnectionName(), document, options);
+        return new BelongsTo().handle(this.driver.connectionName, document, options);
     }
 
     /**
@@ -118,7 +117,7 @@ abstract class BaseDocumentManager<TDocMan extends IDocumentManager = IDocumentM
      * @returns Promise resolving to array of related documents
      */
     async hasMany<T>(document: IDatabaseDocument, options: IHasManyOptions): Promise<T> {
-        return new HasMany().handle(this.adapter.getConnectionName(), document, options) as T;
+        return new HasMany().handle(this.driver.connectionName, document, options) as T;
     }
 
     /**
@@ -133,7 +132,7 @@ abstract class BaseDocumentManager<TDocMan extends IDocumentManager = IDocumentM
         }
         catch (err) {
             if(err instanceof Error && err?.message) {
-                App.container('logger').error(`Database error(${this.adapter.getConnectionName()}): `, err.message, err.stack)
+                App.container('logger').error(`Database error(${this.driver.connectionName}): `, err.message, err.stack)
             }
             throw err
         }
@@ -141,4 +140,4 @@ abstract class BaseDocumentManager<TDocMan extends IDocumentManager = IDocumentM
 
 }
 
-export default BaseDocumentManager
+export default BaseDocumentManagerLegacy

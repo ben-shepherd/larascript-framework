@@ -1,23 +1,15 @@
-import BaseConfig from "@src/core/base/BaseConfig";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
-import { Db, MongoClient, MongoServerError } from "mongodb";
+import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
 
+import BaseDatabaseAdapter from "../../database/base/BaseDatabaseAdapter";
 import CreateDatabaseException from "../../database/exceptions/CreateDatabaseException";
 import ParseMongoDBConnectionString from "../../database/helper/ParseMongoDBConnectionUrl";
-import { IDatabaseAdapter } from "../../database/interfaces/IDatabaseAdapter";
 import { IDatabaseSchema } from "../../database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "../../database/interfaces/IDocumentManager";
 import { IMongoConfig } from "../interfaces/IMongoConfig";
 
-class MongoDbAdapter extends BaseConfig implements IDatabaseAdapter  {
-
-    protected config!: IMongoConfig;
-
-    /**
-     * todo: future refactor this to pg.Client
-     */
-    protected client!: MongoClient;
+class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
 
     protected db!: Db;
 
@@ -25,9 +17,10 @@ class MongoDbAdapter extends BaseConfig implements IDatabaseAdapter  {
      * Constructor for PostgresAdapter
      * @param config The configuration object containing the uri and options for the PostgreSQL connection
      */
-    constructor(config: IMongoConfig) {
+    constructor(connectionName: string, config: IMongoConfig) {
         super()
-        this.setConfig(config);   
+        this.setConnectionName(connectionName);
+        this.setConfig(config);
     }
 
     /**
@@ -47,7 +40,8 @@ class MongoDbAdapter extends BaseConfig implements IDatabaseAdapter  {
         await this.createDefaultDatabase()
         
         const { uri, options } = this.config
-        this.client = new MongoClient(uri, options);
+
+        this.client = new MongoClient(uri, options as MongoClientOptions);
         this.db = this.client.db();
     }
 
@@ -121,10 +115,6 @@ class MongoDbAdapter extends BaseConfig implements IDatabaseAdapter  {
     }
 
     getSchema(): IDatabaseSchema {
-        throw new Error("Method not implemented.");
-    }
-
-    getClient(): unknown {
         throw new Error("Method not implemented.");
     }
 

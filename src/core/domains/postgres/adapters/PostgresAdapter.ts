@@ -1,32 +1,48 @@
-import BaseConfig from "@src/core/base/BaseConfig";
 import { EnvironmentProduction } from "@src/core/consts/Environment";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 import pg from 'pg';
-import { Sequelize } from "sequelize";
+import { QueryInterface, Sequelize } from "sequelize";
 
+import BaseDatabaseAdapter from "../../database/base/BaseDatabaseAdapter";
 import ParsePostgresConnectionUrl from "../../database/helper/ParsePostgresConnectionUrl";
-import { IDatabaseAdapter } from "../../database/interfaces/IDatabaseAdapter";
 import { IDatabaseSchema } from "../../database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "../../database/interfaces/IDocumentManager";
+import InvalidSequelizeException from "../exceptions/InvalidSequelizeException";
 import { IPostgresConfig } from "../interfaces/IPostgresConfig";
+import PostgresDocumentManager from "../PostgresDocumentManager";
+import PostgresSchema from "../PostgresSchema";
 
-class PostgresAdapter extends BaseConfig implements IDatabaseAdapter  {
-
-    protected config!: IPostgresConfig;
-
-    /**
-     * todo: future refactor this to pg.Client
-     */
-    protected client!: Sequelize;
+class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
 
     /**
      * Constructor for PostgresAdapter
      * @param config The configuration object containing the uri and options for the PostgreSQL connection
      */
-    constructor(config: IPostgresConfig) {
+    constructor(connectionName: string, config: IPostgresConfig) {
         super()
+        this.setConnectionName(connectionName);
         this.setConfig(config);   
+    }
+
+    /**
+     * Get the query interface for the database
+     * @returns {QueryInterface} The query interface
+     */
+    getQueryInterface(): QueryInterface {
+        return this.getSequelize().getQueryInterface();
+    }
+    
+    /**
+     * Get the sequelize instance
+     * @returns 
+     */
+    getSequelize(): Sequelize {
+        if(!this.getClient()) {
+            throw new InvalidSequelizeException('Sequelize is not connected');
+        }
+    
+        return this.getClient()
     }
 
     /**
@@ -41,11 +57,13 @@ class PostgresAdapter extends BaseConfig implements IDatabaseAdapter  {
     async connect(): Promise<void> {
         await this.createDefaultDatabase()
         
-        this.client = new Sequelize(this.config.uri, { 
-            logging: App.env() !== EnvironmentProduction,
-            ...this.config.options, 
-            ...this.overrideConfig
-        })
+        this.setClient(
+            new Sequelize(this.config.uri, { 
+                logging: App.env() !== EnvironmentProduction,
+                ...this.config.options, 
+                ...this.overrideConfig
+            })
+        )
     }
 
     /**
@@ -112,15 +130,11 @@ class PostgresAdapter extends BaseConfig implements IDatabaseAdapter  {
     }
  
     getDocumentManager(): IDocumentManager {
-        throw new Error("Method not implemented.");
+        return new PostgresDocumentManager(this)
     }
 
     getSchema(): IDatabaseSchema {
-        throw new Error("Method not implemented.");
-    }
-
-    getClient(): unknown {
-        throw new Error("Method not implemented.");
+        return new PostgresSchema(this)
     }
 
     getQueryBuilderCtor(): ICtor<unknown> {
