@@ -63,7 +63,7 @@ export interface IDocumentManager<TData = unknown> {
      * @param options The options for selecting the documents.
      * @returns A promise resolving to the found documents.
      */
-    findMany<T extends TData = TData>(options: FindOptions): Promise<T>;
+    findMany<T extends TData = TData>(options: FindOptions): Promise<T[]>;
     
     /**
      * Insert a single document.

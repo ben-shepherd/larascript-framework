@@ -4,9 +4,9 @@ import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
 
 import BaseDatabaseAdapter from "../../database/base/BaseDatabaseAdapter";
 import CreateDatabaseException from "../../database/exceptions/CreateDatabaseException";
-import ParseMongoDBConnectionString from "../../database/helper/ParseMongoDBConnectionUrl";
 import { IDatabaseSchema } from "../../database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "../../database/interfaces/IDocumentManager";
+import ParseMongoDBConnectionString from "../helper/ParseMongoDBConnectionUrl";
 import { IMongoConfig } from "../interfaces/IMongoConfig";
 import MongoDbDocumentManager from "../MongoDbDocumentManager";
 import MongoDbSchema from "../MongoDbSchema";

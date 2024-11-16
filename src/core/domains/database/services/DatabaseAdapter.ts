@@ -3,7 +3,6 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { IDatabaseAdapter } from "../interfaces/IDatabaseAdapter";
 import { IDatabaseAdapterConfig } from "../interfaces/IDatabaseConfig";
 
-
 class DatabaseAdapter {
 
     /**

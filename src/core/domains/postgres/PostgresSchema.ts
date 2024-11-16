@@ -1,4 +1,4 @@
-import { IAlterTableOptions } from "@src/core/domains/database/interfaces/postgres/IPostgresAlterTableOptions";
+import { IAlterTableOptions } from "@src/core/domains/postgres/interfaces/IPostgresAlterTableOptions";
 import { DataTypes, QueryInterfaceCreateTableOptions, QueryInterfaceDropTableOptions } from "sequelize";
 import { ModelAttributes } from 'sequelize/types/model';
 

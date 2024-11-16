@@ -1,6 +1,5 @@
 import { IDatabaseProviderCtor } from "@src/core/domains/database/interfaces/IDatabaseProvider";
-import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
-import Postgres from "@src/core/domains/database/providers-db/Postgres";
+
 
 interface Config {
     providers: Record<string, string>;
@@ -8,6 +7,10 @@ interface Config {
     packages: Record<string, string>;
 }
 
+/**
+ * Todo: This should be removed/refactored
+ * Needs to be more dynamic to use adapter pattern
+ */
 const DatabaseConfig: Config = {
 
     /**
@@ -31,8 +34,8 @@ const DatabaseConfig: Config = {
      *   Used for instantiating new database driver instances
      */
     constructors: {
-        mongodb: MongoDB,
-        postgres: Postgres
+        // mongodb: MongoDB,
+        // postgres: Postgres
     },
 
     /**

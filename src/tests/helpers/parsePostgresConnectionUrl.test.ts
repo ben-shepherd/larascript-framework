@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals';
-import ParsePostgresConnectionUrl from '@src/core/domains/database/helper/ParsePostgresConnectionUrl';
+import ParsePostgresConnectionUrl from '@src/core/domains/postgres/helper/ParsePostgresConnectionUrl';
 
 describe('test parsing a postgres connection string', () => {
 

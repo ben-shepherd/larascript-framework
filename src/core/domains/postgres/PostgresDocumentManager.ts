@@ -1,5 +1,5 @@
-import PostgresQueryBuilder, { SelectOptions } from "@src/core/domains/database/builder/PostgresQueryBuilder";
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
+import PostgresQueryBuilder, { SelectOptions } from "@src/core/domains/postgres/builder/PostgresQueryBuilder";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { BindOrReplacements, QueryOptions, QueryTypes } from "sequelize";
 

@@ -1,10 +1,10 @@
-import MongoDbQueryBuilder from "@src/core/domains/database/builder/MongoDbQueryBuilder";
-import MongoDbIdentiferConcern from "@src/core/domains/database/concerns/MongoDbIdentiferConcern";
 import InvalidObjectId from "@src/core/domains/database/exceptions/InvalidObjectId";
 import { FindOptions, IDatabaseDocument, OrderOptions } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
 import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
-import MongoDBBelongsTo from "@src/core/domains/database/relationships/mongodb/MongoDBBelongsTo";
+import MongoDbQueryBuilder from "@src/core/domains/mongodb/builder/MongoDbQueryBuilder";
+import MongoDbIdentiferConcern from "@src/core/domains/mongodb/concerns/MongoDbIdentiferConcern";
+import MongoDBBelongsTo from "@src/core/domains/mongodb/relations/MongoDBBelongsTo";
 import { BulkWriteOptions, Sort, UpdateOptions } from "mongodb";
 
 import BaseDocumentManager from "../database/base/BaseDocumentManager";

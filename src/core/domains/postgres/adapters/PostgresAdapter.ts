@@ -5,10 +5,10 @@ import pg from 'pg';
 import { QueryInterface, Sequelize } from "sequelize";
 
 import BaseDatabaseAdapter from "../../database/base/BaseDatabaseAdapter";
-import ParsePostgresConnectionUrl from "../../database/helper/ParsePostgresConnectionUrl";
 import { IDatabaseSchema } from "../../database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "../../database/interfaces/IDocumentManager";
 import InvalidSequelizeException from "../exceptions/InvalidSequelizeException";
+import ParsePostgresConnectionUrl from "../helper/ParsePostgresConnectionUrl";
 import { IPostgresConfig } from "../interfaces/IPostgresConfig";
 import PostgresDocumentManager from "../PostgresDocumentManager";
 import PostgresSchema from "../PostgresSchema";

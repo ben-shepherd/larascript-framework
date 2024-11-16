@@ -1,11 +1,11 @@
-import ParseMongoDBConnectionString from '@src/core/domains/database/helper/ParseMongoDBConnectionUrl';
-import ParsePostgresConnectionUrl from '@src/core/domains/database/helper/ParsePostgresConnectionUrl';
 import { IDatabaseConfig } from '@src/core/domains/database/interfaces/IDatabaseConfig';
 import DatabaseProvider from '@src/core/domains/database/providers/DatabaseProvider';
 import DatabaseAdapter from '@src/core/domains/database/services/DatabaseAdapter';
 import DatabaseConfig from '@src/core/domains/database/services/DatabaseConfig';
 import MongoDbAdapter from '@src/core/domains/mongodb/adapters/MongoDbAdapter';
+import ParseMongoDBConnectionString from '@src/core/domains/mongodb/helper/ParseMongoDBConnectionUrl';
 import PostgresAdapter from '@src/core/domains/postgres/adapters/PostgresAdapter';
+import ParsePostgresConnectionUrl from '@src/core/domains/postgres/helper/ParsePostgresConnectionUrl';
 import defaultCredentials from '@src/core/domains/setup/utils/defaultCredentials';
 
 export const testDbName = 'test_db';
