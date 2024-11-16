@@ -15,7 +15,7 @@ describe('test postgres client connection', () => {
 
     test('test connection', async () => {
 
-        const client = App.container('db').provider<PostgresAdapter>().getPgClient()
+        const client = App.container('db').getAdapter<PostgresAdapter>().getPgClient()
 
         await client.connect()
 

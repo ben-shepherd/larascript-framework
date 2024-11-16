@@ -266,14 +266,14 @@ class MigrationService implements IMigrationService {
             /**
              * Handle MongoDB driver
              */
-            if (App.container('db').isProvider('mongodb')) {
+            if (App.container('db').isAdapter('mongodb')) {
                 await createMongoDBSchema(tableName);
             }
 
             /**
              * Handle Postgres driver
              */
-            if (App.container('db').isProvider('postgres')) {
+            if (App.container('db').isAdapter('postgres')) {
                 await createPostgresSchema(tableName);
             }
         }

@@ -69,7 +69,7 @@ abstract class BaseMigration implements IMigration {
         }
 
         // Check if the current database matches the specified provider for this migration
-        return App.container('db').isProvider(this.databaseProvider);
+        return App.container('db').isAdapter(this.databaseProvider);
     }
 
 }

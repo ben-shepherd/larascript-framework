@@ -23,4 +23,6 @@ export interface  IDatabaseAdapter {
     getSchema(): IDatabaseSchema;
 
     getQueryBuilderCtor(): ICtor<unknown>;
+
+    isConnected(): Promise<boolean>;
 }

@@ -15,9 +15,9 @@ export type FindOptions = { filter?: object, order?: OrderOptions, limit?: numbe
 /**
  * Provides methods for interacting with a database table.
  *
- * @template T The type of the documents managed by this IDocumentManager.
+ * @template TData The type of the documents managed by this IDocumentManager.
  */
-export interface IDocumentManager<T = any> {
+export interface IDocumentManager<TData = unknown> {
 
     /**
      * The document validator used by this IDocumentManager.
@@ -39,7 +39,7 @@ export interface IDocumentManager<T = any> {
      * @param table The name of the table.
      * @returns The current instance, cast as the type of the IDocumentManager.
      */
-    table(table: string): IDocumentManager<T>;
+    table(table: string): IDocumentManager<TData>;
     
     /**
      * Find a document by id.
@@ -47,7 +47,7 @@ export interface IDocumentManager<T = any> {
      * @param id The id of the document to find.
      * @returns A promise resolving to the found document, or null if not found.
      */
-    findById(id: string): Promise<T | null>;
+    findById<T extends TData = TData>(id: string): Promise<T | null>;
     
     /**
      * Find a single document.
@@ -55,7 +55,7 @@ export interface IDocumentManager<T = any> {
      * @param options The options for selecting the document.
      * @returns A promise resolving to the found document, or null if not found.
      */
-    findOne(options: FindOptions): Promise<T | null>;
+    findOne<T extends TData = TData>(options: FindOptions): Promise<T | null>;
     
     /**
      * Find multiple documents.
@@ -63,7 +63,7 @@ export interface IDocumentManager<T = any> {
      * @param options The options for selecting the documents.
      * @returns A promise resolving to the found documents.
      */
-    findMany(options: FindOptions): Promise<T>;
+    findMany<T extends TData = TData>(options: FindOptions): Promise<T>;
     
     /**
      * Insert a single document.
@@ -72,7 +72,7 @@ export interface IDocumentManager<T = any> {
      * @param options Optional insertion options.
      * @returns A promise resolving to the inserted document.
      */
-    insertOne(document: IDatabaseDocument, options?: object): Promise<T>;
+    insertOne<T extends TData = TData>(document: IDatabaseDocument, options?: object): Promise<T>;
     
     /**
      * Insert multiple documents.
@@ -81,7 +81,7 @@ export interface IDocumentManager<T = any> {
      * @param options Optional insertion options.
      * @returns A promise resolving to the inserted documents.
      */
-    insertMany(documents: IDatabaseDocument[], options?: object): Promise<T>;
+    insertMany<T extends TData = TData>(documents: IDatabaseDocument[], options?: object): Promise<T>;
     
     /**
      * Update a single document.
@@ -90,7 +90,7 @@ export interface IDocumentManager<T = any> {
      * @param options Optional update options.
      * @returns A promise resolving to the updated document.
      */
-    updateOne(document: IDatabaseDocument, options?: object): Promise<T>;
+    updateOne<T extends TData = TData>(document: IDatabaseDocument, options?: object): Promise<T>;
     
     /**
      * Update multiple documents.
@@ -99,7 +99,7 @@ export interface IDocumentManager<T = any> {
      * @param options Optional update options.
      * @returns A promise resolving to the updated documents.
      */
-    updateMany(documents: IDatabaseDocument[], options?: object): Promise<T>;
+    updateMany<T extends TData = TData>(documents: IDatabaseDocument[], options?: object): Promise<T>;
     
     /**
      * Delete a single document.
@@ -107,7 +107,7 @@ export interface IDocumentManager<T = any> {
      * @param document The document to delete.
      * @returns A promise resolving to the deleted document.
      */
-    deleteOne(document: IDatabaseDocument): Promise<T>;
+    deleteOne<T extends TData = TData>(document: IDatabaseDocument): Promise<T>;
     
     /**
      * Delete multiple documents.
@@ -115,7 +115,7 @@ export interface IDocumentManager<T = any> {
      * @param documents The documents to delete.
      * @returns A promise resolving to the deleted documents.
      */
-    deleteMany(documents: IDatabaseDocument[]): Promise<T>;
+    deleteMany<T extends TData = TData>(documents: IDatabaseDocument[]): Promise<T>;
 
     /**
      * Truncate the table.
@@ -131,7 +131,7 @@ export interface IDocumentManager<T = any> {
      * @param options The relationship options.
      * @returns A promise resolving to the related document, or null if not found.
      */
-    belongsTo(document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null>;
+    belongsTo<T extends TData = TData>(document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null>;
     
     /**
      * Handle a "has many" relationship.
@@ -140,5 +140,5 @@ export interface IDocumentManager<T = any> {
      * @param options The relationship options.
      * @returns A promise resolving to the related documents.
      */
-    hasMany(document: IDatabaseDocument, options: IHasManyOptions): Promise<T[]>;
+    hasMany<T extends TData = TData>(document: IDatabaseDocument, options: IHasManyOptions): Promise<T[]>;
 }

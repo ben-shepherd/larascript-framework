@@ -102,7 +102,7 @@ class DatabaseService implements IDatabaseService {
      * @param connectionName 
      * @returns 
      */
-    isProvider(driver: string, connectionName: string = this.config.defaultConnectionName): boolean {
+    isAdapter(driver: string, connectionName: string = this.config.defaultConnectionName): boolean {
         try {
             const driverCtor = this.getDriverCtorByName(driver);
             return this.store[connectionName] instanceof driverCtor;
@@ -121,7 +121,7 @@ class DatabaseService implements IDatabaseService {
      * @param connectionName 
      * @returns 
      */
-    provider<T>(connectionName: string = this.config.defaultConnectionName): T {
+    getAdapter<T>(connectionName: string = this.config.defaultConnectionName): T {
         if (!this.store[connectionName]) {
             throw new InvalidDatabaseConnection(`Invalid database connection: ${connectionName}`);
         }

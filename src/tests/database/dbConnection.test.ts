@@ -19,11 +19,11 @@ describe('attempt to connect to MongoDB database', () => {
    */
     test('test db connection',async () => {
         const db = App.container('db');
-        expect(db.provider('mongodb') instanceof MongoDbAdapter).toBeTruthy();
-        expect(db.provider('postgres') instanceof PostgresAdapter).toBeTruthy();
+        expect(db.getAdapter('mongodb') instanceof MongoDbAdapter).toBeTruthy();
+        expect(db.getAdapter('postgres') instanceof PostgresAdapter).toBeTruthy();
 
         await db.boot();
-        expect(db.provider('mongodb').isConnected()).toBeTruthy();
-        expect(db.provider('postgres').isConnected()).toBeTruthy();
+        expect(db.getAdapter('mongodb').isConnected()).toBeTruthy();
+        expect(db.getAdapter('postgres').isConnected()).toBeTruthy();
     });
 });

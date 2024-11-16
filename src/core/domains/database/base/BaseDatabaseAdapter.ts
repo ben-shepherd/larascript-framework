@@ -7,10 +7,7 @@ import { IDatabaseGenericConnectionConfig } from "../interfaces/IDatabaseConfig"
 import { IDatabaseSchema } from "../interfaces/IDatabaseSchema";
 import { IDocumentManager } from "../interfaces/IDocumentManager";
 
-abstract class BaseDatabaseAdapter<
-    TClient = unknown,
-    TConfig extends object = object
-> extends BaseConfig implements IDatabaseAdapter {
+abstract class BaseDatabaseAdapter<TClient = unknown, TConfig extends object = object> extends BaseConfig implements IDatabaseAdapter {
 
     /**
      * Database client
@@ -70,6 +67,7 @@ abstract class BaseDatabaseAdapter<
 
     abstract getQueryBuilderCtor(): ICtor<unknown>;
 
+    abstract isConnected(): Promise<boolean>;
 
 }
 

@@ -5,9 +5,18 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 
 import { IDatabaseAdapter } from "../interfaces/IDatabaseAdapter";
 import { IDatabaseAdapterConfig, IDatabaseConfig, IDatabaseGenericConnectionConfig } from "../interfaces/IDatabaseConfig";
+import { IDatabaseSchema } from "../interfaces/IDatabaseSchema";
 import { IDatabaseService } from "../interfaces/IDatabaseService";
+import { IDocumentManager } from "../interfaces/IDocumentManager";
 
-
+/**
+ * Database Service
+ * - Registers database adapters, connections 
+ * - Connects to default and keep alive connections
+ * 
+ * Usage:
+ *  App.container('db').provider(connectionName).documentManager().findMany({})
+ */
 class Database extends BaseRegister implements IDatabaseService {
 
     static readonly REGISTERED_ADAPTERS_CONFIG = 'registeredAdaptersConfig'
@@ -118,23 +127,12 @@ class Database extends BaseRegister implements IDatabaseService {
     }
 
     /**
-     * Alias of getAdapter.
-     * Get the provider for the given connection name.
-     * 
-     * @param connectionName The name of the connection to get the provider for. If not specified, the default connection is used.
-     * @returns The provider instance for the given connection.
-     */
-    provider<T = unknown>(connectionName?: string): T {
-        return this.getAdapter(connectionName) as T
-    }
-
-    /**
      * Checks if a connection is a specified provider (adapter)
      * @param adapterName 
      * @param connectionName 
      * @returns 
      */
-    isProvider(adapterName: string, connectionName: string = this.getDefaultConnectionName()): boolean {
+    isAdapter(adapterName: string, connectionName: string = this.getDefaultConnectionName()): boolean {
         return this.getConnectionConfig(connectionName).adapter === adapterName
     }
     
@@ -204,14 +202,14 @@ class Database extends BaseRegister implements IDatabaseService {
      * @returns The adapter instance for the given connection.
      * @throws {Error} If the connection or adapter is not registered.
      */
-    getAdapter<T extends IDatabaseAdapter = IDatabaseAdapter>(connectionName: string = this.getDefaultConnectionName()): T {
+    getAdapter<TAdapter extends IDatabaseAdapter = IDatabaseAdapter>(connectionName: string = this.getDefaultConnectionName()): TAdapter {
         const adapter = this.getRegisteredByList(Database.REGISTERED_ADAPTERS_BY_CONNECTION).get(connectionName)?.[0]
 
         if(!adapter) {
             throw new Error('Adapter not found: ' + connectionName)
         }
 
-        return adapter as T
+        return adapter as TAdapter
     }
 
     /**
@@ -220,8 +218,8 @@ class Database extends BaseRegister implements IDatabaseService {
      * @param connectionName 
      * @returns 
      */
-    documentManager<T>(connectionName: string = this.config.defaultConnectionName): T {
-        return this.getAdapter(connectionName).getDocumentManager() as T
+    documentManager<TDocMan extends IDocumentManager = IDocumentManager>(connectionName: string = this.config.defaultConnectionName): TDocMan {
+        return this.getAdapter(connectionName).getDocumentManager() as TDocMan
     }
     
     /**
@@ -230,8 +228,8 @@ class Database extends BaseRegister implements IDatabaseService {
          * @param connectionName 
          * @returns 
          */
-    schema<T>(connectionName: string = this.config.defaultConnectionName): T {
-        return this.getAdapter(connectionName).getSchema() as T
+    schema<TSchema extends IDatabaseSchema = IDatabaseSchema>(connectionName: string = this.config.defaultConnectionName): TSchema {
+        return this.getAdapter(connectionName).getSchema() as TSchema
     }
     
     /**

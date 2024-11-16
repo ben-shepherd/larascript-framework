@@ -145,7 +145,7 @@ class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
      * Check if the database connection is established
      * @returns {boolean} True if connected, false otherwise
      */
-    isConnected(): boolean {
+    async isConnected(): Promise<boolean> {
         return this.client instanceof Sequelize;
     }
  

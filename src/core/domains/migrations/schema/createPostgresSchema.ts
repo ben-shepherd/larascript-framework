@@ -9,7 +9,7 @@ import PostgresAdapter from "../../postgres/adapters/PostgresAdapter";
  * @returns {Promise<void>}
  */
 const createPostgresSchema = async (tableName: string = 'migrations') => {
-    const sequelize = App.container('db').provider<PostgresAdapter>().getSequelize();
+    const sequelize = App.container('db').getAdapter<PostgresAdapter>().getSequelize();
     const queryInterface = sequelize.getQueryInterface();
 
     if ((await queryInterface.showAllTables())?.includes(tableName)) {

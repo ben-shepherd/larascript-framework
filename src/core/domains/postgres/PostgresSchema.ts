@@ -2,6 +2,7 @@ import { IAlterTableOptions } from "@src/core/domains/database/interfaces/postgr
 import { DataTypes, QueryInterfaceCreateTableOptions, QueryInterfaceDropTableOptions } from "sequelize";
 import { ModelAttributes } from 'sequelize/types/model';
 
+import { IDatabaseAdapter } from "../database/interfaces/IDatabaseAdapter";
 import { IDatabaseAdapterSchema } from "../database/interfaces/IDatabaseAdapterSchema";
 import PostgresAdapter from "./adapters/PostgresAdapter";
 
@@ -14,11 +15,11 @@ class PostgresSchema implements IDatabaseAdapterSchema {
     }
 
     /**
- * Sets the PostgreSQL adapter.
- * @param adapter - The PostgresAdapter instance to set.
- */
-    setAdapter(adapter: PostgresAdapter): void {
-        this.adapter = adapter
+     * Sets the PostgreSQL adapter.
+     * @param adapter - The PostgresAdapter instance to set.
+     */
+    setAdapter(adapter: IDatabaseAdapter): void {
+        this.adapter = adapter as unknown as PostgresAdapter
     }
 
     /**

@@ -8,7 +8,7 @@ import MongoDbAdapter from "../../mongodb/adapters/MongoDbAdapter";
  * @returns {Promise<void>}
  */
 const createMongoDBSchema = async (tableName: string = 'migrations') => {
-    const db = App.container('db').provider<MongoDbAdapter>().getDb();
+    const db = App.container('db').getAdapter<MongoDbAdapter>().getDb();
 
     if ((await db.listCollections().toArray()).map(c => c.name).includes(tableName)) {
         return;

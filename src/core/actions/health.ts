@@ -18,7 +18,7 @@ export default async (req: Request, res: Response) => {
 
     try {
         const db = App.container('db');
-        const provider = db.provider();
+        const provider = db.getAdapter();
         const client = provider.getClient() as any;
 
         // Check if the provider is MongoDB
