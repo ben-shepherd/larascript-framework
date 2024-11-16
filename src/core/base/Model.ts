@@ -11,6 +11,8 @@ import { GetDataOptions, IModel } from '@src/core/interfaces/IModel';
 import IModelAttributes from '@src/core/interfaces/IModelData';
 import { App } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
+
+import BaseQueryBuilder from '../domains/eloquent/base/BaseQueryBuilder';
  
 
 /**
@@ -65,6 +67,12 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         this.setDefaultTable();
         this.attributes = { ...data } as Attributes;
         this.original = { ...data } as Attributes;
+    }
+
+    public static query(): BaseQueryBuilder {
+        return new BaseQueryBuilder({
+            modelCtor: this as unknown as ICtor<IModel>
+        });
     }
 
     /**

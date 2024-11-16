@@ -4,6 +4,8 @@ import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabase
 import DatabaseService from "@src/core/domains/database/services/DatabaseService";
 import { App } from "@src/core/services/App";
 
+import Database from "../services/Database";
+
 /**
  * DatabaseProvider class
  * 
@@ -36,6 +38,19 @@ export default class DatabaseProvider extends BaseProvider {
 
         // Register the database service in the App container
         App.setContainer('db', new DatabaseService(this.config))
+
+        const db2 = new Database();
+    
+        for(const i of Object.keys(this.config.connections)) {
+            const connectionConfig = this.config.connections[i];
+            db2.addConnection(connectionConfig);
+        }
+
+        for(const adapterConfig of this.config.adapters) {
+            db2.registerAdapter(adapterConfig);
+        }
+
+        App.setContainer('db2', new Database())
     }
 
     /**
