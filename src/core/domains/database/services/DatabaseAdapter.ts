@@ -1,8 +1,7 @@
+import { IDatabaseAdapter, TAdapterComposerFileName } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
+import { IDatabaseAdapterConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
-
-import { IDatabaseAdapter, TAdapterComposerFileName } from "../interfaces/IDatabaseAdapter";
-import { IDatabaseAdapterConfig } from "../interfaces/IDatabaseConfig";
 
 class DatabaseAdapter {
 

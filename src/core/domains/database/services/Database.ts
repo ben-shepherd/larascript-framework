@@ -1,14 +1,13 @@
 
 
 import BaseRegister from "@src/core/base/BaseRegister";
+import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
+import { IDatabaseAdapterConfig, IDatabaseConfig, IDatabaseGenericConnectionConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
+import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
+import { IDatabaseService } from "@src/core/domains/database/interfaces/IDatabaseService";
+import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
-
-import { IDatabaseAdapter } from "../interfaces/IDatabaseAdapter";
-import { IDatabaseAdapterConfig, IDatabaseConfig, IDatabaseGenericConnectionConfig } from "../interfaces/IDatabaseConfig";
-import { IDatabaseSchema } from "../interfaces/IDatabaseSchema";
-import { IDatabaseService } from "../interfaces/IDatabaseService";
-import { IDocumentManager } from "../interfaces/IDocumentManager";
 
 /**
  * Database Service

@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
+import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
+import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { ICtor } from "@src/core/interfaces/ICtor";
-
-import { IDatabaseSchema } from "./IDatabaseSchema";
-import { IDocumentManager } from "./IDocumentManager";
 
 export type TAdapterComposerFileName = {
 

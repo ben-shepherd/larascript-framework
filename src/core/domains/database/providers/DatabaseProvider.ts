@@ -1,9 +1,8 @@
 import databaseConfig from "@src/config/database";
 import BaseProvider from "@src/core/base/Provider";
 import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
+import Database from "@src/core/domains/database/services/Database";
 import { App } from "@src/core/services/App";
-
-import Database from "../services/Database";
 
 
 /**

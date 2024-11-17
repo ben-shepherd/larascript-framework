@@ -1,6 +1,5 @@
 
+import { IDatabaseGenericConnectionConfig } from '@src/core/domains/database/interfaces/IDatabaseConfig';
 import { MongoClientOptions } from 'mongodb';
-
-import { IDatabaseGenericConnectionConfig } from '../../database/interfaces/IDatabaseConfig';
 
 export interface IMongoConfig extends IDatabaseGenericConnectionConfig<MongoClientOptions> {}

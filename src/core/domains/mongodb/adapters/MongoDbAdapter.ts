@@ -1,16 +1,15 @@
+import BaseDatabaseAdapter from "@src/core/domains/database/base/BaseDatabaseAdapter";
+import CreateDatabaseException from "@src/core/domains/database/exceptions/CreateDatabaseException";
+import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
+import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
+import ParseMongoDBConnectionString from "@src/core/domains/mongodb/helper/ParseMongoDBConnectionUrl";
+import { IMongoConfig } from "@src/core/domains/mongodb/interfaces/IMongoConfig";
+import MongoDbDocumentManager from "@src/core/domains/mongodb/MongoDbDocumentManager";
+import MongoDbSchema from "@src/core/domains/mongodb/MongoDbSchema";
+import { extractDefaultMongoCredentials } from "@src/core/domains/mongodb/utils/extractDefaultMongoCredentials";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
-
-import BaseDatabaseAdapter from "../../database/base/BaseDatabaseAdapter";
-import CreateDatabaseException from "../../database/exceptions/CreateDatabaseException";
-import { IDatabaseSchema } from "../../database/interfaces/IDatabaseSchema";
-import { IDocumentManager } from "../../database/interfaces/IDocumentManager";
-import ParseMongoDBConnectionString from "../helper/ParseMongoDBConnectionUrl";
-import { IMongoConfig } from "../interfaces/IMongoConfig";
-import MongoDbDocumentManager from "../MongoDbDocumentManager";
-import MongoDbSchema from "../MongoDbSchema";
-import { extractDefaultMongoCredentials } from "../utils/extractDefaultMongoCredentials";
 
 class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
 

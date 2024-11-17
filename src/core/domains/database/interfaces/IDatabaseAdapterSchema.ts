@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 
 
-import { IDatabaseAdapter } from "./IDatabaseAdapter";
+import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 
 /**
  * Interface for database schema operations

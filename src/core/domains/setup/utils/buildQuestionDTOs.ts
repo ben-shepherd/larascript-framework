@@ -1,3 +1,4 @@
+import DatabaseAdapter from "@src/core/domains/database/services/DatabaseAdapter";
 import CopyEnvExampleAction from "@src/core/domains/setup/actions/CopyEnvExampleAction";
 import EnableExpress from "@src/core/domains/setup/actions/EnableExpress";
 import GenerateJwtSecretAction from "@src/core/domains/setup/actions/GenerateJwtSecretAction";
@@ -5,8 +6,6 @@ import SetupDefaultDatabase from "@src/core/domains/setup/actions/SetupDefaultDa
 import SetupDockerDatabaseScripts from "@src/core/domains/setup/actions/SetupDockerDatabaseScripts";
 import { QuestionIDs } from "@src/core/domains/setup/consts/QuestionConsts";
 import QuestionDTO from "@src/core/domains/setup/DTOs/QuestionDTO";
-
-import DatabaseAdapter from "../../database/services/DatabaseAdapter";
 
 const acceptedAnswersBoolean = ['yes', 'no', 'y', 'n', ''];
 

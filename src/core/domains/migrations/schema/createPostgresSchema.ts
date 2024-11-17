@@ -1,7 +1,6 @@
+import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import { App } from "@src/core/services/App";
 import { DataTypes } from "sequelize";
-
-import PostgresAdapter from "../../postgres/adapters/PostgresAdapter";
 
 /**
  * Creates the migrations table in Postgres if it does not already exist

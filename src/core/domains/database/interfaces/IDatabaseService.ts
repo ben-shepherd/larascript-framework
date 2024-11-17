@@ -1,12 +1,11 @@
 /* eslint-disable no-unused-vars */
+import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
+import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IHasConfigConcern } from "@src/core/interfaces/concerns/IHasConfigConcern";
 import { IHasRegisterableConcern } from "@src/core/interfaces/concerns/IHasRegisterableConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
-
-import { IDatabaseAdapter } from "./IDatabaseAdapter";
-import { IDatabaseConfig } from "./IDatabaseConfig";
 
 export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>, IHasRegisterableConcern
 {

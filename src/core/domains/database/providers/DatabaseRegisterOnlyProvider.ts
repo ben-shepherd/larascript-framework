@@ -1,7 +1,6 @@
 import databaseConfig from "@src/config/database";
 import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
-
-import DatabaseProvider from "./DatabaseProvider";
+import DatabaseProvider from "@src/core/domains/database/providers/DatabaseProvider";
 
 /**
  * DatabaseRegisterOnlyProvider class

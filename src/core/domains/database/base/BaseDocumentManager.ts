@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 // Import necessary interfaces and classes
 import MissingTable from "@src/core/domains/database/exceptions/InvalidTable";
+import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 import { IDatabaseDocument, IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IDocumentValidator } from "@src/core/domains/database/interfaces/IDocumentValidator";
 import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
@@ -10,8 +11,6 @@ import BelongsTo from "@src/core/domains/database/relationships/BelongsTo";
 import HasMany from "@src/core/domains/database/relationships/HasMany";
 import DocumentValidator from "@src/core/domains/database/validator/DocumentValidator";
 import { App } from "@src/core/services/App";
-
-import { IDatabaseAdapter } from "../interfaces/IDatabaseAdapter";
 
 /**
  * Abstract base class for document management operations

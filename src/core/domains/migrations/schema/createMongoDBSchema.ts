@@ -1,6 +1,5 @@
+import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import { App } from "@src/core/services/App";
-
-import MongoDbAdapter from "../../mongodb/adapters/MongoDbAdapter";
 
 /**
  * Creates the migrations schema for MongoDB

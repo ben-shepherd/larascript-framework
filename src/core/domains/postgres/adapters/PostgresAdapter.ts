@@ -1,18 +1,17 @@
 import { EnvironmentProduction } from "@src/core/consts/Environment";
+import BaseDatabaseAdapter from "@src/core/domains/database/base/BaseDatabaseAdapter";
+import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
+import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
+import InvalidSequelizeException from "@src/core/domains/postgres/exceptions/InvalidSequelizeException";
+import ParsePostgresConnectionUrl from "@src/core/domains/postgres/helper/ParsePostgresConnectionUrl";
+import { IPostgresConfig } from "@src/core/domains/postgres/interfaces/IPostgresConfig";
+import PostgresDocumentManager from "@src/core/domains/postgres/PostgresDocumentManager";
+import PostgresSchema from "@src/core/domains/postgres/PostgresSchema";
+import { extractDefaultPostgresCredentials } from "@src/core/domains/postgres/utils/extractDefaultPostgresCredentials";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 import pg from 'pg';
 import { QueryInterface, Sequelize } from "sequelize";
-
-import BaseDatabaseAdapter from "../../database/base/BaseDatabaseAdapter";
-import { IDatabaseSchema } from "../../database/interfaces/IDatabaseSchema";
-import { IDocumentManager } from "../../database/interfaces/IDocumentManager";
-import InvalidSequelizeException from "../exceptions/InvalidSequelizeException";
-import ParsePostgresConnectionUrl from "../helper/ParsePostgresConnectionUrl";
-import { IPostgresConfig } from "../interfaces/IPostgresConfig";
-import PostgresDocumentManager from "../PostgresDocumentManager";
-import PostgresSchema from "../PostgresSchema";
-import { extractDefaultPostgresCredentials } from "../utils/extractDefaultPostgresCredentials";
 
 class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
 

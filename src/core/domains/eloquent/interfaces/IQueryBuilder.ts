@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 export interface IQueryBuilder {
     // Select methods
     select(columns?: string | string[]): IQueryBuilder;

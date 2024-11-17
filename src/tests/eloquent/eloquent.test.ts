@@ -1,8 +1,7 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
+import TestUser from '@src/tests/models/models/TestUser';
 import testHelper from '@src/tests/testHelper';
-
-import TestUser from '../models/models/TestUser';
 
 describe('eloquent', () => {
 

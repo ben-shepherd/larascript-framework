@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
+import HasRegisterableConcern from "@src/core/concerns/HasRegisterableConcern";
+import { IHasRegisterableConcern, IRegsiterList, TRegisterMap } from "@src/core/interfaces/concerns/IHasRegisterableConcern";
 import compose from "@src/core/util/compose";
-
-import HasRegisterableConcern from "../concerns/HasRegisterableConcern";
-import { IHasRegisterableConcern, IRegsiterList, TRegisterMap } from "../interfaces/concerns/IHasRegisterableConcern";
 
 export default class BaseRegister extends compose(class {}, HasRegisterableConcern) implements IHasRegisterableConcern {
 

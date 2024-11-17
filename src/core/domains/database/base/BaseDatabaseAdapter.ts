@@ -1,11 +1,10 @@
 /* eslint-disable no-unused-vars */
 import BaseConfig from "@src/core/base/BaseConfig";
+import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
+import { IDatabaseGenericConnectionConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
+import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
+import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { ICtor } from "@src/core/interfaces/ICtor";
-
-import { IDatabaseAdapter } from "../interfaces/IDatabaseAdapter";
-import { IDatabaseGenericConnectionConfig } from "../interfaces/IDatabaseConfig";
-import { IDatabaseSchema } from "../interfaces/IDatabaseSchema";
-import { IDocumentManager } from "../interfaces/IDocumentManager";
 
 abstract class BaseDatabaseAdapter<TClient = unknown, TConfig extends object = object> extends BaseConfig implements IDatabaseAdapter {
 
