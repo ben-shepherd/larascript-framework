@@ -39,7 +39,6 @@ class SetupDefaultDatabase implements IAction {
 
         const env: Record<string,string> = { 
             DATABASE_DEFAULT_CONNECTION: adapterName,
-            DATABASE_DEFAULT_PROVIDER: adapterName,
             DATABASE_DEFAULT_URI: credentials,
         }
 
