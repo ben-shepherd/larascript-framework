@@ -2,11 +2,10 @@
 import { describe } from '@jest/globals';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import { App } from '@src/core/services/App';
+import TestMigrationModel from '@src/tests/migration/models/TestMigrationModel';
+import { TestModelData } from '@src/tests/models/models/TestModel';
 import testHelper from '@src/tests/testHelper';
 import { DataTypes } from 'sequelize';
-
-import { TestModelData } from '../models/models/TestModel';
-import TestMigrationModel from './models/TestMigrationModel';
 
 const dropAndCreateMigrationSchema = async () => {
     const migrationTable = new TestMigrationModel(null).table

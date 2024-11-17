@@ -2,12 +2,11 @@
 import { describe } from '@jest/globals';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import { App } from '@src/core/services/App';
+import TestMigrationModel from '@src/tests/migration/models/TestMigrationModel';
+import TestApiTokenModel from '@src/tests/models/models/TestApiTokenModel';
+import TestModel from '@src/tests/models/models/TestModel';
+import TestUser from '@src/tests/models/models/TestUser';
 import testHelper from '@src/tests/testHelper';
-
-import TestApiTokenModel from '../models/models/TestApiTokenModel';
-import TestModel from '../models/models/TestModel';
-import TestUser from '../models/models/TestUser';
-import TestMigrationModel from './models/TestMigrationModel';
 
 const dropAndCreateMigrationSchema = async () => {
     const migrationTable = new TestMigrationModel(null).table
