@@ -92,9 +92,7 @@ describe('attempt to connect to MongoDB database', () => {
         // Check create migration schema
         for(const connectionConfig of db.getConfig().connections) {
             await db.createMigrationSchema(migrationTableName, connectionConfig.connectionName);
-
             const tableExists = await db.schema(connectionConfig.connectionName).tableExists(migrationTableName);
-
             expect(tableExists).toBe(true);
         }
     });

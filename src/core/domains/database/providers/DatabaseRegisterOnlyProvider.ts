@@ -15,8 +15,8 @@ export default class DatabaseRegisterOnlyProvider extends DatabaseProvider {
      * @type {IDatabaseConfig}
      */
     protected config: IDatabaseConfig = {
-        onBootConnect: false,
-        ...databaseConfig
+        ...databaseConfig,
+        onBootConnect: false
     };
 
 }
