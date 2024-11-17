@@ -8,6 +8,28 @@ import { DataTypes } from 'sequelize';
 import { TestModelData } from '../models/models/TestModel';
 import TestMigrationModel from './models/TestMigrationModel';
 
+const dropAndCreateMigrationSchema = async () => {
+    const migrationTable = new TestMigrationModel(null).table
+
+    if(await App.container('db').schema().tableExists(migrationTable)) {
+        await App.container('db').schema().dropTable(migrationTable);
+    }
+
+    await App.container('db').createMigrationSchema(migrationTable)
+}
+
+const dropAndCreateTestSchema = async () => {
+    if(await App.container('db').schema().tableExists('tests')) {
+        await App.container('db').schema().dropTable('tests');
+    }
+
+    await App.container('db').schema().createTable('tests', {
+        name: DataTypes.STRING,
+        createdAt: DataTypes.DATE,
+        updatedAt: DataTypes.DATE
+    });
+}
+
 describe('test seeders', () => {
 
     let schema: IDatabaseSchema;
@@ -17,37 +39,21 @@ describe('test seeders', () => {
 
         console.log('Connection: ' + App.container('db').getDefaultConnectionName())
 
-        /**
-         * Drop the test table if it exists
-         */
-        if(await App.container('db').schema().tableExists('tests')) {
-            await App.container('db').schema().dropTable('tests');
-        }
+        await dropAndCreateTestSchema()
 
-        await App.container('db').schema().createTable('tests', {
-            name: DataTypes.STRING,
-            createdAt: DataTypes.DATE,
-            updatedAt: DataTypes.DATE
-        });
-
-        const migrationTable = new TestMigrationModel(null).table
-
-        if(await App.container('db').schema().tableExists(migrationTable)) {
-            await App.container('db').schema().dropTable(migrationTable);
-        }
-
-        await App.container('db').createMigrationSchema(migrationTable)
+        await dropAndCreateMigrationSchema()
 
         schema = App.container('db').schema();
     });
 
     afterAll(async () => {
         await App.container('db').schema().dropTable('tests');
+        await App.container('db').schema().dropTable('migrations');
     })
 
     test('test up seeder', async () => {
 
-        await App.container('console').reader(['db:seed']).handle();
+        await App.container('console').reader(['db:seed', '--group=testing']).handle();
 
         const tableExists = await schema.tableExists('tests');
 
