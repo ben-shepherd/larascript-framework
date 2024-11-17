@@ -13,6 +13,9 @@ import MongoDbSchema from "../MongoDbSchema";
 
 class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
 
+    /**
+    * The MongoDB database instance
+     */
     protected db!: Db;
 
     /**
@@ -23,6 +26,14 @@ class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
         super()
         this.setConnectionName(connectionName);
         this.setConfig(config);
+    }
+
+    /**
+     * Retrieves the name of the docker-compose file for MongoDB
+     * @returns {string} The name of the docker-compose file
+     */
+    getDockerComposeFileName(): string {
+        return 'docker-compose.mongodb.yml'
     }
 
     /**
@@ -123,10 +134,20 @@ class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
         return this.db instanceof Db;
     }
  
+    /**
+     * Gets the document manager for database operations.
+     * 
+     * @returns {IDocumentManager} The document manager instance.
+     */
     getDocumentManager(): IDocumentManager {
         return new MongoDbDocumentManager(this)
     }
 
+    /**
+     * Gets the schema interface for the database.
+     * 
+     * @returns {IDatabaseSchema} The schema interface.
+     */
     getSchema(): IDatabaseSchema {
         return new MongoDbSchema(this)
     }

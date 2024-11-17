@@ -1,10 +1,11 @@
-import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
-import Postgres from "@src/core/domains/database/providers-db/Postgres";
 import responseError from "@src/core/domains/express/requests/responseError";
 import { App } from "@src/core/services/App";
 import { Request, Response } from "express";
 import { MongoClient } from "mongodb";
 import { Sequelize } from "sequelize";
+
+import MongoDbAdapter from "../domains/mongodb/adapters/MongoDbAdapter";
+import PostgresAdapter from "../domains/postgres/adapters/PostgresAdapter";
 
 /**
  * Health check endpoint
@@ -22,12 +23,13 @@ export default async (req: Request, res: Response) => {
         const client = provider.getClient() as any;
 
         // Check if the provider is MongoDB
-        if (provider as unknown instanceof MongoDB) {
+        if (provider as unknown instanceof MongoDbAdapter) {
             // Check if the MongoDB connection is active
             await (client as MongoClient).db().stats();
         }
+        
         // Check if the provider is Postgres
-        else if (provider as unknown instanceof Postgres) {
+        else if (provider as unknown instanceof PostgresAdapter) {
             // Check if the Postgres connection is active
             await (client as Sequelize).authenticate();
         }

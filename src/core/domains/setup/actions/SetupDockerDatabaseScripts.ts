@@ -1,9 +1,10 @@
-import DatabaseConfig from '@src/core/domains/database/config/DatabaseConfig';
 import QuestionDTO from '@src/core/domains/setup/DTOs/QuestionDTO';
 import { IAction } from '@src/core/domains/setup/interfaces/IAction';
 import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand';
 import { IPackageJsonService } from '@src/core/interfaces/IPackageJsonService';
 import PackageJsonService from '@src/core/services/PackageJsonService';
+
+import DatabaseAdapter from '../../database/services/DatabaseAdapter';
 
 class SetupDockerDatabaseScripts implements IAction {
 
@@ -12,6 +13,7 @@ class SetupDockerDatabaseScripts implements IAction {
     constructor() {
         this.packageJson = new PackageJsonService();
     }
+
 
     /**
      * Handle the action 
@@ -35,7 +37,7 @@ class SetupDockerDatabaseScripts implements IAction {
         let dockerComposeNames: string[] = [];
 
         if(dbType === 'all') {
-            dockerComposeNames = ['network', ...Object.keys(DatabaseConfig.providers)];
+            dockerComposeNames = ['network', ...this.getComposerShortFileNames()];
         }
         else {
             dockerComposeNames = ['network', dbType];
@@ -67,6 +69,14 @@ class SetupDockerDatabaseScripts implements IAction {
         })
 
         return baseCommand.replace('{dockerComposeNames}', composeScriptsStr).replace('{dockerParameters}', dockerParameters)
+    }
+
+    /**
+     * Retrieves an array of short composer file names (e.g., ['mongodb', 'postgres'])
+     * @returns {string[]}
+     */
+    private getComposerShortFileNames(): string[] {
+        return DatabaseAdapter.getComposerShortFileNames();
     }
 
 }

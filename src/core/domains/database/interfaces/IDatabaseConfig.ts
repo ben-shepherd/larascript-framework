@@ -20,6 +20,5 @@ export interface IDatabaseConfig {
 export interface IDatabaseAdapterConfig
 {
     name: string;
-    package: string;
     adapter: ICtor<IDatabaseAdapter>;
 }

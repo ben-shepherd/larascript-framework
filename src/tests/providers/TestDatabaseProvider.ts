@@ -49,12 +49,8 @@ export default class TestDatabaseProvider extends DatabaseProvider {
             })
         ]),
         adapters: [
-            DatabaseAdapter.createAdapter(PostgresAdapter, {
-                package: 'pg',
-            }),
-            DatabaseAdapter.createAdapter(MongoDbAdapter, {
-                package: 'mongodb',
-            })
+            DatabaseAdapter.createAdapterConfig(PostgresAdapter),
+            DatabaseAdapter.createAdapterConfig(MongoDbAdapter)
         ]
     };
     ;

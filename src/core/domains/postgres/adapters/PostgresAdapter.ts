@@ -26,6 +26,14 @@ class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
     }
 
     /**
+     * Get the name of the docker-compose file for Postgres
+     * @returns {string} The name of the docker-compose file
+     */
+    getDockerComposeFileName(): string {
+        return 'docker-compose.postgres.yml'
+    }
+
+    /**
      * Get the query interface for the database
      * @returns {QueryInterface} The query interface
      */
@@ -149,10 +157,18 @@ class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
         return this.client instanceof Sequelize;
     }
  
+    /**
+     * Get the document manager for database operations
+     * @returns {IDocumentManager} The document manager instance
+     */
     getDocumentManager(): IDocumentManager {
         return new PostgresDocumentManager(this)
     }
 
+    /**
+     * Gets the schema interface for the database
+     * @returns {IDatabaseSchema} The schema interface
+     */
     getSchema(): IDatabaseSchema {
         return new PostgresSchema(this)
     }

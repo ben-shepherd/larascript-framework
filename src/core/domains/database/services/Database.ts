@@ -2,6 +2,7 @@
 
 import BaseRegister from "@src/core/base/BaseRegister";
 import { ICtor } from "@src/core/interfaces/ICtor";
+import { App } from "@src/core/services/App";
 
 import { IDatabaseAdapter } from "../interfaces/IDatabaseAdapter";
 import { IDatabaseAdapterConfig, IDatabaseConfig, IDatabaseGenericConnectionConfig } from "../interfaces/IDatabaseConfig";
@@ -39,6 +40,35 @@ class Database extends BaseRegister implements IDatabaseService {
         this.config = config
     }
 
+    getAllAdapters(): IDatabaseAdapter[] {
+        throw new Error("Method not implemented.");
+    }
+
+    /**
+     * @template T - The type of the configuration object to return. Defaults to IDatabaseConfig.
+     * @returns {T} The database configuration object.
+     */
+    getConfig<T = IDatabaseConfig>(): T {
+        return this.config as T
+    }
+
+    /**
+     * @param config - The new database configuration object implementing IDatabaseConfig interface.
+     */
+    setConfig(config: IDatabaseConfig): void {
+        this.config = config
+    }
+
+    /**
+     * Logs a message to the console with the 'info' log level, prefixed with '[Database] '.
+     * @param message - The message to log.
+     * @param args - Additional arguments to log.
+     * @private
+     */
+    private log(message: string, ...args: any[]): void {
+        App.container('logger').info(`[Database] ${message}`, ...args)
+    }
+
     
     /**
      * Boot method
@@ -53,6 +83,13 @@ class Database extends BaseRegister implements IDatabaseService {
         
         await this.connectDefault()
         await this.connectKeepAlive()
+    }
+    
+    /**
+     * Connects to the default database connection.
+     */
+    async connectDefault(): Promise<void> {
+        await this.connectAdapter(this.getDefaultConnectionName())
     }
 
     /**
@@ -75,13 +112,6 @@ class Database extends BaseRegister implements IDatabaseService {
     }
 
     /**
-     * Connects to the default database connection.
-     */
-    async connectDefault(): Promise<void> {
-        await this.connectAdapter(this.getDefaultConnectionName())
-    }
-
-    /**
      * Connects to the adapter for a given connection name.
      * 
      * If the adapter has already been connected and registered, this method does nothing.
@@ -101,6 +131,8 @@ class Database extends BaseRegister implements IDatabaseService {
             return;
         }
 
+        this.log('Connecting to database (Connection: ' + connectionName + ')');
+
         const adapter = new adapterCtor(connectionName, connectionConfig);
         await adapter.connect()
         
@@ -113,6 +145,7 @@ class Database extends BaseRegister implements IDatabaseService {
     private registerAdapters(): void {
         for(const adapterConfig of this.config.adapters) {
             this.registerByList(Database.REGISTERED_ADAPTERS_CONFIG, adapterConfig.name, adapterConfig)
+            this.log(`Registered adapter: ${adapterConfig.name}`)
         }   
     }
 
@@ -122,6 +155,7 @@ class Database extends BaseRegister implements IDatabaseService {
     private registerConnections(): void {
         for(const connectionConfig of this.config.connections) {
             this.registerByList(Database.REGISTERED_CONNECTIONS_CONFIG, connectionConfig.connectionName, connectionConfig)
+            this.log(`Registered connection: ${connectionConfig.connectionName}`)
         }
         
     }
@@ -210,6 +244,15 @@ class Database extends BaseRegister implements IDatabaseService {
         }
 
         return adapter as TAdapter
+    }
+
+    /**
+     * Retrieves all registered database adapters.
+     *
+     * @returns {IDatabaseAdapter[]} An array of all registered database adapter instances.
+     */
+    getAllAdapterConstructors(): ICtor<IDatabaseAdapter>[] {
+        return this.config.adapters.map((adapterConfig: IDatabaseAdapterConfig) => adapterConfig.adapter) 
     }
 
     /**

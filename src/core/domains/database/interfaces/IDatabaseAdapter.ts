@@ -4,6 +4,19 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { IDatabaseSchema } from "./IDatabaseSchema";
 import { IDocumentManager } from "./IDocumentManager";
 
+export type TAdapterComposerFileName = {
+
+    /**
+     * Example: 'docker-compose.mongodb.yml'
+     */
+    fullName: string,
+
+    /**
+     * Example: 'mongodb'
+     */
+    shortName: string
+}
+
 export interface  IDatabaseAdapter {
 
     getClient(...args: any[]): unknown;
@@ -25,4 +38,6 @@ export interface  IDatabaseAdapter {
     getQueryBuilderCtor(): ICtor<unknown>;
 
     isConnected(): Promise<boolean>;
+
+    getDockerComposeFileName(): string;
 }

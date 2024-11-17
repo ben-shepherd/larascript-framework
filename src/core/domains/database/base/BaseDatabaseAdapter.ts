@@ -25,6 +25,11 @@ abstract class BaseDatabaseAdapter<TClient = unknown, TConfig extends object = o
     protected connectionName!: string;
 
     /**
+     * Docker compose file name
+     */
+    protected dockerComposeFileName?: string;
+
+    /**
      * Set the connection name
      * @param connectionName The name of the connection
      */
@@ -68,6 +73,8 @@ abstract class BaseDatabaseAdapter<TClient = unknown, TConfig extends object = o
     abstract getQueryBuilderCtor(): ICtor<unknown>;
 
     abstract isConnected(): Promise<boolean>;
+
+    abstract getDockerComposeFileName(): string;
 
 }
 
