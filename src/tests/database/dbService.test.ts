@@ -4,11 +4,10 @@ import Database from '@src/core/domains/database/services/Database';
 import MongoDbAdapter from '@src/core/domains/mongodb/adapters/MongoDbAdapter';
 import PostgresAdapter from '@src/core/domains/postgres/adapters/PostgresAdapter';
 import { App } from '@src/core/services/App';
+import TestMigrationModel from '@src/tests/migration/models/TestMigrationModel';
 import testHelper from '@src/tests/testHelper';
 import { MongoClient } from 'mongodb';
 import { Sequelize } from 'sequelize';
-
-import TestMigrationModel from '@src/tests/migration/models/TestMigrationModel';
 
 describe('attempt to connect to MongoDB database', () => {
 
