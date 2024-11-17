@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
-export interface IHasConfigConcern
+export interface IHasConfigConcern<TConfig extends unknown = unknown>
 {
-    getConfig<T = unknown>(): T;
+    getConfig<T = TConfig>(): T;
     
-    setConfig(config: unknown): void;
+    setConfig(config: TConfig): void;
 }

@@ -1,4 +1,4 @@
-import DatabaseConfig from "@src/core/domains/database/config/DatabaseConfig";
+import DatabaseAdapter from "@src/core/domains/database/services/DatabaseAdapter";
 import CopyEnvExampleAction from "@src/core/domains/setup/actions/CopyEnvExampleAction";
 import EnableExpress from "@src/core/domains/setup/actions/EnableExpress";
 import GenerateJwtSecretAction from "@src/core/domains/setup/actions/GenerateJwtSecretAction";
@@ -8,7 +8,10 @@ import { QuestionIDs } from "@src/core/domains/setup/consts/QuestionConsts";
 import QuestionDTO from "@src/core/domains/setup/DTOs/QuestionDTO";
 
 const acceptedAnswersBoolean = ['yes', 'no', 'y', 'n', ''];
-const acceptedAnswersDatabases = ['all',  '', ...Object.keys(DatabaseConfig.providers)];
+
+const acceptedDatabaseAdaptersAnswers = (() => {
+    return ['all', '', ...DatabaseAdapter.getComposerShortFileNames()]
+});
 
 const buildQuestionDTOs = (): QuestionDTO[] => {
     return [
@@ -28,10 +31,10 @@ const buildQuestionDTOs = (): QuestionDTO[] => {
         }),
         new QuestionDTO({
             id: QuestionIDs.selectDb,
-            question: 'Which database providers will be used? (all/mongodb/postgres). This step will overwrite your .env file.',
-            previewText: 'Choose Database Provider to Use',
+            question: 'Which database adapter will be used? (all/mongodb/postgres). This step will overwrite your .env file.',
+            previewText: 'Choose Database Adapter to Use',
             defaultValue: 'all',
-            acceptedAnswers: acceptedAnswersDatabases,
+            acceptedAnswers: acceptedDatabaseAdaptersAnswers(),
             actionCtors: [SetupDockerDatabaseScripts, SetupDefaultDatabase]
         }),
         new QuestionDTO({

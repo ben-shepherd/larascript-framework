@@ -5,13 +5,12 @@ import { IMigration, MigrationType } from "@src/core/domains/migrations/interfac
 import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
 import { IMigrationService, IMigrationServiceOptions } from "@src/core/domains/migrations/interfaces/IMigrationService";
 import MigrationModel from "@src/core/domains/migrations/models/MigrationModel";
-import createMongoDBSchema from "@src/core/domains/migrations/schema/createMongoDBSchema";
-import createPostgresSchema from "@src/core/domains/migrations/schema/createPostgresSchema";
 import MigrationFileService from "@src/core/domains/migrations/services/MigrationFilesService";
 import FileNotFoundError from "@src/core/exceptions/FileNotFoundError";
 import { ModelConstructor } from "@src/core/interfaces/IModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
 import { App } from "@src/core/services/App";
+
 
 interface MigrationDetail {
     fileName: string,
@@ -263,19 +262,7 @@ class MigrationService implements IMigrationService {
         try {
             const tableName = (new this.modelCtor).table
 
-            /**
-             * Handle MongoDB driver
-             */
-            if (App.container('db').isProvider('mongodb')) {
-                await createMongoDBSchema(tableName);
-            }
-
-            /**
-             * Handle Postgres driver
-             */
-            if (App.container('db').isProvider('postgres')) {
-                await createPostgresSchema(tableName);
-            }
+            await App.container('db').createMigrationSchema(tableName)
         }
         catch (err) {
             App.container('logger').info('[Migration] createSchema', err)

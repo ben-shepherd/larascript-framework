@@ -1,22 +1,35 @@
 /* eslint-disable no-unused-vars */
-import { DbTypeHelpers } from "@src/config/database";
-import { IDatabaseProvider } from "@src/core/domains/database/interfaces/IDatabaseProvider";
+import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
+import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
+import { IHasConfigConcern } from "@src/core/interfaces/concerns/IHasConfigConcern";
+import { IHasRegisterableConcern } from "@src/core/interfaces/concerns/IHasRegisterableConcern";
+import { ICtor } from "@src/core/interfaces/ICtor";
 
-type Client = DbTypeHelpers['client'];
-type Provider = DbTypeHelpers['provider'] extends IDatabaseProvider ? DbTypeHelpers['provider'] : IDatabaseProvider;
-type DocumentManager = DbTypeHelpers['documentManager'] extends IDocumentManager ? DbTypeHelpers['documentManager'] : IDocumentManager
-type Schema = DbTypeHelpers['schema'] extends IDatabaseSchema ? DbTypeHelpers['schema'] : IDatabaseSchema;
-
-export interface IDatabaseService
+export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>, IHasRegisterableConcern
 {
     boot(): Promise<void>;
+    
     getDefaultConnectionName(): string;
+
     setDefaultConnectionName(connectionName: string): void;
-    getClient<T = Client>(connectionName?: string): T;
-    provider<T = Provider>(connectionName?: string): T;
-    isProvider(driver: string, connectionName?: string): boolean;
-    documentManager<T = DocumentManager>(connectionName?: string): T;
-    schema<T = Schema>(connectionName?: string): T;
+
+    getClient<TClient = unknown>(connectionName?: string): TClient;
+
+    getAdapter<TAdapter extends IDatabaseAdapter = IDatabaseAdapter>(connectionName?: string): TAdapter;
+
+    getAdapterConstructor<T extends ICtor<IDatabaseAdapter> = ICtor<IDatabaseAdapter>>(connectionName?: string): T;
+
+    getAllAdapterConstructors(): ICtor<IDatabaseAdapter>[]
+
+    isConnectionAdapter(adapter: ICtor<IDatabaseAdapter>, connectionName?: string): boolean
+
+    getDefaultCredentials(adapterName: string): string | null;
+
+    documentManager<TDocMan extends IDocumentManager = IDocumentManager>(connectionName?: string): TDocMan;
+
+    schema<TSchema extends IDatabaseSchema = IDatabaseSchema>(connectionName?: string): TSchema;
+
+    createMigrationSchema(tableName: string, connectionName?: string): Promise<unknown>;
 }

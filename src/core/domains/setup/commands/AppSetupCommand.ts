@@ -44,7 +44,6 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
         super();
         this.env = new EnvService();
         this.input = new ConsoleInputService();
-        this.questions = buildQuestionDTOs();
     }
 
     /**
@@ -66,6 +65,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
         this.writeLine();
         this.writeLine('Setup Preview:');
 
+        this.questions = buildQuestionDTOs();
         this.questions.forEach(question => {
             this.writeLine(`- ${question.getPreviewText()}`);
         });

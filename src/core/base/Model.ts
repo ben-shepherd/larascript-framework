@@ -4,6 +4,7 @@ import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabase
 import { IDatabaseDocument, IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
 import { IBelongsToOptions } from '@src/core/domains/database/interfaces/relationships/IBelongsTo';
 import { IHasManyOptions } from '@src/core/domains/database/interfaces/relationships/IHasMany';
+import BaseQueryBuilder from '@src/core/domains/eloquent/base/BaseQueryBuilder';
 import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
 import { IObserver } from '@src/core/domains/observer/interfaces/IObserver';
 import { ICtor } from '@src/core/interfaces/ICtor';
@@ -65,6 +66,12 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         this.setDefaultTable();
         this.attributes = { ...data } as Attributes;
         this.original = { ...data } as Attributes;
+    }
+
+    public static query(): BaseQueryBuilder {
+        return new BaseQueryBuilder({
+            modelCtor: this as unknown as ICtor<IModel>
+        });
     }
 
     /**

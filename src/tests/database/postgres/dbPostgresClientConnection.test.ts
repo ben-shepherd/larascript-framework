@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { describe, test } from '@jest/globals';
-import Postgres from '@src/core/domains/database/providers-db/Postgres';
+import PostgresAdapter from '@src/core/domains/postgres/adapters/PostgresAdapter';
 import { App } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
 import { Client } from 'pg';
@@ -15,7 +15,7 @@ describe('test postgres client connection', () => {
 
     test('test connection', async () => {
 
-        const client = App.container('db').provider<Postgres>().getPgClient()
+        const client = App.container('db').getAdapter<PostgresAdapter>().getPgClient()
 
         await client.connect()
 

@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals';
-import ParseMongoDBConnectionString from '@src/core/domains/database/helper/ParseMongoDBConnectionUrl';
+import ParseMongoDBConnectionString from '@src/core/domains/mongodb/helper/ParseMongoDBConnectionUrl';
 
 describe('MongoDB Connection String Parser', () => {
     test('parses a basic connection string without authentication', () => {

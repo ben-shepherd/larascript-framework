@@ -1,13 +1,17 @@
-import ParseMongoDBConnectionString from '@src/core/domains/database/helper/ParseMongoDBConnectionUrl';
-import ParsePostgresConnectionUrl from '@src/core/domains/database/helper/ParsePostgresConnectionUrl';
 import { IDatabaseConfig } from '@src/core/domains/database/interfaces/IDatabaseConfig';
 import DatabaseProvider from '@src/core/domains/database/providers/DatabaseProvider';
-import defaultCredentials from '@src/core/domains/setup/utils/defaultCredentials';
+import DatabaseConfig from '@src/core/domains/database/services/DatabaseConfig';
+import MongoDbAdapter from '@src/core/domains/mongodb/adapters/MongoDbAdapter';
+import ParseMongoDBConnectionString from '@src/core/domains/mongodb/helper/ParseMongoDBConnectionUrl';
+import { IMongoConfig } from '@src/core/domains/mongodb/interfaces/IMongoConfig';
+import PostgresAdapter from '@src/core/domains/postgres/adapters/PostgresAdapter';
+import ParsePostgresConnectionUrl from '@src/core/domains/postgres/helper/ParsePostgresConnectionUrl';
+import { IPostgresConfig } from '@src/core/domains/postgres/interfaces/IPostgresConfig';
 
 export const testDbName = 'test_db';
 
-const defaultMongoDbCredentials = defaultCredentials.extractDefaultMongoDBCredentials();
-const defaultPostgresCredentials = defaultCredentials.extractDefaultPostgresCredentials();
+const defaultMongoDbCredentials = new MongoDbAdapter('', {} as IMongoConfig).getDefaultCredentials()
+const defaultPostgresCredentials = new PostgresAdapter('', {} as IPostgresConfig).getDefaultCredentials()
 
 if (!defaultMongoDbCredentials || !defaultPostgresCredentials) {
     throw new Error('Invalid default credentials');
@@ -30,18 +34,20 @@ export default class TestDatabaseProvider extends DatabaseProvider {
     protected config: IDatabaseConfig = {
         defaultConnectionName: 'postgres',
         keepAliveConnections: 'mongodb',
-        connections: {
-            mongodb: {
-                driver: 'mongodb',
+        connections: DatabaseConfig.createConnections([
+            DatabaseConfig.createConfig({
+                connectionName: 'mongodb',
+                adapter: MongoDbAdapter,
                 uri: mongoDbConnectionStringWithTestDb,
-                options: {}
-            },
-            postgres: {
-                driver: 'postgres',
+                options: {} // Additional connection options can be specified here
+            }),
+            DatabaseConfig.createConfig({
+                connectionName: 'postgres',
+                adapter: PostgresAdapter,
                 uri: postgresConnectionStringWithTestDb,
-                options: {}
-            }
-        }
+                options: {} // Additional connection options can be specified here
+            })
+        ])
     };
     ;
 

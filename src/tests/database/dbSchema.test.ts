@@ -1,6 +1,6 @@
  
 import { beforeAll, describe, expect, test } from '@jest/globals';
-import PostgresSchema from '@src/core/domains/database/schema/PostgresSchema';
+import PostgresSchema from '@src/core/domains/postgres/PostgresSchema';
 import { App } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
 import { DataTypes } from 'sequelize';
@@ -58,7 +58,7 @@ describe('Combined DocumentManager Interface Test', () => {
 
     test('alter table', async () => {
         for(const connectionName of connections) {
-            const schema = App.container('db').schema<PostgresSchema>(connectionName);
+            const schema = App.container('db').schema(connectionName);
 
             if(connectionName === 'mongodb') {
                 expect(true).toBeTruthy();

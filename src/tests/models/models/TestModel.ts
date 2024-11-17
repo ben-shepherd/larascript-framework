@@ -1,7 +1,7 @@
 import Model from "@src/core/base/Model";
 import IModelAttributes from "@src/core/interfaces/IModelData";
 
-interface TestModelData extends IModelAttributes {
+export interface TestModelData extends IModelAttributes {
     name: string
 }
 
