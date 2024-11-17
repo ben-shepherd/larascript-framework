@@ -4,14 +4,15 @@ import DatabaseAdapter from '@src/core/domains/database/services/DatabaseAdapter
 import DatabaseConfig from '@src/core/domains/database/services/DatabaseConfig';
 import MongoDbAdapter from '@src/core/domains/mongodb/adapters/MongoDbAdapter';
 import ParseMongoDBConnectionString from '@src/core/domains/mongodb/helper/ParseMongoDBConnectionUrl';
+import { IMongoConfig } from '@src/core/domains/mongodb/interfaces/IMongoConfig';
 import PostgresAdapter from '@src/core/domains/postgres/adapters/PostgresAdapter';
 import ParsePostgresConnectionUrl from '@src/core/domains/postgres/helper/ParsePostgresConnectionUrl';
-import defaultCredentials from '@src/core/domains/setup/utils/defaultCredentials';
+import { IPostgresConfig } from '@src/core/domains/postgres/interfaces/IPostgresConfig';
 
 export const testDbName = 'test_db';
 
-const defaultMongoDbCredentials = defaultCredentials.extractDefaultMongoDBCredentials();
-const defaultPostgresCredentials = defaultCredentials.extractDefaultPostgresCredentials();
+const defaultMongoDbCredentials = new MongoDbAdapter('', {} as IMongoConfig).getDefaultCredentials()
+const defaultPostgresCredentials = new PostgresAdapter('', {} as IPostgresConfig).getDefaultCredentials()
 
 if (!defaultMongoDbCredentials || !defaultPostgresCredentials) {
     throw new Error('Invalid default credentials');

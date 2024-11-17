@@ -40,10 +40,6 @@ class Database extends BaseRegister implements IDatabaseService {
         this.config = config
     }
 
-    getAllAdapters(): IDatabaseAdapter[] {
-        throw new Error("Method not implemented.");
-    }
-
     /**
      * @template T - The type of the configuration object to return. Defaults to IDatabaseConfig.
      * @returns {T} The database configuration object.
@@ -69,6 +65,21 @@ class Database extends BaseRegister implements IDatabaseService {
         App.container('logger').info(`[Database] ${message}`, ...args)
     }
 
+    /**
+     * Returns true if the database should connect on boot, false otherwise.
+     * 1. If onBootConnect is explicitly set to true or false in the database configuration, then return that value.
+     * 2. If onBootConnect is not set in the database configuration, then return true.
+     * 
+     * @returns {boolean} True if the database should connect on boot, false otherwise.
+     * @private
+     */
+    private shouldConnectOnBoot(): boolean {
+        if(this.config.onBootConnect !== undefined) {
+            return this.config.onBootConnect
+        }
+
+        return true
+    }
     
     /**
      * Boot method
@@ -81,6 +92,11 @@ class Database extends BaseRegister implements IDatabaseService {
         this.registerAdapters()
         this.registerConnections()
         
+        if(!this.shouldConnectOnBoot()) {
+            this.log('Database is not configured to connect on boot');
+            return;
+        }
+
         await this.connectDefault()
         await this.connectKeepAlive()
     }
@@ -253,6 +269,20 @@ class Database extends BaseRegister implements IDatabaseService {
      */
     getAllAdapterConstructors(): ICtor<IDatabaseAdapter>[] {
         return this.config.adapters.map((adapterConfig: IDatabaseAdapterConfig) => adapterConfig.adapter) 
+    }
+
+    /**
+     * Get the default credentials for a given adapter name.
+     * 
+     * The default credentials are retrieved from the adapter's `getDefaultCredentials` method.
+     * 
+     * @param adapterName The name of the adapter to get the default credentials for.
+     * @returns The default credentials for the adapter, or null if they could not be retrieved.
+     */
+    getDefaultCredentials(adapterName: string): string | null {
+        const adapterCtor = this.getAdapterConstructor(adapterName)
+        const adapter = new adapterCtor('', {})
+        return adapter.getDefaultCredentials()
     }
 
     /**

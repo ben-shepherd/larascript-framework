@@ -6,7 +6,7 @@ import SetupProvider from '@src/core/domains/setup/providers/SetupProvider';
 import Kernel from "@src/core/Kernel";
 import { App } from '@src/core/services/App';
 
-import DatabaseProvider from './core/domains/database/providers/DatabaseProvider';
+import DatabaseRegisterOnlyProvider from './core/domains/database/providers/DatabaseRegisterOnlyProvider';
 import LoggerProvider from './core/domains/logger/providers/LoggerProvider';
 
 (async() => {
@@ -17,7 +17,7 @@ import LoggerProvider from './core/domains/logger/providers/LoggerProvider';
         providers: [
             new LoggerProvider(),
             new ConsoleProvider(),
-            new DatabaseProvider(),
+            new DatabaseRegisterOnlyProvider(),
             new SetupProvider()
         ]
     }, {})

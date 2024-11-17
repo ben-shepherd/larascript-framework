@@ -24,6 +24,8 @@ export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>, IH
 
     isAdapter(adapterName: string, connectionName?: string): boolean;
 
+    getDefaultCredentials(adapterName: string): string | null;
+
     documentManager<TDocMan extends IDocumentManager = IDocumentManager>(connectionName?: string): TDocMan;
 
     schema<TSchema extends IDatabaseSchema = IDatabaseSchema>(connectionName?: string): TSchema;

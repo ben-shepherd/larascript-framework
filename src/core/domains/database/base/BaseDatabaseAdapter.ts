@@ -76,6 +76,8 @@ abstract class BaseDatabaseAdapter<TClient = unknown, TConfig extends object = o
 
     abstract getDockerComposeFileName(): string;
 
+    abstract getDefaultCredentials(): string | null;
+
 }
 
 export default BaseDatabaseAdapter

@@ -12,6 +12,7 @@ import ParsePostgresConnectionUrl from "../helper/ParsePostgresConnectionUrl";
 import { IPostgresConfig } from "../interfaces/IPostgresConfig";
 import PostgresDocumentManager from "../PostgresDocumentManager";
 import PostgresSchema from "../PostgresSchema";
+import { extractDefaultPostgresCredentials } from "../utils/extractDefaultPostgresCredentials";
 
 class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
 
@@ -31,6 +32,14 @@ class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
      */
     getDockerComposeFileName(): string {
         return 'docker-compose.postgres.yml'
+    }
+
+    /**
+     * Returns the default Postgres credentials extracted from the docker-compose file
+     * @returns {string | null} The default Postgres credentials
+     */
+    getDefaultCredentials(): string | null {
+        return extractDefaultPostgresCredentials();
     }
 
     /**

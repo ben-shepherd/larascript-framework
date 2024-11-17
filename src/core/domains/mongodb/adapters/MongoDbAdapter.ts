@@ -10,6 +10,7 @@ import ParseMongoDBConnectionString from "../helper/ParseMongoDBConnectionUrl";
 import { IMongoConfig } from "../interfaces/IMongoConfig";
 import MongoDbDocumentManager from "../MongoDbDocumentManager";
 import MongoDbSchema from "../MongoDbSchema";
+import { extractDefaultMongoCredentials } from "../utils/extractDefaultMongoCredentials";
 
 class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
 
@@ -34,6 +35,15 @@ class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
      */
     getDockerComposeFileName(): string {
         return 'docker-compose.mongodb.yml'
+    }
+
+    /**
+     * Returns the default MongoDB credentials extracted from the docker-compose file.
+     * 
+     * @returns {string | null} The default MongoDB credentials, or null if they could not be extracted.
+     */
+    getDefaultCredentials(): string | null {
+        return extractDefaultMongoCredentials()
     }
 
     /**

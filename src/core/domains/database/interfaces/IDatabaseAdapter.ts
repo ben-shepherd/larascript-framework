@@ -40,4 +40,6 @@ export interface  IDatabaseAdapter {
     isConnected(): Promise<boolean>;
 
     getDockerComposeFileName(): string;
+
+    getDefaultCredentials(): string | null;
 }

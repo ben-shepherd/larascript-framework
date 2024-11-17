@@ -10,6 +10,7 @@ export interface IDatabaseGenericConnectionConfig<Options extends object = objec
 }
 
 export interface IDatabaseConfig {
+    onBootConnect?: boolean;
     defaultConnectionName: string;
     keepAliveConnections: string;
     connections: IDatabaseGenericConnectionConfig[];
