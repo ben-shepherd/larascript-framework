@@ -1,5 +1,8 @@
 import { IMigration, MigrationType } from "@src/core/domains/migrations/interfaces/IMigration";
+import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
+
+import { IDatabaseAdapter } from "../../database/interfaces/IDatabaseAdapter";
 
 /**
  * BaseMigration class serves as the foundation for all database migrations.
@@ -30,7 +33,7 @@ abstract class BaseMigration implements IMigration {
      * If undefined, the migration will run on the default provider.
      * Can be set to 'mongodb', 'postgres', or other supported database systems.
      */
-    databaseProvider?: string;
+    databaseAdapter?: ICtor<IDatabaseAdapter>;
 
     /**
      * Define the name of the migration group.
@@ -63,13 +66,13 @@ abstract class BaseMigration implements IMigration {
      * @returns true if the migration should run, false otherwise
      */
     shouldUp(): boolean {
-    // If no specific database provider is set, the migration runs on the default provider
-        if(!this.databaseProvider) { 
+        // If no specific database provider is set, the migration runs on the default provider
+        if(!this.databaseAdapter) { 
             return true;
         }
 
         // Check if the current database matches the specified provider for this migration
-        return App.container('db').isAdapter(this.databaseProvider);
+        return App.container('db').isConnectionAdapter(this.databaseAdapter);
     }
 
 }

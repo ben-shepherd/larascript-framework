@@ -19,13 +19,17 @@ export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>, IH
 
     getAdapter<TAdapter extends IDatabaseAdapter = IDatabaseAdapter>(connectionName?: string): TAdapter;
 
+    getAdapterConstructor<T extends ICtor<IDatabaseAdapter> = ICtor<IDatabaseAdapter>>(connectionName?: string): T;
+
     getAllAdapterConstructors(): ICtor<IDatabaseAdapter>[]
 
-    isAdapter(adapterName: string, connectionName?: string): boolean;
+    isConnectionAdapter(adapter: ICtor<IDatabaseAdapter>, connectionName?: string): boolean
 
     getDefaultCredentials(adapterName: string): string | null;
 
     documentManager<TDocMan extends IDocumentManager = IDocumentManager>(connectionName?: string): TDocMan;
 
     schema<TSchema extends IDatabaseSchema = IDatabaseSchema>(connectionName?: string): TSchema;
+
+    createMigrationSchema(tableName: string, connectionName?: string): Promise<unknown>;
 }

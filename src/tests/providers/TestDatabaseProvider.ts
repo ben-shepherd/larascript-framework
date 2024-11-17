@@ -1,6 +1,5 @@
 import { IDatabaseConfig } from '@src/core/domains/database/interfaces/IDatabaseConfig';
 import DatabaseProvider from '@src/core/domains/database/providers/DatabaseProvider';
-import DatabaseAdapter from '@src/core/domains/database/services/DatabaseAdapter';
 import DatabaseConfig from '@src/core/domains/database/services/DatabaseConfig';
 import MongoDbAdapter from '@src/core/domains/mongodb/adapters/MongoDbAdapter';
 import ParseMongoDBConnectionString from '@src/core/domains/mongodb/helper/ParseMongoDBConnectionUrl';
@@ -38,21 +37,17 @@ export default class TestDatabaseProvider extends DatabaseProvider {
         connections: DatabaseConfig.createConnections([
             DatabaseConfig.createConfig({
                 connectionName: 'mongodb',
-                adapter: DatabaseAdapter.getName(MongoDbAdapter),
+                adapter: MongoDbAdapter,
                 uri: mongoDbConnectionStringWithTestDb,
                 options: {} // Additional connection options can be specified here
             }),
             DatabaseConfig.createConfig({
                 connectionName: 'postgres',
-                adapter: DatabaseAdapter.getName(PostgresAdapter),
+                adapter: PostgresAdapter,
                 uri: postgresConnectionStringWithTestDb,
                 options: {} // Additional connection options can be specified here
             })
-        ]),
-        adapters: [
-            DatabaseAdapter.createAdapterConfig(PostgresAdapter),
-            DatabaseAdapter.createAdapterConfig(MongoDbAdapter)
-        ]
+        ])
     };
     ;
 

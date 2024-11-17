@@ -32,14 +32,14 @@ export interface IDatabaseSchema {
      * @param name - Name of the table to create
      * @param args - Additional arguments for table creation
      */
-    createTable(name: string, ...args: any[]): void;
+    createTable(name: string, ...args: any[]): Promise<void>;
 
     /**
      * Drop (delete) a table from the database
      * @param name - Name of the table to drop
      * @param args - Additional arguments for table deletion
      */
-    dropTable(name: string, ...args: any[]): void;
+    dropTable(name: string, ...args: any[]): Promise<void>;
 
     /**
      * Check if a table exists in the database

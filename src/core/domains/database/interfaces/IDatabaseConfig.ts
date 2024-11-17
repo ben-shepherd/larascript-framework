@@ -3,7 +3,7 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 
 export interface IDatabaseGenericConnectionConfig<Options extends object = object> {
     connectionName: string;
-    adapter: string;
+    adapter: ICtor<IDatabaseAdapter>;
     uri: string,
     options: Options;
 }
@@ -13,12 +13,5 @@ export interface IDatabaseConfig {
     defaultConnectionName: string;
     keepAliveConnections: string;
     connections: IDatabaseGenericConnectionConfig[];
-    adapters: IDatabaseAdapterConfig[]
 }
 
-
-export interface IDatabaseAdapterConfig
-{
-    name: string;
-    adapter: ICtor<IDatabaseAdapter>;
-}

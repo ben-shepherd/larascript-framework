@@ -2,12 +2,15 @@
 
 import BaseRegister from "@src/core/base/BaseRegister";
 import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
-import { IDatabaseAdapterConfig, IDatabaseConfig, IDatabaseGenericConnectionConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
+import { IDatabaseConfig, IDatabaseGenericConnectionConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IDatabaseService } from "@src/core/domains/database/interfaces/IDatabaseService";
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
+
+import DatabaseConnectionException from "../exceptions/DatabaseConnectionException";
+import DatabaseAdapter from "./DatabaseAdapter";
 
 /**
  * Database Service
@@ -158,10 +161,10 @@ class Database extends BaseRegister implements IDatabaseService {
      * Register adapters
      */
     private registerAdapters(): void {
-        for(const adapterConfig of this.config.adapters) {
-            this.registerByList(Database.REGISTERED_ADAPTERS_CONFIG, adapterConfig.name, adapterConfig)
-            this.log(`Registered adapter: ${adapterConfig.name}`)
-        }   
+        for(const connectionConfig of this.config.connections) {
+            const adapterName = DatabaseAdapter.getName(connectionConfig.adapter)
+            this.registerByList(Database.REGISTERED_ADAPTERS_CONFIG, adapterName, connectionConfig.adapter)
+        }
     }
 
     /**
@@ -181,8 +184,14 @@ class Database extends BaseRegister implements IDatabaseService {
      * @param connectionName 
      * @returns 
      */
-    isAdapter(adapterName: string, connectionName: string = this.getDefaultConnectionName()): boolean {
-        return this.getConnectionConfig(connectionName).adapter === adapterName
+    isConnectionAdapter(adapter: ICtor<IDatabaseAdapter>, connectionName: string = this.getDefaultConnectionName()): boolean {
+        const connectionConfig = this.config.connections.find(connectionConfig => connectionConfig.connectionName === connectionName)
+
+        if(!connectionConfig) {
+            throw new DatabaseConnectionException('Connection not found: ' + connectionName)
+        }
+
+        return DatabaseAdapter.getName(connectionConfig.adapter) === DatabaseAdapter.getName(adapter)
     }
     
     /**
@@ -227,21 +236,13 @@ class Database extends BaseRegister implements IDatabaseService {
      * @throws {Error} If the connection or adapter is not registered.
      */
     getAdapterConstructor<T extends ICtor<IDatabaseAdapter> = ICtor<IDatabaseAdapter>>(connectionName: string = this.getDefaultConnectionName()): T {
-        const connectionConfig: IDatabaseGenericConnectionConfig = this.getRegisteredByList(Database.REGISTERED_CONNECTIONS_CONFIG).get(connectionName)?.[0]
+        const connectionConfig = this.config.connections.find(connectionConfig => connectionConfig.connectionName === connectionName)
 
         if(!connectionConfig) {
             throw new Error('Connection not found: ' + connectionName)
         }
 
-        const adapterName = connectionConfig.adapter
-
-        const adapterConfig = this.getRegisteredByList(Database.REGISTERED_ADAPTERS_CONFIG).get(adapterName)?.[0]
-
-        if(!adapterConfig) {
-            throw new Error('Adapter not found: ' + adapterName)
-        }
-
-        return (adapterConfig as IDatabaseAdapterConfig).adapter as T 
+        return connectionConfig.adapter as T
     }
 
     /**
@@ -267,7 +268,7 @@ class Database extends BaseRegister implements IDatabaseService {
      * @returns {IDatabaseAdapter[]} An array of all registered database adapter instances.
      */
     getAllAdapterConstructors(): ICtor<IDatabaseAdapter>[] {
-        return this.config.adapters.map((adapterConfig: IDatabaseAdapterConfig) => adapterConfig.adapter) 
+        return this.config.connections.map((connectionConfig) => connectionConfig.adapter)
     }
 
     /**
@@ -290,7 +291,7 @@ class Database extends BaseRegister implements IDatabaseService {
      * @param connectionName 
      * @returns 
      */
-    documentManager<TDocMan extends IDocumentManager = IDocumentManager>(connectionName: string = this.config.defaultConnectionName): TDocMan {
+    documentManager<TDocMan extends IDocumentManager = IDocumentManager>(connectionName: string = this.getDefaultConnectionName()): TDocMan {
         return this.getAdapter(connectionName).getDocumentManager() as TDocMan
     }
     
@@ -300,7 +301,7 @@ class Database extends BaseRegister implements IDatabaseService {
          * @param connectionName 
          * @returns 
          */
-    schema<TSchema extends IDatabaseSchema = IDatabaseSchema>(connectionName: string = this.config.defaultConnectionName): TSchema {
+    schema<TSchema extends IDatabaseSchema = IDatabaseSchema>(connectionName: string = this.getDefaultConnectionName()): TSchema {
         return this.getAdapter(connectionName).getSchema() as TSchema
     }
     
@@ -311,8 +312,18 @@ class Database extends BaseRegister implements IDatabaseService {
      * 
      * @returns 
      */
-    getClient<T = unknown>(connectionName: string = this.config.defaultConnectionName): T {
+    getClient<T = unknown>(connectionName: string = this.getDefaultConnectionName()): T {
         return this.getAdapter(connectionName).getClient() as T
+    }
+
+    /**
+     * Creates the migrations schema for the database
+     * @param tableName The name of the table to create
+     * @param connectionName The connection name to use for the migration schema
+     * @returns A promise that resolves when the schema has been created
+     */
+    async createMigrationSchema(tableName: string, connectionName: string = this.getDefaultConnectionName()): Promise<unknown> {
+        return await this.getAdapter(connectionName).createMigrationSchema(tableName)
     }
 
 }

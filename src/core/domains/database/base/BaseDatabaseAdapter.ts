@@ -77,6 +77,8 @@ abstract class BaseDatabaseAdapter<TClient = unknown, TConfig extends object = o
 
     abstract getDefaultCredentials(): string | null;
 
+    abstract createMigrationSchema(...args: any[]): Promise<unknown>;
+
 }
 
 export default BaseDatabaseAdapter

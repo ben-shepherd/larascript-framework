@@ -13,6 +13,8 @@ import { App } from "@src/core/services/App";
 import pg from 'pg';
 import { QueryInterface, Sequelize } from "sequelize";
 
+import createMigrationSchemaPostgres from "../schema/createMigrationSchemaPostgres";
+
 class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
 
     /**
@@ -184,6 +186,15 @@ class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
     getQueryBuilderCtor(): ICtor<unknown> {
         throw new Error("Method not implemented.");
     }   
+
+    /**
+     * Creates the migrations schema for the database
+     * @param tableName The name of the table to create
+     * @returns A promise that resolves when the schema has been created
+     */
+    createMigrationSchema(tableName: string): Promise<unknown> {
+        return createMigrationSchemaPostgres(this, tableName)
+    }
 
 }
 

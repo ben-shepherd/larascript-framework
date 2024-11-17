@@ -1,3 +1,7 @@
+import { ICtor } from "@src/core/interfaces/ICtor";
+
+import { IDatabaseAdapter } from "../../database/interfaces/IDatabaseAdapter";
+
 /**
  * The type of migration
  */
@@ -8,7 +12,7 @@ export interface IMigration {
     /**
      * This should be set only if this migration should run on a specific database provider
      */
-    databaseProvider?:  string;
+    databaseAdapter?:  ICtor<IDatabaseAdapter>;
 
     /**
      * Specify the group this migration belongs to

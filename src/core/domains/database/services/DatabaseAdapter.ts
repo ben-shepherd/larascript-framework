@@ -1,5 +1,4 @@
 import { IDatabaseAdapter, TAdapterComposerFileName } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
-import { IDatabaseAdapterConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
@@ -15,18 +14,6 @@ class DatabaseAdapter {
         return adapter.name
     }
 
-
-    /**
-     * Creates an adapter configuration object from the given adapter constructor.
-     * @param adapter The adapter constructor to create the configuration object from.
-     * @returns An adapter configuration object containing the adapter and its name.
-     */
-    public static createAdapterConfig(adapter: ICtor<IDatabaseAdapter>): IDatabaseAdapterConfig {
-        return {
-            adapter,
-            name: DatabaseAdapter.getName(adapter),
-        }
-    }
     
     /**
      * Retrieves a list of composer file names from all registered database adapters.

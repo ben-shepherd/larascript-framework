@@ -11,6 +11,8 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
 
+import createMigrationSchemaMongo from "../schema/createMigrationSchemaMongo";
+
 class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
 
     /**
@@ -164,6 +166,10 @@ class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
     getQueryBuilderCtor(): ICtor<unknown> {
         throw new Error("Method not implemented.");
     }   
+
+    createMigrationSchema(tableName: string): Promise<unknown> {
+        return createMigrationSchemaMongo(this, tableName)
+    }
 
 }
 

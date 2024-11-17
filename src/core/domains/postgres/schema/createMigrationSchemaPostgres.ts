@@ -1,14 +1,14 @@
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
-import { App } from "@src/core/services/App";
 import { DataTypes } from "sequelize";
+
 
 /**
  * Creates the migrations table in Postgres if it does not already exist
  *
  * @returns {Promise<void>}
  */
-const createPostgresSchema = async (tableName: string = 'migrations') => {
-    const sequelize = App.container('db').getAdapter<PostgresAdapter>().getSequelize();
+const createMigrationSchemaPostgres = async (adapter: PostgresAdapter, tableName: string = 'migrations') => {
+    const sequelize = adapter.getSequelize();
     const queryInterface = sequelize.getQueryInterface();
 
     if ((await queryInterface.showAllTables())?.includes(tableName)) {
@@ -45,4 +45,4 @@ const createPostgresSchema = async (tableName: string = 'migrations') => {
     })
 }
 
-export default createPostgresSchema
+export default createMigrationSchemaPostgres

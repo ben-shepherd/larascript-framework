@@ -41,4 +41,6 @@ export interface  IDatabaseAdapter {
     getDockerComposeFileName(): string;
 
     getDefaultCredentials(): string | null;
+
+    createMigrationSchema(...args: any[]): Promise<unknown>;
 }
