@@ -6,12 +6,11 @@ import ParseMongoDBConnectionString from "@src/core/domains/mongodb/helper/Parse
 import { IMongoConfig } from "@src/core/domains/mongodb/interfaces/IMongoConfig";
 import MongoDbDocumentManager from "@src/core/domains/mongodb/MongoDbDocumentManager";
 import MongoDbSchema from "@src/core/domains/mongodb/MongoDbSchema";
+import createMigrationSchemaMongo from "@src/core/domains/mongodb/schema/createMigrationSchemaMongo";
 import { extractDefaultMongoCredentials } from "@src/core/domains/mongodb/utils/extractDefaultMongoCredentials";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
-
-import createMigrationSchemaMongo from "../schema/createMigrationSchemaMongo";
 
 class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
 

@@ -7,13 +7,12 @@ import ParsePostgresConnectionUrl from "@src/core/domains/postgres/helper/ParseP
 import { IPostgresConfig } from "@src/core/domains/postgres/interfaces/IPostgresConfig";
 import PostgresDocumentManager from "@src/core/domains/postgres/PostgresDocumentManager";
 import PostgresSchema from "@src/core/domains/postgres/PostgresSchema";
+import createMigrationSchemaPostgres from "@src/core/domains/postgres/schema/createMigrationSchemaPostgres";
 import { extractDefaultPostgresCredentials } from "@src/core/domains/postgres/utils/extractDefaultPostgresCredentials";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 import pg from 'pg';
 import { QueryInterface, Sequelize } from "sequelize";
-
-import createMigrationSchemaPostgres from "../schema/createMigrationSchemaPostgres";
 
 class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
 

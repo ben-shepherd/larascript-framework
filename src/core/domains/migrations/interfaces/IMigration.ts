@@ -1,6 +1,5 @@
+import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 import { ICtor } from "@src/core/interfaces/ICtor";
-
-import { IDatabaseAdapter } from "../../database/interfaces/IDatabaseAdapter";
 
 /**
  * The type of migration
