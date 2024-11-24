@@ -6,9 +6,8 @@ import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
 import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventConfig";
 import { IEventDriversConfigOption } from "@src/core/domains/events/interfaces/config/IEventDriversConfig";
-import { IEventListenersConfig, TListenersConfigOption, TListenersMap } from "@src/core/domains/events/interfaces/config/IEventListenersConfig";
+import { IEventListenersConfig, TListenersConfigOption } from "@src/core/domains/events/interfaces/config/IEventListenersConfig";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import { TRegisterMap } from "@src/core/interfaces/concerns/IHasRegisterableConcern";
 
 import BaseEventService from "../base/BaseEventService";
 
@@ -93,7 +92,7 @@ class EventService extends BaseEventService implements IEventService {
      * @private
      */
     private isRegisteredEvent(event: IBaseEvent): boolean {
-        return this.getRegisteredByList<TRegisterMap<string, ICtor<IBaseEvent>>>(EventService.REGISTERED_EVENTS).has(event.getName());
+        return this.srHasValue(event.getName(), EventService.REGISTERED_EVENTS)
     }
 
     /**
@@ -101,11 +100,11 @@ class EventService extends BaseEventService implements IEventService {
      * @param event The event class to be registered
      */
     registerEvent(event: ICtor<IBaseEvent>): void {
-        this.registerByList(
-            EventService.REGISTERED_EVENTS,
-            new event().getName(),
-            event
-        )
+        if(!this.srListExists(EventService.REGISTERED_EVENTS)) {
+            this.srCreateList(EventService.REGISTERED_EVENTS)
+        }
+
+        this.srSetValue(new event().getName(), event, EventService.REGISTERED_EVENTS)
     }
 
     /**
@@ -116,11 +115,11 @@ class EventService extends BaseEventService implements IEventService {
     registerDriver(driverConfig: IEventDriversConfigOption): void {
         const driverIdentifier = EventService.getDriverName(driverConfig.driverCtor)
 
-        this.registerByList(
-            EventService.REGISTERED_DRIVERS,
-            driverIdentifier,
-            driverConfig
-        )
+        if(!this.srListExists(EventService.REGISTERED_DRIVERS)) {
+            this.srCreateList(EventService.REGISTERED_DRIVERS)
+        }
+
+        this.srSetValue(driverIdentifier, driverConfig, EventService.REGISTERED_DRIVERS)
     }
 
     /**
@@ -129,14 +128,14 @@ class EventService extends BaseEventService implements IEventService {
      * @param listenerConfig the listener configuration
      */
     registerListener(listenerConfig: TListenersConfigOption): void {
-        const listenerIdentifier = listenerConfig.listener.name
+        const listenerIdentifier = new listenerConfig.listener().getName()
 
+        if(!this.srListExists(EventService.REGISTERED_LISTENERS)) {
+            this.srCreateList(EventService.REGISTERED_LISTENERS)
+        }
+ 
         // Update registered listeners
-        this.registerByList(
-            EventService.REGISTERED_LISTENERS,
-            listenerIdentifier,
-            listenerConfig
-        )
+        this.srSetValue(listenerIdentifier, listenerConfig, EventService.REGISTERED_LISTENERS)
 
         // Update the registered events from the listener and subscribers
         this.registerEventsFromListenerConfig(listenerConfig)
@@ -172,10 +171,7 @@ class EventService extends BaseEventService implements IEventService {
      * @returns The configuration options for the specified event driver, or undefined if not found.
      */
     getDriverOptions(driver: IEventDriver): IEventDriversConfigOption | undefined {
-        const registeredDrivers = this.getRegisteredByList<TRegisterMap<string, IEventDriversConfigOption>>(EventService.REGISTERED_DRIVERS);
-        const driverConfig = registeredDrivers.get(driver.getName())?.[0];
-
-        return driverConfig ?? undefined
+        return this.getDriverOptionsByName(driver.getName())
     }
 
     /**
@@ -184,10 +180,7 @@ class EventService extends BaseEventService implements IEventService {
      * @returns The configuration options for the specified event driver, or undefined if not found.
      */
     getDriverOptionsByName(driverName: string): IEventDriversConfigOption | undefined {
-        const registeredDrivers = this.getRegisteredByList<TRegisterMap<string, IEventDriversConfigOption>>(EventService.REGISTERED_DRIVERS);
-        const driverConfig = registeredDrivers.     get(driverName)?.[0];
-
-        return driverConfig ?? undefined
+        return this.srGetValue(driverName, EventService.REGISTERED_DRIVERS) as IEventDriversConfigOption | undefined
     }
 
     /**
@@ -196,8 +189,7 @@ class EventService extends BaseEventService implements IEventService {
      * @returns The event constructor for the specified event, or undefined if not found.
      */
     getEventCtorByName(eventName: string): ICtor<IBaseEvent> | undefined {
-        const registeredEvents = this.getRegisteredByList<TRegisterMap<string, ICtor<IBaseEvent>>>(EventService.REGISTERED_EVENTS);
-        return registeredEvents.get(eventName)?.[0]
+        return this.srGetValue(eventName, EventService.REGISTERED_EVENTS) as ICtor<IBaseEvent> | undefined
     }
 
     /**
@@ -224,15 +216,9 @@ class EventService extends BaseEventService implements IEventService {
      * @returns An array of event subscriber constructors.
      */
     getSubscribers(eventName: string): ICtor<IBaseEvent>[] {
-        const registeredListeners = this.getRegisteredByList<TListenersMap>(EventService.REGISTERED_LISTENERS);
-    
-        const listenerConfig = registeredListeners.get(eventName)?.[0];
-            
-        if(!listenerConfig) {
-            return [];
-        }
-    
-        return listenerConfig.subscribers;
+        const listenerConfig = this.srGetValue(eventName, EventService.REGISTERED_LISTENERS) as TListenersConfigOption | undefined;
+
+        return listenerConfig?.subscribers ?? [];
     }
 
 }

@@ -7,10 +7,10 @@ import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventWorkerConcern } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
 import { IMockableConcern } from "@src/core/domains/events/interfaces/IMockableConcern";
 import { IDispatchable } from "@src/core/interfaces/concerns/IDispatchable";
-import { IHasRegisterableConcern } from "@src/core/interfaces/concerns/IHasRegisterableConcern";
+import { ISimpleRegister } from "@src/core/interfaces/concerns/ISimpleRegister";
 import { ICtor } from "@src/core/interfaces/ICtor";
 
-export interface IEventService extends IHasRegisterableConcern, IDispatchable, IEventWorkerConcern, IMockableConcern
+export interface IEventService extends ISimpleRegister, IDispatchable, IEventWorkerConcern, IMockableConcern
 {
     getConfig(): IEventConfig;
 

@@ -1,5 +1,4 @@
-import { TListValue } from "../concerns/SimpleRegisterConcern";
-import { ICommandOptionArguement, ICommandOptionArguementStructure, ISimpleRegister, TOptionalListName, TSimpleRegisterDatabaseMap } from "../interfaces/concerns/ISimpleRegister";
+import { ICommandOptionArguement, ICommandOptionArguementStructure, ISimpleRegister, TListValueMap, TOptionalListName, TSimpleRegisterDatabaseMap } from "../interfaces/concerns/ISimpleRegister";
 
 export const DEFAULT_LIST = 'defaultList';
 export const DEFAULT_KEY = 'defaultKey';
@@ -45,6 +44,12 @@ const DEFAULTS: ICommandOptionArguementStructure = {
             value: undefined
         }
     },
+    hasValue: {
+        options: {
+            listName: DEFAULT_LIST,
+            key: DEFAULT_KEY
+        }
+    },
     getValue: {
         options: {
             listName: DEFAULT_LIST,
@@ -53,7 +58,7 @@ const DEFAULTS: ICommandOptionArguementStructure = {
     }
 }
 
-class SimpleRegister implements ISimpleRegister {
+class BaseSimpleRegister implements ISimpleRegister {
 
     /**
      * Store all the lists
@@ -65,10 +70,10 @@ class SimpleRegister implements ISimpleRegister {
      * Creates a new list with the given name and value.
      * If the list already exists, it will be overwritten.
      * @param {string} listName - The name of the list to create.
-     * @param {TListValue} [listValue=new Map()] - The value of the list.
+     * @param {TListValueMap} [listValue=new Map()] - The value of the list.
      * @returns {void}
      */
-    srCreateList(listName: string, listValue: TListValue = new Map()) {
+    srCreateList(listName: string, listValue: TListValueMap = new Map()) {
         this.srCommand('createList', { listName, listValue });
     }
 
@@ -85,10 +90,10 @@ class SimpleRegister implements ISimpleRegister {
      * Updates the list with the given name and value.
      * If the list does not exist, it will be created.
      * @param {string} listName - The name of the list to update.
-     * @param {TListValue} listValue - The value of the list.
+     * @param {TListValueMap} listValue - The value of the list.
      * @returns {void}
      */
-    srUpdateList(listName: string, listValue: TListValue) {
+    srUpdateList(listName: string, listValue: TListValueMap) {
         this.srCommand('updateList', { listName, listValue });
     }
 
@@ -96,9 +101,9 @@ class SimpleRegister implements ISimpleRegister {
      * Retrieves the list with the given name.
      * If the list does not exist, an empty list will be returned.
      * @param {string} listName - The name of the list to retrieve.
-     * @returns {TListValue} The retrieved list.
+     * @returns {TListValueMap} The retrieved list.
      */
-    srGetList(listName: string): TListValue {
+    srGetList(listName: string): TListValueMap {
         return this.srCommand('getList', { listName });
     }
 
@@ -170,28 +175,35 @@ class SimpleRegister implements ISimpleRegister {
         const optionsWithDefaults = { ...(DEFAULTS[command].options as object), ...(options ?? {}) }
 
         const commandHandlers: Record<keyof ICommandOptionArguement, () => unknown> = {
+            
             createList: () => {
                 this.createList(listName);
                 this.updateList(listName, (optionsWithDefaults as ICommandOptionArguement['createList']['options']).listValue);                
             },
+            
             listExists: () => {
                 return this.listExists(listName);
             },
+
             getList: () => {
                 return this.getList(listName);
             },
+
             updateList: () => {
                 this.updateList(
                     listName,
                     (optionsWithDefaults as ICommandOptionArguement['updateList']['options']).listValue
                 )
             },
+
             clearList: () => {
                 this.clearList(listName);
             },
+            
             deleteList: () => {
                 this.deleteList(listName);
             },
+
             setValue: () => {
                 this.setValue(
                     (optionsWithDefaults as ICommandOptionArguement['setValue']['options']).key,
@@ -199,12 +211,14 @@ class SimpleRegister implements ISimpleRegister {
                     listName
                 )
             },
+
             hasValue: () => {
                 return this.hasValue(
                     (optionsWithDefaults as ICommandOptionArguement['hasValue']['options']).key,
                     listName
                 )    
             },
+
             getValue: () => {
                 return this.getValue(
                     (optionsWithDefaults as ICommandOptionArguement['getValue']['options']).key,
@@ -228,11 +242,11 @@ class SimpleRegister implements ISimpleRegister {
         this.listMapRegistry.set(listName, new Map());
     }
 
-    protected getList<T extends TListValue = TListValue>(listName: string): T {
+    protected getList<T extends TListValueMap = TListValueMap>(listName: string): T {
         return this.listMapRegistry.get(listName) as T;
     }
 
-    protected updateList(listName: string, listValue?: TListValue) {
+    protected updateList(listName: string, listValue?: TListValueMap) {
         this.listMapRegistry.set(listName, listValue ?? new Map());
     }
 
@@ -259,4 +273,4 @@ class SimpleRegister implements ISimpleRegister {
     }
 
 }
-export default SimpleRegister
+export default BaseSimpleRegister

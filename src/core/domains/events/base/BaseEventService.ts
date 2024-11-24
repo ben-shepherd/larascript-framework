@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
-import HasRegisterableConcern from "@src/core/concerns/HasRegisterableConcern";
+import HasSimpleRegisterConcern from "@src/core/concerns/HasSimpleRegisterConcern";
 import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventConfig";
-import { IRegsiterList, TRegisterMap } from "@src/core/interfaces/concerns/IHasRegisterableConcern";
+import { ICommandOptionArguement, IOptionTypes } from "@src/core/interfaces/concerns/ISimpleRegister";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import compose from "@src/core/util/compose";
 
@@ -12,7 +12,7 @@ import { TEventWorkerOptions } from "../interfaces/IEventWorkerConcern";
 import { TMockableEventCallback } from "../interfaces/IMockableConcern";
 
 
-class BaseEventService extends compose(class {}, HasRegisterableConcern, EventWorkerConcern, EventMockableConcern) {
+class BaseEventService extends compose(class {}, HasSimpleRegisterConcern, EventWorkerConcern, EventMockableConcern) {
 
     static readonly REGISTERED_EVENTS = "registeredEvents";
 
@@ -25,23 +25,29 @@ class BaseEventService extends compose(class {}, HasRegisterableConcern, EventWo
     static readonly REGISTERED_MOCK_DISPATCHED = "mockDispatched";
 
     protected config!: IEventConfig;
-
+    
     /**
-     * Declare HasRegisterableConcern methods.
+     * Declare simple register concern 
      */
-    declare register: (key: string, value: unknown) => void;
+    declare srCreateList: (listName: string, listValue?: IOptionTypes['listValue']) => void;
 
-    declare registerByList: (listName: string, key: string, value: unknown) => void;
-    
-    declare setRegisteredByList: (listName: string, registered: TRegisterMap) => void;
-    
-    declare getRegisteredByList: <T extends TRegisterMap = TRegisterMap>(listName: string) => T;
-    
-    declare getRegisteredList: <T extends TRegisterMap = TRegisterMap>() => T;
-    
-    declare getRegisteredObject: () => IRegsiterList;
+    declare srListExists: (listName: string) => boolean;
 
-    declare isRegisteredInList: (listName: string, key: string) => boolean;
+    declare srUpdateList: (listName: string, listValue: IOptionTypes['listValue']) => void;
+
+    declare srGetList: (listName: string) => IOptionTypes['listValue'];
+
+    declare srClearList: (listName: string) => void;
+
+    declare srDeleteList: (listName: string) => void;
+
+    declare srSetValue: (key: string, value: unknown, listName: string) => void;
+
+    declare srHasValue: (key: string, listName: string) => boolean;
+
+    declare srGetValue: (key: string, listName: string) => unknown;
+
+    declare srCommand: <K extends keyof ICommandOptionArguement = keyof ICommandOptionArguement>(command: K, options?: ICommandOptionArguement[K]['options']) => ICommandOptionArguement[K]['returns'];
 
     /**
      * Declare EventMockableConcern methods.

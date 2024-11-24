@@ -94,4 +94,17 @@ describe('test simple register', () => {
         expect(test.srGetValue('dog', 'animals')).toBeUndefined();
         expect(test.srGetValue('mouse', 'animals')).toBeUndefined();
     })
+
+    test('test sad flow', () => {
+
+        const test = new TestSimpleClass();
+
+        // No list created
+        expect(test.srGetValue('London', 'cities')).toBeUndefined();
+        expect(test.srHasValue('London', 'cities')).toBeFalsy();
+        expect(test.srSetValue('London', 1000000, 'cities')).toBeFalsy();
+        expect(test.srClearList('cities')).toBeFalsy();
+        expect(test.srDeleteList('cities')).toBeFalsy();
+    })
+
 });
