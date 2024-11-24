@@ -1,33 +1,20 @@
-/* eslint-disable no-unused-vars */
+ 
 import BaseEventListener from "@src/core/domains/events/base/BaseEventListener";
-import BaseService from "@src/core/domains/events/base/BaseService";
 import EventDispatchException from "@src/core/domains/events/exceptions/EventDispatchException";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
-import { TEventWorkerOptions } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
-import { TMockableEventCallback } from "@src/core/domains/events/interfaces/IMockableConcern";
 import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventConfig";
 import { IEventDriversConfigOption } from "@src/core/domains/events/interfaces/config/IEventDriversConfig";
 import { IEventListenersConfig, TListenersConfigOption, TListenersMap } from "@src/core/domains/events/interfaces/config/IEventListenersConfig";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import { IRegsiterList, TRegisterMap } from "@src/core/interfaces/concerns/IHasRegisterableConcern";
+import { TRegisterMap } from "@src/core/interfaces/concerns/IHasRegisterableConcern";
+
+import BaseEventService from "../base/BaseEventService";
 
 
-class EventService extends BaseService implements IEventService {
-
-    static readonly REGISTERED_EVENTS = "registeredEvents";
-
-    static readonly REGISTERED_DRIVERS = "registeredDrivers";
-
-    static readonly REGISTERED_LISTENERS = "registeredListeners"; 
-
-    static readonly REGISTERED_MOCK_EVENTS = "mockEvents";
-
-    static readonly REGISTERED_MOCK_DISPATCHED = "mockDispatched";
-
-    protected config!: IEventConfig;
-
+class EventService extends BaseEventService implements IEventService {
+    
     constructor(config: IEventConfig) {
         super()
         this.config = config;
@@ -76,37 +63,6 @@ class EventService extends BaseService implements IEventService {
     getConfig(): IEventConfig {
         return this.config
     }
-
-    /**
-     * Declare HasRegisterableConcern methods.
-     */
-    declare register: (key: string, value: unknown) => void;
-
-    declare registerByList: (listName: string, key: string, value: unknown) => void;
-    
-    declare setRegisteredByList: (listName: string, registered: TRegisterMap) => void;
-    
-    declare getRegisteredByList: <T extends TRegisterMap = TRegisterMap>(listName: string) => T;
-    
-    declare getRegisteredList: <T extends TRegisterMap = TRegisterMap>() => T;
-    
-    declare getRegisteredObject: () => IRegsiterList;
-
-    declare isRegisteredInList: (listName: string, key: string) => boolean;
-
-    /**
-     * Declare EventMockableConcern methods.
-     */
-    declare mockEvent: (event: ICtor<IBaseEvent>) => void;
-
-    declare mockEventDispatched: (event: IBaseEvent) => void;
-
-    declare assertDispatched: <TPayload = unknown>(eventCtor: ICtor<IBaseEvent>, callback?: TMockableEventCallback<TPayload>) => boolean
-
-    /**
-     * Delcare EventWorkerConcern methods.
-     */
-    declare runWorker: (options: TEventWorkerOptions) => Promise<void>;
 
     /**
      * Dispatch an event using its registered driver.
