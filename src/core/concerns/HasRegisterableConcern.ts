@@ -20,11 +20,11 @@ import { ICtor } from "@src/core/interfaces/ICtor";
  * const myInstance = new MyClass();
  * myInstance.getRegisteredObject()['default'].get('myKey'); // returns 'myValue'
  * 
- * @param {ICtor} Broadcaster The base class to extend.
+ * @param {ICtor} Base The base class to extend.
  * @returns {ICtor} The class that extends the passed in class.
  */
-const HasRegisterableConcern = (Broadcaster: ICtor) => {
-    return class HasRegisterable extends Broadcaster implements IHasRegisterableConcern {
+const HasRegisterableConcern = (Base: ICtor) => {
+    return class HasRegisterable extends Base implements IHasRegisterableConcern {
 
         
         protected registerObject: IRegsiterList = {}

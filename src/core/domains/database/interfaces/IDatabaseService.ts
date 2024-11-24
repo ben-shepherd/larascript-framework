@@ -4,10 +4,9 @@ import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabase
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IHasConfigConcern } from "@src/core/interfaces/concerns/IHasConfigConcern";
-import { IHasRegisterableConcern } from "@src/core/interfaces/concerns/IHasRegisterableConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
 
-export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>, IHasRegisterableConcern
+export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>
 {
     boot(): Promise<void>;
     
