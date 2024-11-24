@@ -1,6 +1,6 @@
 
 
-import BaseRegister from "@src/core/base/BaseRegister";
+import BaseSimpleRegister from "@src/core/base/BaseSimpleRegister";
 import DatabaseConnectionException from "@src/core/domains/database/exceptions/DatabaseConnectionException";
 import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 import { IDatabaseConfig, IDatabaseGenericConnectionConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
@@ -19,7 +19,7 @@ import { App } from "@src/core/services/App";
  * Usage:
  *  App.container('db').provider(connectionName).documentManager().findMany({})
  */
-class Database extends BaseRegister implements IDatabaseService {
+class Database extends BaseSimpleRegister implements IDatabaseService {
 
     static readonly REGISTERED_ADAPTERS_CONFIG = 'registeredAdaptersConfig'
 
@@ -40,6 +40,7 @@ class Database extends BaseRegister implements IDatabaseService {
         super()
         this.config = config
     }
+
 
     /**
      * @template T - The type of the configuration object to return. Defaults to IDatabaseConfig.
@@ -142,7 +143,7 @@ class Database extends BaseRegister implements IDatabaseService {
         const connectionConfig = this.getConnectionConfig(connectionName)
         const adapterCtor = this.getAdapterConstructor(connectionName)
 
-        const adapterAlreadyDefined = this.getRegisteredByList(Database.REGISTERED_ADAPTERS_BY_CONNECTION).get(connectionName)?.[0]
+        const adapterAlreadyDefined = this.srGetValue(connectionName, Database.REGISTERED_ADAPTERS_BY_CONNECTION)
 
         if(adapterAlreadyDefined) {
             return;
@@ -153,16 +154,23 @@ class Database extends BaseRegister implements IDatabaseService {
         const adapter = new adapterCtor(connectionName, connectionConfig);
         await adapter.connect()
         
-        this.registerByList(Database.REGISTERED_ADAPTERS_BY_CONNECTION, connectionName, adapter)
+        if(!this.srListExists(Database.REGISTERED_ADAPTERS_BY_CONNECTION)) {
+            this.srCreateList(Database.REGISTERED_ADAPTERS_BY_CONNECTION)
+        }
+
+        this.srSetValue(connectionName, adapter, Database.REGISTERED_ADAPTERS_BY_CONNECTION)
     }
 
     /**
      * Register adapters
      */
     private registerAdapters(): void {
+        this.srCreateList(Database.REGISTERED_ADAPTERS_CONFIG)
+        
         for(const connectionConfig of this.config.connections) {
             const adapterName = DatabaseAdapter.getName(connectionConfig.adapter)
-            this.registerByList(Database.REGISTERED_ADAPTERS_CONFIG, adapterName, connectionConfig.adapter)
+
+            this.srSetValue(adapterName, connectionConfig, Database.REGISTERED_ADAPTERS_CONFIG)
         }
     }
 
@@ -170,11 +178,12 @@ class Database extends BaseRegister implements IDatabaseService {
      * Register connections
      */
     private registerConnections(): void {
+        this.srCreateList(Database.REGISTERED_CONNECTIONS_CONFIG)
+
         for(const connectionConfig of this.config.connections) {
-            this.registerByList(Database.REGISTERED_CONNECTIONS_CONFIG, connectionConfig.connectionName, connectionConfig)
+            this.srSetValue(connectionConfig.connectionName, connectionConfig, Database.REGISTERED_CONNECTIONS_CONFIG)
             this.log(`Registered connection: ${connectionConfig.connectionName}`)
         }
-        
     }
 
     /**
@@ -218,13 +227,14 @@ class Database extends BaseRegister implements IDatabaseService {
      * @throws {Error} If the connection is not found.
      */
     getConnectionConfig<T extends object = object>(connectionName: string): IDatabaseGenericConnectionConfig<T> {
-        const connectionConfig: IDatabaseGenericConnectionConfig = this.getRegisteredByList(Database.REGISTERED_CONNECTIONS_CONFIG).get(connectionName)?.[0]
+
+        const connectionConfig = this.srGetValue(connectionName, Database.REGISTERED_CONNECTIONS_CONFIG) as IDatabaseGenericConnectionConfig<T> | undefined;
 
         if(!connectionConfig) {
             throw new Error('Connection not found: ' + connectionName)
         }
 
-        return connectionConfig as IDatabaseGenericConnectionConfig<T>
+        return connectionConfig
     }
 
     /**
@@ -252,13 +262,13 @@ class Database extends BaseRegister implements IDatabaseService {
      * @throws {Error} If the connection or adapter is not registered.
      */
     getAdapter<TAdapter extends IDatabaseAdapter = IDatabaseAdapter>(connectionName: string = this.getDefaultConnectionName()): TAdapter {
-        const adapter = this.getRegisteredByList(Database.REGISTERED_ADAPTERS_BY_CONNECTION).get(connectionName)?.[0]
+        const adapter = this.srGetValue(connectionName, Database.REGISTERED_ADAPTERS_BY_CONNECTION as string) as TAdapter | undefined
 
         if(!adapter) {
             throw new Error('Adapter not found: ' + connectionName)
         }
 
-        return adapter as TAdapter
+        return adapter
     }
 
     /**
