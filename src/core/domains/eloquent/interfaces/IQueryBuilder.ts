@@ -1,5 +1,21 @@
+import { IModel } from "@src/core/interfaces/IModel";
+import { Collection } from "collect.js";
+
+import { TDirection } from "./TEnums";
+
 /* eslint-disable no-unused-vars */
-export interface IQueryBuilder {
+export interface IQueryBuilder<TModel extends IModel = IModel> {
+
+    // find methods
+    find(id: unknown): TModel | null;
+    findOrFail(id: unknown): TModel;
+    
+    // get methods
+    all: () => Promise<Collection<TModel[]>>;
+    get(): Promise<Collection<TModel[]>>;
+    first(): TModel | null;
+    last(): TModel | null;
+
     // Select methods
     select(columns?: string | string[]): IQueryBuilder;
     selectRaw(expression: string, bindings?: any[]): IQueryBuilder;
@@ -21,7 +37,7 @@ export interface IQueryBuilder {
     crossJoin(table: string): IQueryBuilder;
 
     // Ordering
-    orderBy(column: string, direction?: 'asc' | 'desc'): IQueryBuilder;
+    orderBy(column: string, direction?: TDirection): IQueryBuilder;
     orderByDesc(column: string): IQueryBuilder;
     latest(column?: string): IQueryBuilder;
     oldest(column?: string): IQueryBuilder;
@@ -43,9 +59,7 @@ export interface IQueryBuilder {
     avg(column: string): Promise<number>;
     sum(column: string): Promise<number>;
 
-    // Execution
-    get(): Promise<any[]>;
-    first(): Promise<any>;
+    // Pagination
     paginate(perPage?: number, page?: number): Promise<{
         data: any[];
         total: number;
@@ -55,7 +69,9 @@ export interface IQueryBuilder {
     }>;
 
     // Utility methods
-    toSql(): string;
+    setBindings(bindings: any[]): IQueryBuilder;
     getBindings(): any[];
+
+    // Cloning 
     clone(): IQueryBuilder;
 }

@@ -1,7 +1,7 @@
 import BaseDocumentManager from "@src/core/domains/database/base/BaseDocumentManager";
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
-import PostgresQueryBuilder, { SelectOptions } from "@src/core/domains/postgres/builder/PostgresQueryBuilder";
+import SelectBuilder, { SelectOptions } from "@src/core/domains/postgres/builder/SelectBuilder";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { BindOrReplacements, QueryOptions, QueryTypes } from "sequelize";
 
@@ -12,7 +12,7 @@ import { BindOrReplacements, QueryOptions, QueryTypes } from "sequelize";
  */
 class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManager, PostgresAdapter> {
 
-    protected builder = new PostgresQueryBuilder()
+    protected builder = new SelectBuilder()
 
     /**
      * Adds the id: uuid to the document
