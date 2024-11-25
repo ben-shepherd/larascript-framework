@@ -1,5 +1,8 @@
+import { IModel } from "@src/core/interfaces/IModel";
 
-class PostgresQueryBuilder {
+import BaseQueryBuilder from "../../eloquent/base/BaseQueryBuilder";
+
+class PostgresQueryBuilder<T extends IModel = IModel> extends BaseQueryBuilder<T> {
 
 }
 

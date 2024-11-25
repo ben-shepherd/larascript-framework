@@ -1,5 +1,71 @@
-export type TMapCallback<T,V> = (value: T, index: number, array: T[]) => V;
+/* eslint-disable no-unused-vars */
+import { Collection as CollectJsCollection } from "collect.js";
 
-export type TForeachCallback<T> = (value: T, index: number, array: T[]) => void;
-
+/**
+ * Type definition for callback functions used in collection operations
+ */
+export type TForeachCallback<T> = (item: T, index: number, array: T[]) => void;
+export type TMapCallback<T, R> = (item: T, index: number, array: T[]) => R;
+export type TFilterCallback<T> = (item: T, index: number, array: T[]) => boolean;
 export type TOperator = "===" | "==" | "!==" | "!=" | "<>" | ">" | "<" | ">=" | "<="
+
+/**
+ * Interface defining the structure and behavior of a Collection class
+ */
+export interface ICollection<T = unknown> {
+
+    /**
+     * Get the underlying CollectJs Collection
+     */
+    toCollectJs(): CollectJsCollection<T>;
+
+    /**
+     * Iterable methods
+     */
+    forEach(callback: TForeachCallback<T>): this;
+    map(callback: TMapCallback<T, T>): this;
+    filter(callback: TFilterCallback<T>): this;
+
+    /**
+     * Getters and setters
+     */
+    all(): T[];
+    toArray(): T[];
+    get(index: number): T;
+    set(index: number, value: T): void;
+    add(item: T): this;
+    remove(index: number): this;
+    first(): T | null;
+    last(): T | null;
+
+    /**
+     * Aggregations
+     */
+    count(): number;
+    sum(column: string): number | string;
+    average(column: string): number;
+    max(column: string): number;
+    min(column: string): number;
+
+    /**
+     * Comparison methods
+     */
+    where(column: string, operator: TOperator, value: any): this;
+
+    /**
+     * Utility methods
+     */
+    clone(): this;
+
+    /**
+     * Index signature for array-like access
+     */
+    [index: number]: T;
+}
+
+/**
+ * Interface for the Collection constructor
+ */
+export interface ICollectionConstructor<T = unknown> {
+    new (items?: T[]): ICollection<T>;
+}

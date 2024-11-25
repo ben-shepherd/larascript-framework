@@ -4,23 +4,25 @@ import collect from '@src/core/domains/collections/helper/collect';
 import { Collection as CollectJsCollection } from "collect.js";
 
 describe('collection test', () => {
+    test('instance', () => {
+        expect(collect() instanceof Collection).toBeTruthy();
+    })
+
     test('get data', () => {
         const collection = collect([1, 2, 3]);
 
-        expect(collection instanceof Collection).toBeTruthy();
         expect(collection[0]).toBe(1);
         expect(collection[1]).toBe(2);
         expect(collection[2]).toBe(3);
     });
 
     test('set data', () => {
-        const collection = collect([]);
+        const collection = collect<number>([]);
 
         collection[0] = 1;
         collection[1] = 2;
         collection[2] = 3;
 
-        expect(collection instanceof Collection).toBeTruthy();
         expect(collection.count()).toBe(3);
         expect(collection[0]).toBe(1);
         expect(collection[1]).toBe(2);
@@ -29,8 +31,6 @@ describe('collection test', () => {
 
     test('collection iterable', () => {
         const collection = collect([1, 2, 3]);
-
-        expect(collection instanceof Collection).toBeTruthy();
 
         for(let i = 0; i < collection.count(); i++) {
             expect(collection[i]).toBe({

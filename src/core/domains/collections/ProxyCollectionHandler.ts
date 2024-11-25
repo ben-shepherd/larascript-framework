@@ -1,4 +1,11 @@
 
+/**
+ * Handles get, set, and has operations on a collection proxy.
+ *
+ * Provides a way to access items in a collection using numerical indexes.
+ * It also enables accessing methods on the collection by returning a bound
+ * function to ensure the correct 'this' context.
+ */
 class ProxyCollectionHandler {
 
     /**
@@ -30,11 +37,6 @@ class ProxyCollectionHandler {
         return value;
     }
 
-    // eslint-disable-next-line no-unused-vars
-    getIndex(target, property, receiver) {
-        return target.items[property] ?? null
-    }
-
     /**
      * Sets a new value for a specific property in the target collection.
      *
@@ -44,8 +46,8 @@ class ProxyCollectionHandler {
      * @param receiver - The proxy or the object that initiated the operation.
      * @returns A boolean indicating whether the set operation was successful.
      */
-    // eslint-disable-next-line no-unused-vars
-    set(target, property, newValue, receiver) {
+     
+    set(target, property, newValue) {
         target.items[property] = newValue
         return true
     }

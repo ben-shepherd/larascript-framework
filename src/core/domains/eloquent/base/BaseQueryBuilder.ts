@@ -1,8 +1,7 @@
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
-import IModelAttributes from "@src/core/interfaces/IModelData";
 
-import { ICollection } from "../../collection/interfaces/ICollection";
+import { ICollection } from "../../collections/interfaces/ICollection";
 import { IQueryBuilder } from "../interfaces/IQueryBuilder";
 import { TDirection } from "../interfaces/TEnums";
 
@@ -10,12 +9,12 @@ export type TQueryBuilderOptions = {
     modelCtor: ICtor<IModel>;
 }
 
-class BaseQueryBuilder implements IQueryBuilder {
+abstract class BaseQueryBuilder<M extends IModel> implements IQueryBuilder<M> {
 
     /**
      * The constructor of the model associated with this query builder.
      */
-    modelCtor!: ICtor<IModel>;
+    modelCtor!: ICtor<M>;
 
     /**
      * The connection name to use for the query builder
@@ -25,7 +24,7 @@ class BaseQueryBuilder implements IQueryBuilder {
     /**
      * Constructor
      * @param {Object} options The options for the query builder
-     * @param {ICtor<IModel>} options.modelCtor The constructor of the model associated with this query builder
+     * @param {ICtor<M>} options.modelCtor The constructor of the model associated with this query builder
      */
     constructor({ modelCtor }: TQueryBuilderOptions) {
         this.setModelCtor(modelCtor);
@@ -34,17 +33,17 @@ class BaseQueryBuilder implements IQueryBuilder {
 
     /**
      * Retrieves the constructor of the model associated with this query builder.
-     * @returns {ICtor<IModel>} The model constructor.
+     * @returns {ICtor<M>} The model constructor.
      */
-    getModelCtor(): ICtor<IModel> {
+    getModelCtor(): ICtor<M> {
         return this.modelCtor;
     }
 
     /**
      * Sets the model constructor to use for the query builder
-     * @param {ICtor<IModel>} modelCtor The constructor of the model to use for the query builder
+     * @param {ICtor<M>} modelCtor The constructor of the model to use for the query builder
      */
-    setModelCtor(modelCtor: ICtor<IModel>) {
+    setModelCtor(modelCtor: ICtor<M>) {
         this.modelCtor = modelCtor;
     }
 
@@ -64,157 +63,83 @@ class BaseQueryBuilder implements IQueryBuilder {
         this.connectionName = connectionName
     }
 
-    find(id: unknown): IModel<IModelAttributes> | null {
-        throw new Error("Method not implemented.");
-    }
+    abstract find(id: unknown): M | null;
 
-    findOrFail(id: unknown): IModel<IModelAttributes> {
-        throw new Error("Method not implemented.");
-    }
+    abstract findOrFail(id: unknown): M;
 
-    get(): Promise<ICollection<IModel<IModelAttributes>[]>> {
-        throw new Error("Method not implemented.");
-    }
+    abstract get(): Promise<ICollection<M>>;
 
-    first(): IModel<IModelAttributes> | null {
-        throw new Error("Method not implemented.");
-    }
+    abstract all(): Promise<ICollection<M>>;
 
-    last(): IModel<IModelAttributes> | null {
-        throw new Error("Method not implemented.");
-    }
+    abstract first(): M | null;
 
-    select(columns?: string | string[]): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract last(): M | null;
 
-    selectRaw(expression: string, bindings?: any[]): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract select(columns?: string | string[]): IQueryBuilder;
 
-    distinct(): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract selectRaw(expression: string, bindings?: any[]): IQueryBuilder;
 
-    where(column: string, operator?: string, value?: any): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract distinct(): IQueryBuilder;
 
-    whereIn(column: string, values: any[]): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract where(column: string, operator?: string, value?: any): IQueryBuilder;
 
-    whereNotIn(column: string, values: any[]): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract whereIn(column: string, values: any[]): IQueryBuilder;
 
-    whereNull(column: string): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract whereNotIn(column: string, values: any[]): IQueryBuilder;
 
-    whereNotNull(column: string): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract whereNull(column: string): IQueryBuilder;
 
-    whereBetween(column: string, range: [any, any]): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract whereNotNull(column: string): IQueryBuilder;
 
-    whereRaw(query: string, bindings?: any[]): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract whereBetween(column: string, range: [any, any]): IQueryBuilder;
 
-    join(table: string, first: string, operator?: string, second?: string): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract whereRaw(query: string, bindings?: any[]): IQueryBuilder;
 
-    leftJoin(table: string, first: string, operator?: string, second?: string): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract join(table: string, first: string, operator?: string, second?: string): IQueryBuilder;
 
-    rightJoin(table: string, first: string, operator?: string, second?: string): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract leftJoin(table: string, first: string, operator?: string, second?: string): IQueryBuilder;
 
-    crossJoin(table: string): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract rightJoin(table: string, first: string, operator?: string, second?: string): IQueryBuilder;
 
-    orderBy(column: string, direction?: TDirection): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract crossJoin(table: string): IQueryBuilder;
 
-    orderByDesc(column: string): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract orderBy(column: string, direction?: TDirection): IQueryBuilder;
 
-    latest(column?: string): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract orderByDesc(column: string): IQueryBuilder;
 
-    oldest(column?: string): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract latest(column?: string): IQueryBuilder;
 
-    groupBy(...columns: string[]): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract oldest(column?: string): IQueryBuilder;
 
-    having(column: string, operator?: string, value?: any): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract groupBy(...columns: string[]): IQueryBuilder;
 
-    limit(value: number): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract having(column: string, operator?: string, value?: any): IQueryBuilder;
 
-    offset(value: number): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract limit(value: number): IQueryBuilder;
 
-    skip(value: number): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract offset(value: number): IQueryBuilder;
 
-    take(value: number): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract skip(value: number): IQueryBuilder;
 
-    count(column?: string): Promise<number> {
-        throw new Error("Method not implemented.");
-    }
+    abstract take(value: number): IQueryBuilder;
 
-    max(column: string): Promise<number> {
-        throw new Error("Method not implemented.");
-    }
+    abstract count(column?: string): Promise<number>;
 
-    min(column: string): Promise<number> {
-        throw new Error("Method not implemented.");
-    }
+    abstract max(column: string): Promise<number>;
 
-    avg(column: string): Promise<number> {
-        throw new Error("Method not implemented.");
-    }
+    abstract min(column: string): Promise<number>;
 
-    sum(column: string): Promise<number> {
-        throw new Error("Method not implemented.");
-    }
+    abstract avg(column: string): Promise<number>;
 
-    paginate(perPage?: number, page?: number): Promise<{ data: any[]; total: number; currentPage: number; lastPage: number; perPage: number; }> {
-        throw new Error("Method not implemented.");
-    }
+    abstract sum(column: string): Promise<number>;
 
-    setBindings(bindings: any[]): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract paginate(perPage?: number, page?: number): Promise<{ data: any[]; total: number; currentPage: number; lastPage: number; perPage: number; }>;
 
-    getBindings(): any[] {
-        throw new Error("Method not implemented.");
-    }
+    abstract setBindings(bindings: any[]): IQueryBuilder;
 
-    clone(): IQueryBuilder {
-        throw new Error("Method not implemented.");
-    }
+    abstract getBindings(): any[];
+
+    abstract clone(): IQueryBuilder;
 
 }
 

@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import BaseQueryBuilder from '@src/core/domains/eloquent/base/BaseQueryBuilder';
 import Direction from '@src/core/domains/eloquent/enums/Direction';
 import { App } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
@@ -37,34 +36,46 @@ describe('query builder select', () => {
         }
     })
 
-    /**
-   * Test the MongoDB connection
-   */
-    test('test with ascending order',async () => {
+    test('test query model constructor',async () => {
+        
+        const modelCtor = TestModel.query()
+            .getModelCtor()
+
+        expect(new modelCtor(null)).toBeInstanceOf(TestModel);
+
+    });
+
+    test('find by id',async () => {
+        
+    })
+
+    test('select with ascending order',async () => {
         
         for(const connectionName of connections) {
             const documentManager = App.container('db').documentManager(connectionName).table('tests');
 
             await documentManager.table(tableName).insertMany([
-                {name: 'Bob', age: 30, createdAt: new Date(), updatedAt: new Date()},
-                {name: 'John', age: 40, createdAt: new Date(), updatedAt: new Date()},
-                {name: 'Alice', age: 50, createdAt: new Date(), updatedAt: new Date()},
+                {name: 'Alice', age: 30, createdAt: new Date(), updatedAt: new Date()},
+                {name: 'Ben', age: 40, createdAt: new Date(), updatedAt: new Date()},
+                {name: 'Charlie', age: 50, createdAt: new Date(), updatedAt: new Date()},
             ]);
 
-            const query = TestModel.query()
-                .orderBy('age', Direction.ASC);
+            const result = await TestModel.query()
+                .orderBy('age', Direction.ASC)
+                .get();
 
-            expect(query instanceof BaseQueryBuilder).toBe(true);
+            const first = result.first()
+            expect(first).toBeInstanceOf(TestModel);
+            expect(first?.attr('name')).toBe('Alice');
 
-            const result = await query.get()
+            const second = result.get(1)
+            expect(second).toBeInstanceOf(TestModel);
+            expect(second?.attr('name')).toBe('Ben');
 
-            expect(result.count()).toBe(3);
+            const last = result.last();
+            expect(last).toBeInstanceOf(TestModel);
+            expect(last?.attr('name')).toBe('Charlie');
 
-            expect(result[0].name).toBe('Bob');
-
-            /**
-             * TODO: finish test
-             */
         }
 
     });

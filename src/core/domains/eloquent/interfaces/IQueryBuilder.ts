@@ -1,7 +1,9 @@
 import { IModel } from "@src/core/interfaces/IModel";
-import { Collection } from "collect.js";
 
+import { ICollection } from "../../collections/interfaces/ICollection";
 import { TDirection } from "./TEnums";
+
+export type ModelCollection = ICollection<IModel>;
 
 /* eslint-disable no-unused-vars */
 export interface IQueryBuilder<TModel extends IModel = IModel> {
@@ -11,8 +13,8 @@ export interface IQueryBuilder<TModel extends IModel = IModel> {
     findOrFail(id: unknown): TModel;
     
     // get methods
-    all: () => Promise<Collection<TModel[]>>;
-    get(): Promise<Collection<TModel[]>>;
+    all(): Promise<ModelCollection>;
+    get(): Promise<ModelCollection>;
     first(): TModel | null;
     last(): TModel | null;
 
