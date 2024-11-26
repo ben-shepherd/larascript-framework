@@ -3,10 +3,33 @@ import BaseQueryBuilder from "../../eloquent/base/BaseQueryBuilder";
 import { ICollection } from "../../collections/interfaces/ICollection";
 import { IQueryBuilder } from "../../eloquent/interfaces/IQueryBuilder";
 import { TDirection } from "../../eloquent/interfaces/TEnums";
+import PostgresAdapter from "../adapters/PostgresAdapter";
+import { ICtor } from "@src/core/interfaces/ICtor";
+import ExpressionBuilder from "../builder/ExpressionBuilder/ExpressionBuilder";
 
-class PostgresQueryBuilder<T extends IModel = IModel> extends BaseQueryBuilder<T> {
+type Adapter = PostgresAdapter
+
+class PostgresQueryBuilder<T extends IModel = IModel> extends BaseQueryBuilder<T, Adapter> {
+
+    constructor(modelCtor: ICtor<IModel>) {
+        super({
+            adapterName: 'postgres',
+            modelCtor,
+            expressionBuilderCtor: ExpressionBuilder
+        })
+    }
+    
     find(id: unknown): T | null {
-        throw new Error("Method not implemented: find");
+        return this.captureError(async () => {
+            const client = this.getDatabaseAdapter().getPgClient();
+
+            const sql 
+
+            return await client.query({
+                text: 'SELECT * FROM "public"."users" WHERE "id" = $1',
+                values: [id]
+            })
+        })
     }
 
     findOrFail(id: unknown): T {
