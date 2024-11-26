@@ -6,7 +6,7 @@ export type OrderArray = Record<string, 'ASC' | 'DESC'>[]
 /**
  * Options for select query
  */
-export type SelectOptions = {
+export type TLegacySelectOptions = {
 
     /**
      * Table name
@@ -47,14 +47,14 @@ export type SelectOptions = {
 /**
  * Query builder for Postgres
  */
-class PostgresQueryBuilder {
+class LegacyPostgresQueryBuilder {
 
     /**
      * Build select query
      * @param options Select options
      * @returns Query string
      */
-    select({ fields, tableName, filter = {}, order = [], limit = undefined, skip = undefined, allowPartialSearch = false }: SelectOptions): string {
+    select({ fields, tableName, filter = {}, order = [], limit = undefined, skip = undefined, allowPartialSearch = false }: TLegacySelectOptions): string {
         let queryStr = `SELECT ${this.selectColumnsClause(fields)} FROM "${tableName}"`;
 
         if(Object.keys(filter ?? {}).length > 0) {
@@ -125,4 +125,4 @@ class PostgresQueryBuilder {
 /**
  * Default export
  */
-export default PostgresQueryBuilder
+export default LegacyPostgresQueryBuilder

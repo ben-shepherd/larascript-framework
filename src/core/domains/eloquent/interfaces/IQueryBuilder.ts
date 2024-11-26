@@ -2,8 +2,11 @@ import { IModel } from "@src/core/interfaces/IModel";
 
 import { ICollection } from "../../collections/interfaces/ICollection";
 import { TDirection } from "./TEnums";
+import { ICtor } from "@src/core/interfaces/ICtor";
 
 export type ModelCollection = ICollection<IModel>;
+
+export type ExpressionBuilderConstructor<T = unknown>  = ICtor<T>;
 
 /* eslint-disable no-unused-vars */
 export interface IQueryBuilder<TModel extends IModel = IModel> {

@@ -2,14 +2,18 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 
 import { ICollection } from "../../collections/interfaces/ICollection";
-import { IQueryBuilder } from "../interfaces/IQueryBuilder";
+import { ExpressionBuilderConstructor, IQueryBuilder } from "../interfaces/IQueryBuilder";
 import { TDirection } from "../interfaces/TEnums";
+import { App } from "@src/core/services/App";
+import { IDatabaseAdapter } from "../../database/interfaces/IDatabaseAdapter";
 
-export type TQueryBuilderOptions = {
-    modelCtor: ICtor<IModel>;
+export type TQueryBuilderOptions<M extends IModel = IModel> = {
+    adapterName: string,
+    modelCtor: ICtor<M>;
+    expressionBuilderCtor: ICtor<ExpressionBuilderConstructor>
 }
 
-abstract class BaseQueryBuilder<M extends IModel> implements IQueryBuilder<M> {
+abstract class BaseQueryBuilder<M extends IModel, Adapter extends IDatabaseAdapter = IDatabaseAdapter> implements IQueryBuilder<M> {
 
     /**
      * The constructor of the model associated with this query builder.
@@ -22,20 +26,82 @@ abstract class BaseQueryBuilder<M extends IModel> implements IQueryBuilder<M> {
     protected connectionName!: string;
 
     /**
+     * The bindings to use for the query builder
+     */
+    protected bindings: unknown[] = [];
+
+    /**
+     * The adapter name to use for the query builder (logging purposes)
+     */
+    protected adapterName!: string;
+
+    /**
+     * The constructor of the expression builder associated with this query builder
+     */
+    protected expressionBuilderCtor: ExpressionBuilderConstructor;
+
+    /**
      * Constructor
      * @param {Object} options The options for the query builder
      * @param {ICtor<M>} options.modelCtor The constructor of the model associated with this query builder
      */
-    constructor({ modelCtor }: TQueryBuilderOptions) {
+    constructor({ 
+        adapterName,
+        modelCtor,
+        expressionBuilderCtor
+    }: TQueryBuilderOptions<M>) {
+        this.adapterName = adapterName
+        this.expressionBuilderCtor = expressionBuilderCtor
         this.setModelCtor(modelCtor);
         this.setConnectionName(new  modelCtor().connection);
+    }
+
+    /**
+     * Logs a message to the logger as an error with the query builder's
+     * adapter name prefixed.
+     * @param {string} message The message to log
+     */
+    protected log(message: string, ...args: any[]) {
+        App.container('logger').error(`(QueryBuilder:${this.adapterName}): ${message}`, ...args);
+    }
+
+    /**
+     * Executes the provided async callback function and captures any errors
+     * that occur during its execution. Logs any errors with the query builder's 
+     * adapter name, error message, and stack trace, then rethrows the error.
+     * 
+     * @template T - The return type of the callback function.
+     * @param {() => Promise<T>} callback - The async function to execute.
+     * @returns {Promise<T>} - The result of the callback function, if successful.
+     * @throws Will throw an error if the callback function fails.
+     */
+    protected async captureError<T>(callback:  () => Promise<T>): Promise<T> {
+        try {
+            return await callback()
+        }
+        catch (err) {
+            if(err instanceof Error && err?.message) {
+                App.container('logger').error(`): `, err.message, err.stack)
+            }
+            throw err
+        }
+    }
+
+    abstract getExpressionBuilder(): ExpressionBuilderConstructor
+
+    /**
+     * Retrieves the database adapter for the connection name associated with this query builder.
+     * @returns {IDatabaseAdapter} The database adapter.
+     */
+    protected getDatabaseAdapter(): Adapter {
+        return App.container('db').getAdapter(this.getConnectionName()) as Adapter
     }
 
     /**
      * Retrieves the constructor of the model associated with this query builder.
      * @returns {ICtor<M>} The model constructor.
      */
-    getModelCtor(): ICtor<M> {
+    protected getModelCtor(): ICtor<M> {
         return this.modelCtor;
     }
 
@@ -43,7 +109,7 @@ abstract class BaseQueryBuilder<M extends IModel> implements IQueryBuilder<M> {
      * Sets the model constructor to use for the query builder
      * @param {ICtor<M>} modelCtor The constructor of the model to use for the query builder
      */
-    setModelCtor(modelCtor: ICtor<M>) {
+    protected setModelCtor(modelCtor: ICtor<M>) {
         this.modelCtor = modelCtor;
     }
 
@@ -51,7 +117,7 @@ abstract class BaseQueryBuilder<M extends IModel> implements IQueryBuilder<M> {
      * Retrieves the connection name associated with this query builder.
      * @returns {string} The connection name.
      */
-    getConnectionName(): string {
+    protected getConnectionName(): string {
         return this.connectionName
     }
 
@@ -59,9 +125,40 @@ abstract class BaseQueryBuilder<M extends IModel> implements IQueryBuilder<M> {
      * Sets the connection name to use for the query builder
      * @param {string} connectionName The connection name to use
      */
-    setConnectionName(connectionName: string) {
+    protected setConnectionName(connectionName: string) {
         this.connectionName = connectionName
     }
+    
+    /**
+     * Sets the bindings for the query builder.
+     * @param {any[]} bindings The bindings to use for the query builder
+     * @returns {this} The query builder instance
+     */
+    setBindings(bindings: any[]): this {
+        this.bindings = bindings;
+        return this
+    }
+
+    /**
+     * Retrieves the bindings associated with this query builder.
+     * @returns {unknown[]} The bindings associated with this query builder.
+     */
+    getBindings(): unknown[] {
+        return this.bindings
+    }
+
+    /**
+     * Clones the query builder instance.
+     *
+     * The cloned instance will have the same model constructor associated with it.
+     * @returns {IQueryBuilder} The cloned query builder instance
+     */
+     clone(): IQueryBuilder {
+        return new (this.constructor as any)({
+            modelCtor:
+            this.getModelCtor()
+        })
+     }
 
     abstract find(id: unknown): M | null;
 
@@ -135,11 +232,6 @@ abstract class BaseQueryBuilder<M extends IModel> implements IQueryBuilder<M> {
 
     abstract paginate(perPage?: number, page?: number): Promise<{ data: any[]; total: number; currentPage: number; lastPage: number; perPage: number; }>;
 
-    abstract setBindings(bindings: any[]): IQueryBuilder;
-
-    abstract getBindings(): any[];
-
-    abstract clone(): IQueryBuilder;
 
 }
 
