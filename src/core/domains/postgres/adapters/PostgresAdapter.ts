@@ -10,9 +10,13 @@ import PostgresSchema from "@src/core/domains/postgres/PostgresSchema";
 import createMigrationSchemaPostgres from "@src/core/domains/postgres/schema/createMigrationSchemaPostgres";
 import { extractDefaultPostgresCredentials } from "@src/core/domains/postgres/utils/extractDefaultPostgresCredentials";
 import { ICtor } from "@src/core/interfaces/ICtor";
+import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import pg from 'pg';
 import { QueryInterface, Sequelize } from "sequelize";
+
+import { IQueryBuilder } from "../../eloquent/interfaces/IQueryBuilder";
+import PostgresQueryBuilder from "../queryBuilder/PostgresQueryBuilder";
 
 class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
 
@@ -70,6 +74,12 @@ class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
      */
     getPgClient(): pg.Client {
         return new pg.Client(this.config.uri);
+    }
+
+    async getConnectedPgClient(): Promise<pg.Client> {
+        const client = this.getPgClient();
+        await client.connect()
+        return client
     }
 
     /**
@@ -182,8 +192,15 @@ class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
         return new PostgresSchema(this)
     }
 
-    getQueryBuilderCtor(): ICtor<unknown> {
-        throw new Error("Method not implemented.");
+    /**
+     * Retrieves the constructor for a Postgres query builder.
+     *
+     * @template M - The type of model associated with the query builder, defaults to IModel.
+     * @param {ICtor<IModel>} modelCtor - The constructor of the model to use for the query builder.
+     * @returns {IQueryBuilder} An instance of PostgresQueryBuilder for the specified model.
+     */
+    getQueryBuilder<M extends IModel = IModel>(modelCtor: ICtor<M>): IQueryBuilder<M> {
+        return new PostgresQueryBuilder<M>(modelCtor)
     }   
 
     /**

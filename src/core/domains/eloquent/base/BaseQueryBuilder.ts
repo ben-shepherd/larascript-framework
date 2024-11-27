@@ -1,16 +1,14 @@
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
-
-import { ICollection } from "../../collections/interfaces/ICollection";
-import { ExpressionBuilderConstructor, IQueryBuilder } from "../interfaces/IQueryBuilder";
-import { TDirection } from "../interfaces/TEnums";
 import { App } from "@src/core/services/App";
+
 import { IDatabaseAdapter } from "../../database/interfaces/IDatabaseAdapter";
+import { IQueryBuilder, ModelCollection, TWhereClauseValue } from "../interfaces/IQueryBuilder";
+import { TDirection } from "../interfaces/TEnums";
 
 export type TQueryBuilderOptions<M extends IModel = IModel> = {
     adapterName: string,
-    modelCtor: ICtor<M>;
-    expressionBuilderCtor: ICtor<ExpressionBuilderConstructor>
+    modelCtor: ICtor<M>
 }
 
 abstract class BaseQueryBuilder<M extends IModel, Adapter extends IDatabaseAdapter = IDatabaseAdapter> implements IQueryBuilder<M> {
@@ -26,6 +24,11 @@ abstract class BaseQueryBuilder<M extends IModel, Adapter extends IDatabaseAdapt
     protected connectionName!: string;
 
     /**
+     * The columns to select from the database
+     */
+    protected columns: string[] = [];
+
+    /**
      * The bindings to use for the query builder
      */
     protected bindings: unknown[] = [];
@@ -36,22 +39,12 @@ abstract class BaseQueryBuilder<M extends IModel, Adapter extends IDatabaseAdapt
     protected adapterName!: string;
 
     /**
-     * The constructor of the expression builder associated with this query builder
-     */
-    protected expressionBuilderCtor: ExpressionBuilderConstructor;
-
-    /**
      * Constructor
      * @param {Object} options The options for the query builder
      * @param {ICtor<M>} options.modelCtor The constructor of the model associated with this query builder
      */
-    constructor({ 
-        adapterName,
-        modelCtor,
-        expressionBuilderCtor
-    }: TQueryBuilderOptions<M>) {
+    constructor({ adapterName, modelCtor }: TQueryBuilderOptions<M>) {
         this.adapterName = adapterName
-        this.expressionBuilderCtor = expressionBuilderCtor
         this.setModelCtor(modelCtor);
         this.setConnectionName(new  modelCtor().connection);
     }
@@ -66,35 +59,37 @@ abstract class BaseQueryBuilder<M extends IModel, Adapter extends IDatabaseAdapt
     }
 
     /**
-     * Executes the provided async callback function and captures any errors
-     * that occur during its execution. Logs any errors with the query builder's 
-     * adapter name, error message, and stack trace, then rethrows the error.
-     * 
-     * @template T - The return type of the callback function.
-     * @param {() => Promise<T>} callback - The async function to execute.
-     * @returns {Promise<T>} - The result of the callback function, if successful.
-     * @throws Will throw an error if the callback function fails.
+     * Retrieves the table name associated with the model for this query builder
+     * @returns {string} The table name
      */
-    protected async captureError<T>(callback:  () => Promise<T>): Promise<T> {
-        try {
-            return await callback()
-        }
-        catch (err) {
-            if(err instanceof Error && err?.message) {
-                App.container('logger').error(`): `, err.message, err.stack)
-            }
-            throw err
-        }
+    protected getTable() {
+        return new this.modelCtor().table;
     }
 
-    abstract getExpressionBuilder(): ExpressionBuilderConstructor
+    /**
+     * Sets the columns to select for the query builder.
+     * @param {string[]} columns - The columns to set for selection.
+     * @returns {IQueryBuilder<M>} The query builder instance.
+     */
+    protected setColumns(columns: string[]): IQueryBuilder<M> {
+        this.columns = columns;
+        return this as unknown as IQueryBuilder<M>;
+    }
+
+    /**
+     * Retrieves the columns set for this query builder.
+     * @returns {string[]} The columns set for this query builder.
+     */
+    protected getColumns(): string[] {
+        return this.columns;
+    }
 
     /**
      * Retrieves the database adapter for the connection name associated with this query builder.
      * @returns {IDatabaseAdapter} The database adapter.
      */
     protected getDatabaseAdapter(): Adapter {
-        return App.container('db').getAdapter(this.getConnectionName()) as Adapter
+        return App.container('db').getAdapter<Adapter>(this.getConnectionName())
     }
 
     /**
@@ -128,15 +123,45 @@ abstract class BaseQueryBuilder<M extends IModel, Adapter extends IDatabaseAdapt
     protected setConnectionName(connectionName: string) {
         this.connectionName = connectionName
     }
+
+    /**
+     * Creates a new instance of the model using the provided data.
+     *
+     * @param {unknown} data The data to initialize the model with.
+     * @returns {M} A new instance of the model.
+     */
+    protected createModel(data: unknown): M {
+        return new this.modelCtor(data)
+    }
+
+    /**
+     * Sets the columns to select for the query builder.
+     * @param {string|string[]} [columns='*'] The columns to set for selection.
+     * @returns {IQueryBuilder<M>} The query builder instance.
+     */
+    select(columns?: string | string[]): IQueryBuilder<M> {
+
+        if(columns === undefined) {
+            this.columns = ['*'];
+            return this as unknown as IQueryBuilder<M>;
+        }
+
+        if(typeof columns === 'string' && columns === '*') {
+            this.columns = ['*'];
+        }
+
+        this.setColumns(Array.isArray(columns) ? columns : [columns])
+        return this as unknown as IQueryBuilder<M>;
+    }
     
     /**
      * Sets the bindings for the query builder.
      * @param {any[]} bindings The bindings to use for the query builder
      * @returns {this} The query builder instance
      */
-    setBindings(bindings: any[]): this {
+    setBindings(bindings: any[]): IQueryBuilder<M> {
         this.bindings = bindings;
-        return this
+        return this as unknown as IQueryBuilder<M>;
     }
 
     /**
@@ -153,84 +178,92 @@ abstract class BaseQueryBuilder<M extends IModel, Adapter extends IDatabaseAdapt
      * The cloned instance will have the same model constructor associated with it.
      * @returns {IQueryBuilder} The cloned query builder instance
      */
-     clone(): IQueryBuilder {
+    clone(): IQueryBuilder<M> {
         return new (this.constructor as any)({
             modelCtor:
             this.getModelCtor()
         })
-     }
+    }
 
-    abstract find(id: unknown): M | null;
+    abstract find(id: string | number): Promise<M | null>;
 
-    abstract findOrFail(id: unknown): M;
+    abstract findOrFail(id: string | number): Promise<M>;
 
-    abstract get(): Promise<ICollection<M>>;
+    abstract get(): Promise<ModelCollection<M>>;
 
-    abstract all(): Promise<ICollection<M>>;
+    // abstract all(): Promise<ModelCollection<M>>;
 
-    abstract first(): M | null;
+    // abstract first(): Promise<M | null>;
 
-    abstract last(): M | null;
+    // abstract last(): Promise<M | null>;
 
-    abstract select(columns?: string | string[]): IQueryBuilder;
+    // abstract select(columns?: string | string[]): Promise<IQueryBuilder>;
 
-    abstract selectRaw(expression: string, bindings?: any[]): IQueryBuilder;
+    // abstract selectRaw(expression: string, bindings?: any[]): Promise<IQueryBuilder>;
 
-    abstract distinct(): IQueryBuilder;
+    // abstract distinct(): Promise<IQueryBuilder>;
 
-    abstract where(column: string, operator?: string, value?: any): IQueryBuilder;
+    abstract where(column: string, operator?: string, value?: any): IQueryBuilder<M>;
 
-    abstract whereIn(column: string, values: any[]): IQueryBuilder;
+    abstract whereIn(column: string, values: any[]): IQueryBuilder<M>;
 
-    abstract whereNotIn(column: string, values: any[]): IQueryBuilder;
+    abstract whereNotNull(column: string): IQueryBuilder<M>;
 
-    abstract whereNull(column: string): IQueryBuilder;
+    abstract whereNull(column: string): IQueryBuilder<M>;
 
-    abstract whereNotNull(column: string): IQueryBuilder;
+    abstract whereBetween(column: string, range: [any, any]): IQueryBuilder<M>;
 
-    abstract whereBetween(column: string, range: [any, any]): IQueryBuilder;
+    abstract whereNotIn(column: string, values: any[]): IQueryBuilder<M>;
 
-    abstract whereRaw(query: string, bindings?: any[]): IQueryBuilder;
+    abstract whereLike(column: string, value: TWhereClauseValue): IQueryBuilder<M>;
 
-    abstract join(table: string, first: string, operator?: string, second?: string): IQueryBuilder;
+    abstract whereNotLike(column: string, value: TWhereClauseValue): IQueryBuilder<M>;
 
-    abstract leftJoin(table: string, first: string, operator?: string, second?: string): IQueryBuilder;
+    // abstract whereRaw(query: string, bindings?: any[]): Promise<IQueryBuilder>;
 
-    abstract rightJoin(table: string, first: string, operator?: string, second?: string): IQueryBuilder;
+    // abstract join(table: string, first: string, operator?: string, second?: string): Promise<IQueryBuilder>;
 
-    abstract crossJoin(table: string): IQueryBuilder;
+    // abstract leftJoin(table: string, first: string, operator?: string, second?: string): Promise<IQueryBuilder>;
 
-    abstract orderBy(column: string, direction?: TDirection): IQueryBuilder;
+    // abstract rightJoin(table: string, first: string, operator?: string, second?: string): Promise<IQueryBuilder>;
 
-    abstract orderByDesc(column: string): IQueryBuilder;
+    // abstract crossJoin(table: string): Promise<IQueryBuilder>;
 
-    abstract latest(column?: string): IQueryBuilder;
+    abstract orderBy(column: string, direction?: TDirection): IQueryBuilder<M>;
 
-    abstract oldest(column?: string): IQueryBuilder;
+    // abstract latest(column?: string): Promise<IQueryBuilder>;
 
-    abstract groupBy(...columns: string[]): IQueryBuilder;
+    // abstract oldest(column?: string): Promise<IQueryBuilder>;
 
-    abstract having(column: string, operator?: string, value?: any): IQueryBuilder;
+    // abstract groupBy(...columns: string[]): Promise<IQueryBuilder>;
 
-    abstract limit(value: number): IQueryBuilder;
+    // abstract having(column: string, operator?: string, value?: any): Promise<IQueryBuilder>;
 
-    abstract offset(value: number): IQueryBuilder;
+    // abstract limit(value: number): Promise<IQueryBuilder>;
 
-    abstract skip(value: number): IQueryBuilder;
+    // abstract offset(value: number): Promise<IQueryBuilder>;
 
-    abstract take(value: number): IQueryBuilder;
+    // abstract skip(value: number): Promise<IQueryBuilder>;
 
-    abstract count(column?: string): Promise<number>;
+    // abstract take(value: number): Promise<IQueryBuilder>;
 
-    abstract max(column: string): Promise<number>;
+    // abstract count(column?: string): Promise<number>;
 
-    abstract min(column: string): Promise<number>;
+    // abstract max(column: string): Promise<number>;
 
-    abstract avg(column: string): Promise<number>;
+    // abstract min(column: string): Promise<number>;
 
-    abstract sum(column: string): Promise<number>;
+    // abstract avg(column: string): Promise<number>;
 
-    abstract paginate(perPage?: number, page?: number): Promise<{ data: any[]; total: number; currentPage: number; lastPage: number; perPage: number; }>;
+    // abstract sum(column: string): Promise<number>;
+
+    // abstract paginate(perPage?: number, page?: number): Promise<{
+    //     data: any[];
+    //     total: number;
+    //     currentPage: number;
+    //     lastPage: number;
+    //     perPage: number;
+    // }>;
 
 
 }

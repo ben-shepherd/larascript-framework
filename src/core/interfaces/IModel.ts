@@ -8,6 +8,7 @@ import { IHasAttributes } from "@src/core/interfaces/concerns/IHasAttributes";
 import { IHasDatabaseConnection } from "@src/core/interfaces/concerns/IHasDatabaseConnection";
 import { IHasPrepareDocument } from "@src/core/interfaces/concerns/IHasPrepareDocument";
 
+
 export type GetDataOptions = {excludeGuarded: boolean}
 
 export type ModelConstructor<M extends IModel = IModel> = new (...args: any[]) => M
@@ -25,6 +26,7 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes> 
     setTimestamp(dateTimeField: string, value: Date): Promise<void>;
     fill(data: Partial<Attributes>): Promise<void>;
     getData(options: GetDataOptions): Promise<Attributes | null>;
+    toObject(): Promise<Attributes | null>;
     refresh(): Promise<Attributes | null>;
     update(): Promise<void>;
     save(): Promise<void>;

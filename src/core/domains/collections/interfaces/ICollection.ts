@@ -7,7 +7,7 @@ import { Collection as CollectJsCollection } from "collect.js";
 export type TForeachCallback<T> = (item: T, index: number, array: T[]) => void;
 export type TMapCallback<T, R> = (item: T, index: number, array: T[]) => R;
 export type TFilterCallback<T> = (item: T, index: number, array: T[]) => boolean;
-export type TOperator = "===" | "==" | "!==" | "!=" | "<>" | ">" | "<" | ">=" | "<="
+export type TCollectionOperator = "===" | "==" | "!==" | "!=" | "<>" | ">" | "<" | ">=" | "<="
 
 /**
  * Interface defining the structure and behavior of a Collection class
@@ -50,7 +50,7 @@ export interface ICollection<T = unknown> {
     /**
      * Comparison methods
      */
-    where(column: string, operator: TOperator, value: any): this;
+    where(column: string, operator: TCollectionOperator, value: any): this;
 
     /**
      * Utility methods
@@ -61,11 +61,4 @@ export interface ICollection<T = unknown> {
      * Index signature for array-like access
      */
     [index: number]: T;
-}
-
-/**
- * Interface for the Collection constructor
- */
-export interface ICollectionConstructor<T = unknown> {
-    new (items?: T[]): ICollection<T>;
 }

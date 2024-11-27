@@ -61,7 +61,10 @@ describe('query builder select', () => {
             ]);
 
             const result = await TestModel.query()
+                .select(['name', 'age'])
                 .orderBy('age', Direction.ASC)
+                .where('age', '>', 30)
+                .where('age', '<', 50)
                 .get();
 
             const first = result.first()

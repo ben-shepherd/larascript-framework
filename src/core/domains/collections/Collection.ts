@@ -1,6 +1,6 @@
 import { Collection as CollectJsCollection } from "collect.js";
 
-import { ICollection, TFilterCallback, TForeachCallback, TMapCallback, TOperator } from "./interfaces/ICollection";
+import { ICollection, TCollectionOperator, TFilterCallback, TForeachCallback, TMapCallback } from "./interfaces/ICollection";
 import ProxyCollectionHandler from "./ProxyCollectionHandler";
 
 /**
@@ -202,7 +202,7 @@ abstract class Collection<T = unknown> implements ICollection<T> {
      * @param value - Value to compare against
      * @returns The collection instance with filtered items
      */
-    where(column: string, operator: TOperator, value: any): this {
+    where(column: string, operator: TCollectionOperator, value: any): this {
         this.items = this.toCollectJs().where(column, operator, value).all();
         return this;
     }

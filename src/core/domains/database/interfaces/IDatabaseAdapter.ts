@@ -2,6 +2,9 @@
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { ICtor } from "@src/core/interfaces/ICtor";
+import { IModel } from "@src/core/interfaces/IModel";
+
+import { IQueryBuilder } from "../../eloquent/interfaces/IQueryBuilder";
 
 export type TAdapterComposerFileName = {
 
@@ -34,7 +37,7 @@ export interface  IDatabaseAdapter {
 
     getSchema(): IDatabaseSchema;
 
-    getQueryBuilderCtor(): ICtor<unknown>;
+    getQueryBuilder<M extends IModel = IModel>(modelCtor: ICtor<M>): IQueryBuilder<M>;
 
     isConnected(): Promise<boolean>;
 

@@ -1,181 +1,154 @@
-import { IModel } from "@src/core/interfaces/IModel";
-import BaseQueryBuilder from "../../eloquent/base/BaseQueryBuilder";
-import { ICollection } from "../../collections/interfaces/ICollection";
-import { IQueryBuilder } from "../../eloquent/interfaces/IQueryBuilder";
-import { TDirection } from "../../eloquent/interfaces/TEnums";
-import PostgresAdapter from "../adapters/PostgresAdapter";
+import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import ExpressionBuilder from "../builder/ExpressionBuilder/ExpressionBuilder";
+import { IModel } from "@src/core/interfaces/IModel";
+import captureError from "@src/core/util/captureError";
+import { QueryResult, QueryResultRow } from "pg";
 
-type Adapter = PostgresAdapter
+import collect from "../../collections/helper/collect";
+import BaseQueryBuilder from "../../eloquent/base/BaseQueryBuilder";
+import QueryBuilderException from "../../eloquent/exceptions/QueryBuilderException";
+import { IQueryBuilder, ModelCollection, OperatorArray, TDirection, TOperator, TWhereClauseValue } from "../../eloquent/interfaces/IQueryBuilder";
+import PostgresAdapter from "../adapters/PostgresAdapter";
+import SqlExpressionBuilder from "../builder/ExpressionBuilder/SqlExpressionBuilder";
 
-class PostgresQueryBuilder<T extends IModel = IModel> extends BaseQueryBuilder<T, Adapter> {
+class PostgresQueryBuilder<M extends IModel = IModel> extends BaseQueryBuilder<M, PostgresAdapter> {
 
-    constructor(modelCtor: ICtor<IModel>) {
+    /**
+     * The expression builder instance
+     */
+    protected builder = new SqlExpressionBuilder();
+
+    /**
+     * Constructor
+     * @param {ICtor<M>} modelCtor The constructor of the model to use for the query builder
+     */
+    constructor(modelCtor: ICtor<M>) {
         super({
             adapterName: 'postgres',
-            modelCtor,
-            expressionBuilderCtor: ExpressionBuilder
+            modelCtor
         })
+
+        this.builder.setTable(
+            new modelCtor(null).table
+        );
     }
+
+    /**
+     * Executes a SQL expression using the connected PostgreSQL client.
+     *
+     * @param {SqlExpressionBuilder} expression - The SQL expression builder instance containing the query to execute.
+     * @returns {Promise<T>} A promise that resolves with the query result.
+     * @private
+     */
+    private async executeExpression(expression: SqlExpressionBuilder) {
+        const client = await this.getDatabaseAdapter().getConnectedPgClient();
+        return await client.query(expression.toSql(), expression.getBindings())
+    }
+
+    private formatQueryResult<T extends QueryResultRow = QueryResultRow,R = unknown>(result: QueryResult<T>) {
+        return result.rows.map(row => this.createModel(row))
+    }
+
+    /**
+     * Find a model by its id
+     *
+     * @param id The id of the model to find
+     * @returns A promise resolving to the found model, or null if not found
+     */
+    async find(id: string | number): Promise<M | null> {
+        return await captureError<M | null>(async () => {
     
-    find(id: unknown): T | null {
-        return this.captureError(async () => {
-            const client = this.getDatabaseAdapter().getPgClient();
+            const res = await this.executeExpression(
+                this.builder.where('id', '=', id)
+            )
 
-            const sql 
-
-            return await client.query({
-                text: 'SELECT * FROM "public"."users" WHERE "id" = $1',
-                values: [id]
-            })
+            return this.formatQueryResult(res)[0] ?? null
         })
     }
 
-    findOrFail(id: unknown): T {
-        throw new Error("Method not implemented: findOrFail");
+    /**
+     * Find or fail if no document found
+     * @param id The id of the document to find
+     * @returns The found model or throws a ModelNotFound exception
+     * @throws ModelNotFound
+     */
+    async findOrFail(id: string | number): Promise<M> {
+        const result = await this.find(id)
+
+        if(!result) {
+            throw new ModelNotFound()
+        }
+
+        return result
     }
 
-    async get(): Promise<ICollection<T>> {
-        throw new Error("Method not implemented: get");
+    async first(): Promise<M | null> {
+        return null
     }
 
-    async all(): Promise<ICollection<T>> {
-        throw new Error("Method not implemented: all");
+    where(column: string, operator?: TOperator, value?: TWhereClauseValue): IQueryBuilder<M> {
+
+        // Handle default equals case
+        if(value === undefined && typeof operator === 'string') {
+            this.builder.where(column, '=', operator as TWhereClauseValue);
+            return this
+        }
+
+        // Check operator has been provided and matches expected value
+        if(operator === undefined || OperatorArray.includes(operator) === false) {
+            throw new QueryBuilderException('Operator is required')
+        }
+
+        this.builder.where(column, operator, value as TWhereClauseValue);
+        return this
     }
 
-    first(): T | null {
-        throw new Error("Method not implemented: first");
+    whereIn(column: string, values: TWhereClauseValue[]): IQueryBuilder<M> {
+        this.builder.where(column, 'in', values);
+        return this
     }
 
-    last(): T | null {
-        throw new Error("Method not implemented: last");
+    whereNotIn(column: string, values: any[]): IQueryBuilder<M> {
+        return this
     }
 
-    select(columns?: string | string[]): IQueryBuilder {
-        throw new Error("Method not implemented: select");
+    whereNull(column: string): IQueryBuilder<M> {
+        return this
     }
 
-    selectRaw(expression: string, bindings?: any[]): IQueryBuilder {
-        throw new Error("Method not implemented: selectRaw");
+    whereNotNull(column: string): IQueryBuilder<M> {
+        return this
     }
 
-    distinct(): IQueryBuilder {
-        throw new Error("Method not implemented: distinct");
+    whereBetween(column: string, range: [any, any]): IQueryBuilder<M> {
+        return this 
     }
 
-    where(column: string, operator?: string, value?: any): IQueryBuilder {
-        throw new Error("Method not implemented: where");
+    whereNotBetween(column: string, range: [any, any]): IQueryBuilder<M> {
+        return this
     }
 
-    whereIn(column: string, values: any[]): IQueryBuilder {
-        throw new Error("Method not implemented: whereIn");
+    whereLike(column: string, value: TWhereClauseValue): IQueryBuilder<M> {
+        return this
     }
 
-    whereNotIn(column: string, values: any[]): IQueryBuilder {
-        throw new Error("Method not implemented: whereNotIn");
+    whereNotLike(column: string, value: TWhereClauseValue): IQueryBuilder<M> {
+        return this
     }
 
-    whereNull(column: string): IQueryBuilder {
-        throw new Error("Method not implemented: whereNull");
+    orderBy(column: string, direction: TDirection = 'asc'): IQueryBuilder<M> {
+        this.builder.orderBy({ column, direction });
+        return this
     }
 
-    whereNotNull(column: string): IQueryBuilder {
-        throw new Error("Method not implemented: whereNotNull");
-    }
+    async get(): Promise<ModelCollection<M>> {
+        return await captureError(async () => {
+            const res = await this.executeExpression(this.builder)
 
-    whereBetween(column: string, range: [any, any]): IQueryBuilder {
-        throw new Error("Method not implemented: whereBetween");
-    }
-
-    whereRaw(query: string, bindings?: any[]): IQueryBuilder {
-        throw new Error("Method not implemented: whereRaw");
-    }
-
-    join(table: string, first: string, operator?: string, second?: string): IQueryBuilder {
-        throw new Error("Method not implemented: join");
-    }
-
-    leftJoin(table: string, first: string, operator?: string, second?: string): IQueryBuilder {
-        throw new Error("Method not implemented: leftJoin");
-    }
-
-    rightJoin(table: string, first: string, operator?: string, second?: string): IQueryBuilder {
-        throw new Error("Method not implemented: rightJoin");
-    }
-
-    crossJoin(table: string): IQueryBuilder {
-        throw new Error("Method not implemented: crossJoin");
-    }
-
-    orderBy(column: string, direction?: TDirection): IQueryBuilder {
-        throw new Error("Method not implemented: orderBy");
-    }
-
-    orderByDesc(column: string): IQueryBuilder {
-        throw new Error("Method not implemented: orderByDesc");
-    }
-
-    latest(column?: string): IQueryBuilder {
-        throw new Error("Method not implemented: latest");
-    }
-
-    oldest(column?: string): IQueryBuilder {
-        throw new Error("Method not implemented: oldest");
-    }
-
-    groupBy(...columns: string[]): IQueryBuilder {
-        throw new Error("Method not implemented: groupBy");
-    }
-
-    having(column: string, operator?: string, value?: any): IQueryBuilder {
-        throw new Error("Method not implemented: having");
-    }
-
-    limit(value: number): IQueryBuilder {
-        throw new Error("Method not implemented: limit");
-    }
-
-    offset(value: number): IQueryBuilder {
-        throw new Error("Method not implemented: offset");
-    }
-
-    skip(value: number): IQueryBuilder {
-        throw new Error("Method not implemented: skip");
-    }
-
-    take(value: number): IQueryBuilder {
-        throw new Error("Method not implemented: take");
-    }
-
-    async count(column?: string): Promise<number> {
-        throw new Error("Method not implemented: count");
-    }
-
-    async max(column: string): Promise<number> {
-        throw new Error("Method not implemented: max");
-    }
-
-    async min(column: string): Promise<number> {
-        throw new Error("Method not implemented: min");
-    }
-
-    async avg(column: string): Promise<number> {
-        throw new Error("Method not implemented: avg");
-    }
-
-    async sum(column: string): Promise<number> {
-        throw new Error("Method not implemented: sum");
-    }
-
-    async paginate(perPage?: number, page?: number): Promise<{ 
-        data: any[];
-        total: number;
-        currentPage: number;
-        lastPage: number;
-        perPage: number;
-    }> {
-        throw new Error("Method not implemented: paginate");
+            return collect<M>(
+                this.formatQueryResult(res)
+            )
+        })
     }
 
 }

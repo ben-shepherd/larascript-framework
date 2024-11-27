@@ -4,7 +4,6 @@ import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabase
 import { IDatabaseDocument, IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
 import { IBelongsToOptions } from '@src/core/domains/database/interfaces/relationships/IBelongsTo';
 import { IHasManyOptions } from '@src/core/domains/database/interfaces/relationships/IHasMany';
-import BaseQueryBuilder from '@src/core/domains/eloquent/base/BaseQueryBuilder';
 import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
 import { IObserver } from '@src/core/domains/observer/interfaces/IObserver';
 import { ICtor } from '@src/core/interfaces/ICtor';
@@ -12,6 +11,8 @@ import { GetDataOptions, IModel } from '@src/core/interfaces/IModel';
 import IModelAttributes from '@src/core/interfaces/IModelData';
 import { App } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
+
+import { IQueryBuilder } from '../domains/eloquent/interfaces/IQueryBuilder';
  
 
 /**
@@ -68,10 +69,24 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         this.original = { ...data } as Attributes;
     }
 
-    public static query(): BaseQueryBuilder {
-        return new BaseQueryBuilder({
-            modelCtor: this as unknown as ICtor<IModel>
-        });
+    /**
+     * Creates a new query builder instance for the model.
+     *
+     * @template M - The type of the model, defaults to IModel.
+     * @returns {IQueryBuilder<M>} A query builder instance associated with the model.
+     */
+    public static query<M extends IModel = IModel>(): IQueryBuilder<M> {
+        return App.container('db').getAdapter(this.getConnectionName()).getQueryBuilder(this as unknown as ICtor<M>);
+    }
+
+    /**
+     * Retrieves the connection name associated with the model.
+     * This is achieved by instantiating the model and accessing its connection property.
+     *
+     * @returns {string} The connection name of the model.
+     */
+    public static getConnectionName(): string {
+        return new (this as unknown as ICtor<IModel>)(null).connection;
     }
 
     /**
@@ -200,6 +215,11 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         }
 
         return data as Attributes;
+    }
+
+    
+    async toObject(): Promise<Attributes | null> {
+        return this.getData({ excludeGuarded: false });
     }
 
     /**

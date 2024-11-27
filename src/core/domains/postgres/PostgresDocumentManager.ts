@@ -1,9 +1,12 @@
 import BaseDocumentManager from "@src/core/domains/database/base/BaseDocumentManager";
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
-import SelectBuilder, { SelectOptions } from "@src/core/domains/postgres/builder/SelectBuilder";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { BindOrReplacements, QueryOptions, QueryTypes } from "sequelize";
+
+import LegacyPostgresQueryBuilder, { TLegacySelectOptions } from "./builder/LegacyPostgresQueryBuilder";
+
+
 
 /**
  * PostgreSQL document manager
@@ -12,7 +15,7 @@ import { BindOrReplacements, QueryOptions, QueryTypes } from "sequelize";
  */
 class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManager, PostgresAdapter> {
 
-    protected builder = new SelectBuilder()
+    protected builder = new LegacyPostgresQueryBuilder()
 
     /**
      * Adds the id: uuid to the document
@@ -68,7 +71,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
      * @param selectOptions The options for selecting the document
      * @returns The found document, or null if not found
      */
-    async findOne<T>(selectOptions: Partial<SelectOptions>): Promise<T | null> {
+    async findOne<T>(selectOptions: Partial<TLegacySelectOptions>): Promise<T | null> {
         return this.captureError(async () => {
             const sequelize = this.adapter.getClient();
             const queryString = this.builder.select({
@@ -94,7 +97,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
      * @param options The options for selecting the documents
      * @returns The found documents
      */
-    async findMany<T>(options: Partial<SelectOptions>): Promise<T> {
+    async findMany<T>(options: Partial<TLegacySelectOptions>): Promise<T> {
         return this.captureError(async () => {
             const sequelize = this.adapter.getClient()
 
