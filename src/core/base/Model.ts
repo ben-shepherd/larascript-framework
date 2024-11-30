@@ -1,18 +1,15 @@
-/* eslint-disable no-unused-vars */
+ 
 import BaseModel from '@src/core/base/BaseModel';
-import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
-import { IDatabaseDocument, IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
+import { IDatabaseDocument } from '@src/core/domains/database/interfaces/IDocumentManager';
 import { IBelongsToOptions } from '@src/core/domains/database/interfaces/relationships/IBelongsTo';
 import { IHasManyOptions } from '@src/core/domains/database/interfaces/relationships/IHasMany';
-import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
-import { IObserver } from '@src/core/domains/observer/interfaces/IObserver';
 import { ICtor } from '@src/core/interfaces/ICtor';
 import { GetDataOptions, IModel } from '@src/core/interfaces/IModel';
 import IModelAttributes from '@src/core/interfaces/IModelData';
 import { App } from '@src/core/services/App';
-import Str from '@src/core/util/str/Str';
 
-import { IQueryBuilder } from '../domains/eloquent/interfaces/IQueryBuilder';
+import { IEloquent } from '../domains/eloquent/interfaces/IEloquent';
+import Str from '../util/str/Str';
  
 
 /**
@@ -22,7 +19,7 @@ import { IQueryBuilder } from '../domains/eloquent/interfaces/IQueryBuilder';
  * 
  * @template Attributes Type extending IModelData, representing the structure of the model's data.
  */
-export default abstract class Model<Attributes extends IModelAttributes> extends BaseModel implements IModel<Attributes> {
+export default abstract class Model<Attributes extends IModelAttributes> extends BaseModel<Attributes> implements IModel<Attributes> {
 
     public name!: string;
 
@@ -64,20 +61,58 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
     constructor(data: Attributes | null) {
         super();
         this.name = this.constructor.name;
-        this.setDefaultTable();
         this.attributes = { ...data } as Attributes;
         this.original = { ...data } as Attributes;
+    }
+
+    /**
+     * Magic method that is triggered when a user tries to access a property.
+     *
+     * @param {string} key - The name of the property being accessed.
+     * @returns {any} The value of the property if it exists, undefined otherwise.
+     */
+    public getProperty(key: string): any {
+        return (this as any)[key];
     }
 
     /**
      * Creates a new query builder instance for the model.
      *
      * @template M - The type of the model, defaults to IModel.
-     * @returns {IQueryBuilder<M>} A query builder instance associated with the model.
+     * @returns {IEloquent<M>} A query builder instance associated with the model.
      */
-    public static query<M extends IModel = IModel>(): IQueryBuilder<M> {
-        return App.container('db').getAdapter(this.getConnectionName()).getQueryBuilder(this as unknown as ICtor<M>);
+    public static query<Data extends IModelAttributes = IModelAttributes>(): IEloquent<Data> {
+        const temporaryModel = new (this as unknown as ICtor<IModel>)(null);
+        const connectionName = temporaryModel.connection;
+        const tableName = temporaryModel.useTableName();
+
+        return App.container('db').eloquent<Data>(connectionName).table(tableName);
     }
+
+    /**
+     * Retrieves the table name associated with the model.
+     * The table name is determined by the value of the `table` property.
+     * If the `table` property is not set, this method will throw a MissingTableException.
+     * @returns The table name associated with the model.
+     * @throws MissingTableException If the table name is not set.
+     */
+    useTableName(): string {
+        if(!this.table || this.table?.length === 0) {
+            return this.getDefaultTable()
+        }
+        return this.table
+    }
+    
+    /**
+             * Retrieves the table name associated with the model.
+             * The table name is pluralized and lowercased.
+             * @param tableName - The name of the table to retrieve.
+             * @returns The pluralized and lowercased table name.
+             */
+    public static formatTableName(tableName: string): string {
+        return Str.plural(Str.snakeCase(tableName)).toLowerCase()
+    }
+    
 
     /**
      * Retrieves the connection name associated with the model.
@@ -89,76 +124,23 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         return new (this as unknown as ICtor<IModel>)(null).connection;
     }
 
-    /**
-     * Declare HasDatabaseConnection concern
-     */
-    declare connection: string;
-
-    declare table: string;
-
-    declare getDocumentManager: () => IDocumentManager;
-
-    declare getSchema: () => IDatabaseSchema;
 
     /**
-     * Declare HasPrepareDocument concern
+     * Retrieves the default table name for the model.
+     * The default table name is determined by the name of the model class.
+     * If the model class name ends with 'Model', it is removed.
+     * The table name is then pluralized and lowercased.
+     * @returns The default table name.
      */
-    declare json: string[];
-    
-    declare prepareDocument: <T>() => T;
+    protected getDefaultTable() {
 
-    /**
-     * Declare HasAttributes concern
-     */
-    declare attributes: Attributes | null;
+        let table = this.constructor.name;
 
-    declare original: Attributes | null;
-
-    declare attr: <T extends keyof Attributes>(key: T, value?: unknown) => Attributes[T] | null | undefined;
-
-    declare getAttribute: <T extends keyof Attributes>(key: T) => Attributes[T] | null
-
-    declare getAttributes: () => Attributes | null;
-
-    declare getOriginal: <T extends keyof Attributes>(key: T) => Attributes[T] | null
-
-    declare setAttribute: <T extends keyof Attributes>(key: T, value: Attributes[T]) => Promise<void>;
-
-    declare getDirty: () => Record<keyof Attributes, any> | null;
-
-    declare isDirty: () => boolean;
-    
-    /**
-     * Delcare HasObserver concern
-     */
-    declare observer?: IObserver;
-
-    declare observe: () => void;
-
-    declare observeProperties: Record<string, string>;
-
-    declare observeWith: (observedBy: ObserveConstructor, allowOverride?: boolean) => any;
-
-    declare observeData: <T>(name: string, data: T) => Promise<T>
-
-    declare observeDataCustom: <T>(name: keyof any, data: T) => Promise<T>
-
-
-    /**
-     * Sets the default table name if not explicitly defined.
-     * Uses the pluralized, lower-cased version of the class name.
-     */
-    protected setDefaultTable() {
-        if (this.table) {
-            return;
-        }
-        this.table = this.constructor.name;
-
-        if (this.table.endsWith('Model')) {
-            this.table = this.table.slice(0, -5);
+        if (table.endsWith('Model')) {
+            table = table.slice(0, -5);
         }
 
-        this.table = Str.plural(Str.startLowerCase(this.table))
+        return Model.formatTableName(table);
 
     }
 

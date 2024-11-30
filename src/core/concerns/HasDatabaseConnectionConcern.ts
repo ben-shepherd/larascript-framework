@@ -4,6 +4,7 @@ import { IHasDatabaseConnection } from "@src/core/interfaces/concerns/IHasDataba
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
+
 /**
  * A concern that provides database connection capabilities to a class.
  * 
