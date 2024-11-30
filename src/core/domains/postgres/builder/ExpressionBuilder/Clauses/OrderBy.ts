@@ -1,4 +1,4 @@
-import { TOrderBy } from "@src/core/domains/eloquent/interfaces/IQueryBuilder";
+import { TOrderBy } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
 class OrderBy {
 

@@ -11,6 +11,13 @@ class BindingsHelper {
     protected bindings: TBinding[] = [];
 
     /**
+     * Resets the bindings array to an empty array.
+     */
+    reset() {
+        this.bindings = []
+    }
+
+    /**
      * Adds a binding to the builder.
      * The binding is an object with two properties: `sql` and `value`.
      * The `sql` property is the SQL placeholder string, and the `value` property

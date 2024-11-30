@@ -1,11 +1,7 @@
-import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel } from "@src/core/interfaces/IModel";
+/* eslint-disable no-unused-vars */
 
-import { ICollection } from "../../collections/interfaces/ICollection";
 
-export type ModelCollection<T extends IModel = IModel> = ICollection<T>;
-export type ExpressionBuilderConstructor<T = unknown>  = ICtor<T>;
-
+import Collection from "../../collections/Collection";
 
 export type TColumns = string[]
 
@@ -13,7 +9,7 @@ export type TOperator = "=" | "!=" | "<>" | ">" | "<" | ">=" | "<=" | "like" | "
 
 export const OperatorArray = ["=", "!=", "<>", ">", "<", ">=", "<=", "like", "not like", "in", "not in", "is null", "is not null", "between", "not between"]
 
-export type TWhereClauseValue = string | number | boolean | null 
+export type TWhereClauseValue = string | number | boolean | null | Date
 
 export type TLogicalOperator = "and" | "or"
 
@@ -40,41 +36,52 @@ export type TOrderBy = {
 }
 
 export type TOffset = {
-    limit: number,
+    limit?: number,
     offset?: number
 }
 
-/* eslint-disable no-unused-vars */
-export interface IQueryBuilder<M extends IModel = IModel> {
+export type TFormatterFn = (row: unknown) => unknown;
+
+export interface IEloquent<Data = unknown> {
+
+    // table methods
+    table(table: string): IEloquent<Data>;
+    useTable(): string;
+
+    // Creating and saving
+    insert(documents: object | object[]): Promise<Collection<Data>>; // Promise<IEloquent<Data>): Promise<IEloquent<Data>>;
+    // update(data: Data): Promise<IEloquent<Data>>;
+    // delete(data: Data): Promise<IEloquent<Data>>;
 
     // selection
-    select(columns?: string | string[]): IQueryBuilder<M>;
+    select(columns?: string | string[]): IEloquent<Data>;
 
     // find methods
-    find(id: string | number): Promise<M | null>;
-    findOrFail(id: string | number): Promise<M>;
+    find(id: string | number): Promise<Data | null>;
+    findOrFail(id: string | number): Promise<Data>;
+    //raw(expression: unknown, bindings?: unknown[], ...args: unknown[]): Promise<IEloquent<Data>>;
     
     // get methods
-    // all(): Promise<ModelCollection<TModel>>;
-    get(): Promise<ModelCollection<M>>;
-    // first(): Promise<TModel | null>;
-    // last(): Promise<TModel | null>;
+    all(): Promise<Collection<Data>>;
+    get(): Promise<Collection<Data>>;
+    first(): Promise<Data | null>;
+    last(): Promise<Data | null>;
 
-    // // Select methods
-    // select(columns?: string | string[]): Promise<IQueryBuilder>;
-    // selectRaw(expression: string, bindings?: any[]): Promise<IQueryBuilder>;
-    // distinct(): Promise<IQueryBuilder>;
+    // Select methods
+    select(columns?: string | string[]): IEloquent<Data>;
+    distinct(columns: string | string[]): IEloquent<Data>;
+    //selectRaw(expression: string, bindings?: any[]): IEloquent<Data>;
 
     // // Where clauses
-    where(column: string, value?: TWhereClauseValue): IQueryBuilder<M>;
-    where(column: string, operator?: TOperator, value?: any): IQueryBuilder<M>;
-    whereIn(column: string, values: TWhereClauseValue[]): IQueryBuilder<M>;
-    whereNotIn(column: string, values: TWhereClauseValue[]): IQueryBuilder<M>;
-    whereLike(column: string, value: TWhereClauseValue): IQueryBuilder<M>;
-    whereNotLike(column: string, value: TWhereClauseValue): IQueryBuilder<M>;
-    whereNull(column: string): IQueryBuilder<M>;
-    whereNotNull(column: string): IQueryBuilder<M>;
-    whereBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IQueryBuilder<M>;
+    where(column: string, value?: TWhereClauseValue): IEloquent<Data>;
+    where(column: string, operator?: TOperator, value?: any): IEloquent<Data>;
+    whereIn(column: string, values: TWhereClauseValue[]): IEloquent<Data>;
+    whereNotIn(column: string, values: TWhereClauseValue[]): IEloquent<Data>;
+    whereLike(column: string, value: TWhereClauseValue): IEloquent<Data>;
+    whereNotLike(column: string, value: TWhereClauseValue): IEloquent<Data>;
+    whereNull(column: string): IEloquent<Data>;
+    whereNotNull(column: string): IEloquent<Data>;
+    whereBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data>;
     // whereRaw(query: string, bindings?: any[]): Promise<IQueryBuilder>;
 
     // // Joins
@@ -84,7 +91,7 @@ export interface IQueryBuilder<M extends IModel = IModel> {
     // crossJoin(table: string): Promise<IQueryBuilder>;
 
     // // Ordering
-    orderBy(column: string, direction?: TDirection): IQueryBuilder<M>;
+    orderBy(column: string, direction?: TDirection): IEloquent<Data>;
     // latest(column?: string): Promise<IQueryBuilder>;
     // oldest(column?: string): Promise<IQueryBuilder>;
 
@@ -93,10 +100,10 @@ export interface IQueryBuilder<M extends IModel = IModel> {
     // having(column: string, operator?: string, value?: any): Promise<IQueryBuilder>;
 
     // // Limiting
-    // limit(value: number): Promise<IQueryBuilder>;
-    // offset(value: number): Promise<IQueryBuilder>;
-    // skip(value: number): Promise<IQueryBuilder>;
-    // take(value: number): Promise<IQueryBuilder>;
+    limit(limit: number): IEloquent<Data>;
+    offset(offset: number): IEloquent<Data>;
+    skip(skip: number): IEloquent<Data>;
+    take(take: number): IEloquent<Data>;
 
     // // Aggregates
     // count(column?: string): Promise<number>;
@@ -114,10 +121,6 @@ export interface IQueryBuilder<M extends IModel = IModel> {
     //     perPage: number;
     // }>;
 
-    // Utility methods
-    setBindings(bindings: unknown[]): IQueryBuilder<M>;
-    getBindings(): unknown[];
-
     // Cloning 
-    clone(): IQueryBuilder<M>;
+    clone(): IEloquent<Data>;
 }

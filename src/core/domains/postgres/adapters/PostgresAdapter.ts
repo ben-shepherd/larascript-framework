@@ -15,8 +15,8 @@ import { App } from "@src/core/services/App";
 import pg from 'pg';
 import { QueryInterface, Sequelize } from "sequelize";
 
-import { IQueryBuilder } from "../../eloquent/interfaces/IQueryBuilder";
-import PostgresQueryBuilder from "../queryBuilder/PostgresQueryBuilder";
+import { IEloquent } from "../../eloquent/interfaces/IEloquent";
+import PostgresEloquent from "../eloquent/PostgresEloquent";
 
 class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
 
@@ -197,10 +197,10 @@ class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
      *
      * @template M - The type of model associated with the query builder, defaults to IModel.
      * @param {ICtor<IModel>} modelCtor - The constructor of the model to use for the query builder.
-     * @returns {IQueryBuilder} An instance of PostgresQueryBuilder for the specified model.
+     * @returns {IEloquent} An instance of PostgresQueryBuilder for the specified model.
      */
-    getQueryBuilder<M extends IModel = IModel>(modelCtor: ICtor<M>): IQueryBuilder<M> {
-        return new PostgresQueryBuilder<M>(modelCtor)
+    getEloquent<Data extends object = object>(connectionName: string = this.getConnectionName()): IEloquent<Data> {
+        return new PostgresEloquent<Data>(connectionName)
     }   
 
     /**

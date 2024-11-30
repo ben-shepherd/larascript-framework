@@ -8,12 +8,10 @@ import MongoDbDocumentManager from "@src/core/domains/mongodb/MongoDbDocumentMan
 import MongoDbSchema from "@src/core/domains/mongodb/MongoDbSchema";
 import createMigrationSchemaMongo from "@src/core/domains/mongodb/schema/createMigrationSchemaMongo";
 import { extractDefaultMongoCredentials } from "@src/core/domains/mongodb/utils/extractDefaultMongoCredentials";
-import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
 
-import { IQueryBuilder } from "../../eloquent/interfaces/IQueryBuilder";
+import { IEloquent } from "../../eloquent/interfaces/IEloquent";
 
 class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
 
@@ -165,7 +163,7 @@ class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
         return new MongoDbSchema(this)
     }
 
-    getQueryBuilder<M extends IModel = IModel>(modelCtor: ICtor<IModel>): IQueryBuilder<M> {
+    getEloquent<Data extends object = object>(connectionName: string = this.getConnectionName()): IEloquent<Data> {
         throw new Error("Method not implemented.");
     }   
 

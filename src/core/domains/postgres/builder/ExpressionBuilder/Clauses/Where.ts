@@ -1,4 +1,4 @@
-import { TLogicalOperator, TWhereClause, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IQueryBuilder";
+import { TLogicalOperator, TWhereClause, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
 import BindingsHelper from "../../BindingsHelper";
 

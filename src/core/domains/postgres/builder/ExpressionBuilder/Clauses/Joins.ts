@@ -1,4 +1,4 @@
-import { TJoin } from "@src/core/domains/eloquent/interfaces/IQueryBuilder";
+import { TJoin } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
 class Joins {
 

@@ -6,6 +6,8 @@ import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumen
 import { IHasConfigConcern } from "@src/core/interfaces/concerns/IHasConfigConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
 
+import { IEloquent } from "../../eloquent/interfaces/IEloquent";
+
 export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>
 {
     boot(): Promise<void>;
@@ -29,6 +31,8 @@ export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>
     documentManager<TDocMan extends IDocumentManager = IDocumentManager>(connectionName?: string): TDocMan;
 
     schema<TSchema extends IDatabaseSchema = IDatabaseSchema>(connectionName?: string): TSchema;
+
+    eloquent<Data extends object = object>(connectionName?: string): IEloquent<Data>;
 
     createMigrationSchema(tableName: string, connectionName?: string): Promise<unknown>;
 }

@@ -4,6 +4,10 @@
  */
 export interface IDatabaseSchema {
 
+    /**
+     * Get the name of the table associated with this schema
+     */
+    formatTableName(tableName: string): string;
 
     /**
      * Creates a new database schema.

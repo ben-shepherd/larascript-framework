@@ -22,6 +22,7 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes> 
     dates: string[];
     timestamps: boolean;
     json: string[];
+    useTableName(): string;
     getId(): string | undefined;
     setTimestamp(dateTimeField: string, value: Date): Promise<void>;
     fill(data: Partial<Attributes>): Promise<void>;

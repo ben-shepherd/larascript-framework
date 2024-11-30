@@ -11,6 +11,8 @@ import DatabaseAdapter from "@src/core/domains/database/services/DatabaseAdapter
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
+import { IEloquent } from "../../eloquent/interfaces/IEloquent";
+
 /**
  * Database Service
  * - Registers database adapters, connections 
@@ -314,6 +316,19 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
         return this.getAdapter(connectionName).getSchema() as TSchema
     }
     
+    /**
+     * Retrieves the Eloquent query builder for the specified connection.
+     * 
+     * The Eloquent query builder provides a fluent interface for interacting with the database.
+     * 
+     * @template Data The type of the data to be queried.
+     * @param connectionName The name of the connection to use for the query.
+     * @returns An instance of the Eloquent query builder.
+     */
+    eloquent<Data extends object = object>(connectionName: string = this.getDefaultConnectionName()): IEloquent<Data> {
+        return this.getAdapter(connectionName).getEloquent<Data>(connectionName)
+    }
+
     /**
      * Get the database raw client
      * Example
