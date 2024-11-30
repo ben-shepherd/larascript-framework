@@ -15,6 +15,11 @@ export type TCollectionOperator = "===" | "==" | "!==" | "!=" | "<>" | ">" | "<"
 export interface ICollection<T = unknown> {
 
     /**
+     * Index signature for array-like access
+     */
+    [index: number]: T;
+
+    /**
      * Get the underlying CollectJs Collection
      */
     toCollectJs(): CollectJsCollection<T>;
@@ -57,8 +62,4 @@ export interface ICollection<T = unknown> {
      */
     clone(): this;
 
-    /**
-     * Index signature for array-like access
-     */
-    [index: number]: T;
 }
