@@ -3,11 +3,14 @@ import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabase
 import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import { App } from "@src/core/services/App";
 
-class MongoDBSchema implements IDatabaseSchema{
+import BaseSchema from "../database/base/BaseSchema";
+
+class MongoDBSchema extends BaseSchema implements IDatabaseSchema{
 
     protected adapter!: MongoDbAdapter;
 
     constructor(adapter: MongoDbAdapter) {
+        super()
         this.adapter = adapter;
     }
 
@@ -87,38 +90,42 @@ class MongoDBSchema implements IDatabaseSchema{
 
     /**
      * Create a table
-     * @param name 
+     * @param tableName 
      * @param args 
      */
     // eslint-disable-next-line no-unused-vars
-    async createTable(name: string, ...args: any[]): Promise<void> {
-        await this.adapter.getDb().createCollection(name);
-        await this.adapter.getDb().collection(name).insertOne({
+    async createTable(tableName: string, ...args: any[]): Promise<void> {
+        tableName = this.formatTableName(tableName);
+
+        await this.adapter.getDb().createCollection(tableName);
+        await this.adapter.getDb().collection(tableName).insertOne({
             _create_table: true
         });
-        await this.adapter.getDb().collection(name).deleteMany({
+        await this.adapter.getDb().collection(tableName).deleteMany({
             _create_table: true
         });
     }
 
     /**
      * Drop a table
-     * @param name 
+     * @param tableName 
      * @param args 
      */
     // eslint-disable-next-line no-unused-vars
-    async dropTable(name: string, ...args: any[]): Promise<void> {
-        await this.adapter.getDb().dropCollection(name);
+    async dropTable(tableName: string, ...args: any[]): Promise<void> {
+        tableName = this.formatTableName(tableName);
+        await this.adapter.getDb().dropCollection(tableName);
     }
 
     /**
      * Check if table exists
-     * @param name 
+     * @param tableName 
      * @returns 
      */
     // eslint-disable-next-line no-unused-vars
-    async tableExists(name: string, ...args: any[]): Promise<boolean> {
-        return (await this.adapter.getDb().listCollections().toArray()).map(c => c.name).includes(name);
+    async tableExists(tableName: string, ...args: any[]): Promise<boolean> {
+        tableName = this.formatTableName(tableName);
+        return (await this.adapter.getDb().listCollections().toArray()).map(c => c.name).includes(tableName);
     }
 
     /**
