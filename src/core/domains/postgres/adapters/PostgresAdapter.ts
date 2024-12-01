@@ -66,6 +66,13 @@ class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
         return this.getClient()
     }
 
+    getSequelizeClient(): Sequelize {
+        return new Sequelize(this.config.uri, { 
+            logging: App.env() !== EnvironmentProduction,
+            ...this.config.options, 
+            ...this.overrideConfig
+        })
+    }
 
     /**
      * Get a new PostgreSQL client instance.

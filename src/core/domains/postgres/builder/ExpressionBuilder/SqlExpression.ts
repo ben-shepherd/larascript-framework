@@ -54,6 +54,27 @@ class SqlExpression implements IEloquentExpression {
 
     protected inserts: object | object[] | null  = DEFAULTS.inserts
 
+    /**
+     * Converts a column name to its SQL-safe representation
+     * 
+     * Converts a column name from camelCase to snake_case and lowercases it.
+     * This is necessary because PostgreSQL is case-sensitive for column names
+     * and requires them to be in double quotes if they are camelCase.
+     * @param column - The column name to convert
+     * @returns The SQL-safe column name
+     */
+    public static formatColumn<T extends string | string[] = string>(column: T): T {
+        // this might not be needed
+        // orginally intended to solve camelCase column names
+        return column
+        // const format = (str) =>  Str.snakeCase(str).toLowerCase();
+
+        // if(typeof column === 'string') {
+        //     return format(column) as T;
+        // }
+
+        // return column.map(format) as T;
+    }
 
     /**
      * Builds a SQL query string from the query builder's properties
@@ -116,12 +137,12 @@ class SqlExpression implements IEloquentExpression {
      *
      * @returns {string} The SQL query string
      */
-    buildSelect(): string {
+    buildSelect(): string { 
 
         const oneSpacePrefix = ' ';
         const selectColumns  = SelectColumns.toSql(this.columns, this.distinctColumns).trimEnd();
         const fromTable      = FromTable.toSql(this.table, this.tableAbbreviation).trimEnd();
-        const where          =  Where.toSql(this.whereClauses, this.bindings, oneSpacePrefix).trimEnd();
+        const where          = Where.toSql(this.whereClauses, this.bindings, oneSpacePrefix).trimEnd();
         const join           = Joins.toSql(this.joins, oneSpacePrefix).trimEnd();
         const orderBy        = OrderBy.toSql(this.orderByClauses, oneSpacePrefix).trimEnd();
         const offsetLimit    = OffsetLimit.toSql(this.offset ?? {}, oneSpacePrefix).trimEnd();

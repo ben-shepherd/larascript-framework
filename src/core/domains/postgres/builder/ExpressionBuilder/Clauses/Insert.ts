@@ -43,7 +43,7 @@ class Insert {
      * @returns {string} The SQL string for the INSERT query.
      */
     public static columns(columns: string[]) {
-        return `(${columns.join(', ')})`
+        return `(${columns.map(column => `"${column}"`).join(', ')})`
     }
 
     /**
@@ -71,7 +71,7 @@ class Insert {
      * @returns {string} The SQL string for the RETURNING statement.
      */
     public static returning(columns: string[], prefix = ' RETURNING ') {
-        const keys = ['id', ...columns]
+        const keys = ['id', ...columns].map(column => `"${column}"`);
         return `${prefix}${keys.join(', ')}`
     }
 

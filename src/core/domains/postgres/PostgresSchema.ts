@@ -116,6 +116,7 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
      */
     async createTable(tableName: string, attributes: ModelAttributes, optons?: QueryInterfaceCreateTableOptions): Promise<void> {
         tableName = this.formatTableName(tableName);
+
         const sequelize = this.adapter.getClient();
         const queryInterface = sequelize.getQueryInterface();
         await queryInterface.createTable(tableName, this.withIdSchema(attributes), optons);

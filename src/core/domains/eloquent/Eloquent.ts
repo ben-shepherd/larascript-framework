@@ -4,6 +4,7 @@ import { App } from "@src/core/services/App";
 import Collection from "../collections/Collection";
 import { IDatabaseAdapter } from "../database/interfaces/IDatabaseAdapter";
 import BaseEloquent from "./base/BaseEloquent";
+import InvalidMethodException from "./exceptions/InvalidMethodException";
 import MissingTableException from "./exceptions/MissingTableException";
 import QueryBuilderException from "./exceptions/QueryBuilderException";
 import { IEloquent, OperatorArray, TFormatterFn, TOperator, TWhereClauseValue } from "./interfaces/IEloquent";
@@ -59,9 +60,18 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
         this.setExpressionCtor(expressionCtor);
 
         // Optional
-        this.setTable(tableName)
+        this.setTable(tableName ?? '')
         this.setFormatter(formatterFn)
     }
+
+    /**
+     * Retrieves the database adapter for the connection name associated with this query builder.
+     * @returns {IDatabaseAdapter} The database adapter.
+     */
+    protected getAdapter(): Adapter {
+        return App.container('db').getAdapter<Adapter>(this.getConnectionName())
+    }
+
 
     /**
      * Resets the expression builder to its default state.
@@ -117,24 +127,9 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
      * @param {string} tableName The table name to set.
      * @returns {this} The query builder instance for chaining.
      */
-    table(tableName: string): IEloquent<Data> {
-        this.expression.setTable(tableName);
-        return this.setTable(tableName)
-    }
-
-    /**
-     * Sets the table name to use for the query builder.
-     * 
-     * @param {string} tableName The table name to set.
-     * @returns {this} The query builder instance.
-     */
-    setTable(tableName?: string): IEloquent<Data> {
+    setTable(tableName: string): IEloquent<Data> {
         this.tableName = tableName
-
-        if(this.tableName) {
-            this.expression.setTable(this.tableName);    
-        }
-        
+        this.expression.setTable(tableName);
         return this
     }
 
@@ -146,7 +141,7 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
      * @throws {MissingTableException} If the table name is not set
      */
     useTable(): string {
-        if(!this.table) {
+        if(!this.tableName || this.tableName?.length === 0) {
             throw new MissingTableException()
         }
         return this.tableName as string
@@ -240,7 +235,38 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
         })
     }
 
+    async createDatabase(name: string): Promise<void> {
+        throw new InvalidMethodException()
+    }
 
+    async databaseExists(name: string): Promise<boolean> {
+        throw new InvalidMethodException()
+    }
+
+    async dropDatabase(name: string): Promise<void> {
+        throw new InvalidMethodException()
+    }
+
+    // table methods
+    async createTable(name: string, ...args: any[]): Promise<void> {
+        throw new InvalidMethodException()
+    }
+
+    async dropTable(name: string, ...args: any[]): Promise<void> {
+        throw new InvalidMethodException()
+    }
+
+    async tableExists(name: string): Promise<boolean> {
+        throw new InvalidMethodException()
+    }
+
+    async alterTable(name: string, ...args: any[]): Promise<void> {
+        throw new InvalidMethodException()
+    }
+
+    async dropAllTables(): Promise<void> {
+        throw new InvalidMethodException()
+    }
 
     abstract execute<T>(builder: IEloquentExpression): Promise<T>;
 

@@ -86,7 +86,7 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         const connectionName = temporaryModel.connection;
         const tableName = temporaryModel.useTableName();
 
-        return App.container('db').eloquent<Data>(connectionName).table(tableName);
+        return App.container('db').eloquent<Data>(connectionName).setTable(tableName);
     }
 
     /**

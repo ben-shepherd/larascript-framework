@@ -1,6 +1,7 @@
 import { TLogicalOperator, TWhereClause, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
 import BindingsHelper from "../../BindingsHelper";
+import SqlExpression from "../SqlExpression";
 
 type ParsedWhereClause = {
     column: string;
@@ -77,6 +78,7 @@ class Where {
      * @returns {string} The SQL-safe column name wrapped in backticks.
      */
     public columnToSql({ column }: ParsedWhereClause): string {
+        column = SqlExpression.formatColumn(column);
         return `${column}`
     }
 

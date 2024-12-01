@@ -1,5 +1,7 @@
 import { TJoin } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
+import SqlExpression from "../SqlExpression";
+
 class Joins {
 
     /**
@@ -34,22 +36,30 @@ class Joins {
     }
 
     static formatTable(table: string, abbreviation?: string | null) {
-        return `${table}${abbreviation ? `${abbreviation} ` : ''}`;
+        return `${table}${abbreviation ? (abbreviation + ' ') : ''}`;
     }
 
     static innerJoin(table: string, leftColumn: string, rightColumn: string) {
+        leftColumn = SqlExpression.formatColumn(leftColumn);
+        rightColumn = SqlExpression.formatColumn(rightColumn);
         return `JOIN ${this.formatTable(table)} ON ${leftColumn} = ${rightColumn}`
     }
 
     static leftJoin(table: string, leftColumn: string, rightColumn: string) {
+        leftColumn = SqlExpression.formatColumn(leftColumn);
+        rightColumn = SqlExpression.formatColumn(rightColumn);
         return `LEFT JOIN ${this.formatTable(table)} ON ${leftColumn} = ${rightColumn}`
     }
 
     static rightJoin(table: string, leftColumn: string, rightColumn: string) {
+        leftColumn = SqlExpression.formatColumn(leftColumn);
+        rightColumn = SqlExpression.formatColumn(rightColumn);
         return `RIGHT JOIN ${this.formatTable(table)} ON ${leftColumn} = ${rightColumn}`
     }
 
     static fullJoin(table: string, leftColumn: string, rightColumn: string) {
+        leftColumn = SqlExpression.formatColumn(leftColumn);
+        rightColumn = SqlExpression.formatColumn(rightColumn);
         return `FULL JOIN ${this.formatTable(table)} ON ${leftColumn} = ${rightColumn}`
     }
 

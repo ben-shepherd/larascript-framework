@@ -36,6 +36,7 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter> {
         const client = await this.getDatabaseAdapter().getConnectedPgClient();
         const results = await client.query(expression.build<string>(), expression.getBindings())
         await client.end()
+        
         return results as T
     }
 
@@ -92,6 +93,13 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter> {
         })
     }
 
+    /**
+     * Retrieves the last document from the query builder or null if no documents
+     * are found.
+     * 
+     * @returns A promise resolving to the last document found or null if none
+     * were found.
+     */
     async last(): Promise<Data | null> {
         return await captureError<Data | null>(async () => {
             const res = await this.execute()
@@ -120,6 +128,15 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter> {
         })
     }
 
+    /**
+     * Retrieves all documents from the query builder without any pagination.
+     * 
+     * This method is similar to {@link get}, but it will not apply any
+     * pagination to the query. It is useful when you need to retrieve all
+     * documents from the database without any limit.
+     * 
+     * @returns A promise resolving to a collection of documents.
+     */
     async all(): Promise<Collection<Data>> {
         return await captureError(async () => {
             const res = await this.execute(

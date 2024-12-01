@@ -44,8 +44,20 @@ export type TFormatterFn = (row: unknown) => unknown;
 
 export interface IEloquent<Data = unknown> {
 
+    // db methods
+    createDatabase(name: string): Promise<void>;
+    databaseExists(name: string): Promise<boolean>;
+    dropDatabase(name: string): Promise<void>;
+
     // table methods
-    table(table: string): IEloquent<Data>;
+    createTable(name: string, ...args: any[]): Promise<void>;
+    dropTable(name: string, ...args: any[]): Promise<void>;
+    tableExists(name: string): Promise<boolean>;
+    alterTable(name: string, ...args: any[]): Promise<void>
+    dropAllTables(): Promise<void>;
+
+    // table methods
+    setTable(table: string): IEloquent<Data>;
     useTable(): string;
 
     // Creating and saving

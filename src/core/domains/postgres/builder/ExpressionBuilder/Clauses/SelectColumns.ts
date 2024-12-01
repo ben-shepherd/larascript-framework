@@ -1,3 +1,4 @@
+import SqlExpression from "../SqlExpression";
 
 class SelectColumns {
 
@@ -25,9 +26,12 @@ class SelectColumns {
      * @returns {string} The updated SQL query string with the DISTINCT ON clause.
      */
     protected static distinctColumns(sql: string, distinctColumns: string[] | null): string {
-        if(Array.isArray(distinctColumns) && distinctColumns.length > 0) {
-            sql += `DISTINCT ON (${distinctColumns.map(column => column).join(', ')}) `;
+        const distinctColumnsArray = SqlExpression.formatColumn<string[]>(distinctColumns ?? [])
+
+        if(distinctColumnsArray.length > 0) {
+            sql += `DISTINCT ON (${distinctColumnsArray.map(column => column).join(', ')}) `;
         }
+
         return sql
     }
 
@@ -46,7 +50,9 @@ class SelectColumns {
             return sql
         }
 
-        sql += `${columns.join(', ')}`;
+        columns = SqlExpression.formatColumn(columns);
+
+        sql += `${columns.map(column => `"${column}"`).join(', ')}`;
         return sql
     }
 

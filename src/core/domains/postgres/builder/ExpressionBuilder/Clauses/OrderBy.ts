@@ -1,5 +1,7 @@
 import { TOrderBy } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
+import SqlExpression from "../SqlExpression";
+
 class OrderBy {
 
     static toSql(orders: TOrderBy[] = [], prefix: string = ''): string {
@@ -14,7 +16,7 @@ class OrderBy {
     }
 
     static columnToSql({ column }: TOrderBy): string {
-        return `${column}`   
+        return SqlExpression.formatColumn(column)
     }
 
     static directionToSql({ direction }: TOrderBy): string {
