@@ -106,4 +106,18 @@ describe('eloquent', () => {
 
 
     });
+
+    test('test with raw sql', async () => {
+        
+        const table = query.useTable()
+        const sql = `SELECT * FROM ${table} WHERE name = $1 OR name = $2 ORDER BY name ASC LIMIT 2`;
+        const bindings = ['Alice', 'Bob'];
+
+        const results = await query.clone().raw(sql, bindings);
+
+        expect(results.rows.length).toBe(2);
+        expect(results.rows?.[0].name).toBe('Alice');
+        expect(results.rows?.[1].name).toBe('Bob');
+
+    })
 });

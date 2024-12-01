@@ -2,6 +2,7 @@
 
 
 import { ICtor } from "@src/core/interfaces/ICtor";
+import { QueryResult } from "pg";
 
 import Collection from "../../collections/Collection";
 import IEloquentExpression from "./IEloquentExpression";
@@ -47,11 +48,16 @@ export type TFormatterFn = (row: unknown) => unknown;
 
 export interface IEloquent<Data = unknown, Expression extends IEloquentExpression = IEloquentExpression> {
     
+    // eloquent methods
     setConnectionName(connectionName: string): IEloquent<Data>;
     setFormatter(formatterFn?: TFormatterFn): IEloquent<Data>;
     getExpression(): Expression;
     setExpressionCtor(builderCtor: ICtor<Expression>): IEloquent<Data>
     resetExpression(): IEloquent<Data>;
+
+    // execution
+    execute<T = Data>(builder: IEloquentExpression): Promise<T>
+    raw<T = QueryResult>(expression: string, bindings?: unknown[]): Promise<T>;
 
     // db methods
     createDatabase(name: string): Promise<void>;

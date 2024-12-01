@@ -84,8 +84,6 @@ class SqlExpression implements IEloquentExpression {
      */
     build<T = string>(): T {
 
-        console.log('[SqlExpression] build', this.bindings);
-
         if(this.table.length === 0) {
             throw new Error('Table name is required');
         }

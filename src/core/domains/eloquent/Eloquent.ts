@@ -56,24 +56,66 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
      */
     protected expression!: Expression;
 
-    // /**
-    //  * Constructor
-    //  * @param {Object} options The options for the query builder
-    //  * @param {ICtor<Data>} options.modelCtor The constructor of the model associated with this query builder
-    //  */
-    // constructor({ adapterName, connectionName, expressionCtor, tableName = undefined, formatterFn = undefined }: TQueryBuilderOptions) {
-    //     super()
+    /**
+     * Retrieves the database adapter for the connection name associated with this query builder.
+     * @returns {IDatabaseAdapter} The database adapter.
+     */
+    protected getAdapter(): Adapter {
+        return App.container('db').getAdapter<Adapter>(this.getConnectionName())
+    }
+    
+    /**
+     *
+     * @param rows 
+     * @returns 
+     */
+    protected formatQueryResults(rows: unknown[]): Data[] {
+        return rows.map(row => {
+            return this.formatterFn ? this.formatterFn(row) : row
+        }) as Data[]
+    }
 
-    //     // Required
-    //     this.adapterName = adapterName
-    //     this.setConnectionName(connectionName ?? App.container('db').getDefaultConnectionName())
-    //     this.setExpressionCtor(expressionCtor);
+    /**
+     * Logs a message to the logger as an error with the query builder's
+     * adapter name prefixed.
+     * @param {string} message The message to log
+     */
+    protected log(message: string, ...args: any[]) {
+        App.container('logger').error(`[Eloquent] (Connection: ${this.connectionName}): ${message}`, ...args);
+    }
 
-    //     // Optional
-    //     this.setTable(tableName ?? '')
-    //     this.setFormatter(formatterFn)
-    // }
+    /**
+     * Retrieves the table name associated with the model for this query builder
+     * @returns {string} The table name
+     */
+    protected getTable() {
+        return this.tableName
+    }
 
+    /**
+     * Sets the columns to select for the query builder.
+     * @param {string[]} columns - The columns to set for selection.
+     * @returns {IEloquent<Data>} The query builder instance.
+     */
+    protected setColumns(columns: string[]): IEloquent<Data> {
+        this.expression.setColumns(columns);
+        return this as unknown as IEloquent<Data>;
+    }
+
+
+    /**
+     * Retrieves the connection name associated with this query builder.
+     * @returns {string} The connection name.
+     */
+    protected getConnectionName(): string {
+        return this.connectionName
+    }
+
+    /**
+     * Retrieves the current expression builder instance.
+     *
+     * @returns {Expression} The expression builder instance.
+     */
     getExpression(): Expression {
         return this.expression
     }
@@ -88,14 +130,6 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
         this.expressionCtor = builderCtor;
         this.expression = new builderCtor();
         return this as unknown as IEloquent<Data>
-    }
-
-    /**
-     * Retrieves the database adapter for the connection name associated with this query builder.
-     * @returns {IDatabaseAdapter} The database adapter.
-     */
-    protected getAdapter(): Adapter {
-        return App.container('db').getAdapter<Adapter>(this.getConnectionName())
     }
 
     /**
@@ -124,26 +158,6 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
         this.formatterFn = formatterFn 
         return this as unknown as IEloquent<Data>
     }
-    
-    /**
-     *
-     * @param rows 
-     * @returns 
-     */
-    protected formatQueryResults(rows: unknown[]): Data[] {
-        return rows.map(row => {
-            return this.formatterFn ? this.formatterFn(row) : row
-        }) as Data[]
-    }
-
-    /**
-     * Logs a message to the logger as an error with the query builder's
-     * adapter name prefixed.
-     * @param {string} message The message to log
-     */
-    protected log(message: string, ...args: any[]) {
-        App.container('logger').error(`[Eloquent] (Connection: ${this.connectionName}): ${message}`, ...args);
-    }
 
     /**
      * Sets the table name to use for the query builder.
@@ -158,7 +172,7 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
         this.expression.setTable(tableName);
         return this as unknown as IEloquent<Data>
     }
-
+    
     /**
      * Retrieves the table name associated with the query builder, or throws an
      * exception if it is not set.
@@ -172,41 +186,7 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
         }
         return this.tableName
     }
-
-    /**
-     * Retrieves the table name associated with the model for this query builder
-     * @returns {string} The table name
-     */
-    protected getTable() {
-        return this.tableName
-    }
-
-    /**
-     * Sets the columns to select for the query builder.
-     * @param {string[]} columns - The columns to set for selection.
-     * @returns {IEloquent<Data>} The query builder instance.
-     */
-    protected setColumns(columns: string[]): IEloquent<Data> {
-        this.expression.setColumns(columns);
-        return this as unknown as IEloquent<Data>;
-    }
-
-    /**
-     * Retrieves the database adapter for the connection name associated with this query builder.
-     * @returns {IDatabaseAdapter} The database adapter.
-     */
-    protected getDatabaseAdapter(): Adapter {
-        return App.container('db').getAdapter<Adapter>(this.getConnectionName())
-    }
-
-    /**
-     * Retrieves the connection name associated with this query builder.
-     * @returns {string} The connection name.
-     */
-    protected getConnectionName(): string {
-        return this.connectionName
-    }
-
+    
     /**
      * Sets the connection name to use for the query builder
      * @param {string} connectionName The connection name to use
@@ -263,31 +243,37 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
 
     }
 
+    // eslint-disable-next-line no-unused-vars
     async createDatabase(name: string): Promise<void> {
         throw new InvalidMethodException()
     }
 
+    // eslint-disable-next-line no-unused-vars
     async databaseExists(name: string): Promise<boolean> {
         throw new InvalidMethodException()
     }
 
+    // eslint-disable-next-line no-unused-vars
     async dropDatabase(name: string): Promise<void> {
         throw new InvalidMethodException()
     }
 
-    // table methods
+    // eslint-disable-next-line no-unused-vars
     async createTable(name: string, ...args: any[]): Promise<void> {
         throw new InvalidMethodException()
     }
 
+    // eslint-disable-next-line no-unused-vars
     async dropTable(name: string, ...args: any[]): Promise<void> {
         throw new InvalidMethodException()
     }
 
+    // eslint-disable-next-line no-unused-vars
     async tableExists(name: string): Promise<boolean> {
         throw new InvalidMethodException()
     }
 
+    // eslint-disable-next-line no-unused-vars
     async alterTable(name: string, ...args: any[]): Promise<void> {
         throw new InvalidMethodException()
     }
@@ -296,33 +282,57 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
         throw new InvalidMethodException()
     }
 
-    abstract execute<T>(builder: IEloquentExpression): Promise<T>;
+    // eslint-disable-next-line no-unused-vars
+    async execute<T>(builder: IEloquentExpression): Promise<T> {
+        throw new InvalidMethodException()
+    }
 
-    abstract find(id: string | number): Promise<Data | null>;
+    // eslint-disable-next-line no-unused-vars
+    async raw<T>(expression: string, bindings?: unknown[]): Promise<T> {
+        throw new InvalidMethodException()
+    }
 
-    abstract findOrFail(id: string | number): Promise<Data>;
+    // eslint-disable-next-line no-unused-vars
+    async find(id: string | number): Promise<Data | null> {
+        throw new InvalidMethodException()
+    }
 
-    abstract get(): Promise<Collection<Data>>;
+    // eslint-disable-next-line no-unused-vars
+    async findOrFail(id: string | number): Promise<Data> {
+        throw new InvalidMethodException()
+    }
 
-    abstract all(): Promise<Collection<Data>>;
+    async get(): Promise<Collection<Data>> {
+        throw new InvalidMethodException()
+    }
 
-    abstract first(): Promise<Data | null>;
+    async all(): Promise<Collection<Data>> {
+        throw new InvalidMethodException()
+    }
 
-    abstract firstOrFail(): Promise<Data>;
+    async first(): Promise<Data | null> {
+        throw new InvalidMethodException()
+    }
 
-    abstract last(): Promise<Data | null>;
+    async firstOrFail(): Promise<Data> {
+        throw new InvalidMethodException()
+    }
 
-    abstract lastOrFail(): Promise<Data>;
+    async last(): Promise<Data | null> {
+        throw new InvalidMethodException()
+    }
 
-    abstract insert(documents: object | object[]): Promise<Collection<Data>>
+    async lastOrFail(): Promise<Data> {
+        throw new InvalidMethodException()
+    }
+
+    // eslint-disable-next-line no-unused-vars
+    async insert(documents: object | object[]): Promise<Collection<Data>> {
+        throw new InvalidMethodException()
+    }
 
     /**
      * Adds a where clause to the query builder.
-     *
-     * This method allows for filtering the query results based on a specified
-     * column and condition. It supports various operators for comparison.
-     * If only the column and a single value are provided, it defaults to using
-     * the '=' operator for comparison.
      *
      * @param {string} column - The column to apply the where condition on.
      * @param {TOperator} [operator] - The operator to use for comparison.
@@ -374,104 +384,150 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
         return this
     }
 
+    /**
+     * Adds a where null clause to the query builder.
+     * 
+     * @param {string} column - The column to apply the where null condition on.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
     whereNull(column: string): IEloquent<Data> {
         this.expression.where(column, 'is null', null);
         return this
     }
 
+    /**
+     * Adds a where not null clause to the query builder.
+     * 
+     * This method allows for filtering the query results by including only rows
+     * where the specified column's value is not null.
+     * 
+     * @param {string} column - The column to apply the where not null condition on.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
     whereNotNull(column: string): IEloquent<Data> {
         this.expression.where(column, 'is not null', null);
         return this
     }
 
+    /**
+     * Adds a where between clause to the query builder.
+     * 
+     * This method allows for filtering the query results by including only rows
+     * where the specified column's value is between the two values in the given
+     * range.
+     * 
+     * @param {string} column - The column to apply the where between condition on.
+     * @param {[TWhereClauseValue, TWhereClauseValue]} range - An array of two values to compare against.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
     whereBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data> {
         this.expression.where(column, 'between', range);
         return this 
     }
 
+    /**
+     * Adds a where not between clause to the query builder.
+     * 
+     * This method allows for filtering the query results by excluding rows
+     * where the specified column's value is not between the two values in the given
+     * range.
+     * 
+     * @param {string} column - The column to apply the where not between condition on.
+     * @param {[TWhereClauseValue, TWhereClauseValue]} range - An array of two values to compare against.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
     whereNotBetween(column: string, range: [any, any]): IEloquent<Data> {
         this.expression.where(column, 'not between', range);
         return this
     }
 
+    /**
+     * Adds a where like clause to the query builder.
+     * 
+     * This method allows for filtering the query results by including only rows
+     * where the specified column's value matches the given value using the LIKE operator.
+     * 
+     * @param {string} column - The column to apply the where like condition on.
+     * @param {TWhereClauseValue} value - The value to compare against.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
     whereLike(column: string, value: TWhereClauseValue): IEloquent<Data> {
         this.expression.where(column, 'like', value);
         return this
     }
 
+    /**
+     * Adds a where not like clause to the query builder.
+     * 
+     * This method allows for filtering the query results by excluding rows
+     * where the specified column's value does not match the given value using the NOT LIKE operator.
+     * 
+     * @param {string} column - The column to apply the where not like condition on.
+     * @param {TWhereClauseValue} value - The value to compare against.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
     whereNotLike(column: string, value: TWhereClauseValue): IEloquent<Data> {
         this.expression.where(column, 'not like', value);
         return this
     }
 
+    /**
+     * Adds an order by clause to the query builder.
+     * 
+     * @param {string} column - The column to order by.
+     * @param {TDirection} direction - The direction to order by. Defaults to 'asc'.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
     orderBy(column: string, direction: TDirection = 'asc'): IEloquent<Data> {
         this.expression.orderBy({ column, direction });
         return this
     }
 
+    /**
+     * Sets the offset for the query builder.
+     * 
+     * @param {number} offset - The value of the offset to set.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
     offset(offset: number): IEloquent<Data> {
         this.expression.setOffset(offset);
         return this
     }
     
+    /**
+     * Sets the offset for the query builder.
+     * 
+     * This method is an alias for the `offset` method.
+     * 
+     * @param {number} skip - The value of the offset to set.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
     skip(skip: number): IEloquent<Data> {
         return this.offset(skip)
     }
 
+    /**
+     * Sets the limit clause for the query builder.
+     * 
+     * @param {number} limit - The limit clause to set.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
     limit(limit: number): IEloquent<Data> {
         this.expression.setLimit(limit);
         return this        
     }
 
+    /**
+     * Sets the limit clause for the query builder.
+     * 
+     * This method is an alias for the `limit` method.
+     * 
+     * @param {number} take - The limit clause to set.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
     take(take: number): IEloquent<Data> {
         return this.limit(take)
     }
-
-
-    // abstract whereRaw(query: string, bindings?: any[]): Promise<IQueryBuilder>;
-
-    // abstract join(table: string, first: string, operator?: string, second?: string): Promise<IQueryBuilder>;
-
-    // abstract leftJoin(table: string, first: string, operator?: string, second?: string): Promise<IQueryBuilder>;
-
-    // abstract rightJoin(table: string, first: string, operator?: string, second?: string): Promise<IQueryBuilder>;
-
-    // abstract crossJoin(table: string): Promise<IQueryBuilder>;
-
-    // abstract latest(column?: string): Promise<IQueryBuilder>;
-
-    // abstract oldest(column?: string): Promise<IQueryBuilder>;
-
-    // abstract groupBy(...columns: string[]): Promise<IQueryBuilder>;
-
-    // abstract having(column: string, operator?: string, value?: any): Promise<IQueryBuilder>;
-
-    // abstract limit(value: number): Promise<IQueryBuilder>;
-
-    // abstract offset(value: number): Promise<IQueryBuilder>;
-
-    // abstract skip(value: number): Promise<IQueryBuilder>;
-
-    // abstract take(value: number): Promise<IQueryBuilder>;
-
-    // abstract count(column?: string): Promise<number>;
-
-    // abstract max(column: string): Promise<number>;
-
-    // abstract min(column: string): Promise<number>;
-
-    // abstract avg(column: string): Promise<number>;
-
-    // abstract sum(column: string): Promise<number>;
-
-    // abstract paginate(perPage?: number, page?: number): Promise<{
-    //     data: any[];
-    //     total: number;
-    //     currentPage: number;
-    //     lastPage: number;
-    //     perPage: number;
-    // }>;
-
 
 }
 

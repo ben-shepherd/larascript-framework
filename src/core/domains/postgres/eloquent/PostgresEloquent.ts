@@ -40,14 +40,24 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
     async execute<T = QueryResult>(expression: IEloquentExpression = this.expression): Promise<T> {
         const sql = expression.build<string>()
         const values = expression.getBindingValues()
-        const types = expression.getBindingTypes()
 
-        console.log('[PostgresEloquent]', {expression: sql, bindings: values, types})
-        
-        const client = await this.getDatabaseAdapter().getConnectedPgClient();
-        const results = await client.query(sql, values)
+        return await this.raw<T>(sql, values)
+    }
+
+    /**
+     * Executes a raw SQL query using the connected PostgreSQL client.
+     *
+     * @param expression The SQL query to execute.
+     * @param bindings The bindings to use for the query.
+     * @returns A promise that resolves with the query result.
+     */
+    async raw<T = QueryResult>(expression: string, bindings?: unknown[]): Promise<T> {
+        console.log('[PostgresEloquent] raw', expression, bindings);
+
+        const client = await this.getAdapter().getConnectedPgClient();
+        const results = await client.query(expression, bindings)
         await client.end()
-        
+
         return results as T
     }
 
