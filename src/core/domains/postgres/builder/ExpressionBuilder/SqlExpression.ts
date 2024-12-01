@@ -56,25 +56,18 @@ class SqlExpression implements IEloquentExpression {
     protected inserts: object | object[] | null        = getDefaults().inserts;
 
     /**
-     * Converts a column name to its SQL-safe representation
-     * 
-     * Converts a column name from camelCase to snake_case and lowercases it.
-     * This is necessary because PostgreSQL is case-sensitive for column names
-     * and requires them to be in double quotes if they are camelCase.
-     * @param column - The column name to convert
-     * @returns The SQL-safe column name
+     * Formats a column name with double quotes for safe usage in SQL queries
+     * @param column - The column name to format
+     * @returns The formatted column name
      */
     public static formatColumn<T extends string | string[] = string>(column: T): T {
-        // this might not be needed
-        // orginally intended to solve camelCase column names
-        return column
-        // const format = (str) =>  Str.snakeCase(str).toLowerCase();
+        const format = (col) => `"${col}"`;
 
-        // if(typeof column === 'string') {
-        //     return format(column) as T;
-        // }
+        if(Array.isArray(column)) {
+            return column.map(format) as T;
+        }
 
-        // return column.map(format) as T;
+        return format(column) as T;
     }
 
     /**
@@ -176,6 +169,7 @@ class SqlExpression implements IEloquentExpression {
     }
 
     setDistinctColumns(columns: string[]): this {
+        console.log('[SqlExpression] setDistinctColumns', columns);
         this.distinctColumns = columns;
         return this   
     }

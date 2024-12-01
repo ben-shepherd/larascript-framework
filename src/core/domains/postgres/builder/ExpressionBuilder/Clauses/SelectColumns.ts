@@ -28,6 +28,7 @@ class SelectColumns {
     protected static distinctColumns(sql: string, distinctColumns: string[] | null): string {
         const distinctColumnsArray = SqlExpression.formatColumn<string[]>(distinctColumns ?? [])
 
+        console.log('[SelectColumns] distinctColumnsArray', distinctColumnsArray)
         if(distinctColumnsArray.length > 0) {
             sql += `DISTINCT ON (${distinctColumnsArray.map(column => column).join(', ')}) `;
         }
@@ -52,7 +53,7 @@ class SelectColumns {
 
         columns = SqlExpression.formatColumn(columns);
 
-        sql += `${columns.map(column => `"${column}"`).join(', ')}`;
+        sql += `${columns.join(', ')}`;
         return sql
     }
 
