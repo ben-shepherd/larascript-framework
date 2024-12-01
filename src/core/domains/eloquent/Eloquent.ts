@@ -19,7 +19,7 @@ export type TQueryBuilderOptions = {
     expressionCtor: ICtor<IEloquentExpression>;
 }
 
-abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IDatabaseAdapter> extends BaseEloquent implements IEloquent<Data> {
+abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IDatabaseAdapter, Expression extends IEloquentExpression = IEloquentExpression> extends BaseEloquent implements IEloquent<Data, Expression> {
 
     /**
      * The connection name to use for the query builder
@@ -47,21 +47,47 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
     protected formatterFn?: TFormatterFn;
 
     /**
-     * Constructor
-     * @param {Object} options The options for the query builder
-     * @param {ICtor<Data>} options.modelCtor The constructor of the model associated with this query builder
+     * The constructor of the expression builder
      */
-    constructor({ adapterName, connectionName, expressionCtor, tableName = undefined, formatterFn = undefined }: TQueryBuilderOptions) {
-        super()
+    protected expressionCtor!: ICtor<Expression>;
 
-        // Required
-        this.adapterName = adapterName
-        this.setConnectionName(connectionName ?? App.container('db').getDefaultConnectionName())
-        this.setExpressionCtor(expressionCtor);
+    /**
+     * The expression builder
+     */
+    protected expression!: Expression;
 
-        // Optional
-        this.setTable(tableName ?? '')
-        this.setFormatter(formatterFn)
+    // /**
+    //  * Constructor
+    //  * @param {Object} options The options for the query builder
+    //  * @param {ICtor<Data>} options.modelCtor The constructor of the model associated with this query builder
+    //  */
+    // constructor({ adapterName, connectionName, expressionCtor, tableName = undefined, formatterFn = undefined }: TQueryBuilderOptions) {
+    //     super()
+
+    //     // Required
+    //     this.adapterName = adapterName
+    //     this.setConnectionName(connectionName ?? App.container('db').getDefaultConnectionName())
+    //     this.setExpressionCtor(expressionCtor);
+
+    //     // Optional
+    //     this.setTable(tableName ?? '')
+    //     this.setFormatter(formatterFn)
+    // }
+
+    getExpression(): Expression {
+        return this.expression
+    }
+
+    /**
+     * Sets the expression builder to use for the query builder.
+     * 
+     * @param {ICtor<IEloquentExpression>} builderCtor The constructor of the expression builder to use.
+     * @returns {this} The query builder instance for chaining.
+     */
+    setExpressionCtor(builderCtor: ICtor<Expression>): IEloquent<Data> {
+        this.expressionCtor = builderCtor;
+        this.expression = new builderCtor();
+        return this as unknown as IEloquent<Data>
     }
 
     /**
@@ -72,7 +98,6 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
         return App.container('db').getAdapter<Adapter>(this.getConnectionName())
     }
 
-
     /**
      * Resets the expression builder to its default state.
      * 
@@ -81,9 +106,10 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
      * 
      * @returns {IEloquentExpression} The expression builder instance after resetting.
      */
-    protected resetExpression(): IEloquent<Data> {
-        this.expression = new this.expressionCtor().setTable(this.useTable())
-        return this
+    resetExpression(): IEloquent<Data> {
+        this.setExpressionCtor(this.expressionCtor)
+        this.setTable(this.tableName ?? '')
+        return this as unknown as IEloquent<Data>
     }
 
     /**
@@ -94,9 +120,9 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
      * @param {TFomatterFn} formatterFn The formatter function to set
      * @returns {this} The query builder instance to enable chaining
      */
-    protected setFormatter(formatterFn?: TFormatterFn): this {
-        this.formatterFn = formatterFn
-        return this
+    setFormatter(formatterFn?: TFormatterFn): IEloquent<Data> {
+        this.formatterFn = formatterFn 
+        return this as unknown as IEloquent<Data>
     }
     
     /**
@@ -116,7 +142,7 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
      * @param {string} message The message to log
      */
     protected log(message: string, ...args: any[]) {
-        App.container('logger').error(`(QueryBuilder:${this.adapterName}): ${message}`, ...args);
+        App.container('logger').error(`[Eloquent] (Connection: ${this.connectionName}): ${message}`, ...args);
     }
 
     /**
@@ -130,7 +156,7 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
     setTable(tableName: string): IEloquent<Data> {
         this.tableName = tableName
         this.expression.setTable(tableName);
-        return this
+        return this as unknown as IEloquent<Data>
     }
 
     /**
@@ -144,7 +170,7 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
         if(!this.tableName || this.tableName?.length === 0) {
             throw new MissingTableException()
         }
-        return this.tableName as string
+        return this.tableName
     }
 
     /**
@@ -185,8 +211,9 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
      * Sets the connection name to use for the query builder
      * @param {string} connectionName The connection name to use
      */
-    protected setConnectionName(connectionName: string) {
+    setConnectionName(connectionName: string): IEloquent<Data> {
         this.connectionName = connectionName
+        return this as unknown as IEloquent<Data>;
     }
 
     /**
@@ -227,12 +254,13 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
      * @returns {IEloquent} The cloned query builder instance
      */
     clone(): IEloquent<Data> {
-        return new (this.constructor as any)({
-            adapterName: this.adapterName,
-            tableName: this.tableName,
-            connectionName: this.connectionName,
-            formatterFn: this.formatterFn
-        })
+        return new (this.constructor as ICtor<IEloquent<Data>>)()
+            .setConnectionName(this.connectionName)
+            .setFormatter(this.formatterFn)
+            .setExpressionCtor(this.expressionCtor)
+            .setTable(this.tableName ?? '')
+            .resetExpression()
+
     }
 
     async createDatabase(name: string): Promise<void> {
@@ -280,7 +308,11 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
 
     abstract first(): Promise<Data | null>;
 
+    abstract firstOrFail(): Promise<Data>;
+
     abstract last(): Promise<Data | null>;
+
+    abstract lastOrFail(): Promise<Data>;
 
     abstract insert(documents: object | object[]): Promise<Collection<Data>>
 

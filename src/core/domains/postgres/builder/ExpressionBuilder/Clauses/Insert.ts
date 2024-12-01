@@ -32,7 +32,7 @@ class Insert {
     public static createInsertStatement(table: string, document: object, bindings: BindingsHelper): string {
         const columns = Object.keys(document);
         const values = Object.values(document);
-        return `INSERT INTO ${table} ${this.columns(columns)}${this.values(values, bindings)}${this.returning(columns)};`;
+        return `INSERT INTO ${table} ${this.columns(columns)}${this.values(columns, values, bindings)}${this.returning(columns)};`;
     }
 
     /**
@@ -55,9 +55,11 @@ class Insert {
      * @param {BindingsHelper} bindings - An instance of the BindingsHelper class.
      * @returns {string} The SQL string for the INSERT query.
      */
-    public static values(values: unknown[], bindings: BindingsHelper, prefix = ' VALUES ') {
+    public static values(columns: string[], values: unknown[], bindings: BindingsHelper, prefix = ' VALUES ') {
         bindings.reset()
-        const bindingPlaceholders = bindings.valuesToPlaceholderSqlArray(values)
+        
+        const bindingPlaceholders = columns.map((column, i) => bindings.valuesToPlaceholderSqlArray(column, values[i]));
+
         return `${prefix} (${bindingPlaceholders.join(', ')})`
     }
 

@@ -1,6 +1,9 @@
+import { types } from "pg";
+
 export type TBinding = {
     sql: string;
     value: unknown;
+    type: number
 }
 
 /**
@@ -10,11 +13,24 @@ class BindingsHelper {
 
     protected bindings: TBinding[] = [];
 
+    protected columnTypes: Record<string, number> = {};
+
     /**
      * Resets the bindings array to an empty array.
      */
     reset() {
         this.bindings = []
+    }
+
+    /**
+     * Sets the type of the given column for future bindings.
+     * @param {string} column The column name to set the type for.
+     * @param {number} type The type number to set for the column.
+     * @returns {this} The bindings helper instance.
+     */
+    setColumnType(column: string, type: number): this {
+        this.columnTypes[column] = type
+        return this
     }
 
     /**
@@ -24,17 +40,38 @@ class BindingsHelper {
      * is the value that will be bound to the placeholder.
      * @param {unknown} value The value to bind.
      */
-    addBindings(values: unknown): this {
+    addBinding(column: string, values: unknown): this {
         const valuesArray: unknown[] = Array.isArray(values) ? values : [values];
 
         for(const value of valuesArray) {
+
+            // If the column has a type, add it to the binding
+            // This might look like $1::uuid
+            let suffix = '';
+            if(this.columnTypes[column]) {
+                suffix = '::' + BindingsHelper.getPgEnumValue(this.columnTypes[column])
+            }
+
             this.bindings.push({
-                sql: '$' + this.getNextBindingSql(),
-                value
+                sql: '$' + this.getNextBindingSql() + suffix,
+                value,
+                type: this.columnTypes[column]
             })   
         }
 
         return this
+    }
+
+    /**
+     * Converts the given PostgreSQL type number to its corresponding enum value as a string.
+     * Returns undefined if no matching enum value is found.
+     * Example: type: 16 -> enum: 'bool'
+     * @param {number} type The PostgreSQL type number to convert.
+     * @returns {string | undefined} The enum value as a string, or undefined.
+     */
+    static getPgEnumValue(type: number): string | undefined {
+        const typesMap = Array.from(Object.entries(types.builtins)).map(([key, value]) => ({key, value}))
+        return typesMap.find(({value}) => value === type)?.key.toLowerCase()
     }
 
     /**
@@ -43,9 +80,9 @@ class BindingsHelper {
      * @param {unknown[]} values The values to add as bindings.
      * @returns {string[]} e.g ['$1', '$2', '$3']
      */
-    valuesToPlaceholderSqlArray(values: unknown[]): string[] {
-        this.addBindings(values)
-        const lastBindings = this.bindings.slice(-values.length)
+    valuesToPlaceholderSqlArray(column, value: unknown): string[] {
+        this.addBinding(column, value)
+        const lastBindings = this.bindings.slice(-1)
         return lastBindings.map(({ sql }) => sql)
     }
 
@@ -56,6 +93,14 @@ class BindingsHelper {
      */
     getValues(): unknown[] {
         return this.bindings.map(({ value }) => value)
+    }
+
+    /**
+     * Retrieves the list of PostgreSQL types that have been added to the builder as bindings.
+     * @returns {number[]} The list of PostgreSQL types
+     */
+    getTypes(): number[] {
+        return this.bindings.map(({ type }) => type)
     }
 
     /**

@@ -53,6 +53,7 @@ class Where {
             const parsed = this.parse(this.filters[i])
 
             // Example: column LIKE
+            // Example: column =
             sql += `${this.columnToSql(parsed)} ${this.operatorToSql(parsed)} `
 
             // Example: value
@@ -98,8 +99,11 @@ class Where {
      * @param {ParsedWhereClause} param0 - The parsed where clause containing the value.
      * @returns {TWhereClauseValue} The SQL-safe value.
      */
-    public valueToSql({ value }: ParsedWhereClause): TWhereClauseValue {
-        return this.bindings.addBindings(value).getLastBinding()?.sql as string
+    public valueToSql({ column, value }: ParsedWhereClause): TWhereClauseValue {
+        const addedBind = this.bindings.addBinding(column, value).getLastBinding()
+
+
+        return addedBind?.sql as string
     }
 
     /**
@@ -137,13 +141,13 @@ class Where {
      * @param {TWhereClause} filter - The filter containing the operator to be parsed.
      * @returns {ParsedWhereClause} - The filter with the operator converted to SQL syntax.
      */
-    public parse(filter: TWhereClause): ParsedWhereClause {
-        const parsedFilter = {...filter} as ParsedWhereClause
+    public parse({ column, ...filter}: TWhereClause): ParsedWhereClause {
+        const parsedFilter = { column, ...filter} as ParsedWhereClause
         const valueAsArray = Array.isArray(filter.value) ? filter.value : [filter.value]
 
         if (filter.operator === 'in') {
             parsedFilter.operator = 'IN';
-            parsedFilter.value = `(${this.bindings.valuesToPlaceholderSqlArray(valueAsArray).join(', ')})`;
+            parsedFilter.value = `(${this.bindings.valuesToPlaceholderSqlArray(column, valueAsArray).join(', ')})`;
         }
         else if (filter.operator === 'not in') {
             parsedFilter.operator = 'NOT IN';
@@ -169,7 +173,7 @@ class Where {
             parsedFilter.value = undefined;
         }
 
-        return filter as ParsedWhereClause
+        return parsedFilter
     }
 
 

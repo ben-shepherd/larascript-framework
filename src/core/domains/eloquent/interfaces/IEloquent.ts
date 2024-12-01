@@ -1,7 +1,10 @@
 /* eslint-disable no-unused-vars */
 
 
+import { ICtor } from "@src/core/interfaces/ICtor";
+
 import Collection from "../../collections/Collection";
+import IEloquentExpression from "./IEloquentExpression";
 
 export type TColumns = string[]
 
@@ -42,7 +45,13 @@ export type TOffset = {
 
 export type TFormatterFn = (row: unknown) => unknown;
 
-export interface IEloquent<Data = unknown> {
+export interface IEloquent<Data = unknown, Expression extends IEloquentExpression = IEloquentExpression> {
+    
+    setConnectionName(connectionName: string): IEloquent<Data>;
+    setFormatter(formatterFn?: TFormatterFn): IEloquent<Data>;
+    getExpression(): Expression;
+    setExpressionCtor(builderCtor: ICtor<Expression>): IEloquent<Data>
+    resetExpression(): IEloquent<Data>;
 
     // db methods
     createDatabase(name: string): Promise<void>;
@@ -70,6 +79,10 @@ export interface IEloquent<Data = unknown> {
 
     // find methods
     find(id: string | number): Promise<Data | null>;
+
+    /**
+     * @throws ModelNotFound
+     */
     findOrFail(id: string | number): Promise<Data>;
     //raw(expression: unknown, bindings?: unknown[], ...args: unknown[]): Promise<IEloquent<Data>>;
     
@@ -77,7 +90,9 @@ export interface IEloquent<Data = unknown> {
     all(): Promise<Collection<Data>>;
     get(): Promise<Collection<Data>>;
     first(): Promise<Data | null>;
+    firstOrFail(): Promise<Data>
     last(): Promise<Data | null>;
+    lastOrFail(): Promise<Data>
 
     // Select methods
     select(columns?: string | string[]): IEloquent<Data>;

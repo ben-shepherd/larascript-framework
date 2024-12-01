@@ -43,6 +43,15 @@ const HasDatabaseConnectionConcern = (Base: ICtor) => {
         getDocumentManager(): IDocumentManager {
             return App.container('db').documentManager(this.connection).table(this.table);
         }
+
+        /**
+         * Gets the document manager for database operations.
+         * 
+         * @returns {IDocumentManager} The document manager instance.
+         */
+        setConnectionName(connectionName: string) {
+            this.connection = connectionName;
+        }
     
         /**
          * Gets the schema interface for the database.

@@ -326,7 +326,9 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
      * @returns An instance of the Eloquent query builder.
      */
     eloquent<Data extends object = object>(connectionName: string = this.getDefaultConnectionName()): IEloquent<Data> {
-        return this.getAdapter(connectionName).getEloquent<Data>(connectionName)
+        const adapter = this.getAdapter(connectionName)
+        const eloquentCtor = adapter.getEloquentCtor<Data>()
+        return new eloquentCtor().setConnectionName(connectionName);
     }
 
     /**

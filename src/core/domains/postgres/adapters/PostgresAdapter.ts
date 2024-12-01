@@ -207,8 +207,13 @@ class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
      * @returns {IEloquent} An instance of PostgresQueryBuilder for the specified model.
      */
     getEloquent<Data extends object = object>(connectionName: string = this.getConnectionName()): IEloquent<Data> {
-        return new PostgresEloquent<Data>(connectionName)
+        return new PostgresEloquent<Data>()
+            .setConnectionName(connectionName)
     }   
+
+    getEloquentCtor<Data extends object = object>(): ICtor<IEloquent<Data>> {
+        return PostgresEloquent
+    }
 
     /**
      * Creates the migrations schema for the database

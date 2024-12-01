@@ -1,8 +1,6 @@
-import { EnvironmentProduction } from "@src/core/consts/Environment";
 import InsertException from "@src/core/domains/eloquent/exceptions/InsertException";
 import { TJoin, TOffset, TOperator, TOrderBy, TWhereClause, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
-import { App } from "@src/core/services/App";
 import { z } from "zod";
 
 import BindingsHelper from "../BindingsHelper";
@@ -16,7 +14,7 @@ import Where from "./Clauses/Where";
 
 type BuildType = 'select' | 'insert'
 
-const DEFAULTS = {
+const getDefaults = () => ({
     buildType: 'select',
     bindings: new BindingsHelper(),
     table: '',
@@ -24,35 +22,38 @@ const DEFAULTS = {
     columns: ['*'],
     distinctColumns: null,
     whereClauses: [],
+    whereColumnTypes: {},
     joins: [],
     orderByClauses: [],
     offset: null,
     inserts: null
-}
+})
 
 class SqlExpression implements IEloquentExpression {
 
-    protected buildType: BuildType               = DEFAULTS.buildType as BuildType;
+    public bindings                                    = getDefaults().bindings;
 
-    protected bindings                           = DEFAULTS.bindings;
-
-    protected table: string                      = DEFAULTS.table;
-
-    protected tableAbbreviation?: string | null  = DEFAULTS.tableAbbreviation;
-
-    protected columns: string[]                  = DEFAULTS.columns;
-
-    protected distinctColumns: string[] | null   = DEFAULTS.distinctColumns;
-
-    protected whereClauses: TWhereClause[]       = DEFAULTS.whereClauses;
-
-    protected joins: TJoin[]                     = DEFAULTS.joins;
-
-    protected orderByClauses: TOrderBy[]         = DEFAULTS.orderByClauses;
-
-    protected offset: TOffset | null             = DEFAULTS.offset;
-
-    protected inserts: object | object[] | null  = DEFAULTS.inserts
+    protected buildType: BuildType                     = getDefaults().buildType as BuildType;
+    
+    protected table: string                            = getDefaults().table;
+    
+    protected tableAbbreviation?: string | null        = getDefaults().tableAbbreviation;
+    
+    protected columns: string[]                        = getDefaults().columns;
+    
+    protected distinctColumns: string[] | null         = getDefaults().distinctColumns;
+    
+    protected whereClauses: TWhereClause[]             = getDefaults().whereClauses;
+    
+    protected whereColumnTypes: Record<string, string> = getDefaults().whereColumnTypes;
+    
+    protected joins: TJoin[]                           = getDefaults().joins;
+    
+    protected orderByClauses: TOrderBy[]               = getDefaults().orderByClauses;
+    
+    protected offset: TOffset | null                   = getDefaults().offset;
+    
+    protected inserts: object | object[] | null        = getDefaults().inserts;
 
     /**
      * Converts a column name to its SQL-safe representation
@@ -83,6 +84,8 @@ class SqlExpression implements IEloquentExpression {
      */
     build<T = string>(): T {
 
+        console.log('[SqlExpression] build', this.bindings);
+
         if(this.table.length === 0) {
             throw new Error('Table name is required');
         }
@@ -92,13 +95,7 @@ class SqlExpression implements IEloquentExpression {
             'insert': () => this.buildInsert()
         }
 
-        const sql = fnMap[this.buildType]();
-
-        if(App.env() !== EnvironmentProduction) {
-            console.log('[SQL Expression Builder]', {sql, bindings: this.bindings.getValues()});
-        }
-
-        return sql as T
+        return fnMap[this.buildType]() as T;
     }
 
     /**
@@ -153,11 +150,6 @@ class SqlExpression implements IEloquentExpression {
         sql += orderBy;
         sql += offsetLimit;
 
-        /**
-         * TODO: Temporary log the SQL query string.
-         */
-        console.log('[SQL Expression Builder]', {sql, bindings: this.bindings.getValues()});
-
         return sql.trimEnd()
     }
 
@@ -197,18 +189,27 @@ class SqlExpression implements IEloquentExpression {
      * @param {unknown} binding The value to bind.
      * @returns {this} The query builder instance.
      */
-    addBinding(binding: unknown): this {
-        this.bindings.addBindings(binding);
+    addBinding(column: string, binding: unknown): this {
+        this.bindings.addBinding(column, binding);
         return this
     }
 
     /**
      * Retrieves the list of values that have been added to the builder as bindings.
-     * This can be useful for debugging or logging purposes.
+
      * @returns {unknown[]} The list of values
      */
-    getBindings(): unknown[] {
+    getBindingValues(): unknown[] {
         return this.bindings.getValues();
+    }
+
+    /**
+     * Retrieves the list of PostgreSQL types that have been added to the builder as bindings.
+     
+     * @returns {number[]} The list of PostgreSQL types
+     */
+    getBindingTypes() {
+        return this.bindings.getTypes()
     }
 
     /**

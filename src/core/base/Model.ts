@@ -66,16 +66,6 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
     }
 
     /**
-     * Magic method that is triggered when a user tries to access a property.
-     *
-     * @param {string} key - The name of the property being accessed.
-     * @returns {any} The value of the property if it exists, undefined otherwise.
-     */
-    public getProperty(key: string): any {
-        return (this as any)[key];
-    }
-
-    /**
      * Creates a new query builder instance for the model.
      *
      * @template M - The type of the model, defaults to IModel.
@@ -86,7 +76,9 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         const connectionName = temporaryModel.connection;
         const tableName = temporaryModel.useTableName();
 
-        return App.container('db').eloquent<Data>(connectionName).setTable(tableName);
+        return App.container('db').eloquent<Data>()
+            .setConnectionName(connectionName)
+            .setTable(tableName);
     }
 
     /**

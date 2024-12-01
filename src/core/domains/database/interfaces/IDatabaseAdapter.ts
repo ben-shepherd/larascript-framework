@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
+import { ICtor } from "@src/core/interfaces/ICtor";
 
 import { IEloquent } from "../../eloquent/interfaces/IEloquent";
 
@@ -35,7 +36,9 @@ export interface  IDatabaseAdapter {
 
     getSchema(): IDatabaseSchema;
 
-    getEloquent<Data extends object = object>(connectionName: string): IEloquent<Data>;
+    getEloquent<Data extends object = object>(): IEloquent<Data>;
+
+    getEloquentCtor<Data extends object = object>(): ICtor<IEloquent<Data>>;
 
     isConnected(): Promise<boolean>;
 

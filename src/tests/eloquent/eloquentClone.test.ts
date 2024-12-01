@@ -11,8 +11,10 @@ describe('eloquent', () => {
         await resetTable()
     });
 
-    test('test insert records', async () => {
-        const results = await TestPeopleModel.query<ITestPeopleModelData>().insert([
+    test('test clone query', async () => {
+        const query = TestPeopleModel.query<ITestPeopleModelData>();
+
+        const inserted = await query.clone().insert([
             {
                 name: 'John',
                 age: 25,
@@ -27,15 +29,16 @@ describe('eloquent', () => {
             }
         ]);
 
-        expect(results.count()).toBe(2);
+        const restrictedResult = await query.clone().where('age', '=', 25).first()
+        expect(restrictedResult?.id).toBe(inserted[0].id);
+        expect(restrictedResult?.name).toBe('John');
 
-        expect(typeof results.get(0)?.id === 'string').toBeTruthy()
-        expect(results.get(0)?.name).toBe('John')
-        expect(results.get(0)?.age).toBe(25)
-
-        expect(typeof results.get(1)?.id === 'string').toBeTruthy()
-        expect(results.get(1)?.name).toBe('Jane')
-        expect(results.get(1)?.age).toBe(30)
+        const everythingResult = await query.clone().get()
+        expect(everythingResult.count()).toBe(2);
+        expect(everythingResult[0].id).toBe(inserted[0].id);
+        expect(everythingResult[0].name).toBe('John');
+        expect(everythingResult[1].id).toBe(inserted[1].id);
+        expect(everythingResult[1].name).toBe('Jane');
         
 
     });

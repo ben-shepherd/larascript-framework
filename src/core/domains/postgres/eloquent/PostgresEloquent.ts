@@ -1,26 +1,33 @@
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
+import { ICtor } from "@src/core/interfaces/ICtor";
 import captureError from "@src/core/util/captureError";
-import { QueryResult } from "pg";
+import { QueryResult, types } from "pg";
 
 import Collection from "../../collections/Collection";
 import collect from "../../collections/helper/collect";
 import Eloquent from "../../eloquent/Eloquent";
+import { IEloquent } from "../../eloquent/interfaces/IEloquent";
 import IEloquentExpression from "../../eloquent/interfaces/IEloquentExpression";
 import PostgresAdapter from "../adapters/PostgresAdapter";
 import SqlExpression from "../builder/ExpressionBuilder/SqlExpression";
 
-class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter> {
+class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, SqlExpression> {
 
     /**
      * Constructor
      * @param modelCtor The model constructor to use when creating or fetching models.
      */
-    constructor(connectionName: string) {
-        super({
-            adapterName: 'postgres',
-            connectionName: connectionName,
-            expressionCtor: SqlExpression
-        })
+    constructor() {
+        super()
+        this.setExpressionCtor(SqlExpression)
+    }
+
+    setExpressionCtor(builderCtor: ICtor<SqlExpression>): IEloquent<Data> {
+        
+        super.setExpressionCtor(builderCtor)
+        this.expression.bindings.setColumnType('id', types.builtins.UUID)
+
+        return this as IEloquent<Data>
     }
 
     /**
@@ -31,10 +38,14 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter> {
      * @private
      */
     async execute<T = QueryResult>(expression: IEloquentExpression = this.expression): Promise<T> {
-        console.log('[PostgresEloquent]', {expression: expression.build<string>(), bindings: expression.getBindings()})
+        const sql = expression.build<string>()
+        const values = expression.getBindingValues()
+        const types = expression.getBindingTypes()
+
+        console.log('[PostgresEloquent]', {expression: sql, bindings: values, types})
         
         const client = await this.getDatabaseAdapter().getConnectedPgClient();
-        const results = await client.query(expression.build<string>(), expression.getBindings())
+        const results = await client.query(sql, values)
         await client.end()
         
         return results as T
@@ -76,6 +87,24 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter> {
     }
 
     /**
+     * Retrieves the first document from the query builder or throws a ModelNotFound exception
+     * if no documents are found.
+     * 
+     * @returns A promise resolving to the first document found or throwing a ModelNotFound
+     * exception if none were found.
+     * @throws ModelNotFound
+     */
+    async firstOrFail(): Promise<Data> {
+        const result = await this.first()
+
+        if(!result) {
+            throw new ModelNotFound()
+        }
+
+        return result
+    }
+
+    /**
      * Retrieves the first document from the query builder or null if no documents
      * are found.
      * 
@@ -91,6 +120,24 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter> {
 
             return this.formatQueryResults(res.rows)[0] ?? null
         })
+    }
+
+    /**
+     * Retrieves the last document from the query builder or throws a ModelNotFound exception
+     * if no documents are found.
+     * 
+     * @returns A promise resolving to the last document found or throwing a ModelNotFound
+     * exception if none were found.
+     * @throws ModelNotFound
+     */
+    async lastOrFail(): Promise<Data> {
+        const result = await this.last()
+
+        if(!result) {
+            throw new ModelNotFound()
+        }
+
+        return result
     }
 
     /**
@@ -164,6 +211,7 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter> {
             const results: unknown[] = [];
 
             for(const document of documentsArray) {
+
                 this.resetExpression()
 
                 const documentWithUuid = this.documentWithUuid<Data>(document);
@@ -175,6 +223,8 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter> {
                 
                 results.push(this.formatQueryResults(res.rows)[0])    
             }
+
+            this.resetExpression()
 
             return collect<Data>(
                 this.formatQueryResults(results)

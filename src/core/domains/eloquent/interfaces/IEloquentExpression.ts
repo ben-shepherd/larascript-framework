@@ -1,7 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { TJoin, TOffset, TOperator, TOrderBy, TWhereClause, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
-interface IEloquentExpression {
+interface IEloquentExpression<Bindings = unknown> {
+
+    /**
+     * Binding utility
+     */
+    bindings: Bindings;
 
     /**
      * Abstract class representing a builder for a database query expression.
@@ -45,13 +50,19 @@ interface IEloquentExpression {
      * @param {unknown} binding The value to bind.
      * @returns {this} The query builder instance.
      */
-    addBinding(binding: unknown): this;
+    addBinding(column: string, binding: unknown): this;
 
     /**
      * Retrieves the list of values that have been added to the builder as bindings.
      * @returns {unknown[]} The list of values
      */
-    getBindings(): unknown[];
+    getBindingValues(): unknown[];
+
+    /**
+     * Retrieves the list of column types that have been added to the builder as bindings.
+     * @returns {number[]} The list of column types
+     */
+    getBindingTypes(): number[];
 
     /**
      * Sets the where clauses for the query builder.

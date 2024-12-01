@@ -1,12 +1,10 @@
 /* eslint-disable no-unused-vars */
-import { ICtor } from "@src/core/interfaces/ICtor";
 import compose from "@src/core/util/compose";
 
 import DocumentConcernMixin from "../concerns/DocumentConcern";
-import ExpressionConcernMixin from "../concerns/ExpressionConcern";
-import IEloquentExpression from "../interfaces/IEloquentExpression";
+import { IDocumentConern } from "../interfaces/IDocumentConcern";
 
-class BaseEloquent extends compose(class {}, DocumentConcernMixin, ExpressionConcernMixin) {
+class BaseEloquent extends compose(class {}, DocumentConcernMixin) implements IDocumentConern {
     
     /**
      *  DocumentConcern
@@ -15,14 +13,6 @@ class BaseEloquent extends compose(class {}, DocumentConcernMixin, ExpressionCon
     
     declare documentStripUndefinedProperties: <T>(document: T) => T;
 
-    /**
-     * Expression Concern
-     */
-    declare expressionCtor: ICtor<IEloquentExpression>;
-
-    declare expression: IEloquentExpression;
-
-    declare setExpressionCtor: (builderCtor: ICtor<IEloquentExpression>) => this;
 
 }
 

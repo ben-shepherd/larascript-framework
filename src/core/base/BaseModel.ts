@@ -29,6 +29,8 @@ class BaseModel<Attributes extends IModelAttributes = IModelAttributes> extends 
     declare table: string;
     
     declare getDocumentManager: () => IDocumentManager;
+
+    declare setConnectionName: (connectionName: string) => void;
     
     declare getSchema: () => IDatabaseSchema;
     
