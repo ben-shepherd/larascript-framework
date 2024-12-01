@@ -16,12 +16,15 @@ import Where from "./Clauses/Where";
 
 type BuildType = 'select' | 'insert' | 'update';
 
+type RawSelect = { sql: string, bindings: unknown };
+
 const getDefaults = () => ({
     buildType: 'select',
     bindings: new BindingsHelper(),
     table: '',
     tableAbbreviation: null,
     columns: ['*'],
+    rawSelect: null,
     distinctColumns: null,
     whereClauses: [],
     whereColumnTypes: {},
@@ -43,6 +46,8 @@ class SqlExpression implements IEloquentExpression {
     protected tableAbbreviation?: string | null        = getDefaults().tableAbbreviation;
     
     protected columns: string[]                        = getDefaults().columns;
+
+    protected rawSelect: RawSelect | null              = getDefaults().rawSelect;
     
     protected distinctColumns: string[] | null         = getDefaults().distinctColumns;
     
@@ -140,7 +145,7 @@ class SqlExpression implements IEloquentExpression {
     buildSelect(): string { 
 
         const oneSpacePrefix = ' ';
-        const selectColumns  = SelectColumns.toSql(this.columns, this.distinctColumns).trimEnd();
+        const selectColumns  = SelectColumns.toSql(this.columns, this.distinctColumns, this.rawSelect ?? undefined).trimEnd();
         const fromTable      = FromTable.toSql(this.table, this.tableAbbreviation).trimEnd();
         const where          = Where.toSql(this.whereClauses, this.bindings, oneSpacePrefix).trimEnd();
         const join           = Joins.toSql(this.joins, oneSpacePrefix).trimEnd();
@@ -195,6 +200,12 @@ class SqlExpression implements IEloquentExpression {
     setSelect(): this {
         this.buildType = 'select';
         return this;
+    }
+
+    setSelectRaw(sql: string, bindings: unknown): this {
+        this.buildType = 'select';
+        this.rawSelect = { sql, bindings };
+        return this
     }
 
     /**

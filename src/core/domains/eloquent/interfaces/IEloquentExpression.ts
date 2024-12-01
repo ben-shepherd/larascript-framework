@@ -35,6 +35,13 @@ interface IEloquentExpression<Bindings = unknown> {
     setSelect(): this;
 
     /**
+     * Sets the build type to 'selectRaw'.
+     * 
+     * @returns {this} The instance of the query builder for method chaining.
+     */
+    setSelectRaw(sql: string, bindings: unknown): this;
+
+    /**
      * Sets the columns to include in the SQL query.
      * 
      * @param {string[]} columns - The array of column names to set for the query.

@@ -1,4 +1,7 @@
+
 import SqlExpression from "../SqlExpression";
+
+type RawSelect = { sql: string, bindings: unknown };
 
 class SelectColumns {
 
@@ -11,11 +14,16 @@ class SelectColumns {
      * @param {string[] | null} distinctColumns - An array of columns to append for the DISTINCT ON clause.
      * @returns {string} The SQL string for the SELECT query.
      */
-    public static toSql(columns: string[], distinctColumns: string[] | null = null): string {
+    public static toSql(columns: string[], distinctColumns: string[] | null = null, rawSelect?: RawSelect): string {
         let sql = 'SELECT ';
+
+        if(rawSelect) {
+            sql += rawSelect.sql
+            return sql
+        }
+
         sql = this.distinctColumns(sql, distinctColumns);
         sql = this.selectColumns(sql, columns);
-
         return sql;
     }
 
@@ -25,7 +33,7 @@ class SelectColumns {
      * @param {string[] | null} distinctColumns - An array of columns to append for the DISTINCT ON clause.
      * @returns {string} The updated SQL query string with the DISTINCT ON clause.
      */
-    protected static distinctColumns(sql: string, distinctColumns: string[] | null): string {
+    static distinctColumns(sql: string, distinctColumns: string[] | null): string {
         const distinctColumnsArray = SqlExpression.formatColumn<string[]>(distinctColumns ?? [])
 
         console.log('[SelectColumns] distinctColumnsArray', distinctColumnsArray)
@@ -42,7 +50,7 @@ class SelectColumns {
      * @param {string[]} columns - An array of columns to append.
      * @returns {string} The updated SQL query string with the columns appended.
      */
-    protected static selectColumns(sql: string, columns: string[]): string {
+    static selectColumns(sql: string, columns: string[]): string {
         const firstItemIsAll = columns.length === 1 && columns[0] === '*';
         const isAll = columns.length === 0 || firstItemIsAll
 

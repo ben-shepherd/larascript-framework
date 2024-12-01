@@ -23,6 +23,15 @@ class Update {
         return sql
     }
 
+    /**
+     * Converts a table name and an object to a SQL string that can be used for an UPDATE query.
+     *
+     * @param table - The table name to convert to a SQL string.
+     * @param update - The object to convert to a SQL string.
+     * @param wheres - An array of where clauses to append to the UPDATE query.
+     * @param bindings - An instance of the BindingsHelper class.
+     * @returns The SQL string for the UPDATE query.
+     */
     static createUpdateSql(table: string, update: object, wheres: TWhereClause[], bindings: BindingsHelper): string {
         return `UPDATE ${table} ${this.set(update, bindings)} ${this.where(wheres, bindings)}`.trimEnd() + ';'
     }

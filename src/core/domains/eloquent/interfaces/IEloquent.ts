@@ -103,10 +103,10 @@ export interface IEloquent<Data = unknown, Expression extends IEloquentExpressio
 
     // Select methods
     select(columns?: string | string[]): IEloquent<Data>;
+    selectRaw(expression: string, bindings?: unknown[]): IEloquent<Data>;
     distinct(columns: string | string[]): IEloquent<Data>;
-    //selectRaw(expression: string, bindings?: any[]): IEloquent<Data>;
 
-    // // Where clauses
+    // 
     where(column: string, value?: TWhereClauseValue): IEloquent<Data>;
     where(column: string, operator?: TOperator, value?: any): IEloquent<Data>;
     whereIn(column: string, values: TWhereClauseValue[]): IEloquent<Data>;

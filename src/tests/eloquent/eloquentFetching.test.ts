@@ -73,7 +73,7 @@ describe('eloquent', () => {
         expect(invalidResult).toBe(null);
 
         try {
-            await query.clone().where('name', '=', 'Invalid Name').firstOrFail();
+            await query.clone().where('id', '=', generateUuidV4()).firstOrFail();
             expect(false).toBeTruthy();
         }
         catch (err) {
@@ -118,6 +118,17 @@ describe('eloquent', () => {
         expect(results.rows.length).toBe(2);
         expect(results.rows?.[0].name).toBe('Alice');
         expect(results.rows?.[1].name).toBe('Bob');
+
+    })
+
+    test('test with raw select columns', async () => {
+        
+        const results = await query.clone().selectRaw('"name", "age", "createdAt"').get();
+        expect(results.count()).toBe(4);
+
+        for(const column of ['name', 'age', 'createdAt']) {
+            expect(column in results[0]).toBe(true);
+        }
 
     })
 });

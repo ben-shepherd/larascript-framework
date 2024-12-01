@@ -218,6 +218,21 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
     }
 
     /**
+     * Sets a raw select expression for the query builder.
+     * 
+     * This method can be used to set a custom select expression on the query builder.
+     * The expression will be used as the SELECT clause for the query.
+     * 
+     * @param {string} expression - The raw select expression to set.
+     * @param {unknown[]} [bindings] - The bindings to use for the expression.
+     * @returns {IEloquent<Data, IEloquentExpression<unknown>>} The query builder instance.
+     */
+    selectRaw(expression: string, bindings?: unknown[]): IEloquent<Data, IEloquentExpression<unknown>> {
+        this.expression.setSelectRaw(expression, bindings);
+        return this as unknown as IEloquent<Data, IEloquentExpression<unknown>>
+    }
+
+    /**
      * Sets the distinct columns for the query builder
      * @param {string|string[]} columns The columns to set for distinct
      * @returns {IEloquent<Data>} The query builder instance
