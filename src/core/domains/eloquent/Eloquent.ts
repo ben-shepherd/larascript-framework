@@ -21,6 +21,7 @@ export type TQueryBuilderOptions = {
 
 abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IDatabaseAdapter, Expression extends IEloquentExpression = IEloquentExpression> extends BaseEloquent implements IEloquent<Data, Expression> {
 
+
     /**
      * The connection name to use for the query builder
     */
@@ -328,6 +329,14 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
 
     // eslint-disable-next-line no-unused-vars
     async insert(documents: object | object[]): Promise<Collection<Data>> {
+        throw new InvalidMethodException()
+    }
+
+    async update(documents: object | object[]): Promise<Collection<Data>> {
+        throw new InvalidMethodException()
+    }
+
+    async updateAll(documents: object | object[]): Promise<Collection<Data>> {
         throw new InvalidMethodException()
     }
 

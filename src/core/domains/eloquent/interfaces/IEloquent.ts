@@ -77,7 +77,8 @@ export interface IEloquent<Data = unknown, Expression extends IEloquentExpressio
 
     // Creating and saving
     insert(documents: object | object[]): Promise<Collection<Data>>; // Promise<IEloquent<Data>): Promise<IEloquent<Data>>;
-    // update(data: Data): Promise<IEloquent<Data>>;
+    update(documents: object | object[]): Promise<Collection<Data>>;
+    updateAll(documents: object | object[]): Promise<Collection<Data>>;
     // delete(data: Data): Promise<IEloquent<Data>>;
 
     // selection

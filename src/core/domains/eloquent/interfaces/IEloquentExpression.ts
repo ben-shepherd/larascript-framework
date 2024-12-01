@@ -28,6 +28,13 @@ interface IEloquentExpression<Bindings = unknown> {
     setTable(table: string, abbreviation?: string): this;
 
     /**
+     * Sets the build type to 'select'.
+     * 
+     * @returns {this} The instance of the query builder for method chaining.
+     */
+    setSelect(): this;
+
+    /**
      * Sets the columns to include in the SQL query.
      * 
      * @param {string[]} columns - The array of column names to set for the query.
@@ -142,6 +149,14 @@ interface IEloquentExpression<Bindings = unknown> {
      * @returns {this} The query builder instance for chaining.
      */
     setInsert(documents: object | object[]): this
+
+    /**
+     * Sets the document to update for the query builder.
+     * 
+     * @param {object | object[]} document - The document to update.
+     * @returns {this} The query builder instance for chaining.
+     */
+    setUpdate(document: object | object[]): this;
 
 }
 

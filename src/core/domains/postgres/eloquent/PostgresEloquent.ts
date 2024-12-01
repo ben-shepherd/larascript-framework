@@ -6,6 +6,7 @@ import { QueryResult, types } from "pg";
 import Collection from "../../collections/Collection";
 import collect from "../../collections/helper/collect";
 import Eloquent from "../../eloquent/Eloquent";
+import UpdateException from "../../eloquent/exceptions/UpdateException";
 import { IEloquent } from "../../eloquent/interfaces/IEloquent";
 import IEloquentExpression from "../../eloquent/interfaces/IEloquentExpression";
 import PostgresAdapter from "../adapters/PostgresAdapter";
@@ -240,6 +241,49 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
                 this.formatQueryResults(results)
             )
         })
+    }
+
+    /**
+     * Updates one or multiple documents in the database.
+     * 
+     * @param documents The document(s) to be updated.
+     * @returns A promise resolving to a collection of the updated documents.
+     */
+    async update(documents: object | object[]): Promise<Collection<Data>> {
+        return await captureError(async () => {
+
+            const documentsArray: object[] = Array.isArray(documents) ? documents : [documents]
+
+            if(documentsArray.length === 0) { 
+                throw new UpdateException()
+            }
+
+            for(const document of documentsArray) {
+                await this.clone().execute(
+                    this.expression
+                        .setUpdate(document)
+                )
+            }
+
+            // Reset the expression to 'select'
+            this.getExpression()
+                .setSelect()
+                .bindings
+                .reset()
+
+            return await this.get()
+        })
+    }
+
+    /**
+     * Updates multiple documents in the database without any where clause.
+     * 
+     * @param documents The documents to be updated.
+     * @returns A promise resolving to a collection of the updated documents.
+     */
+    async updateAll(documents: object | object[]): Promise<Collection<Data>> {
+        this.expression.setWhere([])
+        return await this.update(documents)
     }
 
 }

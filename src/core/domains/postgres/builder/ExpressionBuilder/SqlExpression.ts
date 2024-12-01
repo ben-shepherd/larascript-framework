@@ -1,3 +1,4 @@
+import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
 import InsertException from "@src/core/domains/eloquent/exceptions/InsertException";
 import { TJoin, TOffset, TOperator, TOrderBy, TWhereClause, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
@@ -10,9 +11,10 @@ import Joins from "./Clauses/Joins";
 import OffsetLimit from "./Clauses/OffsetLimit";
 import OrderBy from "./Clauses/OrderBy";
 import SelectColumns from "./Clauses/SelectColumns";
+import Update from "./Clauses/Update";
 import Where from "./Clauses/Where";
 
-type BuildType = 'select' | 'insert'
+type BuildType = 'select' | 'insert' | 'update';
 
 const getDefaults = () => ({
     buildType: 'select',
@@ -26,7 +28,8 @@ const getDefaults = () => ({
     joins: [],
     orderByClauses: [],
     offset: null,
-    inserts: null
+    inserts: null,
+    updates: null,
 })
 
 class SqlExpression implements IEloquentExpression {
@@ -55,6 +58,8 @@ class SqlExpression implements IEloquentExpression {
     
     protected inserts: object | object[] | null        = getDefaults().inserts;
 
+    protected updates: object | object[] | null        = getDefaults().updates;
+
     /**
      * Formats a column name with double quotes for safe usage in SQL queries
      * @param column - The column name to format
@@ -70,6 +75,20 @@ class SqlExpression implements IEloquentExpression {
         return format(column) as T;
     }
 
+    
+    /**
+     * Validates that the given array contains only objects
+     * @throws InsertException if the array contains a non-object value
+     * @param objects - The array to validate
+     */
+    protected validateArrayObjects(objects: object[], message = 'Expected an array of objects') {
+        const schema = z.array(z.object({}));
+
+        if(!schema.safeParse(objects).success) {
+            throw new InsertException(message);
+        }
+    }
+    
     /**
      * Builds a SQL query string from the query builder's properties
      *
@@ -83,7 +102,12 @@ class SqlExpression implements IEloquentExpression {
 
         const fnMap = {
             'select': () => this.buildSelect(),
-            'insert': () => this.buildInsert()
+            'insert': () => this.buildInsert(),
+            'update': () => this.buildUpdate(),
+        }
+
+        if(!fnMap[this.buildType]) {
+            throw new ExpressionException(`Invalid build type: ${this.buildType}`);
         }
 
         return fnMap[this.buildType]() as T;
@@ -99,7 +123,7 @@ class SqlExpression implements IEloquentExpression {
         const insertsArray = Array.isArray(this.inserts) ? this.inserts : [this.inserts];
 
         if(insertsArray.length === 0) {
-            throw new InsertException('Inserts must not be empty');
+            throw new ExpressionException('Inserts must not be empty');
         }
 
         this.validateArrayObjects(insertsArray);
@@ -107,18 +131,6 @@ class SqlExpression implements IEloquentExpression {
         return Insert.toSql(this.table, insertsArray, this.bindings);
     }
 
-    /**
-     * Validates that the given array contains only objects
-     * @throws InsertException if the array contains a non-object value
-     * @param objects - The array to validate
-     */
-    protected validateArrayObjects(objects: object[]) {
-        const schema = z.array(z.object({}));
-
-        if(!schema.safeParse(objects).success) {
-            throw new InsertException('Inserts must be an array of objects');
-        }
-    }
 
     /**
      * Builds a SQL query string from the query builder's properties
@@ -145,6 +157,24 @@ class SqlExpression implements IEloquentExpression {
     }
 
     /**
+     * Builds an UPDATE query from the query builder's properties.
+     * 
+     * @returns {string} The SQL UPDATE query string.
+     */
+    buildUpdate(): string {
+        
+        const updatesArray = Array.isArray(this.updates) ? this.updates : [this.updates];
+
+        if(updatesArray.length === 0) {
+            throw new ExpressionException('Updates must not be empty');
+        }
+
+        this.validateArrayObjects(updatesArray);
+
+        return Update.toSql(this.table, updatesArray, this.whereClauses, this.bindings);
+    }
+
+    /**
      * Sets the table name and optional abbreviation for the query builder.
      * 
      * @param {string} table The table name to set.
@@ -154,6 +184,16 @@ class SqlExpression implements IEloquentExpression {
     setTable(table: string, abbreviation?: string): this {
         this.table = table;
         this.tableAbbreviation = abbreviation ?? null
+        return this;
+    }
+
+    /**
+     * Sets the query type to a SELECT query.
+     * 
+     * @returns {this} The query builder instance.
+     */
+    setSelect(): this {
+        this.buildType = 'select';
         return this;
     }
 
@@ -308,6 +348,20 @@ class SqlExpression implements IEloquentExpression {
         documents = Array.isArray(documents) ? documents : [documents]
         this.inserts = documents
         this.buildType = 'insert'
+        return this
+    }
+
+    /**
+     * Sets the document to be updated by the query builder.
+     * 
+     * @param {object | object[]} documents - The document or documents to update.
+     * If a single document is provided, it will be wrapped in an array.
+     * @returns {this} The query builder instance for chaining.
+     */
+    setUpdate(documents: object | object[]): this {
+        documents = Array.isArray(documents) ? documents : [documents]
+        this.updates = documents
+        this.buildType = 'update'
         return this
     }
 
