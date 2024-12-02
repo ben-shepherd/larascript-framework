@@ -165,10 +165,12 @@ describe('eloquent', () => {
         expect(resultsBetween2006And2029.count()).toBe(1);
         expect(resultsBetween2006And2029[0].name).toBe('Alice');
 
-        const resultsNotBetween2006And2029 = await query.clone().whereNotBetween('born', [date2020, date2026]).get();
-        expect(resultsNotBetween2006And2029.count()).toBe(3);
-        expect(resultsNotBetween2006And2029[1].name).toBe('Bob');
-        expect(resultsNotBetween2006And2029[0].name).toBe('John');
-        expect(resultsNotBetween2006And2029[2].name).toBe('Jane');
+        const date2024 = getYearsDate(2024);
+        const date2027 = getYearsDate(2027);
+        const resultsNotBetween2024And2027 = await query.clone().whereNotBetween('born', [date2024, date2027]).get();
+        expect(resultsNotBetween2024And2027.count()).toBe(3);
+        expect(resultsNotBetween2024And2027[0].name).toBe('Bob');
+        expect(resultsNotBetween2024And2027[1].name).toBe('John');
+        expect(resultsNotBetween2024And2027[2].name).toBe('Jane');
     })
 });
