@@ -30,7 +30,9 @@ class Where {
         // eslint-disable-next-line no-unused-vars
         protected rawWhere: RawWhere | undefined,
         // eslint-disable-next-line no-unused-vars
-        protected bindings: BindingsHelper = new BindingsHelper()
+        protected bindings: BindingsHelper = new BindingsHelper(),
+        // eslint-disable-next-line no-unused-vars
+        protected disableAddingNewBindings: boolean = false
     ) {}
 
     /**
@@ -93,40 +95,60 @@ class Where {
         let sql = `WHERE `;
         
         for(let i = 0; i < wheres.length; i++) {
-            const whereSql = this.convertToSqlWhereClause(wheres[i])
+            const currentWhereSql = this.convertToSqlWhereClause(wheres[i])
 
-            // Example: column LIKE
-            // Example: column =
-            sql += `${this.columnToSql(whereSql)} ${this.operatorToSql(whereSql)} `
+            console.log('[Where] currentWhereSql', currentWhereSql.column, currentWhereSql.operator, currentWhereSql.value);
+
+            // Example: "column"
+            sql += SqlExpression.formatColumn(currentWhereSql.column) + ' ';
+
+            // Example: LIKE
+            // Example: =
+            // So far: column LIKE
+            sql += currentWhereSql.operator + ' ';
 
             // Example: value
             // So far: column LIKE value
-            if(whereSql.appendValue !== false) {
-                if(whereSql.appendValueNoBind) {
-                    sql += whereSql.value
-                }
-                else {
-                    sql += this.valueToBindingPlaceholder(whereSql)
-                }
+            if(currentWhereSql.value) {
+                sql += currentWhereSql.value + ' ';
             }
 
             // Example: AND
             // So far: column LIKE value AND
             if(i < wheres.length - 1) {
-                const nextParsed = this.convertToSqlWhereClause(wheres[i + 1]) ?? null
-
-                // If there is a next parsed, append the logical operator (AND, OR)
-                if(nextParsed) {
-                    sql += this.logicalOperatorToSql(nextParsed) + ' '
-                    continue
-                }
-
-                // Otherwise, use the default logical operator (AND)
-                sql += this.logicalOperatorToSql({...whereSql, logicalOperator: LogicalOperators.AND}) + ' '
+                sql += this.logicalOperator(wheres, i)
             }
         }
 
         return sql
+    }
+
+    /**
+     * Converts the logical operator from a parsed where clause into its SQL representation.
+     * 
+     * If the next parsed where clause has a logical operator, it is appended to the SQL string.
+     * If there is no next parsed where clause, the default logical operator (AND) is used.
+     * 
+     * @param {TWhereClause[]} wheres - The array of where clauses being converted to a SQL string.
+     * @param {SqlWhereClause} currentWhereSql - The current parsed where clause being converted.
+     * @param {number} currentIndex - The index of the current parsed where clause in the array.
+     * @returns {string} The SQL-safe logical operator (AND, OR).
+     */
+    logicalOperator(wheres: TWhereClause[], currentIndex: number): string {
+
+        // Temporarily disable adding new bindings in order to fetch the next parsed where clause
+        // Otherwise the bindings will be added twice
+        this.disableAddingNewBindings = true
+        const nextWhereSql = this.convertToSqlWhereClause(wheres[currentIndex + 1]) ?? null
+        this.disableAddingNewBindings = false
+
+        // If there is a next parsed, append the logical operator (AND, OR)
+        if(nextWhereSql) {
+            return nextWhereSql.logicalOperator?.toUpperCase() + ' '
+        }
+
+        // Otherwise, use the default logical operator (AND)
+        return LogicalOperators.AND + ' '
     }
 
     /**
@@ -138,49 +160,6 @@ class Where {
     whereRaw({sql, bindings }: RawWhere): string {
         this.bindings.addBinding(null, bindings)
         return `WHERE ${sql}`;
-    }
-
-    /**
-     * Converts the column name from a parsed where clause into its SQL representation.
-     *
-     * @param {SqlWhereClause} param0 - The parsed where clause containing the column name.
-     * @returns {string} The SQL-safe column name wrapped in backticks.
-     */
-    columnToSql({ column }: SqlWhereClause): string {
-        column = SqlExpression.formatColumn(column);
-        return `${column}`
-    }
-
-    /**
-     * Converts the operator from a parsed where clause into its SQL representation.
-     *
-     * @param {SqlWhereClause} param0 - The parsed where clause containing the operator.
-     * @returns {string} The SQL-safe operator.
-     */
-    operatorToSql({ operator }: SqlWhereClause): string {
-        return operator
-    }
-
-    /**
-     * Converts the value from a parsed where clause into its SQL representation.
-     *
-     * @param {SqlWhereClause} param0 - The parsed where clause containing the value.
-     * @returns {TWhereClauseValue} The SQL-safe value.
-     */
-    valueToBindingPlaceholder({ column, value }: SqlWhereClause): string {
-        return this.bindings.addBinding(column, value).getLastBinding()?.sql as string
-    }
-
-    /**
-     * Converts the logical operator from a parsed where clause into its SQL representation.
-     *
-     * Example: AND
-     * So far: column LIKE value AND
-     * @param {SqlWhereClause} param0 - The parsed where clause containing the logical operator.
-     * @returns {string} The SQL-safe logical operator.
-     */
-    logicalOperatorToSql({ logicalOperator = "and" }: SqlWhereClause): string {
-        return ` ${logicalOperator.toUpperCase()}`
     }
 
     /**
@@ -200,40 +179,49 @@ class Where {
 
         if (filter.operator === 'in') {
             convertedWhere.operator = 'IN';
-            convertedWhere.value = this.getWhereInValuePlaceholders(convertedWhere);
+            convertedWhere.value = this.valueWhereIn(convertedWhere);
             convertedWhere.appendValueNoBind = true;
         }
         else if (filter.operator === 'not in') {
             convertedWhere.operator = 'NOT IN';
-            convertedWhere.value = this.getWhereInValuePlaceholders(convertedWhere);
+            convertedWhere.value = this.valueWhereIn(convertedWhere);
             convertedWhere.appendValueNoBind = true;
         }
         else if (filter.operator === 'between') {
             convertedWhere.operator = 'BETWEEN';
+            convertedWhere.value = this.value(convertedWhere.value as TWhereClauseValue);
         }
         else if (filter.operator === 'not between') {
             convertedWhere.operator = 'NOT BETWEEN';
+            convertedWhere.value = this.value(convertedWhere.value as TWhereClauseValue);
         }
         else if (filter.operator === 'like') {
             convertedWhere.operator = 'LIKE';
+            convertedWhere.value = this.value(convertedWhere.value as TWhereClauseValue);
         }
         else if (filter.operator === 'not like') {
             convertedWhere.operator = 'NOT LIKE';
+            convertedWhere.value = this.value(convertedWhere.value as TWhereClauseValue);
         }
         else if (filter.operator === 'is null') {
             convertedWhere.operator = 'IS NULL';
             convertedWhere.value = undefined;
-            convertedWhere.appendValue = false;
         }
         else if (filter.operator === 'is not null') {
             convertedWhere.operator = 'IS NOT NULL';
             convertedWhere.value = undefined;
-            convertedWhere.appendValue = false;
+        }
+        else {
+            convertedWhere.value = this.value(convertedWhere.value as TWhereClauseValue);
         }
 
         return convertedWhere
     }
- 
+
+    value(value: TWhereClauseValue): string {
+        return this.addWhereBinding(null, value).getLastBinding()?.sql as string
+    }
+
     /**
      * Converts an array of values into their SQL placeholder representation
      * suitable for an IN clause.
@@ -244,17 +232,35 @@ class Where {
      * 
      * Example: `($1, $2, $3)`
      */
-    protected getWhereInValuePlaceholders({ column, value }: SqlWhereClause): string {
+    valueWhereIn({ column, value }: SqlWhereClause): string {
         const valueArray: Iterable<unknown> = Array.isArray(value) ? value : [value];
         const placeholders: string[] = []
         for(const value of valueArray) {
             placeholders.push(
-                this.bindings.addBinding(column, value).getLastBinding()?.sql as string
+                this.addWhereBinding(column, value).getLastBinding()?.sql as string
             );
 
         }
 
         return `(${placeholders.join(', ')})`
+    }
+
+    /**
+     * Adds a binding to the WHERE clause builder. If the internal flag
+     * `disableAddingNewBindings` is set to true, this method will not add the
+     * binding to the builder and will return the current bindings instance.
+     *
+     * @param {string | null} column The column to bind the value to.
+     * @param {unknown} binding The value to bind.
+     * @returns {BindingsHelper} The current bindings instance.
+     */
+    addWhereBinding(column: string | null, binding: unknown): BindingsHelper {
+        if(this.disableAddingNewBindings) {
+            return this.bindings
+        }
+        
+        this.bindings.addBinding(column, binding);
+        return this.bindings
     }
 
 }
