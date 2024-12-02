@@ -10,6 +10,7 @@ export interface ITestPeopleModelData extends IModelAttributes {
     id: string,
     name: string;
     age: number;
+    born?: Date,
     createdAt: Date;
     updatedAt: Date;
 
@@ -26,6 +27,7 @@ export const resetTable = async (connections: string[] = testHelper.getTestConne
         await schema.createTable(tableName, {
             name: DataTypes.STRING,
             age: DataTypes.INTEGER,
+            born: DataTypes.DATE,
             createdAt: DataTypes.DATE,
             updatedAt: DataTypes.DATE
         })

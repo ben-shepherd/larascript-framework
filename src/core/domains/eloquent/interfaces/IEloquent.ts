@@ -126,9 +126,7 @@ export interface IEloquent<Data = unknown, Expression extends IEloquentExpressio
     whereBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data>;
     whereNotBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data>;
 
-    // whereRaw(query: string, bindings?: any[]): Promise<IQueryBuilder>;
-
-    // // Joins
+    // Joins
     // join(table: string, first: string, operator?: string, second?: string): Promise<IQueryBuilder>;
     // leftJoin(table: string, first: string, operator?: string, second?: string): Promise<IQueryBuilder>;
     // rightJoin(table: string, first: string, operator?: string, second?: string): Promise<IQueryBuilder>;
@@ -136,14 +134,15 @@ export interface IEloquent<Data = unknown, Expression extends IEloquentExpressio
 
     // // Ordering
     orderBy(column: string, direction?: TDirection): IEloquent<Data>;
-    // latest(column?: string): Promise<IQueryBuilder>;
-    // oldest(column?: string): Promise<IQueryBuilder>;
+    latest(column?: string): IEloquent<Data>;
+    newest(column?: string): IEloquent<Data>;
+    oldest(column?: string): IEloquent<Data>;
 
     // // Grouping
     // groupBy(...columns: string[]): Promise<IQueryBuilder>;
     // having(column: string, operator?: string, value?: any): Promise<IQueryBuilder>;
 
-    // // Limiting
+    // Limiting
     limit(limit: number): IEloquent<Data>;
     offset(offset: number): IEloquent<Data>;
     skip(skip: number): IEloquent<Data>;

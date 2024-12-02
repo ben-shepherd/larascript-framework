@@ -4,6 +4,7 @@ import { App } from "@src/core/services/App";
 import Collection from "../collections/Collection";
 import { IDatabaseAdapter } from "../database/interfaces/IDatabaseAdapter";
 import BaseEloquent from "./base/BaseEloquent";
+import Direction from "./enums/Direction";
 import InvalidMethodException from "./exceptions/InvalidMethodException";
 import MissingTableException from "./exceptions/MissingTableException";
 import QueryBuilderException from "./exceptions/QueryBuilderException";
@@ -537,6 +538,44 @@ abstract class Eloquent<
         this.expression.orderBy({ column, direction });
         return this as unknown as IEloquent<Data>
     }
+
+    /**
+     * Orders the query builder by the given column in descending order.
+     * 
+     * This method is an alias for orderBy(column, 'desc').
+     * 
+     * @param {string} column - The column to order by.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
+    latest(column: string): IEloquent<Data> {
+        this.expression.orderBy({ column, direction: Direction.DESC});
+        return this as unknown as IEloquent<Data>
+    }
+
+    /**
+     * Orders the query builder by the given column in descending order.
+     * 
+     * This method is an alias for orderBy(column, 'desc').
+     * 
+     * @param {string} column - The column to order by.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
+    newest(column: string): IEloquent<Data> {
+        return this.latest(column)
+    }
+
+    /**
+     * Orders the query builder by the given column in ascending order.
+     * 
+     * This method is an alias for orderBy(column, 'asc').
+     * 
+     * @param {string} column - The column to order by.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
+    oldest(column: string): IEloquent<Data> {
+        return this.orderBy(column, Direction.ASC)
+    }
+
 
     /**
      * Sets the offset for the query builder.
