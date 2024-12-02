@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { TJoin, TOffset, TOperator, TOrderBy, TWhereClause, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
 interface IEloquentExpression<Bindings = unknown> {
 
@@ -76,7 +76,7 @@ interface IEloquentExpression<Bindings = unknown> {
      * Retrieves the list of column types that have been added to the builder as bindings.
      * @returns {number[]} The list of column types
      */
-    getBindingTypes(): number[];
+    getBindingTypes(): (number | undefined)[];
 
     /**
      * Sets the where clauses for the query builder.
@@ -93,7 +93,16 @@ interface IEloquentExpression<Bindings = unknown> {
      * @param {TWhereClauseValue | TWhereClauseValue[]} value - The value or values to compare against.
      * @returns {this} The query builder instance for chaining.
      */
-    where(column: string, operator: TOperator, value: TWhereClauseValue | TWhereClauseValue[]): this;
+    where(column: string, operator: TOperator, value: TWhereClauseValue | TWhereClauseValue[], logicalOperator?: TLogicalOperator): this;
+
+    /**
+     * Adds a raw where clause to the query builder.
+     * 
+     * @param {string} sql - The raw SQL string for the where clause.
+     * @param {unknown} [bindings] - The bindings to use with the raw SQL.
+     * @returns {this} The query builder instance for chaining.
+     */
+    whereRaw(sql: string, bindings?: unknown): this;
 
     /**
      * Sets the order by clauses for the query builder.
@@ -117,10 +126,10 @@ interface IEloquentExpression<Bindings = unknown> {
      * 
      * Example: LIMIT 10 OFFSET 10
      * 
-     * @param {TOffset | null} [offset] - The offset clause to set.
+     * @param {TOffsetLimit | null} [offset] - The offset clause to set.
      * @returns {this} The query builder instance for chaining.
      */
-    setOffsetAndLimit(offset: TOffset | null): this;
+    setOffsetAndLimit(offset: TOffsetLimit | null): this;
 
     /**
      * Sets the limit clause for the query builder.
@@ -140,6 +149,12 @@ interface IEloquentExpression<Bindings = unknown> {
      */
     setOffset(offset: number | null): this;
 
+    /**
+     * Retrieves the offset and limit for the query builder.
+     * 
+     * @returns {TOffsetLimit} The offset and limit.
+     */
+    getOffsetLimit(): TOffsetLimit | null;
 
     /**
      * Sets the joins for the query builder.

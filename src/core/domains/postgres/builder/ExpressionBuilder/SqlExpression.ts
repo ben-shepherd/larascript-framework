@@ -1,6 +1,6 @@
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
 import InsertException from "@src/core/domains/eloquent/exceptions/InsertException";
-import { TJoin, TOffset, TOperator, TOrderBy, TWhereClause, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import { z } from "zod";
 
@@ -18,6 +18,8 @@ type BuildType = 'select' | 'insert' | 'update';
 
 type RawSelect = { sql: string, bindings: unknown };
 
+type RawWhere = { sql: string, bindings: unknown };
+
 const getDefaults = () => ({
     buildType: 'select',
     bindings: new BindingsHelper(),
@@ -28,6 +30,7 @@ const getDefaults = () => ({
     distinctColumns: null,
     whereClauses: [],
     whereColumnTypes: {},
+    whereRaw: null,
     joins: [],
     orderByClauses: [],
     offset: null,
@@ -54,12 +57,14 @@ class SqlExpression implements IEloquentExpression {
     protected whereClauses: TWhereClause[]             = getDefaults().whereClauses;
     
     protected whereColumnTypes: Record<string, string> = getDefaults().whereColumnTypes;
+
+    protected rawWhere: RawWhere | null                = getDefaults().whereRaw;
     
     protected joins: TJoin[]                           = getDefaults().joins;
     
     protected orderByClauses: TOrderBy[]               = getDefaults().orderByClauses;
     
-    protected offset: TOffset | null                   = getDefaults().offset;
+    protected offsetLimit: TOffsetLimit | null         = getDefaults().offset;
     
     protected inserts: object | object[] | null        = getDefaults().inserts;
 
@@ -147,10 +152,10 @@ class SqlExpression implements IEloquentExpression {
         const oneSpacePrefix = ' ';
         const selectColumns  = SelectColumns.toSql(this.columns, this.distinctColumns, this.rawSelect ?? undefined).trimEnd();
         const fromTable      = FromTable.toSql(this.table, this.tableAbbreviation).trimEnd();
-        const where          = Where.toSql(this.whereClauses, this.bindings, oneSpacePrefix).trimEnd();
+        const where          = Where.toSql(this.whereClauses, this.rawWhere ?? undefined, this.bindings, oneSpacePrefix).trimEnd();
         const join           = Joins.toSql(this.joins, oneSpacePrefix).trimEnd();
         const orderBy        = OrderBy.toSql(this.orderByClauses, oneSpacePrefix).trimEnd();
-        const offsetLimit    = OffsetLimit.toSql(this.offset ?? {}, oneSpacePrefix).trimEnd();
+        const offsetLimit    = OffsetLimit.toSql(this.offsetLimit ?? {}, oneSpacePrefix).trimEnd();
 
         let sql = `${selectColumns} ${fromTable}`;
         sql += where
@@ -202,6 +207,13 @@ class SqlExpression implements IEloquentExpression {
         return this;
     }
 
+    /**
+     * Sets the query type to 'select' and assigns a raw SQL expression for the SELECT statement.
+     * 
+     * @param {string} sql - The raw SQL string for the SELECT query.
+     * @param {unknown} bindings - The bindings to be used with the raw SQL.
+     * @returns {this} The query builder instance for method chaining.
+     */
     setSelectRaw(sql: string, bindings: unknown): this {
         this.buildType = 'select';
         this.rawSelect = { sql, bindings };
@@ -251,7 +263,7 @@ class SqlExpression implements IEloquentExpression {
      
      * @returns {number[]} The list of PostgreSQL types
      */
-    getBindingTypes() {
+    getBindingTypes(): (number | undefined)[] {
         return this.bindings.getTypes()
     }
 
@@ -273,9 +285,21 @@ class SqlExpression implements IEloquentExpression {
      * @param {TWhereClauseValue | TWhereClauseValue[]} value - The value or values to compare against.
      * @returns {this} The query builder instance for chaining.
      */
-    where(column: string, operator: TOperator, value: TWhereClauseValue | TWhereClauseValue[] = null): this {
-        this.whereClauses.push({ column, operator, value });
+    where(column: string, operator: TOperator, value: TWhereClauseValue | TWhereClauseValue[] = null, logicalOperator: TLogicalOperator = 'and'): this {
+        this.whereClauses.push({ column, operator, value, logicalOperator });
         return this;
+    }
+
+    /**
+     * Adds a raw where clause to the query builder.
+     * 
+     * @param {string} sql - The raw SQL to use for the where clause.
+     * @param {unknown} bindings - The bindings to use for the where clause.
+     * @returns {this} The query builder instance for chaining.
+     */
+    whereRaw(sql: string, bindings: unknown): this {
+        this.rawWhere = { sql, bindings };
+        return this
     }
 
     /**
@@ -301,15 +325,24 @@ class SqlExpression implements IEloquentExpression {
     }
 
     /**
+     * Retrieves the current offset and limit configuration for the query builder.
+     *
+     * @returns {TOffsetLimit | null} The offset and limit settings, or null if not set.
+     */
+    getOffsetLimit(): TOffsetLimit | null {
+        return this.offsetLimit
+    }
+
+    /**
      * Sets the offset clause for the query builder.
      * 
      * Example: LIMIT 10 OFFSET 10
      * 
-     * @param {TOffset | null} [offset] - The offset clause to set.
+     * @param {TOffsetLimit | null} [offset] - The offset clause to set.
      * @returns {this} The query builder instance for chaining.
      */
-    setOffsetAndLimit(offset: TOffset | null = null): this {
-        this.offset = offset;
+    setOffsetAndLimit(offset: TOffsetLimit | null = null): this {
+        this.offsetLimit = offset;
         return this;
     }
 
@@ -322,7 +355,7 @@ class SqlExpression implements IEloquentExpression {
      * @returns {this} The query builder instance for chaining.
      */
     setLimit(limit: number | null = null): this {
-        this.offset = {limit: limit ?? undefined, offset: this.offset?.offset};
+        this.offsetLimit = {limit: limit ?? undefined, offset: this.offsetLimit?.offset};
         return this
     }
 
@@ -333,7 +366,7 @@ class SqlExpression implements IEloquentExpression {
      * @returns {this} The query builder instance for chaining.
      */
     setOffset(offset: number | null = null): this {
-        this.offset = { limit: this.offset?.limit, offset: offset ?? undefined };
+        this.offsetLimit = { limit: this.offsetLimit?.limit, offset: offset ?? undefined };
         return this
     }
 

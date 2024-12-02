@@ -1,4 +1,4 @@
-import { TOffset } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { TOffsetLimit } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
 class OffsetLimit {
 
@@ -7,10 +7,10 @@ class OffsetLimit {
      *
      * Example: LIMIT 10 OFFSET 10
      *
-     * @param {TOffset} offset - The offset property from the query builder.
+     * @param {TOffsetLimit} offset - The offset property from the query builder.
      * @returns {string} The SQL-safe LIMIT and OFFSET clause.
      */
-    static toSql({ limit, offset}: TOffset = {}, prefix: string = ''): string {
+    static toSql({ limit, offset}: TOffsetLimit = {}, prefix: string = ''): string {
 
         if(!offset && !limit) return ''
 

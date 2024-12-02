@@ -7,7 +7,7 @@ import BaseEloquent from "./base/BaseEloquent";
 import InvalidMethodException from "./exceptions/InvalidMethodException";
 import MissingTableException from "./exceptions/MissingTableException";
 import QueryBuilderException from "./exceptions/QueryBuilderException";
-import { IEloquent, OperatorArray, TFormatterFn, TOperator, TWhereClauseValue } from "./interfaces/IEloquent";
+import { IEloquent, LogicalOperators, OperatorArray, TFormatterFn, TLogicalOperator, TOperator, TWhereClauseValue } from "./interfaces/IEloquent";
 import IEloquentExpression from "./interfaces/IEloquentExpression";
 import { TDirection } from "./interfaces/TEnums";
 
@@ -19,7 +19,10 @@ export type TQueryBuilderOptions = {
     expressionCtor: ICtor<IEloquentExpression>;
 }
 
-abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IDatabaseAdapter, Expression extends IEloquentExpression = IEloquentExpression> extends BaseEloquent implements IEloquent<Data, Expression> {
+abstract class Eloquent<
+    Data = unknown,
+    Adapter extends IDatabaseAdapter = IDatabaseAdapter,
+    Expression extends IEloquentExpression = IEloquentExpression> extends BaseEloquent implements IEloquent<Data, Expression> {
 
 
     /**
@@ -347,10 +350,12 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
         throw new InvalidMethodException()
     }
 
+    // eslint-disable-next-line no-unused-vars
     async update(documents: object | object[]): Promise<Collection<Data>> {
         throw new InvalidMethodException()
     }
 
+    // eslint-disable-next-line no-unused-vars
     async updateAll(documents: object | object[]): Promise<Collection<Data>> {
         throw new InvalidMethodException()
     }
@@ -364,12 +369,12 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
      * @returns {IEloquent<Data>} The query builder instance for chaining.
      * @throws {QueryBuilderException} If an invalid or missing operator is provided.
      */
-    where(column: string, operator?: TOperator, value?: TWhereClauseValue): IEloquent<Data> {
+    where(column: string, operator?: TOperator, value?: TWhereClauseValue, logicalOperator: TLogicalOperator = LogicalOperators.AND): IEloquent<Data> {
 
         // Handle default equals case
         if(value === undefined) {
-            this.expression.where(column, '=', operator as TWhereClauseValue);
-            return this
+            this.expression.where(column, '=', operator as TWhereClauseValue, logicalOperator);
+            return this as unknown as IEloquent<Data>
         }
 
         // Check operator has been provided and matches expected value
@@ -377,9 +382,35 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
             throw new QueryBuilderException('Operator is required')
         }
 
-        this.expression.where(column, operator, value);
-        return this
+        this.expression.where(column, operator, value, logicalOperator);
+        return this as unknown as IEloquent<Data>
     }
+
+    /**
+     * Adds a raw where clause to the query builder.
+     *
+     * @param {Q} sql - The raw SQL to use for the where clause.
+     * @param {Bindings} [bindings] - The bindings to use for the where clause.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
+    whereRaw<Q = string, Bindings = unknown>(sql: Q, bindings?: Bindings): IEloquent<Data> {
+        this.expression.whereRaw(sql as string, bindings);
+        return this as unknown as IEloquent<Data>
+    }
+
+    /**
+     * Adds an or where clause to the query builder.
+     *
+     * @param {string} column - The column to apply the where condition on.
+     * @param {TOperator} [operator] - The operator to use for comparison.
+     * @param {TWhereClauseValue} [value] - The value to compare against.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @throws {QueryBuilderException} If an invalid or missing operator is provided.
+     */
+    orWhere(column: string, operator?: TOperator, value?: TWhereClauseValue): IEloquent<Data> {
+        return this.where(column, operator, value, LogicalOperators.OR)
+    }
+
 
     /**
      * Adds a where in clause to the query builder.
@@ -390,7 +421,7 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
      */
     whereIn(column: string, values: TWhereClauseValue[]): IEloquent<Data> {
         this.expression.where(column, 'in', values);
-        return this
+        return this as unknown as IEloquent<Data>
     }
 
     /**
@@ -405,7 +436,7 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
      */
     whereNotIn(column: string, values: any[]): IEloquent<Data> {
         this.expression.where(column, 'not in', values);
-        return this
+        return this as unknown as IEloquent<Data>
     }
 
     /**
@@ -416,7 +447,7 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
      */
     whereNull(column: string): IEloquent<Data> {
         this.expression.where(column, 'is null', null);
-        return this
+        return this as unknown as IEloquent<Data>
     }
 
     /**
@@ -430,7 +461,7 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
      */
     whereNotNull(column: string): IEloquent<Data> {
         this.expression.where(column, 'is not null', null);
-        return this
+        return this as unknown as IEloquent<Data>
     }
 
     /**
@@ -462,7 +493,7 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
      */
     whereNotBetween(column: string, range: [any, any]): IEloquent<Data> {
         this.expression.where(column, 'not between', range);
-        return this
+        return this as unknown as IEloquent<Data>
     }
 
     /**
@@ -477,7 +508,7 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
      */
     whereLike(column: string, value: TWhereClauseValue): IEloquent<Data> {
         this.expression.where(column, 'like', value);
-        return this
+        return this as unknown as IEloquent<Data>
     }
 
     /**
@@ -492,7 +523,7 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
      */
     whereNotLike(column: string, value: TWhereClauseValue): IEloquent<Data> {
         this.expression.where(column, 'not like', value);
-        return this
+        return this as unknown as IEloquent<Data>
     }
 
     /**
@@ -504,7 +535,7 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
      */
     orderBy(column: string, direction: TDirection = 'asc'): IEloquent<Data> {
         this.expression.orderBy({ column, direction });
-        return this
+        return this as unknown as IEloquent<Data>
     }
 
     /**
@@ -515,7 +546,7 @@ abstract class Eloquent<Data = unknown, Adapter extends IDatabaseAdapter = IData
      */
     offset(offset: number): IEloquent<Data> {
         this.expression.setOffset(offset);
-        return this
+        return this as unknown as IEloquent<Data>
     }
     
     /**

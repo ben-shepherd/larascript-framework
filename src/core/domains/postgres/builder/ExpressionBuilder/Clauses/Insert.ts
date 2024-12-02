@@ -43,7 +43,7 @@ class Insert {
      * @returns {string} The SQL string for the INSERT query.
      */
     public static columns(columns: string[]) {
-        return `(${columns.map(column => `"${column}"`).join(', ')})`
+        return `(${columns.map(column => '"' + column + '"').join(', ')})`
     }
 
     /**

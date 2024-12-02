@@ -24,11 +24,19 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
     }
 
     setExpressionCtor(builderCtor: ICtor<SqlExpression>): IEloquent<Data> {
-        
         super.setExpressionCtor(builderCtor)
         this.expression.bindings.setColumnType('id', types.builtins.UUID)
-
         return this as IEloquent<Data>
+    }
+
+    /**
+     * Resets the bindings array to an empty array.
+     * This is useful if you intend to reuse the same query builder instance
+     * for multiple queries.
+     * @returns {this} The PostgresEloquent instance for chaining.
+     */
+    protected resetBindingValues() {
+        this.expression.bindings.reset()
     }
 
     /**
@@ -125,9 +133,14 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
     async first(): Promise<Data | null> {
         return await captureError<Data | null>(async () => {
     
+            const previousLimit = this.expression.getOffsetLimit()
+
             const res = await this.execute(
                 this.expression.setOffsetAndLimit({ limit: 1})
             )
+
+            // Reset the limit to the previous value
+            this.expression.setOffsetAndLimit(previousLimit)
 
             return this.formatQueryResults(res.rows)[0] ?? null
         })
@@ -161,7 +174,7 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
     async last(): Promise<Data | null> {
         return await captureError<Data | null>(async () => {
             const res = await this.execute()
-
+            
             if(res.rows.length === 0) {
                 return null
             }
@@ -179,6 +192,8 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
     async get(): Promise<Collection<Data>> {
         return await captureError(async () => {
             const res = await this.execute()
+
+            this.resetBindingValues()
 
             return collect<Data>(
                 this.formatQueryResults(res.rows)
@@ -265,11 +280,11 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
                 )
             }
 
+            // Reset the binding values
+            this.resetBindingValues()
+
             // Reset the expression to 'select'
-            this.getExpression()
-                .setSelect()
-                .bindings
-                .reset()
+            this.expression.setSelect()
 
             return await this.get()
         })

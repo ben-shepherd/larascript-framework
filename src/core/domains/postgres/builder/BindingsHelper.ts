@@ -1,9 +1,11 @@
 import { types } from "pg";
 
+import ExpressionException from "../../eloquent/exceptions/ExpressionException";
+
 export type TBinding = {
     sql: string;
     value: unknown;
-    type: number
+    type?: number
 }
 
 /**
@@ -40,7 +42,7 @@ class BindingsHelper {
      * is the value that will be bound to the placeholder.
      * @param {unknown} value The value to bind.
      */
-    addBinding(column: string, values: unknown): this {
+    addBinding(column: string | null, values: unknown): this {
         const valuesArray: unknown[] = Array.isArray(values) ? values : [values];
 
         for(const value of valuesArray) {
@@ -48,14 +50,17 @@ class BindingsHelper {
             // If the column has a type, add it to the binding
             // This might look like $1::uuid
             let suffix = '';
-            if(this.columnTypes[column]) {
+            if(column &&this.columnTypes[column]) {
                 suffix = '::' + BindingsHelper.getPgEnumValue(this.columnTypes[column])
             }
 
+            const type = column ? this.columnTypes[column] : undefined
+
+            console.log('[BindingsHelper] addBinding', {column, value, suffix, type});
             this.bindings.push({
                 sql: '$' + this.getNextBindingSql() + suffix,
                 value,
-                type: this.columnTypes[column]
+                type: type ?? undefined
             })   
         }
 
@@ -85,6 +90,19 @@ class BindingsHelper {
         const lastBindings = this.bindings.slice(-1)
         return lastBindings.map(({ sql }) => sql)
     }
+    
+    valuesArrayToPlaceholderSqlArray(column, values: unknown[]): string[] {
+        if(!Array.isArray(values)) {
+            throw new ExpressionException('Values must be an array')
+        }
+
+        for(const value of values) {
+            this.addBinding(column, value)
+        }
+
+        const lastBindings = this.bindings.slice(-values.length)
+        return lastBindings.map(({ sql }) => sql)
+    }
 
     /**
      * Retrieves the list of values that have been added to the builder as bindings.
@@ -99,7 +117,7 @@ class BindingsHelper {
      * Retrieves the list of PostgreSQL types that have been added to the builder as bindings.
      * @returns {number[]} The list of PostgreSQL types
      */
-    getTypes(): number[] {
+    getTypes(): (number | undefined)[] {
         return this.bindings.map(({ type }) => type)
     }
 

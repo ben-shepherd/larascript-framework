@@ -36,7 +36,6 @@ class SelectColumns {
     static distinctColumns(sql: string, distinctColumns: string[] | null): string {
         const distinctColumnsArray = SqlExpression.formatColumn<string[]>(distinctColumns ?? [])
 
-        console.log('[SelectColumns] distinctColumnsArray', distinctColumnsArray)
         if(distinctColumnsArray.length > 0) {
             sql += `DISTINCT ON (${distinctColumnsArray.map(column => column).join(', ')}) `;
         }

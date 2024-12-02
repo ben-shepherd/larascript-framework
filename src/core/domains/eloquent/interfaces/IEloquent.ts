@@ -11,11 +11,16 @@ export type TColumns = string[]
 
 export type TOperator = "=" | "!=" | "<>" | ">" | "<" | ">=" | "<=" | "like" | "not like" | "in" | "not in" | "is null" | "is not null" | "between" | "not between"; 
 
-export const OperatorArray = ["=", "!=", "<>", ">", "<", ">=", "<=", "like", "not like", "in", "not in", "is null", "is not null", "between", "not between"]
+export const OperatorArray = ["=", "!=", "<>", ">", "<", ">=", "<=", "like", "not like", "in", "not in", "is null", "is not null", "between", "not between"] as const
 
 export type TWhereClauseValue = string | number | boolean | null | Date
 
-export type TLogicalOperator = "and" | "or"
+export const LogicalOperators = {
+    AND: "and",
+    OR: "or"
+} as const;
+
+export type TLogicalOperator = typeof LogicalOperators[keyof typeof LogicalOperators];
 
 export type TWhereClause = {
     column: string,
@@ -39,7 +44,7 @@ export type TOrderBy = {
     direction: TDirection
 }
 
-export type TOffset = {
+export type TOffsetLimit = {
     limit?: number,
     offset?: number
 }
@@ -86,12 +91,7 @@ export interface IEloquent<Data = unknown, Expression extends IEloquentExpressio
 
     // find methods
     find(id: string | number): Promise<Data | null>;
-
-    /**
-     * @throws ModelNotFound
-     */
     findOrFail(id: string | number): Promise<Data>;
-    //raw(expression: unknown, bindings?: unknown[], ...args: unknown[]): Promise<IEloquent<Data>>;
     
     // get methods
     all(): Promise<Collection<Data>>;
@@ -106,16 +106,26 @@ export interface IEloquent<Data = unknown, Expression extends IEloquentExpressio
     selectRaw(expression: string, bindings?: unknown[]): IEloquent<Data>;
     distinct(columns: string | string[]): IEloquent<Data>;
 
-    // 
+    // Where methods
     where(column: string, value?: TWhereClauseValue): IEloquent<Data>;
-    where(column: string, operator?: TOperator, value?: any): IEloquent<Data>;
+    where(column: string, operator?: TOperator, value?: TWhereClauseValue, logicalOperator?: TLogicalOperator): IEloquent<Data>;
+    whereRaw<Q = unknown, Bindings = unknown>(query: Q, bindings?: Bindings): IEloquent<Data>;
+
+    orWhere(column: string, value?: TWhereClauseValue): IEloquent<Data>;
+    orWhere(column: string, operator?: TOperator, value?: TWhereClauseValue): IEloquent<Data>;
+
     whereIn(column: string, values: TWhereClauseValue[]): IEloquent<Data>;
     whereNotIn(column: string, values: TWhereClauseValue[]): IEloquent<Data>;
+
     whereLike(column: string, value: TWhereClauseValue): IEloquent<Data>;
     whereNotLike(column: string, value: TWhereClauseValue): IEloquent<Data>;
+
     whereNull(column: string): IEloquent<Data>;
     whereNotNull(column: string): IEloquent<Data>;
+
     whereBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data>;
+    // whereNotBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data>;
+
     // whereRaw(query: string, bindings?: any[]): Promise<IQueryBuilder>;
 
     // // Joins
