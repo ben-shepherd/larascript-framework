@@ -6,6 +6,21 @@ import testHelper from '@src/tests/testHelper';
 
 import TestPeopleModel, { ITestPeopleModelData, resetTable } from './models/TestPeopleModel';
 
+const getYearsDate = (year: number): Date => {
+    const date = new Date();
+    date.setFullYear(year)
+    return date
+}
+
+const getYearsInPastSince2050 = (years: number): Date => {
+    const date = new Date();
+    date.setFullYear(2050);
+    date.setFullYear(date.getFullYear() - years);
+    return date
+}
+
+const dateOneYearInPast = new Date();
+dateOneYearInPast.setFullYear(dateOneYearInPast.getFullYear() - 1);
 
 describe('eloquent', () => {
 
@@ -19,31 +34,32 @@ describe('eloquent', () => {
         query = TestPeopleModel.query<ITestPeopleModelData>()
             .orderBy('createdAt', 'asc');
 
-        const dateOneYearInPast = new Date();
-        dateOneYearInPast.setFullYear(dateOneYearInPast.getFullYear() - 1);
-
         inserted = await query.insert([
             {
                 name: 'Alice',
                 age: 25,
+                born: getYearsInPastSince2050(25), // 2025
                 createdAt: new Date(),
                 updatedAt: new Date()
             },
             {
                 name: 'Bob',
                 age: 30,
+                born: getYearsInPastSince2050(30), // 2020
                 createdAt: new Date(),
                 updatedAt: new Date()
             },
             {
                 name: 'John',
                 age: 35,
+                born: getYearsInPastSince2050(35), // 2015
                 createdAt: dateOneYearInPast,
                 updatedAt: dateOneYearInPast
             },
             {
                 name: 'Jane',
                 age: 45,
+                born: getYearsInPastSince2050(45), // 2005
                 createdAt: dateOneYearInPast,
                 updatedAt: dateOneYearInPast
             }
@@ -140,6 +156,19 @@ describe('eloquent', () => {
         expect(resultsNotBetween31And39.count()).toBe(3);
         expect(resultsNotBetween31And39[0].name).toBe('Alice');
         expect(resultsNotBetween31And39[1].name).toBe('Bob');
-        expect(resultsNotBetween31And39[2].name).toBe('Jane');
+        expect(resultsNotBetween31And39[2].name).toBe('Jane')
+        
+        const date2020 = getYearsDate(2020);
+        const date2026 = getYearsDate(2026);
+        const resultsBetween2006And2029 = await query.clone().whereBetween('born', [date2020, date2026]).get();
+        console.log('resultsBetween2006And2029', resultsBetween2006And2029.toArray());
+        expect(resultsBetween2006And2029.count()).toBe(1);
+        expect(resultsBetween2006And2029[0].name).toBe('Alice');
+
+        const resultsNotBetween2006And2029 = await query.clone().whereNotBetween('born', [date2020, date2026]).get();
+        expect(resultsNotBetween2006And2029.count()).toBe(3);
+        expect(resultsNotBetween2006And2029[1].name).toBe('Bob');
+        expect(resultsNotBetween2006And2029[0].name).toBe('John');
+        expect(resultsNotBetween2006And2029[2].name).toBe('Jane');
     })
 });
