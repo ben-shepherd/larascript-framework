@@ -1,15 +1,14 @@
 import 'dotenv/config';
 import 'tsconfig-paths/register';
 
-import appConfig from '@src/config/app';
-import Kernel from "@src/core/Kernel";
 import { App } from '@src/core/services/App';
 
 import Model from './core/base/Model';
-import SqlExpressionBuilder from './core/domains/postgres/builder/ExpressionBuilder/SqlExpressionBuilder';
+import { IEloquent } from './core/domains/eloquent/interfaces/IEloquent';
+import TestPeopleModel, { ITestPeopleModelData, resetTable } from './tests/eloquent/models/TestPeopleModel';
+import testHelper from './tests/testHelper';
 
-
-class SqlTestModel extends Model<{ name: string, age: number, createdAt: Date, updatedAt: Date }> {
+class PersonModel extends Model<{ name: string, age: number, createdAt: Date, updatedAt: Date }> {
 
     table = 'tests'
 
@@ -24,7 +23,7 @@ class SqlTestModel extends Model<{ name: string, age: number, createdAt: Date, u
 
 (async () => {
 
-    await Kernel.boot(appConfig, {})
+    await testHelper.testBootApp();
 
     // const auth = App.container('auth');
     const db = App.container('db');
@@ -36,80 +35,66 @@ class SqlTestModel extends Model<{ name: string, age: number, createdAt: Date, u
 
     App.container('logger').info('Tinkers are ready!')
 
-    // const bindingsHelper = new BindingsHelper();
-    // bindingsHelper.addBindings(1)
 
-    // console.log(
-    //     bindingsHelper.valuesToPlaceholderSqlArray([10,15,20]) // expect [$2, $3, $4]
-    // )
-    // console.log(bindingsHelper.getBindings())
+    await resetTable();
 
-    // bindingsHelper.addBinding(1);
-    // bindingsHelper.addBinding('hello world');
-    // bindingsHelper.addBinding(new Date());
+    const query: IEloquent<ITestPeopleModelData> = TestPeopleModel.query()
 
-    // await db.schema().dropTable('tests');
-    // await db.schema().createTable('tests', {
-    //     name: DataTypes.STRING,
-    //     age: DataTypes.INTEGER,
-    //     createdAt: DataTypes.DATE,
-    //     updatedAt: DataTypes.DATE
+    const results = await query.whereBetween('age', [30, 40]).get()
+
+    console.log('=============================================================')
+    console.log('Results', results)
+    return;
+
+
+
+    // const updates = await query.clone()
+    //     .where('id', '=', inserts[0].id)
+    //     .orWhere('id', '=', inserts[1].id)
+    //     .update({
+    //         name: 'John Doe Updated',
+    //         age: 31
+    //     });
+        
+    // console.log(updates)
+    // return;
+
+    
+    // class PeopleModel extends Model<IModelAttributes> {}
+    // class MoviesModel extends Model<IModelAttributes> {}
+    // class BlogPost extends Model<IModelAttributes> {}
+    // class CustomModel extends Model<IModelAttributes> {
+
+    //     table: string = 'custom_table';
+    
+    // }
+
+    // console.log({
+    //     // people: (new PeopleModel(null)).useTableName(),
+    //     // movies: (new MoviesModel(null)).useTableName(),
+    //     // blogPost: (new BlogPost(null)).useTableName(),
+    //     custom: (new CustomModel(null)).useTableName()
     // })
+    // return;
 
-    // await db.documentManager().table('tests').insertMany([
-    //     {
-    //         name: 'Alice',
-    //         age: 30,
-    //         createdAt: new Date(),
-    //         updatedAt: new Date()
-    //     },
-    //     {
-    //         name: 'Ben',
-    //         age: 40,
-    //         createdAt: new Date(),
-    //         updatedAt: new Date()
-    //     },
-    //     {
-    //         name: 'Charlie',
-    //         age: 50,
-    //         createdAt: new Date(),
-    //         updatedAt: new Date()
-    //     }
-    // ])
+        
+    // console.log(results)
 
-    const b = new SqlExpressionBuilder();
-    // const id = 1
+    // const results = await PersonModel.query()
+    //     .select(['id', 'name', 'age'])
+    //     .where('age', '>', 30)
+    //     .where('age', '<', 40)
+    //     .orderBy('age', 'desc')
+    //     .skip(5)
+    //     .take(3)
+    //     .get()
 
-    // const builder = b.setTable('tests', 't')
-    //     // .setColumns(['name', 'age'])
-    //     .where('id', '=', id)
-    //     .setOrderBy([{ column: 'age', direction: 'asc' }, { column: 'name', direction: 'desc' }])
-    //     .setJoins([
-    //         {
-    //             type: 'inner',
-    //             table: 'users',
-    //             tableAbbreviation: 'u',
-    //             leftColumn: 't.id',
-    //             rightColumn: 'u.id'
-    //         }
-    //     ])
-    //     .setOffset({ offset: 1, limit: 2 })
+    // console.log('found results', results.count())
 
-    // console.log('====================================================')
-    // console.log({sql: builder.toSql(    ), bindings: builder.getBindings()})
-    console.log('====================================================')
-    // const result = await SqlTestModel.query().find('78ab4059-83d9-4af4-b356-8cf355af943c')
+    // for(const i in results) {
+    //     console.log(i, results[i])
+    // }
 
-    const results = await SqlTestModel.query()
-        .where('age', '>', 30)
-        .where('age', '<', 40)
-        .orderBy('age', 'desc')
-        .get()
-
-    console.log('found results', results.count())
-
-
-    console.log(await results[0].toObject())
 
     // const query = SqlTestModel.query()
     //     .where('age', '>', 30)
