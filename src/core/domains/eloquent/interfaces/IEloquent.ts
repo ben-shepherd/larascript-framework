@@ -124,7 +124,7 @@ export interface IEloquent<Data = unknown, Expression extends IEloquentExpressio
     whereNotNull(column: string): IEloquent<Data>;
 
     whereBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data>;
-    // whereNotBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data>;
+    whereNotBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data>;
 
     // whereRaw(query: string, bindings?: any[]): Promise<IQueryBuilder>;
 

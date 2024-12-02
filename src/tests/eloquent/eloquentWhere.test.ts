@@ -129,4 +129,17 @@ describe('eloquent', () => {
         expect(resultsExclude25[2].name).toBe('Jane');
 
     })
+
+    test('test where in between and where not in between', async () => {
+
+        const resultBetween31And39 = await query.clone().whereBetween('age', [31, 39]).get();
+        expect(resultBetween31And39.count()).toBe(1);
+        expect(resultBetween31And39[0].name).toBe('John');
+
+        const resultsNotBetween31And39 = await query.clone().whereNotBetween('age', [31, 39]).get();
+        expect(resultsNotBetween31And39.count()).toBe(3);
+        expect(resultsNotBetween31And39[0].name).toBe('Alice');
+        expect(resultsNotBetween31And39[1].name).toBe('Bob');
+        expect(resultsNotBetween31And39[2].name).toBe('Jane');
+    })
 });

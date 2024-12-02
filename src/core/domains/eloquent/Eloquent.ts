@@ -477,7 +477,7 @@ abstract class Eloquent<
      */
     whereBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data> {
         this.expression.where(column, 'between', range);
-        return this 
+        return this as unknown as IEloquent<Data>
     }
 
     /**
@@ -491,7 +491,7 @@ abstract class Eloquent<
      * @param {[TWhereClauseValue, TWhereClauseValue]} range - An array of two values to compare against.
      * @returns {IEloquent<Data>} The query builder instance for chaining.
      */
-    whereNotBetween(column: string, range: [any, any]): IEloquent<Data> {
+    whereNotBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data> {
         this.expression.where(column, 'not between', range);
         return this as unknown as IEloquent<Data>
     }

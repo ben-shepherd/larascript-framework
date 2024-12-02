@@ -18,6 +18,8 @@ type RawWhere = {
     bindings: unknown;
 }
 
+type WhereBetweenValue = [TWhereClauseValue, TWhereClauseValue]
+
 class Where {
 
     /**
@@ -96,8 +98,7 @@ class Where {
         
         for(let i = 0; i < wheres.length; i++) {
             const currentWhereSql = this.convertToSqlWhereClause(wheres[i])
-
-            console.log('[Where] currentWhereSql', currentWhereSql.column, currentWhereSql.operator, currentWhereSql.value);
+            const isNotLastWhere = i < wheres.length - 1
 
             // Example: "column"
             sql += SqlExpression.formatColumn(currentWhereSql.column) + ' ';
@@ -115,11 +116,12 @@ class Where {
 
             // Example: AND
             // So far: column LIKE value AND
-            if(i < wheres.length - 1) {
+            if(isNotLastWhere) {
                 sql += this.logicalOperator(wheres, i)
             }
         }
 
+        // Example: WHERE column LIKE value AND column2 = value
         return sql
     }
 
@@ -135,6 +137,12 @@ class Where {
      * @returns {string} The SQL-safe logical operator (AND, OR).
      */
     logicalOperator(wheres: TWhereClause[], currentIndex: number): string {
+
+        const currentWhere = wheres[currentIndex]
+
+        if(!currentWhere.logicalOperator) {
+            return '';
+        }
 
         // Temporarily disable adding new bindings in order to fetch the next parsed where clause
         // Otherwise the bindings will be added twice
@@ -189,11 +197,13 @@ class Where {
         }
         else if (filter.operator === 'between') {
             convertedWhere.operator = 'BETWEEN';
-            convertedWhere.value = this.value(convertedWhere.value as TWhereClauseValue);
+            convertedWhere.value = this.valueWhereBetween(column, convertedWhere.value as unknown as WhereBetweenValue);
+            convertedWhere.logicalOperator = undefined
         }
         else if (filter.operator === 'not between') {
             convertedWhere.operator = 'NOT BETWEEN';
-            convertedWhere.value = this.value(convertedWhere.value as TWhereClauseValue);
+            convertedWhere.value = this.valueWhereBetween(column, convertedWhere.value as unknown as WhereBetweenValue);
+            convertedWhere.logicalOperator = undefined
         }
         else if (filter.operator === 'like') {
             convertedWhere.operator = 'LIKE';
@@ -239,10 +249,36 @@ class Where {
             placeholders.push(
                 this.addWhereBinding(column, value).getLastBinding()?.sql as string
             );
-
         }
 
         return `(${placeholders.join(', ')})`
+    }
+
+    /**
+     * Converts an array of values into their SQL placeholder representation
+     * suitable for a BETWEEN clause.
+     *
+     * @param {WhereBetweenValue} value - The value to convert, an array of two
+     * elements: the 'from' and 'to' values of the BETWEEN clause.
+     * @returns {string} A string containing the SQL placeholder values for the
+     * given array of values in the format `FROM ? AND TO ?`.
+     * 
+     * Example: `$1 AND $2`
+     */
+    valueWhereBetween(column: string, value: WhereBetweenValue): string {
+
+        const [from, to] = value
+        const placeholders: string[] = []
+
+        for(const value of [from, to]) {
+            placeholders.push(
+                this.addWhereBinding(column, value).getLastBinding()?.sql as string
+            );
+        }
+        
+        const [placeholderFrom, placeholderTo] = placeholders
+
+        return `${placeholderFrom} AND ${placeholderTo}`
     }
 
     /**

@@ -142,6 +142,17 @@ class BindingsHelper {
     }
 
     /**
+     * Retrieves the last `number` bindings added to the builder.
+     * The bindings are returned in the order they were added, with the most recent binding
+     * first.
+     * @param {number} number - The number of bindings to retrieve.
+     * @returns {TBinding[]} The last `number` bindings, or an empty array if less than `number` bindings have been added.
+     */
+    getNthLastBindings(number: number): TBinding[] {
+        return this.bindings.slice(-number)
+    }
+
+    /**
      * Calculates the SQL placeholder index for the next binding.
      * 
      * @returns {string} The SQL placeholder index starting from 1.
