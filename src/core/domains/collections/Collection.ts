@@ -1,6 +1,6 @@
 import { Collection as CollectJsCollection } from "collect.js";
 
-import { ICollection, TCollectionOperator, TFilterCallback, TForeachCallback, TMapCallback } from "./interfaces/ICollection";
+import { ICollection, TCollectionOperator, TFilterCallback, TFindCallback, TForeachCallback, TMapCallback } from "./interfaces/ICollection";
 import ProxyCollectionHandler from "./ProxyCollectionHandler";
 
 /**
@@ -69,6 +69,15 @@ abstract class Collection<T = unknown> implements ICollection<T> {
     map(callback: TMapCallback<T, T>): this {
         this.items = this.items.map(callback);
         return this;
+    }
+
+    /**
+     * Finds and returns the first item in the collection that satisfies the provided testing function.
+     * @param callback - Function to execute on each value in the array, taking a single argument.
+     * @returns The first element in the collection that passes the test, or undefined if no elements pass the test.
+     */
+    find(callback: TFindCallback<T>): T | undefined {
+        return this.items.find(callback);
     }
 
     /**

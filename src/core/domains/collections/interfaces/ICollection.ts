@@ -7,6 +7,7 @@ import { Collection as CollectJsCollection } from "collect.js";
 export type TForeachCallback<T> = (item: T, index: number, array: T[]) => void;
 export type TMapCallback<T, R> = (item: T, index: number, array: T[]) => R;
 export type TFilterCallback<T> = (item: T, index: number, array: T[]) => boolean;
+export type TFindCallback<T> = (item: T, index: number, array: T[]) => boolean;
 export type TCollectionOperator = "===" | "==" | "!==" | "!=" | "<>" | ">" | "<" | ">=" | "<="
 
 /**
@@ -30,6 +31,7 @@ export interface ICollection<T = unknown> {
     forEach(callback: TForeachCallback<T>): this;
     map(callback: TMapCallback<T, T>): this;
     filter(callback: TFilterCallback<T>): this;
+    find(callback: TFindCallback<T>): T | undefined;
 
     /**
      * Getters and setters
