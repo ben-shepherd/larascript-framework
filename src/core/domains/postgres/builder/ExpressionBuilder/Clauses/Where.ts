@@ -117,7 +117,7 @@ class Where {
             // Example: AND
             // So far: column LIKE value AND
             if(isNotLastWhere) {
-                sql += this.logicalOperator(wheres, i)
+                sql += this.logicalOperatorForJoiningWheres(wheres, i)
             }
         }
 
@@ -136,7 +136,7 @@ class Where {
      * @param {number} currentIndex - The index of the current parsed where clause in the array.
      * @returns {string} The SQL-safe logical operator (AND, OR).
      */
-    logicalOperator(wheres: TWhereClause[], currentIndex: number): string {
+    logicalOperatorForJoiningWheres(wheres: TWhereClause[], currentIndex: number): string {
 
         const currentWhere = wheres[currentIndex]
 
@@ -198,11 +198,13 @@ class Where {
         else if (filter.operator === 'between') {
             convertedWhere.operator = 'BETWEEN';
             convertedWhere.value = this.valueWhereBetween(column, convertedWhere.value as unknown as WhereBetweenValue);
+            // "AND" or "OR" logical operator is not required
             convertedWhere.logicalOperator = undefined
         }
         else if (filter.operator === 'not between') {
             convertedWhere.operator = 'NOT BETWEEN';
             convertedWhere.value = this.valueWhereBetween(column, convertedWhere.value as unknown as WhereBetweenValue);
+            // "AND" or "OR" logical operator is not required
             convertedWhere.logicalOperator = undefined
         }
         else if (filter.operator === 'like') {
