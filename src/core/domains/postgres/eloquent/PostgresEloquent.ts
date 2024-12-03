@@ -78,7 +78,8 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
      */
     async find(id: string | number): Promise<Data | null> {
         return await captureError<Data | null>(async () => {
-    
+            this.expression.setSelect()
+            
             const res = await this.execute(
                 this.expression
                     .setWhere([])
@@ -132,7 +133,8 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
      */
     async first(): Promise<Data | null> {
         return await captureError<Data | null>(async () => {
-    
+            this.expression.setSelect()
+
             const previousLimit = this.expression.getOffsetLimit()
 
             const res = await this.execute(
@@ -173,6 +175,8 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
      */
     async last(): Promise<Data | null> {
         return await captureError<Data | null>(async () => {
+            this.expression.setSelect()
+            
             const res = await this.execute()
             
             if(res.rows.length === 0) {
@@ -191,6 +195,8 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
      */
     async get(): Promise<Collection<Data>> {
         return await captureError(async () => {
+            this.expression.setSelect()
+
             const res = await this.execute()
 
             this.resetBindingValues()
@@ -212,6 +218,8 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
      */
     async all(): Promise<Collection<Data>> {
         return await captureError(async () => {
+            this.expression.setSelect()
+
             const res = await this.execute(
                 this.expression
                     .setWhere([])
@@ -282,9 +290,6 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
 
             // Reset the binding values
             this.resetBindingValues()
-
-            // Reset the expression to 'select'
-            this.expression.setSelect()
 
             return await this.get()
         })
