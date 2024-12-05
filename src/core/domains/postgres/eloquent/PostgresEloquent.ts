@@ -97,9 +97,13 @@ class PostgresEloquent<Data extends object = object> extends Eloquent<Data, Post
      * @returns A promise that resolves with the query result.
      */
     async raw<T = QueryResult>(expression: string, bindings?: unknown[]): Promise<T> {
+        console.log('[PostgresEloquent] raw', { expression, bindings })
+
         const client = await this.getAdapter().getConnectedPgClient();
         const results = await client.query(expression, bindings)
         await client.end()
+
+        console.log('[PostgresEloquent] raw results count', results?.rows?.length)
 
         this.expression.bindings.reset()
 
