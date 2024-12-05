@@ -74,6 +74,13 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
 
     protected updates: object | object[] | null        = getDefaults().updates;
 
+    public static readonly formatColumnWithQuotes = (column: string): string => {
+        if(column.startsWith('"') && column.endsWith('"')){
+            return column
+        }
+        return `"${column}"`
+    };
+
     /**
      * Formats a column name with double quotes for safe usage in SQL queries
      * @param column - The column name to format
@@ -88,9 +95,10 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
          * @private
          */
         const format = (col: TColumn): TColumn => {
-            if(!col.isFormatted) {
-                col.column = '"' + col.column + '"';
+            if(col.isFormatted) {
+                return col
             }
+            col.column = this.formatColumnWithQuotes(col.column);
             return col
         }
 

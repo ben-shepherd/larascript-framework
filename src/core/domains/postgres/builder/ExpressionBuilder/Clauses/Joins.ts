@@ -17,7 +17,7 @@ class Joins {
 
         for(const join of joins) {
             if(join.type === 'cross') {
-                sql += this.crossJoin(join.table)
+                sql += this.crossJoin(join.relatedTable as string);
             }
             else {
                 sql += this.genericJoin(join)
@@ -44,13 +44,19 @@ class Joins {
      * @returns The SQL string representation of the generic join clause.
      */
     static genericJoin(join: TJoin) {
-        const type = this.getJoinType(join)
-        const table = this.formatTableWithAbbreviation(join.table, join.tableAbbreviation);
-        const rightTable = this.formatTableWithAbbreviation(join.rightTable as string, join.rightTableAbbreviation);
-        const leftColumn = SqlExpression.formatColumn({ column: join.leftColumn }).column;
-        const rightColumn = SqlExpression.formatColumn({ column: join.rightColumn }).column;
+        if(!join.relatedTable) {
+            throw new ExpressionException('Related table name is required');
+        }
 
-        return `${type} ${rightTable} ON ${table}.${leftColumn} = ${rightTable}.${rightColumn}`;
+        const type = this.getJoinType(join)
+
+        const localTable = this.formatTableWithAbbreviation(join.localTable, join.localTableAbbreviation);
+        const localColumn = SqlExpression.formatColumn({ column: join.localColumn }).column;
+
+        const relatedTable = this.formatTableWithAbbreviation(join.relatedTable, join.relatedTableAbbreviation);
+        const relatedColumn = SqlExpression.formatColumn({ column: join.relatedColumn }).column;
+
+        return `${type} ${relatedTable} ON ${localTable}.${localColumn} = ${relatedTable}.${relatedColumn}`;
     }
 
     /**

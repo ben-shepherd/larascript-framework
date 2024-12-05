@@ -1,18 +1,19 @@
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { ICtor } from "@src/core/interfaces/ICtor";
+import { IModel } from "@src/core/interfaces/IModel";
 import captureError from "@src/core/util/captureError";
-import { QueryResult, types } from "pg";
+import { QueryResult } from "pg";
 
 import Collection from "../../collections/Collection";
 import collect from "../../collections/helper/collect";
 import Eloquent from "../../eloquent/Eloquent";
 import UpdateException from "../../eloquent/exceptions/UpdateException";
-import { IEloquent } from "../../eloquent/interfaces/IEloquent";
+import { IEloquent, SetModelColumnsOptions } from "../../eloquent/interfaces/IEloquent";
 import IEloquentExpression from "../../eloquent/interfaces/IEloquentExpression";
 import PostgresAdapter from "../adapters/PostgresAdapter";
 import SqlExpression from "../builder/ExpressionBuilder/SqlExpression";
 
-class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, SqlExpression> {
+class PostgresEloquent<Data extends object = object> extends Eloquent<Data, PostgresAdapter, SqlExpression> {
 
     /**
      * Constructor
@@ -23,12 +24,6 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
         this.setExpressionCtor(SqlExpression)
     }
 
-    setExpressionCtor(builderCtor: ICtor<SqlExpression>): IEloquent<Data> {
-        super.setExpressionCtor(builderCtor)
-        this.expression.bindings.setColumnType('id', types.builtins.UUID)
-        return this as IEloquent<Data>
-    }
-
     /**
      * Resets the bindings array to an empty array.
      * This is useful if you intend to reuse the same query builder instance
@@ -37,6 +32,28 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
      */
     protected resetBindingValues() {
         this.expression.bindings.reset()
+    }
+
+
+    /**
+     * Sets the model columns for the query builder.
+     * If a model constructor is provided, the model's columns will be used.
+     * If a prefix is provided, the columns will be prefixed with the given string.
+     * If `options.targetProperty` is provided, the columns will be formatted to
+     * access the property of the model under the given key.
+     * @param {ICtor<IModel>} [modelCtor] - The model constructor to use for retrieving the columns.
+     * @param {string} [prefix] - The prefix to add to the columns.
+     * @param {SetModelColumnOptions} [options] - Options object containing the targetProperty to format the columns with.
+     * @returns {this} The PostgresEloquent instance for chaining.
+     */
+    setModelColumns(modelCtor?: ICtor<IModel>, options?: SetModelColumnsOptions): IEloquent<Data> {
+        super.setModelColumns(modelCtor, options)
+        
+        if(options?.columnPrefix && typeof options?.targetProperty === 'string') {
+            this.addFormatResultTargetPropertyToObject(options.columnPrefix, options.targetProperty)
+        }
+
+        return this as unknown as IEloquent<Data>
     }
 
     /**
@@ -54,6 +71,25 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
     }
 
     /**
+     * Executes a SQL expression and returns the result as a raw query result.
+     * Unlike the `execute` method, this method does not return a Collection
+     * of models, but rather the raw query result. If a formatter function is set
+     * on the query builder instance, it will be applied to the result before
+     * returning it. Additionally, if a target property is set on the query
+     * builder instance with `addFormatResultTargetPropertyToObject`, the result
+     * will be formatted to move prefixed columns to the target property.
+     * @param expression The SQL expression builder instance containing the query to execute.
+     * @returns A promise that resolves with the query result.
+     * @private
+     */
+    async fetchRows<T = QueryResult>(expression: IEloquentExpression = this.expression): Promise<T> {
+        const res = await this.execute(expression)
+        res.rows = this.applyFormatResultTargetPropertyToObject(res.rows)
+        res.rows = this.formatterFn ? res.rows.map(this.formatterFn) : res.rows
+        return res as T 
+    }
+
+    /**
      * Executes a raw SQL query using the connected PostgreSQL client.
      *
      * @param expression The SQL query to execute.
@@ -61,8 +97,6 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
      * @returns A promise that resolves with the query result.
      */
     async raw<T = QueryResult>(expression: string, bindings?: unknown[]): Promise<T> {
-        console.log('[PostgresEloquent] raw', {expression, bindings});
-
         const client = await this.getAdapter().getConnectedPgClient();
         const results = await client.query(expression, bindings)
         await client.end()
@@ -82,7 +116,7 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
         return await captureError<Data | null>(async () => {
             this.expression.setSelect()
             
-            const res = await this.execute(
+            const res = await this.fetchRows(
                 this.expression
                     .setWhere([])
                     .where('id', '=', id)
@@ -139,7 +173,7 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
 
             const previousLimit = this.expression.getOffsetLimit()
 
-            const res = await this.execute(
+            const res = await this.fetchRows(
                 this.expression.setOffsetAndLimit({ limit: 1})
             )
 
@@ -179,7 +213,7 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
         return await captureError<Data | null>(async () => {
             this.expression.setSelect()
             
-            const res = await this.execute()
+            const res = await this.fetchRows()
             
             if(res.rows.length === 0) {
                 return null
@@ -199,7 +233,7 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
         return await captureError(async () => {
             this.expression.setSelect()
 
-            const res = await this.execute()
+            const res = await this.fetchRows()
 
             this.resetBindingValues()
 
@@ -222,7 +256,7 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
         return await captureError(async () => {
             this.expression.setSelect()
 
-            const res = await this.execute(
+            const res = await this.fetchRows(
                 this.expression
                     .setWhere([])
                     .setOffsetAndLimit(null)

@@ -5,13 +5,13 @@ import ExpressionException from "../exceptions/ExpressionException";
 import { IEloquent, IRelationship } from "../interfaces/IEloquent";
 import BelongsTo from "./BelongsTo";
 
-class With<Data> {
+class With<Data extends object = object> {
 
     constructor(
         // eslint-disable-next-line no-unused-vars
         protected eloquent: IEloquent<Data>,
         // eslint-disable-next-line no-unused-vars
-        protected relationship: string
+        protected relationshipName: string
     ) {}
 
     /**
@@ -29,15 +29,17 @@ class With<Data> {
         if(relationship instanceof BelongsTo) {
             const localModelCtor = relationship.getLocalModelCtor();
             const foreignModelCtor = relationship.getForeignModelCtor();
+            const columnPrefix = `${this.relationshipName}_`;
             
             this.eloquent.getExpression()
                 .join({
-                    table: new localModelCtor(null).useTableName(),
-                    rightTable: new foreignModelCtor(null).useTableName(),
-                    leftColumn: relationship.getLocalKey(),
-                    rightColumn: relationship.getForeignKey(),
+                    localTable: new localModelCtor(null).useTableName(),
+                    relatedTable: new foreignModelCtor(null).useTableName(),
+                    localColumn: relationship.getLocalKey(),
+                    relatedColumn: relationship.getForeignKey(),
                     type: 'left'
                 })
+            this.eloquent.setModelColumns(foreignModelCtor, { columnPrefix, targetProperty: this.relationshipName})
         }
 
         return this.eloquent
@@ -53,14 +55,14 @@ class With<Data> {
         const modelCtor = this.eloquent.getModelCtor() as ICtor<IModel>;
         const model = new modelCtor(null);
 
-        if(typeof model[this.relationship] !== 'function') {
-            throw new ExpressionException('Invalid relationship \'' + this.relationship + '\'');
+        if(typeof model[this.relationshipName] !== 'function') {
+            throw new ExpressionException('Invalid relationship \'' + this.relationshipName + '\'');
         }
 
-        const relationship = model[this.relationship]() as IRelationship;
+        const relationship = model[this.relationshipName]() as IRelationship;
 
         if(relationship?._relationshipInterface !== true) {
-            throw new ExpressionException('Invalid relationship \'' + this.relationship + '\'');
+            throw new ExpressionException('Invalid relationship \'' + this.relationshipName + '\'');
         }
 
         return relationship

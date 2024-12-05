@@ -112,7 +112,13 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
      * @returns The list of fields defined on the model.
      */
     getFields(): string[] {
-        return this.fields
+        let fields = this.fields
+
+        if(!this.fields.includes(this.primaryKey)) {
+            fields = [this.primaryKey, ...fields]
+        }
+
+        return fields
     }
 
     /**

@@ -12,10 +12,11 @@ import ExpressionException from "./exceptions/ExpressionException";
 import InvalidMethodException from "./exceptions/InvalidMethodException";
 import MissingTableException from "./exceptions/MissingTableException";
 import QueryBuilderException from "./exceptions/QueryBuilderException";
-import { IEloquent, LogicalOperators, OperatorArray, QueryOptions, TColumn, TFormatterFn, TLogicalOperator, TOperator, TWhereClauseValue } from "./interfaces/IEloquent";
+import { IEloquent, LogicalOperators, OperatorArray, QueryOptions, SetModelColumnsOptions, TColumn, TFormatterFn, TLogicalOperator, TOperator, TWhereClauseValue } from "./interfaces/IEloquent";
 import IEloquentExpression from "./interfaces/IEloquentExpression";
 import { TDirection } from "./interfaces/TEnums";
 import With from "./relational/With";
+import PrefixToTargetProperty, { PrefixToTargetPropertyOptions } from "./utils/PrefixToTargetProperty";
 
 export type TQueryBuilderOptions = {
     adapterName: string,
@@ -26,7 +27,7 @@ export type TQueryBuilderOptions = {
 }
 
 abstract class Eloquent<
-    Data = unknown,
+    Data extends object = object,
     Adapter extends IDatabaseAdapter = IDatabaseAdapter,
     Expression extends IEloquentExpression = IEloquentExpression> extends BaseEloquent implements IEloquent<Data, Expression> {
 
@@ -69,6 +70,12 @@ abstract class Eloquent<
      * The constructor of the model
      */
     protected modelCtor?: ICtor<IModel>;
+
+    
+    /**
+     * Prefixed properties to target property as object options
+     */
+    protected formatResultTargetPropertyToObjectOptions: PrefixToTargetPropertyOptions = [];
 
     /**
      * Creates a new Eloquent query builder instance with specified options.
@@ -143,6 +150,65 @@ abstract class Eloquent<
     }
 
     /**
+     * Adds a key-value pair to the map that prefixes results to properties.
+     * 
+     * This method is used to map specific keys to their prefixed property names
+     * for query results processing.
+     * 
+     * @param {string} prefix - The prefix to map.
+     * @param {string} property - The target property name.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
+    protected addFormatResultTargetPropertyToObject(prefix: string, property: string): IEloquent<Data> {
+        this.formatResultTargetPropertyToObjectOptions.push({columnPrefix: prefix, targetProperty: property})
+        return this as unknown as IEloquent<Data>
+    }
+        
+    /**
+     * Sets the key-value pairs to the map that prefixes results to properties.
+     * 
+     * This method is used to set the key-value pairs for mapping specific keys to
+     * their prefixed property names for query results processing.
+     * 
+     * @param {PrefixToTargetPropertyOptions} options - The key-value pairs to map.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
+    protected setFormatResultTargetPropertyToObject(options: PrefixToTargetPropertyOptions): IEloquent<Data> {
+        this.formatResultTargetPropertyToObjectOptions = options
+        return this as unknown as IEloquent<Data>
+    }
+
+    /**
+     * Processes an array of objects by moving properties that match a specified
+     * prefix to a nested object specified by the property name.
+     * 
+     * This is useful when you have a result set that is dynamically generated
+     * and you want to map the results to a specific object structure.
+     * 
+     * Example:
+     * const result = [
+     *   { prefix_id: 1, prefix_name: 'John Doe' },
+     *   { prefix_id: 2, prefix_name: 'Jane Doe' },
+     * ]
+     * const options = [
+     *   { prefix: 'prefix_', property: 'targetProperty' }
+     * ]
+     * 
+     * prefixedPropertiesToTargetPropertyAsObject(result, options)
+     * 
+     * // result is now:
+     * [
+     *   { targetProperty: { id: 1, name: 'John Doe' } },
+     *   { targetProperty: { id: 2, name: 'Jane Doe'} },
+     * ]
+     * @param {T[]} results The array of objects to process.
+     * @returns {T[]} The processed array of objects.
+     */
+    protected applyFormatResultTargetPropertyToObject<T extends object = object>(results: T[]): T[] {
+        return PrefixToTargetProperty.handle<T>(results, this.formatResultTargetPropertyToObjectOptions)
+    }
+
+    /**
      * Retrieves the current expression builder instance.
      *
      * @returns {Expression} The expression builder instance.
@@ -151,6 +217,12 @@ abstract class Eloquent<
         return this.expression
     }
 
+    /**
+     * Sets the expression builder instance to use for the query builder.
+     * 
+     * @param {Expression} expression - The expression builder instance to use.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
     setExpression(expression: Expression): IEloquent<Data> {
         this.expression = expression
         return this as unknown as IEloquent<Data>
@@ -216,14 +288,27 @@ abstract class Eloquent<
      * 
      * @returns {IEloquent<Data>} The query builder instance for chaining.
      */
-    setModelColumns(): IEloquent<Data> {
-        if(!this.modelCtor) {
+    setModelColumns(modelCtor?: ICtor<IModel>, options: SetModelColumnsOptions = {}): IEloquent<Data> {
+        modelCtor = typeof modelCtor === 'undefined' ? this.modelCtor : modelCtor
+        
+        if(!modelCtor) {
             throw new EloquentException('Model constructor has not been set');
         }
 
-        const model = new this.modelCtor(null)
+        const model = new modelCtor(null)
         const tableName = model.useTableName()
-        model.getFields().forEach(field => this.column({ column: field, tableName }));
+        const fields = model.getFields()
+
+        fields.forEach(field => {
+
+            if(options.columnPrefix) {
+                this.column({ column: field, tableName, as: `${options.columnPrefix}${field}` })
+                return;
+            }
+
+            this.column({ column: field, tableName })
+        });
+        
         return this as unknown as IEloquent<Data>
     }
 
@@ -643,20 +728,20 @@ abstract class Eloquent<
      * Adds an inner join to the query builder.
      * 
      * @param {string} table - The table to join.
-     * @param {string} secondTable - The table to join with.
-     * @param {string} leftColumn - The column to join on in the left table.
-     * @param {string} rightColumn - The column to join on in the right table.
+     * @param {string} relatedTable - The table to join with.
+     * @param {string} localColumn - The column to join on in the left table.
+     * @param {string} relatedColumn - The column to join on in the right table.
      * @returns {IEloquent<Data>} The query builder instance for chaining.
      */
-    join(secondTable: string, leftColumn: string, rightColumn: string ): IEloquent<Data> {
-        const table = this.useTable()
-        this.expression.setJoins({ table, rightTable: secondTable, type: 'inner', leftColumn, rightColumn });
+    join(relatedTable: string, localColumn: string, relatedColumn: string ): IEloquent<Data> {
+        const localTable = this.useTable()
+        this.expression.setJoins({ localTable, localColumn, relatedTable, relatedColumn, type: 'inner' });
         return this as unknown as IEloquent<Data>
     }
 
     /**
      * Adds an order by clause to the query builder.
-     * 
+     * `
      * @param {string} column - The column to order by.
      * @param {TDirection} direction - The direction to order by. Defaults to 'asc'.
      * @returns {IEloquent<Data>} The query builder instance for chaining.

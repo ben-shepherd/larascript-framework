@@ -38,7 +38,6 @@ export default class TestDepartmentModel extends Model<ITestDepartmentModelData>
     table = tableName
     
     public fields: string[] = [
-        'deptId',
         'deptName',
         'createdAt',
         'updatedAt'

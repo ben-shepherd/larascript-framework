@@ -14,6 +14,7 @@ export type TColumn = {
     column: string;
     tableName?: string;
     isFormatted?: boolean
+    as?: string;
 }
 
 export type TOperator = "=" | "!=" | "<>" | ">" | "<" | ">=" | "<=" | "like" | "not like" | "in" | "not in" | "is null" | "is not null" | "between" | "not between"; 
@@ -37,13 +38,13 @@ export type TWhereClause = {
 }
 
 export type TJoin = {
-    table: string,
-    tableAbbreviation?: string,
-    rightTable?: string,
-    rightTableAbbreviation?: string,
+    localTable: string,
+    localTableAbbreviation?: string,
+    relatedTable?: string,
+    relatedTableAbbreviation?: string,
     type: typeof JoinTypes[keyof typeof JoinTypes],
-    leftColumn: string,
-    rightColumn: string
+    localColumn: string,
+    relatedColumn: string
 }
 
 export const JoinTypes = {
@@ -94,11 +95,16 @@ export type QueryOptions = {
     tableName?: string,
 }
 
-export interface IEloquent<Data = unknown, Expression extends IEloquentExpression = IEloquentExpression> {
+export type SetModelColumnsOptions = {
+    columnPrefix?: string;
+    targetProperty?: string;
+    [key: string]: unknown;
+}
+
+export interface IEloquent<Data extends object = object, Expression extends IEloquentExpression = IEloquentExpression> {
     
     // eloquent methods
     setConnectionName(connectionName: string): IEloquent<Data>;
-    setFormatter(formatterFn?: TFormatterFn): IEloquent<Data>;
     getExpression(): Expression;
     setExpressionCtor(builderCtor: ICtor<Expression>): IEloquent<Data>
     setExpression(expression: Expression): IEloquent<Data>;
@@ -106,8 +112,11 @@ export interface IEloquent<Data = unknown, Expression extends IEloquentExpressio
     resetExpression(): IEloquent<Data>;
     setModelCtor(modelCtor?: ICtor<IModel>): IEloquent<Data>;
     getModelCtor(): ICtor<IModel> | undefined;
-    setModelColumns(): IEloquent<Data>;
+    setModelColumns(modelCtor?: ICtor<IModel>, options?: SetModelColumnsOptions): IEloquent<Data>;
 
+    // formatting
+    setFormatter(formatterFn?: TFormatterFn): IEloquent<Data>;
+    
     // execution
     execute<T = Data>(builder: IEloquentExpression): Promise<T>
     raw<T = unknown>(expression: string, bindings?: unknown[]): Promise<T>;
@@ -176,7 +185,8 @@ export interface IEloquent<Data = unknown, Expression extends IEloquentExpressio
     whereNotBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data>;
 
     // Joins
-    join(table: string, first: string, operator?: string, second?: string): IEloquent<Data>;
+    // joinModel(model: ICtor<IModel>, type: TJoin['type'], targetProperty: string): IEloquent<Data>;
+    join(relatedTable: string, localColumn: string, relatedColumn: string ): IEloquent<Data>;
     // leftJoin(table: string, first: string, operator?: string, second?: string): Promise<IQueryBuilder>;
     // rightJoin(table: string, first: string, operator?: string, second?: string): Promise<IQueryBuilder>;
     // crossJoin(table: string): Promise<IQueryBuilder>;

@@ -65,11 +65,16 @@ class SelectColumns {
         }
 
         columns = SqlExpression.formatColumn(columns);
+
         const columnStrings = columns.map(column => {
+
             if(column.tableName) {
-                return `${column.tableName}.${column.column}`;
+                column.column = `${column.tableName}.${column.column}`;
             }
-            return column
+            if(column.as) {
+                column.column = `${column.column} AS ${SqlExpression.formatColumnWithQuotes(column.as)}`;
+            }
+            return column.column
         });
 
         sql += `${columnStrings.join(', ')}`;

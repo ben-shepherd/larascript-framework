@@ -28,7 +28,7 @@ export const resetTableEmployeeModel = async (connections: string[] = testHelper
         }
 
         await schema.createTable(tableName, {
-            deptId: DataTypes.UUID,
+            deptId: { type: DataTypes.UUID, allowNull: true },
             name: DataTypes.STRING,
             age: DataTypes.INTEGER,
             salary: DataTypes.INTEGER,
