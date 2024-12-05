@@ -56,7 +56,6 @@ class BindingsHelper {
 
             const type = column ? this.columnTypes[column] : undefined
 
-            console.log('[BindingsHelper] addBinding', {column, value, suffix, type});
             this.bindings.push({
                 sql: '$' + this.getNextBindingSql() + suffix,
                 value,

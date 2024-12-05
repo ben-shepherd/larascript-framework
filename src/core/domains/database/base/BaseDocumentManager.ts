@@ -5,7 +5,7 @@ import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabas
 import { IDatabaseDocument, IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IDocumentValidator } from "@src/core/domains/database/interfaces/IDocumentValidator";
 import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
-import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
+import { IBelongsToOptionsLegacy } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import BelongsTo from "@src/core/domains/database/relationships/BelongsTo";
 import HasMany from "@src/core/domains/database/relationships/HasMany";
@@ -106,7 +106,7 @@ abstract class BaseDocumentManager<TDocMan extends IDocumentManager = IDocumentM
      * @param options - Relationship options
      * @returns Promise resolving to related document or null
      */
-    async belongsTo<T>(document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null> {
+    async belongsTo<T>(document: IDatabaseDocument, options: IBelongsToOptionsLegacy): Promise<T | null> {
         return new BelongsTo().handle(this.adapter.getConnectionName(), document, options);
     }
 

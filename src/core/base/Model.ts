@@ -1,14 +1,15 @@
  
 import BaseModel from '@src/core/base/BaseModel';
 import { IDatabaseDocument } from '@src/core/domains/database/interfaces/IDocumentManager';
-import { IBelongsToOptions } from '@src/core/domains/database/interfaces/relationships/IBelongsTo';
+import { IBelongsToOptionsLegacy } from '@src/core/domains/database/interfaces/relationships/IBelongsTo';
 import { IHasManyOptions } from '@src/core/domains/database/interfaces/relationships/IHasMany';
 import { ICtor } from '@src/core/interfaces/ICtor';
 import { GetDataOptions, IModel } from '@src/core/interfaces/IModel';
 import IModelAttributes from '@src/core/interfaces/IModelData';
 import { App } from '@src/core/services/App';
 
-import { IEloquent } from '../domains/eloquent/interfaces/IEloquent';
+import { IBelongsToOptions, IEloquent } from '../domains/eloquent/interfaces/IEloquent';
+import BelongsTo from '../domains/eloquent/relational/BelongsTo';
 import Str from '../util/str/Str';
  
 
@@ -66,6 +67,25 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
     }
 
     /**
+     * Retrieves the default table name for the model.
+     * The default table name is determined by the name of the model class.
+     * If the model class name ends with 'Model', it is removed.
+     * The table name is then pluralized and lowercased.
+     * @returns The default table name.
+     */
+    protected getDefaultTable() {
+
+        let table = this.constructor.name;
+
+        if (table.endsWith('Model')) {
+            table = table.slice(0, -5);
+        }
+
+        return Model.formatTableName(table);
+
+    }
+
+    /**
      * Creates a new query builder instance for the model.
      *
      * @template M - The type of the model, defaults to IModel.
@@ -76,9 +96,23 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         const connectionName = temporaryModel.connection;
         const tableName = temporaryModel.useTableName();
 
-        return App.container('db').eloquent<Data>()
+        const eloquent = App.container('db').eloquent<Data>()
             .setConnectionName(connectionName)
-            .setTable(tableName);
+            .setTable(tableName)
+            .setModelCtor(this as unknown as ICtor<IModel>)
+            .setModelColumns()
+
+        return eloquent
+    }
+
+    /**
+     * Retrieves the fields defined on the model.
+     * The fields are the list of fields that are allowed to be set on the model.
+     * This is used for mass assignment.
+     * @returns The list of fields defined on the model.
+     */
+    getFields(): string[] {
+        return this.fields
     }
 
     /**
@@ -114,26 +148,6 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
      */
     public static getConnectionName(): string {
         return new (this as unknown as ICtor<IModel>)(null).connection;
-    }
-
-
-    /**
-     * Retrieves the default table name for the model.
-     * The default table name is determined by the name of the model class.
-     * If the model class name ends with 'Model', it is removed.
-     * The table name is then pluralized and lowercased.
-     * @returns The default table name.
-     */
-    protected getDefaultTable() {
-
-        let table = this.constructor.name;
-
-        if (table.endsWith('Model')) {
-            table = table.slice(0, -5);
-        }
-
-        return Model.formatTableName(table);
-
     }
 
     /**
@@ -270,10 +284,10 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
      * 
      * @template T The type of the related model.
      * @param {ICtor<T>} foreignModel - The constructor of the related model.
-     * @param {Omit<IBelongsToOptions, 'foreignTable'>} options - Options for the relationship.
+     * @param {Omit<IBelongsToOptionsLegacy, 'foreignTable'>} options - Options for the relationship.
      * @returns {Promise<T | null>} The related model instance or null if not found.
      */
-    async belongsTo<T extends IModel = IModel>(foreignModel: ICtor<T>, options: Omit<IBelongsToOptions, 'foreignTable'>): Promise<T | null> {
+    async belongsToLegacy<T extends IModel = IModel>(foreignModel: ICtor<T>, options: Omit<IBelongsToOptionsLegacy, 'foreignTable'>): Promise<T | null> {
         const documentManager = App.container('db').documentManager(this.connection);
 
         if (!this.attributes) {
@@ -290,6 +304,18 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         }
 
         return new foreignModel(result);
+    }
+
+    /**
+     * Retrieves a related model based on a "belongs to" relationship.
+     * 
+     * @template ForiegnModel The type of the related model.
+     * @param {ICtor<ForiegnModel>} foreignModel - The constructor of the related model.
+     * @param {Omit<IBelongsToOptionsLegacy, 'foreignTable'>} options - Options for the relationship.
+     * @returns {BelongsTo} An instance of the BelongsTo class for chaining.
+     */
+    belongsTo<ForiegnModel extends IModel = IModel>(foreignModel: ICtor<ForiegnModel>, options: Omit<IBelongsToOptions, 'foreignTable'>): BelongsTo {
+        return new BelongsTo(this.constructor as ICtor<IModel>, foreignModel, options);
     }
 
     /**

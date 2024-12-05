@@ -20,14 +20,14 @@ export class TestMovieModel extends Model<TestMovieModelData> {
     ]
 
     public async author(): Promise<TestAuthorModel | null> {
-        return this.belongsTo(TestAuthorModel, {
+        return this.belongsToLegacy(TestAuthorModel, {
             localKey: 'authorId',
             foreignKey: 'id'
         })
     }
 
     public async authorByName(name: string): Promise<TestAuthorModel | null> {
-        return this.belongsTo(TestAuthorModel, {
+        return this.belongsToLegacy(TestAuthorModel, {
             localKey: 'authorId',
             foreignKey: 'id',
             filters: {

@@ -1,16 +1,21 @@
 import { ICtor } from "@src/core/interfaces/ICtor";
+import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
+import { deepClone } from "@src/core/util/deepClone";
 
 import Collection from "../collections/Collection";
 import { IDatabaseAdapter } from "../database/interfaces/IDatabaseAdapter";
 import BaseEloquent from "./base/BaseEloquent";
 import Direction from "./enums/Direction";
+import EloquentException from "./exceptions/EloquentExpression";
+import ExpressionException from "./exceptions/ExpressionException";
 import InvalidMethodException from "./exceptions/InvalidMethodException";
 import MissingTableException from "./exceptions/MissingTableException";
 import QueryBuilderException from "./exceptions/QueryBuilderException";
-import { IEloquent, LogicalOperators, OperatorArray, TFormatterFn, TLogicalOperator, TOperator, TWhereClauseValue } from "./interfaces/IEloquent";
+import { IEloquent, LogicalOperators, OperatorArray, QueryOptions, TColumn, TFormatterFn, TLogicalOperator, TOperator, TWhereClauseValue } from "./interfaces/IEloquent";
 import IEloquentExpression from "./interfaces/IEloquentExpression";
 import { TDirection } from "./interfaces/TEnums";
+import With from "./relational/With";
 
 export type TQueryBuilderOptions = {
     adapterName: string,
@@ -24,7 +29,6 @@ abstract class Eloquent<
     Data = unknown,
     Adapter extends IDatabaseAdapter = IDatabaseAdapter,
     Expression extends IEloquentExpression = IEloquentExpression> extends BaseEloquent implements IEloquent<Data, Expression> {
-
 
     /**
      * The connection name to use for the query builder
@@ -60,6 +64,27 @@ abstract class Eloquent<
      * The expression builder
      */
     protected expression!: Expression;
+
+    /**
+     * The constructor of the model
+     */
+    protected modelCtor?: ICtor<IModel>;
+
+    /**
+     * Creates a new Eloquent query builder instance with specified options.
+     *
+     * @template Data - The type of data to be queried, defaults to object.
+     * @param {QueryOptions} options - The options for the query builder including:
+     *   @param {string} options.connectionName - The name of the database connection to use.
+     *   @param {string} [options.tableName] - Optional table name to use for the query. Defaults to model's table name.
+     *   @param {ICtor<IModel>} options.modelCtor - The constructor of the model to use for the query builder.
+     * @returns {IEloquent<Data>} A query builder instance configured with the specified options.
+     */
+    static query<Data extends object = object>(connectionName: string, tableName?: string): IEloquent<Data> {
+        return new (this.constructor as ICtor<IEloquent<Data>>)()
+            .setConnectionName(connectionName)
+            .setTable(tableName ?? '')
+    }
 
     /**
      * Retrieves the database adapter for the connection name associated with this query builder.
@@ -103,7 +128,8 @@ abstract class Eloquent<
      * @returns {IEloquent<Data>} The query builder instance.
      */
     protected setColumns(columns: string[]): IEloquent<Data> {
-        this.expression.setColumns(columns);
+        const columnsTyped = columns.map(column => ({column})) as TColumn[]
+        this.expression.setColumns(columnsTyped);
         return this as unknown as IEloquent<Data>;
     }
 
@@ -123,6 +149,11 @@ abstract class Eloquent<
      */
     getExpression(): Expression {
         return this.expression
+    }
+
+    setExpression(expression: Expression): IEloquent<Data> {
+        this.expression = expression
+        return this as unknown as IEloquent<Data>
     }
 
     /**
@@ -149,6 +180,60 @@ abstract class Eloquent<
         this.setExpressionCtor(this.expressionCtor)
         this.setTable(this.tableName ?? '')
         return this as unknown as IEloquent<Data>
+    }
+
+    /**
+     * Retrieves a clone of the expression builder associated with this query builder.
+     *
+     * The cloned expression builder will not be associated with the same model as
+     * the original expression builder.
+     *
+     * @returns {IEloquentExpression} The cloned expression builder instance.
+     */
+    cloneExpression(): IEloquentExpression {
+        return this.expression.clone()
+    }
+
+    /**
+     * Sets the constructor of the model associated with the query builder.
+     * 
+     * If no model constructor is provided, the query builder will not be associated
+     * with any model.
+     * 
+     * @param {ICtor<IModel>} [modelCtor] The constructor of the model to associate with the query builder.
+     * @returns {this} The query builder instance for chaining.
+     */
+    setModelCtor(modelCtor?: ICtor<IModel>): IEloquent<Data> {
+        this.modelCtor = modelCtor
+        return this as unknown as IEloquent<Data>
+    }
+
+    /**
+     * Sets the columns for the query builder based on the fields of the associated model.
+     * 
+     * This method initializes an instance of the model using its constructor,
+     * retrieves the fields of the model, and sets each field as a column in the query builder.
+     * 
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
+    setModelColumns(): IEloquent<Data> {
+        if(!this.modelCtor) {
+            throw new EloquentException('Model constructor has not been set');
+        }
+
+        const model = new this.modelCtor(null)
+        const tableName = model.useTableName()
+        model.getFields().forEach(field => this.column({ column: field, tableName }));
+        return this as unknown as IEloquent<Data>
+    }
+
+    /**
+     * Retrieves the constructor of the model associated with the query builder.
+     *
+     * @returns {ICtor<IModel>} The constructor of the model.
+     */
+    getModelCtor(): ICtor<IModel> | undefined {
+        return this.modelCtor
     }
 
     /**
@@ -222,6 +307,20 @@ abstract class Eloquent<
     }
 
     /**
+     * Adds a column to the columns array to be included in the SQL query.
+     * If the column is already in the array, it will not be added again.
+     * @param {string | TColumn} column The column name to add to the array.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
+    column(column: TColumn | string): IEloquent<Data> {
+        if(typeof column === 'string') {
+            column = {column}
+        }
+        this.expression.addColumn(column);
+        return this as unknown as IEloquent<Data>
+    }
+
+    /**
      * Sets a raw select expression for the query builder.
      * 
      * This method can be used to set a custom select expression on the query builder.
@@ -243,7 +342,9 @@ abstract class Eloquent<
      */
     distinct(columns: string | string[]): IEloquent<Data> {
         columns = Array.isArray(columns) ? columns : [columns];
-        this.expression.setDistinctColumns(columns);
+        const columnsTyped = columns.map(column => ({column})) as TColumn[]
+        
+        this.expression.setDistinctColumns(columnsTyped);
         return this as unknown as IEloquent<Data>;
     }
     
@@ -254,13 +355,8 @@ abstract class Eloquent<
      * @returns {IEloquent} The cloned query builder instance
      */
     clone(): IEloquent<Data> {
-        return new (this.constructor as ICtor<IEloquent<Data>>)()
-            .setConnectionName(this.connectionName)
-            .setFormatter(this.formatterFn)
-            .setExpressionCtor(this.expressionCtor)
-            .setTable(this.tableName ?? '')
-            .resetExpression()
-
+        return deepClone<IEloquent<Data>>(this)
+            .setExpression(this.expression.clone())
     }
 
     // eslint-disable-next-line no-unused-vars
@@ -524,6 +620,37 @@ abstract class Eloquent<
      */
     whereNotLike(column: string, value: TWhereClauseValue): IEloquent<Data> {
         this.expression.where(column, 'not like', value);
+        return this as unknown as IEloquent<Data>
+    }
+
+    /**
+     * Adds a relationship to the query builder.
+     * 
+     * This method allows for loading the related data of the model being queried.
+     * 
+     * @param {string} relationship - The name of the relationship to load.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
+    with(relationship: string): IEloquent<Data> { 
+        if(!this.modelCtor) {
+            throw new ExpressionException('Model constructor has not been set');
+        }
+        
+        return new With(this, relationship).applyOnExpression()
+    }
+
+    /**
+     * Adds an inner join to the query builder.
+     * 
+     * @param {string} table - The table to join.
+     * @param {string} secondTable - The table to join with.
+     * @param {string} leftColumn - The column to join on in the left table.
+     * @param {string} rightColumn - The column to join on in the right table.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
+    join(secondTable: string, leftColumn: string, rightColumn: string ): IEloquent<Data> {
+        const table = this.useTable()
+        this.expression.setJoins({ table, rightTable: secondTable, type: 'inner', leftColumn, rightColumn });
         return this as unknown as IEloquent<Data>
     }
 

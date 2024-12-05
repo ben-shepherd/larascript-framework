@@ -2,12 +2,19 @@
 
 
 import { ICtor } from "@src/core/interfaces/ICtor";
-import { QueryResult } from "pg";
+import { IModel } from "@src/core/interfaces/IModel";
+import IModelAttributes from "@src/core/interfaces/IModelData";
 
 import Collection from "../../collections/Collection";
 import IEloquentExpression from "./IEloquentExpression";
 
 export type TColumns = string[]
+
+export type TColumn = {
+    column: string;
+    tableName?: string;
+    isFormatted?: boolean
+}
 
 export type TOperator = "=" | "!=" | "<>" | ">" | "<" | ">=" | "<=" | "like" | "not like" | "in" | "not in" | "is null" | "is not null" | "between" | "not between"; 
 
@@ -32,9 +39,24 @@ export type TWhereClause = {
 export type TJoin = {
     table: string,
     tableAbbreviation?: string,
-    type: "inner" | "left" | "right" | "full" | "cross",
+    rightTable?: string,
+    rightTableAbbreviation?: string,
+    type: typeof JoinTypes[keyof typeof JoinTypes],
     leftColumn: string,
     rightColumn: string
+}
+
+export const JoinTypes = {
+    INNER: "inner",
+    LEFT: "left",
+    RIGHT: "right",
+    FULL: "full",
+    CROSS: "cross"
+} as const;
+
+export type TWith = {
+    modelCtor: ICtor<IModel>,
+    relationship: string
 }
 
 export type TDirection = "asc" | "desc"
@@ -49,7 +71,28 @@ export type TOffsetLimit = {
     offset?: number
 }
 
+export interface IRelationship {
+    _relationshipInterface: true;
+    getLocalModelCtor(): ICtor<IModel>;
+    getForeignModelCtor(): ICtor<IModel>;
+    getOptions(): IBelongsToOptions
+    getLocalKey(): string;
+    getForeignKey(): string;
+}
+
+export interface IBelongsToOptions {
+    localKey: keyof IModelAttributes;
+    foreignKey?: keyof IModelAttributes;
+    foreignTable: string;
+    filters?: object;
+}
+
 export type TFormatterFn = (row: unknown) => unknown;
+
+export type QueryOptions = {
+    connectionName: string;
+    tableName?: string,
+}
 
 export interface IEloquent<Data = unknown, Expression extends IEloquentExpression = IEloquentExpression> {
     
@@ -58,11 +101,16 @@ export interface IEloquent<Data = unknown, Expression extends IEloquentExpressio
     setFormatter(formatterFn?: TFormatterFn): IEloquent<Data>;
     getExpression(): Expression;
     setExpressionCtor(builderCtor: ICtor<Expression>): IEloquent<Data>
+    setExpression(expression: Expression): IEloquent<Data>;
+    cloneExpression(): IEloquentExpression;
     resetExpression(): IEloquent<Data>;
+    setModelCtor(modelCtor?: ICtor<IModel>): IEloquent<Data>;
+    getModelCtor(): ICtor<IModel> | undefined;
+    setModelColumns(): IEloquent<Data>;
 
     // execution
     execute<T = Data>(builder: IEloquentExpression): Promise<T>
-    raw<T = QueryResult>(expression: string, bindings?: unknown[]): Promise<T>;
+    raw<T = unknown>(expression: string, bindings?: unknown[]): Promise<T>;
 
     // db methods
     createDatabase(name: string): Promise<void>;
@@ -81,13 +129,14 @@ export interface IEloquent<Data = unknown, Expression extends IEloquentExpressio
     useTable(): string;
 
     // Creating and saving
-    insert(documents: object | object[]): Promise<Collection<Data>>; // Promise<IEloquent<Data>): Promise<IEloquent<Data>>;
+    insert(documents: object | object[]): Promise<Collection<Data>>; 
     update(documents: object | object[]): Promise<Collection<Data>>;
     updateAll(documents: object | object[]): Promise<Collection<Data>>;
     // delete(data: Data): Promise<IEloquent<Data>>;
 
     // selection
     select(columns?: string | string[]): IEloquent<Data>;
+    column(column: TColumn): IEloquent<Data>;
 
     // find methods
     find(id: string | number): Promise<Data | null>;
@@ -127,10 +176,14 @@ export interface IEloquent<Data = unknown, Expression extends IEloquentExpressio
     whereNotBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data>;
 
     // Joins
-    // join(table: string, first: string, operator?: string, second?: string): Promise<IQueryBuilder>;
+    join(table: string, first: string, operator?: string, second?: string): IEloquent<Data>;
     // leftJoin(table: string, first: string, operator?: string, second?: string): Promise<IQueryBuilder>;
     // rightJoin(table: string, first: string, operator?: string, second?: string): Promise<IQueryBuilder>;
     // crossJoin(table: string): Promise<IQueryBuilder>;
+
+    // Need to think about what parameters can be passed here.
+    // Ideally we could use (modelCtor, relationshipMethodOnModelCtor)
+    with(relationship: string): IEloquent<Data>;
 
     // // Ordering
     orderBy(column: string, direction?: TDirection): IEloquent<Data>;
@@ -139,7 +192,7 @@ export interface IEloquent<Data = unknown, Expression extends IEloquentExpressio
     oldest(column?: string): IEloquent<Data>;
 
     // // Grouping
-    // groupBy(...columns: string[]): Promise<IQueryBuilder>;
+    // groupBy(...columns: string[]): Promise<IQueryB   uilder>;
     // having(column: string, operator?: string, value?: any): Promise<IQueryBuilder>;
 
     // Limiting

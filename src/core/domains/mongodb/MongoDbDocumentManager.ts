@@ -2,7 +2,7 @@ import BaseDocumentManager from "@src/core/domains/database/base/BaseDocumentMan
 import InvalidObjectId from "@src/core/domains/database/exceptions/InvalidObjectId";
 import { FindOptions, IDatabaseDocument, OrderOptions } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
-import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
+import { IBelongsToOptionsLegacy } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import MongoDbQueryBuilder from "@src/core/domains/mongodb/builder/MongoDbQueryBuilder";
 import MongoDbIdentiferConcern from "@src/core/domains/mongodb/concerns/MongoDbIdentiferConcern";
@@ -265,7 +265,7 @@ class MongoDbDocumentManager extends BaseDocumentManager<MongoDbDocumentManager,
     }
 
 
-    async belongsTo<T>(document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null> {
+    async belongsTo<T>(document: IDatabaseDocument, options: IBelongsToOptionsLegacy): Promise<T | null> {
         return this.captureError(async() => {
             return new MongoDBBelongsTo().handle(
                 this.adapter.getConnectionName(),

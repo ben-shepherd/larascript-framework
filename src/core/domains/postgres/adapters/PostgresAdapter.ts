@@ -211,6 +211,12 @@ class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
             .setConnectionName(connectionName)
     }   
 
+    /**
+     * Retrieves the constructor for a Postgres query builder.
+     *
+     * @template Data The type of data to be queried, defaults to object.
+     * @returns {ICtor<IEloquent<Data>>} The constructor of the query builder.
+     */
     getEloquentCtor<Data extends object = object>(): ICtor<IEloquent<Data>> {
         return PostgresEloquent
     }

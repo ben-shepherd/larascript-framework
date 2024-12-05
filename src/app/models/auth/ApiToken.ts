@@ -71,7 +71,7 @@ class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
      * @returns The user model if found, or null if not
      */
     async user(): Promise<IUserModel | null> {
-        return this.belongsTo(this.userModelCtor, {
+        return this.belongsToLegacy(this.userModelCtor, {
             localKey: 'userId',
             foreignKey: 'id',
         })

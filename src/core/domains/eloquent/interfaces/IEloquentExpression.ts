@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { TColumn, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
 interface IEloquentExpression<Bindings = unknown> {
 
@@ -17,6 +17,13 @@ interface IEloquentExpression<Bindings = unknown> {
      * @template T - The type of object returned by the build method
      */
     build<T = unknown>(): T;
+
+    /**
+     * Gets the current table name.
+     * 
+     * @returns {string} The current table name.
+     */
+    getTable(): string;
 
     /**
      * Sets the table name and optional abbreviation for the query builder.
@@ -42,20 +49,43 @@ interface IEloquentExpression<Bindings = unknown> {
     setSelectRaw(sql: string, bindings: unknown): this;
 
     /**
+     * Gets the current columns in the SQL query.
+     * 
+     * @returns {TColumn[]} The current columns.
+     */
+    getColumns(): TColumn[];
+
+    /**
      * Sets the columns to include in the SQL query.
      * 
-     * @param {string[]} columns - The array of column names to set for the query.
+     * @param {TColumn[]} columns - The array of column names to set for the query.
      * @returns {this} The instance of the query builder for method chaining.
      */
-    setColumns(columns: string[]): this;
+    setColumns(columns: TColumn[]): this;
+
+    /**
+     * Adds a column to the columns array to be included in the SQL query.
+     * If the column is already in the array, it will not be added again.
+     * 
+     * @param {TColumn} column - The column name to add to the array.
+     * @returns {this} The instance of the query builder for method chaining.
+     */
+    addColumn(column: TColumn): this;
+
+    /**
+     * Gets the distinct columns for the query builder.
+     * 
+     * @returns {TColumn[]} The current distinct columns.
+     */
+    getDistinctColumns(): TColumn[];
 
     /**
      * Sets the distinct columns for the query builder.
      * 
-     * @param {string[]} columns - The array of column names to set for the query.
+     * @param {TColumn[]} columns - The array of column names to set for the query.
      * @returns {this} The instance of the query builder for method chaining.
      */
-    setDistinctColumns(columns: string[]): this;
+    setDistinctColumns(columns: TColumn[]): this;
 
     /**
      * Adds a single binding to the builder.
@@ -77,6 +107,13 @@ interface IEloquentExpression<Bindings = unknown> {
      * @returns {number[]} The list of column types
      */
     getBindingTypes(): (number | undefined)[];
+
+    /**
+     * Gets the current where clauses.
+     * 
+     * @returns {TWhereClause[]} The current where clauses.
+     */
+    getWhere(): TWhereClause[];
 
     /**
      * Sets the where clauses for the query builder.
@@ -105,6 +142,13 @@ interface IEloquentExpression<Bindings = unknown> {
     whereRaw(sql: string, bindings?: unknown): this;
 
     /**
+     * Gets the current order by clauses.
+     * 
+     * @returns {TOrderBy[]} The current order by clauses.
+     */
+    getOrderBy(): TOrderBy[];
+
+    /**
      * Sets the order by clauses for the query builder.
      * 
      * @param {TOrderBy[]} orderBy - The array of order by clauses to set.
@@ -119,7 +163,6 @@ interface IEloquentExpression<Bindings = unknown> {
      * @returns {this} The query builder instance for chaining.
      */
     orderBy(orderBy: TOrderBy): this;
-
 
     /**
      * Sets the offset clause for the query builder.
@@ -157,6 +200,13 @@ interface IEloquentExpression<Bindings = unknown> {
     getOffsetLimit(): TOffsetLimit | null;
 
     /**
+     * Gets the current joins.
+     * 
+     * @returns {TJoin[]} The current joins.
+     */
+    getJoins(): TJoin[];
+
+    /**
      * Sets the joins for the query builder.
      * 
      * @param {TJoin | TJoin[]} joins - The joins to set. If an array is provided, multiple joins will be applied.
@@ -165,12 +215,57 @@ interface IEloquentExpression<Bindings = unknown> {
     setJoins(joins: TJoin[] | TJoin): this;
 
     /**
+     * Adds a join to the query builder.
+     * 
+     * @param options 
+     * @returns {this} The query builder instance for chaining.
+     */
+    join(options: TJoin): this;
+
+    /**
+     * Gets the current withs.
+     * 
+     * @returns {TWith[]} The current withs.
+     */
+    getWiths(): TWith[];
+
+    /**
+     * Sets the withs for the query builder.
+     * 
+     * @param {TWith | TWith[]} withs - The withs to set. If an array is provided, multiple withs will be applied.
+     * @returns {this} The query builder instance for chaining.
+     */
+    setWiths(withs: TWith[]): this;
+
+    /**
+     * Adds a with to the query builder.
+     * 
+     * @param {TWith} with - The with to add.
+     * @returns {this} The query builder instance for chaining.
+     */
+    with(options: TWith): this;
+
+    /**
+     * Gets the current documents to insert.
+     * 
+     * @returns {object | object[] | null} The current documents to insert.
+     */
+    getInsert(): object | object[] | null;
+
+    /**
      * Sets the documents to insert for the query builder.
      * 
      * @param {object | object[]} documents - The documents to insert.
      * @returns {this} The query builder instance for chaining.
      */
-    setInsert(documents: object | object[]): this
+    setInsert(documents: object | object[]): this;
+
+    /**
+     * Gets the current document to update.
+     * 
+     * @returns {object | object[] | null} The current document to update.
+     */
+    getUpdate(): object | object[] | null;
 
     /**
      * Sets the document to update for the query builder.
@@ -180,6 +275,12 @@ interface IEloquentExpression<Bindings = unknown> {
      */
     setUpdate(document: object | object[]): this;
 
+    /**
+     * Returns a clone of the query builder.
+     * 
+     * @returns {IEloquentExpression<Bindings>} A clone of the query builder.
+     */
+    clone(): IEloquentExpression<Bindings>;
 }
 
 export default IEloquentExpression;

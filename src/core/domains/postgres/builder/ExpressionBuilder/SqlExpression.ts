@@ -1,6 +1,7 @@
+import BaseExpression from "@src/core/domains/eloquent/base/BaseExpression";
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
 import InsertException from "@src/core/domains/eloquent/exceptions/InsertException";
-import { TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { TColumn, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import { z } from "zod";
 
@@ -25,20 +26,21 @@ const getDefaults = () => ({
     bindings: new BindingsHelper(),
     table: '',
     tableAbbreviation: null,
-    columns: ['*'],
+    columns: [],
     rawSelect: null,
     distinctColumns: null,
     whereClauses: [],
     whereColumnTypes: {},
     whereRaw: null,
     joins: [],
+    withs: [],
     orderByClauses: [],
     offset: null,
     inserts: null,
     updates: null,
 })
 
-class SqlExpression implements IEloquentExpression {
+class SqlExpression extends BaseExpression implements IEloquentExpression {
 
     public bindings                                    = getDefaults().bindings;
 
@@ -48,11 +50,11 @@ class SqlExpression implements IEloquentExpression {
     
     protected tableAbbreviation?: string | null        = getDefaults().tableAbbreviation;
     
-    protected columns: string[]                        = getDefaults().columns;
+    protected columns: TColumn[]                       = getDefaults().columns;
 
     protected rawSelect: RawSelect | null              = getDefaults().rawSelect;
     
-    protected distinctColumns: string[] | null         = getDefaults().distinctColumns;
+    protected distinctColumns: TColumn[] | null        = getDefaults().distinctColumns;
     
     protected whereClauses: TWhereClause[]             = getDefaults().whereClauses;
     
@@ -61,6 +63,8 @@ class SqlExpression implements IEloquentExpression {
     protected rawWhere: RawWhere | null                = getDefaults().whereRaw;
     
     protected joins: TJoin[]                           = getDefaults().joins;
+
+    protected withs: TWith[]                           = getDefaults().withs;
     
     protected orderByClauses: TOrderBy[]               = getDefaults().orderByClauses;
     
@@ -75,8 +79,20 @@ class SqlExpression implements IEloquentExpression {
      * @param column - The column name to format
      * @returns The formatted column name
      */
-    public static formatColumn<T extends string | string[] = string>(column: T): T {
-        const format = (col) => `"${col}"`;
+    public static formatColumn<T extends TColumn | TColumn[] = TColumn>(column: T): T {
+
+        /**
+         * Formats a column name with double quotes for safe usage in SQL queries
+         * @param {TColumn} col - The column name to format
+         * @returns {TColumn} The formatted column name
+         * @private
+         */
+        const format = (col: TColumn): TColumn => {
+            if(!col.isFormatted) {
+                col.column = '"' + col.column + '"';
+            }
+            return col
+        }
 
         if(Array.isArray(column)) {
             return column.map(format) as T;
@@ -98,7 +114,105 @@ class SqlExpression implements IEloquentExpression {
             throw new InsertException(message);
         }
     }
+
+    setOffsetLimit(offsetLimit: TOffsetLimit | null): this {
+        this.offsetLimit = offsetLimit
+        return this
+    }
+
+    getTable(): string {
+        return this.table
+    }
     
+    getColumns(): TColumn[] {
+        return this.columns
+    }
+
+    getDistinctColumns(): TColumn[] {
+        return this.distinctColumns || []
+    }
+
+    getWhereClauses(): TWhereClause[] {
+        return this.whereClauses
+    }
+
+    getJoins(): TJoin[] {
+        return this.joins
+    }
+
+    getWiths(): TWith[] {
+        return this.withs
+    }
+
+    getOrderBy(): TOrderBy[] {
+        return this.orderByClauses
+    }
+
+    getOffsetLimit(): TOffsetLimit | null {
+        return this.offsetLimit
+    }
+
+    getInserts(): object | object[] | null {
+        return this.inserts
+    }
+
+    getUpdates(): object | object[] | null {
+        return this.updates
+    }
+
+    getRawSelect(): RawSelect | null {
+        return this.rawSelect
+    }
+
+    getRawWhere(): RawWhere | null {
+        return this.rawWhere
+    }
+
+    getBindings(): BindingsHelper {
+        return this.bindings
+    }
+
+    getWhere(): TWhereClause[] {
+        return this.whereClauses
+    }
+
+    getInsert(): object | object[] | null {
+        return this.inserts
+    }
+
+    getUpdate(): object | object[] | null {
+        return this.updates
+    }
+
+    getWhereColumnTypes(): Record<string, string> {
+        return this.whereColumnTypes
+    }
+
+    setWhereColumnTypes(whereColumnTypes: Record<string, string>) {
+        this.whereColumnTypes = whereColumnTypes
+        return this
+    }
+
+    setWhereClauses(whereClauses: TWhereClause[]) {
+        this.whereClauses = whereClauses
+        return this
+    }
+
+    setOrderByClauses(orderByClauses: TOrderBy[]) {
+        this.orderByClauses = orderByClauses
+        return this
+    }
+
+    setInserts(inserts: object | object[] | null) {
+        this.inserts = inserts
+        return this
+    }
+
+    setUpdates(updates: object | object[] | null) {
+        this.updates = updates
+        return this
+    }
+
     /**
      * Builds a SQL query string from the query builder's properties
      *
@@ -152,14 +266,14 @@ class SqlExpression implements IEloquentExpression {
         const oneSpacePrefix = ' ';
         const selectColumns  = SelectColumns.toSql(this.columns, this.distinctColumns, this.rawSelect ?? undefined).trimEnd();
         const fromTable      = FromTable.toSql(this.table, this.tableAbbreviation).trimEnd();
-        const where          = Where.toSql(this.whereClauses, this.rawWhere ?? undefined, this.bindings, oneSpacePrefix).trimEnd();
         const join           = Joins.toSql(this.joins, oneSpacePrefix).trimEnd();
+        const where          = Where.toSql(this.whereClauses, this.rawWhere ?? undefined, this.bindings, oneSpacePrefix).trimEnd();
         const orderBy        = OrderBy.toSql(this.orderByClauses, oneSpacePrefix).trimEnd();
         const offsetLimit    = OffsetLimit.toSql(this.offsetLimit ?? {}, oneSpacePrefix).trimEnd();
 
         let sql = `${selectColumns} ${fromTable}`;
-        sql += where
         sql += join;
+        sql += where
         sql += orderBy;
         sql += offsetLimit;
 
@@ -220,21 +334,42 @@ class SqlExpression implements IEloquentExpression {
         return this
     }
 
+    setRawWhere(where: RawWhere | null): this {
+        this.rawWhere = where;
+        return this
+    }
+
     /**
      * Sets the columns to include in the SQL query.
      * 
      * @param {string[]} columns - The array of column names to set for the query.
      * @returns {this} The instance of the query builder for method chaining.
      */
-    setColumns(columns: string[]): this {
+    setColumns(columns: TColumn[]): this {
         this.columns = columns;
         return this;
     }
 
-    setDistinctColumns(columns: string[]): this {
+    /**
+     * Adds a column to the columns array to be included in the SQL query.
+     * If the column is already in the array, it will not be added again.
+     * @param {string} column The column name to add to the array.
+     * @returns {this} The instance of the query builder for method chaining.
+     */
+    addColumn(column: TColumn): this {
+        this.columns.push(column);
+        return this
+    }
+
+    setDistinctColumns(columns: TColumn[]): this {
         console.log('[SqlExpression] setDistinctColumns', columns);
         this.distinctColumns = columns;
         return this   
+    }
+
+    setBindings(bindings: BindingsHelper): this {
+        this.bindings = bindings;
+        return this
     }
 
     /**
@@ -324,14 +459,6 @@ class SqlExpression implements IEloquentExpression {
         return this
     }
 
-    /**
-     * Retrieves the current offset and limit configuration for the query builder.
-     *
-     * @returns {TOffsetLimit | null} The offset and limit settings, or null if not set.
-     */
-    getOffsetLimit(): TOffsetLimit | null {
-        return this.offsetLimit
-    }
 
     /**
      * Sets the offset clause for the query builder.
@@ -379,6 +506,39 @@ class SqlExpression implements IEloquentExpression {
     setJoins(joins: TJoin[] | TJoin): this {
         this.joins = Array.isArray(joins) ? joins : [joins];
         return this        
+    }
+
+    /**
+     * Adds a join to the query builder.
+     * 
+     * @param {TJoin} options - The join to add.
+     * @returns {this} The query builder instance for chaining.
+     */
+    join(options: TJoin): this {
+        this.joins.push(options);
+        return this
+    }
+
+    /**
+     * Sets the withs (common table expressions) for the query builder.
+     * 
+     * @param {TWith | TWith[]} withs - The withs to set. If an array is provided, multiple withs will be applied.
+     * @returns {this} The query builder instance for chaining.
+     */
+    setWiths(withs: TWith[] | TWith): this {
+        this.withs = Array.isArray(withs) ? withs : [withs];
+        return this
+    }
+
+    /**
+     * Adds a with (common table expression) to the query builder.
+     * 
+     * @param {TWith} options - The with to add.
+     * @returns {this} The query builder instance for chaining.
+     */
+    with(options: TWith): this {
+        this.withs.push(options)
+        return this
     }
 
     /**

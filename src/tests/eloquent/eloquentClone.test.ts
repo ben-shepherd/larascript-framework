@@ -29,11 +29,18 @@ describe('eloquent', () => {
             }
         ]);
 
-        const restrictedResult = await query.clone().where('age', '=', 25).first()
+        const restrictedQuery = query.clone().where('age', '=', 25);
+        const restrictedResult = await restrictedQuery.first()
         expect(restrictedResult?.id).toBe(inserted[0].id);
         expect(restrictedResult?.name).toBe('John');
 
-        const everythingResult = await query.clone().get()
+        console.log('restricted expression', restrictedQuery.getExpression());
+
+        const everythingQuery = query.clone();
+        const everythingResult = await everythingQuery.get()
+
+        console.log('everything expression', everythingQuery.getExpression());
+
         expect(everythingResult.count()).toBe(2);
         expect(everythingResult[0].id).toBe(inserted[0].id);
         expect(everythingResult[0].name).toBe('John');

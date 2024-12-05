@@ -101,7 +101,7 @@ class Where {
             const isNotLastWhere = i < wheres.length - 1
 
             // Example: "column"
-            sql += SqlExpression.formatColumn(currentWhereSql.column) + ' ';
+            sql += SqlExpression.formatColumn({ column: currentWhereSql.column }).column + ' ';
 
             // Example: LIKE
             // Example: =

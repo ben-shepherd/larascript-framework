@@ -67,6 +67,8 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
         const results = await client.query(expression, bindings)
         await client.end()
 
+        this.expression.bindings.reset()
+
         return results as T
     }
 
@@ -241,12 +243,14 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
     async insert(documents: object | object[]): Promise<Collection<Data>> {
         return await captureError(async () => {
 
+            const previousExpression = this.expression.clone() as SqlExpression
+
             const documentsArray = Array.isArray(documents) ? documents : [documents]
             const results: unknown[] = [];
 
             for(const document of documentsArray) {
 
-                this.resetExpression()
+                this.setExpression(previousExpression)
 
                 const documentWithUuid = this.documentWithUuid<Data>(document);
 
@@ -258,7 +262,7 @@ class PostgresEloquent<Data = unknown> extends Eloquent<Data, PostgresAdapter, S
                 results.push(this.formatQueryResults(res.rows)[0])    
             }
 
-            this.resetExpression()
+            this.setExpression(previousExpression)
 
             return collect<Data>(
                 this.formatQueryResults(results)
