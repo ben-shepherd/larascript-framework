@@ -27,23 +27,42 @@ class SelectColumns {
         const distinctColumnsArray = this.prepareDistinctColumns(distinctColumnsOptions);
         const columnsArray = this.prepareColumns(columnOptions);
 
-        sql = this.distinctColumns(sql, distinctColumnsArray);
-        sql = this.selectColumns(sql, columnsArray);
+        sql = this.appendDistinctColumnsSql(sql, distinctColumnsArray);
+        sql = this.appendColumnsSql(sql, columnsArray);
+
         return sql;
     }
 
+    /**
+     * Prepares an array of distinct columns for use in a SQL query.
+     * 
+     * This method processes the provided distinct columns to ensure they are in the correct format
+     * for a SQL DISTINCT ON clause. If no distinct columns are provided, an empty array is returned.
+     *
+     * @param {TColumn[] | null} distinctColumns - The array of distinct column options to prepare.
+     * @returns {TColumn[]} The prepared array of distinct columns.
+     */
     protected static prepareDistinctColumns(distinctColumns: TColumn[] | null): TColumn[] {
-        return SqlExpression.formatColumn<TColumn[]>(distinctColumns ?? [])
+        return SqlExpression.prepareColumnOptions<TColumn[]>(distinctColumns ?? [])
     }
 
-
+    /**
+     * Prepares an array of columns for use in a SQL SELECT query.
+     *
+     * This method formats the provided column options, ensuring that each column
+     * is properly qualified with its table name and alias if specified. If no
+     * columns are provided, a wildcard column ('*') is used by default.
+     *
+     * @param {TColumn[] | null} options - The array of column options to prepare, or null.
+     * @returns {string[]} The array of formatted column strings for the SQL query.
+     */
     protected static prepareColumns(options: TColumn[] | null): string[] {
         if(options === null || options.length === 0) {
             options = [{column: '*'}]
         }
 
         // Format the columns
-        options = SqlExpression.formatColumn(options);
+        options = SqlExpression.prepareColumnOptions(options);
 
         // Add table name and alias
         return options.map(option => {
@@ -69,8 +88,8 @@ class SelectColumns {
      * @param {string[] | null} distinctColumns - An array of columns to append for the DISTINCT ON clause.
      * @returns {string} The updated SQL query string with the DISTINCT ON clause.
      */
-    static distinctColumns(sql: string, distinctColumns: TColumn[] | null): string {
-        const distinctColumnsArray = SqlExpression.formatColumn<TColumn[]>(distinctColumns ?? [])
+    static appendDistinctColumnsSql(sql: string, distinctColumns: TColumn[] | null): string {
+        const distinctColumnsArray = SqlExpression.prepareColumnOptions<TColumn[]>(distinctColumns ?? [])
 
         if(distinctColumnsArray.length > 0) {
             sql += `DISTINCT ON (${distinctColumnsArray.map(column => column.column).join(', ')}) `;
@@ -85,12 +104,13 @@ class SelectColumns {
      * @param {string[]} columns - An array of columns to append.
      * @returns {string} The updated SQL query string with the columns appended.
      */
-    static selectColumns(sql: string, columns: string[]): string {
+    static appendColumnsSql(sql: string, columns: string[]): string {
 
-        const firstItemIsAll = columns.length === 1 && columns[0] === '*';
-        const isAll = columns.length === 0 || firstItemIsAll
+        const isEmptyColumns = columns.length === 0;
+        const isFirstItemIsWildcard = columns.length === 1 && columns[0] === '*';
+        const useAllColumns = isEmptyColumns || isFirstItemIsWildcard
 
-        if(isAll) {
+        if(useAllColumns) {
             sql += '*';
             return sql
         }

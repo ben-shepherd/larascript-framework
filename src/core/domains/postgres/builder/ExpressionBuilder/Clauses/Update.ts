@@ -46,7 +46,7 @@ class Update {
     static set(update: object, bindings: BindingsHelper): string {
         let sql = 'SET ';
 
-        const columns = Object.keys(update).map(column => SqlExpression.formatColumn({column}).column);
+        const columns = Object.keys(update).map(column => SqlExpression.prepareColumnOptions({column}).column);
         const values = Object.values(update); 
 
         for(let i = 0; i < columns.length; i++) {
@@ -76,7 +76,7 @@ class Update {
         let sql = 'WHERE ';
 
         for(const where of wheres) {
-            const column = SqlExpression.formatColumn({column: where.column}).column;
+            const column = SqlExpression.prepareColumnOptions({column: where.column}).column;
             const value = bindings.addBinding(column, where.value).getLastBinding()?.sql;
 
             sql += `${column} ${where.operator} ${value}`

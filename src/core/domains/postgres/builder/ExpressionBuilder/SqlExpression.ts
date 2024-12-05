@@ -74,6 +74,12 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
 
     protected updates: object | object[] | null        = getDefaults().updates;
 
+    /**
+     * Class representing a SQL query expression.
+     *
+     * This class is used internally by the Postgres query builder to build SQL queries.
+     * It is not intended to be used directly.
+     */
     public static readonly formatColumnWithQuotes = (column: string): string => {
         if(column.startsWith('"') && column.endsWith('"')){
             return column
@@ -83,30 +89,30 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
 
     /**
      * Formats a column name with double quotes for safe usage in SQL queries
-     * @param column - The column name to format
+     * @param options - The column name to format
      * @returns The formatted column name
      */
-    public static formatColumn<T extends TColumn | TColumn[] = TColumn>(column: T): T {
+    public static prepareColumnOptions<T extends TColumn | TColumn[] = TColumn>(options: T): T {
 
         /**
          * Formats a column name with double quotes for safe usage in SQL queries
-         * @param {TColumn} col - The column name to format
+         * @param {TColumn} option - The column name to format
          * @returns {TColumn} The formatted column name
          * @private
          */
-        const format = (col: TColumn): TColumn => {
-            if(col.isFormatted) {
-                return col
+        const format = (option: TColumn): TColumn => {
+            if(option.isFormatted) {
+                return option
             }
-            col.column = this.formatColumnWithQuotes(col.column);
-            return col
+            option.column = this.formatColumnWithQuotes(option.column);
+            return option
         }
 
-        if(Array.isArray(column)) {
-            return column.map(format) as T;
+        if(Array.isArray(options)) {
+            return options.map(format) as T;
         }
 
-        return format(column) as T;
+        return format(options) as T;
     }
 
     

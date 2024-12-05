@@ -16,7 +16,7 @@ class OrderBy {
     }
 
     static columnToSql({ column }: TOrderBy): string {
-        return SqlExpression.formatColumn({column}).column
+        return SqlExpression.prepareColumnOptions({column}).column
     }
 
     static directionToSql({ direction }: TOrderBy): string {
