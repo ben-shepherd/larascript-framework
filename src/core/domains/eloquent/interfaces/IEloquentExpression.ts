@@ -125,6 +125,14 @@ interface IEloquentExpression<Bindings = unknown> {
     /**
      * Adds a where clause to the query builder.
      * 
+     * @param {TWhereClause} where - The where clause to add.
+     * @returns {this} The query builder instance for chaining.
+     */
+    addWhere(where: TWhereClause): this;
+
+    /**
+     * Adds a where clause to the query builder.
+     * 
      * @param {string} column - The column to apply the where condition on.
      * @param {TOperator} operator - The operator to use for comparison.
      * @param {TWhereClauseValue | TWhereClauseValue[]} value - The value or values to compare against.

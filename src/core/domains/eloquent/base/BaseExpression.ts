@@ -36,6 +36,8 @@ abstract class BaseExpression<Bindings = unknown> implements IEloquentExpression
 
     abstract setWhere(where: TWhereClause[]): this;
 
+    abstract addWhere(where: TWhereClause): this;
+
     abstract getWhere(): TWhereClause[];
 
     abstract where(

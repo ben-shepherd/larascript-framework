@@ -427,6 +427,17 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
     }
 
     /**
+     * Adds a single where clause to the query builder.
+     * 
+     * @param {TWhereClause} where - The where clause to add.
+     * @returns {this} The query builder instance for chaining.
+     */
+    addWhere(where: TWhereClause): this {
+        this.whereClauses.push(where);
+        return this
+    }
+
+    /**
      * Adds a where clause to the query builder.
      * 
      * @param {string} column - The column to apply the where condition on.
@@ -435,7 +446,7 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
      * @returns {this} The query builder instance for chaining.
      */
     where(column: string, operator: TOperator, value: TWhereClauseValue | TWhereClauseValue[] = null, logicalOperator: TLogicalOperator = 'and'): this {
-        this.whereClauses.push({ column, operator, value, logicalOperator });
+        this.whereClauses.push({ column, operator, value, logicalOperator, tableName: this.table });
         return this;
     }
 

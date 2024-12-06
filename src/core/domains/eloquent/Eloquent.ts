@@ -564,7 +564,12 @@ abstract class Eloquent<
             throw new QueryBuilderException('Operator is required')
         }
 
-        this.expression.where(column, operator, value, logicalOperator);
+        this.expression.addWhere({
+            column,
+            operator,
+            value,
+            tableName: this.useTable()
+        })
         return this as unknown as IEloquent<Data>
     }
 
@@ -602,7 +607,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Data>} The query builder instance for chaining.
      */
     whereIn(column: string, values: TWhereClauseValue[]): IEloquent<Data> {
-        this.expression.where(column, 'in', values);
+        this.expression.addWhere({column, operator: 'in', value: values, tableName: this.useTable()});
         return this as unknown as IEloquent<Data>
     }
 
@@ -617,7 +622,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Data>} The query builder instance for chaining.
      */
     whereNotIn(column: string, values: any[]): IEloquent<Data> {
-        this.expression.where(column, 'not in', values);
+        this.expression.addWhere({column, operator: 'not in', value: values, tableName: this.useTable()});
         return this as unknown as IEloquent<Data>
     }
 
@@ -628,7 +633,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Data>} The query builder instance for chaining.
      */
     whereNull(column: string): IEloquent<Data> {
-        this.expression.where(column, 'is null', null);
+        this.expression.addWhere({column, operator: 'is null', value: null, tableName: this.useTable()});
         return this as unknown as IEloquent<Data>
     }
 
@@ -642,7 +647,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Data>} The query builder instance for chaining.
      */
     whereNotNull(column: string): IEloquent<Data> {
-        this.expression.where(column, 'is not null', null);
+        this.expression.addWhere({column, operator: 'is not null', value: null, tableName: this.useTable()});
         return this as unknown as IEloquent<Data>
     }
 
@@ -658,7 +663,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Data>} The query builder instance for chaining.
      */
     whereBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data> {
-        this.expression.where(column, 'between', range);
+        this.expression.addWhere({column, operator: 'between', value: range, tableName: this.useTable()});
         return this as unknown as IEloquent<Data>
     }
 
@@ -674,7 +679,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Data>} The query builder instance for chaining.
      */
     whereNotBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data> {
-        this.expression.where(column, 'not between', range);
+        this.expression.addWhere({column, operator: 'not between', value: range, tableName: this.useTable()});
         return this as unknown as IEloquent<Data>
     }
 
@@ -689,7 +694,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Data>} The query builder instance for chaining.
      */
     whereLike(column: string, value: TWhereClauseValue): IEloquent<Data> {
-        this.expression.where(column, 'like', value);
+        this.expression.addWhere({column, operator: 'like', value, tableName: this.useTable()});
         return this as unknown as IEloquent<Data>
     }
 
@@ -704,7 +709,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Data>} The query builder instance for chaining.
      */
     whereNotLike(column: string, value: TWhereClauseValue): IEloquent<Data> {
-        this.expression.where(column, 'not like', value);
+        this.expression.addWhere({column, operator: 'not like', value, tableName: this.useTable()});
         return this as unknown as IEloquent<Data>
     }
 

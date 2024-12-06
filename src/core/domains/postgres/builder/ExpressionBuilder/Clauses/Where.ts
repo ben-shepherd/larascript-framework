@@ -6,6 +6,7 @@ import SqlExpression from "../SqlExpression";
 
 type SqlWhereClause = {
     column: string;
+    tableName?: string;
     operator: string;
     value?: TWhereClauseValue;
     logicalOperator?: TLogicalOperator
@@ -99,6 +100,11 @@ class Where {
         for(let i = 0; i < wheres.length; i++) {
             const currentWhereSql = this.convertToSqlWhereClause(wheres[i])
             const isNotLastWhere = i < wheres.length - 1
+
+            // Example: "table."
+            if(currentWhereSql.tableName) {
+                sql += currentWhereSql.tableName + '.'
+            }
 
             // Example: "column"
             sql += SqlExpression.prepareColumnOptions({ column: currentWhereSql.column }).column + ' ';

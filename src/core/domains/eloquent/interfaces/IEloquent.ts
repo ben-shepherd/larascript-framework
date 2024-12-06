@@ -31,10 +31,11 @@ export const LogicalOperators = {
 export type TLogicalOperator = typeof LogicalOperators[keyof typeof LogicalOperators];
 
 export type TWhereClause = {
-    column: string,
-    operator: TOperator,
-    value: TWhereClauseValue | TWhereClauseValue[],
-    logicalOperator?: TLogicalOperator
+    column: string;
+    tableName?: string;
+    operator: TOperator;
+    value: TWhereClauseValue | TWhereClauseValue[];
+    logicalOperator?: TLogicalOperator;
 }
 
 export type TJoin = {
