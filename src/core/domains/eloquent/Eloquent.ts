@@ -27,7 +27,7 @@ export type TQueryBuilderOptions = {
 }
 
 abstract class Eloquent<
-    Data extends object = object,
+    Data,
     Adapter extends IDatabaseAdapter = IDatabaseAdapter,
     Expression extends IEloquentExpression = IEloquentExpression> extends BaseEloquent implements IEloquent<Data, Expression> {
 
@@ -87,7 +87,7 @@ abstract class Eloquent<
      *   @param {ICtor<IModel>} options.modelCtor - The constructor of the model to use for the query builder.
      * @returns {IEloquent<Data>} A query builder instance configured with the specified options.
      */
-    static query<Data extends object = object>(connectionName: string, tableName?: string): IEloquent<Data> {
+    static query<Data>(connectionName: string, tableName?: string): IEloquent<Data> {
         return new (this.constructor as ICtor<IEloquent<Data>>)()
             .setConnectionName(connectionName)
             .setTable(tableName ?? '')
@@ -322,6 +322,26 @@ abstract class Eloquent<
     }
 
     /**
+     * Returns a new query builder instance that is associated with the provided model constructor.
+     * The returned query builder instance is a clone of the current query builder and is associated
+     * with the provided model constructor.
+     * @template Model The type of the model to associate with the query builder.
+     * @returns {IEloquent<Model>} A new query builder instance associated with the provided model constructor.
+     */
+    asModel<Model extends IModel>(): IEloquent<Model> {
+        if(!this.modelCtor) {
+            throw new EloquentException('Model constructor has not been set');
+        }
+
+        const modelCtor = this.modelCtor as ICtor<Model>
+
+        return this.clone<Model>()
+            .setExpression(this.expression.clone())
+            .setModelCtor(modelCtor)
+            .setFormatter((row) => new modelCtor(row))
+    }
+
+    /**
      * Sets the formatter function for the query builder. This function will be
      * called with each row of the result as an argument. The function should
      * return the transformed row.
@@ -439,8 +459,8 @@ abstract class Eloquent<
      * The cloned instance will have the same model constructor associated with it.
      * @returns {IEloquent} The cloned query builder instance
      */
-    clone(): IEloquent<Data> {
-        return deepClone<IEloquent<Data>>(this)
+    clone<T = Data>(): IEloquent<T> {
+        return deepClone<IEloquent<T>>(this as unknown as IEloquent<T>)
             .setExpression(this.expression.clone())
     }
 

@@ -13,7 +13,7 @@ import IEloquentExpression from "../../eloquent/interfaces/IEloquentExpression";
 import PostgresAdapter from "../adapters/PostgresAdapter";
 import SqlExpression from "../builder/ExpressionBuilder/SqlExpression";
 
-class PostgresEloquent<Data extends object = object> extends Eloquent<Data, PostgresAdapter, SqlExpression> {
+class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpression> {
 
     /**
      * Constructor

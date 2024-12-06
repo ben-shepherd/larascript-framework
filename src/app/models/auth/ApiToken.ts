@@ -83,7 +83,7 @@ class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
      * @returns True if all scopes are present, false otherwise
      */
     hasScope(scopes: string | string[], exactMatch: boolean = true): boolean {
-        const currentScopes = this.getAttribute('scopes') ?? [];
+        const currentScopes = this.getAttributeSync('scopes') ?? [];
        
         if(exactMatch) {
             return Scopes.exactMatch(currentScopes, scopes);

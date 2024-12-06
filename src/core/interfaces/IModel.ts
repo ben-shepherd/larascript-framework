@@ -4,7 +4,6 @@ import { IHasManyOptions } from "@src/core/domains/database/interfaces/relations
 import IHasObserver from "@src/core/domains/observer/interfaces/IHasObserver";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import IModelAttributes from "@src/core/interfaces/IModelData";
-import { IHasAttributes } from "@src/core/interfaces/concerns/IHasAttributes";
 import { IHasDatabaseConnection } from "@src/core/interfaces/concerns/IHasDatabaseConnection";
 import { IHasPrepareDocument } from "@src/core/interfaces/concerns/IHasPrepareDocument";
 
@@ -17,13 +16,23 @@ export type ModelConstructor<M extends IModel = IModel> = new (...args: any[]) =
 
 export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>
 
-export interface IModel<Attributes extends IModelAttributes = IModelAttributes> extends IHasDatabaseConnection, IHasPrepareDocument, IHasObserver, IHasAttributes<Attributes> {
+export interface IModel<Attributes extends IModelAttributes = IModelAttributes> extends IHasDatabaseConnection, IHasPrepareDocument, IHasObserver {
     primaryKey: string;
     fields: string[];
     guarded: string[];
     dates: string[];
     timestamps: boolean;
     json: string[];
+    attributes: Attributes | null;
+    original: Attributes | null;
+    attr<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Promise<Attributes[K] | null | undefined>;
+    setAttribute(key: keyof Attributes, value?: unknown): Promise<void>;
+    getAttributeSync<K extends keyof Attributes = keyof Attributes>(key: K): Attributes[K] | null
+    getAttribute(key: keyof Attributes): Promise<Attributes[keyof Attributes] | null>
+    getAttributes(...args: any[]): Attributes | null;
+    getOriginal(key: keyof Attributes): Attributes[keyof Attributes] | null
+    getDirty(): Record<keyof Attributes, any> | null
+    isDirty(): boolean;
     getFields(): string[];
     useTableName(): string;
     getId(): string | undefined;

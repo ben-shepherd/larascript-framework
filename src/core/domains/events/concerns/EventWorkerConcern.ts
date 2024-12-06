@@ -43,7 +43,7 @@ const EventWorkerConcern = (Base: ICtor) => {
          */
         private async handleWorkerModel(workerModel: IWorkerModel, options: TEventWorkerOptions): Promise<void> {
             try {
-                const eventName = workerModel.getAttribute('eventName');
+                const eventName = workerModel.getAttributeSync('eventName');
             
                 if(typeof eventName !== 'string') {
                     throw new EventWorkerException('Event name must be a string');
@@ -77,9 +77,9 @@ const EventWorkerConcern = (Base: ICtor) => {
          */
         private async handleUpdateWorkerModelAttempts(workerModel: IWorkerModel, options: TEventWorkerOptions) {
 
-            const attempt = workerModel.getAttribute('attempt') ?? 0
+            const attempt = await workerModel.getAttributeSync('attempt') ?? 0
             const newAttempt = attempt + 1
-            const retries = workerModel.getAttribute('retries') ?? 0
+            const retries = await workerModel.getAttributeSync('retries') ?? 0
 
             await workerModel.attr('attempt', newAttempt)
 
@@ -103,9 +103,9 @@ const EventWorkerConcern = (Base: ICtor) => {
          */
         private async handleFailedWorkerModel(workerModel: IWorkerModel, options: TEventWorkerOptions) {
             const FailedWorkerModel = new options.failedWorkerModelCtor({
-                eventName: workerModel.getAttribute('eventName'),
-                queueName: workerModel.getAttribute('queueName'),
-                payload: workerModel.getAttribute('payload') ?? '{}',
+                eventName: workerModel.getAttributeSync('eventName'),
+                queueName: workerModel.getAttributeSync('queueName'),
+                payload: workerModel.getAttributeSync('payload') ?? '{}',
                 error: '',
                 failedAt: new Date()
             })

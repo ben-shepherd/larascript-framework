@@ -34,7 +34,7 @@ export default class ApiTokenObserver extends Observer<IApiTokenObserverData> {
             return data
         }
 
-        const userGroups = user.getAttribute('groups') ?? [];
+        const userGroups = user.getAttributeSync('groups') ?? [];
 
         for(const userGroup of userGroups) {
             const group = App.container('auth').config.permissions.groups.find(g => g.name === userGroup);

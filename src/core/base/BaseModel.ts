@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 
-import HasAttributesConcern from '@src/core/concerns/HasAttributesConcern';
 import HasDatabaseConnectionConcern from '@src/core/concerns/HasDatabaseConnectionConcern';
 import HasObserverConcern from '@src/core/concerns/HasObserverConcern';
 import HasPrepareDocumentConcern from '@src/core/concerns/HasPrepareDocumentConcern';
@@ -17,7 +16,6 @@ class BaseModel<Attributes extends IModelAttributes = IModelAttributes> extends 
     class extends Broadcaster {},
     HasDatabaseConnectionConcern,
     HasPrepareDocumentConcern,
-    HasAttributesConcern,
     HasObserverConcern
 ) {
 
@@ -35,36 +33,16 @@ class BaseModel<Attributes extends IModelAttributes = IModelAttributes> extends 
     declare getSchema: () => IDatabaseSchema;
     
     /**
-         * Declare HasPrepareDocument concern
-         */
+      * Declare HasPrepareDocument concern
+      */
     declare json: string[];
         
     declare prepareDocument: <T>() => T;
     
-    /**
-         * Declare HasAttributes concern
-         */
-    declare attributes: Attributes | null;
-    
-    declare original: Attributes | null;
-    
-    declare attr: <T extends keyof Attributes>(key: T, value?: unknown) => Attributes[T] | null | undefined;
-    
-    declare getAttribute: <T extends keyof Attributes>(key: T) => Attributes[T] | null
-    
-    declare getAttributes: () => Attributes | null;
-    
-    declare getOriginal: <T extends keyof Attributes>(key: T) => Attributes[T] | null
-    
-    declare setAttribute: <T extends keyof Attributes>(key: T, value: Attributes[T]) => Promise<void>;
-    
-    declare getDirty: () => Record<keyof Attributes, any> | null;
-    
-    declare isDirty: () => boolean;
         
     /**
-         * Delcare HasObserver concern
-         */
+     * Delcare HasObserver concern
+     */
     declare observer?: IObserver;
     
     declare observe: () => void;

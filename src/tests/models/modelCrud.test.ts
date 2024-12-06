@@ -53,7 +53,7 @@ describe('test model crud', () => {
             const createdModel = new TestModel({
                 name: 'John'
             });
-            expect(createdModel.getAttribute('name')).toEqual('John');
+            expect(createdModel.getAttributeSync('name')).toEqual('John');
             
             await createdModel.save();
             expect(typeof createdModel.getId() === 'string').toBe(true);
@@ -65,7 +65,7 @@ describe('test model crud', () => {
             await createdModel.update();
             await createdModel.refresh();
             expect(typeof createdModel.getId() === 'string').toBe(true);
-            expect(createdModel.getAttribute('name')).toEqual('Jane');
+            expect(createdModel.getAttributeSync('name')).toEqual('Jane');
     
 
             /**
@@ -77,7 +77,7 @@ describe('test model crud', () => {
             })
             expect(fetchedModel).toBeTruthy()
             expect(fetchedModel?.getId() === createdModel.getId()).toBe(true)
-            expect(fetchedModel?.getAttribute('name')).toEqual('Jane');
+            expect(fetchedModel?.getAttributeSync('name')).toEqual('Jane');
 
             /**
              * Delete the model

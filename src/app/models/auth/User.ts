@@ -85,7 +85,7 @@ export default class User extends Model<IUserData> implements IUserModel {
      */
     hasRole(roles: string | string[]): boolean {
         roles = typeof roles === 'string' ? [roles] : roles;
-        const userRoles = this.getAttribute('roles') ?? [];
+        const userRoles = this.getAttributeSync('roles') ?? [];
 
         for(const role of roles) {
             if(!userRoles.includes(role)) return false;
@@ -102,7 +102,7 @@ export default class User extends Model<IUserData> implements IUserModel {
      */
     hasGroup(groups: string | string[]): boolean {
         groups = typeof groups === 'string' ? [groups] : groups;
-        const userGroups = this.getAttribute('groups') ?? [];
+        const userGroups = this.getAttributeSync('groups') ?? [];
 
         for(const group of groups) {
             if(!userGroups.includes(group)) return false;

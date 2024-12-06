@@ -34,7 +34,7 @@ class EloquentRelationship {
      * 
      * @return {Eloquent} The Eloquent instance.
      */
-    static applyRelationshipOnEloquent<Data extends object = object>(eloquent: IEloquent<Data>, relationship: IRelationship, relationshipName: string): IEloquent<Data> {
+    static applyRelationshipOnEloquent<Data>(eloquent: IEloquent<Data>, relationship: IRelationship, relationshipName: string): IEloquent<Data> {
 
         if(relationship instanceof BelongsTo) {
             const localModelCtor = relationship.getLocalModelCtor();

@@ -325,7 +325,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
      * @param connectionName The name of the connection to use for the query.
      * @returns An instance of the Eloquent query builder.
      */
-    eloquent<Data extends object = object>(connectionName: string = this.getDefaultConnectionName()): IEloquent<Data> {
+    eloquent<Data>(connectionName: string = this.getDefaultConnectionName()): IEloquent<Data> {
         const adapter = this.getAdapter(connectionName)
         const eloquentCtor = adapter.getEloquentCtor<Data>()
         return new eloquentCtor().setConnectionName(connectionName);

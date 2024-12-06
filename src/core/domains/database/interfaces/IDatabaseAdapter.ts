@@ -36,9 +36,9 @@ export interface  IDatabaseAdapter {
 
     getSchema(): IDatabaseSchema;
 
-    getEloquent<Data extends object = object>(): IEloquent<Data>;
+    getEloquent<Data>(): IEloquent<Data>;
 
-    getEloquentCtor<Data extends object = object>(): ICtor<IEloquent<Data>>;
+    getEloquentCtor<Data>(): ICtor<IEloquent<Data>>;
 
     isConnected(): Promise<boolean>;
 

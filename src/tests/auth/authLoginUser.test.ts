@@ -44,7 +44,7 @@ describe('attempt to run app with normal appConfig', () => {
         })
         await testUser.save();
         expect(testUser.getId()).toBeTruthy();
-        expect(testUser.getAttribute('firstName')).toBe('Tony');
+        expect(testUser.getAttributeSync('firstName')).toBe('Tony');
     })
 
     afterAll(async () => {

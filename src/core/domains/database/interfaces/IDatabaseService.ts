@@ -32,7 +32,7 @@ export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>
 
     schema<TSchema extends IDatabaseSchema = IDatabaseSchema>(connectionName?: string): TSchema;
 
-    eloquent<Data extends object = object>(connectionName?: string): IEloquent<Data>;
+    eloquent<Data>(connectionName?: string): IEloquent<Data>;
 
     createMigrationSchema(tableName: string, connectionName?: string): Promise<unknown>;
 }

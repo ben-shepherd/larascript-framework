@@ -60,7 +60,7 @@ export default class WorkerModel extends Model<WorkerModelData> implements IWork
 
     getPayload<T = unknown>(): T | null {
         try {
-            const payload = this.getAttribute('payload');
+            const payload = this.getAttributeSync('payload');
             return JSON.parse(payload) as T
         }
         // eslint-disable-next-line no-unused-vars

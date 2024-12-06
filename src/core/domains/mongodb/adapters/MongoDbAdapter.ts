@@ -164,11 +164,11 @@ class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
         return new MongoDbSchema(this)
     }
 
-    getEloquent<Data extends object = object>(connectionName: string = this.getConnectionName()): IEloquent<Data> {
+    getEloquent<Data>(connectionName: string = this.getConnectionName()): IEloquent<Data> {
         throw new Error("Method not implemented.");
     }   
 
-    getEloquentCtor<Data extends object = object>(): ICtor<IEloquent<Data>> {
+    getEloquentCtor<Data>(): ICtor<IEloquent<Data>> {
         throw new Error("Method not implemented.");
     }
 

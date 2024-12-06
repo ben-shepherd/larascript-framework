@@ -59,11 +59,11 @@ describe('test model crud', () => {
                 number: 0
             });
             await createdModel.save();
-            expect(createdModel.getAttribute('name')).toEqual('John');
-            expect(createdModel.getAttribute('number')).toEqual(1);
+            expect(createdModel.getAttributeSync('name')).toEqual('John');
+            expect(createdModel.getAttributeSync('number')).toEqual(1);
 
             await createdModel.setAttribute('name', 'Jane');
-            expect(createdModel.getAttribute('name')).toEqual('Bob');
+            expect(createdModel.getAttributeSync('name')).toEqual('Bob');
 
 
         }

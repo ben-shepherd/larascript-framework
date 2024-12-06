@@ -102,7 +102,7 @@ export type SetModelColumnsOptions = {
     [key: string]: unknown;
 }
 
-export interface IEloquent<Data extends object = object, Expression extends IEloquentExpression = IEloquentExpression> {
+export interface IEloquent<Data, Expression extends IEloquentExpression = IEloquentExpression> {
     
     // eloquent methods
     setConnectionName(connectionName: string): IEloquent<Data>;
@@ -116,6 +116,7 @@ export interface IEloquent<Data extends object = object, Expression extends IElo
     setModelColumns(modelCtor?: ICtor<IModel>, options?: SetModelColumnsOptions): IEloquent<Data>;
 
     // formatting
+    asModel<Model extends IModel>(): IEloquent<Model>; 
     setFormatter(formatterFn?: TFormatterFn): IEloquent<Data>;
     
     // execution
@@ -226,5 +227,5 @@ export interface IEloquent<Data extends object = object, Expression extends IElo
     // }>;
 
     // Cloning 
-    clone(): IEloquent<Data>;
+    clone<T = Data>(): IEloquent<T>;
 }

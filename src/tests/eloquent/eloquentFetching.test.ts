@@ -6,6 +6,7 @@ import ModelNotFound from '@src/core/exceptions/ModelNotFound';
 import { generateUuidV4 } from '@src/core/util/uuid/generateUuidV4';
 import testHelper from '@src/tests/testHelper';
 
+import { ITestEmployeeModelData } from './models/TestEmployeeModel';
 import TestPeopleModel, { ITestPeopleModelData, resetTable } from './models/TestPeopleModel';
 
 describe('eloquent', () => {
@@ -47,6 +48,35 @@ describe('eloquent', () => {
         ]);
 
     });
+
+    test('test find, findOrFail, all and get as model', async () => {
+
+        const allResults = await query.clone()
+            .asModel()
+            .all();
+
+        console.log(allResults)
+
+        expect(allResults.count()).toBe(4);
+        expect(allResults[0] instanceof TestPeopleModel).toBeTruthy();
+        expect(allResults[1] instanceof TestPeopleModel).toBeTruthy();
+        expect(allResults[2] instanceof TestPeopleModel).toBeTruthy();
+        expect(allResults[3] instanceof TestPeopleModel).toBeTruthy();
+
+        const getResults = await query.clone()
+            .asModel()
+            .get();
+        expect(getResults.count()).toBe(4);
+        expect(getResults[0] instanceof TestPeopleModel).toBeTruthy();
+        expect(getResults[1] instanceof TestPeopleModel).toBeTruthy();
+        expect(getResults[2] instanceof TestPeopleModel).toBeTruthy();
+        expect(getResults[3] instanceof TestPeopleModel).toBeTruthy();
+
+        const firstResult = await query.clone()
+            .asModel()
+            .find(inserted[0].id)
+        expect(firstResult instanceof TestPeopleModel).toBeTruthy();
+    })
 
     test('test find, findOrFail, all and get', async () => {
         
@@ -114,10 +144,15 @@ describe('eloquent', () => {
         const bindings = ['Alice', 'Bob'];
 
         const results = await query.clone().raw(sql, bindings);
+        let rows: ITestEmployeeModelData[] = [];
 
-        expect(results.rows.length).toBe(2);
-        expect(results.rows?.[0].name).toBe('Alice');
-        expect(results.rows?.[1].name).toBe('Bob');
+        if(results &&typeof results === 'object' && 'rows' in results) {
+            rows = results.rows as ITestEmployeeModelData[];
+        }
+
+        expect(rows.length).toBe(2);
+        expect(rows?.[0].name).toBe('Alice');
+        expect(rows?.[1].name).toBe('Bob');
 
     })
 

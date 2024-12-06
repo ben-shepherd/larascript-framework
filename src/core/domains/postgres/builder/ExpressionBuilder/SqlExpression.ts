@@ -81,6 +81,7 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
      * It is not intended to be used directly.
      */
     public static readonly formatColumnWithQuotes = (column: string): string => {
+        if(column === '*') return column
         if(column.startsWith('"') && column.endsWith('"')){
             return column
         }

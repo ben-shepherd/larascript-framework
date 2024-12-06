@@ -27,18 +27,9 @@ const HasAttributesConcern = <Attributes extends IModelAttributes>(Base: ICtor<I
                 async (payload) => await this.onSetAttributeEvent(payload)
             );
         }
+        attributes: IModelAttributes | null;
+        original: IModelAttributes | null;
 
-        /**
-         * The actual data of the model.
-         * Can be null if the model hasn't been populated.
-         */
-        public attributes: Attributes | null = null;
-
-        /**
-         * The original data of the model.
-         * Can be null if the model hasn't been populated.
-         */
-        public original: Attributes | null = null;
 
 
         /**
@@ -66,9 +57,9 @@ const HasAttributesConcern = <Attributes extends IModelAttributes>(Base: ICtor<I
          * @param {any} [value] - The value to set for the attribute.
          * @returns {Attributes[K] | null | undefined} The value of the attribute or null if not found, or undefined if setting.
          */
-        async attr<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Promise<Attributes[K] | null | undefined> {
+        async attrSync<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Promise<Attributes[K] | null | undefined> {
             if (value === undefined) {
-                return this.getAttribute(key) as Attributes[K] ?? null;
+                return this.getAttributeSync(key) as Attributes[K] ?? null;
             }
 
             await this.setAttribute(key, value);
@@ -111,7 +102,7 @@ const HasAttributesConcern = <Attributes extends IModelAttributes>(Base: ICtor<I
          * @param {K} key - The key of the attribute to retrieve.
          * @returns {Attributes[K] | null} The value of the attribute or null if not found.
          */
-        getAttribute<K extends keyof Attributes = keyof Attributes>(key: K): Attributes[K] | null {
+        getAttributeSync<K extends keyof Attributes = keyof Attributes>(key: K): Attributes[K] | null {
             return this.attributes?.[key] ?? null;
         }
 

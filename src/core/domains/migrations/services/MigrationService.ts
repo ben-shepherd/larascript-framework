@@ -152,8 +152,8 @@ class MigrationService implements IMigrationService {
 
         // Sort by oldest to newest
         results.sort((a, b) => {
-            const aDate = a.getAttribute('appliedAt') as Date;
-            const bDate = b.getAttribute('appliedAt') as Date;
+            const aDate = a.getAttributeSync('appliedAt') as Date;
+            const bDate = b.getAttributeSync('appliedAt') as Date;
 
             if (!aDate || !bDate) {
                 return 0;
@@ -169,7 +169,7 @@ class MigrationService implements IMigrationService {
         // Run the migrations
         for (const result of results) {
             try {
-                const fileName = result.getAttribute('name') as string;
+                const fileName = result.getAttributeSync('name') as string;
                 const migration = await this.fileService.getImportMigrationClass(fileName);
 
                 // Run the down method
@@ -236,8 +236,8 @@ class MigrationService implements IMigrationService {
         let current = 0;
 
         results.forEach(result => {
-            if (result.getAttribute('batch') as number > current) {
-                current = result.getAttribute('batch') as number
+            if (result.getAttributeSync('batch') as number > current) {
+                current = result.getAttributeSync('batch') as number
             }
         });
 

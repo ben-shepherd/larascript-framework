@@ -12,11 +12,11 @@ export interface IHasAttributes<Attributes extends IModelAttributes = IModelAttr
 
     original: Attributes | null;
 
-    attr<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Attributes[K] | null | undefined;
+    attrSync<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Attributes[K] | null | undefined;
 
     setAttribute(key: keyof Attributes, value?: unknown): Promise<void>;
 
-    getAttribute<K extends keyof Attributes = keyof Attributes>(key: K): Attributes[K] | null
+    getAttributeSync<K extends keyof Attributes = keyof Attributes>(key: K): Attributes[K] | null
 
     getAttributes(...args: any[]): Attributes | null;
 

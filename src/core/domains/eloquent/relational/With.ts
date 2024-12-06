@@ -4,7 +4,7 @@ import { IModel } from "@src/core/interfaces/IModel";
 import { IEloquent } from "../interfaces/IEloquent";
 import EloquentRelationship from "../utils/EloquentRelationship";
 
-class With<Data extends object = object> {
+class With<Data> {
 
     constructor(
         // eslint-disable-next-line no-unused-vars
