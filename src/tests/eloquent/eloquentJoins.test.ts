@@ -32,8 +32,11 @@ describe('eloquent', () => {
             = TestEmployeeModel
                 .query<ITestEmployeeModelData>()
                 .orderBy('name', 'asc');
+    });
 
-        const departments = await departmentQuery.insert([
+    test('test insert department and employee relations', async () => {
+
+        const insertedDepartments = await departmentQuery.insert([
             {
                 deptName: 'HR',
                 createdAt: new Date(),
@@ -58,7 +61,7 @@ describe('eloquent', () => {
     
         await employeeQuery.insert([
             {
-                deptId: departments.find((department) => department.deptName === 'HR')?.id,
+                deptId: insertedDepartments.find((department) => department.deptName === 'HR')?.id,
                 name: 'Alice',
                 age: 25,
                 salary: 10000,
@@ -66,7 +69,7 @@ describe('eloquent', () => {
                 updatedAt: new Date()
             },
             {
-                deptId: departments.find((department) => department.deptName === 'Sales')?.id,
+                deptId: insertedDepartments.find((department) => department.deptName === 'Sales')?.id,
                 name: 'Bob',
                 salary: 20000,
                 age: 30,
@@ -74,7 +77,7 @@ describe('eloquent', () => {
                 updatedAt: new Date()
             },
             {
-                deptId: departments.find((department) => department.deptName === 'IT')?.id,
+                deptId: insertedDepartments.find((department) => department.deptName === 'IT')?.id,
                 name: 'John',
                 age: 35,
                 salary: 30000,
@@ -82,7 +85,7 @@ describe('eloquent', () => {
                 updatedAt: new Date()
             },
             {
-                deptId: departments.find((department) => department.deptName === 'Finance')?.id,
+                deptId: insertedDepartments.find((department) => department.deptName === 'Finance')?.id,
                 name: 'Jane',
                 age: 40,
                 salary: 40000,
@@ -98,9 +101,6 @@ describe('eloquent', () => {
                 updatedAt: new Date()
             }
         ])
-    });
-
-    test('test department and employee relations', async () => {
         
         const departments = await departmentQuery.clone().all()
         expect(departments.count()).toBe(4);
@@ -264,7 +264,7 @@ describe('eloquent', () => {
             .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
             .all();
     
-            
+
         // With 5 employees and 4 departments, should get 20 rows
         expect(results.count()).toBe(20);
 

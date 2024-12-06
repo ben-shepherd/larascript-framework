@@ -13,7 +13,7 @@ export interface ITestDepartmentModelData extends IModelAttributes {
     deptName: string;
     createdAt: Date;
     updatedAt: Date;
-    employees?: ITestEmployeeModelData[]
+    employees?: ITestEmployeeModelData[];
 
 }
 

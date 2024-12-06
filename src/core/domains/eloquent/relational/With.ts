@@ -1,9 +1,8 @@
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 
-import ExpressionException from "../exceptions/ExpressionException";
-import { IEloquent, IRelationship } from "../interfaces/IEloquent";
-import BelongsTo from "./BelongsTo";
+import { IEloquent } from "../interfaces/IEloquent";
+import EloquentRelationship from "../utils/EloquentRelationship";
 
 class With<Data extends object = object> {
 
@@ -24,48 +23,11 @@ class With<Data extends object = object> {
      */
     applyOnExpression(): IEloquent<Data> {
 
-        const relationship = this.getRelationInterface();
+        const relationshipInterface = EloquentRelationship.fromModel(this.eloquent.getModelCtor() as ICtor<IModel>, this.relationshipName)
 
-        if(relationship instanceof BelongsTo) {
-            const localModelCtor = relationship.getLocalModelCtor();
-            const foreignModelCtor = relationship.getForeignModelCtor();
-            const columnPrefix = `${this.relationshipName}_`;
-            
-            this.eloquent.getExpression()
-                .join({
-                    localTable: new localModelCtor(null).useTableName(),
-                    relatedTable: new foreignModelCtor(null).useTableName(),
-                    localColumn: relationship.getLocalKey(),
-                    relatedColumn: relationship.getForeignKey(),
-                    type: 'left'
-                })
-            this.eloquent.setModelColumns(foreignModelCtor, { columnPrefix, targetProperty: this.relationshipName})
-        }
+        EloquentRelationship.applyRelationshipOnEloquent<Data>(this.eloquent, relationshipInterface, this.relationshipName)
 
         return this.eloquent
-    }
-
-    /** 
-     * Retrieves the relationship class instance from the provided Local model.
-     *
-     * @throws {ExpressionException} If the relationship is invalid.
-     * @return {IRelationship} The relationship class instance.
-     */
-    protected getRelationInterface(): IRelationship {
-        const modelCtor = this.eloquent.getModelCtor() as ICtor<IModel>;
-        const model = new modelCtor(null);
-
-        if(typeof model[this.relationshipName] !== 'function') {
-            throw new ExpressionException('Invalid relationship \'' + this.relationshipName + '\'');
-        }
-
-        const relationship = model[this.relationshipName]() as IRelationship;
-
-        if(relationship?._relationshipInterface !== true) {
-            throw new ExpressionException('Invalid relationship \'' + this.relationshipName + '\'');
-        }
-
-        return relationship
     }
 
 }

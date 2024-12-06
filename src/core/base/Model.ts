@@ -22,8 +22,6 @@ import Str from '../util/str/Str';
  */
 export default abstract class Model<Attributes extends IModelAttributes> extends BaseModel<Attributes> implements IModel<Attributes> {
 
-    public name!: string;
-
     /**
      * The primary key field name for the model.
      * Defaults to 'id'.
@@ -61,9 +59,19 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
      */
     constructor(data: Attributes | null) {
         super();
-        this.name = this.constructor.name;
         this.attributes = { ...data } as Attributes;
         this.original = { ...data } as Attributes;
+    }
+
+    /**
+     * Creates a new instance of the model with the provided data.
+     * 
+     * @template Attributes The type of the model's attributes.
+     * @param {Attributes | null} data - The data to initialize the model with.
+     * @returns {IModel<Attributes>} A new instance of the model.
+     */
+    static create<Attributes extends IModelAttributes>(data: Attributes | null): IModel<Attributes> {
+        return new (this as unknown as ICtor<IModel<Attributes>>)(data);
     }
 
     /**
@@ -164,6 +172,7 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
     getId(): string | undefined {
         return this.attributes?.[this.primaryKey] as string | undefined;
     }
+
 
     /**
      * Sets a timestamp on a Date field.

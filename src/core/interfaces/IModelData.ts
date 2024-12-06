@@ -6,6 +6,10 @@
  * @property {Date} [updatedAt] - The date and time the model was updated.
  * @property {any} [key] - Any other property that is not explicitly defined.
  */
+
+export type ModelWithAttributes<Attributes extends IModelAttributes> = {
+    [K in keyof Attributes]: Attributes[K];
+}
 export default interface IModelAttributes {
     id?: string;
     createdAt?: Date;
