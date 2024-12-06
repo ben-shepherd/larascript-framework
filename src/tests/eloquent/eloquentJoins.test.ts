@@ -194,38 +194,79 @@ describe('eloquent', () => {
 
     test('test left join', async () => {
         
-        // const alice = await employeeQuery.clone()
-        //     .leftJoin(departmentTable, 'deptId', 'id')
-        //     .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
-        //     .where('name', 'Alice').firstOrFail();
+        const alice = await employeeQuery.clone()
+            .leftJoin(departmentTable, 'deptId', 'id')
+            .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+            .where('name', 'Alice').firstOrFail();
 
-        // expect(alice.department).toBeTruthy();
-        // expect(alice.department?.deptName).toBe('HR');
+        expect(alice.department).toBeTruthy();
+        expect(alice.department?.deptName).toBe('HR');
 
-        // const notFoundRelation = await employeeQuery.clone()
-        //     .leftJoin(departmentTable, 'deptId', 'id')
-        //     .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
-        //     .where('name', 'NoRelationship')
-        //     .firstOrFail();
+        const notFoundRelation = await employeeQuery.clone()
+            .leftJoin(departmentTable, 'deptId', 'id')
+            .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+            .where('name', 'NoRelationship')
+            .firstOrFail();
 
-        // expect(notFoundRelation).toBeTruthy();
-        // expect(notFoundRelation.department).toBeTruthy();
-        // expect(notFoundRelation.department).toBe(null);
+        expect(notFoundRelation).toBeTruthy();
+        expect(notFoundRelation.department).toBe(null);
 
     })
 
     test('test right join', async () => {
         
+        const alice = await employeeQuery.clone()
+            .rightJoin(departmentTable, 'deptId', 'id')
+            .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+            .where('name', 'Alice').firstOrFail();
+        
+        expect(alice.department).toBeTruthy();
+        expect(alice.department?.deptName).toBe('HR');
+
+        const notFoundRelation = await employeeQuery.clone()
+            .rightJoin(departmentTable, 'deptId', 'id')
+            .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+            .where('name', 'NoRelationship')
+            .first();
+
+        expect(notFoundRelation).toBeNull();
 
     })
 
     test('test full join', async () => {
         
+        // Should find matched records
+        const alice = await employeeQuery.clone()
+            .fullJoin(departmentTable, 'deptId', 'id')
+            .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+            .where('name', 'Alice')
+            .firstOrFail();
+    
+        expect(alice.department).toBeTruthy();
+        expect(alice.department?.deptName).toBe('HR');
+
+        // Should find unmatched employee (NoRelationship)
+        const notFoundRelation = await employeeQuery.clone()
+            .fullJoin(departmentTable, 'deptId', 'id')
+            .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+            .where('name', 'NoRelationship')
+            .firstOrFail();
+
+        expect(notFoundRelation).toBeTruthy();
+        expect(notFoundRelation.department).toBeNull();
 
     })
 
     test('test cross join', async () => {
         
+        const results = await employeeQuery.clone()
+            .crossJoin(departmentTable)
+            .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+            .all();
+    
+            
+        // With 5 employees and 4 departments, should get 20 rows
+        expect(results.count()).toBe(20);
 
     })
 });

@@ -3,6 +3,7 @@ import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { deepClone } from "@src/core/util/deepClone";
 
+import PrefixedPropertyGrouper, { PrefixToTargetPropertyOptions } from "../../util/PrefixedPropertyGrouper";
 import Collection from "../collections/Collection";
 import { IDatabaseAdapter } from "../database/interfaces/IDatabaseAdapter";
 import BaseEloquent from "./base/BaseEloquent";
@@ -16,7 +17,6 @@ import { IEloquent, LogicalOperators, OperatorArray, QueryOptions, SetModelColum
 import IEloquentExpression from "./interfaces/IEloquentExpression";
 import { TDirection } from "./interfaces/TEnums";
 import With from "./relational/With";
-import PrefixToTargetProperty, { PrefixToTargetPropertyOptions } from "./utils/PrefixToTargetProperty";
 
 export type TQueryBuilderOptions = {
     adapterName: string,
@@ -160,7 +160,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Data>} The query builder instance for chaining.
      */
     protected addFormatResultTargetPropertyToObject(prefix: string, property: string): IEloquent<Data> {
-        this.formatResultTargetPropertyToObjectOptions.push({columnPrefix: prefix, targetProperty: property})
+        this.formatResultTargetPropertyToObjectOptions.push({columnPrefix: prefix, targetProperty: property, setNullObjectIfAllNull: true })
         return this as unknown as IEloquent<Data>
     }
         
@@ -205,7 +205,7 @@ abstract class Eloquent<
      * @returns {T[]} The processed array of objects.
      */
     protected applyFormatResultTargetPropertyToObject<T extends object = object>(results: T[]): T[] {
-        return PrefixToTargetProperty.handle<T>(results, this.formatResultTargetPropertyToObjectOptions)
+        return PrefixedPropertyGrouper.handleArray<T>(results, this.formatResultTargetPropertyToObjectOptions)
     }
 
     /**
@@ -741,6 +741,62 @@ abstract class Eloquent<
     join(relatedTable: string, localColumn: string, relatedColumn: string ): IEloquent<Data> {
         const localTable = this.useTable()
         this.expression.setJoins({ localTable, localColumn, relatedTable, relatedColumn, type: 'inner' });
+        return this as unknown as IEloquent<Data>
+    }
+
+    /**
+     * Adds a left join to the query builder.
+     * 
+     * @param {string} relatedTable - The table to join with.
+     * @param {string} localColumn - The column to join on in the left table.
+     * @param {string} relatedColumn - The column to join on in the right table.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
+    leftJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Data> {
+        const localTable = this.useTable()
+        this.expression.setJoins({ localTable, localColumn, relatedTable, relatedColumn, type: 'left' });
+        return this as unknown as IEloquent<Data>
+    }
+
+    /**
+     * Adds a right join to the query builder.
+     * 
+     * @param {string} relatedTable - The table to join with.
+     * @param {string} localColumn - The column to join on in the left table.
+     * @param {string} relatedColumn - The column to join on in the right table.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
+    rightJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Data> {
+        const localTable = this.useTable()
+        this.expression.setJoins({ localTable, localColumn, relatedTable, relatedColumn, type: 'right' });
+        return this as unknown as IEloquent<Data>
+    }
+
+    /**
+     * Adds a full join to the query builder.
+     *
+     * This method allows for joining two tables using a full join, which returns
+     * all records when there is a match in either left or right table records.
+     *
+     * @param {string} relatedTable - The table to join with.
+     * @param {string} localColumn - The column to join on in the left table.
+     * @param {string} relatedColumn - The column to join on in the right table.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
+    fullJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Data> {
+        const localTable = this.useTable()
+        this.expression.setJoins({ localTable, localColumn, relatedTable, relatedColumn, type: 'full' });
+        return this as unknown as IEloquent<Data>
+    }
+
+    /**
+     * Adds a cross join to the query builder.
+     * 
+     * @param {string} relatedTable - The table to join with.
+     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     */
+    crossJoin(relatedTable: string) {
+        this.expression.setJoins({ relatedTable, type: 'cross' });
         return this as unknown as IEloquent<Data>
     }
 

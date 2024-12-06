@@ -39,13 +39,13 @@ export type TWhereClause = {
 }
 
 export type TJoin = {
-    localTable: string,
+    type: typeof JoinTypes[keyof typeof JoinTypes],
+    localTable?: string,
     localTableAbbreviation?: string,
     relatedTable?: string,
     relatedTableAbbreviation?: string,
-    type: typeof JoinTypes[keyof typeof JoinTypes],
-    localColumn: string,
-    relatedColumn: string
+    localColumn?: string,
+    relatedColumn?: string
 }
 
 export const JoinTypes = {
@@ -186,23 +186,20 @@ export interface IEloquent<Data extends object = object, Expression extends IElo
     whereNotBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data>;
 
     // Joins
-    // joinModel(model: ICtor<IModel>, type: TJoin['type'], targetProperty: string): IEloquent<Data>;
-    join(relatedTable: string, localColumn: string, relatedColumn: string ): IEloquent<Data>;
-    // leftJoin(table: string, first: string, operator?: string, second?: string): Promise<IQueryBuilder>;
-    // rightJoin(table: string, first: string, operator?: string, second?: string): Promise<IQueryBuilder>;
-    // crossJoin(table: string): Promise<IQueryBuilder>;
-
-    // Need to think about what parameters can be passed here.
-    // Ideally we could use (modelCtor, relationshipMethodOnModelCtor)
+    join(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Data>;
+    fullJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Data>;
+    leftJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Data>;
+    rightJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Data>;
+    crossJoin(table: string): IEloquent<Data>;
     with(relationship: string): IEloquent<Data>;
 
-    // // Ordering
+    // Ordering
     orderBy(column: string, direction?: TDirection): IEloquent<Data>;
     latest(column?: string): IEloquent<Data>;
     newest(column?: string): IEloquent<Data>;
     oldest(column?: string): IEloquent<Data>;
 
-    // // Grouping
+    // Grouping
     // groupBy(...columns: string[]): Promise<IQueryB   uilder>;
     // having(column: string, operator?: string, value?: any): Promise<IQueryBuilder>;
 
@@ -212,14 +209,14 @@ export interface IEloquent<Data extends object = object, Expression extends IElo
     skip(skip: number): IEloquent<Data>;
     take(take: number): IEloquent<Data>;
 
-    // // Aggregates
+    // Aggregates
     // count(column?: string): Promise<number>;
     // max(column: string): Promise<number>;
     // min(column: string): Promise<number>;
     // avg(column: string): Promise<number>;
     // sum(column: string): Promise<number>;
 
-    // // Pagination
+    // Pagination
     // paginate(perPage?: number, page?: number): Promise<{
     //     data: any[];
     //     total: number;

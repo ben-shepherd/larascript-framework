@@ -50,11 +50,11 @@ class Joins {
 
         const type = this.getJoinType(join)
 
-        const localTable = this.formatTableWithAbbreviation(join.localTable, join.localTableAbbreviation);
-        const localColumn = SqlExpression.prepareColumnOptions({ column: join.localColumn }).column;
+        const localTable = this.formatTableWithAbbreviation(join.localTable as string, join.localTableAbbreviation);
+        const localColumn = SqlExpression.prepareColumnOptions({ column: join.localColumn as string }).column;
 
         const relatedTable = this.formatTableWithAbbreviation(join.relatedTable, join.relatedTableAbbreviation);
-        const relatedColumn = SqlExpression.prepareColumnOptions({ column: join.relatedColumn }).column;
+        const relatedColumn = SqlExpression.prepareColumnOptions({ column: join.relatedColumn as string }).column;
 
         return `${type} ${relatedTable} ON ${localTable}.${localColumn} = ${relatedTable}.${relatedColumn}`;
     }
