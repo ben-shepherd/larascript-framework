@@ -32,8 +32,8 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes> 
     attributes: Attributes | null;
     original: Attributes | null;
     relationships: string[];
-    attr<K extends keyof Attributes = keyof Attributes>(key: K): Promise<Attributes[K] | null | undefined>;
     attr<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Promise<Attributes[K] | null | undefined>;
+    attrSync<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Attributes[K] | null | undefined;
     setAttribute(key: keyof Attributes, value?: unknown): Promise<void>;
     getAttributeSync<K extends keyof Attributes = keyof Attributes>(key: K): Attributes[K] | null
     getAttribute(key: keyof Attributes): Promise<Attributes[keyof Attributes] | null>

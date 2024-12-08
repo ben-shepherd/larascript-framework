@@ -92,21 +92,23 @@ class EloquentRelationship {
      * 
      * @return {Eloquent} The Eloquent instance.
      */
-    static applyRelationshipOnEloquent(eloquent: IEloquent, relationship: IRelationship, relationshipName: string) {
+    static updateEloquent(eloquent: IEloquent, relationship: IRelationship, relationshipName: string) {
 
         if(relationship instanceof BelongsTo) {
             const localModelCtor = relationship.getLocalModelCtor();
             const foreignModelCtor = relationship.getForeignModelCtor();
             const columnPrefix = `${relationshipName}_`;
             
-            eloquent.cloneExpression()
-                .join({
-                    localTable: new localModelCtor(null).useTableName(),
-                    relatedTable: new foreignModelCtor(null).useTableName(),
-                    localColumn: relationship.getLocalKey(),
-                    relatedColumn: relationship.getForeignKey(),
-                    type: 'left'
-                })
+            eloquent.setExpression(
+                eloquent.cloneExpression()
+                    .join({
+                        localTable: new localModelCtor(null).useTableName(),
+                        relatedTable: new foreignModelCtor(null).useTableName(),
+                        localColumn: relationship.getLocalKey(),
+                        relatedColumn: relationship.getForeignKey(),
+                        type: 'left'
+                    })
+            )
             eloquent.setModelColumns(foreignModelCtor, { columnPrefix, targetProperty: relationshipName})
         }
 

@@ -1,5 +1,5 @@
 import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel } from "@src/core/interfaces/IModel";
+import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
 import { IBelongsToOptions, IRelationship } from "../interfaces/IEloquent";
 
@@ -9,9 +9,9 @@ class BelongsTo implements IRelationship {
 
     constructor(
         // eslint-disable-next-line no-unused-vars
-        protected localModel: ICtor<IModel>,
+        protected localModel: ModelConstructor<IModel>,
         // eslint-disable-next-line no-unused-vars
-        protected foreignModel: ICtor<IModel>,
+        protected foreignModel: ModelConstructor<IModel>,
         // eslint-disable-next-line no-unused-vars
         protected options: Omit<IBelongsToOptions, 'foreignTable'>
     ) {}
@@ -20,7 +20,7 @@ class BelongsTo implements IRelationship {
      * Retrieves the constructor of the local model in the "belongs to" relationship.
      * @returns {ICtor<IModel>} The constructor of the local model.
      */
-    getLocalModelCtor(): ICtor<IModel> {
+    getLocalModelCtor(): ModelConstructor<IModel> {
         return this.localModel
     }
 
@@ -28,7 +28,7 @@ class BelongsTo implements IRelationship {
      * Retrieves the constructor of the related model in the "belongs to" relationship.
      * @returns {ICtor<IModel>} The constructor of the related model.
      */
-    getForeignModelCtor(): ICtor<IModel> {
+    getForeignModelCtor(): ModelConstructor<IModel> {
         return this.foreignModel
     }
 

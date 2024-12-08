@@ -2,7 +2,7 @@
 
 
 import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel } from "@src/core/interfaces/IModel";
+import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import IModelAttributes from "@src/core/interfaces/IModelData";
 
 import Collection from "../../collections/Collection";
@@ -75,8 +75,8 @@ export type TOffsetLimit = {
 
 export interface IRelationship {
     _relationshipInterface: true;
-    getLocalModelCtor(): ICtor<IModel>;
-    getForeignModelCtor(): ICtor<IModel>;
+    getLocalModelCtor(): ModelConstructor<IModel>;
+    getForeignModelCtor(): ModelConstructor<IModel>;
     getForeignTableName(): string;
     getOptions(): IBelongsToOptions
     getLocalKey(): string;

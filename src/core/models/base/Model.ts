@@ -4,7 +4,7 @@ import { IDatabaseDocument } from '@src/core/domains/database/interfaces/IDocume
 import { IBelongsToOptionsLegacy } from '@src/core/domains/database/interfaces/relationships/IBelongsTo';
 import { IHasManyOptions } from '@src/core/domains/database/interfaces/relationships/IHasMany';
 import { ICtor } from '@src/core/interfaces/ICtor';
-import { GetDataOptions, IModel } from '@src/core/interfaces/IModel';
+import { GetDataOptions, IModel, ModelConstructor } from '@src/core/interfaces/IModel';
 import IModelAttributes from '@src/core/interfaces/IModelData';
 import { App } from '@src/core/services/App';
 
@@ -135,6 +135,28 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         return undefined;
     }
     
+    /**
+     * Sets or retrieves the value of a specific attribute from the model's data.
+     * If called with a single argument, returns the value of the attribute.
+     * If called with two arguments, sets the value of the attribute synchronously.
+     * If the value is not set, returns null.
+     * 
+     * @template K Type of the attribute key.
+     * @param {K} key - The key of the attribute to retrieve or set.
+     * @param {any} [value] - The value to set for the attribute.
+     * @returns {Attributes[K] | null | undefined} The value of the attribute or null if not found, or undefined if setting.
+     */
+    attrSync<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Attributes[K] | null | undefined {
+
+        if (value === undefined) {
+            return this.getAttributeSync(key) as Attributes[K] ?? null;
+        }
+
+        this.setAttribute(key, value).then(() => {});
+
+        return undefined;
+    }
+
     /**
      * Sets the value of a specific attribute in the model's data.
      * 
@@ -482,8 +504,8 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
      * @param {Omit<IBelongsToOptionsLegacy, 'foreignTable'>} options - Options for the relationship.
      * @returns {BelongsTo} An instance of the BelongsTo class for chaining.
      */
-    belongsTo<ForiegnModel extends IModel = IModel>(foreignModel: ICtor<ForiegnModel>, options: Omit<IBelongsToOptions, 'foreignTable'>): BelongsTo {
-        return new BelongsTo(this.constructor as ICtor<IModel>, foreignModel, options);
+    belongsTo<ForiegnModel extends IModel = IModel>(foreignModel: ModelConstructor<ForiegnModel>, options: Omit<IBelongsToOptions, 'foreignTable'>): BelongsTo {
+        return new BelongsTo(this.constructor as ModelConstructor<IModel>, foreignModel, options);
     }
 
     /**

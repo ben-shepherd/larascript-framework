@@ -21,13 +21,13 @@ class With {
      * specify the join columns.
      * @return {IEloquent<Model, Attributes>} The Eloquent instance.
      */
-    applyOnExpression(): IEloquent {
+    updateEloquent() {
 
-        const relationshipInterface = EloquentRelationship.fromModel(this.eloquent.getModelCtor() as ICtor<IModel>, this.relationshipName)
+        const eloquent = this.eloquent.clone()
 
-        EloquentRelationship.applyRelationshipOnEloquent(this.eloquent, relationshipInterface, this.relationshipName)
+        const relationshipInterface = EloquentRelationship.fromModel(eloquent.getModelCtor() as ICtor<IModel>, this.relationshipName)
 
-        return this.eloquent
+        return EloquentRelationship.updateEloquent(eloquent, relationshipInterface, this.relationshipName)
     }
 
 }

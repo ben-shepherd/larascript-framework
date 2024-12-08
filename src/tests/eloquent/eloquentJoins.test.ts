@@ -136,7 +136,7 @@ describe('eloquent', () => {
         
     })
 
-    test('test model property', async () => {
+    test('test relational model property', async () => {
 
         const aliceModel = await employeeQuery.clone()
             .where('name', 'Alice')
@@ -147,7 +147,7 @@ describe('eloquent', () => {
         const hr = await departmentQuery.clone().where('deptName', 'HR').firstOrFail();
 
         expect(department).toBeTruthy();
-        expect(department).toBe(hr?.id);
+        expect(department?.id).toBe(hr?.id);
     })
 
     test('test with', async () => {
@@ -157,16 +157,16 @@ describe('eloquent', () => {
             .where('name', 'Alice')
             .firstOrFail();
 
-        expect(alice?.department).toBeTruthy();
-        expect(alice?.department?.deptName).toBe('HR');
+        expect((alice.attrSync('department') as TestDepartmentModel)).toBeTruthy();
+        expect(alice?.attrSync('department')?.deptName).toBe('HR');
 
         const bob = await employeeQuery.clone()
             .with('department')
             .where('name', 'Bob')
             .firstOrFail();
 
-        expect(bob?.department).toBeTruthy();
-        expect(bob?.department?.deptName).toBe('Sales');
+        expect(bob?.attrSync('department')).toBeTruthy();
+        expect(bob?.attrSync('department')?.deptName).toBe('Sales');
 
     })
 
@@ -178,8 +178,8 @@ describe('eloquent', () => {
             .where('name', 'Alice')
             .firstOrFail();
 
-        expect(alice?.department).toBeTruthy();
-        expect(alice?.department?.deptName).toBe('HR')
+        expect(alice?.attrSync('department')).toBeTruthy();
+        expect(alice?.attrSync('department')?.deptName).toBe('HR')
         
         const notFoundRelation = await employeeQuery.clone()
             .join(departmentTable, 'deptId', 'id')
@@ -198,8 +198,8 @@ describe('eloquent', () => {
             .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
             .where('name', 'Alice').firstOrFail();
 
-        expect(alice?.department).toBeTruthy();
-        expect(alice?.department?.deptName).toBe('HR');
+        expect(alice?.attrSync('department')).toBeTruthy();
+        expect(alice?.attrSync('department')?.deptName).toBe('HR');
 
         const notFoundRelation = await employeeQuery.clone()
             .leftJoin(departmentTable, 'deptId', 'id')
@@ -219,8 +219,8 @@ describe('eloquent', () => {
             .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
             .where('name', 'Alice').firstOrFail();
         
-        expect(alice?.department).toBeTruthy();
-        expect(alice?.department?.deptName).toBe('HR');
+        expect(alice?.attrSync('department')).toBeTruthy();
+        expect(alice?.attrSync('department')?.deptName).toBe('HR');
 
         const notFoundRelation = await employeeQuery.clone()
             .rightJoin(departmentTable, 'deptId', 'id')
@@ -241,8 +241,8 @@ describe('eloquent', () => {
             .where('name', 'Alice')
             .firstOrFail();
     
-        expect(alice?.department).toBeTruthy();
-        expect(alice?.department?.deptName).toBe('HR');
+        expect(alice?.attrSync('department')).toBeTruthy();
+        expect(alice?.attrSync('department')?.deptName).toBe('HR');
 
         // Should find unmatched employee (NoRelationship)
         const notFoundRelation = await employeeQuery.clone()

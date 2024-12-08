@@ -1,12 +1,10 @@
-import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { app } from "@src/core/services/App";
 
 import { IEloquent } from "../interfaces/IEloquent";
 import { IQueryService } from "../interfaces/IQueryService";
 
-export const query = () => app('query');
-export const queryBuilder = (modelCtor: ICtor<IModel>) => app('query').builder(modelCtor);
+export const queryBuilder = <Model extends IModel>(modelCtor: ModelConstructor<Model>): IEloquent<Model> => app('query').builder(modelCtor);
 
 class EloquentQueryService implements IQueryService {
 

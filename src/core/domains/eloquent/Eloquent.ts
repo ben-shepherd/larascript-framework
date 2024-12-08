@@ -188,7 +188,7 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
     protected applyFormatResultTargetPropertyToObject<T extends object = object>(results: T[]): T[] {
         return PrefixedPropertyGrouper.handleArray<T>(results, this.formatResultTargetPropertyToObjectOptions)
     }
-    
+
     /**
      * Retrieves the current expression builder instance.
      *
@@ -741,7 +741,7 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
             throw new ExpressionException('Model constructor has not been set');
         }
         
-        return new With(this as unknown as IEloquent, relationship).applyOnExpression() as unknown as IEloquent<Model>
+        return new With(this as unknown as IEloquent, relationship).updateEloquent() as unknown as IEloquent<Model>
     }
 
     /**

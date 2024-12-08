@@ -2,9 +2,10 @@
 import { describe } from '@jest/globals';
 import Collection from '@src/core/domains/collections/Collection';
 import { IEloquent } from '@src/core/domains/eloquent/interfaces/IEloquent';
+import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryService';
 import testHelper from '@src/tests/testHelper';
 
-import TestPeopleModel, { ITestPeopleModelData, resetTable } from './models/TestPeopleModel';
+import TestPeopleModel, { resetTable } from './models/TestPeopleModel';
 
 const getYearsDate = (year: number): Date => {
     const date = new Date();
@@ -24,14 +25,14 @@ dateOneYearInPast.setFullYear(dateOneYearInPast.getFullYear() - 1);
 
 describe('eloquent', () => {
 
-    let query!: IEloquent<ITestPeopleModelData>;
-    let inserted!: Collection<ITestPeopleModelData>;
+    let query!: IEloquent<TestPeopleModel>;
+    let inserted!: Collection<TestPeopleModel>;
 
     beforeAll(async () => {
         await testHelper.testBootApp()
         await resetTable()
 
-        query = TestPeopleModel.query<ITestPeopleModelData>()
+        query = queryBuilder(TestPeopleModel)
             .orderBy('createdAt', 'asc');
 
         inserted = await query.insert([

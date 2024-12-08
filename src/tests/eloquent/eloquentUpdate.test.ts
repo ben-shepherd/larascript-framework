@@ -1,18 +1,20 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
 import { IEloquent } from '@src/core/domains/eloquent/interfaces/IEloquent';
+import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryService';
 import testHelper from '@src/tests/testHelper';
 
-import TestPeopleModel, { ITestPeopleModelData, resetTable } from './models/TestPeopleModel';
+import TestPeopleModel, { resetTable } from './models/TestPeopleModel';
 
 describe('eloquent', () => {
 
-    let query!: IEloquent<ITestPeopleModelData>;
+    let query!: IEloquent<TestPeopleModel>;
 
     beforeAll(async () => {
         await testHelper.testBootApp()
         await resetTable()
-        query = TestPeopleModel.query();
+        
+        query = queryBuilder(TestPeopleModel);
     });
 
     test('test updating records', async () => {
