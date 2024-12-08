@@ -13,7 +13,7 @@ import IEloquentExpression from "../../eloquent/interfaces/IEloquentExpression";
 import PostgresAdapter from "../adapters/PostgresAdapter";
 import SqlExpression from "../builder/ExpressionBuilder/SqlExpression";
 
-class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpression> {
+class PostgresEloquent<Model extends IModel> extends Eloquent<Model, PostgresAdapter, SqlExpression> {
 
     /**
      * Constructor
@@ -46,14 +46,14 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
      * @param {SetModelColumnOptions} [options] - Options object containing the targetProperty to format the columns with.
      * @returns {this} The PostgresEloquent instance for chaining.
      */
-    setModelColumns(modelCtor?: ICtor<IModel>, options?: SetModelColumnsOptions): IEloquent<Data> {
+    setModelColumns(modelCtor?: ICtor<IModel>, options?: SetModelColumnsOptions): IEloquent<Model> {
         super.setModelColumns(modelCtor, options)
         
         if(options?.columnPrefix && typeof options?.targetProperty === 'string') {
             this.addFormatResultTargetPropertyToObject(options.columnPrefix, options.targetProperty)
         }
 
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model>
     }
 
     /**
@@ -116,8 +116,8 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
      * @param id The id of the model to find
      * @returns A promise resolving to the found model, or null if not found
      */
-    async find(id: string | number): Promise<Data | null> {
-        return await captureError<Data | null>(async () => {
+    async find(id: string | number): Promise<Model | null> {
+        return await captureError<Model | null>(async () => {
             this.expression.setSelect()
             
             const res = await this.fetchRows(
@@ -136,7 +136,7 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
      * @returns The found model or throws a ModelNotFound exception
      * @throws ModelNotFound
      */
-    async findOrFail(id: string | number): Promise<Data> {
+    async findOrFail(id: string | number): Promise<Model> {
         const result = await this.find(id)
 
         if(!result) {
@@ -154,7 +154,7 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
      * exception if none were found.
      * @throws ModelNotFound
      */
-    async firstOrFail(): Promise<Data> {
+    async firstOrFail(): Promise<Model> {
         const result = await this.first()
 
         if(!result) {
@@ -171,8 +171,8 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
      * @returns A promise resolving to the first document found or null if none
      * were found.
      */
-    async first(): Promise<Data | null> {
-        return await captureError<Data | null>(async () => {
+    async first(): Promise<Model | null> {
+        return await captureError<Model | null>(async () => {
             this.expression.setSelect()
 
             const previousLimit = this.expression.getOffsetLimit()
@@ -196,7 +196,7 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
      * exception if none were found.
      * @throws ModelNotFound
      */
-    async lastOrFail(): Promise<Data> {
+    async lastOrFail(): Promise<Model> {
         const result = await this.last()
 
         if(!result) {
@@ -213,8 +213,8 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
      * @returns A promise resolving to the last document found or null if none
      * were found.
      */
-    async last(): Promise<Data | null> {
-        return await captureError<Data | null>(async () => {
+    async last(): Promise<Model | null> {
+        return await captureError<Model | null>(async () => {
             this.expression.setSelect()
             
             const res = await this.fetchRows()
@@ -233,7 +233,7 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
      * 
      * @returns A promise resolving to a collection of documents.
      */
-    async get(): Promise<Collection<Data>> {
+    async get(): Promise<Collection<Model>> {
         return await captureError(async () => {
             this.expression.setSelect()
 
@@ -241,7 +241,7 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
 
             this.resetBindingValues()
 
-            return collect<Data>(res.rows)
+            return collect<Model>(res.rows)
         })
     }
 
@@ -254,7 +254,7 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
      * 
      * @returns A promise resolving to a collection of documents.
      */
-    async all(): Promise<Collection<Data>> {
+    async all(): Promise<Collection<Model>> {
         return await captureError(async () => {
             this.expression.setSelect()
 
@@ -264,7 +264,7 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
                     .setOffsetAndLimit(null)
             )
 
-            return collect<Data>(res.rows)
+            return collect<Model>(res.rows)
         })
     }
 
@@ -274,7 +274,7 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
      * @param documents The document(s) to be inserted.
      * @returns A promise resolving to a collection of the inserted documents.
      */
-    async insert(documents: object | object[]): Promise<Collection<Data>> {
+    async insert(documents: object | object[]): Promise<Collection<Model>> {
         return await captureError(async () => {
 
             const previousExpression = this.expression.clone() as SqlExpression
@@ -286,7 +286,7 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
 
                 this.setExpression(previousExpression)
 
-                const documentWithUuid = this.documentWithUuid<Data>(document);
+                const documentWithUuid = this.documentWithUuid<Model>(document);
 
                 const res = await this.execute(
                     this.expression
@@ -298,7 +298,7 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
 
             this.setExpression(previousExpression)
 
-            return collect<Data>(
+            return collect<Model>(
                 this.formatQueryResults(results)
             )
         })
@@ -310,7 +310,7 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
      * @param documents The document(s) to be updated.
      * @returns A promise resolving to a collection of the updated documents.
      */
-    async update(documents: object | object[]): Promise<Collection<Data>> {
+    async update(documents: object | object[]): Promise<Collection<Model>> {
         return await captureError(async () => {
 
             const documentsArray: object[] = Array.isArray(documents) ? documents : [documents]
@@ -339,7 +339,7 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
      * @param documents The documents to be updated.
      * @returns A promise resolving to a collection of the updated documents.
      */
-    async updateAll(documents: object | object[]): Promise<Collection<Data>> {
+    async updateAll(documents: object | object[]): Promise<Collection<Model>> {
         this.expression.setWhere([])
         return await this.update(documents)
     }

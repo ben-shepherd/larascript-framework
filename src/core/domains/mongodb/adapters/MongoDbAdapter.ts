@@ -9,6 +9,7 @@ import MongoDbSchema from "@src/core/domains/mongodb/MongoDbSchema";
 import createMigrationSchemaMongo from "@src/core/domains/mongodb/schema/createMigrationSchemaMongo";
 import { extractDefaultMongoCredentials } from "@src/core/domains/mongodb/utils/extractDefaultMongoCredentials";
 import { ICtor } from "@src/core/interfaces/ICtor";
+import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
 
@@ -164,11 +165,7 @@ class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
         return new MongoDbSchema(this)
     }
 
-    getEloquent<Data>(connectionName: string = this.getConnectionName()): IEloquent<Data> {
-        throw new Error("Method not implemented.");
-    }   
-
-    getEloquentCtor<Data>(): ICtor<IEloquent<Data>> {
+    getEloquentCtor<Model extends IModel>(): ICtor<IEloquent<Model>> {
         throw new Error("Method not implemented.");
     }
 

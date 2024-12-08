@@ -6,16 +6,11 @@ import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabase
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
-import IModelAttributes from "@src/core/interfaces/IModelData";
 
 import { IEloquent } from "../../eloquent/interfaces/IEloquent";
 
 abstract class BaseDatabaseAdapter<TClient = unknown, TConfig extends object = object> extends BaseConfig implements IDatabaseAdapter {
-
-    getQueryBuilderCtor<M extends IModel = IModel<IModelAttributes>>(): IEloquent<M> {
-        throw new Error("Method not implemented.");
-    }
-
+    
     /**
      * Database client
      */
@@ -77,9 +72,7 @@ abstract class BaseDatabaseAdapter<TClient = unknown, TConfig extends object = o
 
     abstract getSchema(): IDatabaseSchema;
 
-    abstract getEloquent<Data>(): IEloquent<Data>;
-
-    abstract getEloquentCtor<Data>(): ICtor<IEloquent<Data>>;
+    abstract getEloquentCtor<Model extends IModel = IModel>(): ICtor<IEloquent<Model>>;
 
     abstract isConnected(): Promise<boolean>;
 

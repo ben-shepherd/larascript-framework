@@ -1,10 +1,9 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import Collection from '@src/core/domains/collections/Collection';
 import { app } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
 
-import TestPeopleModel, { ITestPeopleModelData, resetTable } from './models/TestPeopleModel';
+import TestPeopleModel, { resetTable } from './models/TestPeopleModel';
 
 describe('eloquent', () => {
 
@@ -29,7 +28,7 @@ describe('eloquent', () => {
                 createdAt: new Date(),
                 updatedAt: new Date()
             }
-        ]) as Collection<ITestPeopleModelData>;
+        ])
 
         const restrictedQuery = query.clone().where('age', '=', 25);
         const restrictedResult = await restrictedQuery.first()

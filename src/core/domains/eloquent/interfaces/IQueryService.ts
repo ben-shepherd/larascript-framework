@@ -5,5 +5,5 @@ import { IModel } from "@src/core/interfaces/IModel";
 import { IEloquent } from "./IEloquent";
 
 export interface IQueryService {
-    builder<Model extends IModel, Attributes extends Model['attributes'] = Model['attributes']>(modelCtor: ICtor<Model>): IEloquent<Model>;
+    builder<Model extends IModel>(modelCtor: ICtor<Model>): IEloquent<Model>;
 }
