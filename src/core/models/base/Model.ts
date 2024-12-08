@@ -6,9 +6,9 @@ import { IHasManyOptions } from '@src/core/domains/database/interfaces/relations
 import { ICtor } from '@src/core/interfaces/ICtor';
 import { GetDataOptions, IModel } from '@src/core/interfaces/IModel';
 import IModelAttributes from '@src/core/interfaces/IModelData';
-import { App, app } from '@src/core/services/App';
+import { App } from '@src/core/services/App';
 
-import { IBelongsToOptions, IEloquent, IRelationship } from '../../domains/eloquent/interfaces/IEloquent';
+import { IBelongsToOptions, IRelationship } from '../../domains/eloquent/interfaces/IEloquent';
 import BelongsTo from '../../domains/eloquent/relational/BelongsTo';
 import EloquentRelationship from '../../domains/eloquent/utils/EloquentRelationship';
 import Str from '../../util/str/Str';
@@ -108,31 +108,6 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
 
         return Model.formatTableName(table);
 
-    }
-
-    /**
-     * Creates a new query builder instance for the model.
-     *
-     * @template M - The type of the model, defaults to IModel.
-     * @returns {IEloquent<M>} A query builder instance associated with the model.
-     */
-    public static query<Model extends IModel = IModel>() {
-        return app('query').builder<Model>(this as unknown as ICtor<Model>);
-    }
-
-    isInstanceOfModel(modelCtor: ICtor<IModel>): boolean {
-        // Use instanceof which properly traverses the prototype chain
-        return this instanceof modelCtor;
-    }
-
-    static [Symbol.hasInstance](instance: any) {
-        if (!instance) return false;
-        let proto = Object.getPrototypeOf(instance);
-        while (proto !== null) {
-            if (proto.constructor === this) return true;
-            proto = Object.getPrototypeOf(proto);
-        }
-        return false;
     }
 
     /**
