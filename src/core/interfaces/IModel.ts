@@ -19,7 +19,9 @@ export type ModelConstructor<M extends IModel = IModel> = {
 
 export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>
 
-export interface IModel<Attributes extends IModelAttributes = IModelAttributes, K extends keyof Attributes = keyof Attributes> extends IHasDatabaseConnection, IHasPrepareDocument, IHasObserver {
+export type ModelAttribtues<Model extends IModel> = Model['attributes']
+
+export interface IModel<Attributes extends IModelAttributes = IModelAttributes> extends IHasDatabaseConnection, IHasPrepareDocument, IHasObserver {
     [key: string]: unknown;
     primaryKey: string;
     fields: string[];
@@ -29,6 +31,8 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes, 
     json: string[];
     attributes: Attributes | null;
     original: Attributes | null;
+    relationships: string[];
+    attr<K extends keyof Attributes = keyof Attributes>(key: K): Promise<Attributes[K] | null | undefined>;
     attr<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Promise<Attributes[K] | null | undefined>;
     setAttribute(key: keyof Attributes, value?: unknown): Promise<void>;
     getAttributeSync<K extends keyof Attributes = keyof Attributes>(key: K): Attributes[K] | null

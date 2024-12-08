@@ -1,11 +1,11 @@
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import IModelAttributes from "@src/core/interfaces/IModelData";
-import { app } from "@src/core/services/App";
 
 import EloquentRelationshipException from "../exceptions/EloquentRelationshipException";
 import { IEloquent, IRelationship, TWhereClauseValue } from "../interfaces/IEloquent";
 import BelongsTo from "../relational/BelongsTo";
+import { queryBuilder } from "../services/EloquentQueryService";
 
 class EloquentRelationship {
 
@@ -19,8 +19,7 @@ class EloquentRelationship {
 
         const localValue = model.getAttributeSync(relationship.getLocalKey()) as TWhereClauseValue;
 
-        return await app('query')
-            .builder(relationship.getForeignModelCtor())
+        return await queryBuilder(relationship.getForeignModelCtor())
             .where(relationship.getForeignKey(), '=', localValue)
             .first() as Attributes[K]
     }

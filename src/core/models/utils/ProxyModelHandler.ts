@@ -1,3 +1,5 @@
+import { IModel } from "@src/core/interfaces/IModel";
+
 /**
  * A proxy handler for model objects that intercepts property access and method calls.
  * 
@@ -26,15 +28,33 @@ class ProxyModelHandler implements ProxyHandler<any> {
      * @returns The value of the property from the target model, or a bound function if the property is a method.
      */
     // eslint-disable-next-line no-unused-vars
-    public get(target: any, prop: string | symbol, receiver: any): any {
-        const value = target[prop];
-        
+    public get(target: IModel, prop: string | symbol, receiver: any): any {
+        const value = target[prop as keyof IModel];
+
+        if(prop === 'department') {
+            console.log(1)
+        }
+
         // Handle method calls
-        if (typeof value === 'function') {
+        if (typeof value === 'function' && this._invokableMethod(target, prop)) {
             return value.bind(target);
         }
 
-        return target?.attributes?.[prop] ?? null;
+        return target?.getAttributeSync(prop as keyof IModel) ?? null;
+    }
+
+    /**
+     * Determines if a method is invokable on the target model by checking if the property
+     * is not listed in the model's relationships. This ensures that relationship properties
+     * are not treated as methods.
+     *
+     * @param target - The target model object.
+     * @param prop - The property name or symbol to check.
+     * @param value - The value associated with the property, typically a function.
+     * @returns A boolean indicating whether the method is invokable.
+     */
+    protected _invokableMethod(target: IModel, prop: string | symbol): boolean {
+        return !target.relationships.includes(prop as string)
     }
 
     // Support proper prototype chain

@@ -50,6 +50,10 @@ export default class TestEmployeeModel extends Model<ITestEmployeeModelData> {
         'updatedAt'
     ];
 
+    relationships = [
+        'department'
+    ]
+
     department(): BelongsTo {
         return this.belongsTo<TestDepartmentModel>(TestDepartmentModel, { localKey: 'deptId' });
     }

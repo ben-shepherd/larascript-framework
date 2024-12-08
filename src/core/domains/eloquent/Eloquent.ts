@@ -188,7 +188,7 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
     protected applyFormatResultTargetPropertyToObject<T extends object = object>(results: T[]): T[] {
         return PrefixedPropertyGrouper.handleArray<T>(results, this.formatResultTargetPropertyToObjectOptions)
     }
-
+    
     /**
      * Retrieves the current expression builder instance.
      *

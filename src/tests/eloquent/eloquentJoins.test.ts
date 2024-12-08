@@ -1,12 +1,11 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
 import { IEloquent } from '@src/core/domains/eloquent/interfaces/IEloquent';
-import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryService';
 import { app } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
 
-import TestDepartmentModel, { ITestDepartmentModelData, resetTableDepartmentModel } from './models/TestDepartmentModel';
-import TestEmployeeModel, { ITestEmployeeModelData, resetTableEmployeeModel } from './models/TestEmployeeModel';
+import TestDepartmentModel, { resetTableDepartmentModel } from './models/TestDepartmentModel';
+import TestEmployeeModel, { resetTableEmployeeModel } from './models/TestEmployeeModel';
 
 
 describe('eloquent', () => {
@@ -104,34 +103,34 @@ describe('eloquent', () => {
         const departments = await departmentQuery.clone().all()
         expect(departments.count()).toBe(4);
 
-        const hr = departments.find((department) => department?.deptName === 'HR') as ITestDepartmentModelData
+        const hr = departments.find((department) => department?.deptName === 'HR') as TestDepartmentModel
         expect(hr).toBeTruthy()
 
-        const sales = departments.find((department) => department?.deptName === 'Sales') as ITestDepartmentModelData
+        const sales = departments.find((department) => department?.deptName === 'Sales') as TestDepartmentModel
         expect(sales).toBeTruthy()
 
-        const it = departments.find((department) => department?.deptName === 'IT') as ITestDepartmentModelData
+        const it = departments.find((department) => department?.deptName === 'IT') as TestDepartmentModel
         expect(it).toBeTruthy()
 
-        const finance = departments.find((department) => department?.deptName === 'Finance') as ITestDepartmentModelData
+        const finance = departments.find((department) => department?.deptName === 'Finance') as TestDepartmentModel
         expect(finance).toBeTruthy()
 
         const employees = await employeeQuery.clone().all()
         expect(employees.count()).toBe(5);
 
-        const alice = employees.find((employee) => employee?.name === 'Alice') as ITestEmployeeModelData
+        const alice = employees.find((employee) => employee?.name === 'Alice') as TestEmployeeModel
         expect(alice.id).toBeTruthy()
         expect(alice.deptId).toBe(hr.id);
 
-        const bob = employees.find((employee) => employee?.name === 'Bob') as ITestEmployeeModelData
+        const bob = employees.find((employee) => employee?.name === 'Bob') as TestEmployeeModel
         expect(bob.id).toBeTruthy()
         expect(bob.deptId).toBe(sales.id);
 
-        const john = employees.find((employee) => employee?.name === 'John') as ITestEmployeeModelData
+        const john = employees.find((employee) => employee?.name === 'John') as TestEmployeeModel
         expect(john.id).toBeTruthy()
         expect(john.deptId).toBe(it.id);
 
-        const jane = employees.find((employee) => employee?.name === 'Jane') as ITestEmployeeModelData
+        const jane = employees.find((employee) => employee?.name === 'Jane') as TestEmployeeModel
         expect(jane.id).toBeTruthy()
         expect(jane.deptId).toBe(finance.id);
         
@@ -139,11 +138,7 @@ describe('eloquent', () => {
 
     test('test model property', async () => {
 
-        const one =  await queryBuilder(TestEmployeeModel).where('name', 'Alice').firstOrFail();
-
-        /** TODO: figure out how to convert to 'asModel' */
-
-        const aliceModel = queryBuilder(TestEmployeeModel)
+        const aliceModel = await employeeQuery.clone()
             .where('name', 'Alice')
             .firstOrFail();
 

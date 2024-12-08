@@ -67,6 +67,11 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
     public timestamps: boolean = true;
 
     /**
+     * List of relationships associated with the model.
+     */
+    public relationships: string[] = [];
+
+    /**
      * Constructs a new instance of the Model class.
      * 
      * @param {Attributes | null} data - Initial data to populate the model.
