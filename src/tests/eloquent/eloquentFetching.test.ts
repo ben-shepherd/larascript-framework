@@ -3,6 +3,7 @@ import { describe } from '@jest/globals';
 import Collection from '@src/core/domains/collections/Collection';
 import { IEloquent } from '@src/core/domains/eloquent/interfaces/IEloquent';
 import ModelNotFound from '@src/core/exceptions/ModelNotFound';
+import { app } from '@src/core/services/App';
 import { generateUuidV4 } from '@src/core/util/uuid/generateUuidV4';
 import testHelper from '@src/tests/testHelper';
 
@@ -18,7 +19,7 @@ describe('eloquent', () => {
         await testHelper.testBootApp()
         await resetTable()
         
-        query = TestPeopleModel.query();
+        query = app('query').builder(TestPeopleModel);
 
         inserted = await query.clone().insert([
             {

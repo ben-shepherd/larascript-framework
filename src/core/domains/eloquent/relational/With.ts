@@ -4,11 +4,11 @@ import { IModel } from "@src/core/interfaces/IModel";
 import { IEloquent } from "../interfaces/IEloquent";
 import EloquentRelationship from "../utils/EloquentRelationship";
 
-class With<Data> {
+class With {
 
     constructor(
         // eslint-disable-next-line no-unused-vars
-        protected eloquent: IEloquent<Data>,
+        protected eloquent: IEloquent,
         // eslint-disable-next-line no-unused-vars
         protected relationshipName: string
     ) {}
@@ -19,13 +19,13 @@ class With<Data> {
      * instance's getForeignModelCtor and getLocalModelCtor methods to retrieve the foreign table and the local table
      * respectively. The join type is a left join. The relationship's getLocalKey and getForeignKey methods are used to
      * specify the join columns.
-     * @return {IEloquent<Data>} The Eloquent instance.
+     * @return {IEloquent<Model, Attributes>} The Eloquent instance.
      */
-    applyOnExpression(): IEloquent<Data> {
+    applyOnExpression(): IEloquent {
 
         const relationshipInterface = EloquentRelationship.fromModel(this.eloquent.getModelCtor() as ICtor<IModel>, this.relationshipName)
 
-        EloquentRelationship.applyRelationshipOnEloquent<Data>(this.eloquent, relationshipInterface, this.relationshipName)
+        EloquentRelationship.applyRelationshipOnEloquent(this.eloquent, relationshipInterface, this.relationshipName)
 
         return this.eloquent
     }

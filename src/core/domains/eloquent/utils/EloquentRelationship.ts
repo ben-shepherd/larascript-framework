@@ -19,11 +19,9 @@ class EloquentRelationship {
 
         const localValue = model.getAttributeSync(relationship.getLocalKey()) as TWhereClauseValue;
 
-        return await app('db').eloquent(model.connection)
-            .setModelCtor(relationship.getForeignModelCtor())
-            .setTable(relationship.getForeignTableName())
+        return await app('query')
+            .builder(relationship.getForeignModelCtor())
             .where(relationship.getForeignKey(), '=', localValue)
-            .asModel()
             .first() as Attributes[K]
     }
 
@@ -95,7 +93,7 @@ class EloquentRelationship {
      * 
      * @return {Eloquent} The Eloquent instance.
      */
-    static applyRelationshipOnEloquent<Data>(eloquent: IEloquent<Data>, relationship: IRelationship, relationshipName: string): IEloquent<Data> {
+    static applyRelationshipOnEloquent(eloquent: IEloquent, relationship: IRelationship, relationshipName: string) {
 
         if(relationship instanceof BelongsTo) {
             const localModelCtor = relationship.getLocalModelCtor();

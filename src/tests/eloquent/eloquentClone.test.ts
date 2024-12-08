@@ -1,5 +1,7 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
+import Collection from '@src/core/domains/collections/Collection';
+import { app } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
 
 import TestPeopleModel, { ITestPeopleModelData, resetTable } from './models/TestPeopleModel';
@@ -12,7 +14,7 @@ describe('eloquent', () => {
     });
 
     test('test clone query', async () => {
-        const query = TestPeopleModel.query<ITestPeopleModelData>();
+        const query = app('query').builder(TestPeopleModel);
 
         const inserted = await query.clone().insert([
             {
@@ -27,7 +29,7 @@ describe('eloquent', () => {
                 createdAt: new Date(),
                 updatedAt: new Date()
             }
-        ]);
+        ]) as Collection<ITestPeopleModelData>;
 
         const restrictedQuery = query.clone().where('age', '=', 25);
         const restrictedResult = await restrictedQuery.first()
@@ -42,10 +44,10 @@ describe('eloquent', () => {
         console.log('everything expression', everythingQuery.getExpression());
 
         expect(everythingResult.count()).toBe(2);
-        expect(everythingResult[0].id).toBe(inserted[0].id);
-        expect(everythingResult[0].name).toBe('John');
-        expect(everythingResult[1].id).toBe(inserted[1].id);
-        expect(everythingResult[1].name).toBe('Jane');
+        expect(everythingResult?.[0]?.id).toBe(inserted[0].id);
+        expect(everythingResult?.[0]?.name).toBe('John');
+        expect(everythingResult?.[1]?.id).toBe(inserted[1].id);
+        expect(everythingResult?.[1]?.name).toBe('Jane');
         
 
     });

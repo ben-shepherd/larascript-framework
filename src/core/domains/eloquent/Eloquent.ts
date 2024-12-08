@@ -13,7 +13,7 @@ import ExpressionException from "./exceptions/ExpressionException";
 import InvalidMethodException from "./exceptions/InvalidMethodException";
 import MissingTableException from "./exceptions/MissingTableException";
 import QueryBuilderException from "./exceptions/QueryBuilderException";
-import { IEloquent, LogicalOperators, OperatorArray, QueryOptions, SetModelColumnsOptions, TColumn, TFormatterFn, TLogicalOperator, TOperator, TWhereClauseValue } from "./interfaces/IEloquent";
+import { IEloquent, LogicalOperators, OperatorArray, SetModelColumnsOptions, TColumn, TFormatterFn, TLogicalOperator, TOperator, TWhereClauseValue } from "./interfaces/IEloquent";
 import IEloquentExpression from "./interfaces/IEloquentExpression";
 import { TDirection } from "./interfaces/TEnums";
 import With from "./relational/With";
@@ -27,9 +27,10 @@ export type TQueryBuilderOptions = {
 }
 
 abstract class Eloquent<
-    Data,
+    Model extends IModel,
+    Attributes extends Model['attributes'] = Model['attributes'],
     Adapter extends IDatabaseAdapter = IDatabaseAdapter,
-    Expression extends IEloquentExpression = IEloquentExpression> extends BaseEloquent implements IEloquent<Data, Expression> {
+    Expression extends IEloquentExpression = IEloquentExpression> extends BaseEloquent implements IEloquent<Model, Attributes, Expression> {
 
     /**
      * The connection name to use for the query builder
@@ -78,22 +79,6 @@ abstract class Eloquent<
     protected formatResultTargetPropertyToObjectOptions: PrefixToTargetPropertyOptions = [];
 
     /**
-     * Creates a new Eloquent query builder instance with specified options.
-     *
-     * @template Data - The type of data to be queried, defaults to object.
-     * @param {QueryOptions} options - The options for the query builder including:
-     *   @param {string} options.connectionName - The name of the database connection to use.
-     *   @param {string} [options.tableName] - Optional table name to use for the query. Defaults to model's table name.
-     *   @param {ICtor<IModel>} options.modelCtor - The constructor of the model to use for the query builder.
-     * @returns {IEloquent<Data>} A query builder instance configured with the specified options.
-     */
-    static query<Data>(connectionName: string, tableName?: string): IEloquent<Data> {
-        return new (this.constructor as ICtor<IEloquent<Data>>)()
-            .setConnectionName(connectionName)
-            .setTable(tableName ?? '')
-    }
-
-    /**
      * Retrieves the database adapter for the connection name associated with this query builder.
      * @returns {IDatabaseAdapter} The database adapter.
      */
@@ -106,10 +91,10 @@ abstract class Eloquent<
      * @param rows 
      * @returns 
      */
-    protected formatQueryResults(rows: unknown[]): Data[] {
+    protected formatQueryResults(rows: unknown[]): Attributes[] {
         return rows.map(row => {
             return this.formatterFn ? this.formatterFn(row) : row
-        }) as Data[]
+        }) as Attributes[]
     }
 
     /**
@@ -132,12 +117,12 @@ abstract class Eloquent<
     /**
      * Sets the columns to select for the query builder.
      * @param {string[]} columns - The columns to set for selection.
-     * @returns {IEloquent<Data>} The query builder instance.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance.
      */
-    protected setColumns(columns: string[]): IEloquent<Data> {
+    protected setColumns(columns: string[]): IEloquent<Model, Attributes> {
         const columnsTyped = columns.map(column => ({column})) as TColumn[]
         this.expression.setColumns(columnsTyped);
-        return this as unknown as IEloquent<Data>;
+        return this as unknown as IEloquent<Model, Attributes>;
     }
 
 
@@ -157,11 +142,11 @@ abstract class Eloquent<
      * 
      * @param {string} prefix - The prefix to map.
      * @param {string} property - The target property name.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    protected addFormatResultTargetPropertyToObject(prefix: string, property: string): IEloquent<Data> {
+    protected addFormatResultTargetPropertyToObject(prefix: string, property: string): IEloquent<Model, Attributes> {
         this.formatResultTargetPropertyToObjectOptions.push({columnPrefix: prefix, targetProperty: property, setNullObjectIfAllNull: true })
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
         
     /**
@@ -171,11 +156,11 @@ abstract class Eloquent<
      * their prefixed property names for query results processing.
      * 
      * @param {PrefixToTargetPropertyOptions} options - The key-value pairs to map.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    protected setFormatResultTargetPropertyToObject(options: PrefixToTargetPropertyOptions): IEloquent<Data> {
+    protected setFormatResultTargetPropertyToObject(options: PrefixToTargetPropertyOptions): IEloquent<Model, Attributes> {
         this.formatResultTargetPropertyToObjectOptions = options
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -221,11 +206,11 @@ abstract class Eloquent<
      * Sets the expression builder instance to use for the query builder.
      * 
      * @param {Expression} expression - The expression builder instance to use.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    setExpression(expression: Expression): IEloquent<Data> {
+    setExpression(expression: Expression): IEloquent<Model, Attributes> {
         this.expression = expression
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -234,10 +219,10 @@ abstract class Eloquent<
      * @param {ICtor<IEloquentExpression>} builderCtor The constructor of the expression builder to use.
      * @returns {this} The query builder instance for chaining.
      */
-    setExpressionCtor(builderCtor: ICtor<Expression>): IEloquent<Data> {
+    setExpressionCtor(builderCtor: ICtor<Expression>): IEloquent<Model, Attributes> {
         this.expressionCtor = builderCtor;
         this.expression = new builderCtor();
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -248,10 +233,10 @@ abstract class Eloquent<
      * 
      * @returns {IEloquentExpression} The expression builder instance after resetting.
      */
-    resetExpression(): IEloquent<Data> {
+    resetExpression(): IEloquent<Model, Attributes> {
         this.setExpressionCtor(this.expressionCtor)
         this.setTable(this.tableName ?? '')
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -275,9 +260,9 @@ abstract class Eloquent<
      * @param {ICtor<IModel>} [modelCtor] The constructor of the model to associate with the query builder.
      * @returns {this} The query builder instance for chaining.
      */
-    setModelCtor(modelCtor?: ICtor<IModel>): IEloquent<Data> {
+    setModelCtor(modelCtor?: ICtor<IModel>): IEloquent<Model, Attributes> {
         this.modelCtor = modelCtor
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -286,9 +271,9 @@ abstract class Eloquent<
      * This method initializes an instance of the model using its constructor,
      * retrieves the fields of the model, and sets each field as a column in the query builder.
      * 
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    setModelColumns(modelCtor?: ICtor<IModel>, options: SetModelColumnsOptions = {}): IEloquent<Data> {
+    setModelColumns(modelCtor?: ICtor<IModel>, options: SetModelColumnsOptions = {}): IEloquent<Model, Attributes> {
         modelCtor = typeof modelCtor === 'undefined' ? this.modelCtor : modelCtor
         
         if(!modelCtor) {
@@ -309,7 +294,7 @@ abstract class Eloquent<
             this.column({ column: field, tableName })
         });
         
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -326,20 +311,21 @@ abstract class Eloquent<
      * The returned query builder instance is a clone of the current query builder and is associated
      * with the provided model constructor.
      * @template Model The type of the model to associate with the query builder.
-     * @returns {IEloquent<Model>} A new query builder instance associated with the provided model constructor.
+     * @returns {IEloquent<Model, Attributes>} A new query builder instance associated with the provided model constructor.
      */
-    asModel<Model extends IModel>(): IEloquent<Model> {
-        if(!this.modelCtor) {
-            throw new EloquentException('Model constructor has not been set');
-        }
+    // asModel<Model extends IModel>(): IEloquent<Model, Model> {
 
-        const modelCtor = this.modelCtor as ICtor<Model>
+    //     if(!this.modelCtor) {
+    //         throw new EloquentException('Model constructor has not been set');
+    //     }
 
-        return this.clone<Model>()
-            .setExpression(this.expression.clone())
-            .setModelCtor(modelCtor)
-            .setFormatter((row) => new modelCtor(row))
-    }
+    //     const modelCtor = this.modelCtor as ICtor<Model>
+
+    //     return this.clone()
+    //         .setExpression(this.expression.clone())
+    //         .setModelCtor(modelCtor)
+    //         .setFormatter((row) => new modelCtor(row)) as unknown as IEloquent<Model, Model>
+    // }
 
     /**
      * Sets the formatter function for the query builder. This function will be
@@ -349,9 +335,9 @@ abstract class Eloquent<
      * @param {TFomatterFn} formatterFn The formatter function to set
      * @returns {this} The query builder instance to enable chaining
      */
-    setFormatter(formatterFn?: TFormatterFn): IEloquent<Data> {
+    setFormatter(formatterFn?: TFormatterFn): IEloquent<Model, Attributes> {
         this.formatterFn = formatterFn 
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -362,10 +348,10 @@ abstract class Eloquent<
      * @param {string} tableName The table name to set.
      * @returns {this} The query builder instance for chaining.
      */
-    setTable(tableName: string): IEloquent<Data> {
+    setTable(tableName: string): IEloquent<Model, Attributes> {
         this.tableName = tableName
         this.expression.setTable(tableName);
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
     
     /**
@@ -386,21 +372,23 @@ abstract class Eloquent<
      * Sets the connection name to use for the query builder
      * @param {string} connectionName The connection name to use
      */
-    setConnectionName(connectionName: string): IEloquent<Data> {
+    setConnectionName(connectionName: string): IEloquent<Model, Attributes> {
         this.connectionName = connectionName
-        return this as unknown as IEloquent<Data>;
+        return this as unknown as IEloquent<Model, Attributes>;
     }
 
     /**
      * Sets the columns to select for the query builder.
      * @param {string|string[]} [columns='*'] The columns to set for selection.
-     * @returns {IEloquent<Data>} The query builder instance.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance.
      */
-    select(columns?: string | string[]): IEloquent<Data> {
+    select(columns?: string | string[]): IEloquent<Model, Attributes> {
+
+        this.setColumns([]);
 
         if(columns === undefined) {
             this.columns = ['*'];
-            return this as unknown as IEloquent<Data>;
+            return this as unknown as IEloquent<Model, Attributes>;
         }
 
         if(typeof columns === 'string' && columns === '*') {
@@ -413,16 +401,16 @@ abstract class Eloquent<
             this.column(column)
         })
 
-        return this as unknown as IEloquent<Data>;
+        return this as unknown as IEloquent<Model, Attributes>;
     }
 
     /**
      * Adds a column to the columns array to be included in the SQL query.
      * If the column is already in the array, it will not be added again.
      * @param {string | TColumn} column The column name to add to the array.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    column(column: TColumn | string): IEloquent<Data> {
+    column(column: TColumn | string): IEloquent<Model, Attributes> {
         if(typeof column === 'string') {
             column = {column}
         }
@@ -433,7 +421,7 @@ abstract class Eloquent<
         }
         
         this.expression.addColumn(column);
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -444,24 +432,24 @@ abstract class Eloquent<
      * 
      * @param {string} expression - The raw select expression to set.
      * @param {unknown[]} [bindings] - The bindings to use for the expression.
-     * @returns {IEloquent<Data, IEloquentExpression<unknown>>} The query builder instance.
+     * @returns {IEloquent<Attributes, IEloquentExpression<unknown>>} The query builder instance.
      */
-    selectRaw(expression: string, bindings?: unknown[]): IEloquent<Data, IEloquentExpression<unknown>> {
+    selectRaw(expression: string, bindings?: unknown[]): IEloquent<Model, Attributes> {
         this.expression.setSelectRaw(expression, bindings);
-        return this as unknown as IEloquent<Data, IEloquentExpression<unknown>>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
      * Sets the distinct columns for the query builder
      * @param {string|string[]} columns The columns to set for distinct
-     * @returns {IEloquent<Data>} The query builder instance
+     * @returns {IEloquent<Model, Attributes>} The query builder instance
      */
-    distinct(columns: string | string[]): IEloquent<Data> {
+    distinct(columns: string | string[]): IEloquent<Model, Attributes> {
         columns = Array.isArray(columns) ? columns : [columns];
         const columnsTyped = columns.map(column => ({column})) as TColumn[]
         
         this.expression.setDistinctColumns(columnsTyped);
-        return this as unknown as IEloquent<Data>;
+        return this as unknown as IEloquent<Model, Attributes>;
     }
     
     /**
@@ -470,8 +458,8 @@ abstract class Eloquent<
      * The cloned instance will have the same model constructor associated with it.
      * @returns {IEloquent} The cloned query builder instance
      */
-    clone<T = Data>(): IEloquent<T> {
-        return deepClone<IEloquent<T>>(this as unknown as IEloquent<T>)
+    clone(): IEloquent<Model, Attributes> {
+        return deepClone<IEloquent<Model, Attributes>>(this as unknown as IEloquent<Model, Attributes>)
             .setExpression(this.expression.clone())
     }
 
@@ -525,51 +513,51 @@ abstract class Eloquent<
     }
 
     // eslint-disable-next-line no-unused-vars
-    async find(id: string | number): Promise<Data | null> {
+    async find(id: string | number): Promise<Attributes | null> {
         throw new InvalidMethodException()
     }
 
     // eslint-disable-next-line no-unused-vars
-    async findOrFail(id: string | number): Promise<Data> {
+    async findOrFail(id: string | number): Promise<Attributes> {
         throw new InvalidMethodException()
     }
 
-    async get(): Promise<Collection<Data>> {
+    async get(): Promise<Collection<Attributes>> {
         throw new InvalidMethodException()
     }
 
-    async all(): Promise<Collection<Data>> {
+    async all(): Promise<Collection<Attributes>> {
         throw new InvalidMethodException()
     }
 
-    async first(): Promise<Data | null> {
+    async first(): Promise<Attributes | null> {
         throw new InvalidMethodException()
     }
 
-    async firstOrFail(): Promise<Data> {
+    async firstOrFail(): Promise<Attributes> {
         throw new InvalidMethodException()
     }
 
-    async last(): Promise<Data | null> {
+    async last(): Promise<Attributes | null> {
         throw new InvalidMethodException()
     }
 
-    async lastOrFail(): Promise<Data> {
-        throw new InvalidMethodException()
-    }
-
-    // eslint-disable-next-line no-unused-vars
-    async insert(documents: object | object[]): Promise<Collection<Data>> {
+    async lastOrFail(): Promise<Attributes> {
         throw new InvalidMethodException()
     }
 
     // eslint-disable-next-line no-unused-vars
-    async update(documents: object | object[]): Promise<Collection<Data>> {
+    async insert(documents: object | object[]): Promise<Collection<Attributes>> {
         throw new InvalidMethodException()
     }
 
     // eslint-disable-next-line no-unused-vars
-    async updateAll(documents: object | object[]): Promise<Collection<Data>> {
+    async update(documents: object | object[]): Promise<Collection<Attributes>> {
+        throw new InvalidMethodException()
+    }
+
+    // eslint-disable-next-line no-unused-vars
+    async updateAll(documents: object | object[]): Promise<Collection<Attributes>> {
         throw new InvalidMethodException()
     }
 
@@ -579,15 +567,15 @@ abstract class Eloquent<
      * @param {string} column - The column to apply the where condition on.
      * @param {TOperator} [operator] - The operator to use for comparison.
      * @param {TWhereClauseValue} [value] - The value to compare against.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      * @throws {QueryBuilderException} If an invalid or missing operator is provided.
      */
-    where(column: string, operator?: TOperator, value?: TWhereClauseValue, logicalOperator: TLogicalOperator = LogicalOperators.AND): IEloquent<Data> {
+    where(column: string, operator?: TOperator, value?: TWhereClauseValue, logicalOperator: TLogicalOperator = LogicalOperators.AND): IEloquent<Model, Attributes> {
 
         // Handle default equals case
         if(value === undefined) {
             this.expression.where(column, '=', operator as TWhereClauseValue, logicalOperator);
-            return this as unknown as IEloquent<Data>
+            return this as unknown as IEloquent<Model, Attributes>
         }
 
         // Check operator has been provided and matches expected value
@@ -601,7 +589,7 @@ abstract class Eloquent<
             value,
             tableName: this.useTable()
         })
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -609,11 +597,11 @@ abstract class Eloquent<
      *
      * @param {Q} sql - The raw SQL to use for the where clause.
      * @param {Bindings} [bindings] - The bindings to use for the where clause.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    whereRaw<Q = string, Bindings = unknown>(sql: Q, bindings?: Bindings): IEloquent<Data> {
+    whereRaw<Q = string, Bindings = unknown>(sql: Q, bindings?: Bindings): IEloquent<Model, Attributes> {
         this.expression.whereRaw(sql as string, bindings);
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -622,10 +610,10 @@ abstract class Eloquent<
      * @param {string} column - The column to apply the where condition on.
      * @param {TOperator} [operator] - The operator to use for comparison.
      * @param {TWhereClauseValue} [value] - The value to compare against.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      * @throws {QueryBuilderException} If an invalid or missing operator is provided.
      */
-    orWhere(column: string, operator?: TOperator, value?: TWhereClauseValue): IEloquent<Data> {
+    orWhere(column: string, operator?: TOperator, value?: TWhereClauseValue): IEloquent<Model, Attributes> {
         return this.where(column, operator, value, LogicalOperators.OR)
     }
 
@@ -635,11 +623,11 @@ abstract class Eloquent<
      * 
      * @param {string} column - The column to apply the where in condition on.
      * @param {TWhereClauseValue[]} values - An array of values to compare against.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    whereIn(column: string, values: TWhereClauseValue[]): IEloquent<Data> {
+    whereIn(column: string, values: TWhereClauseValue[]): IEloquent<Model, Attributes> {
         this.expression.addWhere({column, operator: 'in', value: values, tableName: this.useTable()});
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -650,22 +638,22 @@ abstract class Eloquent<
      * 
      * @param {string} column - The column to apply the where not in condition on.
      * @param {TWhereClauseValue[]} values - An array of values to exclude.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    whereNotIn(column: string, values: any[]): IEloquent<Data> {
+    whereNotIn(column: string, values: any[]): IEloquent<Model, Attributes> {
         this.expression.addWhere({column, operator: 'not in', value: values, tableName: this.useTable()});
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
      * Adds a where null clause to the query builder.
      * 
      * @param {string} column - The column to apply the where null condition on.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    whereNull(column: string): IEloquent<Data> {
+    whereNull(column: string): IEloquent<Model, Attributes> {
         this.expression.addWhere({column, operator: 'is null', value: null, tableName: this.useTable()});
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -675,11 +663,11 @@ abstract class Eloquent<
      * where the specified column's value is not null.
      * 
      * @param {string} column - The column to apply the where not null condition on.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    whereNotNull(column: string): IEloquent<Data> {
+    whereNotNull(column: string): IEloquent<Model, Attributes> {
         this.expression.addWhere({column, operator: 'is not null', value: null, tableName: this.useTable()});
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -691,11 +679,11 @@ abstract class Eloquent<
      * 
      * @param {string} column - The column to apply the where between condition on.
      * @param {[TWhereClauseValue, TWhereClauseValue]} range - An array of two values to compare against.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    whereBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data> {
+    whereBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Model, Attributes> {
         this.expression.addWhere({column, operator: 'between', value: range, tableName: this.useTable()});
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -707,11 +695,11 @@ abstract class Eloquent<
      * 
      * @param {string} column - The column to apply the where not between condition on.
      * @param {[TWhereClauseValue, TWhereClauseValue]} range - An array of two values to compare against.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    whereNotBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data> {
+    whereNotBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Model, Attributes> {
         this.expression.addWhere({column, operator: 'not between', value: range, tableName: this.useTable()});
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -722,11 +710,11 @@ abstract class Eloquent<
      * 
      * @param {string} column - The column to apply the where like condition on.
      * @param {TWhereClauseValue} value - The value to compare against.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    whereLike(column: string, value: TWhereClauseValue): IEloquent<Data> {
+    whereLike(column: string, value: TWhereClauseValue): IEloquent<Model, Attributes> {
         this.expression.addWhere({column, operator: 'like', value, tableName: this.useTable()});
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -737,11 +725,11 @@ abstract class Eloquent<
      * 
      * @param {string} column - The column to apply the where not like condition on.
      * @param {TWhereClauseValue} value - The value to compare against.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    whereNotLike(column: string, value: TWhereClauseValue): IEloquent<Data> {
+    whereNotLike(column: string, value: TWhereClauseValue): IEloquent<Model, Attributes> {
         this.expression.addWhere({column, operator: 'not like', value, tableName: this.useTable()});
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -750,14 +738,14 @@ abstract class Eloquent<
      * This method allows for loading the related data of the model being queried.
      * 
      * @param {string} relationship - The name of the relationship to load.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    with(relationship: string): IEloquent<Data> { 
+    with(relationship: string): IEloquent<Model, Attributes> { 
         if(!this.modelCtor) {
             throw new ExpressionException('Model constructor has not been set');
         }
         
-        return new With(this, relationship).applyOnExpression()
+        return new With(this as unknown as IEloquent, relationship).applyOnExpression() as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -767,12 +755,12 @@ abstract class Eloquent<
      * @param {string} relatedTable - The table to join with.
      * @param {string} localColumn - The column to join on in the left table.
      * @param {string} relatedColumn - The column to join on in the right table.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    join(relatedTable: string, localColumn: string, relatedColumn: string ): IEloquent<Data> {
+    join(relatedTable: string, localColumn: string, relatedColumn: string ): IEloquent<Model, Attributes> {
         const localTable = this.useTable()
         this.expression.setJoins({ localTable, localColumn, relatedTable, relatedColumn, type: 'inner' });
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -781,12 +769,12 @@ abstract class Eloquent<
      * @param {string} relatedTable - The table to join with.
      * @param {string} localColumn - The column to join on in the left table.
      * @param {string} relatedColumn - The column to join on in the right table.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    leftJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Data> {
+    leftJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, Attributes> {
         const localTable = this.useTable()
         this.expression.setJoins({ localTable, localColumn, relatedTable, relatedColumn, type: 'left' });
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -795,12 +783,12 @@ abstract class Eloquent<
      * @param {string} relatedTable - The table to join with.
      * @param {string} localColumn - The column to join on in the left table.
      * @param {string} relatedColumn - The column to join on in the right table.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    rightJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Data> {
+    rightJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, Attributes> {
         const localTable = this.useTable()
         this.expression.setJoins({ localTable, localColumn, relatedTable, relatedColumn, type: 'right' });
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -812,23 +800,23 @@ abstract class Eloquent<
      * @param {string} relatedTable - The table to join with.
      * @param {string} localColumn - The column to join on in the left table.
      * @param {string} relatedColumn - The column to join on in the right table.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    fullJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Data> {
+    fullJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, Attributes> {
         const localTable = this.useTable()
         this.expression.setJoins({ localTable, localColumn, relatedTable, relatedColumn, type: 'full' });
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
      * Adds a cross join to the query builder.
      * 
      * @param {string} relatedTable - The table to join with.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
     crossJoin(relatedTable: string) {
         this.expression.setJoins({ relatedTable, type: 'cross' });
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -836,11 +824,11 @@ abstract class Eloquent<
      * `
      * @param {string} column - The column to order by.
      * @param {TDirection} direction - The direction to order by. Defaults to 'asc'.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    orderBy(column: string, direction: TDirection = 'asc'): IEloquent<Data> {
+    orderBy(column: string, direction: TDirection = 'asc'): IEloquent<Model, Attributes> {
         this.expression.orderBy({ column, direction });
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -849,11 +837,11 @@ abstract class Eloquent<
      * This method is an alias for orderBy(column, 'desc').
      * 
      * @param {string} column - The column to order by.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    latest(column: string): IEloquent<Data> {
+    latest(column: string): IEloquent<Model, Attributes> {
         this.expression.orderBy({ column, direction: Direction.DESC});
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
 
     /**
@@ -862,9 +850,9 @@ abstract class Eloquent<
      * This method is an alias for orderBy(column, 'desc').
      * 
      * @param {string} column - The column to order by.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    newest(column: string): IEloquent<Data> {
+    newest(column: string): IEloquent<Model, Attributes> {
         return this.latest(column)
     }
 
@@ -874,9 +862,9 @@ abstract class Eloquent<
      * This method is an alias for orderBy(column, 'asc').
      * 
      * @param {string} column - The column to order by.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    oldest(column: string): IEloquent<Data> {
+    oldest(column: string): IEloquent<Model, Attributes> {
         return this.orderBy(column, Direction.ASC)
     }
 
@@ -885,11 +873,11 @@ abstract class Eloquent<
      * Sets the offset for the query builder.
      * 
      * @param {number} offset - The value of the offset to set.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    offset(offset: number): IEloquent<Data> {
+    offset(offset: number): IEloquent<Model, Attributes> {
         this.expression.setOffset(offset);
-        return this as unknown as IEloquent<Data>
+        return this as unknown as IEloquent<Model, Attributes>
     }
     
     /**
@@ -898,9 +886,9 @@ abstract class Eloquent<
      * This method is an alias for the `offset` method.
      * 
      * @param {number} skip - The value of the offset to set.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    skip(skip: number): IEloquent<Data> {
+    skip(skip: number): IEloquent<Model, Attributes> {
         return this.offset(skip)
     }
 
@@ -908,11 +896,11 @@ abstract class Eloquent<
      * Sets the limit clause for the query builder.
      * 
      * @param {number} limit - The limit clause to set.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    limit(limit: number): IEloquent<Data> {
+    limit(limit: number): IEloquent<Model, Attributes> {
         this.expression.setLimit(limit);
-        return this        
+        return this as unknown as IEloquent<Model, Attributes>      
     }
 
     /**
@@ -921,9 +909,9 @@ abstract class Eloquent<
      * This method is an alias for the `limit` method.
      * 
      * @param {number} take - The limit clause to set.
-     * @returns {IEloquent<Data>} The query builder instance for chaining.
+     * @returns {IEloquent<Model, Attributes>} The query builder instance for chaining.
      */
-    take(take: number): IEloquent<Data> {
+    take(take: number): IEloquent<Model, Attributes> {
         return this.limit(take)
     }
 

@@ -103,25 +103,25 @@ export type SetModelColumnsOptions = {
     [key: string]: unknown;
 }
 
-export interface IEloquent<Data, Expression extends IEloquentExpression = IEloquentExpression> {
+export interface IEloquent<Model extends IModel = IModel, Attributes extends Model['attributes'] = Model['attributes'], Expression extends IEloquentExpression = IEloquentExpression> {
     
     // eloquent methods
-    setConnectionName(connectionName: string): IEloquent<Data>;
+    setConnectionName(connectionName: string): IEloquent<Model, Attributes>;
     getExpression(): Expression;
-    setExpressionCtor(builderCtor: ICtor<Expression>): IEloquent<Data>
-    setExpression(expression: Expression): IEloquent<Data>;
+    setExpressionCtor(builderCtor: ICtor<Expression>): IEloquent<Model, Attributes>
+    setExpression(expression: Expression): IEloquent<Model, Attributes>;
     cloneExpression(): IEloquentExpression;
-    resetExpression(): IEloquent<Data>;
-    setModelCtor(modelCtor?: ICtor<IModel>): IEloquent<Data>;
+    resetExpression(): IEloquent<Model, Attributes>;
+    setModelCtor(modelCtor?: ICtor<IModel>): IEloquent<Model, Attributes>;
     getModelCtor(): ICtor<IModel> | undefined;
-    setModelColumns(modelCtor?: ICtor<IModel>, options?: SetModelColumnsOptions): IEloquent<Data>;
+    setModelColumns(modelCtor?: ICtor<IModel>, options?: SetModelColumnsOptions): IEloquent<Model, Attributes>;
 
     // formatting
-    asModel<Model extends IModel>(): IEloquent<Model>; 
-    setFormatter(formatterFn?: TFormatterFn): IEloquent<Data>;
+    // asModel<Model extends IModel>(): IEloquent<Model, Model>; 
+    setFormatter(formatterFn?: TFormatterFn): IEloquent<Model, Attributes>;
     
     // execution
-    execute<T = Data>(builder: IEloquentExpression): Promise<T>
+    execute<T = Attributes>(builder: IEloquentExpression): Promise<T>
     raw<T = unknown>(expression: string, bindings?: unknown[]): Promise<T>;
 
     // db methods
@@ -137,79 +137,79 @@ export interface IEloquent<Data, Expression extends IEloquentExpression = IEloqu
     dropAllTables(): Promise<void>;
 
     // table methods
-    setTable(table: string): IEloquent<Data>;
+    setTable(table: string): IEloquent<Model, Attributes>;
     useTable(): string;
 
     // Creating and saving
-    insert(documents: object | object[]): Promise<Collection<Data>>; 
-    update(documents: object | object[]): Promise<Collection<Data>>;
-    updateAll(documents: object | object[]): Promise<Collection<Data>>;
-    // delete(data: Data): Promise<IEloquent<Data>>;
+    insert(documents: object | object[]): Promise<Collection<Attributes>>; 
+    update(documents: object | object[]): Promise<Collection<Attributes>>;
+    updateAll(documents: object | object[]): Promise<Collection<Attributes>>;
+    // delete(data: Data): Promise<IEloquent<Model, Attributes>>;
 
     // selection
-    select(columns?: string | string[]): IEloquent<Data>;
-    column(column: TColumn): IEloquent<Data>;
+    select(columns?: string | string[]): IEloquent<Model, Attributes>;
+    column(column: TColumn): IEloquent<Model, Attributes>;
 
     // find methods
-    find(id: string | number): Promise<Data | null>;
-    findOrFail(id: string | number): Promise<Data>;
+    find(id: string | number): Promise<Attributes | null>;
+    findOrFail(id: string | number): Promise<Attributes>;
     
     // get methods
-    all(): Promise<Collection<Data>>;
-    get(): Promise<Collection<Data>>;
-    first(): Promise<Data | null>;
-    firstOrFail(): Promise<Data>
-    last(): Promise<Data | null>;
-    lastOrFail(): Promise<Data>
+    all(): Promise<Collection<Attributes>>;
+    get(): Promise<Collection<Attributes>>;
+    first(): Promise<Attributes | null>;
+    firstOrFail(): Promise<Attributes>
+    last(): Promise<Attributes | null>;
+    lastOrFail(): Promise<Attributes>
 
     // Select methods
-    select(columns?: string | string[]): IEloquent<Data>;
-    selectRaw(expression: string, bindings?: unknown[]): IEloquent<Data>;
-    distinct(columns: string | string[]): IEloquent<Data>;
+    select(columns?: string | string[]): IEloquent<Model, Attributes>;
+    selectRaw(expression: string, bindings?: unknown[]): IEloquent<Model, Attributes>;
+    distinct(columns: string | string[]): IEloquent<Model, Attributes>;
 
     // Where methods
-    where(column: string, value?: TWhereClauseValue): IEloquent<Data>;
-    where(column: string, operator?: TOperator, value?: TWhereClauseValue, logicalOperator?: TLogicalOperator): IEloquent<Data>;
-    whereRaw<Q = unknown, Bindings = unknown>(query: Q, bindings?: Bindings): IEloquent<Data>;
+    where(column: string, value?: TWhereClauseValue): IEloquent<Model, Attributes>;
+    where(column: string, operator?: TOperator, value?: TWhereClauseValue, logicalOperator?: TLogicalOperator): IEloquent<Model, Attributes>;
+    whereRaw<Q = unknown, Bindings = unknown>(query: Q, bindings?: Bindings): IEloquent<Model, Attributes>;
 
-    orWhere(column: string, value?: TWhereClauseValue): IEloquent<Data>;
-    orWhere(column: string, operator?: TOperator, value?: TWhereClauseValue): IEloquent<Data>;
+    orWhere(column: string, value?: TWhereClauseValue): IEloquent<Model, Attributes>;
+    orWhere(column: string, operator?: TOperator, value?: TWhereClauseValue): IEloquent<Model, Attributes>;
 
-    whereIn(column: string, values: TWhereClauseValue[]): IEloquent<Data>;
-    whereNotIn(column: string, values: TWhereClauseValue[]): IEloquent<Data>;
+    whereIn(column: string, values: TWhereClauseValue[]): IEloquent<Model, Attributes>;
+    whereNotIn(column: string, values: TWhereClauseValue[]): IEloquent<Model, Attributes>;
 
-    whereLike(column: string, value: TWhereClauseValue): IEloquent<Data>;
-    whereNotLike(column: string, value: TWhereClauseValue): IEloquent<Data>;
+    whereLike(column: string, value: TWhereClauseValue): IEloquent<Model, Attributes>;
+    whereNotLike(column: string, value: TWhereClauseValue): IEloquent<Model, Attributes>;
 
-    whereNull(column: string): IEloquent<Data>;
-    whereNotNull(column: string): IEloquent<Data>;
+    whereNull(column: string): IEloquent<Model, Attributes>;
+    whereNotNull(column: string): IEloquent<Model, Attributes>;
 
-    whereBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data>;
-    whereNotBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Data>;
+    whereBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Model, Attributes>;
+    whereNotBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Model, Attributes>;
 
     // Joins
-    join(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Data>;
-    fullJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Data>;
-    leftJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Data>;
-    rightJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Data>;
-    crossJoin(table: string): IEloquent<Data>;
-    with(relationship: string): IEloquent<Data>;
+    join(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, Attributes>;
+    fullJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, Attributes>;
+    leftJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, Attributes>;
+    rightJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, Attributes>;
+    crossJoin(table: string): IEloquent<Model, Attributes>;
+    with(relationship: string): IEloquent<Model, Attributes>;
 
     // Ordering
-    orderBy(column: string, direction?: TDirection): IEloquent<Data>;
-    latest(column?: string): IEloquent<Data>;
-    newest(column?: string): IEloquent<Data>;
-    oldest(column?: string): IEloquent<Data>;
+    orderBy(column: string, direction?: TDirection): IEloquent<Model, Attributes>;
+    latest(column?: string): IEloquent<Model, Attributes>;
+    newest(column?: string): IEloquent<Model, Attributes>;
+    oldest(column?: string): IEloquent<Model, Attributes>;
 
     // Grouping
     // groupBy(...columns: string[]): Promise<IQueryB   uilder>;
     // having(column: string, operator?: string, value?: any): Promise<IQueryBuilder>;
 
     // Limiting
-    limit(limit: number): IEloquent<Data>;
-    offset(offset: number): IEloquent<Data>;
-    skip(skip: number): IEloquent<Data>;
-    take(take: number): IEloquent<Data>;
+    limit(limit: number): IEloquent<Model, Attributes>;
+    offset(offset: number): IEloquent<Model, Attributes>;
+    skip(skip: number): IEloquent<Model, Attributes>;
+    take(take: number): IEloquent<Model, Attributes>;
 
     // Aggregates
     // count(column?: string): Promise<number>;
@@ -228,5 +228,5 @@ export interface IEloquent<Data, Expression extends IEloquentExpression = IEloqu
     // }>;
 
     // Cloning 
-    clone<T = Data>(): IEloquent<T>;
+    clone<T = Attributes>(): IEloquent<Model, Attributes>;
 }

@@ -1,8 +1,9 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
+import { app } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
 
-import TestPeopleModel, { ITestPeopleModelData, resetTable } from './models/TestPeopleModel';
+import TestPeopleModel, { resetTable } from './models/TestPeopleModel';
 
 describe('eloquent', () => {
 
@@ -12,20 +13,21 @@ describe('eloquent', () => {
     });
 
     test('test insert records', async () => {
-        const results = await TestPeopleModel.query<ITestPeopleModelData>().insert([
-            {
-                name: 'John',
-                age: 25,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            },
-            {
-                name: 'Jane',
-                age: 30,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            }
-        ]);
+        const results = await app('query').builder(TestPeopleModel)
+            .insert([
+                {
+                    name: 'John',
+                    age: 25,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                },
+                {
+                    name: 'Jane',
+                    age: 30,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                }
+            ]);
 
         expect(results.count()).toBe(2);
 
