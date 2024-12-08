@@ -36,7 +36,9 @@ export default abstract class BaseProvider implements IProvider {
      * @abstract
      * @returns {Promise<void>}
      */
-    abstract boot(): Promise<void>;
+    boot(): Promise<void> {
+        return Promise.resolve();
+    }
 
     /**
      * Logs a message to the console

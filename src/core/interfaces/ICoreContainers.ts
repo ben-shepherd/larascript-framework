@@ -8,6 +8,8 @@ import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerServi
 import IValidatorService from '@src/core/domains/validator/interfaces/IValidatorService';
 import readline from 'node:readline';
 
+import { IQueryService } from '../domains/eloquent/interfaces/IQueryService';
+
 export interface ICoreContainers {
     [key: string]: any;
 
@@ -28,6 +30,13 @@ export interface ICoreContainers {
      * Provided by '@src/core/domains/database/providers/DatabaseProvider'
      */
     db: IDatabaseService;
+
+    /**
+     * Query Service
+     * Provided by '@src/core/domains/eloquent/providers/EloquentQueryProvider'
+     * Provides fluent interface for database queries using the Eloquent ORM pattern
+     */
+    query: IQueryService;
 
     /**
      * Express web server Service

@@ -113,23 +113,22 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
      * @template M - The type of the model, defaults to IModel.
      * @returns {IEloquent<M>} A query builder instance associated with the model.
      */
-    public static query<Attributes extends IModelAttributes = IModelAttributes>(modelCtor?: ICtor<IModel>): IEloquent<Attributes> {
+    public static query<Model extends IModel = IModel>(): IEloquent<Model['attributes']> {
 
-        const model = modelCtor 
-            ? new (modelCtor as unknown as ICtor<IModel>)(null) 
-            : new (this as unknown as ICtor<IModel>)(null);
+        return app('query').builder<Model>(this as unknown as ICtor<Model>);
+
             
-        const connectionName = model.connection;
-        const tableName = model.useTableName();
+        // const connectionName = model.connection;
+        // const tableName = model.useTableName();
 
-        const eloquent = app('db')
-            .eloquent<Attributes>()
-            .setConnectionName(connectionName)
-            .setTable(tableName)
-            .setModelCtor(this as unknown as ICtor<IModel>)
-            .setModelColumns()
+        // const eloquent = app('db')
+        //     .eloquent<Attributes>()
+        //     .setConnectionName(connectionName)
+        //     .setTable(tableName)
+        //     .setModelCtor(this as unknown as ICtor<IModel>)
+        //     .setModelColumns()
 
-        return eloquent
+        // return eloquent
     }
 
     /**
