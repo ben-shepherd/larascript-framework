@@ -8,12 +8,12 @@ import { generateUuidV4 } from '@src/core/util/uuid/generateUuidV4';
 import testHelper from '@src/tests/testHelper';
 
 import { ITestEmployeeModelData } from './models/TestEmployeeModel';
-import TestPeopleModel, { ITestPeopleModelData, resetTable } from './models/TestPeopleModel';
+import TestPeopleModel, { resetTable } from './models/TestPeopleModel';
 
 describe('eloquent', () => {
 
-    let query!: IEloquent<ITestPeopleModelData>;
-    let inserted!: Collection<ITestPeopleModelData>;
+    let query!: IEloquent<TestPeopleModel>;
+    let inserted!: Collection<TestPeopleModel>;
 
     beforeAll(async () => {
         await testHelper.testBootApp()
@@ -53,7 +53,6 @@ describe('eloquent', () => {
     test('test find, findOrFail, all and get as model', async () => {
 
         const allResults = await query.clone()
-            .asModel()
             .all();
 
         console.log(allResults)
@@ -65,7 +64,6 @@ describe('eloquent', () => {
         expect(allResults[3] instanceof TestPeopleModel).toBeTruthy();
 
         const getResults = await query.clone()
-            .asModel()
             .get();
         expect(getResults.count()).toBe(4);
         expect(getResults[0] instanceof TestPeopleModel).toBeTruthy();
@@ -74,7 +72,6 @@ describe('eloquent', () => {
         expect(getResults[3] instanceof TestPeopleModel).toBeTruthy();
 
         const firstResult = await query.clone()
-            .asModel()
             .find(inserted[0].id)
         expect(firstResult instanceof TestPeopleModel).toBeTruthy();
     })
@@ -126,14 +123,18 @@ describe('eloquent', () => {
 
         expect(resultsWithAllColumns.count()).toBe(4);
         expect(resultsWithAllColumns[0].name).toBe('John');
+
         ['id', 'name', 'age', 'createdAt', 'updatedAt'].forEach((column) => {
-            expect(column in resultsWithAllColumns[0]).toBe(true);
+            const attribtues = resultsWithAllColumns[0]?.getAttributes() ?? {};
+
+            expect(column in attribtues).toBe(true);
         })
 
         const resultsOnlyName = await query.clone().select('name').get();
         expect(resultsOnlyName.count()).toBe(4);
         expect(resultsOnlyName[0].name).toBe('John');
-        expect(Object.keys(resultsOnlyName[0])).toHaveLength(1);
+        const resultsOnlyNameAttributes = resultsOnlyName[0]?.getAttributes() ?? {};
+        expect(Object.keys(resultsOnlyNameAttributes)).toHaveLength(1);
 
 
     });
@@ -163,7 +164,8 @@ describe('eloquent', () => {
         expect(results.count()).toBe(4);
 
         for(const column of ['name', 'age', 'createdAt']) {
-            expect(column in results[0]).toBe(true);
+            const attribtues = results[0]?.getAttributes() ?? {};
+            expect(column in attribtues).toBe(true);
         }
 
     })

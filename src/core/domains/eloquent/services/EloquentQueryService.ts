@@ -1,5 +1,5 @@
 import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel } from "@src/core/interfaces/IModel";
+import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { app } from "@src/core/services/App";
 
 import { IEloquent } from "../interfaces/IEloquent";
@@ -15,7 +15,7 @@ class EloquentQueryService implements IQueryService {
      * @param modelCtor The constructor of the model to query.
      * @returns A query builder instance associated with the model.
      */
-    builder<Model extends IModel, Attributes extends Model['attributes'] = Model['attributes']>(modelCtor: ICtor<Model>): IEloquent<Model> {
+    builder<Model extends IModel>(modelCtor: ModelConstructor<Model>): IEloquent<Model> {
         const model = new modelCtor(null)
         
         const eloquentCtor = app('db')
@@ -27,7 +27,7 @@ class EloquentQueryService implements IQueryService {
             .setModelCtor(modelCtor)
             .setModelColumns(modelCtor)
             .setTable(model.useTableName())
-            .setFormatter((result) => new modelCtor(result))
+            .setFormatter((result) => modelCtor.create<Model>(result as Model['attributes'] | null));
     }
 
 }

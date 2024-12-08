@@ -2,6 +2,8 @@
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
+import { ICtor } from "./ICtor";
+
 /**
  * Constructor type for repositories.
  * @template Model The type of model the repository is for.
@@ -29,7 +31,7 @@ export interface IRepository<Model extends IModel = IModel> {
     /**
      * Model Constructor
      */
-    modelCtor: ModelConstructor<Model>;
+    modelCtor: ICtor<Model>;
     
     /**
      * Get the Database Query

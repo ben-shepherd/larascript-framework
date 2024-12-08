@@ -1,10 +1,10 @@
 import User from '@src/app/models/auth/User';
 import ApiTokenObserver from '@src/app/observers/ApiTokenObserver';
-import Model from '@src/core/base/Model';
 import IApiTokenModel, { IApiTokenData } from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import Scopes from '@src/core/domains/auth/services/Scopes';
 import { ICtor } from '@src/core/interfaces/ICtor';
+import Model from '@src/core/models/base/Model';
 
 /**
  * ApiToken model

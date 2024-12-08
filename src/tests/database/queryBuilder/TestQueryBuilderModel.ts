@@ -1,5 +1,5 @@
-import Model from "@src/core/base/Model";
 import IModelAttributes from "@src/core/interfaces/IModelData";
+import Model from "@src/core/models/base/Model";
 
 export interface TestQueryBuilderModelData extends IModelAttributes {
     name: string,

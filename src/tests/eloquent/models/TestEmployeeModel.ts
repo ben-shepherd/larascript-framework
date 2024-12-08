@@ -1,6 +1,6 @@
-import Model from "@src/core/base/Model";
 import BelongsTo from "@src/core/domains/eloquent/relational/BelongsTo";
 import IModelAttributes from "@src/core/interfaces/IModelData";
+import Model from "@src/core/models/base/Model";
 import { App } from "@src/core/services/App";
 import testHelper from "@src/tests/testHelper";
 import { DataTypes } from "sequelize";

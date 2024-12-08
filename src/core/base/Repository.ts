@@ -4,6 +4,8 @@ import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
 import { App } from "@src/core/services/App";
 
+import { ICtor } from "../interfaces/ICtor";
+
 /**
  * Base class for repositories
  */
@@ -12,7 +14,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
     /**
      * The model constructor
      */
-    public modelCtor: ModelConstructor<Model>;
+    public modelCtor: ICtor<Model>;
 
     /**
      * The name of the collection/table
@@ -29,7 +31,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @param collectionName The name of the collection/table
      * @param modelConstructor The model constructor
      */
-    constructor(modelConstructor: ModelConstructor<Model>, collectionName?: string) {
+    constructor(modelConstructor: ICtor<Model>, collectionName?: string) {
         this.collectionName = collectionName ?? (new modelConstructor()).table;
         this.connection = new modelConstructor().connection
         this.modelCtor = modelConstructor;

@@ -1,4 +1,4 @@
-import Model from "@src/core/base/Model";
+import Model from "@src/core/models/base/Model";
 
 class BaseSchema {
 

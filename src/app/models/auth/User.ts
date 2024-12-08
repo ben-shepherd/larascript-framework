@@ -1,8 +1,8 @@
 import ApiToken from "@src/app/models/auth/ApiToken";
 import UserObserver from "@src/app/observers/UserObserver";
-import Model from "@src/core/base/Model";
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import IModelAttributes from "@src/core/interfaces/IModelData";
+import Model from "@src/core/models/base/Model";
 
 /**
  * User structure

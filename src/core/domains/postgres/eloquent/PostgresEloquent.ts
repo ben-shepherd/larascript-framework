@@ -126,7 +126,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, PostgresAda
                     .where('id', '=', id)
             )
 
-            return this.formatQueryResults(res.rows)[0] ?? null
+            return res.rows[0] ?? null
         })
     }
 
@@ -293,7 +293,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, PostgresAda
                         .setInsert(documentWithUuid as object)
                 )
                 
-                results.push(this.formatQueryResults(res.rows)[0])    
+                results.push(res.rows[0])    
             }
 
             this.setExpression(previousExpression)

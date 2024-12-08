@@ -12,11 +12,15 @@ import BelongsTo from "../domains/eloquent/relational/BelongsTo";
 
 export type GetDataOptions = {excludeGuarded: boolean}
 
-export type ModelConstructor<M extends IModel = IModel> = new (...args: any[]) => M
+export type ModelConstructor<M extends IModel = IModel> = {
+    new (...args: any[]): M;
+    create<T extends M>(data: T['attributes'] | null): T;
+}
 
 export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>
 
-export interface IModel<Attributes extends IModelAttributes = IModelAttributes> extends IHasDatabaseConnection, IHasPrepareDocument, IHasObserver {
+export interface IModel<Attributes extends IModelAttributes = IModelAttributes, K extends keyof Attributes = keyof Attributes> extends IHasDatabaseConnection, IHasPrepareDocument, IHasObserver {
+    [key: string]: unknown;
     primaryKey: string;
     fields: string[];
     guarded: string[];
@@ -25,6 +29,7 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes> 
     json: string[];
     attributes: Attributes | null;
     original: Attributes | null;
+    isInstanceOfModel(modelCtor: ICtor<IModel>): boolean;
     attr<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Promise<Attributes[K] | null | undefined>;
     setAttribute(key: keyof Attributes, value?: unknown): Promise<void>;
     getAttributeSync<K extends keyof Attributes = keyof Attributes>(key: K): Attributes[K] | null
