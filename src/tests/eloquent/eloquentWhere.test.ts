@@ -69,7 +69,9 @@ describe('eloquent', () => {
 
     test('test raw where', async () => {
         
-        const resultsOnlyJohn = await query.whereRaw('"name" = $1', ['John']).first()
+        const resultsOnlyJohn = await query.clone()
+            .whereRaw('"name" = $1', ['John']).first()
+            
         expect(resultsOnlyJohn?.id).toBe(inserted[2].id);
         expect(resultsOnlyJohn?.name).toBe('John');
     })
