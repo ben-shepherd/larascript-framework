@@ -5,6 +5,7 @@ import { app } from "@src/core/services/App";
 import { IEloquent } from "../interfaces/IEloquent";
 import { IQueryService } from "../interfaces/IQueryService";
 
+export const query = () => app('query');
 export const queryBuilder = (modelCtor: ICtor<IModel>) => app('query').builder(modelCtor);
 
 class EloquentQueryService implements IQueryService {
