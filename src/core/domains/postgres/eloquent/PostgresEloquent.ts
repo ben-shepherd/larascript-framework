@@ -184,7 +184,7 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
             // Reset the limit to the previous value
             this.expression.setOffsetAndLimit(previousLimit)
 
-            return this.formatQueryResults(res.rows)[0] ?? null
+            return res.rows[0] ?? null
         })
     }
 
@@ -223,7 +223,7 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
                 return null
             }
 
-            return this.formatQueryResults(res.rows)[res.rows.length - 1] ?? null
+            return res.rows[res.rows.length - 1] ?? null
         })
     }
 
@@ -241,9 +241,7 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
 
             this.resetBindingValues()
 
-            return collect<Data>(
-                this.formatQueryResults(res.rows)
-            )
+            return collect<Data>(res.rows)
         })
     }
 
@@ -266,9 +264,7 @@ class PostgresEloquent<Data> extends Eloquent<Data, PostgresAdapter, SqlExpressi
                     .setOffsetAndLimit(null)
             )
 
-            return collect<Data>(
-                this.formatQueryResults(res.rows)
-            )
+            return collect<Data>(res.rows)
         })
     }
 

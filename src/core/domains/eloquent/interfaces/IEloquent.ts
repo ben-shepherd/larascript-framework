@@ -77,6 +77,7 @@ export interface IRelationship {
     _relationshipInterface: true;
     getLocalModelCtor(): ICtor<IModel>;
     getForeignModelCtor(): ICtor<IModel>;
+    getForeignTableName(): string;
     getOptions(): IBelongsToOptions
     getLocalKey(): string;
     getForeignKey(): string;

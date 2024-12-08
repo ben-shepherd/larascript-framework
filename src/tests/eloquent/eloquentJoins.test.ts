@@ -140,15 +140,17 @@ describe('eloquent', () => {
 
     test('test model property', async () => {
 
-        // const alice = await employeeQuery.clone()
-        //     .where('name', 'Alice')
-        //     .firstOrFail();
+        const aliceModel = await TestEmployeeModel.query()
+            .where('name', 'Alice')
+            .asModel()
+            .firstOrFail();
 
-        // const department = await alice.department;
-        // const hr = await departmentQuery.clone().where('deptName', 'HR').firstOrFail();
+        const department = await aliceModel.attr('department');
 
-        // expect(department).toBeTruthy();
-        // expect(department?.id).toBe(hr.id);
+        const hr = await departmentQuery.clone().where('deptName', 'HR').firstOrFail();
+
+        expect(department).toBeTruthy();
+        expect(department).toBe(hr.id);
     })
 
     test('test with', async () => {

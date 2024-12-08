@@ -5,7 +5,7 @@ import { App } from "@src/core/services/App";
 import testHelper from "@src/tests/testHelper";
 import { DataTypes } from "sequelize";
 
-import TestDepartmentModel, { ITestDepartmentModelData } from "./TestDepartmentModel";
+import TestDepartmentModel from "./TestDepartmentModel";
 
 const tableName = Model.formatTableName('testsEmployees')
 
@@ -16,7 +16,7 @@ export interface ITestEmployeeModelData extends IModelAttributes {
     salary: number;
     createdAt: Date;
     updatedAt: Date;
-    department?: ITestDepartmentModelData
+    department?: TestDepartmentModel
 }
 
 export const resetTableEmployeeModel = async (connections: string[] = testHelper.getTestConnectionNames()) => {

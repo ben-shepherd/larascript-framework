@@ -6,10 +6,11 @@ import { IHasManyOptions } from '@src/core/domains/database/interfaces/relations
 import { ICtor } from '@src/core/interfaces/ICtor';
 import { GetDataOptions, IModel } from '@src/core/interfaces/IModel';
 import IModelAttributes from '@src/core/interfaces/IModelData';
-import { App } from '@src/core/services/App';
+import { App, app } from '@src/core/services/App';
 
-import { IBelongsToOptions, IEloquent } from '../domains/eloquent/interfaces/IEloquent';
+import { IBelongsToOptions, IEloquent, IRelationship } from '../domains/eloquent/interfaces/IEloquent';
 import BelongsTo from '../domains/eloquent/relational/BelongsTo';
+import EloquentRelationship from '../domains/eloquent/utils/EloquentRelationship';
 import Str from '../util/str/Str';
  
 
@@ -112,12 +113,17 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
      * @template M - The type of the model, defaults to IModel.
      * @returns {IEloquent<M>} A query builder instance associated with the model.
      */
-    public static query<Data extends IModelAttributes = IModelAttributes>(): IEloquent<Data> {
-        const temporaryModel = new (this as unknown as ICtor<IModel>)(null);
-        const connectionName = temporaryModel.connection;
-        const tableName = temporaryModel.useTableName();
+    public static query<Attributes extends IModelAttributes = IModelAttributes>(modelCtor?: ICtor<IModel>): IEloquent<Attributes> {
 
-        const eloquent = App.container('db').eloquent<Data>()
+        const model = modelCtor 
+            ? new (modelCtor as unknown as ICtor<IModel>)(null) 
+            : new (this as unknown as ICtor<IModel>)(null);
+            
+        const connectionName = model.connection;
+        const tableName = model.useTableName();
+
+        const eloquent = app('db')
+            .eloquent<Attributes>()
             .setConnectionName(connectionName)
             .setTable(tableName)
             .setModelCtor(this as unknown as ICtor<IModel>)
@@ -139,7 +145,7 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
      */
     async attr<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Promise<Attributes[K] | null | undefined> {
         if (value === undefined) {
-            return this.getAttributeSync(key) as Attributes[K] ?? null;
+            return this.getAttribute(key) as Attributes[K] ?? null;
         }
 
         await this.setAttribute(key, value);
@@ -174,7 +180,45 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         return this.attributes?.[key] ?? null;
     }
 
+    /**
+     * Retrieves the value of a specific attribute from the model's data, or
+     * fetches the relationship data if the attribute is a relationship.
+     * 
+     * @template K Type of the attribute key.
+     * @param {K} key - The key of the attribute to retrieve.
+     * @returns {Attributes[K] | null} The value of the attribute or null if not found.
+     */
     async getAttribute<K extends keyof Attributes = keyof Attributes>(key: K): Promise<Attributes[K] | null> {
+
+        const relationsip = EloquentRelationship.getRelationshipInterface(this, key as string);
+
+        if(relationsip) {
+            return this.getAttributeRelationship(key, relationsip);
+        }
+
+        return this.getAttributeSync(key);
+    }
+
+    /**
+     * Retrieves the value of a specific attribute from the model's data, or
+     * fetches the relationship data if the attribute is a relationship.
+     * 
+     * @template K Type of the attribute key.
+     * @param {K} key - The key of the attribute to retrieve.
+     * @returns {Attributes[K] | null} The value of the attribute or null if not found.
+     */
+    protected async getAttributeRelationship<K extends keyof Attributes = keyof Attributes>(key: K, relationship?: IRelationship): Promise<Attributes[K] | null> {
+
+        if(this.attributes?.[key]) {
+            return this.attributes[key] 
+        }
+
+        if(!relationship) {
+            relationship = EloquentRelationship.fromModel(this.constructor as ICtor<IModel>, key as string);
+        }
+
+        this.setAttribute(key, await EloquentRelationship.fetchRelationshipData<Attributes, K>(this, relationship));
+
         return this.getAttributeSync(key);
     }
 

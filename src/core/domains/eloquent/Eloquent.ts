@@ -407,7 +407,12 @@ abstract class Eloquent<
             this.columns = ['*'];
         }
 
-        this.setColumns(Array.isArray(columns) ? columns : [columns])
+        const columnsArray = Array.isArray(columns) ? columns : [columns]
+
+        columnsArray.forEach(column => {
+            this.column(column)
+        })
+
         return this as unknown as IEloquent<Data>;
     }
 
@@ -421,6 +426,12 @@ abstract class Eloquent<
         if(typeof column === 'string') {
             column = {column}
         }
+
+        // if no table name is set, use the current table
+        if(!column.tableName) {
+            column.tableName = this.useTable();
+        }
+        
         this.expression.addColumn(column);
         return this as unknown as IEloquent<Data>
     }

@@ -33,6 +33,14 @@ class BelongsTo implements IRelationship {
     }
 
     /**
+     * Retrieves the table name of the related model in the "belongs to" relationship.
+     * @returns {string} The table name of the related model.
+     */
+    getForeignTableName(): string {
+        return new this.foreignModel().useTableName()
+    }
+
+    /**
      * Retrieves the options for the "belongs to" relationship,
      * including the foreign table name derived from the related model.
      * 
