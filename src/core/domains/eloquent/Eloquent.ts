@@ -13,7 +13,7 @@ import ExpressionException from "./exceptions/ExpressionException";
 import InvalidMethodException from "./exceptions/InvalidMethodException";
 import MissingTableException from "./exceptions/MissingTableException";
 import QueryBuilderException from "./exceptions/QueryBuilderException";
-import { IEloquent, LogicalOperators, OperatorArray, SetModelColumnsOptions, TColumn, TFormatterFn, TLogicalOperator, TOperator, TWhereClauseValue } from "./interfaces/IEloquent";
+import { IEloquent, LogicalOperators, OperatorArray, SetModelColumnsOptions, TColumnOption, TFormatterFn, TLogicalOperator, TOperator, TWhereClauseValue } from "./interfaces/IEloquent";
 import IEloquentExpression from "./interfaces/IEloquentExpression";
 import { TDirection } from "./interfaces/TEnums";
 import With from "./relational/With";
@@ -116,7 +116,7 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
      * @returns {IEloquent<Model>} The query builder instance.
      */
     protected setColumns(columns: string[]): IEloquent<Model> {
-        const columnsTyped = columns.map(column => ({column})) as TColumn[]
+        const columnsTyped = columns.map(column => ({column})) as TColumnOption[]
         this.expression.setColumns(columnsTyped);
         return this as unknown as IEloquent<Model>;
     }
@@ -383,15 +383,14 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
         this.setColumns([]);
 
         if(columns === undefined) {
-            this.columns = ['*'];
             return this as unknown as IEloquent<Model>;
         }
 
-        if(typeof columns === 'string' && columns === '*') {
-            this.columns = ['*'];
-        }
-
         const columnsArray = Array.isArray(columns) ? columns : [columns]
+
+        if(columnsArray.length === 0) {
+            throw new EloquentException('Expected at least one column');
+        }
 
         columnsArray.forEach(column => {
             this.column(column)
@@ -403,10 +402,10 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
     /**
      * Adds a column to the columns array to be included in the SQL query.
      * If the column is already in the array, it will not be added again.
-     * @param {string | TColumn} column The column name to add to the array.
+     * @param {string | TColumnOption} column The column name to add to the array.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    column(column: TColumn | string): IEloquent<Model> {
+    column(column: TColumnOption | string): IEloquent<Model> {
         if(typeof column === 'string') {
             column = {column}
         }
@@ -442,7 +441,7 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
      */
     distinct(columns: string | string[]): IEloquent<Model> {
         columns = Array.isArray(columns) ? columns : [columns];
-        const columnsTyped = columns.map(column => ({column})) as TColumn[]
+        const columnsTyped = columns.map(column => ({column})) as TColumnOption[]
         
         this.expression.setDistinctColumns(columnsTyped);
         return this as unknown as IEloquent<Model>;
@@ -583,6 +582,7 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
             column,
             operator,
             value,
+            logicalOperator,
             tableName: this.useTable()
         })
         return this as unknown as IEloquent<Model>

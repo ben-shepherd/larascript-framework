@@ -1,5 +1,5 @@
 
-import { TColumn } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { TColumnOption } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
 import SqlExpression from "../SqlExpression";
 
@@ -16,7 +16,7 @@ class SelectColumns {
      * @param {string[] | null} distinctColumnsOptions - An array of columns to append for the DISTINCT ON clause.
      * @returns {string} The SQL string for the SELECT query.
      */
-    public static toSql(columnOptions: TColumn[], distinctColumnsOptions: TColumn[] | null = null, rawSelect?: RawSelect): string {
+    public static toSql(columnOptions: TColumnOption[], distinctColumnsOptions: TColumnOption[] | null = null, rawSelect?: RawSelect): string {
         let sql = 'SELECT ';
 
         if(rawSelect) {
@@ -39,11 +39,11 @@ class SelectColumns {
      * This method processes the provided distinct columns to ensure they are in the correct format
      * for a SQL DISTINCT ON clause. If no distinct columns are provided, an empty array is returned.
      *
-     * @param {TColumn[] | null} distinctColumns - The array of distinct column options to prepare.
-     * @returns {TColumn[]} The prepared array of distinct columns.
+     * @param {TColumnOption[] | null} distinctColumns - The array of distinct column options to prepare.
+     * @returns {TColumnOption[]} The prepared array of distinct columns.
      */
-    protected static prepareDistinctColumns(distinctColumns: TColumn[] | null): TColumn[] {
-        return SqlExpression.prepareColumnOptions<TColumn[]>(distinctColumns ?? [])
+    protected static prepareDistinctColumns(distinctColumns: TColumnOption[] | null): TColumnOption[] {
+        return SqlExpression.prepareColumnOptions<TColumnOption[]>(distinctColumns ?? [])
     }
 
     /**
@@ -53,10 +53,10 @@ class SelectColumns {
      * is properly qualified with its table name and alias if specified. If no
      * columns are provided, a wildcard column ('*') is used by default.
      *
-     * @param {TColumn[] | null} options - The array of column options to prepare, or null.
+     * @param {TColumnOption[] | null} options - The array of column options to prepare, or null.
      * @returns {string[]} The array of formatted column strings for the SQL query.
      */
-    protected static prepareColumns(options: TColumn[] | null): string[] {
+    protected static prepareColumns(options: TColumnOption[] | null): string[] {
         if(options === null || options.length === 0) {
             options = [{column: '*'}]
         }
@@ -88,8 +88,8 @@ class SelectColumns {
      * @param {string[] | null} distinctColumns - An array of columns to append for the DISTINCT ON clause.
      * @returns {string} The updated SQL query string with the DISTINCT ON clause.
      */
-    static appendDistinctColumnsSql(sql: string, distinctColumns: TColumn[] | null): string {
-        const distinctColumnsArray = SqlExpression.prepareColumnOptions<TColumn[]>(distinctColumns ?? [])
+    static appendDistinctColumnsSql(sql: string, distinctColumns: TColumnOption[] | null): string {
+        const distinctColumnsArray = SqlExpression.prepareColumnOptions<TColumnOption[]>(distinctColumns ?? [])
 
         if(distinctColumnsArray.length > 0) {
             sql += `DISTINCT ON (${distinctColumnsArray.map(column => column.column).join(', ')}) `;

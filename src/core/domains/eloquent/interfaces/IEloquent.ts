@@ -8,9 +8,7 @@ import IModelAttributes from "@src/core/interfaces/IModelData";
 import Collection from "../../collections/Collection";
 import IEloquentExpression from "./IEloquentExpression";
 
-export type TColumns = string[]
-
-export type TColumn = {
+export type TColumnOption = {
     column: string;
     tableName?: string;
     isFormatted?: boolean
@@ -148,7 +146,7 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
 
     // selection
     select(columns?: string | string[]): IEloquent<Model>;
-    column(column: TColumn): IEloquent<Model>;
+    column(column: TColumnOption): IEloquent<Model>;
 
     // find methods
     find(id: string | number): Promise<Model | null>;

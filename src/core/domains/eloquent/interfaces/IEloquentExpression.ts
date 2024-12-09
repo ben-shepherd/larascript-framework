@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { TColumn, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { TColumnOption, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
 interface IEloquentExpression<Bindings = unknown> {
 
@@ -51,41 +51,41 @@ interface IEloquentExpression<Bindings = unknown> {
     /**
      * Gets the current columns in the SQL query.
      * 
-     * @returns {TColumn[]} The current columns.
+     * @returns {TColumnOption[]} The current columns.
      */
-    getColumns(): TColumn[];
+    getColumns(): TColumnOption[];
 
     /**
      * Sets the columns to include in the SQL query.
      * 
-     * @param {TColumn[]} columns - The array of column names to set for the query.
+     * @param {TColumnOption[]} columns - The array of column names to set for the query.
      * @returns {this} The instance of the query builder for method chaining.
      */
-    setColumns(columns: TColumn[]): this;
+    setColumns(columns: TColumnOption[]): this;
 
     /**
      * Adds a column to the columns array to be included in the SQL query.
      * If the column is already in the array, it will not be added again.
      * 
-     * @param {TColumn} column - The column name to add to the array.
+     * @param {TColumnOption} column - The column name to add to the array.
      * @returns {this} The instance of the query builder for method chaining.
      */
-    addColumn(column: TColumn): this;
+    addColumn(column: TColumnOption): this;
 
     /**
      * Gets the distinct columns for the query builder.
      * 
-     * @returns {TColumn[]} The current distinct columns.
+     * @returns {TColumnOption[]} The current distinct columns.
      */
-    getDistinctColumns(): TColumn[];
+    getDistinctColumns(): TColumnOption[];
 
     /**
      * Sets the distinct columns for the query builder.
      * 
-     * @param {TColumn[]} columns - The array of column names to set for the query.
+     * @param {TColumnOption[]} columns - The array of column names to set for the query.
      * @returns {this} The instance of the query builder for method chaining.
      */
-    setDistinctColumns(columns: TColumn[]): this;
+    setDistinctColumns(columns: TColumnOption[]): this;
 
     /**
      * Adds a single binding to the builder.

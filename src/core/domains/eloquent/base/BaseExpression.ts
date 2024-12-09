@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { TColumn, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { TColumnOption, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { deepClone } from "@src/core/util/deepClone";
 
 import IEloquentExpression from "../interfaces/IEloquentExpression";
@@ -18,15 +18,15 @@ abstract class BaseExpression<Bindings = unknown> implements IEloquentExpression
 
     abstract setSelectRaw(sql: string, bindings: unknown): this;
 
-    abstract setColumns(columns: TColumn[]): this;
+    abstract setColumns(columns: TColumnOption[]): this;
 
-    abstract getColumns(): TColumn[];
+    abstract getColumns(): TColumnOption[];
 
-    abstract addColumn(column: TColumn): this;
+    abstract addColumn(column: TColumnOption): this;
 
-    abstract setDistinctColumns(columns: TColumn[]): this;
+    abstract setDistinctColumns(columns: TColumnOption[]): this;
 
-    abstract getDistinctColumns(): TColumn[];
+    abstract getDistinctColumns(): TColumnOption[];
 
     abstract addBinding(column: string, binding: unknown): this;
 

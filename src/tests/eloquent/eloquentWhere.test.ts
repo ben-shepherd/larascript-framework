@@ -33,7 +33,7 @@ describe('eloquent', () => {
         await resetTable()
 
         query = queryBuilder(TestPeopleModel)
-            .orderBy('createdAt', 'asc');
+            .orderBy('name', 'asc');
 
         inserted = await query.insert([
             {
@@ -94,13 +94,14 @@ describe('eloquent', () => {
             .get();
 
         expect(resultsOnlyJohnOrJane.count()).toBe(2);
-        expect(resultsOnlyJohnOrJane[0].name).toBe('John');
-        expect(resultsOnlyJohnOrJane[1].name).toBe('Jane');    
+        expect(resultsOnlyJohnOrJane[0].name).toBe('Jane');
+        expect(resultsOnlyJohnOrJane[1].name).toBe('John');    
         
         const resultsYoungerThan30OrOlderThan40 = await query.clone()
             .where('age', '<', 30)
             .orWhere('age', '>', 40)
             .get();
+
 
         expect(resultsYoungerThan30OrOlderThan40.count()).toBe(2);
         expect(resultsYoungerThan30OrOlderThan40[0].name).toBe('Alice');
@@ -116,8 +117,8 @@ describe('eloquent', () => {
 
         const resultsGreaterThanOrEqual35YearsOld = await query.clone().where('age', '>=', 35).get();
         expect(resultsGreaterThanOrEqual35YearsOld.count()).toBe(2);
-        expect(resultsGreaterThanOrEqual35YearsOld[0].name).toBe('John');
-        expect(resultsGreaterThanOrEqual35YearsOld[1].name).toBe('Jane');
+        expect(resultsGreaterThanOrEqual35YearsOld[0].name).toBe('Jane');
+        expect(resultsGreaterThanOrEqual35YearsOld[1].name).toBe('John');
     
     })
 
@@ -144,8 +145,8 @@ describe('eloquent', () => {
         const resultsExclude25 = await query.clone().whereNotIn('age', [25]).get();
         expect(resultsExclude25.count()).toBe(3);
         expect(resultsExclude25[0].name).toBe('Bob');
-        expect(resultsExclude25[1].name).toBe('John');
-        expect(resultsExclude25[2].name).toBe('Jane');
+        expect(resultsExclude25[1].name).toBe('Jane');
+        expect(resultsExclude25[2].name).toBe('John');
 
     })
 
@@ -173,7 +174,7 @@ describe('eloquent', () => {
         const resultsNotBetween2024And2027 = await query.clone().whereNotBetween('born', [date2024, date2027]).get();
         expect(resultsNotBetween2024And2027.count()).toBe(3);
         expect(resultsNotBetween2024And2027[0].name).toBe('Bob');
-        expect(resultsNotBetween2024And2027[1].name).toBe('John');
-        expect(resultsNotBetween2024And2027[2].name).toBe('Jane');
+        expect(resultsNotBetween2024And2027[1].name).toBe('Jane');
+        expect(resultsNotBetween2024And2027[2].name).toBe('John');
     })
 });

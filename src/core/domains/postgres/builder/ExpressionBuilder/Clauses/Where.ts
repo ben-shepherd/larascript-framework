@@ -99,7 +99,7 @@ class Where {
         
         for(let i = 0; i < wheres.length; i++) {
             const currentWhereSql = this.convertToSqlWhereClause(wheres[i])
-            const isNotLastWhere = i < wheres.length - 1
+            const isNotLastWhere = i !== wheres.length - 1
 
             // Example: "table."
             if(currentWhereSql.tableName) {

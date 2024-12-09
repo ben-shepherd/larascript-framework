@@ -1,7 +1,7 @@
 import BaseExpression from "@src/core/domains/eloquent/base/BaseExpression";
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
 import InsertException from "@src/core/domains/eloquent/exceptions/InsertException";
-import { TColumn, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { TColumnOption, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import { z } from "zod";
 
@@ -50,11 +50,11 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
     
     protected tableAbbreviation?: string | null        = getDefaults().tableAbbreviation;
     
-    protected columns: TColumn[]                       = getDefaults().columns;
+    protected columns: TColumnOption[]                 = getDefaults().columns;
 
     protected rawSelect: RawSelect | null              = getDefaults().rawSelect;
     
-    protected distinctColumns: TColumn[] | null        = getDefaults().distinctColumns;
+    protected distinctColumns: TColumnOption[] | null  = getDefaults().distinctColumns;
     
     protected whereClauses: TWhereClause[]             = getDefaults().whereClauses;
     
@@ -93,15 +93,15 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
      * @param options - The column name to format
      * @returns The formatted column name
      */
-    public static prepareColumnOptions<T extends TColumn | TColumn[] = TColumn>(options: T): T {
+    public static prepareColumnOptions<T extends TColumnOption | TColumnOption[] = TColumnOption>(options: T): T {
 
         /**
          * Formats a column name with double quotes for safe usage in SQL queries
-         * @param {TColumn} option - The column name to format
-         * @returns {TColumn} The formatted column name
+         * @param {TColumnOption} option - The column name to format
+         * @returns {TColumnOption} The formatted column name
          * @private
          */
-        const format = (option: TColumn): TColumn => {
+        const format = (option: TColumnOption): TColumnOption => {
             if(option.isFormatted) {
                 return option
             }
@@ -139,11 +139,11 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         return this.table
     }
     
-    getColumns(): TColumn[] {
+    getColumns(): TColumnOption[] {
         return this.columns
     }
 
-    getDistinctColumns(): TColumn[] {
+    getDistinctColumns(): TColumnOption[] {
         return this.distinctColumns || []
     }
 
@@ -360,7 +360,7 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
      * @param {string[]} columns - The array of column names to set for the query.
      * @returns {this} The instance of the query builder for method chaining.
      */
-    setColumns(columns: TColumn[]): this {
+    setColumns(columns: TColumnOption[]): this {
         this.columns = columns;
         return this;
     }
@@ -371,12 +371,12 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
      * @param {string} column The column name to add to the array.
      * @returns {this} The instance of the query builder for method chaining.
      */
-    addColumn(column: TColumn): this {
+    addColumn(column: TColumnOption): this {
         this.columns.push(column);
         return this
     }
 
-    setDistinctColumns(columns: TColumn[]): this {
+    setDistinctColumns(columns: TColumnOption[]): this {
         console.log('[SqlExpression] setDistinctColumns', columns);
         this.distinctColumns = columns;
         return this   
