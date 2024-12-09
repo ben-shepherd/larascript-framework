@@ -86,9 +86,19 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         return `"${column}"`
     };
 
+    /**
+     * Prepares an array of column options for use in a SQL query.
+     *
+     * This method formats the provided column options, ensuring that each column
+     * is properly qualified with quotes. If the option has a preFormattedColumn
+     * set to true, the column will not be formatted.
+     *
+     * @param {TColumnOption[] | TColumnOption} options - The array of column options to prepare.
+     * @returns {TColumnOption[] | TColumnOption} The prepared array of column options.
+     */
     public static prepareColumnOptions<T extends TColumnOption | TColumnOption[] = TColumnOption>(options: T): T {
         const format = (option: TColumnOption): TColumnOption => {
-            if(option.isFormatted) {
+            if(option.preFormattedColumn) {
                 return option
             }
 

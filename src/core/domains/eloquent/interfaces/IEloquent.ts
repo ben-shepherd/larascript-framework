@@ -11,7 +11,7 @@ import IEloquentExpression from "./IEloquentExpression";
 export type TColumnOption = {
     column: string | null;
     tableName?: string;
-    isFormatted?: boolean
+    preFormattedColumn?: boolean
     as?: string;
 }
 
