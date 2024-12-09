@@ -19,6 +19,7 @@ import Where from "./Clauses/Where";
 type BuildType = 'select' | 'insert' | 'update';
 type RawSelect = { sql: string, bindings: unknown };
 type RawWhere = { sql: string, bindings: unknown };
+type NullableObjectOrArray = object | object[] | null;
 
 const getDefaults = () => ({
     buildType: 'select',
@@ -43,39 +44,39 @@ const getDefaults = () => ({
 class SqlExpression extends BaseExpression implements IEloquentExpression {
 
     // Class Properties
-    public bindings = getDefaults().bindings;
+    public bindings                                    = getDefaults().bindings;
 
-    protected buildType: BuildType = getDefaults().buildType as BuildType;
+    protected buildType: BuildType                     = getDefaults().buildType as BuildType;
 
-    protected table: string = getDefaults().table;
+    protected table: string                            = getDefaults().table;
 
-    protected tableAbbreviation?: string | null = getDefaults().tableAbbreviation;
+    protected tableAbbreviation?: string | null        = getDefaults().tableAbbreviation;
 
-    protected columns: TColumnOption[] = getDefaults().columns;
+    protected columns: TColumnOption[]                 = getDefaults().columns;
 
-    protected rawSelect: RawSelect | null = getDefaults().rawSelect;
+    protected rawSelect: RawSelect | null              = getDefaults().rawSelect;
 
-    protected distinctColumns: TColumnOption[] | null = getDefaults().distinctColumns;
+    protected distinctColumns: TColumnOption[] | null  = getDefaults().distinctColumns;
 
-    protected whereClauses: TWhereClause[] = getDefaults().whereClauses;
+    protected whereClauses: TWhereClause[]             = getDefaults().whereClauses;
 
     protected whereColumnTypes: Record<string, string> = getDefaults().whereColumnTypes;
 
-    protected rawWhere: RawWhere | null = getDefaults().whereRaw;
+    protected rawWhere: RawWhere | null                = getDefaults().whereRaw;
 
-    protected joins: TJoin[] = getDefaults().joins;
+    protected joins: TJoin[]                           = getDefaults().joins;
 
-    protected withs: TWith[] = getDefaults().withs;
+    protected withs: TWith[]                           = getDefaults().withs;
 
-    protected orderByClauses: TOrderBy[] | null = getDefaults().orderByClauses;
+    protected orderByClauses: TOrderBy[] | null        = getDefaults().orderByClauses;
 
-    protected offsetLimit: TOffsetLimit | null = getDefaults().offset;
+    protected offsetLimit: TOffsetLimit | null         = getDefaults().offset;
 
-    protected inserts: object | object[] | null = getDefaults().inserts;
+    protected inserts: NullableObjectOrArray           = getDefaults().inserts;
 
-    protected updates: object | object[] | null = getDefaults().updates;
+    protected updates: NullableObjectOrArray           = getDefaults().updates;
 
-    protected groupBy: TGroupBy[] | null = getDefaults().groupBy;
+    protected groupBy: TGroupBy[] | null               = getDefaults().groupBy;
 
     // Static Utility Methods
     public static readonly formatColumnWithQuotes = (column: string): string => {

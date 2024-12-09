@@ -216,10 +216,10 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
 
     // Aggregates
     count(column?: string): Promise<number>;
-    // max(column: string): Promise<number>;
-    // min(column: string): Promise<number>;
-    // avg(column: string): Promise<number>;
-    // sum(column: string): Promise<number>;
+    max(column: string): Promise<number>;
+    min(column: string): Promise<number>;
+    avg(column: string): Promise<number>;
+    sum(column: string): Promise<number>;
 
     // Pagination
     // paginate(perPage?: number, page?: number): Promise<{

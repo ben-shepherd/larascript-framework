@@ -66,4 +66,48 @@ describe('eloquent', () => {
         expect(resultsBetween30And40).toBe(2);
 
     })
+
+    test('test avg', async () => {
+        
+        const results = await query.clone().avg('age');
+        expect(results).toBe(33.75);
+
+        const resultsOver30 = await query.clone()
+            .where('age', '>', 30)
+            .avg('age');
+        expect(resultsOver30).toBe(40);
+
+        const resultsUnder30 = await query.clone()
+            .where('age', '<', 30)
+            .avg('age');
+        expect(resultsUnder30).toBe(25);
+
+    })
+
+    test('test sum', async () => {
+        
+        const results = await query.clone().sum('age');
+        expect(results).toBe(135);
+
+        const resultsOver30 = await query.clone()
+            .where('age', '>', 30)
+            .sum('age');
+        expect(resultsOver30).toBe(80);
+
+    })
+
+    test('test min', async () => {
+        
+        const results = await query.clone().min('age');
+        expect(results).toBe(25);
+
+    })
+
+    test('test max', async () => {
+        
+        const results = await query.clone().max('age');
+        expect(results).toBe(45);
+
+    })
+
 });

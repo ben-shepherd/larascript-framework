@@ -352,27 +352,82 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, PostgresAda
      * @returns A promise resolving to the count of the documents.
      */
     async count(column: string | null = null): Promise<number> {
+        return await this.fetchAggregateResultNumber(`COUNT(${column ?? '*'}) AS aggregate_result`)
+    }
+
+    /**
+     * Calculates the minimum of the specified column and returns it as a Promise.
+     * 
+     * @param {string} column The column to calculate the minimum for.
+     * @returns {Promise<number>} A promise resolving to the minimum of the specified column.
+     */
+    async min(column: string): Promise<number> {
+        return await this.fetchAggregateResultNumber(`MIN(${column}) AS aggregate_result`)
+    }
+
+    /**
+     * Calculates the maximum of the specified column and returns it as a Promise.
+     * 
+     * @param {string} column The column to calculate the maximum for.
+     * @returns {Promise<number>} A promise resolving to the maximum of the specified column.
+     */
+    
+    async max(column: string): Promise<number> {
+        return await this.fetchAggregateResultNumber(`MAX(${column}) AS aggregate_result`)
+    }
+
+    /**
+     * Calculates the average of the specified column and returns it as a Promise.
+     * 
+     * @param {string} column The column to calculate the average for.
+     * @returns {Promise<number>} A promise resolving to the average of the specified column.
+     */
+    async avg(column: string): Promise<number> {
+        return await this.fetchAggregateResultNumber(`AVG(${column}) AS aggregate_result`)
+    }
+
+    /**
+     * Calculates the sum of the specified column and returns it as a Promise.
+     *
+     * @param {string} column - The column to calculate the sum for.
+     * @returns {Promise<number>} A promise resolving to the sum of the specified column.
+     */
+    async sum(column: string): Promise<number> {
+        return await this.fetchAggregateResultNumber(`SUM(${column}) AS aggregate_result`)
+    }
+
+    /**
+     * Executes a raw query to retrieve a single number from the database
+     * and returns it as a Promise.
+     * 
+     * @param {string} selectRaw The raw SQL to execute.
+     * @param {string} [targetProperty] The property to retrieve from the result.
+     * @returns {Promise<number>} A promise resolving to the result of the query.
+     * @throws {EloquentException} If the query result is null or undefined.
+     * @private
+     */
+    protected async fetchAggregateResultNumber(selectRaw: string, targetProperty: string = 'aggregate_result'): Promise<number> {
         return await captureError(async () => {
             
             const previousExpression = this.expression.clone() as SqlExpression
 
             this.expression.setSelect()
-            this.selectRaw(`COUNT(${column ?? '*'}) as count`)
+            this.selectRaw(selectRaw)
             this.groupBy(null)
             this.orderBy(null)
             this.offset(null)
             
             const res = await this.execute()
             
-            const result = res.rows?.[0]?.count ?? null;
+            const result = res.rows?.[0]?.[targetProperty] ?? null;
 
             if(!result) {
-                throw new EloquentException('Count result is null')
+                throw new EloquentException(`${targetProperty} is null`)
             }
 
             this.setExpression(previousExpression)
 
-            return parseInt(result)
+            return parseFloat(result)
         })
     }
 

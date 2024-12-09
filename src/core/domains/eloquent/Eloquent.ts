@@ -575,14 +575,23 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
         return this as unknown as IEloquent<Model>
     }
 
-    /**
-     * Executes a count query to determine the number of documents matching the 
-     * query criteria.
-     * 
-     * @returns A promise resolving to the count of the documents.
-     * @throws InvalidMethodException If the method is not implemented.
-     */
     async count(): Promise<number> {
+        throw new InvalidMethodException()
+    }
+
+    async max(column: string): Promise<number> {
+        throw new InvalidMethodException()
+    }
+
+    async min(column: string): Promise<number> {
+        throw new InvalidMethodException()
+    }
+
+    async sum(column: string): Promise<number> {
+        throw new InvalidMethodException()
+    }
+
+    async avg(column: string): Promise<number> {
         throw new InvalidMethodException()
     }
 
@@ -944,6 +953,7 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
     take(take: number | null): IEloquent<Model> {
         return this.limit(take)
     }
+
 
 }
 
