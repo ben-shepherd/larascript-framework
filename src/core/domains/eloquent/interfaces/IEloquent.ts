@@ -9,7 +9,7 @@ import Collection from "../../collections/Collection";
 import IEloquentExpression from "./IEloquentExpression";
 
 export type TColumnOption = {
-    column: string;
+    column: string | null;
     tableName?: string;
     isFormatted?: boolean
     as?: string;
@@ -69,6 +69,11 @@ export type TOrderBy = {
 export type TOffsetLimit = {
     limit?: number,
     offset?: number
+}
+
+export type TGroupBy = {
+    column: string;
+    tableName?: string
 }
 
 export interface IRelationship {
@@ -200,7 +205,7 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     oldest(column?: string): IEloquent<Model>;
 
     // Grouping
-    // groupBy(...columns: string[]): Promise<IQueryB   uilder>;
+    groupBy(columns: string[] | string | null): IEloquent<Model>;
     // having(column: string, operator?: string, value?: any): Promise<IQueryBuilder>;
 
     // Limiting
@@ -210,7 +215,7 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     take(take: number): IEloquent<Model>;
 
     // Aggregates
-    // count(column?: string): Promise<number>;
+    count(column?: string): Promise<number>;
     // max(column: string): Promise<number>;
     // min(column: string): Promise<number>;
     // avg(column: string): Promise<number>;

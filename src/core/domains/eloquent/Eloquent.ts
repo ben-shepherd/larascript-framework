@@ -13,7 +13,7 @@ import ExpressionException from "./exceptions/ExpressionException";
 import InvalidMethodException from "./exceptions/InvalidMethodException";
 import MissingTableException from "./exceptions/MissingTableException";
 import QueryBuilderException from "./exceptions/QueryBuilderException";
-import { IEloquent, LogicalOperators, OperatorArray, SetModelColumnsOptions, TColumnOption, TFormatterFn, TLogicalOperator, TOperator, TWhereClauseValue } from "./interfaces/IEloquent";
+import { IEloquent, LogicalOperators, OperatorArray, SetModelColumnsOptions, TColumnOption, TFormatterFn, TGroupBy, TLogicalOperator, TOperator, TWhereClauseValue } from "./interfaces/IEloquent";
 import IEloquentExpression from "./interfaces/IEloquentExpression";
 import { TDirection } from "./interfaces/TEnums";
 import With from "./relational/With";
@@ -115,9 +115,8 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
      * @param {string[]} columns - The columns to set for selection.
      * @returns {IEloquent<Model>} The query builder instance.
      */
-    protected setColumns(columns: string[]): IEloquent<Model> {
-        const columnsTyped = columns.map(column => ({column})) as TColumnOption[]
-        this.expression.setColumns(columnsTyped);
+    protected setColumns(columns: TColumnOption[]): IEloquent<Model> {
+        this.expression.setColumns(columns);
         return this as unknown as IEloquent<Model>;
     }
 
@@ -557,6 +556,37 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
     }
 
     /**
+     * Sets the group by columns for the query builder.
+     *
+     * @param {...string} columns - The columns to group by.
+     * @returns {this} The query builder instance for chaining.
+     */
+    groupBy(columns: string[] | string | null): IEloquent<Model> {
+
+        if(!columns) {
+            this.expression.setGroupBy(null);
+            return this as unknown as IEloquent<Model>
+        }
+
+        const columnsArray = Array.isArray(columns) ? columns : [columns]
+        const groupBy = columns ? columnsArray.map(column => ({column, tableName: this.useTable()})) as TGroupBy[] : null
+        
+        this.expression.setGroupBy(groupBy);
+        return this as unknown as IEloquent<Model>
+    }
+
+    /**
+     * Executes a count query to determine the number of documents matching the 
+     * query criteria.
+     * 
+     * @returns A promise resolving to the count of the documents.
+     * @throws InvalidMethodException If the method is not implemented.
+     */
+    async count(): Promise<number> {
+        throw new InvalidMethodException()
+    }
+
+    /**
      * Adds a where clause to the query builder.
      *
      * @param {string} column - The column to apply the where condition on.
@@ -822,7 +852,11 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
      * @param {TDirection} direction - The direction to order by. Defaults to 'asc'.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    orderBy(column: string, direction: TDirection = 'asc'): IEloquent<Model> {
+    orderBy(column: string | null, direction: TDirection = 'asc'): IEloquent<Model> {
+        if(column === null) {
+            this.expression.setOrderBy(null);
+            return this as unknown as IEloquent<Model>
+        }
         this.expression.orderBy({ column, direction });
         return this as unknown as IEloquent<Model>
     }
@@ -871,7 +905,7 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
      * @param {number} offset - The value of the offset to set.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    offset(offset: number): IEloquent<Model> {
+    offset(offset: number | null): IEloquent<Model> {
         this.expression.setOffset(offset);
         return this as unknown as IEloquent<Model>
     }
@@ -884,7 +918,7 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
      * @param {number} skip - The value of the offset to set.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    skip(skip: number): IEloquent<Model> {
+    skip(skip: number | null): IEloquent<Model> {
         return this.offset(skip)
     }
 
@@ -894,7 +928,7 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
      * @param {number} limit - The limit clause to set.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    limit(limit: number): IEloquent<Model> {
+    limit(limit: number | null): IEloquent<Model> {
         this.expression.setLimit(limit);
         return this as unknown as IEloquent<Model>      
     }
@@ -907,7 +941,7 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
      * @param {number} take - The limit clause to set.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    take(take: number): IEloquent<Model> {
+    take(take: number | null): IEloquent<Model> {
         return this.limit(take)
     }
 

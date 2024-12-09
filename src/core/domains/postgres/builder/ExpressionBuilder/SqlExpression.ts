@@ -1,12 +1,13 @@
 import BaseExpression from "@src/core/domains/eloquent/base/BaseExpression";
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
 import InsertException from "@src/core/domains/eloquent/exceptions/InsertException";
-import { TColumnOption, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { TColumnOption, TGroupBy, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import { z } from "zod";
 
 import BindingsHelper from "../BindingsHelper";
 import FromTable from "./Clauses/FromTable";
+import GroupBy from "./Clauses/GroupBy";
 import Insert from "./Clauses/Insert";
 import Joins from "./Clauses/Joins";
 import OffsetLimit from "./Clauses/OffsetLimit";
@@ -16,9 +17,7 @@ import Update from "./Clauses/Update";
 import Where from "./Clauses/Where";
 
 type BuildType = 'select' | 'insert' | 'update';
-
 type RawSelect = { sql: string, bindings: unknown };
-
 type RawWhere = { sql: string, bindings: unknown };
 
 const getDefaults = () => ({
@@ -34,52 +33,51 @@ const getDefaults = () => ({
     whereRaw: null,
     joins: [],
     withs: [],
-    orderByClauses: [],
+    orderByClauses: null,
     offset: null,
     inserts: null,
     updates: null,
+    groupBy: null,
 })
 
 class SqlExpression extends BaseExpression implements IEloquentExpression {
 
-    public bindings                                    = getDefaults().bindings;
+    // Class Properties
+    public bindings = getDefaults().bindings;
 
-    protected buildType: BuildType                     = getDefaults().buildType as BuildType;
-    
-    protected table: string                            = getDefaults().table;
-    
-    protected tableAbbreviation?: string | null        = getDefaults().tableAbbreviation;
-    
-    protected columns: TColumnOption[]                 = getDefaults().columns;
+    protected buildType: BuildType = getDefaults().buildType as BuildType;
 
-    protected rawSelect: RawSelect | null              = getDefaults().rawSelect;
-    
-    protected distinctColumns: TColumnOption[] | null  = getDefaults().distinctColumns;
-    
-    protected whereClauses: TWhereClause[]             = getDefaults().whereClauses;
-    
+    protected table: string = getDefaults().table;
+
+    protected tableAbbreviation?: string | null = getDefaults().tableAbbreviation;
+
+    protected columns: TColumnOption[] = getDefaults().columns;
+
+    protected rawSelect: RawSelect | null = getDefaults().rawSelect;
+
+    protected distinctColumns: TColumnOption[] | null = getDefaults().distinctColumns;
+
+    protected whereClauses: TWhereClause[] = getDefaults().whereClauses;
+
     protected whereColumnTypes: Record<string, string> = getDefaults().whereColumnTypes;
 
-    protected rawWhere: RawWhere | null                = getDefaults().whereRaw;
-    
-    protected joins: TJoin[]                           = getDefaults().joins;
+    protected rawWhere: RawWhere | null = getDefaults().whereRaw;
 
-    protected withs: TWith[]                           = getDefaults().withs;
-    
-    protected orderByClauses: TOrderBy[]               = getDefaults().orderByClauses;
-    
-    protected offsetLimit: TOffsetLimit | null         = getDefaults().offset;
-    
-    protected inserts: object | object[] | null        = getDefaults().inserts;
+    protected joins: TJoin[] = getDefaults().joins;
 
-    protected updates: object | object[] | null        = getDefaults().updates;
+    protected withs: TWith[] = getDefaults().withs;
 
-    /**
-     * Class representing a SQL query expression.
-     *
-     * This class is used internally by the Postgres query builder to build SQL queries.
-     * It is not intended to be used directly.
-     */
+    protected orderByClauses: TOrderBy[] | null = getDefaults().orderByClauses;
+
+    protected offsetLimit: TOffsetLimit | null = getDefaults().offset;
+
+    protected inserts: object | object[] | null = getDefaults().inserts;
+
+    protected updates: object | object[] | null = getDefaults().updates;
+
+    protected groupBy: TGroupBy[] | null = getDefaults().groupBy;
+
+    // Static Utility Methods
     public static readonly formatColumnWithQuotes = (column: string): string => {
         if(column === '*') return column
         if(column.startsWith('"') && column.endsWith('"')){
@@ -88,153 +86,25 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         return `"${column}"`
     };
 
-    /**
-     * Formats a column name with double quotes for safe usage in SQL queries
-     * @param options - The column name to format
-     * @returns The formatted column name
-     */
     public static prepareColumnOptions<T extends TColumnOption | TColumnOption[] = TColumnOption>(options: T): T {
-
-        /**
-         * Formats a column name with double quotes for safe usage in SQL queries
-         * @param {TColumnOption} option - The column name to format
-         * @returns {TColumnOption} The formatted column name
-         * @private
-         */
         const format = (option: TColumnOption): TColumnOption => {
             if(option.isFormatted) {
                 return option
             }
-            option.column = this.formatColumnWithQuotes(option.column);
+
+            option.column = this.formatColumnWithQuotes(option.column as string);
             return option
         }
 
         if(Array.isArray(options)) {
-            return options.map(format) as T;
+            return options.filter(option => option.column !== null).map(format) as T;
         }
 
         return format(options) as T;
     }
 
-    
-    /**
-     * Validates that the given array contains only objects
-     * @throws InsertException if the array contains a non-object value
-     * @param objects - The array to validate
-     */
-    protected validateArrayObjects(objects: object[], message = 'Expected an array of objects') {
-        const schema = z.array(z.object({}));
-
-        if(!schema.safeParse(objects).success) {
-            throw new InsertException(message);
-        }
-    }
-
-    setOffsetLimit(offsetLimit: TOffsetLimit | null): this {
-        this.offsetLimit = offsetLimit
-        return this
-    }
-
-    getTable(): string {
-        return this.table
-    }
-    
-    getColumns(): TColumnOption[] {
-        return this.columns
-    }
-
-    getDistinctColumns(): TColumnOption[] {
-        return this.distinctColumns || []
-    }
-
-    getWhereClauses(): TWhereClause[] {
-        return this.whereClauses
-    }
-
-    getJoins(): TJoin[] {
-        return this.joins
-    }
-
-    getWiths(): TWith[] {
-        return this.withs
-    }
-
-    getOrderBy(): TOrderBy[] {
-        return this.orderByClauses
-    }
-
-    getOffsetLimit(): TOffsetLimit | null {
-        return this.offsetLimit
-    }
-
-    getInserts(): object | object[] | null {
-        return this.inserts
-    }
-
-    getUpdates(): object | object[] | null {
-        return this.updates
-    }
-
-    getRawSelect(): RawSelect | null {
-        return this.rawSelect
-    }
-
-    getRawWhere(): RawWhere | null {
-        return this.rawWhere
-    }
-
-    getBindings(): BindingsHelper {
-        return this.bindings
-    }
-
-    getWhere(): TWhereClause[] {
-        return this.whereClauses
-    }
-
-    getInsert(): object | object[] | null {
-        return this.inserts
-    }
-
-    getUpdate(): object | object[] | null {
-        return this.updates
-    }
-
-    getWhereColumnTypes(): Record<string, string> {
-        return this.whereColumnTypes
-    }
-
-    setWhereColumnTypes(whereColumnTypes: Record<string, string>) {
-        this.whereColumnTypes = whereColumnTypes
-        return this
-    }
-
-    setWhereClauses(whereClauses: TWhereClause[]) {
-        this.whereClauses = whereClauses
-        return this
-    }
-
-    setOrderByClauses(orderByClauses: TOrderBy[]) {
-        this.orderByClauses = orderByClauses
-        return this
-    }
-
-    setInserts(inserts: object | object[] | null) {
-        this.inserts = inserts
-        return this
-    }
-
-    setUpdates(updates: object | object[] | null) {
-        this.updates = updates
-        return this
-    }
-
-    /**
-     * Builds a SQL query string from the query builder's properties
-     *
-     * @returns {string} The SQL query string
-     */
+    // Core Building Methods
     build<T = string>(): T {
-
         if(this.table.length === 0) {
             throw new Error('Table name is required');
         }
@@ -252,13 +122,27 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         return fnMap[this.buildType]() as T;
     }
 
-    /**
-     * Builds a SQL query string from the query builder's properties
-     *
-     * @returns {string} The SQL query string
-     */
-    buildInsert(): string {
+    buildSelect(): string { 
+        const oneSpacePrefix = ' ';
+        const selectColumns  = SelectColumns.toSql(this.columns, this.distinctColumns, this.rawSelect ?? undefined).trimEnd();
+        const fromTable     = FromTable.toSql(this.table, this.tableAbbreviation).trimEnd();
+        const join          = Joins.toSql(this.joins, oneSpacePrefix).trimEnd();
+        const where         = Where.toSql(this.whereClauses, this.rawWhere ?? undefined, this.bindings, oneSpacePrefix).trimEnd();
+        const groupBy      = GroupBy.toSql(this.groupBy, oneSpacePrefix).trimEnd();
+        const orderBy      = OrderBy.toSql(this.orderByClauses, oneSpacePrefix).trimEnd();
+        const offsetLimit  = OffsetLimit.toSql(this.offsetLimit ?? {}, oneSpacePrefix).trimEnd();
 
+        let sql = `${selectColumns} ${fromTable}`;
+        sql += join;
+        sql += where
+        sql += groupBy;
+        sql += orderBy;
+        sql += offsetLimit;
+
+        return sql.trimEnd()
+    }
+
+    buildInsert(): string {
         const insertsArray = Array.isArray(this.inserts) ? this.inserts : [this.inserts];
 
         if(insertsArray.length === 0) {
@@ -270,38 +154,7 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         return Insert.toSql(this.table, insertsArray, this.bindings);
     }
 
-
-    /**
-     * Builds a SQL query string from the query builder's properties
-     *
-     * @returns {string} The SQL query string
-     */
-    buildSelect(): string { 
-
-        const oneSpacePrefix = ' ';
-        const selectColumns  = SelectColumns.toSql(this.columns, this.distinctColumns, this.rawSelect ?? undefined).trimEnd();
-        const fromTable      = FromTable.toSql(this.table, this.tableAbbreviation).trimEnd();
-        const join           = Joins.toSql(this.joins, oneSpacePrefix).trimEnd();
-        const where          = Where.toSql(this.whereClauses, this.rawWhere ?? undefined, this.bindings, oneSpacePrefix).trimEnd();
-        const orderBy        = OrderBy.toSql(this.orderByClauses, oneSpacePrefix).trimEnd();
-        const offsetLimit    = OffsetLimit.toSql(this.offsetLimit ?? {}, oneSpacePrefix).trimEnd();
-
-        let sql = `${selectColumns} ${fromTable}`;
-        sql += join;
-        sql += where
-        sql += orderBy;
-        sql += offsetLimit;
-
-        return sql.trimEnd()
-    }
-
-    /**
-     * Builds an UPDATE query from the query builder's properties.
-     * 
-     * @returns {string} The SQL UPDATE query string.
-     */
     buildUpdate(): string {
-        
         const updatesArray = Array.isArray(this.updates) ? this.updates : [this.updates];
 
         if(updatesArray.length === 0) {
@@ -313,67 +166,34 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         return Update.toSql(this.table, updatesArray, this.whereClauses, this.bindings);
     }
 
-    /**
-     * Sets the table name and optional abbreviation for the query builder.
-     * 
-     * @param {string} table The table name to set.
-     * @param {string} [abbreviation] The abbreviation for the table name.
-     * @returns {this} The query builder instance.
-     */
+    toSql(): string {
+        return this.buildSelect();
+    }
+
+    // Table Methods
     setTable(table: string, abbreviation?: string): this {
         this.table = table;
         this.tableAbbreviation = abbreviation ?? null
         return this;
     }
 
-    /**
-     * Sets the query type to a SELECT query.
-     * 
-     * @returns {this} The query builder instance.
-     */
-    setSelect(): this {
-        this.buildType = 'select';
-        return this;
+    getTable(): string {
+        return this.table
     }
 
-    /**
-     * Sets the query type to 'select' and assigns a raw SQL expression for the SELECT statement.
-     * 
-     * @param {string} sql - The raw SQL string for the SELECT query.
-     * @param {unknown} bindings - The bindings to be used with the raw SQL.
-     * @returns {this} The query builder instance for method chaining.
-     */
-    setSelectRaw(sql: string, bindings: unknown): this {
-        this.buildType = 'select';
-        this.rawSelect = { sql, bindings };
-        return this
-    }
-
-    setRawWhere(where: RawWhere | null): this {
-        this.rawWhere = where;
-        return this
-    }
-
-    /**
-     * Sets the columns to include in the SQL query.
-     * 
-     * @param {string[]} columns - The array of column names to set for the query.
-     * @returns {this} The instance of the query builder for method chaining.
-     */
+    // Column Methods
     setColumns(columns: TColumnOption[]): this {
         this.columns = columns;
         return this;
     }
 
-    /**
-     * Adds a column to the columns array to be included in the SQL query.
-     * If the column is already in the array, it will not be added again.
-     * @param {string} column The column name to add to the array.
-     * @returns {this} The instance of the query builder for method chaining.
-     */
     addColumn(column: TColumnOption): this {
         this.columns.push(column);
         return this
+    }
+
+    getColumns(): TColumnOption[] {
+        return this.columns
     }
 
     setDistinctColumns(columns: TColumnOption[]): this {
@@ -382,198 +202,139 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         return this   
     }
 
-    setBindings(bindings: BindingsHelper): this {
-        this.bindings = bindings;
-        return this
+    getDistinctColumns(): TColumnOption[] {
+        return this.distinctColumns || []
     }
 
-    /**
-     * Adds a single binding to the builder.
-     * This method wraps the given binding in an array and passes it to the underlying addBindings method.
-     * 
-     * @param {unknown} binding The value to bind.
-     * @returns {this} The query builder instance.
-     */
-    addBinding(column: string, binding: unknown): this {
-        this.bindings.addBinding(column, binding);
-        return this
-    }
-
-    /**
-     * Retrieves the list of values that have been added to the builder as bindings.
-
-     * @returns {unknown[]} The list of values
-     */
-    getBindingValues(): unknown[] {
-        return this.bindings.getValues();
-    }
-
-    /**
-     * Retrieves the list of PostgreSQL types that have been added to the builder as bindings.
-     
-     * @returns {number[]} The list of PostgreSQL types
-     */
-    getBindingTypes(): (number | undefined)[] {
-        return this.bindings.getTypes()
-    }
-
-    /**
-     * Sets the where clauses for the query builder.
-     * @param {TWhereClause[]} where The array of where clauses to set.
-     * @returns {this} The query builder instance.
-     */
+    // Where Clause Methods
     setWhere(where: TWhereClause[]): this {
         this.whereClauses = where;
         return this;
     }
 
-    /**
-     * Adds a single where clause to the query builder.
-     * 
-     * @param {TWhereClause} where - The where clause to add.
-     * @returns {this} The query builder instance for chaining.
-     */
     addWhere(where: TWhereClause): this {
         this.whereClauses.push(where);
         return this
     }
 
-    /**
-     * Adds a where clause to the query builder.
-     * 
-     * @param {string} column - The column to apply the where condition on.
-     * @param {TOperator} operator - The operator to use for comparison.
-     * @param {TWhereClauseValue | TWhereClauseValue[]} value - The value or values to compare against.
-     * @returns {this} The query builder instance for chaining.
-     */
     where(column: string, operator: TOperator, value: TWhereClauseValue | TWhereClauseValue[] = null, logicalOperator: TLogicalOperator = 'and'): this {
         this.whereClauses.push({ column, operator, value, logicalOperator, tableName: this.table });
         return this;
     }
 
-    /**
-     * Adds a raw where clause to the query builder.
-     * 
-     * @param {string} sql - The raw SQL to use for the where clause.
-     * @param {unknown} bindings - The bindings to use for the where clause.
-     * @returns {this} The query builder instance for chaining.
-     */
     whereRaw(sql: string, bindings: unknown): this {
         this.rawWhere = { sql, bindings };
         return this
     }
 
-    /**
-     * Sets the order by clauses for the query builder.
-     * 
-     * @param {TOrderBy[]} orderBy - The array of order by clauses to set.
-     * @returns {this} The query builder instance for chaining.
-     */
-    setOrderBy(orderBy: TOrderBy[]): this {
-        this.orderByClauses = orderBy;
-        return this;
+    getWhereClauses(): TWhereClause[] {
+        return this.whereClauses
     }
-    
-    /**
-     * Adds an order by clause to the query builder.
-     * 
-     * @param {TOrderBy} orderBy - The order by clause to add.
-     * @returns {this} The query builder instance for chaining.
-     */
-    orderBy(orderBy: TOrderBy): this {
-        this.orderByClauses.push(orderBy);
+
+    getWhere(): TWhereClause[] {
+        return this.whereClauses
+    }
+
+    getRawWhere(): RawWhere | null {
+        return this.rawWhere
+    }
+
+    setWhereClauses(whereClauses: TWhereClause[]) {
+        this.whereClauses = whereClauses
         return this
     }
 
-
-    /**
-     * Sets the offset clause for the query builder.
-     * 
-     * Example: LIMIT 10 OFFSET 10
-     * 
-     * @param {TOffsetLimit | null} [offset] - The offset clause to set.
-     * @returns {this} The query builder instance for chaining.
-     */
-    setOffsetAndLimit(offset: TOffsetLimit | null = null): this {
-        this.offsetLimit = offset;
-        return this;
-    }
-
-    /**
-     * Sets the limit clause for the query builder.
-     * 
-     * Example: LIMIT 10
-     * 
-     * @param {number} limit - The limit clause to set.
-     * @returns {this} The query builder instance for chaining.
-     */
-    setLimit(limit: number | null = null): this {
-        this.offsetLimit = {limit: limit ?? undefined, offset: this.offsetLimit?.offset};
+    setRawWhere(where: RawWhere | null): this {
+        this.rawWhere = where;
         return this
     }
 
-    /**
-     * Sets the offset for the query builder.
-     * 
-     * @param {number | null} offset - The value of the offset to set.
-     * @returns {this} The query builder instance for chaining.
-     */
-    setOffset(offset: number | null = null): this {
-        this.offsetLimit = { limit: this.offsetLimit?.limit, offset: offset ?? undefined };
+    getWhereColumnTypes(): Record<string, string> {
+        return this.whereColumnTypes
+    }
+
+    setWhereColumnTypes(whereColumnTypes: Record<string, string>) {
+        this.whereColumnTypes = whereColumnTypes
         return this
     }
 
-    /**
-     * Sets the joins for the query builder.
-     * 
-     * @param {TJoin | TJoin[]} joins - The joins to set. If an array is provided, multiple joins will be applied.
-     * @returns {this} The query builder instance for chaining.
-     */
+    // Join Methods
     setJoins(joins: TJoin[] | TJoin): this {
         this.joins = Array.isArray(joins) ? joins : [joins];
         return this        
     }
 
-    /**
-     * Adds a join to the query builder.
-     * 
-     * @param {TJoin} options - The join to add.
-     * @returns {this} The query builder instance for chaining.
-     */
     join(options: TJoin): this {
         this.joins.push(options);
         return this
     }
 
-    /**
-     * Sets the withs (common table expressions) for the query builder.
-     * 
-     * @param {TWith | TWith[]} withs - The withs to set. If an array is provided, multiple withs will be applied.
-     * @returns {this} The query builder instance for chaining.
-     */
+    getJoins(): TJoin[] {
+        return this.joins
+    }
+
+    // With Methods
     setWiths(withs: TWith[] | TWith): this {
         this.withs = Array.isArray(withs) ? withs : [withs];
         return this
     }
 
-    /**
-     * Adds a with (common table expression) to the query builder.
-     * 
-     * @param {TWith} options - The with to add.
-     * @returns {this} The query builder instance for chaining.
-     */
     with(options: TWith): this {
         this.withs.push(options)
         return this
     }
 
-    /**
-     * Sets the documents to be inserted by the query builder.
-     * 
-     * @param {object | object[]} documents - The document or documents to insert.
-     * If a single document is provided, it will be wrapped in an array.
-     * @returns {this} The query builder instance for chaining.
-     */
+    getWiths(): TWith[] {
+        return this.withs
+    }
+
+    // Order By Methods
+    setOrderBy(orderBy: TOrderBy[] | null): this {
+        this.orderByClauses = orderBy;
+        return this;
+    }
+    
+    orderBy(orderBy: TOrderBy): this {
+        if(!this.orderByClauses) this.orderByClauses = [];
+        this.orderByClauses.push(orderBy);
+        return this
+    }
+
+    getOrderBy(): TOrderBy[] | null {
+        return this.orderByClauses
+    }
+
+    setOrderByClauses(orderByClauses: TOrderBy[]) {
+        this.orderByClauses = orderByClauses
+        return this
+    }
+
+    // Offset/Limit Methods
+    setOffsetLimit(offsetLimit: TOffsetLimit | null): this {
+        this.offsetLimit = offsetLimit
+        return this
+    }
+
+    setOffsetAndLimit(offset: TOffsetLimit | null = null): this {
+        this.offsetLimit = offset;
+        return this;
+    }
+
+    setLimit(limit: number | null = null): this {
+        this.offsetLimit = {limit: limit ?? undefined, offset: this.offsetLimit?.offset};
+        return this
+    }
+
+    setOffset(offset: number | null = null): this {
+        this.offsetLimit = { limit: this.offsetLimit?.limit, offset: offset ?? undefined };
+        return this
+    }
+
+    getOffsetLimit(): TOffsetLimit | null {
+        return this.offsetLimit
+    }
+
+    // Insert/Update Methods
     setInsert(documents: object | object[]): this {
         documents = Array.isArray(documents) ? documents : [documents]
         this.inserts = documents
@@ -581,13 +342,14 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         return this
     }
 
-    /**
-     * Sets the document to be updated by the query builder.
-     * 
-     * @param {object | object[]} documents - The document or documents to update.
-     * If a single document is provided, it will be wrapped in an array.
-     * @returns {this} The query builder instance for chaining.
-     */
+    getInserts(): object | object[] | null {
+        return this.inserts
+    }
+
+    getInsert(): object | object[] | null {
+        return this.inserts
+    }
+
     setUpdate(documents: object | object[]): this {
         documents = Array.isArray(documents) ? documents : [documents]
         this.updates = documents
@@ -595,15 +357,77 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         return this
     }
 
-    /**
-     * Builds a SQL query string from the query builder's properties.
-     * 
-     * @returns {string} The SQL query string
-     */
-    toSql(): string {
-        return this.buildSelect();
+    getUpdates(): object | object[] | null {
+        return this.updates
     }
-    
+
+    getUpdate(): object | object[] | null {
+        return this.updates
+    }
+
+    setUpdates(updates: object | object[] | null) {
+        this.updates = updates
+        return this
+    }
+
+    // Select Methods
+    setSelect(): this {
+        this.buildType = 'select';
+        return this;
+    }
+
+    setSelectRaw(sql: string, bindings: unknown): this {
+        this.buildType = 'select';
+        this.rawSelect = { sql, bindings };
+        return this
+    }
+
+    getRawSelect(): RawSelect | null {
+        return this.rawSelect
+    }
+
+    // Binding Methods
+    setBindings(bindings: BindingsHelper): this {
+        this.bindings = bindings;
+        return this
+    }
+
+    addBinding(column: string, binding: unknown): this {
+        this.bindings.addBinding(column, binding);
+        return this
+    }
+
+    getBindings(): BindingsHelper {
+        return this.bindings
+    }
+
+    getBindingValues(): unknown[] {
+        return this.bindings.getValues();
+    }
+
+    getBindingTypes(): (number | undefined)[] {
+        return this.bindings.getTypes()
+    }
+
+    // Group By Methods
+    getGroupBy(): TGroupBy[] | null {
+        return this.groupBy
+    }
+
+    setGroupBy(columns: TGroupBy[]): this {
+        this.groupBy = columns
+        return this
+    }
+
+    // Utility Methods
+    protected validateArrayObjects(objects: object[], message = 'Expected an array of objects') {
+        const schema = z.array(z.object({}));
+
+        if(!schema.safeParse(objects).success) {
+            throw new InsertException(message);
+        }
+    }
+
 }
 
 export default SqlExpression

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { TColumnOption, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { TColumnOption, TGroupBy, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
 interface IEloquentExpression<Bindings = unknown> {
 
@@ -154,7 +154,7 @@ interface IEloquentExpression<Bindings = unknown> {
      * 
      * @returns {TOrderBy[]} The current order by clauses.
      */
-    getOrderBy(): TOrderBy[];
+    getOrderBy(): TOrderBy[] | null;
 
     /**
      * Sets the order by clauses for the query builder.
@@ -162,7 +162,7 @@ interface IEloquentExpression<Bindings = unknown> {
      * @param {TOrderBy[]} orderBy - The array of order by clauses to set.
      * @returns {this} The query builder instance for chaining.
      */
-    setOrderBy(orderBy: TOrderBy[]): this;
+    setOrderBy(orderBy: TOrderBy[] | null): this;
     
     /**
      * Adds an order by clause to the query builder.
@@ -282,6 +282,21 @@ interface IEloquentExpression<Bindings = unknown> {
      * @returns {this} The query builder instance for chaining.
      */
     setUpdate(document: object | object[]): this;
+
+    /**
+     * Gets the current group by columns.
+     * 
+     * @returns {string[]} The current group by columns.
+     */
+    getGroupBy(): TGroupBy[] | null;
+
+    /**
+     * Sets the group by columns for the query builder.
+     * 
+     * @param {string[]} columns - The columns to group by.
+     * @returns {this} The query builder instance for chaining.
+     */
+    setGroupBy(columns: TGroupBy[] | null): this;
 
     /**
      * Returns a clone of the query builder.

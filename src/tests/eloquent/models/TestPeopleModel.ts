@@ -27,7 +27,14 @@ export const resetTable = async (connections: string[] = testHelper.getTestConne
         await schema.createTable(tableName, {
             name: DataTypes.STRING,
             age: DataTypes.INTEGER,
-            born: DataTypes.DATE,
+            born: {
+                type: DataTypes.DATE,
+                allowNull: true
+            },
+            religion: {
+                type: DataTypes.STRING,
+                allowNull: true
+            },
             createdAt: DataTypes.DATE,
             updatedAt: DataTypes.DATE
         })

@@ -7,6 +7,7 @@ import { QueryResult } from "pg";
 import Collection from "../../collections/Collection";
 import collect from "../../collections/helper/collect";
 import Eloquent from "../../eloquent/Eloquent";
+import EloquentException from "../../eloquent/exceptions/EloquentExpression";
 import UpdateException from "../../eloquent/exceptions/UpdateException";
 import { IEloquent, SetModelColumnsOptions } from "../../eloquent/interfaces/IEloquent";
 import IEloquentExpression from "../../eloquent/interfaces/IEloquentExpression";
@@ -342,6 +343,49 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, PostgresAda
     async updateAll(documents: object | object[]): Promise<Collection<Model>> {
         this.expression.setWhere([])
         return await this.update(documents)
+    }
+
+    /**
+     * Executes a count query to retrieve the number of documents matching the
+     * query criteria.
+     * 
+     * @returns A promise resolving to the count of the documents.
+     */
+    async count(column: string | null = null): Promise<number> {
+        return await captureError(async () => {
+            
+            const previousExpression = this.expression.clone() as SqlExpression
+
+            this.expression.setSelect()
+            this.selectRaw(`COUNT(${column ?? '*'}) as count`)
+            this.groupBy(null)
+            this.orderBy(null)
+            this.offset(null)
+            
+            const res = await this.execute()
+            
+            const result = res.rows?.[0]?.count ?? null;
+
+            if(!result) {
+                throw new EloquentException('Count result is null')
+            }
+
+            this.setExpression(previousExpression)
+
+            return parseInt(result)
+        })
+    }
+
+    /**
+     * Sets the distinct columns for the query builder.
+     * 
+     * @param {string|string[]} [columns] The columns to set for distinct.
+     * @returns {this} The query builder instance.
+     */
+    groupBy(columns: string[] | string | null): IEloquent<Model> {
+        const columnsArray = Array.isArray(columns) ? columns : [columns]
+        this.expression.setDistinctColumns(columnsArray.map(column => ({column})))
+        return this as unknown as IEloquent<Model>
     }
 
 }

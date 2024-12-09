@@ -65,7 +65,7 @@ class SelectColumns {
         options = SqlExpression.prepareColumnOptions(options);
 
         // Add table name and alias
-        return options.map(option => {
+        return options.filter(option => option.column !== null).map(option => {
             let columnString = option.column
 
             // If the column has a table name, add it
@@ -79,7 +79,7 @@ class SelectColumns {
             }
             
             return columnString
-        });
+        }) as string[];
     }
 
     /**

@@ -4,8 +4,10 @@ import SqlExpression from "../SqlExpression";
 
 class OrderBy {
 
-    static toSql(orders: TOrderBy[] = [], prefix: string = ''): string {
+    static toSql(orders: TOrderBy[] | null = null, prefix: string = ''): string {
 
+        if(!orders) return '';
+        
         if(orders.length === 0) return '';
 
         let sql = `${prefix}ORDER BY `

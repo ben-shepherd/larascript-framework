@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { TColumnOption, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { TColumnOption, TGroupBy, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { deepClone } from "@src/core/util/deepClone";
 
 import IEloquentExpression from "../interfaces/IEloquentExpression";
@@ -51,7 +51,7 @@ abstract class BaseExpression<Bindings = unknown> implements IEloquentExpression
 
     abstract setOrderBy(orderBy: TOrderBy[]): this;
 
-    abstract getOrderBy(): TOrderBy[];
+    abstract getOrderBy(): TOrderBy[] | null;
 
     abstract orderBy(orderBy: TOrderBy): this;
 
@@ -82,6 +82,10 @@ abstract class BaseExpression<Bindings = unknown> implements IEloquentExpression
     abstract setUpdate(document: object | object[]): this;
 
     abstract getUpdate(): object | object[] | null;
+
+    abstract setGroupBy(columns: TGroupBy[]): this;
+
+    abstract getGroupBy(): TGroupBy[] | null;
 
     /**
      * Clones the query builder expression.
