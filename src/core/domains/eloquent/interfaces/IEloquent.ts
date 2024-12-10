@@ -106,13 +106,13 @@ export type SetModelColumnsOptions = {
     [key: string]: unknown;
 }
 
-export interface IEloquent<Model extends IModel = IModel, Expression extends IEloquentExpression = IEloquentExpression> {
+export interface IEloquent<Model extends IModel = IModel> {
     
     // eloquent methods
     setConnectionName(connectionName: string): IEloquent<Model>;
-    getExpression(): Expression;
-    setExpressionCtor(builderCtor: ICtor<Expression>): IEloquent<Model>
-    setExpression(expression: Expression): IEloquent<Model>;
+    getExpression(): IEloquentExpression;
+    setExpressionCtor(builderCtor: ICtor<IEloquentExpression>): IEloquent<Model>
+    setExpression(expression: IEloquentExpression): IEloquent<Model>;
     cloneExpression(): IEloquentExpression;
     resetExpression(): IEloquent<Model>;
     setModelCtor(modelCtor?: ICtor<IModel>): IEloquent<Model>;

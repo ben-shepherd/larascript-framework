@@ -31,10 +31,6 @@ class ProxyModelHandler implements ProxyHandler<any> {
     public get(target: IModel, prop: string | symbol, receiver: any): any {
         const value = target[prop as keyof IModel];
 
-        if(prop === 'department') {
-            console.log(1)
-        }
-
         // Handle method calls
         if (typeof value === 'function' && this._invokableMethod(target, prop)) {
             return value.bind(target);
@@ -57,7 +53,15 @@ class ProxyModelHandler implements ProxyHandler<any> {
         return !target.relationships.includes(prop as string)
     }
 
-    // Support proper prototype chain
+
+    /**
+     * Retrieves the prototype of the target object. This method is used to access
+     * the prototype of the model, allowing access to methods and properties defined
+     * on the model's prototype chain.
+     *
+     * @param target - The target model object whose prototype is to be retrieved.
+     * @returns The prototype of the target object, or null if not available.
+     */
     public getPrototypeOf(target: any): object | null {
         return target.constructor.prototype;
     }

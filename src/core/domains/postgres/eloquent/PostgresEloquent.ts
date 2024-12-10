@@ -2,6 +2,7 @@ import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import captureError from "@src/core/util/captureError";
+import PrefixedPropertyGrouper from "@src/core/util/PrefixedPropertyGrouper";
 import { QueryResult } from "pg";
 
 import Collection from "../../collections/Collection";
@@ -14,7 +15,12 @@ import IEloquentExpression from "../../eloquent/interfaces/IEloquentExpression";
 import PostgresAdapter from "../adapters/PostgresAdapter";
 import SqlExpression from "../builder/ExpressionBuilder/SqlExpression";
 
-class PostgresEloquent<Model extends IModel> extends Eloquent<Model, PostgresAdapter, SqlExpression> {
+class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
+
+    /**
+     * The query builder expression object
+     */
+    protected expression!: SqlExpression
 
     /**
      * Constructor
@@ -50,8 +56,10 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, PostgresAda
     setModelColumns(modelCtor?: ICtor<IModel>, options?: SetModelColumnsOptions): IEloquent<Model> {
         super.setModelColumns(modelCtor, options)
         
+        // Store the options for formatting the result rows to objects with a target property.
+        // This will be used when calling fetchRows() to format the result rows to objects with the target property.
         if(options?.columnPrefix && typeof options?.targetProperty === 'string') {
-            this.addFormatResultTargetPropertyToObject(options.columnPrefix, options.targetProperty)
+            this.formatResultTargetPropertyToObjectOptions.push({columnPrefix: options.columnPrefix, targetProperty: options.targetProperty, setTargetPropertyNullWhenObjectAllNullish: true })
         }
 
         return this as unknown as IEloquent<Model>
@@ -72,20 +80,21 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, PostgresAda
     }
 
     /**
-     * Executes a SQL expression and returns the result as a raw query result.
-     * Unlike the `execute` method, this method does not return a Collection
-     * of models, but rather the raw query result. If a formatter function is set
-     * on the query builder instance, it will be applied to the result before
-     * returning it. Additionally, if a target property is set on the query
-     * builder instance with `addFormatResultTargetPropertyToObject`, the result
-     * will be formatted to move prefixed columns to the target property.
-     * @param expression The SQL expression builder instance containing the query to execute.
-     * @returns A promise that resolves with the query result.
+     * Executes a SQL expression using the connected PostgreSQL client.
+     * 
+     * This method builds the SQL query from the given expression and executes it using the connected PostgreSQL client.
+     * The result of the query is returned as a promise.
+     * 
+     * @param {SqlExpression} [expression] - The SQL expression builder instance containing the query to execute. If not provided, the query builder's expression instance is used.
+     * @returns {Promise<T>} A promise that resolves with the query result.
+     * @throws {QueryException} If the query execution fails.
      * @private
      */
     async fetchRows<T = QueryResult>(expression: IEloquentExpression = this.expression): Promise<T> {
         const res = await this.execute(expression)
-        res.rows = this.applyFormatResultTargetPropertyToObject(res.rows)
+        // Map the result to move prefixed columns to the target property
+        res.rows = PrefixedPropertyGrouper.handleArray<object>(res.rows, this.formatResultTargetPropertyToObjectOptions)
+        // Apply formatter
         res.rows = this.formatterFn ? res.rows.map(this.formatterFn) : res.rows
         return res as T 
     }
@@ -100,7 +109,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, PostgresAda
     async raw<T = QueryResult>(expression: string, bindings?: unknown[]): Promise<T> {
         console.log('[PostgresEloquent] raw', { expression, bindings })
 
-        const client = await this.getAdapter().getConnectedPgClient();
+        const client = await this.getAdapter<PostgresAdapter>().getConnectedPgClient();
         const results = await client.query(expression, bindings)
         await client.end()
 
@@ -300,7 +309,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, PostgresAda
             this.setExpression(previousExpression)
 
             return collect<Model>(
-                this.formatQueryResults(results)
+                this.applyFormatter(results)
             )
         })
     }

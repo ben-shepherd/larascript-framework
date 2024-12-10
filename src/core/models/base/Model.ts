@@ -81,13 +81,17 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         this.attributes = { ...data } as Attributes;
         this.original = { ...data } as Attributes;
     }
-
+    
     /**
-     * Creates a new instance of the model with the provided data.
+     * Creates a new instance of the model wrapped in a Proxy.
      * 
-     * @template Attributes The type of the model's attributes.
-     * @param {Attributes | null} data - The data to initialize the model with.
-     * @returns {IModel<Attributes>} A new instance of the model.
+     * This method uses the Proxy pattern to allow interception and customization of
+     * property access and method calls on the model instance. It utilizes the ProxyModelHandler
+     * to maintain proper 'this' context and provide additional features.
+     * 
+     * @template Model Extends IModel, representing the type of the model to create.
+     * @param {Model['attributes'] | null} data - The initial data to populate the model.
+     * @returns {Model} A new instance of the model wrapped in a Proxy.
      */
     static create<Model extends IModel>(data: Model['attributes'] | null): Model {
         return new Proxy(

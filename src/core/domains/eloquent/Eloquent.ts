@@ -3,7 +3,7 @@ import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { deepClone } from "@src/core/util/deepClone";
 
-import PrefixedPropertyGrouper, { PrefixToTargetPropertyOptions } from "../../util/PrefixedPropertyGrouper";
+import { PrefixToTargetPropertyOptions } from "../../util/PrefixedPropertyGrouper";
 import Collection from "../collections/Collection";
 import { IDatabaseAdapter } from "../database/interfaces/IDatabaseAdapter";
 import BaseEloquent from "./base/BaseEloquent";
@@ -18,15 +18,15 @@ import IEloquentExpression from "./interfaces/IEloquentExpression";
 import { TDirection } from "./interfaces/TEnums";
 import With from "./relational/With";
 
-export type TQueryBuilderOptions = {
-    adapterName: string,
-    connectionName: string;
-    tableName?: string;
-    formatterFn?: TFormatterFn;
-    expressionCtor: ICtor<IEloquentExpression>;
-}
+/**
+ * Base class for Eloquent query builder.
+ * Provides database query building and execution functionality.
+ * 
+ * @template Model - The model type this query builder works with
+ * @abstract
+ */
 
-abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter = IDatabaseAdapter, Expression extends IEloquentExpression = IEloquentExpression> extends BaseEloquent implements IEloquent<Model, Expression> {
+abstract class Eloquent<Model extends IModel> extends BaseEloquent implements IEloquent<Model> {
 
     /**
      * The connection name to use for the query builder
@@ -34,19 +34,14 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
     protected connectionName!: string;
 
     /**
-     * The table name to use for the query builder
-     */
-    protected tableName?: string;
-    
-    /**
      * The columns to select from the database
      */
     protected columns: string[] = [];
 
     /**
-     * The adapter name to use for the query builder (logging purposes)
+     * The logger name to use for the query builder (logging purposes)
      */
-    protected adapterName!: string;
+    protected loggerName!: string;
 
     /**
      * Formatter function to transform row result
@@ -56,19 +51,18 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
     /**
      * The constructor of the expression builder
      */
-    protected expressionCtor!: ICtor<Expression>;
+    protected expressionCtor!: ICtor<IEloquentExpression>;
 
     /**
      * The expression builder
      */
-    protected expression!: Expression;
+    protected expression!: IEloquentExpression;
 
     /**
      * The constructor of the model
      */
     protected modelCtor?: ICtor<IModel>;
 
-    
     /**
      * Prefixed properties to target property as object options
      */
@@ -78,16 +72,18 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
      * Retrieves the database adapter for the connection name associated with this query builder.
      * @returns {IDatabaseAdapter} The database adapter.
      */
-    protected getAdapter(): Adapter {
-        return App.container('db').getAdapter<Adapter>(this.getConnectionName())
+    protected getAdapter<T extends IDatabaseAdapter = IDatabaseAdapter>(): T {
+        return App.container('db').getAdapter<T>(this.getConnectionName())
     }
     
+
     /**
-     *
-     * @param rows 
-     * @returns 
+     * Applies the formatter function to the given array of rows.
+     * If no formatter function is set, the rows are returned as is.
+     * @param {unknown[]} rows The array of rows to apply the formatter to.
+     * @returns {Model[]} The formatted array of rows.
      */
-    protected formatQueryResults(rows: unknown[]): Model[] {
+    protected applyFormatter(rows: unknown[]): Model[] {
         return rows.map(row => {
             return this.formatterFn ? this.formatterFn(row) : row
         }) as Model[]
@@ -107,7 +103,7 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
      * @returns {string} The table name
      */
     protected getTable() {
-        return this.tableName
+        return this.expression.getTable();
     }
 
     /**
@@ -120,7 +116,6 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
         return this as unknown as IEloquent<Model>;
     }
 
-
     /**
      * Retrieves the connection name associated with this query builder.
      * @returns {string} The connection name.
@@ -130,71 +125,12 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
     }
 
     /**
-     * Adds a key-value pair to the map that prefixes results to properties.
-     * 
-     * This method is used to map specific keys to their prefixed property names
-     * for query results processing.
-     * 
-     * @param {string} prefix - The prefix to map.
-     * @param {string} property - The target property name.
-     * @returns {IEloquent<Model>} The query builder instance for chaining.
-     */
-    protected addFormatResultTargetPropertyToObject(prefix: string, property: string): IEloquent<Model> {
-        this.formatResultTargetPropertyToObjectOptions.push({columnPrefix: prefix, targetProperty: property, setNullObjectIfAllNull: true })
-        return this as unknown as IEloquent<Model>
-    }
-        
-    /**
-     * Sets the key-value pairs to the map that prefixes results to properties.
-     * 
-     * This method is used to set the key-value pairs for mapping specific keys to
-     * their prefixed property names for query results processing.
-     * 
-     * @param {PrefixToTargetPropertyOptions} options - The key-value pairs to map.
-     * @returns {IEloquent<Model>} The query builder instance for chaining.
-     */
-    protected setFormatResultTargetPropertyToObject(options: PrefixToTargetPropertyOptions): IEloquent<Model> {
-        this.formatResultTargetPropertyToObjectOptions = options
-        return this as unknown as IEloquent<Model>
-    }
-
-    /**
-     * Processes an array of objects by moving properties that match a specified
-     * prefix to a nested object specified by the property name.
-     * 
-     * This is useful when you have a result set that is dynamically generated
-     * and you want to map the results to a specific object structure.
-     * 
-     * Example:
-     * const result = [
-     *   { prefix_id: 1, prefix_name: 'John Doe' },
-     *   { prefix_id: 2, prefix_name: 'Jane Doe' },
-     * ]
-     * const options = [
-     *   { prefix: 'prefix_', property: 'targetProperty' }
-     * ]
-     * 
-     * prefixedPropertiesToTargetPropertyAsObject(result, options)
-     * 
-     * // result is now:
-     * [
-     *   { targetProperty: { id: 1, name: 'John Doe' } },
-     *   { targetProperty: { id: 2, name: 'Jane Doe'} },
-     * ]
-     * @param {T[]} results The array of objects to process.
-     * @returns {T[]} The processed array of objects.
-     */
-    protected applyFormatResultTargetPropertyToObject<T extends object = object>(results: T[]): T[] {
-        return PrefixedPropertyGrouper.handleArray<T>(results, this.formatResultTargetPropertyToObjectOptions)
-    }
-
-    /**
      * Retrieves the current expression builder instance.
      *
      * @returns {Expression} The expression builder instance.
      */
-    getExpression(): Expression {
-        return this.expression
+    getExpression<T extends IEloquentExpression = IEloquentExpression>(): T {
+        return this.expression as T
     }
 
     /**
@@ -203,7 +139,7 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
      * @param {Expression} expression - The expression builder instance to use.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    setExpression(expression: Expression): IEloquent<Model> {
+    setExpression(expression: IEloquentExpression): IEloquent<Model> {
         this.expression = expression
         return this as unknown as IEloquent<Model>
     }
@@ -214,7 +150,7 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
      * @param {ICtor<IEloquentExpression>} builderCtor The constructor of the expression builder to use.
      * @returns {this} The query builder instance for chaining.
      */
-    setExpressionCtor(builderCtor: ICtor<Expression>): IEloquent<Model> {
+    setExpressionCtor(builderCtor: ICtor<IEloquentExpression>): IEloquent<Model> {
         this.expressionCtor = builderCtor;
         this.expression = new builderCtor();
         return this as unknown as IEloquent<Model>
@@ -229,8 +165,9 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
      * @returns {IEloquentExpression} The expression builder instance after resetting.
      */
     resetExpression(): IEloquent<Model> {
-        this.setExpressionCtor(this.expressionCtor)
-        this.setTable(this.tableName ?? '')
+        const tableName = this.expression.getTable();
+        this.expression = new this.expressionCtor();
+        this.setTable(tableName)
         return this as unknown as IEloquent<Model>
     }
 
@@ -302,27 +239,6 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
     }
 
     /**
-     * Returns a new query builder instance that is associated with the provided model constructor.
-     * The returned query builder instance is a clone of the current query builder and is associated
-     * with the provided model constructor.
-     * @template Model The type of the model to associate with the query builder.
-     * @returns {IEloquent<Model>} A new query builder instance associated with the provided model constructor.
-     */
-    // asModel<Model extends IModel>(): IEloquent<Model, Model> {
-
-    //     if(!this.modelCtor) {
-    //         throw new EloquentException('Model constructor has not been set');
-    //     }
-
-    //     const modelCtor = this.modelCtor as ICtor<Model>
-
-    //     return this.clone()
-    //         .setExpression(this.expression.clone())
-    //         .setModelCtor(modelCtor)
-    //         .setFormatter((row) => new modelCtor(row)) as unknown as IEloquent<Model, Model>
-    // }
-
-    /**
      * Sets the formatter function for the query builder. This function will be
      * called with each row of the result as an argument. The function should
      * return the transformed row.
@@ -344,7 +260,6 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
      * @returns {this} The query builder instance for chaining.
      */
     setTable(tableName: string): IEloquent<Model> {
-        this.tableName = tableName
         this.expression.setTable(tableName);
         return this as unknown as IEloquent<Model>
     }
@@ -357,10 +272,11 @@ abstract class Eloquent<Model extends IModel, Adapter extends IDatabaseAdapter =
      * @throws {MissingTableException} If the table name is not set
      */
     useTable(): string {
-        if(!this.tableName || this.tableName?.length === 0) {
+        const tableName = this.expression.getTable();
+        if(!tableName || tableName?.length === 0) {
             throw new MissingTableException()
         }
-        return this.tableName
+        return tableName
     }
     
     /**

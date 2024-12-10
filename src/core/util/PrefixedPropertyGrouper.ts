@@ -2,7 +2,7 @@
 export type PrefixToTargetPropertyOptions = {
     columnPrefix: string;
     targetProperty: string;
-    setNullObjectIfAllNull?: boolean;
+    setTargetPropertyNullWhenObjectAllNullish?: boolean;
 }[]
 
 /**
@@ -77,12 +77,13 @@ class PrefixedPropertyGrouper {
         const { columnPrefix, targetProperty } = option;
         
         const prefixedProperties = this.extractPrefixedProperties(item, columnPrefix);
+        
         if (Object.keys(prefixedProperties).length > 0) {
             result[targetProperty] = prefixedProperties;
             this.deletePrefixedProperties(result, Object.keys(prefixedProperties), columnPrefix);
         }
 
-        if (option.setNullObjectIfAllNull && result[targetProperty]) {
+        if (option.setTargetPropertyNullWhenObjectAllNullish && result[targetProperty]) {
             this.handleNullChecking(result, targetProperty);
         }
     }

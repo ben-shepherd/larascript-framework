@@ -206,7 +206,7 @@ class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
      * @returns {ICtor<IEloquent<Data>>} The constructor of the query builder.
      */
     getEloquentCtor<Model extends IModel>(): ICtor<IEloquent<Model>> {
-        return PostgresEloquent
+        return PostgresEloquent as unknown as ICtor<IEloquent<Model>>
     }
 
     /**
