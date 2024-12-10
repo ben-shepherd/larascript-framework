@@ -11,7 +11,6 @@ type SqlWhereClause = {
     value?: TWhereClauseValue;
     logicalOperator?: TLogicalOperator
     appendValue?: boolean;
-    appendValueNoBind?: boolean
 }
 
 type RawWhere = {
@@ -193,51 +192,57 @@ class Where {
 
         if (filter.operator === 'in') {
             convertedWhere.operator = 'IN';
-            convertedWhere.value = this.valueWhereIn(convertedWhere);
-            convertedWhere.appendValueNoBind = true;
+            convertedWhere.value = this.getValueWhereInStringAndAddBindings(convertedWhere);
         }
         else if (filter.operator === 'not in') {
             convertedWhere.operator = 'NOT IN';
-            convertedWhere.value = this.valueWhereIn(convertedWhere);
-            convertedWhere.appendValueNoBind = true;
+            convertedWhere.value = this.getValueWhereInStringAndAddBindings(convertedWhere);
         }
         else if (filter.operator === 'between') {
             convertedWhere.operator = 'BETWEEN';
-            convertedWhere.value = this.valueWhereBetween(column, convertedWhere.value as unknown as WhereBetweenValue);
+            convertedWhere.value = this.getValueWhereBetweenStringAndAddBinding(column, convertedWhere.value as unknown as WhereBetweenValue);
             // "AND" or "OR" logical operator is not required
             convertedWhere.logicalOperator = undefined
         }
         else if (filter.operator === 'not between') {
             convertedWhere.operator = 'NOT BETWEEN';
-            convertedWhere.value = this.valueWhereBetween(column, convertedWhere.value as unknown as WhereBetweenValue);
+            convertedWhere.value = this.getValueWhereBetweenStringAndAddBinding(column, convertedWhere.value as unknown as WhereBetweenValue);
             // "AND" or "OR" logical operator is not required
             convertedWhere.logicalOperator = undefined
         }
         else if (filter.operator === 'like') {
             convertedWhere.operator = 'LIKE';
-            convertedWhere.value = this.value(convertedWhere.value as TWhereClauseValue);
+            convertedWhere.value = this.getValueStringAndAddBinding(convertedWhere.value as TWhereClauseValue);
         }
         else if (filter.operator === 'not like') {
             convertedWhere.operator = 'NOT LIKE';
-            convertedWhere.value = this.value(convertedWhere.value as TWhereClauseValue);
+            convertedWhere.value = this.getValueStringAndAddBinding(convertedWhere.value as TWhereClauseValue);
         }
         else if (filter.operator === 'is null') {
             convertedWhere.operator = 'IS NULL';
+            // Value is not required
             convertedWhere.value = undefined;
         }
         else if (filter.operator === 'is not null') {
             convertedWhere.operator = 'IS NOT NULL';
+            // Value is not required
             convertedWhere.value = undefined;
         }
         else {
-            convertedWhere.value = this.value(convertedWhere.value as TWhereClauseValue);
+            convertedWhere.value = this.getValueStringAndAddBinding(convertedWhere.value as TWhereClauseValue);
         }
 
         return convertedWhere
     }
 
-    value(value: TWhereClauseValue): string {
-        return this.addWhereBinding(null, value).getLastBinding()?.sql as string
+    /**
+     * Converts a given value into its SQL placeholder representation and adds it as a binding.
+     *
+     * @param {TWhereClauseValue} value - The value to convert and bind.
+     * @returns {string} The SQL placeholder for the bound value.
+     */
+    getValueStringAndAddBinding(value: TWhereClauseValue): string {
+        return this.addBinding(null, value).getLastBinding()?.sql as string
     }
 
     /**
@@ -250,12 +255,12 @@ class Where {
      * 
      * Example: `($1, $2, $3)`
      */
-    valueWhereIn({ column, value }: SqlWhereClause): string {
+    getValueWhereInStringAndAddBindings({ column, value }: SqlWhereClause): string {
         const valueArray: Iterable<unknown> = Array.isArray(value) ? value : [value];
         const placeholders: string[] = []
         for(const value of valueArray) {
             placeholders.push(
-                this.addWhereBinding(column, value).getLastBinding()?.sql as string
+                this.addBinding(column, value).getLastBinding()?.sql as string
             );
         }
 
@@ -273,14 +278,14 @@ class Where {
      * 
      * Example: `$1 AND $2`
      */
-    valueWhereBetween(column: string, value: WhereBetweenValue): string {
+    getValueWhereBetweenStringAndAddBinding(column: string, value: WhereBetweenValue): string {
 
         const [from, to] = value
         const placeholders: string[] = []
 
         for(const value of [from, to]) {
             placeholders.push(
-                this.addWhereBinding(column, value).getLastBinding()?.sql as string
+                this.addBinding(column, value).getLastBinding()?.sql as string
             );
         }
         
@@ -298,7 +303,7 @@ class Where {
      * @param {unknown} binding The value to bind.
      * @returns {BindingsHelper} The current bindings instance.
      */
-    addWhereBinding(column: string | null, binding: unknown): BindingsHelper {
+    addBinding(column: string | null, binding: unknown): BindingsHelper {
         if(this.disableAddingNewBindings) {
             return this.bindings
         }

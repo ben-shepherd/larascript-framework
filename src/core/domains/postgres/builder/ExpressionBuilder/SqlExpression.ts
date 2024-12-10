@@ -1,6 +1,5 @@
 import BaseExpression from "@src/core/domains/eloquent/base/BaseExpression";
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
-import InsertException from "@src/core/domains/eloquent/exceptions/InsertException";
 import { TColumnOption, TGroupBy, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import { z } from "zod";
@@ -80,7 +79,9 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
 
     // Static Utility Methods
     public static readonly formatColumnWithQuotes = (column: string): string => {
-        if(column === '*') return column
+        if(column === '*') {
+            return column
+        }
         if(column.startsWith('"') && column.endsWith('"')){
             return column
         }
@@ -136,12 +137,12 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
     buildSelect(): string { 
         const oneSpacePrefix = ' ';
         const selectColumns  = SelectColumns.toSql(this.columns, this.distinctColumns, this.rawSelect ?? undefined).trimEnd();
-        const fromTable     = FromTable.toSql(this.table, this.tableAbbreviation).trimEnd();
-        const join          = Joins.toSql(this.joins, oneSpacePrefix).trimEnd();
-        const where         = Where.toSql(this.whereClauses, this.rawWhere ?? undefined, this.bindings, oneSpacePrefix).trimEnd();
-        const groupBy      = GroupBy.toSql(this.groupBy, oneSpacePrefix).trimEnd();
-        const orderBy      = OrderBy.toSql(this.orderByClauses, oneSpacePrefix).trimEnd();
-        const offsetLimit  = OffsetLimit.toSql(this.offsetLimit ?? {}, oneSpacePrefix).trimEnd();
+        const fromTable      = FromTable.toSql(this.table, this.tableAbbreviation).trimEnd();
+        const join           = Joins.toSql(this.joins, oneSpacePrefix).trimEnd();
+        const where          = Where.toSql(this.whereClauses, this.rawWhere ?? undefined, this.bindings, oneSpacePrefix).trimEnd();
+        const groupBy        = GroupBy.toSql(this.groupBy, oneSpacePrefix).trimEnd();
+        const orderBy        = OrderBy.toSql(this.orderByClauses, oneSpacePrefix).trimEnd();
+        const offsetLimit    = OffsetLimit.toSql(this.offsetLimit ?? {}, oneSpacePrefix).trimEnd();
 
         let sql = `${selectColumns} ${fromTable}`;
         sql += join;
@@ -353,11 +354,11 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         return this
     }
 
-    getInserts(): object | object[] | null {
+    getInserts(): NullableObjectOrArray {
         return this.inserts
     }
 
-    getInsert(): object | object[] | null {
+    getInsert(): NullableObjectOrArray {
         return this.inserts
     }
 
@@ -368,15 +369,15 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         return this
     }
 
-    getUpdates(): object | object[] | null {
+    getUpdates(): NullableObjectOrArray {
         return this.updates
     }
 
-    getUpdate(): object | object[] | null {
+    getUpdate(): NullableObjectOrArray {
         return this.updates
     }
 
-    setUpdates(updates: object | object[] | null) {
+    setUpdates(updates: NullableObjectOrArray) {
         this.updates = updates
         return this
     }
@@ -435,7 +436,7 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         const schema = z.array(z.object({}));
 
         if(!schema.safeParse(objects).success) {
-            throw new InsertException(message);
+            throw new ExpressionException(message);
         }
     }
 
