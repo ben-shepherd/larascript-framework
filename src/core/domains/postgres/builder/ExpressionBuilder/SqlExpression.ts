@@ -135,6 +135,8 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
     }
 
     buildSelect(): string { 
+
+        // Construct the components of the SQL query
         const oneSpacePrefix = ' ';
         const selectColumns  = SelectColumns.toSql(this.columns, this.distinctColumns, this.rawSelect ?? undefined).trimEnd();
         const fromTable      = FromTable.toSql(this.table, this.tableAbbreviation).trimEnd();
@@ -144,6 +146,7 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         const orderBy        = OrderBy.toSql(this.orderByClauses, oneSpacePrefix).trimEnd();
         const offsetLimit    = OffsetLimit.toSql(this.offsetLimit ?? {}, oneSpacePrefix).trimEnd();
 
+        // Construct the SQL query
         let sql = `${selectColumns} ${fromTable}`;
         sql += join;
         sql += where
@@ -154,6 +157,11 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         return sql.trimEnd()
     }
 
+    /**
+     * Builds an INSERT query.
+     *
+     * @returns {string} The SQL string for the INSERT query.
+     */
     buildInsert(): string {
         const insertsArray = Array.isArray(this.inserts) ? this.inserts : [this.inserts];
 
@@ -166,6 +174,11 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         return Insert.toSql(this.table, insertsArray, this.bindings);
     }
 
+    /**
+     * Builds an UPDATE query.
+     *
+     * @returns {string} The SQL string for the UPDATE query.
+     */
     buildUpdate(): string {
         const updatesArray = Array.isArray(this.updates) ? this.updates : [this.updates];
 
@@ -178,6 +191,15 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         return Update.toSql(this.table, updatesArray, this.whereClauses, this.bindings);
     }
 
+    /**
+     * Converts the current SQL expression to a SQL query string.
+     * 
+     * This method builds and returns the SQL query string based on the current state
+     * of the SqlExpression instance, using the selected build type and configured
+     * query components such as the columns, table, joins, where clauses, and more.
+     * 
+     * @returns {string} The SQL query string representation of the current expression.
+     */
     toSql(): string {
         return this.buildSelect();
     }

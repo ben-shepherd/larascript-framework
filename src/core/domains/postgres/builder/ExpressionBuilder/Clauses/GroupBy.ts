@@ -4,6 +4,13 @@ import SqlExpression from "../SqlExpression";
 
 class GroupBy {
 
+    /**
+     * Converts an array of group by columns into a SQL string suitable for a GROUP BY clause.
+     *
+     * @param {TGroupBy[] | null} groupBy - The array of columns to group by, or null if no grouping is needed.
+     * @param {string} [prefix=''] - An optional prefix to prepend to the SQL string.
+     * @returns {string} The SQL string for the GROUP BY clause, or an empty string if no columns are specified.
+     */
     static toSql(groupBy: TGroupBy[] | null, prefix: string = ''): string {
 
         if(!groupBy || groupBy.length === 0) return '';

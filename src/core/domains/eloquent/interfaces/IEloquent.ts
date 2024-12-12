@@ -119,6 +119,9 @@ export interface IEloquent<Model extends IModel = IModel> {
     getModelCtor(): ICtor<IModel> | undefined;
     setModelColumns(modelCtor?: ICtor<IModel>, options?: SetModelColumnsOptions): IEloquent<Model>;
 
+    // results
+    fetchRows<T = unknown>(expression: IEloquentExpression, ...args: any[]): Promise<T>;
+
     // formatting
     // asModel<Model extends IModel>(): IEloquent<Model, Model>; 
     setFormatter(formatterFn?: TFormatterFn): IEloquent<Model>;
@@ -220,6 +223,12 @@ export interface IEloquent<Model extends IModel = IModel> {
     min(column: string): Promise<number>;
     avg(column: string): Promise<number>;
     sum(column: string): Promise<number>;
+
+    // Deleting
+    delete(): Promise<Collection<Model>>;
+
+    // Transaction
+    // transaction(): Promise<void>;
 
     // Pagination
     // paginate(perPage?: number, page?: number): Promise<{

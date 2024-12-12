@@ -239,6 +239,15 @@ abstract class Eloquent<Model extends IModel> extends BaseEloquent implements IE
     }
 
     /**
+     * Fetches rows from the database based on the provided expression and arguments.
+     * 
+     * @param expression 
+     * @param args 
+     */
+    // eslint-disable-next-line no-unused-vars
+    abstract fetchRows<T = unknown>(expression: IEloquentExpression, ...args: any[]): Promise<T>;
+
+    /**
      * Sets the formatter function for the query builder. This function will be
      * called with each row of the result as an argument. The function should
      * return the transformed row.
@@ -870,7 +879,17 @@ abstract class Eloquent<Model extends IModel> extends BaseEloquent implements IE
         return this.limit(take)
     }
 
-
+    /**
+     * Deletes records from the database based on the current query builder state.
+     * 
+     * @returns {Promise<Collection<Model>>} A promise that resolves to a collection of the deleted models.
+     * 
+     * @throws {Error} Throws an error if the method is not implemented.
+     */
+    delete(): Promise<Collection<Model>> {
+        throw new Error("Method not implemented.");
+    }
+    
 }
 
 export default Eloquent
