@@ -171,7 +171,10 @@ class Where {
      * @returns {string} The SQL string for the WHERE clause.
      */
     whereRaw({sql, bindings }: RawWhere): string {
-        this.bindings.addBinding(null, bindings)
+        let bindingsArray = Array.isArray(bindings) ? bindings : [bindings]
+        bindingsArray = bindingsArray.filter(binding => typeof binding !== 'undefined')
+
+        this.bindings.addBinding(null, bindingsArray)
         return `WHERE ${sql}`;
     }
 

@@ -225,7 +225,7 @@ export interface IEloquent<Model extends IModel = IModel> {
     sum(column: string): Promise<number>;
 
     // Deleting
-    delete(): Promise<Collection<Model>>;
+    delete(): Promise<IEloquent<Model>>;
 
     // Transaction
     // transaction(): Promise<void>;

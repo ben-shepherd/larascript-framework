@@ -5,6 +5,7 @@ import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquent
 import { z } from "zod";
 
 import BindingsHelper from "../BindingsHelper";
+import DeleteFrom from "./Clauses/DeleteFrom";
 import FromTable from "./Clauses/FromTable";
 import GroupBy from "./Clauses/GroupBy";
 import Insert from "./Clauses/Insert";
@@ -15,7 +16,7 @@ import SelectColumns from "./Clauses/SelectColumns";
 import Update from "./Clauses/Update";
 import Where from "./Clauses/Where";
 
-type BuildType = 'select' | 'insert' | 'update';
+type BuildType = 'select' | 'insert' | 'update' | 'delete';
 type RawSelect = { sql: string, bindings: unknown };
 type RawWhere = { sql: string, bindings: unknown };
 type NullableObjectOrArray = object | object[] | null;
@@ -125,6 +126,7 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
             'select': () => this.buildSelect(),
             'insert': () => this.buildInsert(),
             'update': () => this.buildUpdate(),
+            'delete': () => this.buildDelete()
         }
 
         if(!fnMap[this.buildType]) {
@@ -134,6 +136,16 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         return fnMap[this.buildType]() as T;
     }
 
+    /**
+     * Builds a SELECT SQL query string using the specified query components.
+     *
+     * This method constructs a SQL SELECT query by combining various parts of
+     * the query including columns, table, joins, where clauses, group by, 
+     * order by, and offset/limit clauses. Each component is converted to its
+     * SQL string representation and combined into a complete SQL query.
+     *
+     * @returns {string} The fully constructed SQL SELECT query string.
+     */
     buildSelect(): string { 
 
         // Construct the components of the SQL query
@@ -189,6 +201,26 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         this.validateArrayObjects(updatesArray);
 
         return Update.toSql(this.table, updatesArray, this.whereClauses, this.bindings);
+    }
+
+    /**
+     * Builds a DELETE query.
+     *
+     * @returns {string} The SQL string for the DELETE query.
+     */
+    buildDelete(): string {
+        
+        // Construct the components of the SQL query
+        const oneSpacePrefix = ' ';
+        const deleteFrom     = DeleteFrom.toSql(this.table);
+        const where          = Where.toSql(this.whereClauses, this.rawWhere ?? undefined, this.bindings, oneSpacePrefix).trimEnd();
+        
+        // Construct the SQL query
+        let sql = deleteFrom;
+        sql += where
+        
+        return sql.trimEnd()
+
     }
 
     /**
@@ -407,6 +439,11 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
     // Select Methods
     setSelect(): this {
         this.buildType = 'select';
+        return this;
+    }
+
+    setDelete(): this {
+        this.buildType = 'delete';
         return this;
     }
 

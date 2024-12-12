@@ -87,6 +87,8 @@ abstract class BaseExpression<Bindings = unknown> implements IEloquentExpression
 
     abstract getGroupBy(): TGroupBy[] | null;
 
+    abstract setDelete(): this;
+
     /**
      * Clones the query builder expression.
      *

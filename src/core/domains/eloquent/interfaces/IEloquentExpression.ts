@@ -299,6 +299,13 @@ interface IEloquentExpression<Bindings = unknown> {
     setGroupBy(columns: TGroupBy[] | null): this;
 
     /**
+     * Sets the delete clause for the query builder.
+     * 
+     * @returns {this} The query builder instance for chaining.
+     */
+    setDelete(): this
+
+    /**
      * Returns a clone of the query builder.
      * 
      * @returns {IEloquentExpression<Bindings>} A clone of the query builder.

@@ -886,7 +886,7 @@ abstract class Eloquent<Model extends IModel> extends BaseEloquent implements IE
      * 
      * @throws {Error} Throws an error if the method is not implemented.
      */
-    delete(): Promise<Collection<Model>> {
+    delete(): Promise<IEloquent<Model>> {
         throw new Error("Method not implemented.");
     }
     

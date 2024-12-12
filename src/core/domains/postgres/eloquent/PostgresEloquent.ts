@@ -353,6 +353,29 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
         this.expression.setWhere([])
         return await this.update(documents)
     }
+    
+    /**
+     * Deletes records from the database based on the current query builder state.
+     * 
+     * @returns {Promise<IEloquent<Model>>} A promise that resolves to the query builder instance
+     * for chaining after the deletion operation.
+     * 
+     * @throws {DeleteException} Throws an exception if the query builder state is invalid.
+     */
+    async delete(): Promise<IEloquent<Model>> {
+        return await captureError(async () => {
+
+            const previousExpression = this.expression.clone() as SqlExpression
+
+            this.expression.setDelete()
+
+            await this.execute();
+
+            this.setExpression(previousExpression)
+
+            return this
+        })
+    }
 
     /**
      * Executes a count query to retrieve the number of documents matching the
@@ -451,6 +474,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
         this.expression.setDistinctColumns(columnsArray.map(column => ({column})))
         return this as unknown as IEloquent<Model>
     }
+
 
 }
 
