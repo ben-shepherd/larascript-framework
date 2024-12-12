@@ -8,7 +8,7 @@ import { generateUuidV4 } from '@src/core/util/uuid/generateUuidV4';
 import testHelper from '@src/tests/testHelper';
 
 import { ITestEmployeeModelData } from './models/TestEmployeeModel';
-import TestPeopleModel, { resetTable } from './models/TestPeopleModel';
+import TestPeopleModel, { resetPeopleTable } from './models/TestPeopleModel';
 
 describe('eloquent', () => {
 
@@ -17,7 +17,7 @@ describe('eloquent', () => {
 
     beforeAll(async () => {
         await testHelper.testBootApp()
-        await resetTable()
+        await resetPeopleTable()
         
         query = app('query').builder(TestPeopleModel);
 

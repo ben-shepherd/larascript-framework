@@ -16,7 +16,7 @@ export interface ITestPeopleModelData extends IModelAttributes {
 
 }
 
-export const resetTable = async (connections: string[] = testHelper.getTestConnectionNames()) => {
+export const resetPeopleTable = async (connections: string[] = testHelper.getTestConnectionNames()) => {
     for(const connectionName of connections) {
         const schema = App.container('db').schema(connectionName);
 

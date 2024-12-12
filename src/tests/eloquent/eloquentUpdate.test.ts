@@ -4,7 +4,7 @@ import { IEloquent } from '@src/core/domains/eloquent/interfaces/IEloquent';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryService';
 import testHelper from '@src/tests/testHelper';
 
-import TestPeopleModel, { resetTable } from './models/TestPeopleModel';
+import TestPeopleModel, { resetPeopleTable } from './models/TestPeopleModel';
 
 describe('eloquent', () => {
 
@@ -12,7 +12,7 @@ describe('eloquent', () => {
 
     beforeAll(async () => {
         await testHelper.testBootApp()
-        await resetTable()
+        await resetPeopleTable()
         
         query = queryBuilder(TestPeopleModel);
     });
