@@ -4,7 +4,8 @@ import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
 import { App } from "@src/core/services/App";
 
-import { ICtor } from "../interfaces/ICtor";
+import { IEloquent } from "../domains/eloquent/interfaces/IEloquent";
+import { queryBuilder } from "../domains/eloquent/services/EloquentQueryBuilderService";
 
 /**
  * Base class for repositories
@@ -14,7 +15,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
     /**
      * The model constructor
      */
-    public modelCtor: ICtor<Model>;
+    public modelCtor: ModelConstructor<Model>;
 
     /**
      * The name of the collection/table
@@ -31,10 +32,18 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @param collectionName The name of the collection/table
      * @param modelConstructor The model constructor
      */
-    constructor(modelConstructor: ICtor<Model>, collectionName?: string) {
+    constructor(modelConstructor: ModelConstructor<Model>, collectionName?: string) {
         this.collectionName = collectionName ?? (new modelConstructor()).table;
         this.connection = new modelConstructor().connection
         this.modelCtor = modelConstructor;
+    }
+    
+    /**
+     * Returns a new query builder instance that is a clone of the existing one.
+     * @returns A new query builder instance.
+     */
+    protected query(): IEloquent<Model> {
+        return queryBuilder(this.modelCtor);
     }
 
     /**
@@ -48,6 +57,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
     /**
      * Get the query builder
      * @returns The query builder
+     * @deprecated
      */
     documentManager(): IDocumentManager {
         return App.container('db').documentManager(this.connection).table(this.collectionName)

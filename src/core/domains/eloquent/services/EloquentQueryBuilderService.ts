@@ -4,9 +4,17 @@ import { app } from "@src/core/services/App";
 import { IEloquent } from "../interfaces/IEloquent";
 import { IQueryService } from "../interfaces/IQueryService";
 
+/**
+ * Shorthand function to create a new query builder instance for the model.
+ * @param modelCtor 
+ * @returns 
+ */
 export const queryBuilder = <Model extends IModel>(modelCtor: ModelConstructor<Model>): IEloquent<Model> => app('query').builder(modelCtor);
 
-class EloquentQueryService implements IQueryService {
+/**
+ * Eloquent query service
+ */
+class EloquentQueryBuilderService implements IQueryService {
 
     /**
      * Creates a new query builder instance for the model.
@@ -16,11 +24,11 @@ class EloquentQueryService implements IQueryService {
     builder<Model extends IModel>(modelCtor: ModelConstructor<Model>): IEloquent<Model> {
         const model = new modelCtor(null)
         
-        const eloquentCtor = app('db')
+        const eloquentConstructor = app('db')
             .getAdapter(model.connection)
             .getEloquentConstructor<Model>()
 
-        return new eloquentCtor()
+        return new eloquentConstructor()
             .setConnectionName(model.connection)
             .setModelCtor(modelCtor)
             .setModelColumns(modelCtor)
@@ -31,4 +39,4 @@ class EloquentQueryService implements IQueryService {
 
 }
 
-export default EloquentQueryService;
+export default EloquentQueryBuilderService;

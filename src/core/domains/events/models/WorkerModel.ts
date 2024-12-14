@@ -1,7 +1,7 @@
-import { IWorkerModel, TWorkerModelData } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
+import { IWorkerModel, WorkerModelAttributes } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
 import Model from "@src/core/models/base/Model";
 
-export interface WorkerModelData extends TWorkerModelData {}
+export interface WorkerModelData extends WorkerModelAttributes {}
 
 export const initialWorkerModalData = {
     queueName: '',

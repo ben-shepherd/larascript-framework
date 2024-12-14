@@ -1,7 +1,7 @@
 import BaseDriver from "@src/core/domains/events/base/BaseDriver";
 import EventDriverException from "@src/core/domains/events/exceptions/EventDriverException";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
-import { IWorkerModel, TFailedWorkerModelData } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
+import { FailedWorkerModelAttributes, IWorkerModel } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import { z } from "zod";
@@ -37,7 +37,7 @@ export type TQueueDriverOptions = {
     /**
      * Constructor for the Worker model for failed events
      */
-    failedWorkerModelCtor: ICtor<IModel<TFailedWorkerModelData>>;
+    failedWorkerModelCtor: ICtor<IModel<FailedWorkerModelAttributes>>;
 
     /**
      * Run the worker only once, defaults to false

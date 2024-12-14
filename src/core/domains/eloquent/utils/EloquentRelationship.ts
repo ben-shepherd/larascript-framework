@@ -5,7 +5,7 @@ import IModelAttributes from "@src/core/interfaces/IModelData";
 import EloquentRelationshipException from "../exceptions/EloquentRelationshipException";
 import { IEloquent, IRelationship, TWhereClauseValue } from "../interfaces/IEloquent";
 import BelongsTo from "../relational/BelongsTo";
-import { queryBuilder } from "../services/EloquentQueryService";
+import { queryBuilder } from "../services/EloquentQueryBuilderService";
 
 class EloquentRelationship {
 

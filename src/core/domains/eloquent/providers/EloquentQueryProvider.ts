@@ -1,7 +1,7 @@
 import BaseProvider from "@src/core/base/Provider";
 import { App } from "@src/core/services/App";
 
-import EloquentQueryService from "../services/EloquentQueryService";
+import EloquentQueryBuilderService from "../services/EloquentQueryBuilderService";
 
 class EloquentQueryProvider extends BaseProvider {
 
@@ -13,10 +13,10 @@ class EloquentQueryProvider extends BaseProvider {
      * 
      * @extends BaseProvider
      * @see BaseProvider
-     * @see EloquentQueryService
+     * @see EloquentQueryBuilderService
      */
     async register() {
-        App.setContainer('query', new EloquentQueryService());
+        App.setContainer('query', new EloquentQueryBuilderService());
     }
 
 }

@@ -58,7 +58,7 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * @returns 
      */
     public async createApiTokenFromUser(user: IUserModel, scopes: string[] = []): Promise<IApiTokenModel> {
-        const factory = new this.config.factory.apiTokenFactory;
+        const factory = new this.config.factory.apiTokenFactory(this.config.models.apiToken);
         const apiToken = factory.createFromUser(user, scopes)
         await apiToken.save();
         return apiToken

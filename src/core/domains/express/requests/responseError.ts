@@ -19,5 +19,5 @@ export default (req: Request , res: Response, err: Error, code: number = 500) =>
 
     App.container('logger').error(err)
     
-    res.status(code).send({ error: `${err.message}` })
+    res.status(code).send({ error: `${err.message}`, stack: err.stack })
 }

@@ -56,7 +56,7 @@ export default async (req: Request, res: Response): Promise<void> => {
     catch (error) {
         // Handle validation errors
         if (error instanceof ValidationError) {
-            res.status(400).send({ error: error.message });
+            res.status(400).send({ error: error.message, stack: error.stack });
             return;
         }
 
