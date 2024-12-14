@@ -6,6 +6,10 @@ import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumen
 export interface IHasDatabaseConnection {
     connection: string;
     table: string;
+
+    /**
+     * @deprecated
+     */
     getDocumentManager(): IDocumentManager;
     getSchema(): IDatabaseSchema;
 }

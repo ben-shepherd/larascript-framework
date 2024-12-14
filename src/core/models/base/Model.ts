@@ -1,8 +1,10 @@
  
 import BaseModel from '@src/core/base/BaseModel';
-import { IDatabaseDocument } from '@src/core/domains/database/interfaces/IDocumentManager';
+import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
+import { IDatabaseDocument, IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
 import { IBelongsToOptionsLegacy } from '@src/core/domains/database/interfaces/relationships/IBelongsTo';
 import { IHasManyOptions } from '@src/core/domains/database/interfaces/relationships/IHasMany';
+import { db } from '@src/core/domains/database/services/Database';
 import { ICtor } from '@src/core/interfaces/ICtor';
 import { GetDataOptions, IModel, ModelConstructor } from '@src/core/interfaces/IModel';
 import IModelAttributes from '@src/core/interfaces/IModelData';
@@ -74,6 +76,18 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
     public relationships: string[] = [];
 
     /**
+     * The name of the database connection to use.
+     * Defaults to the application's default connection name.
+     */
+    public connection: string = App.container('db').getDefaultConnectionName();
+
+    /**
+     * The name of the MongoDB collection associated with this model.
+     * Must be set by child classes or will be automatically generated.
+     */
+    public table!: string;
+    
+    /**
      * Constructs a new instance of the Model class.
      * 
      * @param {Attributes | null} data - Initial data to populate the model.
@@ -82,6 +96,37 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         super();
         this.attributes = { ...data } as Attributes;
         this.original = { ...data } as Attributes;
+        if(!this.table) {
+            this.table = this.getDefaultTable()
+        }
+    }
+
+    /**
+     * Gets the document manager for database operations.
+     * 
+     * @returns {IDocumentManager} The document manager instance.
+     * @deprecated
+     */
+    getDocumentManager(): IDocumentManager {
+        return db().documentManager(this.connection).table(this.table);
+    }
+        
+    /**
+     * Gets the document manager for database operations.
+     * 
+     * @returns {IDocumentManager} The document manager instance.
+     */
+    setConnectionName(connectionName: string) {
+        this.connection = connectionName;
+    }
+            
+    /**
+     * Gets the schema interface for the database.
+     * 
+     * @returns {IDatabaseSchema} The schema interface.
+     */
+    getSchema(): IDatabaseSchema {
+        return db().schema(this.connection);
     }
 
     /**
@@ -104,11 +149,20 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
      * @param {Model['attributes'] | null} data - The initial data to populate the model.
      * @returns {Model} A new instance of the model wrapped in a Proxy.
      */
-    static create<Model extends IModel>(data: Model['attributes'] | null): Model {
+    static create<Model extends IModel>(data: Model['attributes'] | null = null): Model {
         return new Proxy(
             new (this as unknown as ICtor<Model>)(data),
             new ProxyModelHandler()
         )
+    }
+
+    /**
+     * Retrieves the table name associated with the model.
+     * 
+     * @returns {string} The table name associated with the model.
+     */
+    static getTable(): string {
+        return this.create().useTableName()
     }
 
     /**

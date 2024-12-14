@@ -16,6 +16,7 @@ export type GetDataOptions = {excludeGuarded: boolean}
 export type ModelConstructor<M extends IModel = IModel> = {
     new (...args: any[]): M;
     create<T extends M>(data: T['attributes'] | null): T;
+    getTable(): string;
 }
 
 export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>

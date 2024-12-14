@@ -11,7 +11,7 @@ export class CreateApiTokenMigration extends BaseMigration {
 
     group?: string = 'app:setup';
 
-    table = new ApiToken(null).table;
+    table = ApiToken.getTable()
 
     async up(): Promise<void> {
         await this.schema.createTable(this.table, {

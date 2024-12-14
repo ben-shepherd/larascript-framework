@@ -11,6 +11,18 @@ import DatabaseAdapter from "@src/core/domains/database/services/DatabaseAdapter
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
+/**
+ * Short alias for App.container('db')
+ * @returns 
+ */
+export const db = () => App.container('db')
+
+/**
+ * Short alias for db().schema(connectionName)
+ * @param connectionName 
+ * @returns 
+ */
+export const schema = (connectionName: string = db().getDefaultConnectionName()) => db().schema(connectionName)
 
 /**
  * Database Service

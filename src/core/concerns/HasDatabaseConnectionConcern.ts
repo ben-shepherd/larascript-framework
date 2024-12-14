@@ -4,6 +4,8 @@ import { IHasDatabaseConnection } from "@src/core/interfaces/concerns/IHasDataba
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
+import { db } from "../domains/database/services/Database";
+
 
 /**
  * A concern that provides database connection capabilities to a class.
@@ -41,7 +43,7 @@ const HasDatabaseConnectionConcern = (Base: ICtor) => {
          * @returns {IDocumentManager} The document manager instance.
          */
         getDocumentManager(): IDocumentManager {
-            return App.container('db').documentManager(this.connection).table(this.table);
+            return db().documentManager(this.connection).table(this.table);
         }
 
         /**
@@ -59,7 +61,7 @@ const HasDatabaseConnectionConcern = (Base: ICtor) => {
          * @returns {IDatabaseSchema} The schema interface.
          */
         getSchema(): IDatabaseSchema {
-            return App.container('db').schema(this.connection);
+            return db().schema(this.connection);
         }
     
     }
