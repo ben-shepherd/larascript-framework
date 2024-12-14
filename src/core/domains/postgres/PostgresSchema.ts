@@ -92,7 +92,7 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
      * @param attributes 
      * @returns 
      */
-    protected withIdSchema(attributes: ModelAttributes): ModelAttributes {
+    protected withDefaultUuuidV4Schema(attributes: ModelAttributes): ModelAttributes {
         if(attributes['id'] === undefined) {
             return {
                 id: {
@@ -119,7 +119,7 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
 
         const sequelize = this.adapter.getClient();
         const queryInterface = sequelize.getQueryInterface();
-        await queryInterface.createTable(tableName, this.withIdSchema(attributes), optons);
+        await queryInterface.createTable(tableName, this.withDefaultUuuidV4Schema(attributes), optons);
     }
 
     /**

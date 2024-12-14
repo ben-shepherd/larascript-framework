@@ -3,6 +3,7 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import captureError from "@src/core/util/captureError";
 import PrefixedPropertyGrouper from "@src/core/util/PrefixedPropertyGrouper";
+import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { QueryResult } from "pg";
 
 import Collection from "../../collections/Collection";
@@ -10,7 +11,7 @@ import collect from "../../collections/helper/collect";
 import Eloquent from "../../eloquent/Eloquent";
 import EloquentException from "../../eloquent/exceptions/EloquentExpression";
 import UpdateException from "../../eloquent/exceptions/UpdateException";
-import { IEloquent, SetModelColumnsOptions } from "../../eloquent/interfaces/IEloquent";
+import { IEloquent, IdGeneratorFn, SetModelColumnsOptions } from "../../eloquent/interfaces/IEloquent";
 import IEloquentExpression from "../../eloquent/interfaces/IEloquentExpression";
 import PostgresAdapter from "../adapters/PostgresAdapter";
 import SqlExpression from "../builder/ExpressionBuilder/SqlExpression";
@@ -21,6 +22,11 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
      * The query builder expression object
      */
     protected expression!: SqlExpression
+
+    /**
+     * The default ID generator function for the query builder.
+     */
+    protected defaultIdGeneratorFn = generateUuidV4;
 
     /**
      * Constructor
@@ -39,6 +45,20 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
      */
     protected resetBindingValues() {
         this.expression.bindings.reset()
+    }
+
+    /**
+     * Sets the ID generator function for the query builder.
+     *
+     * If no ID generator function is provided, the default ID generator function
+     * will be used, which generates a UUID v4 string.
+     *
+     * @param {IdGeneratorFn} [idGeneratorFn] - The ID generator function to use.
+     * @returns {this} The PostgresEloquent instance for chaining.
+     */
+    setIdGenerator(idGeneratorFn: IdGeneratorFn = this.defaultIdGeneratorFn as IdGeneratorFn): IEloquent<Model> {
+        this.idGeneratorFn = idGeneratorFn
+        return this
     }
 
 
@@ -296,11 +316,11 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
 
                 this.setExpression(previousExpression)
 
-                const documentWithUuid = this.documentWithGeneratedId<Model>(document);
+                const documentWithId = this.documentWithGeneratedId<Model>(document);
 
                 const res = await this.execute(
                     this.expression
-                        .setInsert(documentWithUuid as object)
+                        .setInsert(documentWithId as object)
                 )
                 
                 results.push(res.rows[0])    
