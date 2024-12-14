@@ -1,4 +1,4 @@
-import WorkerModel, { WorkerModelData } from "@src/core/domains/events/models/WorkerModel";
+import WorkerModel from "@src/core/domains/events/models/WorkerModel";
 import BaseMigration from "@src/core/domains/migrations/base/BaseMigration";
 import { DataTypes } from "sequelize";
 
@@ -11,7 +11,7 @@ export class CreateWorkerTableMigration extends BaseMigration {
 
     group?: string = 'testing';
 
-    table = (new WorkerModel({} as WorkerModelData)).table
+    table = WorkerModel.getTable()
 
     async up(): Promise<void> {
         await this.schema.createTable(this.table, {

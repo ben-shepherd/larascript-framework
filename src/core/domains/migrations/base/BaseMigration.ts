@@ -3,6 +3,8 @@ import { IMigration, MigrationType } from "@src/core/domains/migrations/interfac
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
+import { db } from "../../database/services/Database";
+
 /**
  * BaseMigration class serves as the foundation for all database migrations.
  * It implements the IMigration interface and provides core functionality
@@ -71,7 +73,7 @@ abstract class BaseMigration implements IMigration {
         }
 
         // Check if the current database matches the specified provider for this migration
-        return App.container('db').isConnectionAdapter(this.databaseAdapter);
+        return db().isConnectionAdapter(this.databaseAdapter);
     }
 
 }
