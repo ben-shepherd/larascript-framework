@@ -306,11 +306,11 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
     }
     
     /**
-         * Get the schema service
-         * 
-         * @param connectionName 
-         * @returns 
-         */
+     * Get the schema service
+     * 
+     * @param connectionName 
+     * @returns 
+     */
     schema<TSchema extends IDatabaseSchema = IDatabaseSchema>(connectionName: string = this.getDefaultConnectionName()): TSchema {
         return this.getAdapter(connectionName).getSchema() as TSchema
     }

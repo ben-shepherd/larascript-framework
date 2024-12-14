@@ -72,7 +72,7 @@ abstract class BaseDatabaseAdapter<TClient = unknown, TConfig extends object = o
 
     abstract getSchema(): IDatabaseSchema;
 
-    abstract getEloquentCtor<Model extends IModel = IModel>(): ICtor<IEloquent<Model>>;
+    abstract getEloquentConstructor<Model extends IModel = IModel>(): ICtor<IEloquent<Model>>;
 
     abstract isConnected(): Promise<boolean>;
 

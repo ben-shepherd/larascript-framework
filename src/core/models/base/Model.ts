@@ -8,7 +8,7 @@ import { GetDataOptions, IModel, ModelConstructor } from '@src/core/interfaces/I
 import IModelAttributes from '@src/core/interfaces/IModelData';
 import { App } from '@src/core/services/App';
 
-import { IBelongsToOptions, IRelationship } from '../../domains/eloquent/interfaces/IEloquent';
+import { IBelongsToOptions, IRelationship, IdGeneratorFn } from '../../domains/eloquent/interfaces/IEloquent';
 import BelongsTo from '../../domains/eloquent/relational/BelongsTo';
 import EloquentRelationship from '../../domains/eloquent/utils/EloquentRelationship';
 import Str from '../../util/str/Str';
@@ -23,6 +23,8 @@ import ProxyModelHandler from '../utils/ProxyModelHandler';
  * @template Attributes Type extending IModelData, representing the structure of the model's data.
  */
 export default abstract class Model<Attributes extends IModelAttributes> extends BaseModel<Attributes> implements IModel<Attributes> {
+
+    protected idGeneratorFn: IdGeneratorFn | undefined;
 
     /**
      * The primary key field name for the model.
@@ -80,6 +82,15 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         super();
         this.attributes = { ...data } as Attributes;
         this.original = { ...data } as Attributes;
+    }
+
+    /**
+     * Retrieves the current ID generator function for the query builder.
+     *
+     * @returns {IdGeneratorFn | undefined} The ID generator function.
+     */
+    getIdGeneratorFn(): IdGeneratorFn | undefined {
+        return this.idGeneratorFn;
     }
     
     /**

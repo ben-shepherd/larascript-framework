@@ -7,6 +7,7 @@ import IModelAttributes from "@src/core/interfaces/IModelData";
 import { IHasDatabaseConnection } from "@src/core/interfaces/concerns/IHasDatabaseConnection";
 import { IHasPrepareDocument } from "@src/core/interfaces/concerns/IHasPrepareDocument";
 
+import { IdGeneratorFn } from "../domains/eloquent/interfaces/IEloquent";
 import BelongsTo from "../domains/eloquent/relational/BelongsTo";
 
 
@@ -32,6 +33,7 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes> 
     attributes: Attributes | null;
     original: Attributes | null;
     relationships: string[];
+    getIdGeneratorFn(): IdGeneratorFn | undefined;
     attr<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Promise<Attributes[K] | null | undefined>;
     attrSync<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Attributes[K] | null | undefined;
     setAttribute(key: keyof Attributes, value?: unknown): Promise<void>;

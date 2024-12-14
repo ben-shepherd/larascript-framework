@@ -165,7 +165,7 @@ class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
         return new MongoDbSchema(this)
     }
 
-    getEloquentCtor<Model extends IModel>(): ICtor<IEloquent<Model>> {
+    getEloquentConstructor<Model extends IModel>(): ICtor<IEloquent<Model>> {
         throw new Error("Method not implemented.");
     }
 

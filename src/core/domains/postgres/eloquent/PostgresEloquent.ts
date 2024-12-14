@@ -296,7 +296,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
 
                 this.setExpression(previousExpression)
 
-                const documentWithUuid = this.documentWithUuid<Model>(document);
+                const documentWithUuid = this.documentWithGeneratedId<Model>(document);
 
                 const res = await this.execute(
                     this.expression

@@ -31,7 +31,7 @@ class DatabaseAdapter {
         const lastPartRegex = RegExp(/docker-compose.(\w+).yml$/);
 
         return composerFileNames.map((composerFileName: string) => ({
-            fullName: composerFileName,
+            fullName: composerFileName, 
             shortName: composerFileName.replace(lastPartRegex, '$1')
         }));
     }

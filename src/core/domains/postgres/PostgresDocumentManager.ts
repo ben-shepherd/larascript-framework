@@ -12,6 +12,8 @@ import LegacyPostgresQueryBuilder, { TLegacySelectOptions } from "./builder/Lega
  * PostgreSQL document manager
  *
  * Provides methods for interacting with a PostgreSQL database
+ * 
+ * @deprecated
  */
 class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManager, PostgresAdapter> {
 

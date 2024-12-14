@@ -66,6 +66,11 @@ class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
         return this.getClient()
     }
 
+    /**
+     * Returns a new Sequelize client instance.
+     * 
+     * @returns {Sequelize} A new Sequelize client instance.
+     */
     getSequelizeClient(): Sequelize {
         return new Sequelize(this.config.uri, { 
             logging: App.env() !== EnvironmentProduction,
@@ -83,6 +88,11 @@ class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
         return new pg.Client(this.config.uri);
     }
 
+    /**
+     * Get a new PostgreSQL client instance connected to the database.
+     * 
+     * @returns {Promise<pg.Client>} A promise that resolves with a new instance of PostgreSQL client.
+     */
     async getConnectedPgClient(): Promise<pg.Client> {
         const client = this.getPgClient();
         await client.connect()
@@ -205,7 +215,7 @@ class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
      * @template Data The type of data to be queried, defaults to object.
      * @returns {ICtor<IEloquent<Data>>} The constructor of the query builder.
      */
-    getEloquentCtor<Model extends IModel>(): ICtor<IEloquent<Model>> {
+    getEloquentConstructor<Model extends IModel>(): ICtor<IEloquent<Model>> {
         return PostgresEloquent as unknown as ICtor<IEloquent<Model>>
     }
 

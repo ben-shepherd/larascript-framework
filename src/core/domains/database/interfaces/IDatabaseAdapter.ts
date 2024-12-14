@@ -8,14 +8,10 @@ import { IEloquent } from "../../eloquent/interfaces/IEloquent";
 
 export type TAdapterComposerFileName = {
 
-    /**
-     * Example: 'docker-compose.mongodb.yml'
-     */
+    // Example: 'mongodb.yml'
     fullName: string,
 
-    /**
-     * Example: 'mongodb'
-     */
+    // Example: 'mongodb'
     shortName: string
 }
 
@@ -31,15 +27,18 @@ export interface  IDatabaseAdapter {
 
     connect(): Promise<unknown>;
 
+    isConnected(): Promise<boolean>;
+
     connectToDatabase(...args: any[]): Promise<unknown>;
 
+    /**
+     * @deprecated
+     */
     getDocumentManager(): IDocumentManager;
 
     getSchema(): IDatabaseSchema;
 
-    getEloquentCtor<Model extends IModel = IModel>(): ICtor<IEloquent<Model>>;
-
-    isConnected(): Promise<boolean>;
+    getEloquentConstructor<Model extends IModel = IModel>(): ICtor<IEloquent<Model>>;
 
     getDockerComposeFileName(): string;
 

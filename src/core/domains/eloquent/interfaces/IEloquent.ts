@@ -106,6 +106,8 @@ export type SetModelColumnsOptions = {
     [key: string]: unknown;
 }
 
+export type IdGeneratorFn<T = unknown> = <ReturnType = T>(...args: any[]) => ReturnType;
+
 export interface IEloquent<Model extends IModel = IModel> {
     
     // eloquent methods
@@ -118,6 +120,11 @@ export interface IEloquent<Model extends IModel = IModel> {
     setModelCtor(modelCtor?: ICtor<IModel>): IEloquent<Model>;
     getModelCtor(): ICtor<IModel> | undefined;
     setModelColumns(modelCtor?: ICtor<IModel>, options?: SetModelColumnsOptions): IEloquent<Model>;
+
+    // id generator
+    setIdGenerator(idGeneratorFn?: IdGeneratorFn): IEloquent<Model>;
+    getIdGenerator(): IdGeneratorFn | undefined;
+    generateId<T = unknown>(): T | null;
 
     // results
     fetchRows<T = unknown>(expression: IEloquentExpression, ...args: any[]): Promise<T>;
@@ -146,11 +153,11 @@ export interface IEloquent<Model extends IModel = IModel> {
     setTable(table: string): IEloquent<Model>;
     useTable(): string;
 
-    // Creating and saving
+    // Creating and saving-
     insert(documents: object | object[]): Promise<Collection<Model>>; 
     update(documents: object | object[]): Promise<Collection<Model>>;
     updateAll(documents: object | object[]): Promise<Collection<Model>>;
-    // delete(data: Data): Promise<IEloquent<Model>>;
+    delete(): Promise<IEloquent<Model>>;
 
     // selection
     select(columns?: string | string[]): IEloquent<Model>;
@@ -224,8 +231,6 @@ export interface IEloquent<Model extends IModel = IModel> {
     avg(column: string): Promise<number>;
     sum(column: string): Promise<number>;
 
-    // Deleting
-    delete(): Promise<IEloquent<Model>>;
 
     // Transaction
     // transaction(): Promise<void>;

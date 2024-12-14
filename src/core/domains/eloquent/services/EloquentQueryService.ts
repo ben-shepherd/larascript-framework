@@ -18,14 +18,15 @@ class EloquentQueryService implements IQueryService {
         
         const eloquentCtor = app('db')
             .getAdapter(model.connection)
-            .getEloquentCtor<Model>()
+            .getEloquentConstructor<Model>()
 
         return new eloquentCtor()
             .setConnectionName(model.connection)
             .setModelCtor(modelCtor)
             .setModelColumns(modelCtor)
             .setTable(model.useTableName())
-            .setFormatter((result) => modelCtor.create<Model>(result as Model['attributes'] | null));
+            .setFormatter((result) => modelCtor.create<Model>(result as Model['attributes'] | null))
+            .setIdGenerator(model.getIdGeneratorFn());
     }
 
 }

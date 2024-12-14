@@ -6,14 +6,13 @@ import { deepClone } from "@src/core/util/deepClone";
 import { PrefixToTargetPropertyOptions } from "../../util/PrefixedPropertyGrouper";
 import Collection from "../collections/Collection";
 import { IDatabaseAdapter } from "../database/interfaces/IDatabaseAdapter";
-import BaseEloquent from "./base/BaseEloquent";
 import Direction from "./enums/Direction";
 import EloquentException from "./exceptions/EloquentExpression";
 import ExpressionException from "./exceptions/ExpressionException";
 import InvalidMethodException from "./exceptions/InvalidMethodException";
 import MissingTableException from "./exceptions/MissingTableException";
 import QueryBuilderException from "./exceptions/QueryBuilderException";
-import { IEloquent, LogicalOperators, OperatorArray, SetModelColumnsOptions, TColumnOption, TFormatterFn, TGroupBy, TLogicalOperator, TOperator, TWhereClauseValue } from "./interfaces/IEloquent";
+import { IEloquent, IdGeneratorFn, LogicalOperators, OperatorArray, SetModelColumnsOptions, TColumnOption, TFormatterFn, TGroupBy, TLogicalOperator, TOperator, TWhereClauseValue } from "./interfaces/IEloquent";
 import IEloquentExpression from "./interfaces/IEloquentExpression";
 import { TDirection } from "./interfaces/TEnums";
 import With from "./relational/With";
@@ -26,7 +25,7 @@ import With from "./relational/With";
  * @abstract
  */
 
-abstract class Eloquent<Model extends IModel> extends BaseEloquent implements IEloquent<Model> {
+abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
 
     /**
      * The connection name to use for the query builder
@@ -67,6 +66,11 @@ abstract class Eloquent<Model extends IModel> extends BaseEloquent implements IE
      * Prefixed properties to target property as object options
      */
     protected formatResultTargetPropertyToObjectOptions: PrefixToTargetPropertyOptions = [];
+
+    /**
+     * The id generator function
+     */
+    protected idGeneratorFn?: IdGeneratorFn;
 
     /**
      * Retrieves the database adapter for the connection name associated with this query builder.
@@ -230,6 +234,32 @@ abstract class Eloquent<Model extends IModel> extends BaseEloquent implements IE
     }
 
     /**
+     * Adds the id: uuid to the document
+     * @param document The document to add an id to
+     * @returns The document with an id added
+     */
+    protected documentWithGeneratedId<T>(document: T): T {
+        return this.documentStripUndefinedProperties({
+            ...document,
+            id: this.generateId() ?? undefined
+        }) 
+    }
+
+    /**
+     * Removes undefined properties from the document
+     * @param document The document to clean
+     * @returns The cleaned document
+     */
+    protected documentStripUndefinedProperties<T>(document: T): T {
+        for (const key in document) {
+            if (document[key] === undefined) {
+                delete document[key]
+            }
+        }
+        return document
+    }
+
+    /**
      * Retrieves the constructor of the model associated with the query builder.
      *
      * @returns {ICtor<IModel>} The constructor of the model.
@@ -258,6 +288,40 @@ abstract class Eloquent<Model extends IModel> extends BaseEloquent implements IE
     setFormatter(formatterFn?: TFormatterFn): IEloquent<Model> {
         this.formatterFn = formatterFn 
         return this as unknown as IEloquent<Model>
+    }
+
+    /**
+     * Sets the ID generator function for the query builder.
+     *
+     * This function will be used to generate unique IDs for new records
+     * when inserting them into the database.
+     *
+     * @param {IdGeneratorFn} idGeneratorFn - The ID generator function to set.
+     * @returns {IEloquent<Model>} The query builder instance for chaining.
+     */
+    setIdGenerator(idGeneratorFn?: IdGeneratorFn): IEloquent<Model> {
+        this.idGeneratorFn = idGeneratorFn
+        return this as unknown as IEloquent<Model>
+    }
+
+    /**
+     * Retrieves the current ID generator function for the query builder.
+     *
+     * @returns {IdGeneratorFn} The ID generator function.
+     */
+    getIdGenerator(): IdGeneratorFn | undefined {
+        return this.idGeneratorFn
+    }
+
+    /**
+     * Generates a unique ID for a new record using the current ID generator
+     * function.
+     *
+     * @returns {T | null} The generated ID or null if no ID generator
+     * function is set.
+     */
+    generateId<T = unknown>(): T | null {
+        return this.idGeneratorFn ? this.idGeneratorFn() : null
     }
 
     /**
