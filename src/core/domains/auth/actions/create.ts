@@ -6,6 +6,8 @@ import ValidationError from '@src/core/exceptions/ValidationError';
 import { App } from '@src/core/services/App';
 import { Request, Response } from 'express';
 
+import { auth } from '../services/AuthService';
+
 /**
  * Creates a new user
  *
@@ -19,7 +21,7 @@ export default async (req: Request, res: Response): Promise<void> => {
 
     try {
         // Check if the user already exists
-        const repository = App.container('auth').userRepository;
+        const repository =  auth().getUserRepository();
         const existingUser = await repository.findOneByEmail(email);
 
         if (existingUser) {

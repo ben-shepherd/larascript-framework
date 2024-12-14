@@ -78,6 +78,16 @@ export default class User extends Model<IUserData> implements IUserModel {
     ]
 
     /**
+     * Retrieves the fields defined on the model, minus the password field.
+     * As this is a temporary field and shouldn't be saved to the database.
+     * 
+     * @returns The list of fields defined on the model.
+     */
+    getFields(): string[] {
+        return super.getFields().filter(field => !['password'].includes(field));
+    }
+
+    /**
      * Checks if the user has the given role
      *
      * @param role The role to check

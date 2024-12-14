@@ -13,8 +13,18 @@ import comparePassword from '@src/core/domains/auth/utils/comparePassword';
 import createJwt from '@src/core/domains/auth/utils/createJwt';
 import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';
 import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
+import { app } from '@src/core/services/App';
 import { JsonWebTokenError } from 'jsonwebtoken';
 
+/**
+ * Shorthand for accessing the auth service
+ * @returns 
+ */
+export const auth = () => app('auth');
+
+/**
+ * Auth service
+ */
 export default class AuthService extends Service<IAuthConfig> implements IAuthService {
 
     /**
@@ -171,6 +181,14 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
         }
 
         return routes;
+    }
+
+    /**
+     * Retrieves the user repository instance.
+     * @returns {IUserRepository} The user repository instance.
+     */
+    getUserRepository(): IUserRepository {
+        return new this.config.repositories.user(this.config.models.user);
     }
 
 }

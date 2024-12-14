@@ -19,6 +19,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
 
     /**
      * The name of the collection/table
+     * @deprecated
      */
     public collectionName!: string;
 
