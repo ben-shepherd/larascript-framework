@@ -14,12 +14,17 @@ import { App } from "@src/core/services/App";
 import pg from 'pg';
 import { QueryInterface, Sequelize } from "sequelize";
 
+import { IDatabaseGenericConnectionConfig } from "../../database/interfaces/IDatabaseConfig";
 import { IEloquent } from "../../eloquent/interfaces/IEloquent";
 import PostgresEloquent from "../eloquent/PostgresEloquent";
 
 
 class PostgresAdapter extends BaseDatabaseAdapter<pg.Pool, IPostgresConfig>  {
 
+    /**
+     * The sequelize instance
+     * Used as an alternative to help with managing the structure of the database and tables, and to provide a way to perform queries on the database.
+     */
     protected sequelize!: Sequelize;
 
     /**
@@ -49,73 +54,6 @@ class PostgresAdapter extends BaseDatabaseAdapter<pg.Pool, IPostgresConfig>  {
     }
 
     /**
-     * Get the query interface for the database
-     * @returns {QueryInterface} The query interface
-     */
-    getQueryInterface(): QueryInterface {
-        return this.getSequelize().getQueryInterface();
-    }
-    
-    /**
-     * Get the sequelize instance
-     * @returns 
-     */
-    getSequelize(): Sequelize {
-        if(!this.sequelize) {
-            this.sequelize = new Sequelize(this.config.uri, { 
-                logging: App.env() !== EnvironmentProduction,
-                ...this.config.options, 
-                ...this.overrideConfig
-            })
-        }
-
-        return this.sequelize
-    }
-
-    /**
-     * Returns a new Sequelize client instance.
-     * 
-     * @returns {Sequelize} A new Sequelize client instance.
-     */
-    getSequelizeClient(): Sequelize {
-        return new Sequelize(this.config.uri, { 
-            logging: App.env() !== EnvironmentProduction,
-            ...this.config.options, 
-            ...this.overrideConfig
-        })
-    }
-
-    /**
-     * Get a new PostgreSQL client instance.
-     * 
-     * @returns {pg.Client} A new instance of PostgreSQL client.
-     */
-    getPgClient(): pg.Client {
-        return new pg.Client(this.config.uri);
-    }
-
-    /**
-     * Get a new PostgreSQL client instance connected to the database.
-     * 
-     * @returns {Promise<pg.Client>} A promise that resolves with a new instance of PostgreSQL client.
-     */
-    async getConnectedPgClient(): Promise<pg.Client> {
-        const client = this.getPgClient();
-        await client.connect()
-        return client
-    }
-
-    /**
-     * Get a new PostgreSQL client instance connected to a specific database.
-     * 
-     * @param database - The name of the database to connect to. Defaults to 'postgres'
-     * @returns {pg.Client} A new instance of PostgreSQL client.
-     */
-    async getPgClientDatabase(database: string = 'postgres'): Promise<pg.Client> {
-        return this.connectToDatabase(database)
-    }
-
-    /**
      * Connect to the PostgreSQL database
      *
      * Creates the default database if it does not exist
@@ -124,7 +62,7 @@ class PostgresAdapter extends BaseDatabaseAdapter<pg.Pool, IPostgresConfig>  {
      * @returns {Promise<void>} A promise that resolves when the connection is established
      */
     
-    async connect(): Promise<void> {
+    async connetClient(): Promise<void> {
         await this.createDefaultDatabase()
 
         const { username: user, password, host, port, database} = ParsePostgresConnectionUrl.parse(this.config.uri);
@@ -141,30 +79,12 @@ class PostgresAdapter extends BaseDatabaseAdapter<pg.Pool, IPostgresConfig>  {
     }
 
     /**
-     * Connect to a specific PostgreSQL database.
-     *
-     * @param database - The name of the database to connect to.
-     * @returns {Promise<pg.Client>} A promise that resolves with a new instance of PostgreSQL client.
-     */
-    async connectToDatabase(database: string): Promise<pg.Client> {
-        const { username: user, password, host, port} = ParsePostgresConnectionUrl.parse(this.config.uri);
-
-        return new pg.Client({
-            user,
-            password,
-            host,
-            port,
-            database
-        });
-    }
-
-    /**
      * Creates the default database if it does not exist
      * @returns {Promise<void>} A promise that resolves when the default database has been created
      * @throws {Error} If an error occurs while creating the default database
      * @private
      */
-    private async createDefaultDatabase(): Promise<void> {
+    async createDefaultDatabase(): Promise<void> {
         const credentials = ParsePostgresConnectionUrl.parse(this.config.uri);
             
         const client = new pg.Client({
@@ -238,6 +158,57 @@ class PostgresAdapter extends BaseDatabaseAdapter<pg.Pool, IPostgresConfig>  {
         return createMigrationSchemaPostgres(this, tableName)
     }
 
+    /**
+     * Get the query interface for the database
+     * @returns {QueryInterface} The query interface
+     */
+    getSequelizeQueryInterface(): QueryInterface {
+        return this.getSequelize().getQueryInterface();
+    }
+        
+    /**
+     * Get the sequelize instance
+     * @returns 
+     */
+    getSequelize(): Sequelize {
+        if(!this.sequelize) {
+            this.sequelize = new Sequelize(this.config.uri, { 
+                logging: App.env() !== EnvironmentProduction,
+                ...this.config.options, 
+                ...this.overrideConfig
+            })
+        }
+    
+        return this.sequelize
+    }
+    
+    /**
+     * Get a new PostgreSQL client instance.
+     * 
+     * @returns {pg.Client} A new instance of PostgreSQL client.
+     */
+    getPgClient(config: IDatabaseGenericConnectionConfig<IPostgresConfig> = this.config): pg.Client {
+        return new pg.Client(config as object);
+    }
+    
+    /**
+     * Get a new PostgreSQL client instance connected to a specific database.
+     * 
+     * @param database - The name of the database to connect to. Defaults to 'postgres'
+     * @returns {pg.Client} A new instance of PostgreSQL client.
+     */
+    getPgClientWithDatabase(database: string = 'postgres'): pg.Client {
+        const { username: user, password, host, port} = ParsePostgresConnectionUrl.parse(this.config.uri);
+    
+        return new pg.Client({
+            user,
+            password,
+            host,
+            port,
+            database
+        });
+    }
+    
 }
 
 export default PostgresAdapter

@@ -20,7 +20,7 @@ class MongoDBSchema extends BaseSchema implements IDatabaseSchema{
      * @returns A promise that resolves when the database schema has been created
      */
     async createDatabase(name: string): Promise<void> {
-        const client = await this.adapter.connectToDatabase('app')
+        const client = await this.adapter.getMongoClientWithData('app')
 
         try {
             const db = client.db(name);
@@ -51,7 +51,7 @@ class MongoDBSchema extends BaseSchema implements IDatabaseSchema{
      * @returns A promise that resolves to a boolean indicating whether the database exists
      */
     async databaseExists(name: string): Promise<boolean> {
-        const client = await this.adapter.connectToDatabase('app')
+        const client = await this.adapter.getMongoClientWithData('app')
 
         try {
             const adminDb = client.db().admin()
@@ -75,7 +75,7 @@ class MongoDBSchema extends BaseSchema implements IDatabaseSchema{
      * @returns A promise that resolves when the database has been dropped.
      */
     async dropDatabase(name: string): Promise<void> {
-        const client = await this.adapter.connectToDatabase('app');
+        const client = await this.adapter.getMongoClientWithData('app');
 
         try {
             await client.db(name).dropDatabase();

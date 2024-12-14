@@ -69,7 +69,7 @@ class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
      * @returns {Promise<void>} A promise that resolves when the connection is established
      */
     
-    async connect(): Promise<void> {
+    async connetClient(): Promise<void> {
         if (await this.isConnected()) {
             return;
         }
@@ -88,7 +88,7 @@ class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
      * @param database - The name of the database to connect to.
      * @returns {Promise<pg.Client>} A promise that resolves with a new instance of PostgreSQL client.
      */
-    async connectToDatabase(database: string = 'app', options: object = {}): Promise<MongoClient> {
+    async getMongoClientWithDatabase(database: string = 'app', options: object = {}): Promise<MongoClient> {
         const { host, port, username, password, options: mongoOptions } = ParseMongoDBConnectionString.parse(this.config.uri); 
 
         const newCredentials = new ParseMongoDBConnectionString({

@@ -64,17 +64,19 @@ abstract class BaseDatabaseAdapter<TClient = unknown, TConfig extends object = o
         return this.client
     }
 
-    abstract connect(): Promise<unknown>;
+    abstract connetClient(): Promise<unknown>;
 
-    abstract connectToDatabase(...args: any[]): Promise<unknown>;
+    abstract isConnected(): Promise<boolean>;
 
+    /**
+     * @deprecated
+     */
     abstract getDocumentManager(): IDocumentManager;
 
     abstract getSchema(): IDatabaseSchema;
 
     abstract getEloquentConstructor<Model extends IModel = IModel>(): ICtor<IEloquent<Model>>;
 
-    abstract isConnected(): Promise<boolean>;
 
     abstract getDockerComposeFileName(): string;
 

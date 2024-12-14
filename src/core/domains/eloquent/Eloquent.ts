@@ -585,7 +585,7 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
         throw new InvalidMethodException()
     }
 
-    async transaction(callbackFn: TransactionFn): Promise<void> {
+    async transaction(callbackFn: TransactionFn<Model>): Promise<void> {
         throw new InvalidMethodException()
     }
 

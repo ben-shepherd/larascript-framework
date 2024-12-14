@@ -132,7 +132,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
             document = this.documentWithUuid(document)
             document = this.documentStripUndefinedProperties(document)
 
-            const queryInterface = this.adapter.getQueryInterface();
+            const queryInterface = this.adapter.getSequelizeQueryInterface();
             await queryInterface.insert(null, this.getTable(), document, options) as T
 
             return document as T
@@ -153,7 +153,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
             documents = documents.map(d => this.documentWithUuid(d))
             documents = documents.map(d => this.documentStripUndefinedProperties(d))
 
-            const queryInterface = this.adapter.getQueryInterface();
+            const queryInterface = this.adapter.getSequelizeQueryInterface();
             await queryInterface.bulkInsert(this.getTable(), documents, options) as T[];
 
             return documents as T
@@ -170,7 +170,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
             this.validator.validateSingleDocument(document)
             this.validator.validateContainsId(document)
 
-            const queryInterface = this.adapter.getQueryInterface();
+            const queryInterface = this.adapter.getSequelizeQueryInterface();
             await queryInterface.bulkUpdate(this.getTable(), document, { id: document.id })
 
             return document as T
@@ -205,7 +205,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
             this.validator.validateSingleDocument(document)
             this.validator.validateContainsId(document)
 
-            const queryInterface = this.adapter.getQueryInterface();
+            const queryInterface = this.adapter.getSequelizeQueryInterface();
 
             return await queryInterface.bulkDelete(this.getTable(), {
                 id: document.id
@@ -234,7 +234,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
      */
     async truncate(): Promise<void> {
         return this.captureError(async () => {
-            const queryInterface = this.adapter.getQueryInterface();
+            const queryInterface = this.adapter.getSequelizeQueryInterface();
             await queryInterface.bulkDelete(this.getTable(), {});
         })
     }

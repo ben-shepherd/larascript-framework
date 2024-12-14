@@ -165,7 +165,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
         this.log('Connecting to database (Connection: ' + connectionName + ')');
 
         const adapter = new adapterCtor(connectionName, connectionConfig);
-        await adapter.connect()
+        await adapter.connetClient()
         
         if(!this.srListExists(Database.REGISTERED_ADAPTERS_BY_CONNECTION)) {
             this.srCreateList(Database.REGISTERED_ADAPTERS_BY_CONNECTION)

@@ -25,11 +25,9 @@ export interface  IDatabaseAdapter {
 
     getConnectionName(...args: any[]): string;
 
-    connect(): Promise<unknown>;
+    connetClient(): Promise<unknown>;
 
     isConnected(): Promise<boolean>;
-
-    connectToDatabase(...args: any[]): Promise<unknown>;
 
     /**
      * @deprecated

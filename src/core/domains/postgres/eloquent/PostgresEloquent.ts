@@ -4,14 +4,14 @@ import { IModel } from "@src/core/interfaces/IModel";
 import captureError from "@src/core/util/captureError";
 import PrefixedPropertyGrouper from "@src/core/util/PrefixedPropertyGrouper";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
-import { QueryResult } from "pg";
+import pg, { QueryResult } from 'pg';
 
 import Collection from "../../collections/Collection";
 import collect from "../../collections/helper/collect";
 import Eloquent from "../../eloquent/Eloquent";
 import EloquentException from "../../eloquent/exceptions/EloquentExpression";
 import UpdateException from "../../eloquent/exceptions/UpdateException";
-import { IEloquent, IdGeneratorFn, SetModelColumnsOptions } from "../../eloquent/interfaces/IEloquent";
+import { IEloquent, IdGeneratorFn, SetModelColumnsOptions, TransactionFn } from "../../eloquent/interfaces/IEloquent";
 import IEloquentExpression from "../../eloquent/interfaces/IEloquentExpression";
 import PostgresAdapter from "../adapters/PostgresAdapter";
 import SqlExpression from "../builder/ExpressionBuilder/SqlExpression";
@@ -29,12 +29,22 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
     protected defaultIdGeneratorFn = generateUuidV4;
 
     /**
+     * The query builder client
+     */
+    protected client: pg.Pool | null = null
+
+    /**
      * Constructor
      * @param modelCtor The model constructor to use when creating or fetching models.
      */
     constructor() {
         super()
         this.setExpressionCtor(SqlExpression)
+        this.client = this.getAdapter<PostgresAdapter>().getClient();
+    }
+
+    setClient(client: pg.Pool) {
+        this.client = client
     }
 
     /**
@@ -120,6 +130,15 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
     }
 
     /**
+     * Retrieves the PostgreSQL client instance connected to the database.
+     * This is a protected method, intended to be used by subclasses of PostgresEloquent.
+     * @returns {pg.Client} The PostgreSQL client instance.
+     */
+    protected getClient() { 
+        return this.getAdapter<PostgresAdapter>().getClient()
+    }
+
+    /**
      * Executes a raw SQL query using the connected PostgreSQL client.
      *
      * @param expression The SQL query to execute.
@@ -129,8 +148,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
     async raw<T = QueryResult>(expression: string, bindings?: unknown[]): Promise<T> {
         console.log('[PostgresEloquent] raw', { expression, bindings })
 
-        const client = await this.getAdapter<PostgresAdapter>().getClient();
-        const results = await client.query(expression, bindings)
+        const results = await this.getClient().query(expression, bindings)
 
         console.log('[PostgresEloquent] raw results count', results?.rows?.length)
 
@@ -447,17 +465,49 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
         return await this.fetchAggregateResultNumber(`SUM(${column}) AS aggregate_result`)
     }
 
-    // async transaction(callbackFn: TransactionFn): Promise<void> {
-    //     try {
-    //         return captureError(async () => {
-    //             const query = this.clone();
-                
-    //         })
-    //     }
-    //     catch (err) {
+    /**
+     * Executes a database transaction, allowing a series of operations to be
+     * executed with rollback capability in case of errors.
+     *
+     * @param {TransactionFn} callbackFn - The function to execute within the transaction.
+     * It receives a query instance to perform database operations.
+     * @returns {Promise<void>} A promise that resolves once the transaction completes.
+     * @throws {Error} Throws an error if the transaction fails, in which case a rollback is performed.
+     */
+    async transaction(callbackFn: TransactionFn<Model>): Promise<void> {
+        let pgClient!: pg.PoolClient;
 
-    //     }
-    // }
+        try {
+            const pool = this.getAdapter<PostgresAdapter>().getClient();
+            pgClient = await pool.connect();
+
+            // Begin the transaction
+            await this.getClient().query('BEGIN');
+
+            // Execute the callback function
+            await captureError(async () => {
+                const query = this.clone() as PostgresEloquent<Model>;
+                query.setClient(pgClient as unknown as pg.Pool);
+                await callbackFn(query as unknown as IEloquent<Model>);
+            })
+
+            // Commit the transaction
+            await this.getClient().query('COMMIT');
+        }
+        catch (err) {
+            // Rollback the transaction
+            if(pgClient) {
+                await pgClient.query('ROLLBACK');
+            }
+            throw err
+        }
+        finally {
+            // Close the client
+            if(pgClient) {
+                pgClient.release();
+            }
+        }
+    }
 
     /**
      * Executes a raw query to retrieve a single number from the database

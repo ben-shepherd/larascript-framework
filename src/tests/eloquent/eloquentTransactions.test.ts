@@ -71,14 +71,19 @@ describe('eloquent', () => {
 
         await resetTableAndRepopulate();
 
-        await query.clone().transaction(async (trx) => {
+        try {
+            await query.clone().transaction(async (trx) => {
             
-            await trx.clone().where('name', 'Alice').update({ age: 26 });
+                await trx.clone().where('name', 'Alice').update({ age: 26 });
 
-            await trx.clone().where('name', 'Bob').update({ age: 31 });
+                await trx.clone().where('name', 'Bob').update({ age: 31 });
 
-            throw new Error('Transaction failed');
-        })
+                throw new Error('Transaction failed');
+            })
+        }
+        catch (error) {
+            expect((error as Error).message).toBe('Transaction failed');
+        }
 
         const results = await query.clone().get();
         expect(results[0].age).toBe(25);
