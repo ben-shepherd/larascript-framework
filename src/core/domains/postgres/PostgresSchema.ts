@@ -117,7 +117,7 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
     async createTable(tableName: string, attributes: ModelAttributes, optons?: QueryInterfaceCreateTableOptions): Promise<void> {
         tableName = this.formatTableName(tableName);
 
-        const sequelize = this.adapter.getClient();
+        const sequelize = this.adapter.getSequelize();
         const queryInterface = sequelize.getQueryInterface();
         await queryInterface.createTable(tableName, this.withDefaultUuuidV4Schema(attributes), optons);
     }
@@ -129,7 +129,7 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
      */
     async dropTable(tableName: string, options?: QueryInterfaceDropTableOptions): Promise<void> {
         tableName = this.formatTableName(tableName);
-        const sequelize = this.adapter.getClient();
+        const sequelize = this.adapter.getSequelize();
         const queryInterface = sequelize.getQueryInterface();
         await queryInterface.dropTable(tableName, options);
     }
@@ -147,7 +147,7 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
             tableName.tableName = this.formatTableName(tableName.tableName);
         }
         
-        const sequelize = this.adapter.getClient();
+        const sequelize = this.adapter.getSequelize();
     
         if(options.addColumn) {
             await sequelize.getQueryInterface().addColumn(
@@ -203,7 +203,7 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
      */
     async tableExists(tableName: string): Promise<boolean> {
         tableName = this.formatTableName(tableName);
-        const sequelize = this.adapter.getClient();
+        const sequelize = this.adapter.getSequelize();
         const queryInterface = sequelize.getQueryInterface();
         return await queryInterface.tableExists(tableName);
     }
@@ -212,7 +212,7 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
      * Drop all tables in the database
      */
     async dropAllTables(): Promise<void> {
-        const sequelize = this.adapter.getClient();
+        const sequelize = this.adapter.getSequelize();
         const queryInterface = sequelize.getQueryInterface();
         await queryInterface.dropAllTables();
     }

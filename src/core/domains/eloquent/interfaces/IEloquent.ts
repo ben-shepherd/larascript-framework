@@ -108,6 +108,8 @@ export type SetModelColumnsOptions = {
 
 export type IdGeneratorFn<T = unknown> = <ReturnType = T>(...args: any[]) => ReturnType;
 
+export type TransactionFn<T extends IEloquent = IEloquent> = (query: T) => Promise<void>;
+
 export interface IEloquent<Model extends IModel = IModel> {
     
     // eloquent methods
@@ -233,7 +235,7 @@ export interface IEloquent<Model extends IModel = IModel> {
 
 
     // Transaction
-    // transaction(): Promise<void>;
+    transaction(callbackFn: TransactionFn): Promise<void>;
 
     // Pagination
     // paginate(perPage?: number, page?: number): Promise<{

@@ -129,9 +129,8 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
     async raw<T = QueryResult>(expression: string, bindings?: unknown[]): Promise<T> {
         console.log('[PostgresEloquent] raw', { expression, bindings })
 
-        const client = await this.getAdapter<PostgresAdapter>().getConnectedPgClient();
+        const client = await this.getAdapter<PostgresAdapter>().getClient();
         const results = await client.query(expression, bindings)
-        await client.end()
 
         console.log('[PostgresEloquent] raw results count', results?.rows?.length)
 
@@ -447,6 +446,18 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
     async sum(column: string): Promise<number> {
         return await this.fetchAggregateResultNumber(`SUM(${column}) AS aggregate_result`)
     }
+
+    // async transaction(callbackFn: TransactionFn): Promise<void> {
+    //     try {
+    //         return captureError(async () => {
+    //             const query = this.clone();
+                
+    //         })
+    //     }
+    //     catch (err) {
+
+    //     }
+    // }
 
     /**
      * Executes a raw query to retrieve a single number from the database

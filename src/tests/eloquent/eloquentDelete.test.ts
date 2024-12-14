@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
 import { IEloquent } from '@src/core/domains/eloquent/interfaces/IEloquent';
-import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryService';
+import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
 import testHelper from '@src/tests/testHelper';
 
 import TestDepartmentModel, { resetTableDepartmentModel } from './models/TestDepartmentModel';

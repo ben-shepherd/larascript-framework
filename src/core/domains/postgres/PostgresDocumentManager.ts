@@ -75,7 +75,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
      */
     async findOne<T>(selectOptions: Partial<TLegacySelectOptions>): Promise<T | null> {
         return this.captureError(async () => {
-            const sequelize = this.adapter.getClient();
+            const sequelize = this.adapter.getSequelize();
             const queryString = this.builder.select({
                 ...selectOptions,
                 tableName: this.getTable(),
@@ -101,7 +101,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
      */
     async findMany<T>(options: Partial<TLegacySelectOptions>): Promise<T> {
         return this.captureError(async () => {
-            const sequelize = this.adapter.getClient()
+            const sequelize = this.adapter.getSequelize()
 
             const queryString = this.builder.select({
                 ...options,

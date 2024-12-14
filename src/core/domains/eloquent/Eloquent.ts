@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
@@ -12,7 +13,7 @@ import ExpressionException from "./exceptions/ExpressionException";
 import InvalidMethodException from "./exceptions/InvalidMethodException";
 import MissingTableException from "./exceptions/MissingTableException";
 import QueryBuilderException from "./exceptions/QueryBuilderException";
-import { IEloquent, IdGeneratorFn, LogicalOperators, OperatorArray, SetModelColumnsOptions, TColumnOption, TFormatterFn, TGroupBy, TLogicalOperator, TOperator, TWhereClauseValue } from "./interfaces/IEloquent";
+import { IEloquent, IdGeneratorFn, LogicalOperators, OperatorArray, SetModelColumnsOptions, TColumnOption, TFormatterFn, TGroupBy, TLogicalOperator, TOperator, TWhereClauseValue, TransactionFn } from "./interfaces/IEloquent";
 import IEloquentExpression from "./interfaces/IEloquentExpression";
 import { TDirection } from "./interfaces/TEnums";
 import With from "./relational/With";
@@ -274,7 +275,7 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
      * @param expression 
      * @param args 
      */
-    // eslint-disable-next-line no-unused-vars
+     
     abstract fetchRows<T = unknown>(expression: IEloquentExpression, ...args: any[]): Promise<T>;
 
     /**
@@ -446,37 +447,37 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
             .setExpression(this.expression.clone())
     }
 
-    // eslint-disable-next-line no-unused-vars
+     
     async createDatabase(name: string): Promise<void> {
         throw new InvalidMethodException()
     }
 
-    // eslint-disable-next-line no-unused-vars
+     
     async databaseExists(name: string): Promise<boolean> {
         throw new InvalidMethodException()
     }
 
-    // eslint-disable-next-line no-unused-vars
+     
     async dropDatabase(name: string): Promise<void> {
         throw new InvalidMethodException()
     }
 
-    // eslint-disable-next-line no-unused-vars
+     
     async createTable(name: string, ...args: any[]): Promise<void> {
         throw new InvalidMethodException()
     }
 
-    // eslint-disable-next-line no-unused-vars
+     
     async dropTable(name: string, ...args: any[]): Promise<void> {
         throw new InvalidMethodException()
     }
 
-    // eslint-disable-next-line no-unused-vars
+     
     async tableExists(name: string): Promise<boolean> {
         throw new InvalidMethodException()
     }
 
-    // eslint-disable-next-line no-unused-vars
+     
     async alterTable(name: string, ...args: any[]): Promise<void> {
         throw new InvalidMethodException()
     }
@@ -485,22 +486,22 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
         throw new InvalidMethodException()
     }
 
-    // eslint-disable-next-line no-unused-vars
+     
     async execute<T>(builder: IEloquentExpression): Promise<T> {
         throw new InvalidMethodException()
     }
 
-    // eslint-disable-next-line no-unused-vars
+     
     async raw<T>(expression: string, bindings?: unknown[]): Promise<T> {
         throw new InvalidMethodException()
     }
 
-    // eslint-disable-next-line no-unused-vars
+     
     async find(id: string | number): Promise<Model | null> {
         throw new InvalidMethodException()
     }
 
-    // eslint-disable-next-line no-unused-vars
+     
     async findOrFail(id: string | number): Promise<Model> {
         throw new InvalidMethodException()
     }
@@ -529,17 +530,17 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
         throw new InvalidMethodException()
     }
 
-    // eslint-disable-next-line no-unused-vars
+     
     async insert(documents: object | object[]): Promise<Collection<Model>> {
         throw new InvalidMethodException()
     }
 
-    // eslint-disable-next-line no-unused-vars
+     
     async update(documents: object | object[]): Promise<Collection<Model>> {
         throw new InvalidMethodException()
     }
 
-    // eslint-disable-next-line no-unused-vars
+     
     async updateAll(documents: object | object[]): Promise<Collection<Model>> {
         throw new InvalidMethodException()
     }
@@ -581,6 +582,10 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
     }
 
     async avg(column: string): Promise<number> {
+        throw new InvalidMethodException()
+    }
+
+    async transaction(callbackFn: TransactionFn): Promise<void> {
         throw new InvalidMethodException()
     }
 

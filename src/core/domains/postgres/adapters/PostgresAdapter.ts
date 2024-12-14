@@ -2,7 +2,6 @@ import { EnvironmentProduction } from "@src/core/consts/Environment";
 import BaseDatabaseAdapter from "@src/core/domains/database/base/BaseDatabaseAdapter";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
-import InvalidSequelizeException from "@src/core/domains/postgres/exceptions/InvalidSequelizeException";
 import ParsePostgresConnectionUrl from "@src/core/domains/postgres/helper/ParsePostgresConnectionUrl";
 import { IPostgresConfig } from "@src/core/domains/postgres/interfaces/IPostgresConfig";
 import PostgresDocumentManager from "@src/core/domains/postgres/PostgresDocumentManager";
@@ -18,7 +17,10 @@ import { QueryInterface, Sequelize } from "sequelize";
 import { IEloquent } from "../../eloquent/interfaces/IEloquent";
 import PostgresEloquent from "../eloquent/PostgresEloquent";
 
-class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
+
+class PostgresAdapter extends BaseDatabaseAdapter<pg.Pool, IPostgresConfig>  {
+
+    protected sequelize!: Sequelize;
 
     /**
      * Constructor for PostgresAdapter
@@ -59,11 +61,15 @@ class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
      * @returns 
      */
     getSequelize(): Sequelize {
-        if(!this.getClient()) {
-            throw new InvalidSequelizeException('Sequelize is not connected');
+        if(!this.sequelize) {
+            this.sequelize = new Sequelize(this.config.uri, { 
+                logging: App.env() !== EnvironmentProduction,
+                ...this.config.options, 
+                ...this.overrideConfig
+            })
         }
-    
-        return this.getClient()
+
+        return this.sequelize
     }
 
     /**
@@ -120,12 +126,16 @@ class PostgresAdapter extends BaseDatabaseAdapter<Sequelize, IPostgresConfig>  {
     
     async connect(): Promise<void> {
         await this.createDefaultDatabase()
+
+        const { username: user, password, host, port, database} = ParsePostgresConnectionUrl.parse(this.config.uri);
         
         this.setClient(
-            new Sequelize(this.config.uri, { 
-                logging: App.env() !== EnvironmentProduction,
-                ...this.config.options, 
-                ...this.overrideConfig
+            new pg.Pool({
+                user,
+                password,
+                host,
+                port,
+                database
             })
         )
     }
