@@ -8,6 +8,7 @@ import { App } from "@src/core/services/App";
  *
  * @class
  * @implements {IBelongsTo}
+ * @deprecated
  */
 export default class BelongsTo implements IBelongsTo {
 

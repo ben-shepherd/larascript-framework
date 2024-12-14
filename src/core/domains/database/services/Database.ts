@@ -312,6 +312,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
      * 
      * @param connectionName 
      * @returns 
+     * @deprecated
      */
     documentManager<TDocMan extends IDocumentManager = IDocumentManager>(connectionName: string = this.getDefaultConnectionName()): TDocMan {
         return this.getAdapter(connectionName).getDocumentManager() as TDocMan

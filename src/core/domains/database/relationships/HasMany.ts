@@ -8,6 +8,7 @@ import { App } from "@src/core/services/App";
  *
  * @class
  * @implements {IHasMany}
+ * @deprecated
  */
 export default class HasMany implements IHasMany {
 
