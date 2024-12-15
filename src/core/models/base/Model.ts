@@ -6,6 +6,7 @@ import { IBelongsToOptions, IEloquent, IHasManyOptions, IRelationship, IdGenerat
 import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
 import HasMany from '@src/core/domains/eloquent/relational/HasMany';
 import EloquentRelationship from '@src/core/domains/eloquent/utils/EloquentRelationship';
+import OnAttributeChangeBroadcastEvent from '@src/core/events/concerns/HasAttribute/OnAttributeChangeBroadcastEvent';
 import { ICtor } from '@src/core/interfaces/ICtor';
 import { GetAttributesOptions, IModel, ModelConstructor } from '@src/core/interfaces/IModel';
 import IModelAttributes from '@src/core/interfaces/IModelData';
@@ -21,7 +22,7 @@ import Str from '@src/core/util/str/Str';
  * 
  * @template Attributes Type extending IModelData, representing the structure of the model's data.
  */
-export default abstract class Model<Attributes extends IModelAttributes> extends BaseModel<Attributes> implements IModel<Attributes> {
+export default abstract class Model<Attributes extends IModelAttributes> extends BaseModel implements IModel<Attributes> {
 
     protected idGeneratorFn: IdGeneratorFn | undefined;
 
@@ -228,6 +229,12 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         if (this.attributes) {
             this.attributes[key] = value as Attributes[K];
         }
+
+        // Broadcast the event 
+        // Observer will receive the event
+        this.broadcast(
+            new OnAttributeChangeBroadcastEvent({ key: key as string, value, attributes: this.attributes })
+        )
     }
     
     /**
