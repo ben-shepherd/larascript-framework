@@ -232,18 +232,8 @@ export interface IEloquent<Model extends IModel = IModel> {
     avg(column: string): Promise<number>;
     sum(column: string): Promise<number>;
 
-
     // Transaction
     transaction(callbackFn: TransactionFn<Model>): Promise<void>;
-
-    // Pagination
-    // paginate(perPage?: number, page?: number): Promise<{
-    //     data: any[];
-    //     total: number;
-    //     currentPage: number;
-    //     lastPage: number;
-    //     perPage: number;
-    // }>;
 
     // Cloning 
     clone(): IEloquent<Model>;
