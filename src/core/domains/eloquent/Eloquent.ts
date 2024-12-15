@@ -597,7 +597,19 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      * @throws {QueryBuilderException} If an invalid or missing operator is provided.
      */
-    where(column: string, operator?: TOperator, value?: TWhereClauseValue, logicalOperator: TLogicalOperator = LogicalOperators.AND): IEloquent<Model> {
+    where(column: string | object, operator?: TOperator, value?: TWhereClauseValue, logicalOperator: TLogicalOperator = LogicalOperators.AND): IEloquent<Model> {
+
+        // Handle object case
+        if(typeof column === 'object') {
+            const filters = {...column}
+            const filtersOperator: TOperator = operator ?? '=';
+
+            Object.keys(filters).forEach(key => {
+                const value = filters[key]
+                this.expression.addWhere({column: key, operator: filtersOperator, value, logicalOperator, tableName: this.useTable()})
+            })
+            return this as unknown as IEloquent<Model>
+        }
 
         // Handle default equals case
         if(value === undefined) {

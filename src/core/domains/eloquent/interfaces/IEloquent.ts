@@ -182,6 +182,7 @@ export interface IEloquent<Model extends IModel = IModel> {
     distinct(columns: string | string[]): IEloquent<Model>;
 
     // Where methods
+    where(filters: object, operator?: TOperator): IEloquent<Model>;
     where(column: string, value?: TWhereClauseValue): IEloquent<Model>;
     where(column: string, operator?: TOperator, value?: TWhereClauseValue, logicalOperator?: TLogicalOperator): IEloquent<Model>;
     whereRaw<Q = unknown, Bindings = unknown>(query: Q, bindings?: Bindings): IEloquent<Model>;

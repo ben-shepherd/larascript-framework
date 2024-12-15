@@ -213,11 +213,11 @@ class Where {
             convertedWhere.logicalOperator = undefined
         }
         else if (filter.operator === 'like') {
-            convertedWhere.operator = 'LIKE';
+            convertedWhere.operator = 'ILIKE';
             convertedWhere.value = this.getValueStringAndAddBinding(convertedWhere.value as TWhereClauseValue);
         }
         else if (filter.operator === 'not like') {
-            convertedWhere.operator = 'NOT LIKE';
+            convertedWhere.operator = 'NOT ILIKE';
             convertedWhere.value = this.getValueStringAndAddBinding(convertedWhere.value as TWhereClauseValue);
         }
         else if (filter.operator === 'is null') {
