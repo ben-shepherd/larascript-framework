@@ -15,8 +15,6 @@ export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>
 
     setDefaultConnectionName(connectionName: string): void;
 
-    getClient<TClient = unknown>(connectionName?: string): TClient;
-
     getAdapter<TAdapter extends IDatabaseAdapter = IDatabaseAdapter>(connectionName?: string): TAdapter;
 
     getAdapterConstructor<T extends ICtor<IDatabaseAdapter> = ICtor<IDatabaseAdapter>>(connectionName?: string): T;

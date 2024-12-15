@@ -15,7 +15,7 @@ import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
 
 import { IEloquent } from "../../eloquent/interfaces/IEloquent";
 
-class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
+class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
 
     /**
     * The MongoDB database instance
@@ -69,7 +69,7 @@ class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
      * @returns {Promise<void>} A promise that resolves when the connection is established
      */
     
-    async connetClient(): Promise<void> {
+    async connectDefault(): Promise<void> {
         if (await this.isConnected()) {
             return;
         }

@@ -1,9 +1,10 @@
-import Repository from "@src/core/base/Repository";
 import EventWorkerException from "@src/core/domains/events/exceptions/EventWorkerException";
 import { TISerializablePayload } from "@src/core/domains/events/interfaces/IEventPayload";
 import { IEventWorkerConcern, IWorkerModel, TEventWorkerOptions } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
+
+import { queryBuilder } from "../../eloquent/services/EloquentQueryBuilderService";
 
 const EventWorkerConcern = (Base: ICtor) => {
     return class EventWorkerConcern extends Base implements IEventWorkerConcern {
@@ -117,13 +118,12 @@ const EventWorkerConcern = (Base: ICtor) => {
          * Fetches worker model documents
          */
         private async fetchWorkerModelDocuments(options: TEventWorkerOptions): Promise<IWorkerModel[]> {
-            return await new Repository<IWorkerModel>(options.workerModelCtor).findMany({
-                queueName: options.queueName,
-            }, {
-                sort: {
-                    createdAt: 'asc'
-                }
-            })
+            return (
+                await queryBuilder(options.workerModelCtor)
+                    .where('queueName', options.queueName)
+                    .orderBy('createdAt', 'asc')
+                    .get()
+            ).toArray()
         }
     
     }

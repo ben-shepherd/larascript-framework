@@ -11,7 +11,7 @@ import { IdGeneratorFn } from "../domains/eloquent/interfaces/IEloquent";
 import BelongsTo from "../domains/eloquent/relational/BelongsTo";
 
 
-export type GetDataOptions = {excludeGuarded: boolean}
+export type GetAttributesOptions = {excludeGuarded: boolean}
 
 export type ModelConstructor<M extends IModel = IModel> = {
     new (...args: any[]): M;
@@ -40,7 +40,7 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes> 
     setAttribute(key: keyof Attributes, value?: unknown): Promise<void>;
     getAttributeSync<K extends keyof Attributes = keyof Attributes>(key: K): Attributes[K] | null
     getAttribute(key: keyof Attributes): Promise<Attributes[keyof Attributes] | null>
-    getAttributes(...args: any[]): Attributes | null;
+    getAttributes(options: GetAttributesOptions): Attributes | null;
     getOriginal(key: keyof Attributes): Attributes[keyof Attributes] | null
     getDirty(): Record<keyof Attributes, any> | null
     isDirty(): boolean;
@@ -49,7 +49,11 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes> 
     getId(): string | undefined;
     setTimestamp(dateTimeField: string, value: Date): Promise<void>;
     fill(data: Partial<Attributes>): Promise<void>;
-    getData(options: GetDataOptions): Promise<Attributes | null>;
+
+    /**
+     * @deprecated
+     */
+    getData(options: GetAttributesOptions): Promise<Attributes | null>;
     toObject(): Promise<Attributes | null>;
     refresh(): Promise<Attributes | null>;
     update(): Promise<void>;

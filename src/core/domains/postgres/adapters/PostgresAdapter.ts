@@ -19,13 +19,18 @@ import { IEloquent } from "../../eloquent/interfaces/IEloquent";
 import PostgresEloquent from "../eloquent/PostgresEloquent";
 
 
-class PostgresAdapter extends BaseDatabaseAdapter<pg.Pool, IPostgresConfig>  {
+class PostgresAdapter extends BaseDatabaseAdapter<IPostgresConfig>  {
 
     /**
      * The sequelize instance
      * Used as an alternative to help with managing the structure of the database and tables, and to provide a way to perform queries on the database.
      */
     protected sequelize!: Sequelize;
+
+    /**
+     * The pg Pool instance
+     */
+    protected pool!: pg.Pool;
 
     /**
      * Constructor for PostgresAdapter
@@ -54,6 +59,14 @@ class PostgresAdapter extends BaseDatabaseAdapter<pg.Pool, IPostgresConfig>  {
     }
 
     /**
+     * Gets the pg Pool instance
+     * @returns {pg.Pool} The pool instance
+     */
+    getPool(): pg.Pool {
+        return this.pool;
+    }
+
+    /**
      * Connect to the PostgreSQL database
      *
      * Creates the default database if it does not exist
@@ -62,12 +75,12 @@ class PostgresAdapter extends BaseDatabaseAdapter<pg.Pool, IPostgresConfig>  {
      * @returns {Promise<void>} A promise that resolves when the connection is established
      */
     
-    async connetClient(): Promise<void> {
+    async connectDefault(): Promise<void> {
         await this.createDefaultDatabase()
 
         const { username: user, password, host, port, database} = ParsePostgresConnectionUrl.parse(this.config.uri);
         
-        this.setClient(
+        this.pool = (
             new pg.Pool({
                 user,
                 password,
@@ -76,6 +89,7 @@ class PostgresAdapter extends BaseDatabaseAdapter<pg.Pool, IPostgresConfig>  {
                 database
             })
         )
+        await this.pool.connect();
     }
 
     /**

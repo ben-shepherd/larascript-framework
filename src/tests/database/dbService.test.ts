@@ -54,8 +54,8 @@ describe('attempt to connect to MongoDB database', () => {
         expect(db.isConnectionAdapter(PostgresAdapter, 'postgres')).toBe(true);
         
         // Check clients
-        expect(db.getClient('mongodb') instanceof MongoClient).toBeTruthy();
-        expect(db.getClient('postgres') instanceof Sequelize).toBeTruthy();
+        expect(db.getAdapter<MongoDbAdapter>('mongodb').getClient() instanceof MongoClient).toBeTruthy();
+        expect(db.getAdapter<PostgresAdapter>('postgres').getClient() instanceof Sequelize).toBeTruthy();
 
         // Check default connection name
         expect(db.getDefaultConnectionName() === 'postgres').toBe(true);

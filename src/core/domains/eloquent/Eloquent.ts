@@ -7,6 +7,7 @@ import { deepClone } from "@src/core/util/deepClone";
 import { PrefixToTargetPropertyOptions } from "../../util/PrefixedPropertyGrouper";
 import Collection from "../collections/Collection";
 import { IDatabaseAdapter } from "../database/interfaces/IDatabaseAdapter";
+import { db } from "../database/services/Database";
 import Direction from "./enums/Direction";
 import EloquentException from "./exceptions/EloquentExpression";
 import ExpressionException from "./exceptions/ExpressionException";
@@ -77,10 +78,9 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
      * Retrieves the database adapter for the connection name associated with this query builder.
      * @returns {IDatabaseAdapter} The database adapter.
      */
-    protected getAdapter<T extends IDatabaseAdapter = IDatabaseAdapter>(): T {
-        return App.container('db').getAdapter<T>(this.getConnectionName())
+    protected getDatabaseAdapter<T extends IDatabaseAdapter = IDatabaseAdapter>(): T {
+        return db().getAdapter<T>(this.getConnectionName())
     }
-    
 
     /**
      * Applies the formatter function to the given array of rows.

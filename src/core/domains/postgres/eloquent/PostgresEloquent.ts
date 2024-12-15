@@ -4,10 +4,12 @@ import { IModel } from "@src/core/interfaces/IModel";
 import captureError from "@src/core/util/captureError";
 import PrefixedPropertyGrouper from "@src/core/util/PrefixedPropertyGrouper";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
+import { bindAll } from 'lodash';
 import pg, { QueryResult } from 'pg';
 
 import Collection from "../../collections/Collection";
 import collect from "../../collections/helper/collect";
+import { db } from "../../database/services/Database";
 import Eloquent from "../../eloquent/Eloquent";
 import EloquentException from "../../eloquent/exceptions/EloquentExpression";
 import UpdateException from "../../eloquent/exceptions/UpdateException";
@@ -31,7 +33,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
     /**
      * The query builder client
      */
-    protected client: pg.Pool | null = null
+    protected pool!: pg.PoolClient | pg.Pool;
 
     /**
      * Constructor
@@ -40,11 +42,17 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
     constructor() {
         super()
         this.setExpressionCtor(SqlExpression)
-        this.client = this.getAdapter<PostgresAdapter>().getClient();
     }
 
-    setClient(client: pg.Pool) {
-        this.client = client
+    /**
+     * Sets the query builder client to the given value.
+     * This is useful if you have an existing client you want to reuse
+     * for multiple queries.
+     * @param client The client to use for queries.
+     * @returns {this} The PostgresEloquent instance for chaining.
+     */
+    setPool(client: pg.Pool) {
+        this.pool = client
     }
 
     /**
@@ -134,8 +142,12 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
      * This is a protected method, intended to be used by subclasses of PostgresEloquent.
      * @returns {pg.Client} The PostgreSQL client instance.
      */
-    protected getClient() { 
-        return this.getAdapter<PostgresAdapter>().getClient()
+    protected getPool(): pg.Pool | pg.PoolClient {
+        if(this.pool) {
+            return this.pool
+        }
+
+        return db().getAdapter<PostgresAdapter>().getPool();
     }
 
     /**
@@ -148,7 +160,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
     async raw<T = QueryResult>(expression: string, bindings?: unknown[]): Promise<T> {
         console.log('[PostgresEloquent] raw', { expression, bindings })
 
-        const results = await this.getClient().query(expression, bindings)
+        const results = await this.getPool().query(expression, bindings)
 
         console.log('[PostgresEloquent] raw results count', results?.rows?.length)
 
@@ -475,36 +487,41 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
      * @throws {Error} Throws an error if the transaction fails, in which case a rollback is performed.
      */
     async transaction(callbackFn: TransactionFn<Model>): Promise<void> {
-        let pgClient!: pg.PoolClient;
+        let boundPgClient!: pg.PoolClient;
 
         try {
-            const pool = this.getAdapter<PostgresAdapter>().getClient();
-            pgClient = await pool.connect();
+            const pool = this.getDatabaseAdapter<PostgresAdapter>().getPool();
+            const pgClient = await pool.connect();
+            // Bind all methods
+            boundPgClient = bindAll(pgClient, ['query', 'release']);
 
             // Begin the transaction
-            await this.getClient().query('BEGIN');
+            await boundPgClient.query('BEGIN');
 
             // Execute the callback function
-            await captureError(async () => {
-                const query = this.clone() as PostgresEloquent<Model>;
-                query.setClient(pgClient as unknown as pg.Pool);
-                await callbackFn(query as unknown as IEloquent<Model>);
-            })
+            const cloneEloquentBound = this.clone.bind(this);
+            const clonedEloquent = cloneEloquentBound() as PostgresEloquent<Model>;
+
+            // Set the pool
+            clonedEloquent.setPool(boundPgClient as unknown as pg.Pool);
+
+            // Override clone to ensure it uses the bound pool
+            await callbackFn(clonedEloquent as unknown as IEloquent<Model>);
 
             // Commit the transaction
-            await this.getClient().query('COMMIT');
+            await boundPgClient.query('COMMIT');
         }
         catch (err) {
             // Rollback the transaction
-            if(pgClient) {
-                await pgClient.query('ROLLBACK');
+            if(boundPgClient) {
+                await boundPgClient.query('ROLLBACK');
             }
             throw err
         }
         finally {
             // Close the client
-            if(pgClient) {
-                pgClient.release();
+            if(boundPgClient) {
+                boundPgClient.release();
             }
         }
     }

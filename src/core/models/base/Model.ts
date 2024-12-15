@@ -6,7 +6,7 @@ import { IBelongsToOptionsLegacy } from '@src/core/domains/database/interfaces/r
 import { IHasManyOptions } from '@src/core/domains/database/interfaces/relationships/IHasMany';
 import { db } from '@src/core/domains/database/services/Database';
 import { ICtor } from '@src/core/interfaces/ICtor';
-import { GetDataOptions, IModel, ModelConstructor } from '@src/core/interfaces/IModel';
+import { GetAttributesOptions, IModel, ModelConstructor } from '@src/core/interfaces/IModel';
 import IModelAttributes from '@src/core/interfaces/IModelData';
 import { App } from '@src/core/services/App';
 
@@ -449,10 +449,10 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
     /**
      * Retrieves the data from the model.
      * 
-     * @param {GetDataOptions} [options={ excludeGuarded: true }] - Options for data retrieval.
+     * @param {GetAttributesOptions} [options={ excludeGuarded: true }] - Options for data retrieval.
      * @returns {Attributes | null} The model's data, potentially excluding guarded fields.
      */
-    async getData(options: GetDataOptions = { excludeGuarded: true }): Promise<Attributes | null> {
+    async getData(options: GetAttributesOptions = { excludeGuarded: true }): Promise<Attributes | null> {
         let data = this.getAttributes();
 
         if (data && options.excludeGuarded) {

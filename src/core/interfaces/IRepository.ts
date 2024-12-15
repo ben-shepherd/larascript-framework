@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
 import { ICtor } from "./ICtor";
@@ -19,11 +18,6 @@ export type RepositoryConstructor<Model extends IModel = IModel, Repository exte
 export interface IRepository<Model extends IModel = IModel> {
 
     /**
-     * Collection name
-     */
-    collectionName: string;
-
-    /**
      * Connection name
      */
     connection: string;
@@ -31,12 +25,8 @@ export interface IRepository<Model extends IModel = IModel> {
     /**
      * Model Constructor
      */
-    modelCtor: ICtor<Model>;
-    
-    /**
-     * Get the Database Query
-     */
-    documentManager(): IDocumentManager;
+    modelConstructor: ICtor<Model>;
+
 
     /**
      * Find or fail if no document found

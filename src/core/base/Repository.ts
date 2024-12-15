@@ -1,8 +1,6 @@
-import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
-import { App } from "@src/core/services/App";
 
 import { IEloquent } from "../domains/eloquent/interfaces/IEloquent";
 import { queryBuilder } from "../domains/eloquent/services/EloquentQueryBuilderService";
@@ -15,13 +13,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
     /**
      * The model constructor
      */
-    public modelCtor: ModelConstructor<Model>;
-
-    /**
-     * The name of the collection/table
-     * @deprecated
-     */
-    public collectionName!: string;
+    public modelConstructor: ModelConstructor<Model>;
 
     /**
      * The connection to use for queries
@@ -33,10 +25,9 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @param collectionName The name of the collection/table
      * @param modelConstructor The model constructor
      */
-    constructor(modelConstructor: ModelConstructor<Model>, collectionName?: string) {
-        this.collectionName = collectionName ?? (new modelConstructor()).table;
+    constructor(modelConstructor: ModelConstructor<Model>) {
         this.connection = new modelConstructor().connection
-        this.modelCtor = modelConstructor;
+        this.modelConstructor = modelConstructor;
     }
     
     /**
@@ -44,7 +35,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @returns A new query builder instance.
      */
     protected query(): IEloquent<Model> {
-        return queryBuilder(this.modelCtor);
+        return queryBuilder(this.modelConstructor);
     }
 
     /**
@@ -52,16 +43,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @param modelCtor The model constructor
      */
     protected setModelCtor(modelCtor: ModelConstructor<Model>) {
-        this.modelCtor = modelCtor;
-    }
-
-    /**
-     * Get the query builder
-     * @returns The query builder
-     * @deprecated
-     */
-    documentManager(): IDocumentManager {
-        return App.container('db').documentManager(this.connection).table(this.collectionName)
+        this.modelConstructor = modelCtor;
     }
     
     /**
@@ -86,13 +68,13 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @returns The found model or null
      */
     async findById(id: string): Promise<Model | null> {
-        const data = await this.documentManager().findById(id)
+        const data = await this.query().find(id)
 
         if(!data) {
             return null
         }
 
-        return new this.modelCtor(data)
+        return data ? this.modelConstructor.create(data) : null
     }
 
     /**
@@ -101,8 +83,14 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @returns The found model or null
      */
     async findOne(filter: object = {}): Promise<Model | null> {
-        const data = await this.documentManager().findOne({filter});
-        return data ? new this.modelCtor(data) : null;
+        const builder = await this.query();
+
+        Object.keys(filter).forEach(key => {
+            builder.where(key, filter[key]);
+        })
+
+        const data = await builder.first();
+        return data ? this.modelConstructor.create(data) : null;
     }
 
     /**
@@ -111,9 +99,14 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @param options The options to use for the query
      * @returns The found models
      */
-    async findMany(filter: object = {}, options?: object): Promise<Model[]> {
-        const dataArray = await this.documentManager().findMany({...options, filter})
-        return (dataArray as unknown[]).map(data => new this.modelCtor(data));
+    async findMany(filter: object = {}): Promise<Model[]> {
+        const builder = this.query();
+
+        Object.keys(filter).forEach(key => {
+            builder.where(key, filter[key]);
+        })
+
+        return (await builder.get()).toArray()
     }
 
 }

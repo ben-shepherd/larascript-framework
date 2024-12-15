@@ -165,7 +165,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
         this.log('Connecting to database (Connection: ' + connectionName + ')');
 
         const adapter = new adapterCtor(connectionName, connectionConfig);
-        await adapter.connetClient()
+        await adapter.connectDefault()
         
         if(!this.srListExists(Database.REGISTERED_ADAPTERS_BY_CONNECTION)) {
             this.srCreateList(Database.REGISTERED_ADAPTERS_BY_CONNECTION)
@@ -326,17 +326,6 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
      */
     schema<TSchema extends IDatabaseSchema = IDatabaseSchema>(connectionName: string = this.getDefaultConnectionName()): TSchema {
         return this.getAdapter(connectionName).getSchema() as TSchema
-    }
-    
-    /**
-     * Get the database raw client
-     * Example
-     *  getClient() // MongoClient
-     * 
-     * @returns 
-     */
-    getClient<T = unknown>(connectionName: string = this.getDefaultConnectionName()): T {
-        return this.getAdapter(connectionName).getClient() as T
     }
 
     /**

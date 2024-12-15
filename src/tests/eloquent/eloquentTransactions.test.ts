@@ -70,6 +70,7 @@ describe('eloquent', () => {
     test('test unsuccessful transaction', async () => {
 
         await resetTableAndRepopulate();
+        let exceptionThrown = false;
 
         try {
             await query.clone().transaction(async (trx) => {
@@ -83,7 +84,10 @@ describe('eloquent', () => {
         }
         catch (error) {
             expect((error as Error).message).toBe('Transaction failed');
+            exceptionThrown = true;
         }
+
+        expect(exceptionThrown).toBe(true);
 
         const results = await query.clone().get();
         expect(results[0].age).toBe(25);

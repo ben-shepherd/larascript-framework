@@ -17,15 +17,11 @@ export type TAdapterComposerFileName = {
 
 export interface  IDatabaseAdapter {
 
-    getClient(...args: any[]): unknown;
-
-    setClient(...args: any[]): void;
-
     setConnectionName(...args: any[]): void;
 
     getConnectionName(...args: any[]): string;
 
-    connetClient(): Promise<unknown>;
+    connectDefault(): Promise<unknown>;
 
     isConnected(): Promise<boolean>;
 
