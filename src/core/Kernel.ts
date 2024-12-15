@@ -12,7 +12,7 @@ export type KernelOptions = {
 
 export default class Kernel<Config extends IAppConfig> extends Singleton<Config> {
 
-    private appConfig!: IAppConfig;
+    private readonly appConfig!: IAppConfig;
 
     public containers: Map<keyof Containers, Containers[keyof Containers]> = new Map();
 
