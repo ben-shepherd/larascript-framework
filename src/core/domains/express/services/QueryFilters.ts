@@ -1,17 +1,19 @@
 import Singleton from "@src/core/base/Singleton";
 import { SearchOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
-import { App } from "@src/core/services/App";
 import { Request } from "express";
+
+import { logger } from "../../logger/services/LoggerService";
+import QueryFiltersException from "../exceptions/QueryFiltersException";
 
 class QueryFilters extends Singleton {
 
     protected filters: object | undefined = undefined
 
-
     /**
      * Parses the request object to extract the filters from the query string
      * 
      * @param {Request} req - The Express Request object
+     * @throws {QueryFiltersException} Throws an exception if the filters are not a string or an object
      * @returns {this} - The QueryFilters class itself to enable chaining
      */
     parseRequest(req: Request, options: SearchOptions = {} as SearchOptions): this {
@@ -26,7 +28,7 @@ class QueryFilters extends Singleton {
                 decodedFilters = req.query?.filters ?? {};
             }
             else {
-                decodedFilters = {};
+                throw new QueryFiltersException('Filters must be a string or an object')
             }
             
             let filters: object = {};
@@ -44,7 +46,7 @@ class QueryFilters extends Singleton {
         }
          
         catch (err) { 
-            App.container('logger').error(err)
+            logger().error(err)
         }
 
         return this;
