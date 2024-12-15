@@ -19,8 +19,8 @@ class QueryFilters extends Singleton {
             const { fields = [] } = options;
             let decodedFilters: object = {};
 
-            if(typeof req.query.filters === 'string') {
-                decodedFilters = JSON.parse(decodeURIComponent(req.query?.filters as string ?? '')) ?? {};
+            if(typeof req.query?.filters === 'string') {
+                decodedFilters = JSON.parse(decodeURIComponent(req.query?.filters)) ?? {};
             }
             else if(typeof req.query.filters === 'object') {
                 decodedFilters = req.query?.filters ?? {};
