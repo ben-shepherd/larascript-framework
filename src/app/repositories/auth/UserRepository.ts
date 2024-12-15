@@ -15,7 +15,7 @@ export default class UserRepository extends Repository<IUserModel> implements IU
      * @returns 
      */
     public async findOneByEmail(email: string): Promise<IUserModel | null> {
-        return this.query().select('id').where('email', email).first()
+        return this.query().where('email', email).first()
     }
 
 }
