@@ -1,4 +1,3 @@
-import ApiToken from "@src/app/models/auth/ApiToken";
 import UserObserver from "@src/app/observers/UserObserver";
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import IModelAttributes from "@src/core/interfaces/IModelData";
@@ -119,21 +118,6 @@ export default class User extends Model<IUserData> implements IUserModel {
         }
 
         return true;
-    }
-
-    /**
-     * @returns The tokens associated with this user
-     *
-     * Retrieves the ApiToken models associated with this user.
-     */
-    async tokens(active: boolean = true): Promise<ApiToken[]> {
-        const filters = active ? { revokedAt: null } : {};
-
-        return this.hasMany(ApiToken, {
-            localKey: 'id',
-            foreignKey: 'userId',
-            filters
-        }) 
     }
 
 }

@@ -2,8 +2,9 @@
 import BaseModel from '@src/core/base/BaseModel';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import { db } from '@src/core/domains/database/services/Database';
-import { IBelongsToOptions, IEloquent, IRelationship, IdGeneratorFn } from '@src/core/domains/eloquent/interfaces/IEloquent';
+import { IBelongsToOptions, IEloquent, IHasManyOptions, IRelationship, IdGeneratorFn } from '@src/core/domains/eloquent/interfaces/IEloquent';
 import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
+import HasMany from '@src/core/domains/eloquent/relational/HasMany';
 import EloquentRelationship from '@src/core/domains/eloquent/utils/EloquentRelationship';
 import { ICtor } from '@src/core/interfaces/ICtor';
 import { GetAttributesOptions, IModel, ModelConstructor } from '@src/core/interfaces/IModel';
@@ -559,5 +560,16 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         return new BelongsTo(this.constructor as ModelConstructor<IModel>, foreignModel, options);
     }
 
+    /**
+     * Retrieves a related model based on a "has many" relationship.
+     * 
+     * @template ForiegnModel The type of the related model.
+     * @param {ICtor<ForiegnModel>} foreignModel - The constructor of the related model.
+     * @param {Omit<IHasManyOptions, 'foreignTable'>} options - Options for the relationship.
+     * @returns {HasMany} An instance of the HasMany class for chaining.
+     */
+    hasMany<ForiegnModel extends IModel = IModel>(foreignModel: ModelConstructor<ForiegnModel>, options: Omit<IHasManyOptions, 'foreignTable'>): HasMany {
+        return new HasMany(this.constructor as ModelConstructor<IModel>, foreignModel, options);
+    }
 
 }

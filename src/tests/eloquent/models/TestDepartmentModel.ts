@@ -1,9 +1,11 @@
+import Collection from "@src/core/domains/collections/Collection";
+import HasMany from "@src/core/domains/eloquent/relational/HasMany";
 import IModelAttributes from "@src/core/interfaces/IModelData";
 import Model from "@src/core/models/base/Model";
 import { App } from "@src/core/services/App";
+import TestEmployeeModel from "@src/tests/eloquent/models/TestEmployeeModel";
 import testHelper from "@src/tests/testHelper";
 import { DataTypes } from "sequelize";
-import TestEmployeeModel, { ITestEmployeeModelData } from "@src/tests/eloquent/models/TestEmployeeModel";
 
 const tableName = Model.formatTableName('testsDepartments')
 
@@ -12,7 +14,7 @@ export interface ITestDepartmentModelData extends IModelAttributes {
     deptName: string;
     createdAt: Date;
     updatedAt: Date;
-    employees?: ITestEmployeeModelData[];
+    employees?: Collection<TestEmployeeModel>;
 
 }
 
@@ -42,7 +44,11 @@ export default class TestDepartmentModel extends Model<ITestDepartmentModelData>
         'updatedAt'
     ];
 
-    async employees(): Promise<TestEmployeeModel[]> {
+    // async employeesLegacy(): Promise<TestEmployeeModel[]> {
+    //     return this.hasMany(TestEmployeeModel, { foreignKey: 'deptId', localKey: 'id' });
+    // }
+
+    employees(): HasMany {
         return this.hasMany(TestEmployeeModel, { foreignKey: 'deptId', localKey: 'id' });
     }
 

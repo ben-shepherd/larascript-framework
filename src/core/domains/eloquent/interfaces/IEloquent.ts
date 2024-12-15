@@ -80,12 +80,19 @@ export interface IRelationship {
     getLocalModelCtor(): ModelConstructor<IModel>;
     getForeignModelCtor(): ModelConstructor<IModel>;
     getForeignTableName(): string;
-    getOptions(): IBelongsToOptions
+    getOptions<T extends object = object>(): T
     getLocalKey(): string;
     getForeignKey(): string;
 }
 
 export interface IBelongsToOptions {
+    localKey: keyof IModelAttributes;
+    foreignKey?: keyof IModelAttributes;
+    foreignTable: string;
+    filters?: object;
+}
+
+export interface IHasManyOptions {
     localKey: keyof IModelAttributes;
     foreignKey?: keyof IModelAttributes;
     foreignTable: string;
