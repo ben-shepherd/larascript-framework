@@ -17,15 +17,25 @@ class QueryFilters extends Singleton {
     parseRequest(req: Request, options: SearchOptions = {} as SearchOptions): this {
         try {
             const { fields = [] } = options;
-            const decodedQuery = decodeURIComponent(req.query?.filters as string ?? '');
-            const filtersParsed: object = JSON.parse(decodedQuery ?? '{}');
+            let decodedFilters: object = {};
+
+            if(typeof req.query.filters === 'string') {
+                decodedFilters = JSON.parse(decodeURIComponent(req.query?.filters as string ?? '')) ?? {};
+            }
+            else if(typeof req.query.filters === 'object') {
+                decodedFilters = req.query?.filters ?? {};
+            }
+            else {
+                decodedFilters = {};
+            }
+            
             let filters: object = {};
 
             fields.forEach((field: string) => {
-                if (field in filtersParsed) {
+                if (field in decodedFilters) {
                     filters = {
                         ...filters,
-                        [field]: filtersParsed[field]
+                        [field]: decodedFilters[field]
                     }
                 }
             })
