@@ -1,7 +1,7 @@
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { IEloquentQueryBuilderService } from "@src/core/domains/eloquent/interfaces/IEloquentQueryBuilderService";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { app } from "@src/core/services/App";
-import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
-import { IQueryService } from "@src/core/domains/eloquent/interfaces/IQueryService";
 
 /**
  * Shorthand function to create a new query builder instance for the model.
@@ -13,7 +13,7 @@ export const queryBuilder = <Model extends IModel>(modelCtor: ModelConstructor<M
 /**
  * Eloquent query service
  */
-class EloquentQueryBuilderService implements IQueryService {
+class EloquentQueryBuilderService implements IEloquentQueryBuilderService {
 
     /**
      * Creates a new query builder instance for the model.
