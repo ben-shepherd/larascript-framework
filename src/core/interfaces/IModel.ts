@@ -1,10 +1,8 @@
 /* eslint-disable no-unused-vars */
 import { IBelongsToOptionsLegacy } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
-import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 import IHasObserver from "@src/core/domains/observer/interfaces/IHasObserver";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import IModelAttributes from "@src/core/interfaces/IModelData";
-import { IHasDatabaseConnection } from "@src/core/interfaces/concerns/IHasDatabaseConnection";
 import { IHasPrepareDocument } from "@src/core/interfaces/concerns/IHasPrepareDocument";
 
 import { IdGeneratorFn } from "../domains/eloquent/interfaces/IEloquent";
@@ -23,8 +21,9 @@ export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MC
 
 export type ModelAttribtues<Model extends IModel> = Model['attributes']
 
-export interface IModel<Attributes extends IModelAttributes = IModelAttributes> extends IHasDatabaseConnection, IHasPrepareDocument, IHasObserver {
+export interface IModel<Attributes extends IModelAttributes = IModelAttributes> extends IHasPrepareDocument, IHasObserver {
     [key: string]: unknown;
+    connection: string;
     primaryKey: string;
     fields: string[];
     guarded: string[];
@@ -59,7 +58,5 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes> 
     update(): Promise<void>;
     save(): Promise<void>;
     delete(): Promise<void>;
-    belongsToLegacy<T extends IModel = IModel>(foreignModel: ICtor<T>, options: IBelongsToOptionsLegacy): Promise<T | null>;
     belongsTo<ForiegnModel extends IModel = IModel>(foreignModel: ICtor<ForiegnModel>, options: Omit<IBelongsToOptionsLegacy, 'foreignTable'>): BelongsTo;
-    hasMany<T extends IModel = IModel>(foreignModel: ICtor<T>, options: IHasManyOptions): Promise<T[]>;
 }

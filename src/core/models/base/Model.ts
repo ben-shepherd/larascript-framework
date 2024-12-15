@@ -1,14 +1,12 @@
  
 import BaseModel from '@src/core/base/BaseModel';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
-import { IDatabaseDocument, IDocumentManager } from '@src/core/domains/database/interfaces/IDocumentManager';
-import { IBelongsToOptionsLegacy } from '@src/core/domains/database/interfaces/relationships/IBelongsTo';
-import { IHasManyOptions } from '@src/core/domains/database/interfaces/relationships/IHasMany';
+import { IDatabaseDocument } from '@src/core/domains/database/interfaces/IDocumentManager';
 import { db } from '@src/core/domains/database/services/Database';
 import { ICtor } from '@src/core/interfaces/ICtor';
 import { GetAttributesOptions, IModel, ModelConstructor } from '@src/core/interfaces/IModel';
 import IModelAttributes from '@src/core/interfaces/IModelData';
-import { App } from '@src/core/services/App';
+import { app } from '@src/core/services/App';
 
 import { IBelongsToOptions, IRelationship, IdGeneratorFn } from '../../domains/eloquent/interfaces/IEloquent';
 import BelongsTo from '../../domains/eloquent/relational/BelongsTo';
@@ -79,7 +77,7 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
      * The name of the database connection to use.
      * Defaults to the application's default connection name.
      */
-    public connection: string = App.container('db').getDefaultConnectionName();
+    public connection: string = app('db').getDefaultConnectionName();
 
     /**
      * The name of the MongoDB collection associated with this model.
@@ -100,17 +98,7 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
             this.table = this.getDefaultTable()
         }
     }
-
-    /**
-     * Gets the document manager for database operations.
-     * 
-     * @returns {IDocumentManager} The document manager instance.
-     * @deprecated
-     */
-    getDocumentManager(): IDocumentManager {
-        return db().documentManager(this.connection).table(this.table);
-    }
-        
+     
     /**
      * Gets the document manager for database operations.
      * 
@@ -541,33 +529,6 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
     /**
      * Retrieves a related model based on a "belongs to" relationship.
      * 
-     * @template T The type of the related model.
-     * @param {ICtor<T>} foreignModel - The constructor of the related model.
-     * @param {Omit<IBelongsToOptionsLegacy, 'foreignTable'>} options - Options for the relationship.
-     * @returns {Promise<T | null>} The related model instance or null if not found.
-     */
-    async belongsToLegacy<T extends IModel = IModel>(foreignModel: ICtor<T>, options: Omit<IBelongsToOptionsLegacy, 'foreignTable'>): Promise<T | null> {
-        const documentManager = App.container('db').documentManager(this.connection);
-
-        if (!this.attributes) {
-            return null;
-        }
-
-        const result = await documentManager.belongsTo(this.attributes, {
-            ...options,
-            foreignTable: (new foreignModel()).table
-        });
-
-        if (!result) {
-            return null;
-        }
-
-        return new foreignModel(result);
-    }
-
-    /**
-     * Retrieves a related model based on a "belongs to" relationship.
-     * 
      * @template ForiegnModel The type of the related model.
      * @param {ICtor<ForiegnModel>} foreignModel - The constructor of the related model.
      * @param {Omit<IBelongsToOptionsLegacy, 'foreignTable'>} options - Options for the relationship.
@@ -577,27 +538,5 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
         return new BelongsTo(this.constructor as ModelConstructor<IModel>, foreignModel, options);
     }
 
-    /**
-     * Retrieves related models based on a "has many" relationship.
-     * 
-     * @template T The type of the related models.
-     * @param {ICtor<T>} foreignModel - The constructor of the related model.
-     * @param {Omit<IHasManyOptions, 'foreignTable'>} options - Options for the relationship.
-     * @returns {Promise<T[]>} An array of related model instances.
-     */
-    public async hasMany<T extends IModel = IModel>(foreignModel: ICtor<T>, options: Omit<IHasManyOptions, 'foreignTable'>): Promise<T[]> {
-        const documentManager = App.container('db').documentManager(this.connection);
-
-        if (!this.attributes) {
-            return [];
-        }
-
-        const results = await documentManager.hasMany(this.attributes, {
-            ...options,
-            foreignTable: (new foreignModel()).table
-        });
-
-        return (results as unknown[]).map((document) => new foreignModel(document));
-    }
 
 }

@@ -18,8 +18,18 @@ import { IDatabaseGenericConnectionConfig } from "../../database/interfaces/IDat
 import { IEloquent } from "../../eloquent/interfaces/IEloquent";
 import PostgresEloquent from "../eloquent/PostgresEloquent";
 
-
+/**
+ * PostgresAdapter is responsible for managing the connection and operations with a PostgreSQL database.
+ * 
+ * @class
+ * @extends BaseDatabaseAdapter<IPostgresConfig>
+ */
 class PostgresAdapter extends BaseDatabaseAdapter<IPostgresConfig>  {
+
+    /**
+     * The name of the Docker Compose file associated with the database
+     */
+    protected dockerComposeFileName: string = 'docker-compose.postgres.yml';
 
     /**
      * The sequelize instance
@@ -42,13 +52,6 @@ class PostgresAdapter extends BaseDatabaseAdapter<IPostgresConfig>  {
         this.setConfig(config);   
     }
 
-    /**
-     * Get the name of the docker-compose file for Postgres
-     * @returns {string} The name of the docker-compose file
-     */
-    getDockerComposeFileName(): string {
-        return 'docker-compose.postgres.yml'
-    }
 
     /**
      * Returns the default Postgres credentials extracted from the docker-compose file

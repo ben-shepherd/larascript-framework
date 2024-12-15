@@ -1,7 +1,17 @@
 import { ILoggerService } from "@src/core/domains/logger/interfaces/ILoggerService";
+import { app } from "@src/core/services/App";
 import path from "path";
 import winston, { format } from "winston";
 
+/**
+ * Shorthand to get the logger instance
+ * @returns 
+ */
+export const logger = () => app('logger');
+
+/**
+ * Winston logger service
+ */
 class LoggerService implements ILoggerService {
 
     /**
