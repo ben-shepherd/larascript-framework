@@ -3,13 +3,13 @@ import { describe, expect } from '@jest/globals';
 import Database from '@src/core/domains/database/services/Database';
 import MongoDbAdapter from '@src/core/domains/mongodb/adapters/MongoDbAdapter';
 import PostgresAdapter from '@src/core/domains/postgres/adapters/PostgresAdapter';
-import { App } from '@src/core/services/App';
+import { app } from '@src/core/services/App';
 import TestMigrationModel from '@src/tests/migration/models/TestMigrationModel';
 import testHelper from '@src/tests/testHelper';
 import { MongoClient } from 'mongodb';
 import { Sequelize } from 'sequelize';
 
-describe('attempt to connect to MongoDB database', () => {
+describe('db service', () => {
 
     
     let migrationTableName!: string;
@@ -23,18 +23,16 @@ describe('attempt to connect to MongoDB database', () => {
 
         migrationTableName = new TestMigrationModel(null).table;
 
-        const db = App.container('db');
+        const db = app('db');
 
         for(const connectionConfig of db.getConfig().connections) {
             await db.schema(connectionConfig.connectionName).dropTable(migrationTableName);
         }
     })
 
-    /**
-   * Test the MongoDB connection
-   */
-    test('test db connection',async () => {
-        const db = App.container('db');
+
+    test('check db service',async () => {
+        const db = app('db');
 
         const expectedConnections = ['mongodb', 'postgres'];
         const actualConnections = db.getConfig().connections.map(c => c.connectionName);
@@ -59,21 +57,12 @@ describe('attempt to connect to MongoDB database', () => {
 
         // Check default connection name
         expect(db.getDefaultConnectionName() === 'postgres').toBe(true);
-
         db.setDefaultConnectionName('mongodb');
-
         expect(db.getDefaultConnectionName() === 'mongodb').toBe(true);
         
         // Check adapter constructor
         expect(typeof db.getAdapterConstructor('mongodb')).toBe('function');
         expect(typeof db.getAdapterConstructor('postgres')).toBe('function');
-
-        // Check document manager
-        const documentManager = db.documentManager();
-        expect(typeof documentManager.findById === 'function').toBe(true);
-        expect(typeof documentManager.insertOne === 'function').toBe(true);
-        expect(typeof documentManager.updateOne === 'function').toBe(true);
-        expect(typeof documentManager.deleteOne === 'function').toBe(true);
 
         // Check schema
         const schema = db.schema();
