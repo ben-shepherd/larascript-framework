@@ -1,12 +1,18 @@
 import { IModel } from "@src/core/interfaces/IModel";
 import IModelAttributes from "@src/core/interfaces/IModelData";
 
-const stripGuardedResourceProperties = async (results: IModel<IModelAttributes>[] | IModel<IModelAttributes>) => {
+const stripGuardedResourceProperties = async (results: IModel[] | IModel) => {
+    const strippedResult: IModelAttributes[] = []
+
     if(!Array.isArray(results)) {
-        return await results.getData({ excludeGuarded: true })
+        results = [results];
     }
 
-    return results.map(async result => await result.getData({ excludeGuarded: true }));
+    for(const result of results) {
+        strippedResult.push(await result.toObject({ excludeGuarded: true }) as IModelAttributes);
+    }
+
+    return strippedResult
 }
 
 export default stripGuardedResourceProperties

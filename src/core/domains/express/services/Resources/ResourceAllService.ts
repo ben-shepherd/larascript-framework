@@ -1,5 +1,6 @@
 import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
+import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import { IPageOptions } from "@src/core/domains/express/interfaces/IResourceService";
 import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
 import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResource";
@@ -62,11 +63,11 @@ class ResourceAllService extends BaseResourceService {
         }
 
         // Fetch the results
-        const results = await this.fetchResults(options, filters, pageOptions)
-        const resultsAsModels = results.map((result) => new options.resource(result));
+        const results  = await this.fetchResults(options, filters, pageOptions)
+        const resultsGuardedStripped = await stripGuardedResourceProperties(results)
 
         // Send the results
-        res.send(await stripGuardedResourceProperties(resultsAsModels))
+        res.send(resultsGuardedStripped)
     }
 
     /**
@@ -77,15 +78,16 @@ class ResourceAllService extends BaseResourceService {
      * @returns {Promise<IModel[]>} - A promise that resolves to the fetched results as an array of models
      */
     async fetchResults(options: IRouteResourceOptions, filters: object, pageOptions: IPageOptions): Promise<IModel[]> {
-        const tableName = options.resource.getTable();
-        const documentManager = App.container('db').documentManager().table(tableName);
 
-        return await documentManager.findMany({
-            filter: filters,
-            limit: pageOptions.pageSize,
-            skip: pageOptions.skip,
-            useFuzzySearch: options.searching?.useFuzzySearch,
-        })
+        const builder = queryBuilder(options.resource)
+            .where(filters, 'like');
+
+        if(pageOptions.pageSize && pageOptions.skip) {
+            builder.take(pageOptions.pageSize ?? null)
+                .skip(pageOptions.skip)
+        }
+
+        return (await builder.get()).toArray()
     }
 
     /**
