@@ -5,6 +5,14 @@ import IAppConfig from "@src/core/interfaces/IAppConfig";
 import Kernel from '@src/core/Kernel';
 
 /**
+ * @module App
+ * @description The App service allows you to access kernel containers and configure the app environment
+ */
+export const app = <K extends keyof IContainers = keyof IContainers>(name: K): IContainers[K] => {
+    return App.container(name);
+}
+
+/**
  * App service
  * Allows you to access kernel containers
  * and configure the app environment

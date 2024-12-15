@@ -121,7 +121,7 @@ describe('test dirty', () => {
             modelTwo.attr('array', ['a', 'b', 'c'])
             expect(modelTwo.isDirty()).toBeTruthy();
             expect(Object.keys(modelTwo.getDirty() ?? {}).includes('array')).toBeTruthy()
-            expect((modelTwo.getAttribute('array') as string[])?.length).toEqual(3)
+            expect((modelTwo.getAttributeSync('array') as string[])?.length).toEqual(3)
             expect((modelTwo.getOriginal('array') as string[])?.length).toEqual(2)
 
             modelTwo.attr('object', {
@@ -130,8 +130,8 @@ describe('test dirty', () => {
             })
             expect(modelTwo.isDirty()).toBeTruthy();
             expect(Object.keys(modelTwo.getDirty() ?? {}).includes('object')).toBeTruthy()
-            expect((modelTwo.getAttribute('object') as {a: number, b: number})?.a).toEqual(2)
-            expect((modelTwo.getAttribute('object') as {a: number, b: number})?.b).toEqual(2)
+            expect((modelTwo.getAttributeSync('object') as {a: number, b: number})?.a).toEqual(2)
+            expect((modelTwo.getAttributeSync('object') as {a: number, b: number})?.b).toEqual(2)
             expect((modelTwo.getOriginal('object') as {a: number, b: number})?.a).toEqual(1)
             expect((modelTwo.getOriginal('object') as {a: number, b: number})?.b).toEqual(1)
         }

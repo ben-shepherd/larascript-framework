@@ -6,6 +6,7 @@ import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumen
 import { IHasConfigConcern } from "@src/core/interfaces/concerns/IHasConfigConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
 
+
 export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>
 {
     boot(): Promise<void>;
@@ -13,8 +14,6 @@ export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>
     getDefaultConnectionName(): string;
 
     setDefaultConnectionName(connectionName: string): void;
-
-    getClient<TClient = unknown>(connectionName?: string): TClient;
 
     getAdapter<TAdapter extends IDatabaseAdapter = IDatabaseAdapter>(connectionName?: string): TAdapter;
 

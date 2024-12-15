@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
-import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel } from "@src/core/interfaces/IModel";
+import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
+import IModelAttributes from "@src/core/interfaces/IModelData";
 
 
-export type TWorkerModelData = {
+export interface WorkerModelAttributes extends IModelAttributes {
     queueName: string;
     eventName: string;
     payload: any;
@@ -12,9 +12,7 @@ export type TWorkerModelData = {
     createdAt: Date;
 }
 
-export type TFailedWorkerModel = IModel<TFailedWorkerModelData>;
-
-export type TFailedWorkerModelData = {
+export interface FailedWorkerModelAttributes extends IModelAttributes {
     eventName: string;
     queueName: string;
     payload: string;
@@ -22,7 +20,7 @@ export type TFailedWorkerModelData = {
     failedAt: Date;
 }
 
-export interface IWorkerModel extends IModel<TWorkerModelData> {
+export interface IWorkerModel extends IModel<WorkerModelAttributes> {
     getPayload<T = unknown>(): T | null;
 }
 
@@ -30,8 +28,8 @@ export type TEventWorkerOptions = {
     queueName: string;
     retries: number;
     runAfterSeconds: number;
-    workerModelCtor: ICtor<IWorkerModel>
-    failedWorkerModelCtor: ICtor<TFailedWorkerModel>;
+    workerModelCtor: ModelConstructor<IWorkerModel>
+    failedWorkerModelCtor: ModelConstructor;
     runOnce?: boolean;
 }
 

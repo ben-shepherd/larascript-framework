@@ -1,22 +1,20 @@
+ 
 import 'dotenv/config';
 import 'tsconfig-paths/register';
 
-import appConfig from '@src/config/app';
-import Kernel from "@src/core/Kernel";
-import { App } from '@src/core/services/App';
-
+import testHelper from '@src/tests/testHelper';
 
 (async () => {
 
-    await Kernel.boot(appConfig, {})
+    await testHelper.testBootApp();
 
-    // const auth = App.container('auth');
-    // const db = App.container('db');
-    // const events = App.container('events')
-    // const express = App.container('express')                         
-    // const cnsl = App.container('console');
-
-    // Add your tinkers below
-
-    App.container('logger').info('Tinkers are ready!')
+    // const auth    = app('auth');
+    // const db      = app('db');
+    // const events  = app('events')
+    // const express = app('express')                         
+    // const cnsl    = app('console');
+    // const query   = app('query');
+    
+    // ADD YOUR CODE HERE
+    
 })(); 

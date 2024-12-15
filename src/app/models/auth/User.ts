@@ -1,8 +1,8 @@
 import ApiToken from "@src/app/models/auth/ApiToken";
 import UserObserver from "@src/app/observers/UserObserver";
-import Model from "@src/core/base/Model";
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import IModelAttributes from "@src/core/interfaces/IModelData";
+import Model from "@src/core/models/base/Model";
 
 /**
  * User structure
@@ -78,6 +78,16 @@ export default class User extends Model<IUserData> implements IUserModel {
     ]
 
     /**
+     * Retrieves the fields defined on the model, minus the password field.
+     * As this is a temporary field and shouldn't be saved to the database.
+     * 
+     * @returns The list of fields defined on the model.
+     */
+    getFields(): string[] {
+        return super.getFields().filter(field => !['password'].includes(field));
+    }
+
+    /**
      * Checks if the user has the given role
      *
      * @param role The role to check
@@ -85,7 +95,7 @@ export default class User extends Model<IUserData> implements IUserModel {
      */
     hasRole(roles: string | string[]): boolean {
         roles = typeof roles === 'string' ? [roles] : roles;
-        const userRoles = this.getAttribute('roles') ?? [];
+        const userRoles = this.getAttributeSync('roles') ?? [];
 
         for(const role of roles) {
             if(!userRoles.includes(role)) return false;
@@ -102,7 +112,7 @@ export default class User extends Model<IUserData> implements IUserModel {
      */
     hasGroup(groups: string | string[]): boolean {
         groups = typeof groups === 'string' ? [groups] : groups;
-        const userGroups = this.getAttribute('groups') ?? [];
+        const userGroups = this.getAttributeSync('groups') ?? [];
 
         for(const group of groups) {
             if(!userGroups.includes(group)) return false;

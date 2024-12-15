@@ -1,18 +1,43 @@
+/* eslint-disable no-unused-vars */
 
-import HasAttributesConcern from '@src/core/concerns/HasAttributesConcern';
-import HasDatabaseConnectionConcern from '@src/core/concerns/HasDatabaseConnectionConcern';
 import HasObserverConcern from '@src/core/concerns/HasObserverConcern';
 import HasPrepareDocumentConcern from '@src/core/concerns/HasPrepareDocumentConcern';
 import Broadcaster from '@src/core/domains/broadcast/abstract/Broadcaster';
-import { ICtor } from '@src/core/interfaces/ICtor';
 import compose from '@src/core/util/compose';
+import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
+import { IObserver } from '@src/core/domains/observer/interfaces/IObserver';
+import IModelAttributes from '@src/core/interfaces/IModelData';
 
-const BaseModel: ICtor = compose(
+class BaseModel<Attributes extends IModelAttributes = IModelAttributes> extends compose(
     class extends Broadcaster {},
-    HasDatabaseConnectionConcern,
     HasPrepareDocumentConcern,
-    HasAttributesConcern,
     HasObserverConcern
-)
+) {
+
+
+    /**
+      * Declare HasPrepareDocument concern
+      */
+    declare json: string[];
+        
+    declare prepareDocument: <T>() => T;
+    
+        
+    /**
+     * Delcare HasObserver concern
+     */
+    declare observer?: IObserver;
+    
+    declare observe: () => void;
+    
+    declare observeProperties: Record<string, string>;
+    
+    declare observeWith: (observedBy: ObserveConstructor, allowOverride?: boolean) => any;
+    
+    declare observeData: <T>(name: string, data: T) => Promise<T>
+    
+    declare observeDataCustom: <T>(name: keyof any, data: T) => Promise<T>
+
+}
 
 export default BaseModel

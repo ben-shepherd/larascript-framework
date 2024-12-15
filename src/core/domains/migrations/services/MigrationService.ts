@@ -9,7 +9,8 @@ import MigrationFileService from "@src/core/domains/migrations/services/Migratio
 import FileNotFoundError from "@src/core/exceptions/FileNotFoundError";
 import { ModelConstructor } from "@src/core/interfaces/IModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
-import { App } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
+import { logger } from "@src/core/domains/logger/services/LoggerService";
 
 
 interface MigrationDetail {
@@ -125,12 +126,12 @@ class MigrationService implements IMigrationService {
         const newBatchCount = (await this.getCurrentBatchCount()) + 1;
 
         if (!migrationsDetails.length) {
-            App.container('logger').info(this.emptyMigrationsMessage);
+            logger().info(this.emptyMigrationsMessage);
         }
 
         // Run the migrations for every file
         for (const migrationDetail of migrationsDetails) {
-            App.container('logger').info('[Migration] up -> ' + migrationDetail.fileName);
+            logger().info('[Migration] up -> ' + migrationDetail.fileName);
 
             await this.handleFileUp(migrationDetail, newBatchCount);
         }
@@ -152,8 +153,8 @@ class MigrationService implements IMigrationService {
 
         // Sort by oldest to newest
         results.sort((a, b) => {
-            const aDate = a.getAttribute('appliedAt') as Date;
-            const bDate = b.getAttribute('appliedAt') as Date;
+            const aDate = a.getAttributeSync('appliedAt') as Date;
+            const bDate = b.getAttributeSync('appliedAt') as Date;
 
             if (!aDate || !bDate) {
                 return 0;
@@ -163,17 +164,17 @@ class MigrationService implements IMigrationService {
         });
 
         if (!results.length) {
-            App.container('logger').info(this.emptyMigrationsMessage);
+            logger().info(this.emptyMigrationsMessage);
         }
 
         // Run the migrations
         for (const result of results) {
             try {
-                const fileName = result.getAttribute('name') as string;
+                const fileName = result.getAttributeSync('name') as string;
                 const migration = await this.fileService.getImportMigrationClass(fileName);
 
                 // Run the down method
-                App.container('logger').info(`[Migration] down -> ${fileName}`);
+                logger().info(`[Migration] down -> ${fileName}`);
                 await migration.down();
 
                 // Delete the migration document
@@ -204,16 +205,16 @@ class MigrationService implements IMigrationService {
         });
 
         if (migrationDocument) {
-            App.container('logger').info(`[Migration] ${fileName} already applied`);
+            logger().info(`[Migration] ${fileName} already applied`);
             return;
         }
 
         if (!migration.shouldUp()) {
-            App.container('logger').info(`[Migration] Skipping (Provider mismatch) -> ${fileName}`);
+            logger().info(`[Migration] Skipping (Provider mismatch) -> ${fileName}`);
             return;
         }
 
-        App.container('logger').info(`[Migration] up -> ${fileName}`);
+        logger().info(`[Migration] up -> ${fileName}`);
         await migration.up();
 
         const model = (new MigrationFactory).create({
@@ -236,8 +237,8 @@ class MigrationService implements IMigrationService {
         let current = 0;
 
         results.forEach(result => {
-            if (result.getAttribute('batch') as number > current) {
-                current = result.getAttribute('batch') as number
+            if (result.getAttributeSync('batch') as number > current) {
+                current = result.getAttributeSync('batch') as number
             }
         });
 
@@ -260,15 +261,15 @@ class MigrationService implements IMigrationService {
      */
     protected async createSchema(): Promise<void> {
         try {
-            const tableName = (new this.modelCtor).table
+            const tableName = this.modelCtor.getTable()
 
-            await App.container('db').createMigrationSchema(tableName)
+            await app('db').createMigrationSchema(tableName)
         }
         catch (err) {
-            App.container('logger').info('[Migration] createSchema', err)
+            logger().info('[Migration] createSchema', err)
 
             if (err instanceof Error) {
-                App.container('logger').error(err)
+                logger().error(err)
             }
         }
     }

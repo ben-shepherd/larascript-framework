@@ -11,7 +11,7 @@ export class CreateUserModelMigration extends BaseMigration {
 
     group?: string = 'app:setup';
 
-    table = (new User).table;
+    table = User.getTable();
 
     async up(): Promise<void> {
         const stringNullable = {

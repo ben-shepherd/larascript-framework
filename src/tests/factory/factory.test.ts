@@ -16,10 +16,10 @@ describe('create a movie model using factories', () => {
         const movie = factory.createFakeMovie();
 
         expect(movie).toBeTruthy();
-        expect(typeof movie.getAttribute('authorId') === 'string').toEqual(true);
-        expect(typeof movie.getAttribute('name') === 'string').toEqual(true);
-        expect(typeof movie.getAttribute('yearReleased') === 'number').toEqual(true);
-        expect(movie.getAttribute('createdAt') instanceof Date).toEqual(true);
-        expect(movie.getAttribute('updatedAt') instanceof Date).toEqual(true);
+        expect(typeof movie.getAttributeSync('authorId') === 'string').toEqual(true);
+        expect(typeof movie.getAttributeSync('name') === 'string').toEqual(true);
+        expect(typeof movie.getAttributeSync('yearReleased') === 'number').toEqual(true);
+        expect(movie.getAttributeSync('createdAt') instanceof Date).toEqual(true);
+        expect(movie.getAttributeSync('updatedAt') instanceof Date).toEqual(true);
     });
 });

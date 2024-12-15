@@ -9,10 +9,12 @@ import MongoDbSchema from "@src/core/domains/mongodb/MongoDbSchema";
 import createMigrationSchemaMongo from "@src/core/domains/mongodb/schema/createMigrationSchemaMongo";
 import { extractDefaultMongoCredentials } from "@src/core/domains/mongodb/utils/extractDefaultMongoCredentials";
 import { ICtor } from "@src/core/interfaces/ICtor";
+import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
-class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
+class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
 
     /**
     * The MongoDB database instance
@@ -66,7 +68,7 @@ class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
      * @returns {Promise<void>} A promise that resolves when the connection is established
      */
     
-    async connect(): Promise<void> {
+    async connectDefault(): Promise<void> {
         if (await this.isConnected()) {
             return;
         }
@@ -85,7 +87,7 @@ class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
      * @param database - The name of the database to connect to.
      * @returns {Promise<pg.Client>} A promise that resolves with a new instance of PostgreSQL client.
      */
-    async connectToDatabase(database: string = 'app', options: object = {}): Promise<MongoClient> {
+    async getMongoClientWithDatabase(database: string = 'app', options: object = {}): Promise<MongoClient> {
         const { host, port, username, password, options: mongoOptions } = ParseMongoDBConnectionString.parse(this.config.uri); 
 
         const newCredentials = new ParseMongoDBConnectionString({
@@ -162,9 +164,9 @@ class MongoDbAdapter extends BaseDatabaseAdapter<MongoClient, IMongoConfig>  {
         return new MongoDbSchema(this)
     }
 
-    getQueryBuilderCtor(): ICtor<unknown> {
+    getEloquentConstructor<Model extends IModel>(): ICtor<IEloquent<Model>> {
         throw new Error("Method not implemented.");
-    }   
+    }
 
     createMigrationSchema(tableName: string): Promise<unknown> {
         return createMigrationSchemaMongo(this, tableName)

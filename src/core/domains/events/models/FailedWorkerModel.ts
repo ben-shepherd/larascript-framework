@@ -1,8 +1,8 @@
-import Model from "@src/core/base/Model";
-import { TFailedWorkerModelData } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
+import { FailedWorkerModelAttributes } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
+import Model from "@src/core/models/base/Model";
 
 
-export interface FailedWorkerModelData extends TFailedWorkerModelData {}
+export interface FailedWorkerModelData extends FailedWorkerModelAttributes {}
 
 export const initialFailedWorkerModalData = {
     eventName: '',

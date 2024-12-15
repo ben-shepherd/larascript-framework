@@ -1,4 +1,4 @@
-import { ICommandOptionArguement, ICommandOptionArguementStructure, ISimpleRegister, TListValueMap, TOptionalListName, TSimpleRegisterDatabaseMap } from "../interfaces/concerns/ISimpleRegister";
+import { ICommandOptionArguement, ICommandOptionArguementStructure, ISimpleRegister, TListValueMap, TOptionalListName, TSimpleRegisterDatabaseMap } from "@src/core/interfaces/concerns/ISimpleRegister";
 
 export const DEFAULT_LIST = 'defaultList';
 export const DEFAULT_KEY = 'defaultKey';

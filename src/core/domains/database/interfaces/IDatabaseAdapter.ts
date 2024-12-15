@@ -2,41 +2,36 @@
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { ICtor } from "@src/core/interfaces/ICtor";
+import { IModel } from "@src/core/interfaces/IModel";
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
 export type TAdapterComposerFileName = {
 
-    /**
-     * Example: 'docker-compose.mongodb.yml'
-     */
+    // Example: 'mongodb.yml'
     fullName: string,
 
-    /**
-     * Example: 'mongodb'
-     */
+    // Example: 'mongodb'
     shortName: string
 }
 
 export interface  IDatabaseAdapter {
 
-    getClient(...args: any[]): unknown;
-
-    setClient(...args: any[]): void;
-
     setConnectionName(...args: any[]): void;
 
     getConnectionName(...args: any[]): string;
 
-    connect(): Promise<unknown>;
+    connectDefault(): Promise<unknown>;
 
-    connectToDatabase(...args: any[]): Promise<unknown>;
+    isConnected(): Promise<boolean>;
 
+    /**
+     * @deprecated
+     */
     getDocumentManager(): IDocumentManager;
 
     getSchema(): IDatabaseSchema;
 
-    getQueryBuilderCtor(): ICtor<unknown>;
-
-    isConnected(): Promise<boolean>;
+    getEloquentConstructor<Model extends IModel = IModel>(): ICtor<IEloquent<Model>>;
 
     getDockerComposeFileName(): string;
 

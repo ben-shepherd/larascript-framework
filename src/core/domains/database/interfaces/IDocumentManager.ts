@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { IDocumentValidator } from "@src/core/domains/database/interfaces/IDocumentValidator";
 import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
-import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
+import { IBelongsToOptionsLegacy } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 
 export interface IDatabaseDocument {
@@ -131,7 +131,7 @@ export interface IDocumentManager<TData = unknown> {
      * @param options The relationship options.
      * @returns A promise resolving to the related document, or null if not found.
      */
-    belongsTo<T extends TData = TData>(document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null>;
+    belongsTo<T extends TData = TData>(document: IDatabaseDocument, options: IBelongsToOptionsLegacy): Promise<T | null>;
     
     /**
      * Handle a "has many" relationship.

@@ -5,14 +5,11 @@ import { IDatabaseGenericConnectionConfig } from "@src/core/domains/database/int
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { ICtor } from "@src/core/interfaces/ICtor";
+import { IModel } from "@src/core/interfaces/IModel";
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
-abstract class BaseDatabaseAdapter<TClient = unknown, TConfig extends object = object> extends BaseConfig implements IDatabaseAdapter {
+abstract class BaseDatabaseAdapter<TConfig extends object = object> extends BaseConfig implements IDatabaseAdapter {
 
-    /**
-     * Database client
-     */
-    protected client!: TClient;
-    
     /**
      * Database config
      */
@@ -26,7 +23,7 @@ abstract class BaseDatabaseAdapter<TClient = unknown, TConfig extends object = o
     /**
      * Docker compose file name
      */
-    protected dockerComposeFileName?: string;
+    protected dockerComposeFileName!: string;
 
     /**
      * Set the connection name
@@ -43,40 +40,52 @@ abstract class BaseDatabaseAdapter<TClient = unknown, TConfig extends object = o
     getConnectionName(): string {
         return this.connectionName
     }
-
+    
     /**
-     * Set the database client
-     * @param client The database client
-     */
-    setClient(client: TClient): void {
-        this.client = client
-    }
-
-    /**
-     * Retrieves the current database client instance.
+     * Retrieves the name of the Docker Compose file associated with the database.
      *
-     * @returns {TClient} The database client instance.
+     * @returns {string} The Docker Compose file name.
      */
-    getClient(): TClient {
-        return this.client
+    getDockerComposeFileName(): string {
+        if(!this.dockerComposeFileName) {
+            throw new Error('Docker compose file name not set')
+        }
+        return this.dockerComposeFileName
     }
 
-    abstract connect(): Promise<unknown>;
+    /**
+     * Connect to the default database
+     */
+    abstract connectDefault(): Promise<unknown>;
 
-    abstract connectToDatabase(...args: any[]): Promise<unknown>;
-
-    abstract getDocumentManager(): IDocumentManager;
-
-    abstract getSchema(): IDatabaseSchema;
-
-    abstract getQueryBuilderCtor(): ICtor<unknown>;
-
+    /**
+     * Check if the database is connected
+     */
     abstract isConnected(): Promise<boolean>;
 
-    abstract getDockerComposeFileName(): string;
+    /**
+     * @deprecated
+     */
+    abstract getDocumentManager(): IDocumentManager;
 
+    /**
+     * Get the database schema manager
+     */
+    abstract getSchema(): IDatabaseSchema;
+
+    /**
+     * Get the Eloquent constructor
+     */
+    abstract getEloquentConstructor<Model extends IModel = IModel>(): ICtor<IEloquent<Model>>;
+
+    /**
+     * Get the default credentials
+     */
     abstract getDefaultCredentials(): string | null;
 
+    /**
+     * Create a migration schema
+     */
     abstract createMigrationSchema(...args: any[]): Promise<unknown>;
 
 }

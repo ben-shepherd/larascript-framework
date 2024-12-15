@@ -1,8 +1,9 @@
 /* eslint-disable no-undef */
 import { describe, test } from '@jest/globals';
+import { db } from '@src/core/domains/database/services/Database';
+import PostgresAdapter from '@src/core/domains/postgres/adapters/PostgresAdapter';
 import { App } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
-import { Sequelize } from 'sequelize';
 
 const connections = testHelper.getTestConnectionNames()
 
@@ -30,7 +31,7 @@ describe('create and drop a database', () => {
             const schema = App.container('db').schema(connectionName)
 
             if(connectionName === 'postgres') {
-                const sequelize = App.container('db').getClient<Sequelize>(connectionName)
+                const sequelize = db().getAdapter<PostgresAdapter>().getSequelize()
                 
                 await Promise.all([
                     sequelize.close(),

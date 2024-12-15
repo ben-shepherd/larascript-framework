@@ -1,5 +1,5 @@
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
-import { IBelongsTo, IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
+import { IBelongsTo, IBelongsToOptionsLegacy } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import DocumentValidator from "@src/core/domains/database/validator/DocumentValidator";
 import { App } from "@src/core/services/App";
 import { ObjectId } from "mongodb";
@@ -23,7 +23,7 @@ export default class MongoDBBelongsTo implements IBelongsTo {
      * @param options - The relationship options.
      * @returns The related document or null if not found.
      */
-    public async handle<T>(connection: string, document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null> {
+    public async handle<T>(connection: string, document: IDatabaseDocument, options: IBelongsToOptionsLegacy): Promise<T | null> {
         const {
             foreignTable,
             filters: filtersOptions = {}

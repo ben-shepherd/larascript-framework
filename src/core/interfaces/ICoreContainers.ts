@@ -1,6 +1,7 @@
 import { IAuthService } from '@src/core/domains/auth/interfaces/IAuthService';
 import ICommandService from '@src/core/domains/console/interfaces/ICommandService';
 import { IDatabaseService } from '@src/core/domains/database/interfaces/IDatabaseService';
+import { IEloquentQueryBuilderService } from '@src/core/domains/eloquent/interfaces/IQueryService';
 import { IEventService } from '@src/core/domains/events/interfaces/IEventService';
 import { IRequestContext } from '@src/core/domains/express/interfaces/ICurrentRequest';
 import IExpressService from '@src/core/domains/express/interfaces/IExpressService';
@@ -28,6 +29,13 @@ export interface ICoreContainers {
      * Provided by '@src/core/domains/database/providers/DatabaseProvider'
      */
     db: IDatabaseService;
+
+    /**
+     * Query Service
+     * Provided by '@src/core/domains/eloquent/providers/EloquentQueryProvider'
+     * Provides fluent interface for database queries using the Eloquent ORM pattern
+     */
+    query: IEloquentQueryBuilderService;
 
     /**
      * Express web server Service

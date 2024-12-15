@@ -1,18 +1,22 @@
 import BaseDocumentManager from "@src/core/domains/database/base/BaseDocumentManager";
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
-import PostgresQueryBuilder, { SelectOptions } from "@src/core/domains/postgres/builder/PostgresQueryBuilder";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { BindOrReplacements, QueryOptions, QueryTypes } from "sequelize";
+import LegacyPostgresQueryBuilder, { TLegacySelectOptions } from "@src/core/domains/postgres/builder/LegacyPostgresQueryBuilder";
+
+
 
 /**
  * PostgreSQL document manager
  *
  * Provides methods for interacting with a PostgreSQL database
+ * 
+ * @deprecated
  */
 class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManager, PostgresAdapter> {
 
-    protected builder = new PostgresQueryBuilder()
+    protected builder = new LegacyPostgresQueryBuilder()
 
     /**
      * Adds the id: uuid to the document
@@ -68,9 +72,9 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
      * @param selectOptions The options for selecting the document
      * @returns The found document, or null if not found
      */
-    async findOne<T>(selectOptions: Partial<SelectOptions>): Promise<T | null> {
+    async findOne<T>(selectOptions: Partial<TLegacySelectOptions>): Promise<T | null> {
         return this.captureError(async () => {
-            const sequelize = this.adapter.getClient();
+            const sequelize = this.adapter.getSequelize();
             const queryString = this.builder.select({
                 ...selectOptions,
                 tableName: this.getTable(),
@@ -94,9 +98,9 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
      * @param options The options for selecting the documents
      * @returns The found documents
      */
-    async findMany<T>(options: Partial<SelectOptions>): Promise<T> {
+    async findMany<T>(options: Partial<TLegacySelectOptions>): Promise<T> {
         return this.captureError(async () => {
-            const sequelize = this.adapter.getClient()
+            const sequelize = this.adapter.getSequelize()
 
             const queryString = this.builder.select({
                 ...options,
@@ -127,7 +131,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
             document = this.documentWithUuid(document)
             document = this.documentStripUndefinedProperties(document)
 
-            const queryInterface = this.adapter.getQueryInterface();
+            const queryInterface = this.adapter.getSequelizeQueryInterface();
             await queryInterface.insert(null, this.getTable(), document, options) as T
 
             return document as T
@@ -148,7 +152,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
             documents = documents.map(d => this.documentWithUuid(d))
             documents = documents.map(d => this.documentStripUndefinedProperties(d))
 
-            const queryInterface = this.adapter.getQueryInterface();
+            const queryInterface = this.adapter.getSequelizeQueryInterface();
             await queryInterface.bulkInsert(this.getTable(), documents, options) as T[];
 
             return documents as T
@@ -165,7 +169,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
             this.validator.validateSingleDocument(document)
             this.validator.validateContainsId(document)
 
-            const queryInterface = this.adapter.getQueryInterface();
+            const queryInterface = this.adapter.getSequelizeQueryInterface();
             await queryInterface.bulkUpdate(this.getTable(), document, { id: document.id })
 
             return document as T
@@ -200,7 +204,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
             this.validator.validateSingleDocument(document)
             this.validator.validateContainsId(document)
 
-            const queryInterface = this.adapter.getQueryInterface();
+            const queryInterface = this.adapter.getSequelizeQueryInterface();
 
             return await queryInterface.bulkDelete(this.getTable(), {
                 id: document.id
@@ -229,7 +233,7 @@ class PostgresDocumentManager extends BaseDocumentManager<PostgresDocumentManage
      */
     async truncate(): Promise<void> {
         return this.captureError(async () => {
-            const queryInterface = this.adapter.getQueryInterface();
+            const queryInterface = this.adapter.getSequelizeQueryInterface();
             await queryInterface.bulkDelete(this.getTable(), {});
         })
     }

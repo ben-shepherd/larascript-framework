@@ -16,11 +16,11 @@ const resourceOwnerSecurity = (req: BaseRequest, resource: IModel, attribute: st
         return false;
     }
 
-    if(typeof resource.getAttribute !== 'function') {
+    if(typeof resource.getAttributeSync !== 'function') {
         throw new Error('Resource is not an instance of IModel');
     }
 
-    return resource.getAttribute(attribute) === user?.getId()
+    return resource.getAttributeSync(attribute) === user?.getId()
 }
 
 export default resourceOwnerSecurity

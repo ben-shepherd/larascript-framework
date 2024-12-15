@@ -10,7 +10,19 @@ class Str {
             return `${str}s`;
         }
 
-        return `${str}s`;
+        return str;
+    }
+
+    /**
+     * @function
+     * @param {string} str
+     * @returns {string}
+     */
+    public static readonly snakeCase = (str: string): string => {
+        return str.replace(/\W+/g, " ")
+            .split(/ |\B(?=[A-Z])/)
+            .map(word => word.toLowerCase())
+            .join('_');
     }
 
     /**

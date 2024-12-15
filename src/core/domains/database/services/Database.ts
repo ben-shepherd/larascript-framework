@@ -12,6 +12,19 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
 /**
+ * Short alias for App.container('db')
+ * @returns 
+ */
+export const db = () => App.container('db')
+
+/**
+ * Short alias for db().schema(connectionName)
+ * @param connectionName 
+ * @returns 
+ */
+export const schema = (connectionName: string = db().getDefaultConnectionName()) => db().schema(connectionName)
+
+/**
  * Database Service
  * - Registers database adapters, connections 
  * - Connects to default and keep alive connections
@@ -152,7 +165,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
         this.log('Connecting to database (Connection: ' + connectionName + ')');
 
         const adapter = new adapterCtor(connectionName, connectionConfig);
-        await adapter.connect()
+        await adapter.connectDefault()
         
         if(!this.srListExists(Database.REGISTERED_ADAPTERS_BY_CONNECTION)) {
             this.srCreateList(Database.REGISTERED_ADAPTERS_BY_CONNECTION)
@@ -299,30 +312,20 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
      * 
      * @param connectionName 
      * @returns 
+     * @deprecated
      */
     documentManager<TDocMan extends IDocumentManager = IDocumentManager>(connectionName: string = this.getDefaultConnectionName()): TDocMan {
         return this.getAdapter(connectionName).getDocumentManager() as TDocMan
     }
     
     /**
-         * Get the schema service
-         * 
-         * @param connectionName 
-         * @returns 
-         */
-    schema<TSchema extends IDatabaseSchema = IDatabaseSchema>(connectionName: string = this.getDefaultConnectionName()): TSchema {
-        return this.getAdapter(connectionName).getSchema() as TSchema
-    }
-    
-    /**
-     * Get the database raw client
-     * Example
-     *  getClient() // MongoClient
+     * Get the schema service
      * 
+     * @param connectionName 
      * @returns 
      */
-    getClient<T = unknown>(connectionName: string = this.getDefaultConnectionName()): T {
-        return this.getAdapter(connectionName).getClient() as T
+    schema<TSchema extends IDatabaseSchema = IDatabaseSchema>(connectionName: string = this.getDefaultConnectionName()): TSchema {
+        return this.getAdapter(connectionName).getSchema() as TSchema
     }
 
     /**

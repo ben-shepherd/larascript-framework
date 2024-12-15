@@ -1,5 +1,5 @@
 import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocumentManager";
-import { IBelongsTo, IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
+import { IBelongsTo, IBelongsToOptionsLegacy } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import IModelAttributes from "@src/core/interfaces/IModelData";
 import { App } from "@src/core/services/App";
 
@@ -8,6 +8,7 @@ import { App } from "@src/core/services/App";
  *
  * @class
  * @implements {IBelongsTo}
+ * @deprecated
  */
 export default class BelongsTo implements IBelongsTo {
 
@@ -18,7 +19,7 @@ export default class BelongsTo implements IBelongsTo {
      * @param options - The relationship options.
      * @returns The related document or null if not found.
      */
-    public async handle<T = IModelAttributes>(connection: string, document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null> {
+    public async handle<T = IModelAttributes>(connection: string, document: IDatabaseDocument, options: IBelongsToOptionsLegacy): Promise<T | null> {
 
         /**
          * Get the local key and foreign key from the options.

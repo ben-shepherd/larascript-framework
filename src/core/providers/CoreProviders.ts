@@ -9,6 +9,7 @@ import MigrationProvider from "@src/core/domains/migrations/providers/MigrationP
 import SetupProvider from "@src/core/domains/setup/providers/SetupProvider";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 import { IProvider } from "@src/core/interfaces/IProvider";
+import EloquentQueryProvider from "@src/core/domains/eloquent/providers/EloquentQueryProvider";
 
 /**
  * Core providers for the framework
@@ -46,6 +47,13 @@ const CoreProviders: IProvider[] = [
      * Provides database connections and document managers
      */
     new DatabaseProvider(),
+
+    /**
+     * Eloquent Query provider
+     * 
+     * Provides Eloquent-style query builder and model functionality
+     */
+    new EloquentQueryProvider(),
 
     /**
      * Express provider

@@ -1,7 +1,7 @@
-import Model from "@src/core/base/Model";
-import { IWorkerModel, TWorkerModelData } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
+import { IWorkerModel, WorkerModelAttributes } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
+import Model from "@src/core/models/base/Model";
 
-export interface WorkerModelData extends TWorkerModelData {}
+export interface WorkerModelData extends WorkerModelAttributes {}
 
 export const initialWorkerModalData = {
     queueName: '',
@@ -60,7 +60,7 @@ export default class WorkerModel extends Model<WorkerModelData> implements IWork
 
     getPayload<T = unknown>(): T | null {
         try {
-            const payload = this.getAttribute('payload');
+            const payload = this.getAttributeSync('payload');
             return JSON.parse(payload) as T
         }
         // eslint-disable-next-line no-unused-vars

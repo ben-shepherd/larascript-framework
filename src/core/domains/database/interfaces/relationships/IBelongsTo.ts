@@ -4,7 +4,7 @@ import IModelAttributes from "@src/core/interfaces/IModelData";
 
 export type IBelongsToCtor = new () => IBelongsTo;
 
-export interface IBelongsToOptions {
+export interface IBelongsToOptionsLegacy {
     localKey: keyof IModelAttributes;
     foreignKey: keyof IModelAttributes;
     foreignTable: string;
@@ -15,6 +15,6 @@ export interface IBelongsTo {
     handle(
         connection: string,
         document: IDatabaseDocument,
-        options: IBelongsToOptions
+        options: IBelongsToOptionsLegacy
     ): Promise<IModelAttributes | null>;
 }

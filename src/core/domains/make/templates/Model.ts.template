@@ -1,5 +1,5 @@
 
-import Model from '@src/core/base/Model';
+import Model from '@src/core/models/base/Model';
 import IModelData from '@src/core/interfaces/IModelData';
 
 /**

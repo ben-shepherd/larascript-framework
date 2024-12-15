@@ -103,4 +103,12 @@ export interface IAuthService extends IService {
      * @memberof IAuthService
      */
     getAuthRoutes(): IRoute[] | null;
+
+    /**
+     * Gets the user repository.
+     *
+     * @returns {IUserRepository} The user repository
+     * @memberof IAuthService
+     */
+    getUserRepository(): IUserRepository;
 }

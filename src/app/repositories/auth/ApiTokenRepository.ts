@@ -16,7 +16,7 @@ export default class ApiTokenRepository extends Repository<IApiTokenModel> imple
      * @returns 
      */
     async findOneToken(token: string): Promise<IApiTokenModel | null> {
-        return await this.findOne({ token })
+        return await this.query().where('token', token).first()
     }
 
     /**
@@ -25,7 +25,7 @@ export default class ApiTokenRepository extends Repository<IApiTokenModel> imple
      * @returns 
      */
     async findOneActiveToken(token: string): Promise<IApiTokenModel | null> {
-        return await this.findOne({ token, revokedAt: null })
+        return await this.query().where('token', token).whereNull('revokedAt').first()
     }
 
 }
