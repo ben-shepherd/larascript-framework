@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 import { IBelongsToOptionsLegacy } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
+import { IdGeneratorFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import BelongsTo from "@src/core/domains/eloquent/relational/BelongsTo";
 import IHasObserver from "@src/core/domains/observer/interfaces/IHasObserver";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import IModelAttributes from "@src/core/interfaces/IModelData";
 import { IHasPrepareDocument } from "@src/core/interfaces/concerns/IHasPrepareDocument";
-import { IdGeneratorFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
-import BelongsTo from "@src/core/domains/eloquent/relational/BelongsTo";
 
 
 export type GetAttributesOptions = {excludeGuarded: boolean}
@@ -14,6 +14,7 @@ export type ModelConstructor<M extends IModel = IModel> = {
     new (...args: any[]): M;
     create<T extends M>(data?: T['attributes'] | null): T;
     getTable(): string;
+    getPrimaryKey(): string;
 }
 
 export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>
@@ -52,7 +53,7 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes> 
      * @deprecated
      */
     getData(options: GetAttributesOptions): Promise<Attributes | null>;
-    toObject(): Promise<Attributes | null>;
+    toObject(options?: GetAttributesOptions): Promise<Attributes | null>;
     refresh(): Promise<Attributes | null>;
     update(): Promise<void>;
     save(): Promise<void>;

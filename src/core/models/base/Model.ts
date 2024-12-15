@@ -395,6 +395,16 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
     }
 
     /**
+     * Retrieves the primary key associated with the model.
+     * This is achieved by instantiating the model and accessing its primaryKey property.
+     *
+     * @returns {string} The primary key associated with the model.
+     */
+    public static getPrimaryKey(): string {
+        return new (this as unknown as ICtor<IModel>)(null).primaryKey;
+    }
+
+    /**
      * Retrieves a query builder instance for the model.
      * The query builder is a fluent interface for querying the database associated with the model.
      * @returns {IEloquent<IModel>} The query builder instance.
