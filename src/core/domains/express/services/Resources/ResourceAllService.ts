@@ -9,8 +9,9 @@ import QueryFilters from "@src/core/domains/express/services/QueryFilters";
 import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import stripGuardedResourceProperties from "@src/core/domains/express/utils/stripGuardedResourceProperties";
-import { App } from "@src/core/services/App";
 import { Response } from "express";
+
+import { requestContext } from "../RequestContext";
 
 
 class ResourceAllService extends BaseResourceService {
@@ -55,7 +56,7 @@ class ResourceAllService extends BaseResourceService {
         if(this.validateResourceOwner(req, options)) {
             const resourceOwnerSecurity = this.getResourceOwnerSecurity(options)
             const propertyKey = resourceOwnerSecurity?.arguements?.key as string;
-            const userId = App.container('requestContext').getByRequest<string>(req, 'userId');
+            const userId = requestContext().getByRequest<string>(req, 'userId');
 
             if(!userId) { 
                 throw new ForbiddenResourceError()
