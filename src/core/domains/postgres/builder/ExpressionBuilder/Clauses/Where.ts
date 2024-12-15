@@ -1,8 +1,7 @@
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
 import { LogicalOperators, TLogicalOperator, TWhereClause, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
-
-import BindingsHelper from "../../BindingsHelper";
-import SqlExpression from "../SqlExpression";
+import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
+import SqlExpression from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 
 type SqlWhereClause = {
     column: string;

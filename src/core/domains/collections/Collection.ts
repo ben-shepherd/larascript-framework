@@ -1,7 +1,6 @@
 import { Collection as CollectJsCollection } from "collect.js";
-
-import { ICollection, TCollectionOperator, TFilterCallback, TFindCallback, TForeachCallback, TMapCallback } from "./interfaces/ICollection";
-import ProxyCollectionHandler from "./ProxyCollectionHandler";
+import { ICollection, TCollectionOperator, TFilterCallback, TFindCallback, TForeachCallback, TMapCallback } from "@src/core/domains/collections/interfaces/ICollection";
+import ProxyCollectionHandler from "@src/core/domains/collections/ProxyCollectionHandler";
 
 /**
  * Abstract class representing a collection of items

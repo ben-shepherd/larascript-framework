@@ -1,23 +1,22 @@
 /* eslint-disable no-unused-vars */
+import Collection from "@src/core/domains/collections/Collection";
+import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
+import { db } from "@src/core/domains/database/services/Database";
+import Direction from "@src/core/domains/eloquent/enums/Direction";
+import EloquentException from "@src/core/domains/eloquent/exceptions/EloquentExpression";
+import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
+import InvalidMethodException from "@src/core/domains/eloquent/exceptions/InvalidMethodException";
+import MissingTableException from "@src/core/domains/eloquent/exceptions/MissingTableException";
+import QueryBuilderException from "@src/core/domains/eloquent/exceptions/QueryBuilderException";
+import { IEloquent, IdGeneratorFn, LogicalOperators, OperatorArray, SetModelColumnsOptions, TColumnOption, TFormatterFn, TGroupBy, TLogicalOperator, TOperator, TWhereClauseValue, TransactionFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
+import { TDirection } from "@src/core/domains/eloquent/interfaces/TEnums";
+import With from "@src/core/domains/eloquent/relational/With";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { deepClone } from "@src/core/util/deepClone";
-
-import { PrefixToTargetPropertyOptions } from "../../util/PrefixedPropertyGrouper";
-import Collection from "../collections/Collection";
-import { IDatabaseAdapter } from "../database/interfaces/IDatabaseAdapter";
-import { db } from "../database/services/Database";
-import Direction from "./enums/Direction";
-import EloquentException from "./exceptions/EloquentExpression";
-import ExpressionException from "./exceptions/ExpressionException";
-import InvalidMethodException from "./exceptions/InvalidMethodException";
-import MissingTableException from "./exceptions/MissingTableException";
-import QueryBuilderException from "./exceptions/QueryBuilderException";
-import { IEloquent, IdGeneratorFn, LogicalOperators, OperatorArray, SetModelColumnsOptions, TColumnOption, TFormatterFn, TGroupBy, TLogicalOperator, TOperator, TWhereClauseValue, TransactionFn } from "./interfaces/IEloquent";
-import IEloquentExpression from "./interfaces/IEloquentExpression";
-import { TDirection } from "./interfaces/TEnums";
-import With from "./relational/With";
+import { PrefixToTargetPropertyOptions } from "@src/core/util/PrefixedPropertyGrouper";
 
 /**
  * Base class for Eloquent query builder.

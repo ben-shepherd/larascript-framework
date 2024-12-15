@@ -4,8 +4,7 @@ import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter
 import { IAlterTableOptions } from "@src/core/domains/postgres/interfaces/IPostgresAlterTableOptions";
 import { DataTypes, QueryInterfaceCreateTableOptions, QueryInterfaceDropTableOptions } from "sequelize";
 import { ModelAttributes } from 'sequelize/types/model';
-
-import BaseSchema from "../database/base/BaseSchema";
+import BaseSchema from "@src/core/domains/database/base/BaseSchema";
 
 class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
 

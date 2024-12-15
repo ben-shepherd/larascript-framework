@@ -1,4 +1,4 @@
-import BindingsHelper from "../../BindingsHelper";
+import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
 
 class Insert {
 

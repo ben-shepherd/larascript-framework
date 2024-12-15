@@ -1,11 +1,10 @@
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import IModelAttributes from "@src/core/interfaces/IModelData";
-
-import EloquentRelationshipException from "../exceptions/EloquentRelationshipException";
-import { IEloquent, IRelationship, TWhereClauseValue } from "../interfaces/IEloquent";
-import BelongsTo from "../relational/BelongsTo";
-import { queryBuilder } from "../services/EloquentQueryBuilderService";
+import EloquentRelationshipException from "@src/core/domains/eloquent/exceptions/EloquentRelationshipException";
+import { IEloquent, IRelationship, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import BelongsTo from "@src/core/domains/eloquent/relational/BelongsTo";
+import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 
 class EloquentRelationship {
 

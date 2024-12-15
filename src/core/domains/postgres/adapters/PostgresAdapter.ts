@@ -13,10 +13,9 @@ import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import pg from 'pg';
 import { QueryInterface, Sequelize } from "sequelize";
-
-import { IDatabaseGenericConnectionConfig } from "../../database/interfaces/IDatabaseConfig";
-import { IEloquent } from "../../eloquent/interfaces/IEloquent";
-import PostgresEloquent from "../eloquent/PostgresEloquent";
+import { IDatabaseGenericConnectionConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import PostgresEloquent from "@src/core/domains/postgres/eloquent/PostgresEloquent";
 
 /**
  * PostgresAdapter is responsible for managing the connection and operations with a PostgreSQL database.

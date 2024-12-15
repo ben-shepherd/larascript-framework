@@ -1,12 +1,11 @@
 /* eslint-disable no-unused-vars */
 
 
+import Collection from "@src/core/domains/collections/Collection";
+import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import IModelAttributes from "@src/core/interfaces/IModelData";
-
-import Collection from "../../collections/Collection";
-import IEloquentExpression from "./IEloquentExpression";
 
 export type TColumnOption = {
     column: string | null;
@@ -77,7 +76,7 @@ export type TGroupBy = {
 }
 
 export interface IRelationship {
-    _relationshipInterface: true;
+    _relationshipInterface: boolean;
     getLocalModelCtor(): ModelConstructor<IModel>;
     getForeignModelCtor(): ModelConstructor<IModel>;
     getForeignTableName(): string;

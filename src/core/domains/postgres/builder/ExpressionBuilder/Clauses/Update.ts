@@ -1,7 +1,6 @@
 import { TWhereClause } from "@src/core/domains/eloquent/interfaces/IEloquent";
-
-import BindingsHelper from "../../BindingsHelper";
-import SqlExpression from "../SqlExpression";
+import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
+import SqlExpression from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 
 class Update {
 

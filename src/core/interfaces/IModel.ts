@@ -4,9 +4,8 @@ import IHasObserver from "@src/core/domains/observer/interfaces/IHasObserver";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import IModelAttributes from "@src/core/interfaces/IModelData";
 import { IHasPrepareDocument } from "@src/core/interfaces/concerns/IHasPrepareDocument";
-
-import { IdGeneratorFn } from "../domains/eloquent/interfaces/IEloquent";
-import BelongsTo from "../domains/eloquent/relational/BelongsTo";
+import { IdGeneratorFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import BelongsTo from "@src/core/domains/eloquent/relational/BelongsTo";
 
 
 export type GetAttributesOptions = {excludeGuarded: boolean}

@@ -4,10 +4,9 @@ import HasObserverConcern from '@src/core/concerns/HasObserverConcern';
 import HasPrepareDocumentConcern from '@src/core/concerns/HasPrepareDocumentConcern';
 import Broadcaster from '@src/core/domains/broadcast/abstract/Broadcaster';
 import compose from '@src/core/util/compose';
-
-import { ObserveConstructor } from '../domains/observer/interfaces/IHasObserver';
-import { IObserver } from '../domains/observer/interfaces/IObserver';
-import IModelAttributes from '../interfaces/IModelData';
+import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
+import { IObserver } from '@src/core/domains/observer/interfaces/IObserver';
+import IModelAttributes from '@src/core/interfaces/IModelData';
 
 class BaseModel<Attributes extends IModelAttributes = IModelAttributes> extends compose(
     class extends Broadcaster {},

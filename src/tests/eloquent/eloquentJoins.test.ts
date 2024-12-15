@@ -2,10 +2,9 @@
 import { describe } from '@jest/globals';
 import { IEloquent } from '@src/core/domains/eloquent/interfaces/IEloquent';
 import { app } from '@src/core/services/App';
+import TestDepartmentModel, { resetTableDepartmentModel } from '@src/tests/eloquent/models/TestDepartmentModel';
+import TestEmployeeModel, { resetTableEmployeeModel } from '@src/tests/eloquent/models/TestEmployeeModel';
 import testHelper from '@src/tests/testHelper';
-
-import TestDepartmentModel, { resetTableDepartmentModel } from './models/TestDepartmentModel';
-import TestEmployeeModel, { resetTableEmployeeModel } from './models/TestEmployeeModel';
 
 
 describe('eloquent', () => {
@@ -14,7 +13,6 @@ describe('eloquent', () => {
     let departmentTable!: string;
 
     let employeeQuery!: IEloquent<TestEmployeeModel>;
-    let employeeTable!: string;
 
     beforeAll(async () => {
         await testHelper.testBootApp()
@@ -22,7 +20,6 @@ describe('eloquent', () => {
         await resetTableEmployeeModel();
         await resetTableDepartmentModel();
 
-        employeeTable =  new TestEmployeeModel(null).useTableName();
         departmentTable = new TestDepartmentModel(null).useTableName();
 
         departmentQuery = app('query').builder(TestDepartmentModel)

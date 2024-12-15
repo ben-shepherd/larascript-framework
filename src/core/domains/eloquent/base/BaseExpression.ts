@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { TColumnOption, TGroupBy, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { deepClone } from "@src/core/util/deepClone";
-
-import IEloquentExpression from "../interfaces/IEloquentExpression";
+import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 
 abstract class BaseExpression<Bindings = unknown> implements IEloquentExpression<Bindings> {
 

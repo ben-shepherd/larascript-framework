@@ -27,7 +27,9 @@ const HasAttributesConcern = <Attributes extends IModelAttributes>(Base: ICtor<I
                 async (payload) => await this.onSetAttributeEvent(payload)
             );
         }
+
         attributes: IModelAttributes | null;
+
         original: IModelAttributes | null;
 
 

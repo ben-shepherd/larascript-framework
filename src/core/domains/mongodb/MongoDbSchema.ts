@@ -2,8 +2,7 @@ import CreateDatabaseException from "@src/core/domains/database/exceptions/Creat
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import { App } from "@src/core/services/App";
-
-import BaseSchema from "../database/base/BaseSchema";
+import BaseSchema from "@src/core/domains/database/base/BaseSchema";
 
 class MongoDBSchema extends BaseSchema implements IDatabaseSchema{
 

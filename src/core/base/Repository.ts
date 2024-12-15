@@ -1,9 +1,8 @@
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
-
-import { IEloquent } from "../domains/eloquent/interfaces/IEloquent";
-import { queryBuilder } from "../domains/eloquent/services/EloquentQueryBuilderService";
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 
 /**
  * Base class for repositories

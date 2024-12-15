@@ -7,8 +7,7 @@ import IExpressService from '@src/core/domains/express/interfaces/IExpressServic
 import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerService';
 import IValidatorService from '@src/core/domains/validator/interfaces/IValidatorService';
 import readline from 'node:readline';
-
-import { IQueryService } from '../domains/eloquent/interfaces/IQueryService';
+import { IQueryService } from '@src/core/domains/eloquent/interfaces/IQueryService';
 
 export interface ICoreContainers {
     [key: string]: any;

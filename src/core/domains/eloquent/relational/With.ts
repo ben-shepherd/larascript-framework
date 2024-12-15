@@ -1,8 +1,7 @@
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
-
-import { IEloquent } from "../interfaces/IEloquent";
-import EloquentRelationship from "../utils/EloquentRelationship";
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import EloquentRelationship from "@src/core/domains/eloquent/utils/EloquentRelationship";
 
 class With {
 

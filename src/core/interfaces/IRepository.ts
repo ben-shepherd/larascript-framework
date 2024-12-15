@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
-
-import { ICtor } from "./ICtor";
+import { ICtor } from "@src/core/interfaces/ICtor";
 
 /**
  * Constructor type for repositories.

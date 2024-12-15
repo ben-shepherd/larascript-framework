@@ -1,4 +1,4 @@
-import { App } from "../services/App"
+import { App } from "@src/core/services/App"
 
 const captureError = async <T>(callbackFn:  () => Promise<T>): Promise<T> => {
     try {

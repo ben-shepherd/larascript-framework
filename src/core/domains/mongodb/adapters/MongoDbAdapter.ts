@@ -12,8 +12,7 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
-
-import { IEloquent } from "../../eloquent/interfaces/IEloquent";
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
 class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
 

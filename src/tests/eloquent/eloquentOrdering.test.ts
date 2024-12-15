@@ -3,8 +3,7 @@ import { describe } from '@jest/globals';
 import { IEloquent } from '@src/core/domains/eloquent/interfaces/IEloquent';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
 import testHelper from '@src/tests/testHelper';
-
-import TestPeopleModel, { resetPeopleTable } from './models/TestPeopleModel';
+import TestPeopleModel, { resetPeopleTable } from '@src/tests/eloquent/models/TestPeopleModel';
 
 const date2024 = new Date('2024-01-01');
 const date2025 = new Date('2025-01-01');

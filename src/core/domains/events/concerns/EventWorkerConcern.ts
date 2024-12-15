@@ -3,8 +3,7 @@ import { TISerializablePayload } from "@src/core/domains/events/interfaces/IEven
 import { IEventWorkerConcern, IWorkerModel, TEventWorkerOptions } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
-
-import { queryBuilder } from "../../eloquent/services/EloquentQueryBuilderService";
+import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 
 const EventWorkerConcern = (Base: ICtor) => {
     return class EventWorkerConcern extends Base implements IEventWorkerConcern {

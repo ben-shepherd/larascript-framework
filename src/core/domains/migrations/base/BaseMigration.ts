@@ -2,8 +2,7 @@ import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabas
 import { IMigration, MigrationType } from "@src/core/domains/migrations/interfaces/IMigration";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
-
-import { db } from "../../database/services/Database";
+import { db } from "@src/core/domains/database/services/Database";
 
 /**
  * BaseMigration class serves as the foundation for all database migrations.

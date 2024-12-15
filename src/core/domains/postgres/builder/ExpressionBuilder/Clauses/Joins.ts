@@ -1,7 +1,6 @@
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
 import { TJoin } from "@src/core/domains/eloquent/interfaces/IEloquent";
-
-import SqlExpression from "../SqlExpression";
+import SqlExpression from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 
 class Joins {
 

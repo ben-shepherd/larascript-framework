@@ -77,7 +77,7 @@ class ResourceAllService extends BaseResourceService {
      * @returns {Promise<IModel[]>} - A promise that resolves to the fetched results as an array of models
      */
     async fetchResults(options: IRouteResourceOptions, filters: object, pageOptions: IPageOptions): Promise<IModel[]> {
-        const tableName = (new options.resource).table;
+        const tableName = options.resource.getTable();
         const documentManager = App.container('db').documentManager().table(tableName);
 
         return await documentManager.findMany({

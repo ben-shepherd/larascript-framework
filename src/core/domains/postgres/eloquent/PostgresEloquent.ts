@@ -6,17 +6,16 @@ import PrefixedPropertyGrouper from "@src/core/util/PrefixedPropertyGrouper";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { bindAll } from 'lodash';
 import pg, { QueryResult } from 'pg';
-
-import Collection from "../../collections/Collection";
-import collect from "../../collections/helper/collect";
-import { db } from "../../database/services/Database";
-import Eloquent from "../../eloquent/Eloquent";
-import EloquentException from "../../eloquent/exceptions/EloquentExpression";
-import UpdateException from "../../eloquent/exceptions/UpdateException";
-import { IEloquent, IdGeneratorFn, SetModelColumnsOptions, TransactionFn } from "../../eloquent/interfaces/IEloquent";
-import IEloquentExpression from "../../eloquent/interfaces/IEloquentExpression";
-import PostgresAdapter from "../adapters/PostgresAdapter";
-import SqlExpression from "../builder/ExpressionBuilder/SqlExpression";
+import Collection from "@src/core/domains/collections/Collection";
+import collect from "@src/core/domains/collections/helper/collect";
+import { db } from "@src/core/domains/database/services/Database";
+import Eloquent from "@src/core/domains/eloquent/Eloquent";
+import EloquentException from "@src/core/domains/eloquent/exceptions/EloquentExpression";
+import UpdateException from "@src/core/domains/eloquent/exceptions/UpdateException";
+import { IEloquent, IdGeneratorFn, SetModelColumnsOptions, TransactionFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
+import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
+import SqlExpression from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 
 class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
 

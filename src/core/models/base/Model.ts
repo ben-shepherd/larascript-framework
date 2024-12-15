@@ -7,12 +7,11 @@ import { ICtor } from '@src/core/interfaces/ICtor';
 import { GetAttributesOptions, IModel, ModelConstructor } from '@src/core/interfaces/IModel';
 import IModelAttributes from '@src/core/interfaces/IModelData';
 import { app } from '@src/core/services/App';
-
-import { IBelongsToOptions, IRelationship, IdGeneratorFn } from '../../domains/eloquent/interfaces/IEloquent';
-import BelongsTo from '../../domains/eloquent/relational/BelongsTo';
-import EloquentRelationship from '../../domains/eloquent/utils/EloquentRelationship';
-import Str from '../../util/str/Str';
-import ProxyModelHandler from '../utils/ProxyModelHandler';
+import { IBelongsToOptions, IRelationship, IdGeneratorFn } from '@src/core/domains/eloquent/interfaces/IEloquent';
+import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
+import EloquentRelationship from '@src/core/domains/eloquent/utils/EloquentRelationship';
+import Str from '@src/core/util/str/Str';
+import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
  
 
 /**

@@ -6,8 +6,7 @@ import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabase
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
-
-import { IEloquent } from "../../eloquent/interfaces/IEloquent";
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
 abstract class BaseDatabaseAdapter<TConfig extends object = object> extends BaseConfig implements IDatabaseAdapter {
 

@@ -1,8 +1,7 @@
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { app } from "@src/core/services/App";
-
-import { IEloquent } from "../interfaces/IEloquent";
-import { IQueryService } from "../interfaces/IQueryService";
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { IQueryService } from "@src/core/domains/eloquent/interfaces/IQueryService";
 
 /**
  * Shorthand function to create a new query builder instance for the model.

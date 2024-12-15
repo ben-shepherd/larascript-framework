@@ -1,4 +1,4 @@
-import Collection from "../Collection";
+import Collection from "@src/core/domains/collections/Collection";
 
 
 /**

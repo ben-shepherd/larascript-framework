@@ -3,9 +3,8 @@ import { describe } from '@jest/globals';
 import { IEloquent } from '@src/core/domains/eloquent/interfaces/IEloquent';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
 import testHelper from '@src/tests/testHelper';
-
-import TestDepartmentModel, { resetTableDepartmentModel } from './models/TestDepartmentModel';
-import TestEmployeeModel, { resetTableEmployeeModel } from './models/TestEmployeeModel';
+import TestDepartmentModel, { resetTableDepartmentModel } from '@src/tests/eloquent/models/TestDepartmentModel';
+import TestEmployeeModel, { resetTableEmployeeModel } from '@src/tests/eloquent/models/TestEmployeeModel';
 
 const dateOneYearInPast = new Date();
 dateOneYearInPast.setFullYear(dateOneYearInPast.getFullYear() - 1);

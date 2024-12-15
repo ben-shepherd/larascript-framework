@@ -5,8 +5,7 @@ import responseError from '@src/core/domains/express/requests/responseError';
 import ValidationError from '@src/core/exceptions/ValidationError';
 import { App } from '@src/core/services/App';
 import { Request, Response } from 'express';
-
-import { auth } from '../services/AuthService';
+import { auth } from '@src/core/domains/auth/services/AuthService';
 
 /**
  * Creates a new user

@@ -3,18 +3,17 @@ import ExpressionException from "@src/core/domains/eloquent/exceptions/Expressio
 import { TColumnOption, TGroupBy, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import { z } from "zod";
-
-import BindingsHelper from "../BindingsHelper";
-import DeleteFrom from "./Clauses/DeleteFrom";
-import FromTable from "./Clauses/FromTable";
-import GroupBy from "./Clauses/GroupBy";
-import Insert from "./Clauses/Insert";
-import Joins from "./Clauses/Joins";
-import OffsetLimit from "./Clauses/OffsetLimit";
-import OrderBy from "./Clauses/OrderBy";
-import SelectColumns from "./Clauses/SelectColumns";
-import Update from "./Clauses/Update";
-import Where from "./Clauses/Where";
+import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
+import DeleteFrom from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/DeleteFrom";
+import FromTable from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/FromTable";
+import GroupBy from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/GroupBy";
+import Insert from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/Insert";
+import Joins from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/Joins";
+import OffsetLimit from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/OffsetLimit";
+import OrderBy from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/OrderBy";
+import SelectColumns from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/SelectColumns";
+import Update from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/Update";
+import Where from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/Where";
 
 type BuildType = 'select' | 'insert' | 'update' | 'delete';
 type RawSelect = { sql: string, bindings: unknown };

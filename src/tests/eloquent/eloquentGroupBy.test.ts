@@ -1,16 +1,13 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import Collection from '@src/core/domains/collections/Collection';
 import { IEloquent } from '@src/core/domains/eloquent/interfaces/IEloquent';
 import { app } from '@src/core/services/App';
+import TestPeopleModel, { resetPeopleTable } from '@src/tests/eloquent/models/TestPeopleModel';
 import testHelper from '@src/tests/testHelper';
-
-import TestPeopleModel, { resetPeopleTable } from './models/TestPeopleModel';
 
 describe('eloquent', () => {
 
     let query!: IEloquent<TestPeopleModel>;
-    let inserted!: Collection<TestPeopleModel>;
 
     beforeAll(async () => {
         await testHelper.testBootApp()
@@ -18,7 +15,7 @@ describe('eloquent', () => {
         
         query = app('query').builder(TestPeopleModel);
 
-        inserted = await query.clone().insert([
+        await query.clone().insert([
             {
                 name: 'John',
                 age: 20,

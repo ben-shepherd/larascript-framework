@@ -3,8 +3,7 @@ import { IDatabaseDocument } from "@src/core/domains/database/interfaces/IDocume
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { BindOrReplacements, QueryOptions, QueryTypes } from "sequelize";
-
-import LegacyPostgresQueryBuilder, { TLegacySelectOptions } from "./builder/LegacyPostgresQueryBuilder";
+import LegacyPostgresQueryBuilder, { TLegacySelectOptions } from "@src/core/domains/postgres/builder/LegacyPostgresQueryBuilder";
 
 
 

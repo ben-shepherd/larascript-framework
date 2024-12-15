@@ -4,12 +4,11 @@ import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventC
 import { ICommandOptionArguement, IOptionTypes } from "@src/core/interfaces/concerns/ISimpleRegister";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import compose from "@src/core/util/compose";
-
-import EventMockableConcern from "../concerns/EventMockableConcern";
-import EventWorkerConcern from "../concerns/EventWorkerConcern";
-import { IBaseEvent } from "../interfaces/IBaseEvent";
-import { TEventWorkerOptions } from "../interfaces/IEventWorkerConcern";
-import { TMockableEventCallback } from "../interfaces/IMockableConcern";
+import EventMockableConcern from "@src/core/domains/events/concerns/EventMockableConcern";
+import EventWorkerConcern from "@src/core/domains/events/concerns/EventWorkerConcern";
+import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
+import { TEventWorkerOptions } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
+import { TMockableEventCallback } from "@src/core/domains/events/interfaces/IMockableConcern";
 
 
 class BaseEventService extends compose(class {}, HasSimpleRegisterConcern, EventWorkerConcern, EventMockableConcern) {

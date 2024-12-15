@@ -1,7 +1,6 @@
 import BaseProvider from "@src/core/base/Provider";
 import { App } from "@src/core/services/App";
-
-import EloquentQueryBuilderService from "../services/EloquentQueryBuilderService";
+import EloquentQueryBuilderService from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 
 class EloquentQueryProvider extends BaseProvider {
 

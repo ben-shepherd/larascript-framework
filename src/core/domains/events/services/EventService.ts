@@ -8,8 +8,7 @@ import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventC
 import { IEventDriversConfigOption } from "@src/core/domains/events/interfaces/config/IEventDriversConfig";
 import { IEventListenersConfig, TListenersConfigOption } from "@src/core/domains/events/interfaces/config/IEventListenersConfig";
 import { ICtor } from "@src/core/interfaces/ICtor";
-
-import BaseEventService from "../base/BaseEventService";
+import BaseEventService from "@src/core/domains/events/base/BaseEventService";
 
 
 class EventService extends BaseEventService implements IEventService {

@@ -1,11 +1,9 @@
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { IBelongsToOptions, IRelationship } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
-
-import { IBelongsToOptions, IRelationship } from "../interfaces/IEloquent";
 
 class BelongsTo implements IRelationship {
 
-    _relationshipInterface = true as IRelationship['_relationshipInterface'];
+    _relationshipInterface = true;
 
     constructor(
         // eslint-disable-next-line no-unused-vars

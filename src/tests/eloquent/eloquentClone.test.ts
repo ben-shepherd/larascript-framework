@@ -2,8 +2,7 @@
 import { describe } from '@jest/globals';
 import { app } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
-
-import TestPeopleModel, { resetPeopleTable } from './models/TestPeopleModel';
+import TestPeopleModel, { resetPeopleTable } from '@src/tests/eloquent/models/TestPeopleModel';
 
 describe('eloquent', () => {
 

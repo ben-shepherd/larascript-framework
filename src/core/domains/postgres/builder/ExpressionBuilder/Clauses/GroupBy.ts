@@ -1,6 +1,5 @@
 import { TGroupBy } from "@src/core/domains/eloquent/interfaces/IEloquent";
-
-import SqlExpression from "../SqlExpression";
+import SqlExpression from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 
 class GroupBy {
 
