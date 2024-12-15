@@ -1,17 +1,16 @@
  
 import BaseModel from '@src/core/base/BaseModel';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
-import { IDatabaseDocument } from '@src/core/domains/database/interfaces/IDocumentManager';
 import { db } from '@src/core/domains/database/services/Database';
+import { IBelongsToOptions, IEloquent, IRelationship, IdGeneratorFn } from '@src/core/domains/eloquent/interfaces/IEloquent';
+import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
+import EloquentRelationship from '@src/core/domains/eloquent/utils/EloquentRelationship';
 import { ICtor } from '@src/core/interfaces/ICtor';
 import { GetAttributesOptions, IModel, ModelConstructor } from '@src/core/interfaces/IModel';
 import IModelAttributes from '@src/core/interfaces/IModelData';
-import { app } from '@src/core/services/App';
-import { IBelongsToOptions, IRelationship, IdGeneratorFn } from '@src/core/domains/eloquent/interfaces/IEloquent';
-import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
-import EloquentRelationship from '@src/core/domains/eloquent/utils/EloquentRelationship';
-import Str from '@src/core/util/str/Str';
 import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
+import { app } from '@src/core/services/App';
+import Str from '@src/core/util/str/Str';
  
 
 /**
@@ -396,6 +395,15 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
     }
 
     /**
+     * Retrieves a query builder instance for the model.
+     * The query builder is a fluent interface for querying the database associated with the model.
+     * @returns {IEloquent<IModel>} The query builder instance.
+     */
+    private queryBuilder(): IEloquent<IModel> {
+        return app('query').builder(this.constructor as ICtor<IModel>);
+    }
+
+    /**
      * Retrieves the primary key value of the model.
      * 
      * @returns {string | undefined} The primary key value or undefined if not set.
@@ -438,6 +446,7 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
      * 
      * @param {GetAttributesOptions} [options={ excludeGuarded: true }] - Options for data retrieval.
      * @returns {Attributes | null} The model's data, potentially excluding guarded fields.
+     * @deprecated use `toObject` instead
      */
     async getData(options: GetAttributesOptions = { excludeGuarded: true }): Promise<Attributes | null> {
         let data = this.getAttributes();
@@ -466,8 +475,11 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
 
         if (!id) return null;
 
-        this.attributes = await this.getDocumentManager().findById(id);
-        this.original = { ...this.attributes } as Attributes
+        const result =  await this.queryBuilder().find(id)
+        const attributes = result ? await result.toObject() : null;
+
+        this.attributes = attributes ? { ...attributes } as Attributes : null
+        this.original = { ...(this.attributes ?? {}) } as Attributes
 
         return this.attributes as Attributes;
     }
@@ -480,7 +492,7 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
     async update(): Promise<void> {
         if (!this.getId() || !this.attributes) return;
 
-        await this.getDocumentManager().updateOne(this.prepareDocument());
+        await this.queryBuilder().where(this.primaryKey, this.getId()).update(this.attributes);
     }
 
 
@@ -496,7 +508,7 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
             await this.setTimestamp('createdAt');
             await this.setTimestamp('updatedAt');
 
-            this.attributes = await this.getDocumentManager().insertOne(this.prepareDocument());
+            this.attributes = await (await this.queryBuilder().insert(this.attributes)).first()?.toObject() as Attributes;
             this.attributes = await this.refresh();
 
             this.attributes = await this.observeData('created', this.attributes);
@@ -519,7 +531,7 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
     async delete(): Promise<void> {
         if (!this.attributes) return;
         this.attributes = await this.observeData('deleting', this.attributes);
-        await this.getDocumentManager().deleteOne(this.attributes as IDatabaseDocument);
+        await this.queryBuilder().where(this.primaryKey, this.getId()).delete();
         this.attributes = null;
         this.original = null;
         await this.observeData('deleted', this.attributes);
