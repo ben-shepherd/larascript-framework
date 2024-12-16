@@ -42,6 +42,11 @@ class BindingsHelper {
      * @param {unknown} value The value to bind.
      */
     addBinding(column: string | null, value: unknown): this {
+
+        if(typeof value === 'undefined') {
+            return this
+        }
+
         // If the column has a type, add it to the binding
         // This might look like $1::uuid
         let suffix = '';
