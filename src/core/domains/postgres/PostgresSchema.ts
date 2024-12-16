@@ -1,10 +1,10 @@
+import BaseSchema from "@src/core/domains/database/base/BaseSchema";
 import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 import { IDatabaseAdapterSchema } from "@src/core/domains/database/interfaces/IDatabaseAdapterSchema";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import { IAlterTableOptions } from "@src/core/domains/postgres/interfaces/IPostgresAlterTableOptions";
 import { DataTypes, QueryInterfaceCreateTableOptions, QueryInterfaceDropTableOptions } from "sequelize";
 import { ModelAttributes } from 'sequelize/types/model';
-import BaseSchema from "@src/core/domains/database/base/BaseSchema";
 
 class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
 
@@ -114,8 +114,6 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
      * @param optons 
      */
     async createTable(tableName: string, attributes: ModelAttributes, optons?: QueryInterfaceCreateTableOptions): Promise<void> {
-        tableName = this.formatTableName(tableName);
-
         const sequelize = this.adapter.getSequelize();
         const queryInterface = sequelize.getQueryInterface();
         await queryInterface.createTable(tableName, this.withDefaultUuuidV4Schema(attributes), optons);
@@ -127,7 +125,6 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
      * @param options 
      */
     async dropTable(tableName: string, options?: QueryInterfaceDropTableOptions): Promise<void> {
-        tableName = this.formatTableName(tableName);
         const sequelize = this.adapter.getSequelize();
         const queryInterface = sequelize.getQueryInterface();
         await queryInterface.dropTable(tableName, options);
@@ -139,13 +136,6 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
      * @param options 
      */
     async alterTable(tableName: IAlterTableOptions['tableName'], options: Omit<IAlterTableOptions, 'tableName'>): Promise<void> {
-        if(typeof tableName === 'string') {
-            tableName = this.formatTableName(tableName);
-        }
-        if(typeof tableName === 'object' && 'tableName' in tableName) {
-            tableName.tableName = this.formatTableName(tableName.tableName);
-        }
-        
         const sequelize = this.adapter.getSequelize();
     
         if(options.addColumn) {
@@ -201,7 +191,6 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
      * @returns 
      */
     async tableExists(tableName: string): Promise<boolean> {
-        tableName = this.formatTableName(tableName);
         const sequelize = this.adapter.getSequelize();
         const queryInterface = sequelize.getQueryInterface();
         return await queryInterface.tableExists(tableName);

@@ -10,6 +10,7 @@ class BaseSchema {
      * @param tableName - The name of the table to retrieve.
      * @returns The pluralized and lowercased table name associated with the model.
      * @throws MissingTableException If the table name is not set.
+     * @deprecated Should not control the table name. Use `Model.getTable()` instead
      */
     formatTableName(tableName: string): string {
         return Model.formatTableName(tableName)
