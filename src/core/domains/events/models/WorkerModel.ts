@@ -60,8 +60,18 @@ export default class WorkerModel extends Model<WorkerModelData> implements IWork
 
     getPayload<T = unknown>(): T | null {
         try {
-            const payload = this.getAttributeSync('payload');
-            return JSON.parse(payload) as T
+            const json = this.getAttributeSync('payload');
+
+            if(typeof json === 'string') {
+                const payload = this.getAttributeSync('payload');
+                return JSON.parse(payload) as T
+            }
+
+            if(typeof json === 'object') {
+                return json as T
+            }
+
+            throw new Error('Invalid payload')
         }
         // eslint-disable-next-line no-unused-vars
         catch (err) {
