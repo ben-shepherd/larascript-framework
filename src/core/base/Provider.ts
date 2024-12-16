@@ -51,13 +51,4 @@ export default abstract class BaseProvider implements IProvider {
         App.container('logger').info(message, ...args);
     }
 
-    /**
-     * Gets the name of the provider
-     *
-     * @returns {string|null} - The name of the provider, or null if not set
-     */
-    public getProviderName(): string | null {
-        return this.providerName;
-    }
-
 }
