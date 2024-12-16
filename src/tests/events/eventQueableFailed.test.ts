@@ -1,12 +1,12 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
+import { console } from '@src/core/domains/console/service/ConsoleService';
+import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
 import QueueableDriver, { TQueueDriverOptions } from '@src/core/domains/events/drivers/QueableDriver';
-import EventService from '@src/core/domains/events/services/EventService';
-import { IModel } from '@src/core/interfaces/IModel';
-import { App } from '@src/core/services/App';
+import EventService, { events } from '@src/core/domains/events/services/EventService';
 import TestEventQueueAddAlwaysFailsEventToQueue from '@src/tests/events/events/TestEventQueueAddAlwaysFailsEventToQueue';
 import TestEventQueueAlwaysFailsEvent from '@src/tests/events/events/TestEventQueueAlwaysFailsEvent';
-import createWorkerTables, { dropWorkerTables } from '@src/tests/events/helpers/createWorketTables';
+import resetWorkerTables from '@src/tests/events/helpers/createWorketTables';
 import TestFailedWorkerModel from '@src/tests/models/models/TestFailedWorkerModel';
 import TestWorkerModel from '@src/tests/models/models/TestWorkerModel';
 import testHelper from '@src/tests/testHelper';
@@ -21,10 +21,6 @@ describe('mock queable event failed', () => {
         await testHelper.testBootApp()
     })
 
-    afterAll(async () => {
-        await dropWorkerTables();
-    })
-
 
     /**
      * - Dispatch TestEventQueueEvent, this will add a queued item to the database
@@ -34,31 +30,29 @@ describe('mock queable event failed', () => {
      */
     test('test dispatch event queable ', async () => {
 
-        await dropWorkerTables();
-        await createWorkerTables();
+        await resetWorkerTables()
 
-        const eventService = App.container('events');
-        const driverOptions = eventService.getDriverOptionsByName(EventService.getDriverName(QueueableDriver))?.['options'] as TQueueDriverOptions;
+        const driverOptions = events().getDriverOptionsByName(EventService.getDriverName(QueueableDriver))?.['options'] as TQueueDriverOptions;
         const attempts = driverOptions?.retries ?? 3
             
-        eventService.mockEvent(TestEventQueueAddAlwaysFailsEventToQueue)
+        events().mockEvent(TestEventQueueAddAlwaysFailsEventToQueue)
 
-        await eventService.dispatch(new TestEventQueueAddAlwaysFailsEventToQueue());
+        await events().dispatch(new TestEventQueueAddAlwaysFailsEventToQueue());
 
-        expect(eventService.assertDispatched(TestEventQueueAddAlwaysFailsEventToQueue)).toBeTruthy()
+        expect(events().assertDispatched(TestEventQueueAddAlwaysFailsEventToQueue)).toBeTruthy()
     
         for(let i = 0; i < attempts; i++) {
-            App.container('events').mockEvent(TestEventQueueAlwaysFailsEvent);
+            events().mockEvent(TestEventQueueAlwaysFailsEvent);
 
-            await App.container('console').reader(['worker', '--queue=testQueue']).handle();
+            await console().reader(['worker', '--queue=testQueue']).handle();
 
-            expect(App.container('events').assertDispatched(TestEventQueueAlwaysFailsEvent)).toBeTruthy()
+            expect(events().assertDispatched(TestEventQueueAlwaysFailsEvent)).toBeTruthy()
         }
 
-        const results = await App.container('db').documentManager().table(new TestWorkerModel().table).findMany<IModel[]>({})
-        expect(results.length).toBe(0)
+        const results = await queryBuilder(TestWorkerModel).get();
+        expect(results.count()).toBe(0)
 
-        const failedResults = await App.container('db').documentManager().table(new TestFailedWorkerModel().table).findMany<IModel[]>({})
-        expect(failedResults.length).toBe(1)
+        const failedResults = await queryBuilder(TestFailedWorkerModel).get();
+        expect(failedResults.count()).toBe(1)
     })
 }); 

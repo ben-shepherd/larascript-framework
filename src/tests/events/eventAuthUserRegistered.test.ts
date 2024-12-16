@@ -1,10 +1,10 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
 import { IUserData } from '@src/app/models/auth/User';
-import { App } from '@src/core/services/App';
+import { events } from '@src/core/domains/events/services/EventService';
 import { TestUserCreatedListener } from '@src/tests/events/events/auth/TestUserCreatedListener';
 import TestUserCreatedSubscriber from '@src/tests/events/events/auth/TestUserCreatedSubscriber';
-import { dropWorkerTables } from '@src/tests/events/helpers/createWorketTables';
+import resetWorkerTables from '@src/tests/events/helpers/createWorketTables';
 import TestUserFactory from '@src/tests/factory/TestUserFactory';
 import testHelper from '@src/tests/testHelper';
 
@@ -26,11 +26,6 @@ describe('mock queable event', () => {
         await testHelper.createAuthTables();
     })
 
-    afterAll(async () => {
-        await dropWorkerTables();
-        await testHelper.dropAuthTables();
-    })
-
 
     /**
      * - Dispatch TestEventQueueEvent, this will add a queued item to the database
@@ -40,10 +35,10 @@ describe('mock queable event', () => {
      */
     test('test queued worker ', async () => {
 
-        const eventService = App.container('events');
-        
-        eventService.mockEvent(TestUserCreatedListener)
-        eventService.mockEvent(TestUserCreatedSubscriber)
+        await resetWorkerTables()
+
+        events().mockEvent(TestUserCreatedListener)
+        events().mockEvent(TestUserCreatedSubscriber)
 
         const testUser = new TestUserFactory().createWithData({
             email: 'test@example.com',
@@ -62,11 +57,11 @@ describe('mock queable event', () => {
         }
 
         expect(
-            eventService.assertDispatched<IUserData>(TestUserCreatedListener, expectedPayloadCallback)
+            events().assertDispatched<IUserData>(TestUserCreatedListener, expectedPayloadCallback)
         ).toBeTruthy()
 
         expect(
-            eventService.assertDispatched<IUserData>(TestUserCreatedSubscriber, expectedPayloadCallback)
+            events().assertDispatched<IUserData>(TestUserCreatedSubscriber, expectedPayloadCallback)
         ).toBeTruthy()
     })
 
