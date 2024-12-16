@@ -4,8 +4,7 @@ import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumen
 import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
-
-import { IPrepareOptions } from "./IPrepareOptions";
+import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
 
 export type TAdapterComposerFileName = {
 

@@ -1,6 +1,5 @@
 import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
-
-import SqlExpression from "../SqlExpression";
+import SqlExpression from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 
 class Insert {
 

@@ -10,8 +10,7 @@ import BaseResourceService from "@src/core/domains/express/services/Resources/Ba
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import stripGuardedResourceProperties from "@src/core/domains/express/utils/stripGuardedResourceProperties";
 import { Response } from "express";
-
-import { requestContext } from "../RequestContext";
+import { requestContext } from "@src/core/domains/express/services/RequestContext";
 
 
 class ResourceAllService extends BaseResourceService {

@@ -1,9 +1,8 @@
 import Singleton from "@src/core/base/Singleton";
 import { SearchOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
 import { Request } from "express";
-
-import { logger } from "../../logger/services/LoggerService";
-import QueryFiltersException from "../exceptions/QueryFiltersException";
+import { logger } from "@src/core/domains/logger/services/LoggerService";
+import QueryFiltersException from "@src/core/domains/express/exceptions/QueryFiltersException";
 
 class QueryFilters extends Singleton {
 

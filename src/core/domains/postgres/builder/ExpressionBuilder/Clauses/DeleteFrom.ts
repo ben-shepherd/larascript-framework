@@ -1,6 +1,5 @@
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
-
-import SqlExpression from "../SqlExpression";
+import SqlExpression from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 
 class DeleteFrom {
 

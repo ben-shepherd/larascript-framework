@@ -1,4 +1,4 @@
-import SqlExpression from "../SqlExpression";
+import SqlExpression from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 
 class FromTable {
 

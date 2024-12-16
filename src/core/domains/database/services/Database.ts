@@ -12,7 +12,7 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
 /**
- * Short alias for App.container('db')
+ * Short alias for app('db')
  * @returns 
  */
 export const db = () => App.container('db')
@@ -23,6 +23,12 @@ export const db = () => App.container('db')
  * @returns 
  */
 export const schema = (connectionName: string = db().getDefaultConnectionName()) => db().schema(connectionName)
+
+/**
+ * Short alias for db().getAdapter<AdapterType>(connectionName)
+ * @param connectionName 
+ */
+export const databaseAdapter = <T extends IDatabaseAdapter = IDatabaseAdapter>(connectionName: string) => db().getAdapter<T>(connectionName) 
 
 /**
  * Database Service

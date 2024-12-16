@@ -5,10 +5,9 @@ import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryB
 import IModelAttributes from '@src/core/interfaces/IModelData';
 import Model from '@src/core/models/base/Model';
 import { app } from '@src/core/services/App';
+import TestMigrationModel from '@src/tests/migration/models/TestMigrationModel';
 import testHelper from '@src/tests/testHelper';
 import { DataTypes } from 'sequelize';
-
-import TestMigrationModel from './models/TestMigrationModel';
 
 export interface SeederTestModelAttributes extends IModelAttributes {
     id: string;

@@ -1,8 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { IDocumentValidator } from "@src/core/domains/database/interfaces/IDocumentValidator";
 import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
-import { IBelongsToOptionsLegacy } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
-import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
 
 export interface IDatabaseDocument {
     id?: any;
@@ -124,21 +122,4 @@ export interface IDocumentManager<TData = unknown> {
      */
     truncate(): Promise<void>;
 
-    /**
-     * Handle a "belongs to" relationship.
-     *
-     * @param document The source document.
-     * @param options The relationship options.
-     * @returns A promise resolving to the related document, or null if not found.
-     */
-    belongsTo<T extends TData = TData>(document: IDatabaseDocument, options: IBelongsToOptionsLegacy): Promise<T | null>;
-    
-    /**
-     * Handle a "has many" relationship.
-     *
-     * @param document The source document.
-     * @param options The relationship options.
-     * @returns A promise resolving to the related documents.
-     */
-    hasMany<T extends TData = TData>(document: IDatabaseDocument, options: IHasManyOptions): Promise<T[]>;
 }

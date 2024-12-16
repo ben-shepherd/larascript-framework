@@ -1,6 +1,5 @@
 import BaseSeeder from "@src/core/domains/migrations/base/BaseSeeder";
-
-import { SeederTestModel } from "../seeder.test";
+import { SeederTestModel } from "@src/tests/migration/seeder.test";
 
 export class Seeder extends BaseSeeder {
 

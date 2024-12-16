@@ -5,9 +5,8 @@ import Broadcaster from '@src/core/domains/broadcast/abstract/Broadcaster';
 import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
 import { IObserver } from '@src/core/domains/observer/interfaces/IObserver';
 import compose from '@src/core/util/compose';
-
-import { IBroadcastEvent } from '../domains/broadcast/interfaces/IBroadcastEvent';
-import { BroadcastCallback } from '../domains/broadcast/interfaces/IBroadcaster';
+import { IBroadcastEvent } from '@src/core/domains/broadcast/interfaces/IBroadcastEvent';
+import { BroadcastCallback } from '@src/core/domains/broadcast/interfaces/IBroadcaster';
 
 class BaseModel extends compose(class extends Broadcaster {}, HasObserverConcern) {
 

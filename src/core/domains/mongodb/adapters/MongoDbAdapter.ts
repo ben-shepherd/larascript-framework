@@ -13,8 +13,7 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
-
-import { db } from "../../database/services/Database";
+import { db } from "@src/core/domains/database/services/Database";
 
 class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
 

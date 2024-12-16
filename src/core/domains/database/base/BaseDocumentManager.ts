@@ -1,14 +1,9 @@
 /* eslint-disable no-unused-vars */
-// Import necessary interfaces and classes
 import MissingTable from "@src/core/domains/database/exceptions/InvalidTable";
 import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 import { IDatabaseDocument, IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IDocumentValidator } from "@src/core/domains/database/interfaces/IDocumentValidator";
 import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
-import { IBelongsToOptionsLegacy } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
-import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
-import BelongsTo from "@src/core/domains/database/relationships/BelongsTo";
-import HasMany from "@src/core/domains/database/relationships/HasMany";
 import DocumentValidator from "@src/core/domains/database/validator/DocumentValidator";
 import { App } from "@src/core/services/App";
 
@@ -99,26 +94,6 @@ abstract class BaseDocumentManager<TDocMan extends IDocumentManager = IDocumentM
     abstract deleteMany<T>(filter: object): Promise<T>;
 
     abstract truncate(): Promise<void>;
-
-    /**
-     * Handle "belongs to" relationship
-     * @param document - Source document
-     * @param options - Relationship options
-     * @returns Promise resolving to related document or null
-     */
-    async belongsTo<T>(document: IDatabaseDocument, options: IBelongsToOptionsLegacy): Promise<T | null> {
-        return new BelongsTo().handle(this.adapter.getConnectionName(), document, options);
-    }
-
-    /**
-     * Handle "has many" relationship
-     * @param document - Source document
-     * @param options - Relationship options
-     * @returns Promise resolving to array of related documents
-     */
-    async hasMany<T>(document: IDatabaseDocument, options: IHasManyOptions): Promise<T> {
-        return new HasMany().handle(this.adapter.getConnectionName(), document, options) as T;
-    }
 
     /**
      * Catches and logs any errors that occur in the callback,

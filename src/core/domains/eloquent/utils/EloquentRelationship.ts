@@ -5,9 +5,8 @@ import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryB
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import IModelAttributes from "@src/core/interfaces/IModelData";
-
-import Collection from "../../collections/Collection";
-import HasMany from "../relational/HasMany";
+import Collection from "@src/core/domains/collections/Collection";
+import HasMany from "@src/core/domains/eloquent/relational/HasMany";
 
 class EloquentRelationship {
 
