@@ -101,7 +101,8 @@ class Where {
 
             // Example: "table."
             if(currentWhereSql.tableName) {
-                sql += currentWhereSql.tableName + '.'
+                const tableName = SqlExpression.formatTableNameWithQuotes(currentWhereSql.tableName)
+                sql += tableName + '.'
             }
 
             // Example: "column"

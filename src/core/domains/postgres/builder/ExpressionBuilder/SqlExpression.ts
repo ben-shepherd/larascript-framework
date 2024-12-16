@@ -2,7 +2,6 @@ import BaseExpression from "@src/core/domains/eloquent/base/BaseExpression";
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
 import { TColumnOption, TGroupBy, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
-import { z } from "zod";
 import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
 import DeleteFrom from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/DeleteFrom";
 import FromTable from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/FromTable";
@@ -14,6 +13,7 @@ import OrderBy from "@src/core/domains/postgres/builder/ExpressionBuilder/Clause
 import SelectColumns from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/SelectColumns";
 import Update from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/Update";
 import Where from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/Where";
+import { z } from "zod";
 
 type BuildType = 'select' | 'insert' | 'update' | 'delete';
 type RawSelect = { sql: string, bindings: unknown };
@@ -86,6 +86,16 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
             return column
         }
         return `"${column}"`
+    };
+
+    public static readonly formatTableNameWithQuotes = (tableName: string): string => {
+        if(!tableName.startsWith('"')) {
+            tableName = `"${tableName}"`
+        }
+        if(!tableName.endsWith('"')){
+            tableName = `${tableName}"`
+        }
+        return tableName
     };
 
     /**

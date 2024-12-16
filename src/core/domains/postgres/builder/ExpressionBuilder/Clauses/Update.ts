@@ -32,6 +32,7 @@ class Update {
      * @returns The SQL string for the UPDATE query.
      */
     static createUpdateSql(table: string, update: object, wheres: TWhereClause[], bindings: BindingsHelper): string {
+        table = SqlExpression.formatTableNameWithQuotes(table);
         return `UPDATE ${table} ${this.set(update, bindings)} ${this.where(wheres, bindings)}`.trimEnd() + ';'
     }
 
