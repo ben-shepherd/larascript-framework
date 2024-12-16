@@ -1,37 +1,33 @@
 /* eslint-disable no-undef */
 import { describe, expect, test } from '@jest/globals';
 import Repository from '@src/core/base/Repository';
+import { db } from '@src/core/domains/database/services/Database';
+import { logger } from '@src/core/domains/logger/services/LoggerService';
 import { IModel } from '@src/core/interfaces/IModel';
-import { App } from '@src/core/services/App';
 import TestDirtyModel from '@src/tests/models/models/TestDirtyModel';
 import testHelper from '@src/tests/testHelper';
 import { DataTypes } from 'sequelize';
 
 const connections = testHelper.getTestConnectionNames()
 
-const createTable = async (connectionName: string) => {
-    const schema = App.container('db').schema(connectionName)
+const resetTable = async () => {
+    for(const connectionName of connections) {
+        const schema = db().schema(connectionName)
 
-    schema.createTable('tests', {
-        name: DataTypes.STRING,
-        object: DataTypes.JSON,
-        array: DataTypes.JSON,
-        createdAt: DataTypes.DATE,
-        updatedAt: DataTypes.DATE
-    })
-}
+        if(await schema.tableExists('tests')) {
+            await schema.dropTable('tests');
+        }
 
-const dropTable = async (connectionName: string) => {
-    const schema = App.container('db').schema(connectionName)
-
-    if(await schema.tableExists('tests')) {
-        await schema.dropTable('tests');
+        schema.createTable('tests', {
+            name: DataTypes.STRING,
+            object: DataTypes.JSON,
+            array: DataTypes.JSON,
+            createdAt: DataTypes.DATE,
+            updatedAt: DataTypes.DATE
+        })
     }
 }
 
-const truncate = async (connectionName: string) => {
-    await App.container('db').documentManager(connectionName).table('tests').truncate()
-}
 
 describe('test dirty', () => {
 
@@ -40,19 +36,12 @@ describe('test dirty', () => {
      */
     beforeAll(async () => {
         await testHelper.testBootApp()
-
-        for(const connection of connections) {
-            await dropTable(connection)
-            await createTable(connection)
-        }
     })
     
     test('dirty', async () => {
         for(const connectionName of connections) {
-            App.container('logger').info('[Connection]', connectionName)
-            App.container('db').setDefaultConnectionName(connectionName);
-
-            await truncate(connectionName);
+            logger().console('[Connection]', connectionName)
+            await resetTable()
 
 
             /**

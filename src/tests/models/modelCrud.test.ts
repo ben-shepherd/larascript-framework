@@ -1,51 +1,40 @@
 /* eslint-disable no-undef */
 import { describe, expect, test } from '@jest/globals';
 import Repository from '@src/core/base/Repository';
-import { App } from '@src/core/services/App';
+import { db } from '@src/core/domains/database/services/Database';
+import { logger } from '@src/core/domains/logger/services/LoggerService';
 import TestModel from '@src/tests/models/models/TestModel';
 import testHelper from '@src/tests/testHelper';
 import { DataTypes } from 'sequelize';
 
 const connections = testHelper.getTestConnectionNames()
 
-const createTable = async (connectionName: string) => {
-    const schema = App.container('db').schema(connectionName)
+const resetTable = async () => {
+    for(const connectionName of connections) {
+        const schema = db().schema(connectionName)
 
-    schema.createTable('tests', {
-        name: DataTypes.STRING,
-        createdAt: DataTypes.DATE,
-        updatedAt: DataTypes.DATE
-    })
-}
+        if(await schema.tableExists('tests')) {
+            await schema.dropTable('tests');
+        }
 
-const dropTable = async (connectionName: string) => {
-    const schema = App.container('db').schema(connectionName)
-
-    if(await schema.tableExists('tests')) {
-        await schema.dropTable('tests');
+        schema.createTable('tests', {
+            name: DataTypes.STRING,
+            createdAt: DataTypes.DATE,
+            updatedAt: DataTypes.DATE
+        })
     }
 }
-
-
 describe('test model crud', () => {
 
     beforeAll(async () => {
         await testHelper.testBootApp()
-        
-        for(const connectionName of connections) {
-            await dropTable(connectionName)
-            await createTable(connectionName)
-        }
     })
 
     test('CRUD', async () => {
         
         for(const connectionName of connections) {
-            App.container('logger').info('[Connection]', connectionName)
-            App.container('db').setDefaultConnectionName(connectionName);
-
-            const documentManager = App.container('db').documentManager(connectionName).table('tests');
-            await documentManager.truncate();
+            logger().console('[Connection]', connectionName)
+            await resetTable()
 
             /**
              * Create a model
