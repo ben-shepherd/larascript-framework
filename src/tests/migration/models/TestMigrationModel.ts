@@ -6,7 +6,7 @@ import MigrationModel, { MigrationModelData } from "@src/core/domains/migrations
 class TestMigrationModel extends MigrationModel {
 
     constructor(data: MigrationModelData | null) {
-        super(data, 'testMigrations');
+        super(data);
     }
 
 }

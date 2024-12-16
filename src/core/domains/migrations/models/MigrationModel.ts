@@ -38,9 +38,10 @@ export interface MigrationModelData extends IModelAttributes {
  */
 class MigrationModel extends Model<MigrationModelData> {
 
-    constructor(data: MigrationModelData | null, tableName = 'migrations') {
+    public table: string = 'migrations';
+
+    constructor(data: MigrationModelData | null) {
         super(data);
-        this.table = tableName
     }
 
     /**

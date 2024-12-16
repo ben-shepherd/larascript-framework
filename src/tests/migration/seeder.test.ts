@@ -1,80 +1,82 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
-import { App } from '@src/core/services/App';
-import TestMigrationModel from '@src/tests/migration/models/TestMigrationModel';
-import { TestModelData } from '@src/tests/models/models/TestModel';
+import { db } from '@src/core/domains/database/services/Database';
+import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
+import IModelAttributes from '@src/core/interfaces/IModelData';
+import Model from '@src/core/models/base/Model';
+import { app } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
 import { DataTypes } from 'sequelize';
 
-const dropAndCreateMigrationSchema = async () => {
-    const migrationTable = new TestMigrationModel(null).table
+import TestMigrationModel from './models/TestMigrationModel';
 
-    if(await App.container('db').schema().tableExists(migrationTable)) {
-        await App.container('db').schema().dropTable(migrationTable);
-    }
-
-    await App.container('db').createMigrationSchema(migrationTable)
+export interface SeederTestModelAttributes extends IModelAttributes {
+    id: string;
+    name: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
-const dropAndCreateTestSchema = async () => {
-    if(await App.container('db').schema().tableExists('tests')) {
-        await App.container('db').schema().dropTable('tests');
-    }
+export class SeederTestModel extends Model<SeederTestModelAttributes> {
 
-    await App.container('db').schema().createTable('tests', {
-        name: DataTypes.STRING,
-        createdAt: DataTypes.DATE,
-        updatedAt: DataTypes.DATE
-    });
+    public table: string = 'seeder_test';
+
+    public fields: string[] = [
+        'name',
+        'createdAt',
+        'updatedAt'
+    ]
+
+}
+
+const resetTable = async () => {
+    for(const connectionName of testHelper.getTestConnectionNames()) {
+        const schema = db().schema(connectionName)
+
+        // Drop migration
+        if(await schema.tableExists(TestMigrationModel.getTable())) { 
+            await schema.dropTable(TestMigrationModel.getTable());
+        }
+
+        const tableName = SeederTestModel.getTable()
+
+        if(await schema.tableExists(tableName)) {
+            await schema.dropTable(tableName);
+        }
+    
+        await schema.createTable(tableName, {
+            name: DataTypes.STRING,
+            createdAt: DataTypes.DATE,
+            updatedAt: DataTypes.DATE
+        });
+    }
 }
 
 describe('test seeders', () => {
 
-    let schema: IDatabaseSchema;
-
     beforeAll(async () => {
         await testHelper.testBootApp()
-
-        console.log('Connection: ' + App.container('db').getDefaultConnectionName())
-
-        await dropAndCreateTestSchema()
-
-        await dropAndCreateMigrationSchema()
-
-        schema = App.container('db').schema();
     });
-
-    afterAll(async () => {
-        await App.container('db').schema().dropTable('tests');
-        await App.container('db').schema().dropTable('migrations');
-    })
 
     test('test up seeder', async () => {
 
-        await App.container('console').reader(['db:seed', '--group=testing']).handle();
+        // await dropAndCreateMigrationSchema()
+        await resetTable()
 
-        const tableExists = await schema.tableExists('tests');
+        for(const connectionName of testHelper.getTestConnectionNames()) {
+            const schema = db().schema(connectionName)
 
-        expect(tableExists).toBe(true);
+            await app('console').reader(['db:seed', '--group=testing', '--file=test-seeder-model']).handle();
 
-        const data1 = await App.container('db').documentManager().table('tests').findOne<TestModelData>({
-            filter: {
-                name: 'John'
-            }
-        })
+            const tableExists = await schema.tableExists(SeederTestModel.getTable());
+            expect(tableExists).toBe(true);
 
-        expect(typeof data1 === 'object').toEqual(true);
-        expect(data1?.name).toEqual('John');
-
-        const data2 = await App.container('db').documentManager().table('tests').findOne<TestModelData>({
-            filter: {
-                name: 'Jane'
-            }
-        })
-
-        expect(typeof data2 === 'object').toEqual(true);
-        expect(data2?.name).toEqual('Jane');
+            const john = await queryBuilder(SeederTestModel).where('name', 'John').firstOrFail();
+            expect(john?.name).toEqual('John');
+        
+            const jane = await queryBuilder(SeederTestModel).where('name', 'Jane').firstOrFail();
+            expect(jane?.name).toEqual('Jane');
+        }
 
     });
 
