@@ -5,7 +5,6 @@ import BelongsTo from "@src/core/domains/eloquent/relational/BelongsTo";
 import IHasObserver from "@src/core/domains/observer/interfaces/IHasObserver";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import IModelAttributes from "@src/core/interfaces/IModelData";
-import { IHasPrepareDocument } from "@src/core/interfaces/concerns/IHasPrepareDocument";
 
 
 export type GetAttributesOptions = {excludeGuarded: boolean}
@@ -21,7 +20,7 @@ export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MC
 
 export type ModelAttribtues<Model extends IModel> = Model['attributes']
 
-export interface IModel<Attributes extends IModelAttributes = IModelAttributes> extends IHasPrepareDocument, IHasObserver {
+export interface IModel<Attributes extends IModelAttributes = IModelAttributes> extends IHasObserver {
     [key: string]: unknown;
     connection: string;
     primaryKey: string;

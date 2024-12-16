@@ -4,9 +4,11 @@ import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabas
 import { IDatabaseGenericConnectionConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
-import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
+
+import { IPrepareOptions } from "../interfaces/IPrepareOptions";
 
 abstract class BaseDatabaseAdapter<TConfig extends object = object> extends BaseConfig implements IDatabaseAdapter {
 
@@ -87,6 +89,29 @@ abstract class BaseDatabaseAdapter<TConfig extends object = object> extends Base
      * Create a migration schema
      */
     abstract createMigrationSchema(...args: any[]): Promise<unknown>;
+
+    /**
+     * Prepare a document for insertion or update.
+     * 
+     * @param document - The document to prepare.
+     * @param prepareOptions - Optional preparation options.
+     * @returns {T} The prepared document.
+     * @template T - The type of the prepared document.
+     */
+    prepareDocument<T extends object = object>(document: T, prepareOptions?: IPrepareOptions): T {
+        const preparedDocument: T = {...document}
+
+        for(const key in preparedDocument) {
+            if(prepareOptions?.jsonStringify?.includes(key)) {
+                preparedDocument[key as string] = JSON.stringify(preparedDocument[key as string])
+            }
+            if(prepareOptions?.jsonParse?.includes(key)) {
+                preparedDocument[key as string] = JSON.parse(preparedDocument[key as string])
+            }
+        }
+        
+        return preparedDocument
+    }
 
 }
 

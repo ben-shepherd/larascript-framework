@@ -69,6 +69,13 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
     public timestamps: boolean = true;
 
     /**
+     * List of fields that should be treated as JSON.
+     * These fields will be automatically stringified when saving to the database.
+     */
+    public json: string[] = [];
+
+
+    /**
      * List of relationships associated with the model.
      */
     public relationships: string[] = [];
@@ -170,6 +177,23 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
 
         return Model.formatTableName(table);
 
+    }
+
+    /**
+     * Prepares the document for saving to the database.
+     * Handles JSON stringification for specified fields.
+     * 
+     * @template T The type of the prepared document.
+     * @returns {T} The prepared document.
+     */
+    protected prepareDocument(): Attributes | null {
+        if(!this.attributes) {
+            return null
+        }
+
+        return db().getAdapter().prepareDocument<Attributes>(this.attributes, {
+            jsonStringify: this.json   
+        })
     }
 
     /**
@@ -479,6 +503,11 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
     }
 
     
+    /**
+     * Retrieves the entire model's data as an object.
+     * 
+     * @returns {Promise<Attributes | null>} The model's data as an object, or null if no data is set.
+     */
     async toObject(): Promise<Attributes | null> {
         return this.getData({ excludeGuarded: false });
     }
@@ -510,7 +539,8 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
     async update(): Promise<void> {
         if (!this.getId() || !this.attributes) return;
 
-        await this.queryBuilder().where(this.primaryKey, this.getId()).update(this.attributes);
+        const preparedAttributes = this.prepareDocument() ?? {};
+        await this.queryBuilder().where(this.primaryKey, this.getId()).update(preparedAttributes);
     }
 
 
@@ -526,7 +556,8 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
             await this.setTimestamp('createdAt');
             await this.setTimestamp('updatedAt');
 
-            this.attributes = await (await this.queryBuilder().insert(this.attributes)).first()?.toObject() as Attributes;
+            const preparedAttributes = this.prepareDocument() ?? {};
+            this.attributes = await (await this.queryBuilder().insert(preparedAttributes)).first()?.toObject() as Attributes;
             this.attributes = await this.refresh();
 
             this.attributes = await this.observeData('created', this.attributes);
