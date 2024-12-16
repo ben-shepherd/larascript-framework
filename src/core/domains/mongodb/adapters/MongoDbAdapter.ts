@@ -2,6 +2,7 @@ import BaseDatabaseAdapter from "@src/core/domains/database/base/BaseDatabaseAda
 import CreateDatabaseException from "@src/core/domains/database/exceptions/CreateDatabaseException";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import ParseMongoDBConnectionString from "@src/core/domains/mongodb/helper/ParseMongoDBConnectionUrl";
 import { IMongoConfig } from "@src/core/domains/mongodb/interfaces/IMongoConfig";
 import MongoDbDocumentManager from "@src/core/domains/mongodb/MongoDbDocumentManager";
@@ -12,7 +13,8 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
-import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
+
+import { db } from "../../database/services/Database";
 
 class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
 
@@ -131,7 +133,7 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
                 throw new CreateDatabaseException('Database name not found in connection string');
             }
 
-            await this.schema().createDatabase(database);
+            await db().schema().createDatabase(database);
         }
         catch (err) {
             App.container('logger').error(err);
