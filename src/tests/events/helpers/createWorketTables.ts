@@ -1,17 +1,21 @@
-import { App } from "@src/core/services/App";
+import { db } from "@src/core/domains/database/services/Database";
 import TestFailedWorkerModel from "@src/tests/models/models/TestFailedWorkerModel";
 import TestWorkerModel from "@src/tests/models/models/TestWorkerModel";
 import { DataTypes } from "sequelize";
 
-export const dropWorkerTables = async () => {
-    await App.container('db').schema().dropTable((new TestWorkerModel).table);
+const resetWorkerTables = async () => {
+    const workerTable = TestWorkerModel.getTable()
+    const workerFailedTable = TestFailedWorkerModel.getTable()
 
-    await App.container('db').schema().dropTable((new TestFailedWorkerModel).table);
-}
+    if(await db().schema().tableExists(workerTable)) {
+        await db().schema().dropTable(workerTable);
+    }
 
-export const createWorkerTables = async () => {
+    if(await db().schema().tableExists(workerFailedTable)) {
+        await db().schema().dropTable(workerFailedTable);
+    }
 
-    await App.container('db').schema().createTable((new TestWorkerModel).table, {
+    await db().schema().createTable(workerTable, {
         queueName: DataTypes.STRING,
         eventName: DataTypes.STRING,
         payload: DataTypes.JSON,
@@ -20,7 +24,7 @@ export const createWorkerTables = async () => {
         createdAt: DataTypes.DATE
     });
 
-    await App.container('db').schema().createTable((new TestFailedWorkerModel).table, {
+    await db().schema().createTable(workerFailedTable, {
         queueName: DataTypes.STRING,
         eventName: DataTypes.STRING,
         payload: DataTypes.JSON,
@@ -29,4 +33,4 @@ export const createWorkerTables = async () => {
     })
 }
 
-export default createWorkerTables
+export default resetWorkerTables
