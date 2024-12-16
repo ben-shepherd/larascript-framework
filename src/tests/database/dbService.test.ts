@@ -1,19 +1,17 @@
 /* eslint-disable no-undef */
 import { describe, expect } from '@jest/globals';
-import Database from '@src/core/domains/database/services/Database';
+import Database, { db } from '@src/core/domains/database/services/Database';
 import MongoDbAdapter from '@src/core/domains/mongodb/adapters/MongoDbAdapter';
 import PostgresAdapter from '@src/core/domains/postgres/adapters/PostgresAdapter';
 import { app } from '@src/core/services/App';
 import TestMigrationModel from '@src/tests/migration/models/TestMigrationModel';
 import testHelper from '@src/tests/testHelper';
 import { MongoClient } from 'mongodb';
-import { Sequelize } from 'sequelize';
+import pg from 'pg';
 
 describe('db service', () => {
 
-    
     let migrationTableName!: string;
-
 
     /**
      * Boot the MongoDB provider
@@ -21,12 +19,10 @@ describe('db service', () => {
     beforeAll(async () => {
         await testHelper.testBootApp()
 
-        migrationTableName = new TestMigrationModel(null).table;
+        migrationTableName = TestMigrationModel.getTable()
 
-        const db = app('db');
-
-        for(const connectionConfig of db.getConfig().connections) {
-            await db.schema(connectionConfig.connectionName).dropTable(migrationTableName);
+        for(const connectionName of testHelper.getTestConnectionNames()) {
+            await db().schema(connectionName).dropTable(migrationTableName);
         }
     })
 
@@ -34,11 +30,11 @@ describe('db service', () => {
     test('check db service',async () => {
         const db = app('db');
 
-        const expectedConnections = ['mongodb', 'postgres'];
-        const actualConnections = db.getConfig().connections.map(c => c.connectionName);
+        const expectedConnectionsInConfig = ['mongodb', 'postgres'];
+        const actualConnectionsInConfig = db.getConfig().connections.map(c => c.connectionName);
 
-        for(const connectionName of expectedConnections) {
-            expect(actualConnections.includes(connectionName)).toBe(true);
+        for(const connectionName of expectedConnectionsInConfig) {
+            expect(actualConnectionsInConfig.includes(connectionName)).toBe(true);
         }
 
         expect(db instanceof Database).toBeTruthy();
@@ -52,8 +48,12 @@ describe('db service', () => {
         expect(db.isConnectionAdapter(PostgresAdapter, 'postgres')).toBe(true);
         
         // Check clients
-        expect(db.getAdapter<MongoDbAdapter>('mongodb').getClient() instanceof MongoClient).toBeTruthy();
-        expect(db.getAdapter<PostgresAdapter>('postgres').getClient() instanceof Sequelize).toBeTruthy();
+        if(testHelper.getTestConnectionNames().includes('mongodb')) {
+            expect(db.getAdapter<MongoDbAdapter>('mongodb').getClient() instanceof MongoClient).toBeTruthy();
+        }
+        if(testHelper.getTestConnectionNames().includes('postgres')) {
+            expect(db.getAdapter<PostgresAdapter>('postgres').getPool() instanceof pg.Pool).toBeTruthy();
+        }
 
         // Check default connection name
         expect(db.getDefaultConnectionName() === 'postgres').toBe(true);
@@ -78,9 +78,9 @@ describe('db service', () => {
         }
         
         // Check create migration schema
-        for(const connectionConfig of db.getConfig().connections) {
-            await db.createMigrationSchema(migrationTableName, connectionConfig.connectionName);
-            const tableExists = await db.schema(connectionConfig.connectionName).tableExists(migrationTableName);
+        for(const connectionName of testHelper.getTestConnectionNames()) {
+            await db.createMigrationSchema(migrationTableName, connectionName);
+            const tableExists = await db.schema(connectionName).tableExists(migrationTableName);
             expect(tableExists).toBe(true);
         }
     });
