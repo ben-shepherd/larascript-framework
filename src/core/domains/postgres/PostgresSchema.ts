@@ -29,7 +29,7 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
      * @returns A promise that resolves when the database schema has been created
      */
     async createDatabase(name: string): Promise<void> {
-        const client = await this.adapter.getMongoClientWithData('postgres');
+        const client = await this.adapter.getPgClientWithDatabase('postgres');
         try {
             await client.connect()
             await client.query(`CREATE DATABASE ${name}`)
@@ -47,7 +47,7 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
          * @returns A promise that resolves to a boolean indicating whether the database exists
          */
     async databaseExists(name: string): Promise<boolean> {
-        const client = await this.adapter.getMongoClientWithData('postgres');
+        const client = await this.adapter.getPgClientWithDatabase('postgres');
         await client.connect()
         const result = await client.query(`SELECT FROM pg_database WHERE datname = '${name}'`)
         const dbExists = typeof result.rowCount === 'number' && result.rowCount > 0
@@ -62,7 +62,7 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
          * @returns A promise that resolves when the database has been dropped.
          */
     async dropDatabase(name: string): Promise<void> {
-        const client = await this.adapter.getMongoClientWithData('postgres');
+        const client = await this.adapter.getPgClientWithDatabase('postgres');
 
         try {
             await client.connect();

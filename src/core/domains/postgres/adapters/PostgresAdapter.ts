@@ -83,6 +83,8 @@ class PostgresAdapter extends BaseDatabaseAdapter<IPostgresConfig>  {
         await this.createDefaultDatabase()
 
         const { username: user, password, host, port, database} = ParsePostgresConnectionUrl.parse(this.config.uri);
+
+        await this.getSequelize()
         
         this.pool = (
             new pg.Pool({
