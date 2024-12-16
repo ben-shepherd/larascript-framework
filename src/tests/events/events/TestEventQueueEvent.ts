@@ -1,7 +1,7 @@
 
 import BaseEvent from "@src/core/domains/events/base/BaseEvent";
 import QueueableDriver from "@src/core/domains/events/drivers/QueableDriver";
-import { App } from "@src/core/services/App";
+import { events } from "@src/core/domains/events/services/EventService";
 import TestEventQueueCalledFromWorkerEvent from "@src/tests/events/events/TestEventQueueCalledFromWorkerEvent";
 
 class TestEventQueueEvent extends BaseEvent {
@@ -24,8 +24,7 @@ class TestEventQueueEvent extends BaseEvent {
 
     async execute(): Promise<void> {
         console.log('Executed TestEventQueueEvent', this.getPayload(), this.getName())
-
-        App.container('events').dispatch(new TestEventQueueCalledFromWorkerEvent(this.getPayload()))
+        events().dispatch(new TestEventQueueCalledFromWorkerEvent(this.getPayload()))
     }
 
 }
