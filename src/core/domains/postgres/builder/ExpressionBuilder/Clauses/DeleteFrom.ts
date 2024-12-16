@@ -1,5 +1,7 @@
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
 
+import SqlExpression from "../SqlExpression";
+
 class DeleteFrom {
 
     /**
@@ -10,6 +12,8 @@ class DeleteFrom {
      * @returns The SQL string for the FROM clause.
      */
     static toSql(table: string, abbreviation?: string | null): string {
+        table = SqlExpression.formatTableNameWithQuotes(table);
+
         if(table?.length === 0) {
             throw new ExpressionException('Table name is required');
         }
