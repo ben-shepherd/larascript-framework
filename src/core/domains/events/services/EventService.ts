@@ -1,5 +1,6 @@
  
 import BaseEventListener from "@src/core/domains/events/base/BaseEventListener";
+import BaseEventService from "@src/core/domains/events/base/BaseEventService";
 import EventDispatchException from "@src/core/domains/events/exceptions/EventDispatchException";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
@@ -8,9 +9,22 @@ import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventC
 import { IEventDriversConfigOption } from "@src/core/domains/events/interfaces/config/IEventDriversConfig";
 import { IEventListenersConfig, TListenersConfigOption } from "@src/core/domains/events/interfaces/config/IEventListenersConfig";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import BaseEventService from "@src/core/domains/events/base/BaseEventService";
+import { app } from "@src/core/services/App";
 
+/**
+ * Short hand for `app('events')`
+ */
+export const events = () => app('events');
 
+/**
+ * The event service is responsible for managing the event system.
+ * It provides features like dispatching events, registering event listeners
+ * and drivers.
+ * 
+ * @class EventService
+ * @extends BaseEventService
+ * @implements IEventService
+ */
 class EventService extends BaseEventService implements IEventService {
     
     constructor(config: IEventConfig) {
