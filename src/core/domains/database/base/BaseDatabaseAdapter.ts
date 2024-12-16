@@ -103,10 +103,14 @@ abstract class BaseDatabaseAdapter<TConfig extends object = object> extends Base
 
         for(const key in preparedDocument) {
             if(prepareOptions?.jsonStringify?.includes(key)) {
-                preparedDocument[key as string] = JSON.stringify(preparedDocument[key as string])
+                if(typeof preparedDocument[key as string] === 'object') {
+                    preparedDocument[key as string] = JSON.stringify(preparedDocument[key as string])
+                }
             }
             if(prepareOptions?.jsonParse?.includes(key)) {
-                preparedDocument[key as string] = JSON.parse(preparedDocument[key as string])
+                if(typeof preparedDocument[key as string] === 'string') {
+                    preparedDocument[key as string] = JSON.parse(preparedDocument[key as string])
+                }
             }
         }
         
