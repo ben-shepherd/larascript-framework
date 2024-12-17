@@ -5,11 +5,6 @@
 export interface IDatabaseSchema {
 
     /**
-     * Get the name of the table associated with this schema
-     */
-    formatTableName(tableName: string): string;
-
-    /**
      * Creates a new database schema.
      * If the database already exists, this method does nothing.
      * If the database does not exist, this method creates a new database schema.
