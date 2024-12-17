@@ -44,10 +44,6 @@ export default class TestDepartmentModel extends Model<ITestDepartmentModelData>
         'updatedAt'
     ];
 
-    // async employeesLegacy(): Promise<TestEmployeeModel[]> {
-    //     return this.hasMany(TestEmployeeModel, { foreignKey: 'deptId', localKey: 'id' });
-    // }
-
     employees(): HasMany {
         return this.hasMany(TestEmployeeModel, { foreignKey: 'deptId', localKey: 'id' });
     }
