@@ -6,13 +6,14 @@ import { IBelongsToOptions, IEloquent, IHasManyOptions, IRelationship, IdGenerat
 import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
 import HasMany from '@src/core/domains/eloquent/relational/HasMany';
 import EloquentRelationship from '@src/core/domains/eloquent/utils/EloquentRelationship';
-import OnAttributeChangeBroadcastEvent from '@src/core/events/concerns/HasAttribute/OnAttributeChangeBroadcastEvent';
 import { ICtor } from '@src/core/interfaces/ICtor';
 import { GetAttributesOptions, IModel, ModelConstructor } from '@src/core/interfaces/IModel';
 import IModelAttributes from '@src/core/interfaces/IModelData';
 import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
 import { app } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
+
+import AttributeChangeListener from '../broadcast/AttributeChangeListener';
  
 
 /**
@@ -254,10 +255,21 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
             this.attributes[key] = value as Attributes[K];
         }
 
+        // Subscribe to the event
+        this.broadcastSubscribeOnce<AttributeChangeListener>({
+            listener: AttributeChangeListener,
+            callback: async (event) => {
+                this.attributes = event.attributes as Attributes
+            }
+        })
+
         // Broadcast the event 
-        // Observer will receive the event
-        this.broadcast(
-            new OnAttributeChangeBroadcastEvent({ key: key as string, value, attributes: this.attributes })
+        this.broadcastDispatch(
+            new AttributeChangeListener({
+                key: key as string,
+                value,
+                attributes: this.attributes
+            })
         )
     }
     

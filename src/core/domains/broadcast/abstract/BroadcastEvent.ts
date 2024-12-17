@@ -1,36 +1,51 @@
-import { IBroadcastEvent } from "@src/core/domains/broadcast/interfaces/IBroadcastEvent";
+import { ICtor } from "@src/core/interfaces/ICtor";
 
-abstract class BroadcastEvent implements IBroadcastEvent {
+import { IBroadcastListener } from "../interfaces/IBroadcaster";
 
-    protected payload!: unknown;
+/**
+ * Abstract base class for events that can be broadcasted.
+ * 
+ * This class serves as a base for creating events that can be broadcasted to communicate changes or actions between different parts of an application. 
+ * It helps decouple the components by allowing them to listen for and respond to specific events, rather than relying on direct method calls. 
+ * This is particularly useful in systems where multiple components need to be notified about changes or actions, such as in an observer pattern implementation.
+ *
+ * @template Payload The type of the payload of the event.
+ */
+abstract class BroadcastListener<Payload extends object> implements IBroadcastListener<Payload> {
 
     /**
-     * Constructor
-     *
+     * The payload of the event.
+     */
+    payload!: Payload;
+
+    /**
      * @param payload The payload of the event.
      */
-    constructor(payload: unknown) {
+    constructor(payload: Payload) {
         this.payload = payload
     }
 
     /**
-     * Returns the name of the event.
-     *
-     * @returns The name of the event.
+     * @returns The name of the event as a string.
      */
-    abstract getName(): string;
+    static getName(): string {
+        return new (this as unknown as ICtor<IBroadcastListener>)({}).getListenerName()
+    }
 
     /**
-     * Returns the payload of the event.
-     *
+     * @returns The name of the event.
+     */
+    abstract getListenerName(): string;
+
+    /**
      * @template T The type of the payload to return.
      * @returns The payload of the event.
      */
-    getPayload<T = unknown>(): T {
-        return this.payload as T
+    getPayload(): Payload {
+        return this.payload
     }
         
     
 }
 
-export default BroadcastEvent
+export default BroadcastListener

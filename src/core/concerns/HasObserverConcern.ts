@@ -1,10 +1,11 @@
 import { IBroadcaster } from "@src/core/domains/broadcast/interfaces/IBroadcaster";
 import IHasObserver, { ObserveConstructor } from "@src/core/domains/observer/interfaces/IHasObserver";
 import { IObserver, IObserverEvent } from "@src/core/domains/observer/interfaces/IObserver";
-import OnAttributeChangeBroadcastEvent, { OnAttributeChangeBroadcastEventPayload } from "@src/core/events/concerns/HasAttribute/OnAttributeChangeBroadcastEvent";
-import SetAttributeBroadcastEvent from "@src/core/events/concerns/HasAttribute/SetAttributeBroadcastEvent";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import IModelAttributes from "@src/core/interfaces/IModelData";
+import { z } from "zod";
+
+import AttributeChangeListener, { AttributeChangePayload } from "../models/broadcast/AttributeChangeListener";
 
 /**
  * Attaches an observer to a model.
@@ -28,11 +29,10 @@ const HasObserverConcern = (Broadcaster: ICtor<IBroadcaster>) => {
         constructor() {
             super()
 
-            this.subscribeToBroadcastListener(
-                this.constructor.name,
-                OnAttributeChangeBroadcastEvent.eventName,
-                async (payload) => await this.onAttributeChange(payload)
-            )
+            this.broadcastSubscribe<AttributeChangeListener>({
+                listener: AttributeChangeListener,
+                callback: async (payload) => await this.onAttributeChange(payload)
+            })
         }
 
         /**
@@ -50,7 +50,7 @@ const HasObserverConcern = (Broadcaster: ICtor<IBroadcaster>) => {
         /**
          * Called when a HasAttributeBroadcastEvent is triggered from a model with the HasAttributes concern.
          * 
-         * @param {OnAttributeChangeBroadcastEventPayload} event - The event payload
+         * @param {Payload} event - The event payload
          * @param {string} event.key - The key of the attribute that changed
          * @param {any} event.value - The new value of the attribute
          * @param {IModelAttributes} event.attributes - The attributes of the model that triggered the event
@@ -60,18 +60,26 @@ const HasObserverConcern = (Broadcaster: ICtor<IBroadcaster>) => {
          * 
          * @returns {void}
          */
-        // eslint-disable-next-line no-unused-vars
-        async onAttributeChange ({ key, value, attributes }: OnAttributeChangeBroadcastEventPayload): Promise<void> {
+         
+        async onAttributeChange ({ key, value, attributes }: AttributeChangePayload): Promise<void> {
             if(Object.keys(this.observeProperties).includes(key)) {
+
+                const schema = z.object({
+                    key: z.string(),
+                    value: z.any(),
+                    attributes: z.object({})
+                })
+                schema.parse({ key, value, attributes })
 
                 const data = await this.observeDataCustom<IModelAttributes>(this.observeProperties[key] as keyof IObserver, value)
 
-                this.broadcast(
-                    new SetAttributeBroadcastEvent({
+                this.broadcastDispatch(
+                    new AttributeChangeListener({
                         key,
-                        value: data
+                        value: data,
+                        attributes
                     })
-                )
+                );
             }
         }
     

@@ -38,6 +38,12 @@ describe('test model observer', () => {
             logger().console('[Connection]', connectionName)
 
             await resetTable();
+
+            const startingNameValue = 'John';
+            const expectedNameValue = 'Bob';
+
+            const startingNumberValue = 0;
+            const expectedNumberValue = 1;
         
             /**
              * Create a model
@@ -47,15 +53,19 @@ describe('test model observer', () => {
              * = On setting the name, it will set the name to 'Bob'
              */ 
             const createdModel = new TestObserverModel({
-                name: 'John',
-                number: 0
+                name: startingNameValue,
+                number: startingNumberValue
             });
             await createdModel.save();
-            expect(createdModel.getAttributeSync('name')).toEqual('John');
-            expect(createdModel.getAttributeSync('number')).toEqual(1);
 
-            await createdModel.setAttribute('name', 'Jane');
-            expect(createdModel.getAttributeSync('name')).toEqual('Bob');
+            // Name should not have been modified
+            expect(createdModel.getAttributeSync('name')).toEqual(startingNameValue);
+            // Only the 'number' attribute should have been modified
+            expect(createdModel.getAttributeSync('number')).toEqual(expectedNumberValue);
+
+            // On setting the name, it will set the name to 'Bob'
+            await createdModel.setAttribute('name', 'new name');
+            expect(createdModel.getAttributeSync('name')).toEqual(expectedNameValue);
 
 
         }

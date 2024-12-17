@@ -2,24 +2,21 @@
 
 import HasObserverConcern from '@src/core/concerns/HasObserverConcern';
 import Broadcaster from '@src/core/domains/broadcast/abstract/Broadcaster';
+import { IBroadcastListener, IBroadcastSubscribeOptions } from '@src/core/domains/broadcast/interfaces/IBroadcaster';
 import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
 import { IObserver } from '@src/core/domains/observer/interfaces/IObserver';
 import compose from '@src/core/util/compose';
-import { IBroadcastEvent } from '@src/core/domains/broadcast/interfaces/IBroadcastEvent';
-import { BroadcastCallback } from '@src/core/domains/broadcast/interfaces/IBroadcaster';
 
 class BaseModel extends compose(class extends Broadcaster {}, HasObserverConcern) {
 
     /**
    * Declare HasBroadcaster concern
    */
-    declare broadcast: (event: IBroadcastEvent) => Promise<void>;
+    declare broadcastDispatch: (listener: IBroadcastListener) => Promise<void>;
 
-    declare createBroadcastListener: (eventName: string) => void;
+    declare broadcastSubscribe: <Listener extends IBroadcastListener = IBroadcastListener>(options: IBroadcastSubscribeOptions<Listener>) => void;
 
-    declare subscribeToBroadcastListener: (id: string, eventName: string, callback: BroadcastCallback) => void;
-
-    declare unsubscribeFromBroadcastListener: (id: string, eventName: string) => void;
+    declare broadcastSubscribeOnce: <Listener extends IBroadcastListener = IBroadcastListener>(options: IBroadcastSubscribeOptions<Listener>) => void;
     
         
     /**

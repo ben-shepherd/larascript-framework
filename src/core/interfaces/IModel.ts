@@ -1,9 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { IBelongsToOptionsLegacy } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
 import { IdGeneratorFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
-import BelongsTo from "@src/core/domains/eloquent/relational/BelongsTo";
 import IHasObserver from "@src/core/domains/observer/interfaces/IHasObserver";
-import { ICtor } from "@src/core/interfaces/ICtor";
 import IModelAttributes from "@src/core/interfaces/IModelData";
 
 
@@ -57,5 +54,4 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes> 
     update(): Promise<void>;
     save(): Promise<void>;
     delete(): Promise<void>;
-    belongsTo<ForiegnModel extends IModel = IModel>(foreignModel: ICtor<ForiegnModel>, options: Omit<IBelongsToOptionsLegacy, 'foreignTable'>): BelongsTo;
 }
