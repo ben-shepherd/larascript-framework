@@ -101,7 +101,8 @@ class Where {
 
             // Example: "table."
             if(currentWhereSql.tableName) {
-                sql += currentWhereSql.tableName + '.'
+                const tableName = SqlExpression.formatTableNameWithQuotes(currentWhereSql.tableName)
+                sql += tableName + '.'
             }
 
             // Example: "column"
@@ -156,7 +157,8 @@ class Where {
 
         // If there is a next parsed, append the logical operator (AND, OR)
         if(nextWhereSql) {
-            return nextWhereSql.logicalOperator?.toUpperCase() + ' '
+            const logicalOperator = nextWhereSql.logicalOperator ?? LogicalOperators.AND
+            return logicalOperator.toUpperCase() + ' '
         }
 
         // Otherwise, use the default logical operator (AND)
@@ -170,10 +172,13 @@ class Where {
      * @returns {string} The SQL string for the WHERE clause.
      */
     whereRaw({sql, bindings }: RawWhere): string {
-        let bindingsArray = Array.isArray(bindings) ? bindings : [bindings]
-        bindingsArray = bindingsArray.filter(binding => typeof binding !== 'undefined')
-
-        this.bindings.addBinding(null, bindingsArray)
+        if(Array.isArray(bindings)) {
+            bindings.forEach(binding => this.bindings.addBinding(null, binding));
+        }
+        else {
+            this.bindings.addBinding(null, bindings);
+        }
+        
         return `WHERE ${sql}`;
     }
 
@@ -213,11 +218,11 @@ class Where {
             convertedWhere.logicalOperator = undefined
         }
         else if (filter.operator === 'like') {
-            convertedWhere.operator = 'LIKE';
+            convertedWhere.operator = 'ILIKE';
             convertedWhere.value = this.getValueStringAndAddBinding(convertedWhere.value as TWhereClauseValue);
         }
         else if (filter.operator === 'not like') {
-            convertedWhere.operator = 'NOT LIKE';
+            convertedWhere.operator = 'NOT ILIKE';
             convertedWhere.value = this.getValueStringAndAddBinding(convertedWhere.value as TWhereClauseValue);
         }
         else if (filter.operator === 'is null') {

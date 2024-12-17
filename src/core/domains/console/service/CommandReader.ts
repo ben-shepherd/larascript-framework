@@ -6,15 +6,19 @@ import { App } from "@src/core/services/App";
 
 export default class CommandReader implements ICommandReader {
 
-    private argv: string[] = [];
+    /**
+     * Command signature
+     * 
+     *  Example:
+            ["--id=123", "--name=\"My Name\""]
+     */
+    private readonly argv: string[] = [];
 
     /**
      * Command signature
      * 
      *  Example:
-     *      my:command --id=123 --name="My Name"
-     * 
-     * @param argv 
+            ["my:command", "--id=123", "--name=\"My Name\""]
      */
     constructor(argv: string[]) {
         this.argv = argv;   

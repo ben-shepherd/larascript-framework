@@ -8,6 +8,7 @@ import { DataTypes } from "sequelize";
  * @returns {Promise<void>}
  */
 const createMigrationSchemaPostgres = async (adapter: PostgresAdapter, tableName: string = 'migrations') => {
+    
     const sequelize = adapter.getSequelize();
     const queryInterface = sequelize.getQueryInterface();
 

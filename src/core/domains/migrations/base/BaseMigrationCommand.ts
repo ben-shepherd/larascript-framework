@@ -30,7 +30,8 @@ abstract class BaseMigrationCommand extends BaseCommand {
 
         return new MigrationService({
             migrationType: MigrationTypeEnum.schema,
-            directory: this.config.schemaMigrationDir
+            directory: this.config.schemaMigrationDir,
+            modelCtor: this.config.modelCtor,
         });
     }
 
@@ -45,7 +46,8 @@ abstract class BaseMigrationCommand extends BaseCommand {
 
         return new MigrationService({
             migrationType: MigrationTypeEnum.seeder,
-            directory: this.config.seederMigrationDir
+            directory: this.config.seederMigrationDir,
+            modelCtor: this.config.modelCtor,
         });
     }
 

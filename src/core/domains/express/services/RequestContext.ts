@@ -2,7 +2,13 @@ import Singleton from "@src/core/base/Singleton";
 import { IPContextData, IRequestContext, IRequestContextData } from "@src/core/domains/express/interfaces/ICurrentRequest";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import getIpAddress from "@src/core/domains/express/utils/getIpAddress";
+import { app } from "@src/core/services/App";
 
+/**
+ * Short hand for `app('requestContext')`
+ * @returns 
+ */
+export const requestContext = () => app('requestContext');
 
 /**
  * Current request service

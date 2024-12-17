@@ -15,8 +15,6 @@ class LoggerProvider extends BaseProvider {
     
     }
 
-    async boot(): Promise<void> {}
-
 }
 
 export default LoggerProvider

@@ -23,7 +23,7 @@ export const RouteResourceTypes = {
 } as const
 
 /**
- * Returns a group of routes for a given resource
+ * Returns an array of routes for a given resource
  * - name.index - GET - /name
  * - name.show - GET - /name/:id
  * - name.update - PUT - /name/:id

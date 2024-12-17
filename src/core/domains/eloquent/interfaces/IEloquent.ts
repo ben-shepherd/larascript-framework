@@ -80,12 +80,19 @@ export interface IRelationship {
     getLocalModelCtor(): ModelConstructor<IModel>;
     getForeignModelCtor(): ModelConstructor<IModel>;
     getForeignTableName(): string;
-    getOptions(): IBelongsToOptions
+    getOptions<T extends object = object>(): T
     getLocalKey(): string;
     getForeignKey(): string;
 }
 
 export interface IBelongsToOptions {
+    localKey: keyof IModelAttributes;
+    foreignKey?: keyof IModelAttributes;
+    foreignTable: string;
+    filters?: object;
+}
+
+export interface IHasManyOptions {
     localKey: keyof IModelAttributes;
     foreignKey?: keyof IModelAttributes;
     foreignTable: string;
@@ -182,6 +189,7 @@ export interface IEloquent<Model extends IModel = IModel> {
     distinct(columns: string | string[]): IEloquent<Model>;
 
     // Where methods
+    where(filters: object, operator?: TOperator): IEloquent<Model>;
     where(column: string, value?: TWhereClauseValue): IEloquent<Model>;
     where(column: string, operator?: TOperator, value?: TWhereClauseValue, logicalOperator?: TLogicalOperator): IEloquent<Model>;
     whereRaw<Q = unknown, Bindings = unknown>(query: Q, bindings?: Bindings): IEloquent<Model>;

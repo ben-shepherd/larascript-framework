@@ -8,7 +8,7 @@ import { app } from "@src/core/services/App";
  * @param modelCtor 
  * @returns 
  */
-export const queryBuilder = <Model extends IModel>(modelCtor: ModelConstructor<Model>): IEloquent<Model> => app('query').builder(modelCtor);
+export const queryBuilder = <Model extends IModel>(modelCtor: ModelConstructor<Model>, connectionName?: string): IEloquent<Model> => app('query').builder(modelCtor, connectionName);
 
 /**
  * Eloquent query service
@@ -20,18 +20,19 @@ class EloquentQueryBuilderService implements IEloquentQueryBuilderService {
      * @param modelCtor The constructor of the model to query.
      * @returns A query builder instance associated with the model.
      */
-    builder<Model extends IModel>(modelCtor: ModelConstructor<Model>): IEloquent<Model> {
+    builder<Model extends IModel>(modelCtor: ModelConstructor<Model>, connectionName?: string): IEloquent<Model> {
         const model = new modelCtor(null)
+        const tableName = modelCtor.getTable()
         
         const eloquentConstructor = app('db')
             .getAdapter(model.connection)
             .getEloquentConstructor<Model>()
 
         return new eloquentConstructor()
-            .setConnectionName(model.connection)
+            .setConnectionName(connectionName ?? model.connection)
             .setModelCtor(modelCtor)
             .setModelColumns(modelCtor)
-            .setTable(model.useTableName())
+            .setTable(tableName)
             .setFormatter((result) => modelCtor.create<Model>(result as Model['attributes'] | null))
             .setIdGenerator(model.getIdGeneratorFn());
     }

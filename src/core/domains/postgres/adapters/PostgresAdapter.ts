@@ -1,7 +1,10 @@
 import { EnvironmentProduction } from "@src/core/consts/Environment";
 import BaseDatabaseAdapter from "@src/core/domains/database/base/BaseDatabaseAdapter";
+import { IDatabaseGenericConnectionConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import PostgresEloquent from "@src/core/domains/postgres/eloquent/PostgresEloquent";
 import ParsePostgresConnectionUrl from "@src/core/domains/postgres/helper/ParsePostgresConnectionUrl";
 import { IPostgresConfig } from "@src/core/domains/postgres/interfaces/IPostgresConfig";
 import PostgresDocumentManager from "@src/core/domains/postgres/PostgresDocumentManager";
@@ -13,9 +16,9 @@ import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import pg from 'pg';
 import { QueryInterface, Sequelize } from "sequelize";
-import { IDatabaseGenericConnectionConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
-import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
-import PostgresEloquent from "@src/core/domains/postgres/eloquent/PostgresEloquent";
+import { logger } from "@src/core/domains/logger/services/LoggerService";
+
+
 
 /**
  * PostgresAdapter is responsible for managing the connection and operations with a PostgreSQL database.
@@ -81,6 +84,17 @@ class PostgresAdapter extends BaseDatabaseAdapter<IPostgresConfig>  {
         await this.createDefaultDatabase()
 
         const { username: user, password, host, port, database} = ParsePostgresConnectionUrl.parse(this.config.uri);
+
+        if(this.sequelize) {
+            await this.sequelize.close();
+        }
+
+        await this.getSequelize()
+
+        if (this.pool) {
+            await this.pool.end();
+        }
+        
         
         this.pool = (
             new pg.Pool({
@@ -92,6 +106,10 @@ class PostgresAdapter extends BaseDatabaseAdapter<IPostgresConfig>  {
             })
         )
         await this.pool.connect();
+
+        this.pool.on('error', (err) => {
+            logger().error('[Postgres] Pool error: ', err);
+        })
     }
 
     /**
@@ -124,7 +142,7 @@ class PostgresAdapter extends BaseDatabaseAdapter<IPostgresConfig>  {
             await client.query('CREATE DATABASE ' + credentials.database);
         }
         catch (err) {
-            App.container('logger').error(err);
+            logger().error(err);
         }
         finally {
             await client.end();
@@ -214,7 +232,7 @@ class PostgresAdapter extends BaseDatabaseAdapter<IPostgresConfig>  {
      * @returns {pg.Client} A new instance of PostgreSQL client.
      */
     getPgClientWithDatabase(database: string = 'postgres'): pg.Client {
-        const { username: user, password, host, port} = ParsePostgresConnectionUrl.parse(this.config.uri);
+        const { username: user, password, host, port } = ParsePostgresConnectionUrl.parse(this.config.uri);
     
         return new pg.Client({
             user,
@@ -225,6 +243,27 @@ class PostgresAdapter extends BaseDatabaseAdapter<IPostgresConfig>  {
         });
     }
     
+    /**
+     * Close the database connection.
+     *
+     * This method is a wrapper around the close method of the underlying
+     * PostgreSQL client. It is used to close the database connection when
+     * the application is shutting down or when the database connection is
+     * no longer needed.
+     *
+     * @returns {Promise<void>} A promise that resolves when the connection is closed.
+     */
+    async close(): Promise<void> {
+        if(this.sequelize) {
+            await this.sequelize.close();
+            this.sequelize = undefined as unknown as Sequelize;
+        }
+        if(this.pool) {
+            await this.pool.end();
+            this.pool = undefined as unknown as pg.Pool;
+        }
+    }
+
 }
 
 export default PostgresAdapter

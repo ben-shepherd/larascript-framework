@@ -3,8 +3,8 @@ import { describe } from '@jest/globals';
 import Collection from '@src/core/domains/collections/Collection';
 import { IEloquent } from '@src/core/domains/eloquent/interfaces/IEloquent';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
-import testHelper from '@src/tests/testHelper';
 import TestPeopleModel, { resetPeopleTable } from '@src/tests/eloquent/models/TestPeopleModel';
+import testHelper from '@src/tests/testHelper';
 
 const getYearsDate = (year: number): Date => {
     const date = new Date();
@@ -82,6 +82,22 @@ describe('eloquent', () => {
             .get();
         expect(resultsOnlyJohn.count()).toBe(1);
         expect(resultsOnlyJohn[0].name).toBe('John');
+
+    })
+
+    test('test filters with object', async () => {
+        
+        const resultsJohnExactMatchNotFound = await query.clone()
+            .where({ name: 'john' })
+            .first()
+        expect(resultsJohnExactMatchNotFound).toBe(null);
+
+        const resultsOnlyJohnFoundUsingLike = await query.clone()
+            .where({ name: 'john' }, 'like')
+            .first()
+
+        expect(resultsOnlyJohnFoundUsingLike?.id).toBe(inserted[2].id);
+
 
     })
 

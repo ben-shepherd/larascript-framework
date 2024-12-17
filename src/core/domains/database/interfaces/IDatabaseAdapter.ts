@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
+import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
-import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
 export type TAdapterComposerFileName = {
 
@@ -38,4 +39,8 @@ export interface  IDatabaseAdapter {
     getDefaultCredentials(): string | null;
 
     createMigrationSchema(...args: any[]): Promise<unknown>;
+
+    prepareDocument<T extends object = object>(document: T, prepareOptions?: IPrepareOptions): T;
+
+    close(): Promise<void>;
 }

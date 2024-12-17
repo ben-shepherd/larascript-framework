@@ -1,31 +1,42 @@
 import Singleton from "@src/core/base/Singleton";
 import { SearchOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
-import { App } from "@src/core/services/App";
 import { Request } from "express";
+import { logger } from "@src/core/domains/logger/services/LoggerService";
+import QueryFiltersException from "@src/core/domains/express/exceptions/QueryFiltersException";
 
 class QueryFilters extends Singleton {
 
     protected filters: object | undefined = undefined
 
-
     /**
      * Parses the request object to extract the filters from the query string
      * 
      * @param {Request} req - The Express Request object
+     * @throws {QueryFiltersException} Throws an exception if the filters are not a string or an object
      * @returns {this} - The QueryFilters class itself to enable chaining
      */
     parseRequest(req: Request, options: SearchOptions = {} as SearchOptions): this {
         try {
             const { fields = [] } = options;
-            const decodedQuery = decodeURIComponent(req.query?.filters as string ?? '');
-            const filtersParsed: object = JSON.parse(decodedQuery ?? '{}');
+            let decodedFilters: object = {};
+
+            if(typeof req.query?.filters === 'string') {
+                decodedFilters = JSON.parse(decodeURIComponent(req.query?.filters)) ?? {};
+            }
+            else if(typeof req.query.filters === 'object') {
+                decodedFilters = req.query?.filters ?? {};
+            }
+            else {
+                throw new QueryFiltersException('Filters must be a string or an object')
+            }
+            
             let filters: object = {};
 
             fields.forEach((field: string) => {
-                if (field in filtersParsed) {
+                if (field in decodedFilters) {
                     filters = {
                         ...filters,
-                        [field]: filtersParsed[field]
+                        [field]: decodedFilters[field]
                     }
                 }
             })
@@ -34,7 +45,7 @@ class QueryFilters extends Singleton {
         }
          
         catch (err) { 
-            App.container('logger').error(err)
+            logger().error(err)
         }
 
         return this;

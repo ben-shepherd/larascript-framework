@@ -1,8 +1,8 @@
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
-import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
-import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 
 /**
  * Base class for repositories
@@ -88,8 +88,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
             builder.where(key, filter[key]);
         })
 
-        const data = await builder.first();
-        return data ? this.modelConstructor.create(data) : null;
+        return await builder.first();
     }
 
     /**

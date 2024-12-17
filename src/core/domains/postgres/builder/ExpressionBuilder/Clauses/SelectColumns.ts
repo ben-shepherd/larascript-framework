@@ -63,6 +63,12 @@ class SelectColumns {
         // Format the columns
         options = SqlExpression.prepareColumnOptions(options);
 
+        // Prepare table
+        options = options.map(option => {
+            option.tableName = option.tableName ? SqlExpression.formatTableNameWithQuotes(option.tableName) : option.tableName
+            return option
+        })
+
         // Add table name and alias
         return options.filter(option => option.column !== null).map(option => {
             let columnString = option.column

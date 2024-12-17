@@ -1,3 +1,4 @@
+import SqlExpression from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 
 class FromTable {
 
@@ -9,6 +10,8 @@ class FromTable {
      * @returns The SQL string for the FROM clause.
      */
     static toSql(table: string, abbreviation?: string | null): string {
+        table = SqlExpression.formatTableNameWithQuotes(table);
+
         let sql = `FROM ${table}`;
 
         if(abbreviation) {

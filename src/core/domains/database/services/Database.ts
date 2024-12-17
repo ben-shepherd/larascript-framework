@@ -6,13 +6,12 @@ import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabas
 import { IDatabaseConfig, IDatabaseGenericConnectionConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IDatabaseService } from "@src/core/domains/database/interfaces/IDatabaseService";
-import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import DatabaseAdapter from "@src/core/domains/database/services/DatabaseAdapter";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
 /**
- * Short alias for App.container('db')
+ * Short alias for app('db')
  * @returns 
  */
 export const db = () => App.container('db')
@@ -23,6 +22,12 @@ export const db = () => App.container('db')
  * @returns 
  */
 export const schema = (connectionName: string = db().getDefaultConnectionName()) => db().schema(connectionName)
+
+/**
+ * Short alias for db().getAdapter<AdapterType>(connectionName)
+ * @param connectionName 
+ */
+export const databaseAdapter = <T extends IDatabaseAdapter = IDatabaseAdapter>(connectionName: string) => db().getAdapter<T>(connectionName) 
 
 /**
  * Database Service
@@ -305,17 +310,6 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
         const adapterCtor = this.getAdapterConstructor(adapterName)
         const adapter = new adapterCtor('', {})
         return adapter.getDefaultCredentials()
-    }
-
-    /**
-     * Get the DocumentManager service
-     * 
-     * @param connectionName 
-     * @returns 
-     * @deprecated
-     */
-    documentManager<TDocMan extends IDocumentManager = IDocumentManager>(connectionName: string = this.getDefaultConnectionName()): TDocMan {
-        return this.getAdapter(connectionName).getDocumentManager() as TDocMan
     }
     
     /**

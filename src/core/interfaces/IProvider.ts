@@ -29,10 +29,4 @@ export interface IProvider {
      */
     boot(): Promise<void>;
 
-    /**
-     * Gets the name of the provider
-     *
-     * @returns {string|null} - The name of the provider, or null if not set
-     */
-    getProviderName(): string | null;
 }

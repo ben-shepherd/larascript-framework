@@ -8,7 +8,7 @@ class SeedCommand extends BaseMigrationCommand {
      */
     public signature: string = 'db:seed';
 
-    description = 'Run all seeders';
+    description = 'Run all seeders. Usage: db:seed --file=filename --group=group';
 
 
     /**

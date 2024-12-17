@@ -1,6 +1,6 @@
 
 import GenericRelationship from "@src/core/domains/eloquent/relational/GenericRelationship";
 
-class BelongsTo extends GenericRelationship {}
+class HasMany extends GenericRelationship {}
 
-export default BelongsTo
+export default HasMany

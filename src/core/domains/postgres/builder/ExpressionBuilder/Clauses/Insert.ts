@@ -1,4 +1,5 @@
 import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
+import SqlExpression from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 
 class Insert {
 
@@ -30,6 +31,7 @@ class Insert {
      * @returns {string} The SQL string for the INSERT query.
      */
     public static createInsertStatement(table: string, document: object, bindings: BindingsHelper): string {
+        table = SqlExpression.formatTableNameWithQuotes(table);
         const columns = Object.keys(document);
         const values = Object.values(document);
         return `INSERT INTO ${table} ${this.columns(columns)}${this.values(columns, values, bindings)}${this.returning(columns)};`;

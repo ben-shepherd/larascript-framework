@@ -1,5 +1,5 @@
-import { types } from "pg";
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
+import { types } from "pg";
 
 export type TBinding = {
     sql: string;
@@ -41,27 +41,26 @@ class BindingsHelper {
      * is the value that will be bound to the placeholder.
      * @param {unknown} value The value to bind.
      */
-    addBinding(column: string | null, values: unknown): this {
-        const valuesArray: unknown[] = Array.isArray(values) ? values : [values];
+    addBinding(column: string | null, value: unknown): this {
 
-        for(const value of valuesArray) {
-
-            // If the column has a type, add it to the binding
-            // This might look like $1::uuid
-            let suffix = '';
-            if(column &&this.columnTypes[column]) {
-                suffix = '::' + BindingsHelper.getPgEnumValue(this.columnTypes[column])
-            }
-
-            const type = column ? this.columnTypes[column] : undefined
-
-            this.bindings.push({
-                sql: '$' + this.getNextBindingSql() + suffix,
-                value,
-                type: type ?? undefined
-            })   
+        if(typeof value === 'undefined') {
+            return this
         }
 
+        // If the column has a type, add it to the binding
+        // This might look like $1::uuid
+        let suffix = '';
+        if(column &&this.columnTypes[column]) {
+            suffix = '::' + BindingsHelper.getPgEnumValue(this.columnTypes[column])
+        }
+
+        const type = column ? this.columnTypes[column] : undefined
+
+        this.bindings.push({
+            sql: '$' + this.getNextBindingSql() + suffix,
+            value,
+            type: type ?? undefined
+        })   
         return this
     }
 

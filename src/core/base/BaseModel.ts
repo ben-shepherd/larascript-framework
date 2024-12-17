@@ -1,26 +1,25 @@
 /* eslint-disable no-unused-vars */
 
 import HasObserverConcern from '@src/core/concerns/HasObserverConcern';
-import HasPrepareDocumentConcern from '@src/core/concerns/HasPrepareDocumentConcern';
 import Broadcaster from '@src/core/domains/broadcast/abstract/Broadcaster';
-import compose from '@src/core/util/compose';
 import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
 import { IObserver } from '@src/core/domains/observer/interfaces/IObserver';
-import IModelAttributes from '@src/core/interfaces/IModelData';
+import compose from '@src/core/util/compose';
+import { IBroadcastEvent } from '@src/core/domains/broadcast/interfaces/IBroadcastEvent';
+import { BroadcastCallback } from '@src/core/domains/broadcast/interfaces/IBroadcaster';
 
-class BaseModel<Attributes extends IModelAttributes = IModelAttributes> extends compose(
-    class extends Broadcaster {},
-    HasPrepareDocumentConcern,
-    HasObserverConcern
-) {
-
+class BaseModel extends compose(class extends Broadcaster {}, HasObserverConcern) {
 
     /**
-      * Declare HasPrepareDocument concern
-      */
-    declare json: string[];
-        
-    declare prepareDocument: <T>() => T;
+   * Declare HasBroadcaster concern
+   */
+    declare broadcast: (event: IBroadcastEvent) => Promise<void>;
+
+    declare createBroadcastListener: (eventName: string) => void;
+
+    declare subscribeToBroadcastListener: (id: string, eventName: string, callback: BroadcastCallback) => void;
+
+    declare unsubscribeFromBroadcastListener: (id: string, eventName: string) => void;
     
         
     /**

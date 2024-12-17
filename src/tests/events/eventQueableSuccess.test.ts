@@ -1,12 +1,14 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import { IModel } from '@src/core/interfaces/IModel';
+import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
+import { events } from '@src/core/domains/events/services/EventService';
 import { App } from '@src/core/services/App';
 import TestEventQueueCalledFromWorkerEvent from '@src/tests/events/events/TestEventQueueCalledFromWorkerEvent';
 import TestEventQueueEvent from '@src/tests/events/events/TestEventQueueEvent';
-import createWorkerTables, { dropWorkerTables } from '@src/tests/events/helpers/createWorketTables';
+import resetWorkerTables from '@src/tests/events/helpers/createWorketTables';
 import TestWorkerModel from '@src/tests/models/models/TestWorkerModel';
 import testHelper from '@src/tests/testHelper';
+import { z } from 'zod';
 
 
 describe('mock queable event', () => {
@@ -18,10 +20,6 @@ describe('mock queable event', () => {
         await testHelper.testBootApp()
     })
 
-    afterAll(async () => {
-        await dropWorkerTables();
-    })
-
 
     /**
      * - Dispatch TestEventQueueEvent, this will add a queued item to the database
@@ -31,32 +29,35 @@ describe('mock queable event', () => {
      */
     test('test queued worker ', async () => {
 
-        await dropWorkerTables();
-        await createWorkerTables();
-
-        const eventService = App.container('events');
+        await resetWorkerTables()
         
-        eventService.mockEvent(TestEventQueueEvent)
-        eventService.mockEvent(TestEventQueueCalledFromWorkerEvent);
+        events().mockEvent(TestEventQueueEvent)
+        events().mockEvent(TestEventQueueCalledFromWorkerEvent);
 
-        await eventService.dispatch(new TestEventQueueEvent({ hello: 'world', createdAt: new Date() }));
+        await events().dispatch(new TestEventQueueEvent({ hello: 'world', createdAt: new Date() }));
 
         type TPayload = {
             hello: string,
             createdAt: Date
         }
         const validatePayload = (payload: TPayload) => {
+            const schema = z.object({
+                hello: z.string(),
+                createdAt: z.date()
+            })
+            schema.parse(payload)
+
             return payload.hello === 'world' && payload.createdAt instanceof Date
         }
         
-        expect(eventService.assertDispatched<TPayload>(TestEventQueueEvent, validatePayload)).toBeTruthy()
+        expect(events().assertDispatched<TPayload>(TestEventQueueEvent, validatePayload)).toBeTruthy()
 
         await App.container('console').reader(['worker', '--queue=testQueue']).handle();
 
-        expect(eventService.assertDispatched<TPayload>(TestEventQueueCalledFromWorkerEvent, validatePayload)).toBeTruthy()
+        expect(events().assertDispatched<TPayload>(TestEventQueueCalledFromWorkerEvent, validatePayload)).toBeTruthy()
 
-        const results = await App.container('db').documentManager().table(new TestWorkerModel().table).findMany<IModel[]>({})
-        expect(results.length).toBe(0)
+        const results = await queryBuilder(TestWorkerModel).get()
+        expect(results.count()).toBe(0)
     })
 
 }); 
