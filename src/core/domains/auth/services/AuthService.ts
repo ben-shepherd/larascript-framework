@@ -16,6 +16,8 @@ import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
 import { app } from '@src/core/services/App';
 import { JsonWebTokenError } from 'jsonwebtoken';
 
+import { queryBuilder } from '../../eloquent/services/EloquentQueryBuilderService';
+
 /**
  * Shorthand for accessing the auth service
  * @returns 
@@ -90,11 +92,14 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * @returns 
      */
     jwt(apiToken: IApiTokenModel): string {
-        if (!apiToken?.attributes?.userId) {
+        if (!apiToken?.userId) {
             throw new Error('Invalid token');
         }
 
-        const payload = JWTTokenFactory.create(apiToken.attributes?.userId?.toString(), apiToken.attributes?.token);
+        const userId = apiToken.getAttributeSync('userId')?.toString() ?? '';
+        const token = apiToken.getAttributeSync('token') ?? '';
+
+        const payload = JWTTokenFactory.create(userId, token);
         return createJwt(this.config.jwtSecret, payload, `${this.config.expiresInMinutes}m`);
     }
 
@@ -104,12 +109,13 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * @returns 
      */
     async revokeToken(apiToken: IApiTokenModel): Promise<void> {
-        if (apiToken?.attributes?.revokedAt) {
+        if (apiToken?.revokedAt) {
             return;
         }
 
-        apiToken.setAttribute('revokedAt', new Date());
-        await apiToken.save();
+        await queryBuilder(this.apiTokenRepository.modelConstructor)
+            .where('userId', apiToken.userId as string)
+            .update({ revokedAt: new Date() });
     }
 
     /**
@@ -151,17 +157,19 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * @returns 
      */
     async attemptCredentials(email: string, password: string, scopes: string[] = []): Promise<string> {
-        const user = await this.userRepository.findOneByEmail(email) as IUserModel;
+        const user = await this.userRepository.findOneByEmail(email);
 
-        if (!user?.attributes?.id) {
+        if (!user) {
             throw new UnauthorizedError()
         }
 
-        if (user?.attributes?.hashedPassword && !comparePassword(password, user.attributes?.hashedPassword)) {
+        const hashedPassword = user.getAttributeSync('hashedPassword')
+
+        if (hashedPassword && !comparePassword(password, hashedPassword)) {
             throw new UnauthorizedError()
         }
 
-        return this.createJwtFromUser(user, scopes)
+        return await this.createJwtFromUser(user, scopes)
     }
 
     /**

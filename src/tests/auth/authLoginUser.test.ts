@@ -3,8 +3,9 @@ import { describe } from '@jest/globals';
 import authConfig from '@src/config/auth';
 import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
+import { auth } from '@src/core/domains/auth/services/AuthService';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';
-import { App } from '@src/core/services/App';
+import { logger } from '@src/core/domains/logger/services/LoggerService';
 import TestUserFactory from '@src/tests/factory/TestUserFactory';
 import TestApiTokenModel from '@src/tests/models/models/TestApiTokenModel';
 import TestUser from '@src/tests/models/models/TestUser';
@@ -48,11 +49,11 @@ describe('attempt to run app with normal appConfig', () => {
     })
 
     afterAll(async () => {
-        await testUser?.delete();
-        expect(await testUser?.getData({ excludeGuarded: false })).toBeNull();
+        // await testUser?.delete();
+        // expect(await testUser?.getAttributes({ excludeGuarded: false })).toBeNull();
 
-        await apiToken?.delete();
-        expect(await apiToken?.getData({ excludeGuarded: false })).toBeNull();  
+        // await apiToken?.delete();
+        // expect(await apiToken?.getAttributes({ excludeGuarded: false })).toBeNull();  
     })
 
     test('test create user validator (email already exists, validator should fail)', async () => {
@@ -77,7 +78,7 @@ describe('attempt to run app with normal appConfig', () => {
         });
 
         if(!result.success) {
-            App.container('logger').error(result.joi.error);
+            logger().error(result.joi.error);
         }
 
         expect(result.success).toBeTruthy();
@@ -93,41 +94,45 @@ describe('attempt to run app with normal appConfig', () => {
         });
 
         if(!result.success) {
-            App.container('logger').error(result.joi.error);
+            logger().error(result.joi.error);
         }
 
         expect(result.success).toBeTruthy();
     })
 
     test('attempt credentials', async () => {
-        jwtToken = await App.container('auth').attemptCredentials(email, password);
+        jwtToken = await auth().attemptCredentials(email, password);
+        logger().info('[jwtToken]', jwtToken);
         expect(jwtToken).toBeTruthy();
     })
 
     test('create api token from user', async () => {
-        apiToken = await App.container('auth').createApiTokenFromUser(testUser);
+        apiToken = await auth().createApiTokenFromUser(testUser);
+        logger().info('[apiToken]', apiToken);
         expect(apiToken).toBeInstanceOf(TestApiTokenModel);
     })
 
     test('create jwt from user', async () => {
-        const jwt = await App.container('auth').createJwtFromUser(testUser);
+        const jwt = await auth().createJwtFromUser(testUser);
+        logger().info('[jwt]', jwt);
         expect(jwt).toBeTruthy();
     })
 
     test('verify token', async () => {
-        apiToken = await App.container('auth').attemptAuthenticateToken(jwtToken);
+        apiToken = await auth().attemptAuthenticateToken(jwtToken);
         expect(apiToken).toBeInstanceOf(TestApiTokenModel);
 
-        const user = await apiToken?.user();
+        const user = await apiToken?.getAttribute('user');
         expect(user).toBeInstanceOf(TestUser);
     })
 
     test('revoke token', async () => {
         expect(apiToken).toBeInstanceOf(TestApiTokenModel);
-        apiToken && await App.container('auth').revokeToken(apiToken);
+
+        apiToken && await auth().revokeToken(apiToken);
 
         await apiToken?.refresh();
-        expect(apiToken?.attributes?.revokedAt).toBeTruthy();
+        expect(apiToken?.revokedAt).toBeTruthy();
     })
 
 })

@@ -4,7 +4,7 @@ import TestUser from '@src/tests/models/models/TestUser';
 
 class TestApiTokenModel extends ApiToken {
 
-    table: string = (new ApiToken).table;
+    table: string = 'api_tokens';
 
 
     constructor(data: IApiTokenData | null = null) {

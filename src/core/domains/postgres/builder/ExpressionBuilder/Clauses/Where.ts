@@ -157,7 +157,8 @@ class Where {
 
         // If there is a next parsed, append the logical operator (AND, OR)
         if(nextWhereSql) {
-            return nextWhereSql.logicalOperator?.toUpperCase() + ' '
+            const logicalOperator = nextWhereSql.logicalOperator ?? LogicalOperators.AND
+            return logicalOperator.toUpperCase() + ' '
         }
 
         // Otherwise, use the default logical operator (AND)

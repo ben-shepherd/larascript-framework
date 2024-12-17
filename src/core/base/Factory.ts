@@ -37,7 +37,7 @@ export default abstract class Factory<Model extends IModel = IModel> implements 
      * @returns A new instance of the model.
      */
     createWithData<Data extends IModelAttributes = IModelAttributes>(data: Data | null = null): Model {
-        return new this.modelCtor(data)
+        return this.modelCtor.create(data);
     }
 
 }

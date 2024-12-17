@@ -3,7 +3,8 @@ import ApiTokenObserver from '@src/app/observers/ApiTokenObserver';
 import IApiTokenModel, { IApiTokenData } from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import Scopes from '@src/core/domains/auth/services/Scopes';
-import { ICtor } from '@src/core/interfaces/ICtor';
+import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
+import { ModelConstructor } from '@src/core/interfaces/IModel';
 import Model from '@src/core/models/base/Model';
 
 /**
@@ -16,7 +17,7 @@ class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
     /**
      * The user model constructor
      */
-    protected userModelCtor: ICtor<IUserModel> = User
+    protected userModelCtor: ModelConstructor<IUserModel> = User
 
     /**
      * Required ApiToken fields
@@ -36,6 +37,10 @@ class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
         'scopes'
     ]
 
+    public relationships: string[] = [
+        'user'
+    ]
+
     public timestamps: boolean = false;
 
     /**
@@ -52,30 +57,31 @@ class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
 
     /**
      * Sets the user model constructor to use for fetching the user of this ApiToken
-     * @param {ICtor<IUserModel>} userModelCtor The user model constructor
+     * @param {ModelConstructor<IUserModel>} userModelCtor The user model constructor
      */
-    setUserModelCtor(userModelCtor: ICtor<IUserModel>): void {
+    setUserModelCtor(userModelCtor: ModelConstructor<IUserModel>): void {
         this.userModelCtor = userModelCtor
     }
 
     /**
      * Retrieves the constructor for the user model associated with this ApiToken.
-     * @returns {ICtor<IUserModel>} The user model constructor.
+     * @returns {ModelConstructor<IUserModel>} The user model constructor.
      */
-    getUserModelCtor(): ICtor<IUserModel> {
+    getUserModelCtor(): ModelConstructor<IUserModel> {
         return this.userModelCtor
     }
 
     /**
-     * Finds the related user for this ApiToken
-     * @returns The user model if found, or null if not
+     * Fetches the user that this ApiToken belongs to.
+     *
+     * @returns A BelongsTo relationship that resolves to the user model.
      */
-    async user(): Promise<IUserModel | null> {
-        return this.belongsToLegacy(this.userModelCtor, {
+    user(): BelongsTo {
+        return this.belongsTo(this.userModelCtor, {
             localKey: 'userId',
             foreignKey: 'id',
         })
-    }   
+    }
 
     /**
      * Checks if the given scope(s) are present in the scopes of this ApiToken
