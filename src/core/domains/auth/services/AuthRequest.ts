@@ -1,9 +1,8 @@
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
+import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
+import { auth } from "@src/core/domains/auth/services/AuthService";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { App } from "@src/core/services/App";
-
-import IUserModel from "../interfaces/IUserModel";
-import { auth } from "./AuthService";
 
 class AuthRequest {
 

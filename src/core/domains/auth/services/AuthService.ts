@@ -15,8 +15,7 @@ import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';
 import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
 import { app } from '@src/core/services/App';
 import { JsonWebTokenError } from 'jsonwebtoken';
-
-import { queryBuilder } from '../../eloquent/services/EloquentQueryBuilderService';
+import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
 
 /**
  * Shorthand for accessing the auth service
