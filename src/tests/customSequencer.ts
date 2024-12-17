@@ -3,7 +3,6 @@ const Sequencer = require('@jest/test-sequencer').default;
 const firstTest = 'runApp.test.ts';
 const secondTest = 'migration.test.ts';
 const thirdTest = 'seeder.test.ts';
-const lastTest = 'endTests.test.ts';
 
 /**
  * Custom sequencer to ensure tests run in a specific order:
@@ -33,8 +32,8 @@ class CustomSequencer extends Sequencer {
             if (indexB !== -1) return 1;
             
             // If neither test has a priority but one is the last test
-            if (testA.path.includes(lastTest)) return 1;
-            if (testB.path.includes(lastTest)) return -1;
+            // if (testA.path.includes(lastTest)) return 1;
+            // if (testB.path.includes(lastTest)) return -1;
             
             // For all other tests, maintain their relative order
             return 0;

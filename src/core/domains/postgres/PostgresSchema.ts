@@ -3,8 +3,11 @@ import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabas
 import { IDatabaseAdapterSchema } from "@src/core/domains/database/interfaces/IDatabaseAdapterSchema";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import { IAlterTableOptions } from "@src/core/domains/postgres/interfaces/IPostgresAlterTableOptions";
+import pg from 'pg';
 import { DataTypes, QueryInterfaceCreateTableOptions, QueryInterfaceDropTableOptions } from "sequelize";
 import { ModelAttributes } from 'sequelize/types/model';
+
+import { logger } from "../logger/services/LoggerService";
 
 
 class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
@@ -55,13 +58,42 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
         await client.end()
         return dbExists
     }
+
+    /**
+     * Terminates any remaining connections to a PostgreSQL database.
+     * @param database The name of the database to terminate connections to.
+     * @param client An optional pg.Client instance to use. If not provided, a new client will be created and closed after use.
+     * @returns A promise that resolves when the connections have been terminated.
+     */
+    async terminateConnections(database: string, client?: pg.Client): Promise<void> {
+        const endConnection: boolean = typeof client === 'undefined';
+        client = client ?? await this.adapter.getPgClientWithDatabase(database);
+        
+        try {
+        // Terminate any remaining connections to the target database
+            await client.query(`
+            SELECT pg_terminate_backend(pg_stat_activity.pid)
+            FROM pg_stat_activity 
+            WHERE pg_stat_activity.datname = $1
+            AND pid <> pg_backend_pid()
+            `, [database]);
+        }
+        catch (err) {
+            logger().error(`Failed to terminate connections to database ${database}: ${(err as Error).message}`);
+        }
+        finally {
+            if(endConnection) {
+                await client.end();
+            }
+        }
+    }
     
     /**
-         * Drops the specified database.
-         * 
-         * @param name - The name of the database to drop.
-         * @returns A promise that resolves when the database has been dropped.
-         */
+     * Drops the specified database.
+     * 
+     * @param name - The name of the database to drop.
+     * @returns A promise that resolves when the database has been dropped.
+     */
     async dropDatabase(name: string): Promise<void> {
 
         const client = await this.adapter.getPgClientWithDatabase('postgres');
@@ -70,13 +102,9 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
             await client.connect();
             
             // Terminate any remaining connections to the target database
-            await client.query(`
-                SELECT pg_terminate_backend(pg_stat_activity.pid)
-                FROM pg_stat_activity 
-                WHERE pg_stat_activity.datname = $1
-                AND pid <> pg_backend_pid()
-            `, [name]);
+            await this.terminateConnections(name, client);
     
+            // Drop the database
             await client.query(`DROP DATABASE IF EXISTS "${name}"`);
         }
         catch (err) {
