@@ -2,7 +2,6 @@
 import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
-import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IHasConfigConcern } from "@src/core/interfaces/concerns/IHasConfigConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
 
@@ -24,8 +23,6 @@ export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>
     isConnectionAdapter(adapter: ICtor<IDatabaseAdapter>, connectionName?: string): boolean
 
     getDefaultCredentials(adapterName: string): string | null;
-
-    documentManager<TDocMan extends IDocumentManager = IDocumentManager>(connectionName?: string): TDocMan;
 
     schema<TSchema extends IDatabaseSchema = IDatabaseSchema>(connectionName?: string): TSchema;
 

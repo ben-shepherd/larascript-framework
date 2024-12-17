@@ -1,8 +1,8 @@
 import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
+import { db } from "@src/core/domains/database/services/Database";
 import { IMigration, MigrationType } from "@src/core/domains/migrations/interfaces/IMigration";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
-import { db } from "@src/core/domains/database/services/Database";
 
 /**
  * BaseMigration class serves as the foundation for all database migrations.
@@ -16,12 +16,6 @@ abstract class BaseMigration implements IMigration {
      * It's retrieved from the database connection in the App container.
      */
     protected readonly schema = App.container('db').schema();
-
-    /**
-     * documentManager is used for CRUD operations on database documents or records.
-     * It handles inserting, updating, fetching, and deleting database documents.
-     */
-    protected readonly documentManager = App.container('db').documentManager()
 
     /**
      * Define the type of migration.
