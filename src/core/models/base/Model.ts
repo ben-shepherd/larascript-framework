@@ -191,7 +191,7 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
             return null
         }
 
-        return db().getAdapter().prepareDocument<Attributes>(this.attributes, {
+        return db().getAdapter(this.connection).prepareDocument<Attributes>(this.attributes, {
             jsonStringify: this.json   
         })
     }
