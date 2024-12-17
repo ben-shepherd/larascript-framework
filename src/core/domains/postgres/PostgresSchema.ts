@@ -6,6 +6,7 @@ import { IAlterTableOptions } from "@src/core/domains/postgres/interfaces/IPostg
 import { DataTypes, QueryInterfaceCreateTableOptions, QueryInterfaceDropTableOptions } from "sequelize";
 import { ModelAttributes } from 'sequelize/types/model';
 
+
 class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
 
     protected adapter!: PostgresAdapter;
@@ -62,6 +63,7 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
          * @returns A promise that resolves when the database has been dropped.
          */
     async dropDatabase(name: string): Promise<void> {
+
         const client = await this.adapter.getPgClientWithDatabase('postgres');
 
         try {

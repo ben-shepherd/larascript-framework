@@ -2,6 +2,7 @@ import BaseDatabaseAdapter from "@src/core/domains/database/base/BaseDatabaseAda
 import CreateDatabaseException from "@src/core/domains/database/exceptions/CreateDatabaseException";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
+import { db } from "@src/core/domains/database/services/Database";
 import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import ParseMongoDBConnectionString from "@src/core/domains/mongodb/helper/ParseMongoDBConnectionUrl";
 import { IMongoConfig } from "@src/core/domains/mongodb/interfaces/IMongoConfig";
@@ -12,8 +13,8 @@ import { extractDefaultMongoCredentials } from "@src/core/domains/mongodb/utils/
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
-import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
-import { db } from "@src/core/domains/database/services/Database";
+import { Db, MongoClient, MongoServerError } from "mongodb";
+import { logger } from "@src/core/domains/logger/services/LoggerService";
 
 class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
 
@@ -70,16 +71,19 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
      */
     
     async connectDefault(): Promise<void> {
-        if (await this.isConnected()) {
-            return;
-        }
+        logger().warn('MongoDB temporary disabled');
+        return;
 
-        await this.createDefaultDatabase()
+        // if (await this.isConnected()) {
+        //     return;
+        // }
+
+        // await this.createDefaultDatabase()
         
-        const { uri, options } = this.config
+        // const { uri, options } = this.config
 
-        this.client = new MongoClient(uri, options as MongoClientOptions);
-        this.db = this.client.db();
+        // this.client = new MongoClient(uri, options as MongoClientOptions);
+        // this.db = this.client.db();
     }
 
     /**
@@ -171,6 +175,10 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
 
     createMigrationSchema(tableName: string): Promise<unknown> {
         return createMigrationSchemaMongo(this, tableName)
+    }
+
+    async close(): Promise<void> {
+        throw new Error("Method not implemented.");
     }
 
 }

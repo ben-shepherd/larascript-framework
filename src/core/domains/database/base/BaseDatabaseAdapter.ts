@@ -4,10 +4,10 @@ import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabas
 import { IDatabaseGenericConnectionConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
+import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
 import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
-import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
 
 abstract class BaseDatabaseAdapter<TConfig extends object = object> extends BaseConfig implements IDatabaseAdapter {
 
@@ -88,6 +88,11 @@ abstract class BaseDatabaseAdapter<TConfig extends object = object> extends Base
      * Create a migration schema
      */
     abstract createMigrationSchema(...args: any[]): Promise<unknown>;
+
+    /**
+     * Close the database connection
+     */
+    abstract close(): Promise<void>;
 
     /**
      * Prepare a document for insertion or update.
