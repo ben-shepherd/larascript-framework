@@ -2,6 +2,9 @@ import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedErr
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { App } from "@src/core/services/App";
 
+import IUserModel from "../interfaces/IUserModel";
+import { auth } from "./AuthService";
+
 class AuthRequest {
 
     /**
@@ -16,9 +19,9 @@ class AuthRequest {
     public static async attemptAuthorizeRequest(req: BaseRequest): Promise<BaseRequest> {
         const authorization = (req.headers.authorization ?? '').replace('Bearer ', '');
 
-        const apiToken = await App.container('auth').attemptAuthenticateToken(authorization)
+        const apiToken = await auth().attemptAuthenticateToken(authorization)
 
-        const user = await apiToken?.user()
+        const user = await apiToken?.getAttribute('user') as IUserModel | null;
 
         if(!user || !apiToken) {
             throw new UnauthorizedError();
