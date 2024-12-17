@@ -94,7 +94,6 @@ class MongoDBSchema extends BaseSchema implements IDatabaseSchema{
      */
     // eslint-disable-next-line no-unused-vars
     async createTable(tableName: string, ...args: any[]): Promise<void> {
-        tableName = this.formatTableName(tableName);
 
         await this.adapter.getDb().createCollection(tableName);
         await this.adapter.getDb().collection(tableName).insertOne({
@@ -112,7 +111,6 @@ class MongoDBSchema extends BaseSchema implements IDatabaseSchema{
      */
     // eslint-disable-next-line no-unused-vars
     async dropTable(tableName: string, ...args: any[]): Promise<void> {
-        tableName = this.formatTableName(tableName);
         await this.adapter.getDb().dropCollection(tableName);
     }
 
@@ -123,7 +121,6 @@ class MongoDBSchema extends BaseSchema implements IDatabaseSchema{
      */
     // eslint-disable-next-line no-unused-vars
     async tableExists(tableName: string, ...args: any[]): Promise<boolean> {
-        tableName = this.formatTableName(tableName);
         return (await this.adapter.getDb().listCollections().toArray()).map(c => c.name).includes(tableName);
     }
 
