@@ -9,6 +9,8 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>
 {
     boot(): Promise<void>;
+
+    showLogs(): boolean
     
     getDefaultConnectionName(): string;
 

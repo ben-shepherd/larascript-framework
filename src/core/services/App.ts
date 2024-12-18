@@ -13,6 +13,11 @@ export const app = <K extends keyof IContainers = keyof IContainers>(name: K): I
 }
 
 /**
+ * Short hand for App.env()
+ */
+export const appEnv = (): string | undefined => App.env();
+
+/**
  * App service
  * Allows you to access kernel containers
  * and configure the app environment

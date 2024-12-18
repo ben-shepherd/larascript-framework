@@ -122,6 +122,16 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
     }
     
     /**
+     * Determines whether logging is enabled for the database operations.
+     *
+     * @returns {boolean} True if logging is enabled, false otherwise.
+     */
+
+    showLogs(): boolean {
+        return this.config?.enableLogging ?? false;
+    }
+
+    /**
      * Connects to the default database connection.
      */
     async connectDefault(): Promise<void> {

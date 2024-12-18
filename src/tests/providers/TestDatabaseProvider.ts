@@ -32,6 +32,7 @@ const mongoDbConnectionStringWithTestDb: string = (() => {
 export default class TestDatabaseProvider extends DatabaseProvider {
 
     protected config: IDatabaseConfig = {
+        enableLogging: true,
         defaultConnectionName: 'postgres',
         keepAliveConnections: 'mongodb',
         connections: DatabaseConfig.createConnections([

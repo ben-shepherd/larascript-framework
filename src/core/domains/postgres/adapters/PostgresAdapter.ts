@@ -1,4 +1,3 @@
-import { EnvironmentProduction } from "@src/core/consts/Environment";
 import BaseDatabaseAdapter from "@src/core/domains/database/base/BaseDatabaseAdapter";
 import { IDatabaseGenericConnectionConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
@@ -12,9 +11,9 @@ import createMigrationSchemaPostgres from "@src/core/domains/postgres/schema/cre
 import { extractDefaultPostgresCredentials } from "@src/core/domains/postgres/utils/extractDefaultPostgresCredentials";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
-import { App } from "@src/core/services/App";
 import pg from 'pg';
 import { QueryInterface, Sequelize } from "sequelize";
+import { db } from "@src/core/domains/database/services/Database";
 
 
 
@@ -51,7 +50,6 @@ class PostgresAdapter extends BaseDatabaseAdapter<IPostgresConfig>  {
         this.setConnectionName(connectionName);
         this.setConfig(config);   
     }
-
 
     /**
      * Returns the default Postgres credentials extracted from the docker-compose file
@@ -197,7 +195,7 @@ class PostgresAdapter extends BaseDatabaseAdapter<IPostgresConfig>  {
     getSequelize(): Sequelize {
         if(!this.sequelize) {
             this.sequelize = new Sequelize(this.config.uri, { 
-                logging: App.env() !== EnvironmentProduction,
+                logging: db().showLogs(),
                 ...this.config.options, 
                 ...this.overrideConfig
             })

@@ -1,11 +1,3 @@
-import ModelNotFound from "@src/core/exceptions/ModelNotFound";
-import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel } from "@src/core/interfaces/IModel";
-import captureError from "@src/core/util/captureError";
-import PrefixedPropertyGrouper from "@src/core/util/PrefixedPropertyGrouper";
-import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
-import { bindAll } from 'lodash';
-import pg, { QueryResult } from 'pg';
 import Collection from "@src/core/domains/collections/Collection";
 import collect from "@src/core/domains/collections/helper/collect";
 import { db } from "@src/core/domains/database/services/Database";
@@ -16,6 +8,14 @@ import { IEloquent, IdGeneratorFn, SetModelColumnsOptions, TransactionFn } from 
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import SqlExpression from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
+import ModelNotFound from "@src/core/exceptions/ModelNotFound";
+import { ICtor } from "@src/core/interfaces/ICtor";
+import { IModel } from "@src/core/interfaces/IModel";
+import captureError from "@src/core/util/captureError";
+import PrefixedPropertyGrouper from "@src/core/util/PrefixedPropertyGrouper";
+import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
+import { bindAll } from 'lodash';
+import pg, { QueryResult } from 'pg';
 
 class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
 
@@ -157,11 +157,16 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
      * @returns A promise that resolves with the query result.
      */
     async raw<T = QueryResult>(expression: string, bindings?: unknown[]): Promise<T> {
-        console.log('[PostgresEloquent] raw', { expression, bindings })
+
+        if(db().showLogs()) {
+            console.log('[PostgresEloquent] raw', { expression, bindings })
+        }
 
         const results = await this.getPool().query(expression, bindings)
 
-        console.log('[PostgresEloquent] raw results count', results?.rows?.length)
+        if(db().showLogs()) {
+            console.log('[PostgresEloquent] raw results count', results?.rows?.length)
+        }
 
         this.expression.bindings.reset()
 
