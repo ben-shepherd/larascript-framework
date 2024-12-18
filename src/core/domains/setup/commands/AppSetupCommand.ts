@@ -77,8 +77,17 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
  
         this.input.clearScreen();
 
-        this.writeLine('--- Setup Complete ---');
-        this.writeLine('Happy coding!');
+        this.writeLine('');
+        this.writeLine('  ╔═══════════════════════════════════════╗');
+        this.writeLine('  ║          SETUP COMPLETE! 🎉           ║');
+        this.writeLine('  ╚═══════════════════════════════════════╝');
+        this.writeLine('');
+        this.writeLine('         🚀 Ready for takeoff! 🚀');
+        this.writeLine('');
+        this.writeLine('  ⭐️ Happy coding! May your code be bug-free ⭐️');
+        this.writeLine('');
+        this.writeLine('      Why did the programmer quit his job?');
+        this.writeLine('       Because he didn\'t get arrays! 📊');
         this.writeLine('');
     }
 
