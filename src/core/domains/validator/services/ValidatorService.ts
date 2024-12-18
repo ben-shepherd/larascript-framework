@@ -2,7 +2,14 @@ import Validator from "@src/core/domains/validator/base/Validator";
 import IValidator from "@src/core/domains/validator/interfaces/IValidator";
 import IValidatorService from "@src/core/domains/validator/interfaces/IValidatorService";
 import { validateMiddleware } from "@src/core/domains/validator/middleware/validateMiddleware";
+import { app } from "@src/core/services/App";
 import Joi from "joi";
+
+/**
+ * Short hand for app('validate')
+ * @returns 
+ */
+export const validate = () => app('validate');
 
 /**
  * Validator service class

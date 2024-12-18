@@ -7,8 +7,16 @@ import requestIdMiddleware from '@src/core/domains/express/middleware/requestIdM
 import { securityMiddleware } from '@src/core/domains/express/middleware/securityMiddleware';
 import SecurityRules, { SecurityIdentifiers } from '@src/core/domains/express/services/SecurityRules';
 import { Middleware } from '@src/core/interfaces/Middleware.t';
-import { App } from '@src/core/services/App';
-import express from 'express';
+import { app } from '@src/core/services/App';
+import expressClient from 'express';
+
+import { logger } from '../../logger/services/LoggerService';
+import { validate } from '../../validator/services/ValidatorService';
+
+/**
+ * Short hand for `app('express')`
+ */
+export const express = () => app('express');
 
 /**
  * ExpressService class
@@ -19,9 +27,9 @@ export default class ExpressService extends Service<IExpressConfig> implements I
 
     protected config!: IExpressConfig | null;
 
-    private app: express.Express
+    private readonly app: expressClient.Express
 
-    private registedRoutes: IRoute[] = [];
+    private readonly registedRoutes: IRoute[] = [];
 
     /**
      * Config defined in @src/config/http/express.ts
@@ -29,7 +37,7 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      */
     constructor(config: IExpressConfig | null = null) {
         super(config)
-        this.app = express()
+        this.app = expressClient()
     }
 
     /**
@@ -134,7 +142,7 @@ export default class ExpressService extends Service<IExpressConfig> implements I
          * Add validator middleware
          */
         if (route?.validator) {
-            const validatorMiddleware = App.container('validate').middleware()
+            const validatorMiddleware = validate().middleware()
             const validator = new route.validator();
             const validateBeforeAction = route?.validateBeforeAction ?? true
 
@@ -193,7 +201,7 @@ export default class ExpressService extends Service<IExpressConfig> implements I
     /**
      * Returns the Express instance.
      */
-    public getExpress(): express.Express {
+    public getExpress(): expressClient.Express {
         return this.app
     }
 
@@ -252,7 +260,7 @@ export default class ExpressService extends Service<IExpressConfig> implements I
             }
         }
 
-        App.container('logger').info(str)
+        logger().info(str)
     }
 
 }
