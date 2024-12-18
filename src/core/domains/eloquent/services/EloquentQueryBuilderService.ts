@@ -21,8 +21,10 @@ class EloquentQueryBuilderService implements IEloquentQueryBuilderService {
      * @returns A query builder instance associated with the model.
      */
     builder<Model extends IModel>(modelCtor: ModelConstructor<Model>, connectionName?: string): IEloquent<Model> {
+        
         const model = new modelCtor(null)
         const tableName = modelCtor.getTable()
+        const formatter = (result: unknown) => modelCtor.create<Model>(result as Model['attributes'] | null)
         
         const eloquentConstructor = app('db')
             .getAdapter(model.connection)
@@ -33,7 +35,7 @@ class EloquentQueryBuilderService implements IEloquentQueryBuilderService {
             .setModelCtor(modelCtor)
             .setModelColumns(modelCtor)
             .setTable(tableName)
-            .setFormatter((result) => modelCtor.create<Model>(result as Model['attributes'] | null))
+            .setFormatter(formatter)
             .setIdGenerator(model.getIdGeneratorFn());
     }
 

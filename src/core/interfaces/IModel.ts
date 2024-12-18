@@ -1,8 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { IdGeneratorFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import IHasObserver from "@src/core/domains/observer/interfaces/IHasObserver";
-import IModelAttributes from "@src/core/interfaces/IModelAttributes";
-
 
 export type GetAttributesOptions = {excludeGuarded: boolean}
 
@@ -16,6 +14,18 @@ export type ModelConstructor<M extends IModel = IModel> = {
 export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>
 
 export type ModelAttribtues<Model extends IModel> = Model['attributes']
+
+export type ModelWithAttributes<Model extends IModel, Attributes = Model['attributes']> = Model &{
+    [K in keyof Attributes]: Attributes[K];
+}
+
+export default interface IModelAttributes {
+    id?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+    [key: string]: unknown;
+}
+
 
 export interface IModel<Attributes extends IModelAttributes = IModelAttributes> extends IHasObserver {
     [key: string]: unknown;

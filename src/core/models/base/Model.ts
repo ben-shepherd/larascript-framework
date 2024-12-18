@@ -8,8 +8,7 @@ import EloquentRelationship from '@src/core/domains/eloquent/utils/EloquentRelat
 import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
 import { IObserver, IObserverEvent } from '@src/core/domains/observer/interfaces/IObserver';
 import { ICtor } from '@src/core/interfaces/ICtor';
-import { GetAttributesOptions, IModel, ModelConstructor } from '@src/core/interfaces/IModel';
-import IModelAttributes from '@src/core/interfaces/IModelAttributes';
+import IModelAttributes, { GetAttributesOptions, IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
 import { app } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
@@ -23,10 +22,10 @@ import Str from '@src/core/util/str/Str';
  * 
  * @template Attributes Type extending IModelData, representing the structure of the model's data.
  */
-export default abstract class Model<Attributes extends IModelAttributes> implements IModel<Attributes> {
+export default abstract class Model<Attributes extends IModelAttributes> implements IModel<Attributes>  {
 
     [key: string]: unknown;
-
+    
     /**
      * The ID generator function for the model.
      */
@@ -122,6 +121,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
             this.table = this.getDefaultTable()
         }
     }
+
 
     /**
      * Gets the document manager for database operations.

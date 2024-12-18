@@ -3,6 +3,7 @@ import { describe } from '@jest/globals';
 import Collection from '@src/core/domains/collections/Collection';
 import { IEloquent } from '@src/core/domains/eloquent/interfaces/IEloquent';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
+import { ModelWithAttributes } from '@src/core/interfaces/IModel';
 import TestPeopleModel, { resetPeopleTable } from '@src/tests/eloquent/models/TestPeopleModel';
 import testHelper from '@src/tests/testHelper';
 
@@ -25,7 +26,7 @@ dateOneYearInPast.setFullYear(dateOneYearInPast.getFullYear() - 1);
 describe('eloquent', () => {
 
     let query!: IEloquent<TestPeopleModel>;
-    let inserted!: Collection<TestPeopleModel>;
+    let inserted!: Collection<ModelWithAttributes<TestPeopleModel>>;
 
     beforeAll(async () => {
         await testHelper.testBootApp()

@@ -1,6 +1,6 @@
 import UserObserver from "@src/app/observers/UserObserver";
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
-import IModelAttributes from "@src/core/interfaces/IModelAttributes";
+import IModelAttributes from "@src/core/interfaces/IModel";
 import Model from "@src/core/models/base/Model";
 
 /**

@@ -3,16 +3,17 @@ import { describe } from '@jest/globals';
 import Collection from '@src/core/domains/collections/Collection';
 import { IEloquent } from '@src/core/domains/eloquent/interfaces/IEloquent';
 import ModelNotFound from '@src/core/exceptions/ModelNotFound';
+import { ModelWithAttributes } from '@src/core/interfaces/IModel';
 import { app } from '@src/core/services/App';
 import { generateUuidV4 } from '@src/core/util/uuid/generateUuidV4';
-import testHelper from '@src/tests/testHelper';
 import { ITestEmployeeModelData } from '@src/tests/eloquent/models/TestEmployeeModel';
 import TestPeopleModel, { resetPeopleTable } from '@src/tests/eloquent/models/TestPeopleModel';
+import testHelper from '@src/tests/testHelper';
 
 describe('eloquent', () => {
 
     let query!: IEloquent<TestPeopleModel>;
-    let inserted!: Collection<TestPeopleModel>;
+    let inserted!: Collection<ModelWithAttributes<TestPeopleModel>>;
 
     beforeAll(async () => {
         await testHelper.testBootApp()
@@ -46,7 +47,6 @@ describe('eloquent', () => {
                 updatedAt: new Date()
             }
         ]);
-
     });
 
     test('test find, findOrFail, all and get as model', async () => {

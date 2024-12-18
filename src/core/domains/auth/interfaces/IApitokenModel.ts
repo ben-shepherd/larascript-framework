@@ -2,8 +2,7 @@
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import BelongsTo from "@src/core/domains/eloquent/relational/BelongsTo";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel } from "@src/core/interfaces/IModel";
-import IModelAttributes from "@src/core/interfaces/IModelAttributes";
+import IModelAttributes, { IModel } from "@src/core/interfaces/IModel";
 
 export interface ApiTokenAttributes extends IModelAttributes {
     userId: string;
