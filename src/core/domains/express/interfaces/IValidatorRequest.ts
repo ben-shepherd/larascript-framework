@@ -1,5 +1,6 @@
-import IValidator from "@src/core/domains/validator/interfaces/IValidator";
+
+import { ValidatorConstructor } from "../../validator/interfaces/IValidatorService";
 
 export default interface IValidatorRequest {
-    validator?: IValidator;
+    validatorConstructor?: ValidatorConstructor;
 }

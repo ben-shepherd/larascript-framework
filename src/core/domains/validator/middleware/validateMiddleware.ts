@@ -13,9 +13,11 @@ import { NextFunction, Response } from 'express';
  * @param {{validator: IValidator, validateBeforeAction: boolean}} options
  * @returns {import('express').RequestHandler} The middleware function
  */
-export const validateMiddleware = ({validator, validateBeforeAction}: ValidatorMiddlewareProps) => async (req: BaseRequest, res: Response, next: NextFunction): Promise<void> => {
+export const validateMiddleware = ({validatorConstructor, validateBeforeAction}: ValidatorMiddlewareProps) => async (req: BaseRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        req.validator = validator;
+        req.validatorConstructor = validatorConstructor
+
+        const validator = new validatorConstructor();
 
         if(validateBeforeAction) {
             const result = await validator.validate(
