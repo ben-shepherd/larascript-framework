@@ -2,12 +2,11 @@ import { EnvironmentProduction } from "@src/core/consts/Environment";
 import BaseDatabaseAdapter from "@src/core/domains/database/base/BaseDatabaseAdapter";
 import { IDatabaseGenericConnectionConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
-import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { logger } from "@src/core/domains/logger/services/LoggerService";
 import PostgresEloquent from "@src/core/domains/postgres/eloquent/PostgresEloquent";
 import ParsePostgresConnectionUrl from "@src/core/domains/postgres/helper/ParsePostgresConnectionUrl";
 import { IPostgresConfig } from "@src/core/domains/postgres/interfaces/IPostgresConfig";
-import PostgresDocumentManager from "@src/core/domains/postgres/PostgresDocumentManager";
 import PostgresSchema from "@src/core/domains/postgres/PostgresSchema";
 import createMigrationSchemaPostgres from "@src/core/domains/postgres/schema/createMigrationSchemaPostgres";
 import { extractDefaultPostgresCredentials } from "@src/core/domains/postgres/utils/extractDefaultPostgresCredentials";
@@ -16,7 +15,6 @@ import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import pg from 'pg';
 import { QueryInterface, Sequelize } from "sequelize";
-import { logger } from "@src/core/domains/logger/services/LoggerService";
 
 
 
@@ -157,14 +155,6 @@ class PostgresAdapter extends BaseDatabaseAdapter<IPostgresConfig>  {
         return this.client instanceof Sequelize;
     }
  
-    /**
-     * Get the document manager for database operations
-     * @returns {IDocumentManager} The document manager instance
-     */
-    getDocumentManager(): IDocumentManager {
-        return new PostgresDocumentManager(this)
-    }
-
     /**
      * Gets the schema interface for the database
      * @returns {IDatabaseSchema} The schema interface

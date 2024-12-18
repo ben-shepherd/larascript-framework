@@ -3,7 +3,6 @@ import BaseConfig from "@src/core/base/BaseConfig";
 import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 import { IDatabaseGenericConnectionConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
-import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
 import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { ICtor } from "@src/core/interfaces/ICtor";
@@ -63,11 +62,6 @@ abstract class BaseDatabaseAdapter<TConfig extends object = object> extends Base
      * Check if the database is connected
      */
     abstract isConnected(): Promise<boolean>;
-
-    /**
-     * @deprecated
-     */
-    abstract getDocumentManager(): IDocumentManager;
 
     /**
      * Get the database schema manager

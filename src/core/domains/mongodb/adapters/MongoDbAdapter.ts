@@ -1,12 +1,11 @@
 import BaseDatabaseAdapter from "@src/core/domains/database/base/BaseDatabaseAdapter";
 import CreateDatabaseException from "@src/core/domains/database/exceptions/CreateDatabaseException";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
-import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { db } from "@src/core/domains/database/services/Database";
 import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { logger } from "@src/core/domains/logger/services/LoggerService";
 import ParseMongoDBConnectionString from "@src/core/domains/mongodb/helper/ParseMongoDBConnectionUrl";
 import { IMongoConfig } from "@src/core/domains/mongodb/interfaces/IMongoConfig";
-import MongoDbDocumentManager from "@src/core/domains/mongodb/MongoDbDocumentManager";
 import MongoDbSchema from "@src/core/domains/mongodb/MongoDbSchema";
 import createMigrationSchemaMongo from "@src/core/domains/mongodb/schema/createMigrationSchemaMongo";
 import { extractDefaultMongoCredentials } from "@src/core/domains/mongodb/utils/extractDefaultMongoCredentials";
@@ -14,7 +13,6 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { Db, MongoClient, MongoServerError } from "mongodb";
-import { logger } from "@src/core/domains/logger/services/LoggerService";
 
 class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
 
@@ -149,15 +147,6 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
      */
     async isConnected(): Promise<boolean> {
         return this.db instanceof Db;
-    }
- 
-    /**
-     * Gets the document manager for database operations.
-     * 
-     * @returns {IDocumentManager} The document manager instance.
-     */
-    getDocumentManager(): IDocumentManager {
-        return new MongoDbDocumentManager(this)
     }
 
     /**

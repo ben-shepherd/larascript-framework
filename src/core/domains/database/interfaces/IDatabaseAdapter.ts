@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
-import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
 import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { ICtor } from "@src/core/interfaces/ICtor";
@@ -24,11 +23,6 @@ export interface  IDatabaseAdapter {
     connectDefault(): Promise<unknown>;
 
     isConnected(): Promise<boolean>;
-
-    /**
-     * @deprecated
-     */
-    getDocumentManager(): IDocumentManager;
 
     getSchema(): IDatabaseSchema;
 
