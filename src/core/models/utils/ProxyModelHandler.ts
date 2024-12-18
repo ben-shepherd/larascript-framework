@@ -36,6 +36,10 @@ class ProxyModelHandler implements ProxyHandler<any> {
             return value.bind(target);
         }
 
+        if(prop === 'attributes') {
+            return target.attributes;
+        }
+
         return target?.getAttributeSync(prop as keyof IModel) ?? null;
     }
 
