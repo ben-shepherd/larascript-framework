@@ -1,5 +1,7 @@
 version: '3'
 
+name: larascript
+
 services:
   mongodb:
     container_name: larascript-mongodb
@@ -17,3 +19,8 @@ services:
 
 volumes:
   mongodb_data:
+
+networks:
+  app-network:
+    external: true
+    name: larascript
