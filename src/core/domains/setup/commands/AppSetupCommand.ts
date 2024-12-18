@@ -25,26 +25,17 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
     /**
      * The environment service
      */
-    env: IEnvService;
+    env: IEnvService = new EnvService();
 
     /**
      * The console input service
      */
-    input: IConsoleInputService;
+    input: IConsoleInputService = new ConsoleInputService();
 
     /**
      * The questions to ask the user
      */
-    questions!: QuestionDTO[];
-
-    /**
-     * Constructor
-     */
-    constructor() {
-        super();
-        this.env = new EnvService();
-        this.input = new ConsoleInputService();
-    }
+    protected questions!: QuestionDTO[];
 
     /**
      * Writes a line to the console

@@ -41,7 +41,7 @@ const buildQuestionDTOs = (): QuestionDTO[] => {
             id: QuestionIDs.selectDefaultDb,
             question: 'Which default database do you want to use?. This step will overwrite your .env file.',
             previewText: 'Select Default Database',
-            defaultValue: 'mongodb',
+            defaultValue: 'postgres',
             acceptedAnswers: ['mongodb', 'postgres', ''],
             actionCtor: SetupDefaultDatabase,
             applicableOnly: {
