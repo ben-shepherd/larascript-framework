@@ -1,12 +1,12 @@
 import UserObserver from "@src/app/observers/UserObserver";
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
-import IModelAttributes from "@src/core/interfaces/IModelData";
+import IModelAttributes from "@src/core/interfaces/IModelAttributes";
 import Model from "@src/core/models/base/Model";
 
 /**
  * User structure
  */
-export interface IUserData extends IModelAttributes {
+export interface UserAttributes extends IModelAttributes {
     email: string;
     password?: string;
     hashedPassword: string;
@@ -23,7 +23,7 @@ export interface IUserData extends IModelAttributes {
  *
  * Represents a user in the database.
  */
-export default class User extends Model<IUserData> implements IUserModel {
+export default class User extends Model<UserAttributes> implements IUserModel {
 
     /**
      * Table name
@@ -33,7 +33,7 @@ export default class User extends Model<IUserData> implements IUserModel {
     /**
      * @param data User data
      */
-    constructor(data: IUserData | null = null) {
+    constructor(data: UserAttributes | null = null) {
         super(data);
         this.setObserverConstructor(UserObserver);
     }

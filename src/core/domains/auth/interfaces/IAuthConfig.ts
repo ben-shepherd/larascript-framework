@@ -5,7 +5,7 @@ import { IAuthService } from "@src/core/domains/auth/interfaces/IAuthService";
 import { IPermissionsConfig } from "@src/core/domains/auth/interfaces/IPermissionsConfig";
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import IUserRepository from "@src/core/domains/auth/interfaces/IUserRepository";
-import { IInterfaceCtor } from "@src/core/domains/validator/interfaces/IValidator";
+import { ValidatorConstructor } from "@src/core/domains/validator/interfaces/IValidator";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import IFactory from "@src/core/interfaces/IFactory";
 import { ModelConstructor } from "@src/core/interfaces/IModel";
@@ -29,8 +29,8 @@ export interface IAuthConfig {
         apiTokenFactory: ICtor<IApiTokenFactory>;
     }
     validators: {
-        createUser: IInterfaceCtor;
-        updateUser: IInterfaceCtor;
+        createUser: ValidatorConstructor;
+        updateUser: ValidatorConstructor;
     };
     jwtSecret: string,
     expiresInMinutes: number;

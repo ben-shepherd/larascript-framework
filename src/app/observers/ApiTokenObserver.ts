@@ -1,9 +1,9 @@
 import UserRepository from "@src/app/repositories/auth/UserRepository";
-import { IApiTokenData } from "@src/core/domains/auth/interfaces/IApitokenModel";
+import { ApiTokenAttributes } from "@src/core/domains/auth/interfaces/IApitokenModel";
 import Observer from "@src/core/domains/observer/services/Observer";
 import { App } from "@src/core/services/App";
 
-interface IApiTokenObserverData extends IApiTokenData {
+interface IApiTokenObserverData extends ApiTokenAttributes {
 
 }
 

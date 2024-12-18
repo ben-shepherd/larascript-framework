@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import { IUserData } from '@src/app/models/auth/User';
+import { UserAttributes } from '@src/app/models/auth/User';
 import { events } from '@src/core/domains/events/services/EventService';
 import { TestUserCreatedListener } from '@src/tests/events/events/auth/TestUserCreatedListener';
 import TestUserCreatedSubscriber from '@src/tests/events/events/auth/TestUserCreatedSubscriber';
@@ -52,16 +52,16 @@ describe('mock queable event', () => {
         await testUser.save();
         expect(testUser.getId()).toBeTruthy();
 
-        const expectedPayloadCallback = (payload: IUserData) => {
+        const expectedPayloadCallback = (payload: UserAttributes) => {
             return payload.id === testUser.getId() && payload.email === 'test@example.com'
         }
 
         expect(
-            events().assertDispatched<IUserData>(TestUserCreatedListener, expectedPayloadCallback)
+            events().assertDispatched<UserAttributes>(TestUserCreatedListener, expectedPayloadCallback)
         ).toBeTruthy()
 
         expect(
-            events().assertDispatched<IUserData>(TestUserCreatedSubscriber, expectedPayloadCallback)
+            events().assertDispatched<UserAttributes>(TestUserCreatedSubscriber, expectedPayloadCallback)
         ).toBeTruthy()
     })
 

@@ -1,4 +1,4 @@
-import { IUserData } from "@src/app/models/auth/User";
+import { UserAttributes } from "@src/app/models/auth/User";
 import BaseEvent from "@src/core/domains/events/base/BaseEvent";
 import SyncDriver from "@src/core/domains/events/drivers/SyncDriver";
 
@@ -21,7 +21,7 @@ export default class TestUserCreatedSubscriber extends BaseEvent {
     }
 
     async execute(): Promise<void> {
-        const payload = this.getPayload<IUserData>();
+        const payload = this.getPayload<UserAttributes>();
         
         console.log('User was created', payload);
     }

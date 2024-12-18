@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { describe, expect } from '@jest/globals';
-import IModelAttributes from '@src/core/interfaces/IModelData';
+import IModelAttributes from '@src/core/interfaces/IModelAttributes';
 import Model from '@src/core/models/base/Model';
 import testHelper from '@src/tests/testHelper';
 

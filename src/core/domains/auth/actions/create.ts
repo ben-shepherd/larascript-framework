@@ -1,11 +1,11 @@
-import { IUserData } from '@src/app/models/auth/User';
+import { UserAttributes } from '@src/app/models/auth/User';
 import UserFactory from '@src/core/domains/auth/factory/userFactory';
+import { auth } from '@src/core/domains/auth/services/AuthService';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';
 import responseError from '@src/core/domains/express/requests/responseError';
 import ValidationError from '@src/core/exceptions/ValidationError';
 import { App } from '@src/core/services/App';
 import { Request, Response } from 'express';
-import { auth } from '@src/core/domains/auth/services/AuthService';
 
 /**
  * Creates a new user
@@ -16,7 +16,7 @@ import { auth } from '@src/core/domains/auth/services/AuthService';
  */
 export default async (req: Request, res: Response): Promise<void> => {
 
-    const { email, password, firstName, lastName } = req.body as Pick<IUserData, 'email' | 'password' | 'firstName' | 'lastName'>;
+    const { email, password, firstName, lastName } = req.body as Pick<UserAttributes, 'email' | 'password' | 'firstName' | 'lastName'>;
 
     try {
         // Check if the user already exists

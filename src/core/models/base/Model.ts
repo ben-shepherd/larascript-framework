@@ -9,7 +9,7 @@ import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasOb
 import { IObserver, IObserverEvent } from '@src/core/domains/observer/interfaces/IObserver';
 import { ICtor } from '@src/core/interfaces/ICtor';
 import { GetAttributesOptions, IModel, ModelConstructor } from '@src/core/interfaces/IModel';
-import IModelAttributes from '@src/core/interfaces/IModelData';
+import IModelAttributes from '@src/core/interfaces/IModelAttributes';
 import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
 import { app } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';

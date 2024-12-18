@@ -2,9 +2,9 @@
 import IValidatorResult from "@src/core/domains/validator/interfaces/IValidatorResult";
 import Joi, { ValidationOptions } from "joi";
 
-export type IInterfaceCtor = new (...args: any[]) => IValidator;
+export type ValidatorConstructor = new (...args: any[]) => IValidator;
 
-export type IValidatorPayload = Record<string, unknown>;
+export type ValidatorPayload = Record<string, unknown>;
 
 /**
  * Interface for a validator class.

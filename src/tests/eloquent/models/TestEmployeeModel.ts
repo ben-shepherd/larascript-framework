@@ -1,10 +1,10 @@
 import BelongsTo from "@src/core/domains/eloquent/relational/BelongsTo";
-import IModelAttributes from "@src/core/interfaces/IModelData";
+import IModelAttributes from "@src/core/interfaces/IModelAttributes";
 import Model from "@src/core/models/base/Model";
 import { App } from "@src/core/services/App";
+import TestDepartmentModel from "@src/tests/eloquent/models/TestDepartmentModel";
 import testHelper from "@src/tests/testHelper";
 import { DataTypes } from "sequelize";
-import TestDepartmentModel from "@src/tests/eloquent/models/TestDepartmentModel";
 
 const tableName = Model.formatTableName('testsEmployees')
 

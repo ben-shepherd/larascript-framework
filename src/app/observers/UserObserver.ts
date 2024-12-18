@@ -1,5 +1,5 @@
 import { UserCreatedListener } from "@src/app/events/listeners/UserCreatedListener";
-import { IUserData } from "@src/app/models/auth/User";
+import { UserAttributes } from "@src/app/models/auth/User";
 import hashPassword from "@src/core/domains/auth/utils/hashPassword";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import Observer from "@src/core/domains/observer/services/Observer";
@@ -11,7 +11,7 @@ import { App } from "@src/core/services/App";
  * 
  * Automatically hashes the password on create/update if it is provided.
  */
-export default class UserObserver extends Observer<IUserData> {
+export default class UserObserver extends Observer<UserAttributes> {
 
     protected userCreatedListener: ICtor<IBaseEvent> = UserCreatedListener;
 
@@ -30,7 +30,7 @@ export default class UserObserver extends Observer<IUserData> {
      * @param data The User data being created.
      * @returns The processed User data.
      */
-    async creating(data: IUserData): Promise<IUserData> {
+    async creating(data: UserAttributes): Promise<UserAttributes> {
         data = this.onPasswordChange(data)
         data = await this.updateRoles(data)
         return data
@@ -41,7 +41,7 @@ export default class UserObserver extends Observer<IUserData> {
      * @param data The User data that has been created.
      * @returns The processed User data.
      */
-    async created(data: IUserData): Promise<IUserData> {
+    async created(data: UserAttributes): Promise<UserAttributes> {
         await App.container('events').dispatch(new this.userCreatedListener(data))
         return data
     }
@@ -52,7 +52,7 @@ export default class UserObserver extends Observer<IUserData> {
      * @param data The User data being created/updated.
      * @returns The processed User data with the updated roles.
      */
-    async updateRoles(data: IUserData): Promise<IUserData> {
+    async updateRoles(data: UserAttributes): Promise<UserAttributes> {
         let updatedRoles: string[] = [];
 
         for(const group of data.groups) {
@@ -74,7 +74,7 @@ export default class UserObserver extends Observer<IUserData> {
      * @param data The User data being created/updated.
      * @returns The processed User data.
      */
-    onPasswordChange(data: IUserData): IUserData {
+    onPasswordChange(data: UserAttributes): UserAttributes {
         if(!data.password) {
             return data
         }

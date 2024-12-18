@@ -1,4 +1,4 @@
-import User, { IUserData } from '@src/app/models/auth/User';
+import User, { UserAttributes } from '@src/app/models/auth/User';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';
 import responseError from '@src/core/domains/express/requests/responseError';
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
@@ -14,7 +14,7 @@ import { Response } from 'express';
 export default async (req: BaseRequest, res: Response) => {
     try {
         const user = req.user as User;
-        const { password, firstName, lastName } = req.body as Pick<IUserData, 'password' | 'firstName' | 'lastName'>;
+        const { password, firstName, lastName } = req.body as Pick<UserAttributes, 'password' | 'firstName' | 'lastName'>;
 
         // If the user provided a new password, hash it and update the user object
         if(password) {

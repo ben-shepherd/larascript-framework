@@ -1,6 +1,6 @@
 import User from '@src/app/models/auth/User';
 import ApiTokenObserver from '@src/app/observers/ApiTokenObserver';
-import IApiTokenModel, { IApiTokenData } from '@src/core/domains/auth/interfaces/IApitokenModel';
+import IApiTokenModel, { ApiTokenAttributes } from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import Scopes from '@src/core/domains/auth/services/Scopes';
 import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
@@ -12,7 +12,7 @@ import Model from '@src/core/models/base/Model';
  *
  * Represents an API token that can be used to authenticate a user.
  */
-class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
+class ApiToken extends Model<ApiTokenAttributes> implements IApiTokenModel {
 
     /**
      * The user model constructor
@@ -46,11 +46,11 @@ class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
     /**
      * Construct an ApiToken model from the given data.
      *
-     * @param {IApiTokenData} [data=null] The data to construct the model from.
+     * @param {ApiTokenAttributes} [data=null] The data to construct the model from.
      *
      * @constructor
      */
-    constructor(data: IApiTokenData | null = null) {
+    constructor(data: ApiTokenAttributes | null = null) {
         super(data)
         this.setObserverConstructor(ApiTokenObserver)
     }

@@ -1,5 +1,5 @@
 import { IModel } from "@src/core/interfaces/IModel";
-import IModelAttributes from "@src/core/interfaces/IModelData";
+import IModelAttributes from "@src/core/interfaces/IModelAttributes";
 
 const stripGuardedResourceProperties = async (results: IModel[] | IModel) => {
     const strippedResult: IModelAttributes[] = []

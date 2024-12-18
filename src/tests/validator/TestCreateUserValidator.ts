@@ -1,5 +1,5 @@
 import BaseValidator from "@src/core/domains/validator/base/BaseValidator";
-import { IValidatorPayload } from "@src/core/domains/validator/interfaces/IValidator";
+import { ValidatorPayload } from "@src/core/domains/validator/interfaces/IValidator";
 import { App } from "@src/core/services/App";
 import Joi, { ObjectSchema } from "joi";
 
@@ -13,7 +13,7 @@ class TestCreateUserValidator extends BaseValidator {
      * Validate if the email is available
      * @param payload 
      */
-    async validateEmailAvailability(payload: IValidatorPayload) {
+    async validateEmailAvailability(payload: ValidatorPayload) {
         const repository = App.container('auth').userRepository;
         
         const user = await repository.findOneByEmail(payload.email as string);

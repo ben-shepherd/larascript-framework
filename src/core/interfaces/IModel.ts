@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { IdGeneratorFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import IHasObserver from "@src/core/domains/observer/interfaces/IHasObserver";
-import IModelAttributes from "@src/core/interfaces/IModelData";
+import IModelAttributes from "@src/core/interfaces/IModelAttributes";
 
 
 export type GetAttributesOptions = {excludeGuarded: boolean}
