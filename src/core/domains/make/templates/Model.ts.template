@@ -1,22 +1,21 @@
-
+import IModelAttributes from '@src/core/interfaces/IModelAttributes';
 import Model from '@src/core/models/base/Model';
-import IModelData from '@src/core/interfaces/IModelData';
 
-/**
- * Add your models fields here, e.g.
- *
- * foo: string;
- * bar: number;
- * baz: boolean;
- */
-export interface I#name#Data extends IModelData {
-    
+// Attribute type hinting
+export interface #name#Attributes extends IModelAttributes {
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
-class #name# extends Model<I#name#Data> {
+class #name# extends Model<#name#Attributes> {
 
     // Add your models fields here, e.g: ['foo', 'bar', 'baz']
-    fields: string[] = []
+    fields: string[] = [
+        'id',
+        'createdAt',
+        'updatedAt'
+    ]
 
     // Add your guarded fields here, e.g: ['sensitiveField']
     guarded: string[] = [];
@@ -30,14 +29,8 @@ class #name# extends Model<I#name#Data> {
     // Enable or disable automatic generation of createdAt, updatedAt fields
     timestamps: boolean = true;
 
-    /**
-     * Constructs a new instance of the Test model.
-     * 
-     * @param {I#name#Data | null} data - Initial data to populate the model.
-     */
-    constructor(data: I#name#Data | null = null) {
-        super(data)
-    }
+    // Add your relationships here
+    relationships: string[] = [];
 
 }
 
