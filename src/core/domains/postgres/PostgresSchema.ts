@@ -6,8 +6,7 @@ import { IAlterTableOptions } from "@src/core/domains/postgres/interfaces/IPostg
 import pg from 'pg';
 import { DataTypes, QueryInterfaceCreateTableOptions, QueryInterfaceDropTableOptions } from "sequelize";
 import { ModelAttributes } from 'sequelize/types/model';
-
-import { logger } from "../logger/services/LoggerService";
+import { logger } from "@src/core/domains/logger/services/LoggerService";
 
 
 class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {

@@ -1,6 +1,5 @@
 import { ICtor } from "@src/core/interfaces/ICtor";
-
-import { IBroadcastListener } from "../interfaces/IBroadcaster";
+import { IBroadcastListener } from "@src/core/domains/broadcast/interfaces/IBroadcaster";
 
 /**
  * Abstract base class for events that can be broadcasted.

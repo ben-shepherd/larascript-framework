@@ -2,8 +2,7 @@ import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter
 import ParsePostgresConnectionUrl from "@src/core/domains/postgres/helper/ParsePostgresConnectionUrl";
 import { IPostgresConfig } from "@src/core/domains/postgres/interfaces/IPostgresConfig";
 import pg from 'pg';
-
-import testHelper from "./testHelper";
+import testHelper from "@src/tests/testHelper";
 
 (async () => {
 
