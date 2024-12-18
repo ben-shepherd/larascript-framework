@@ -52,7 +52,7 @@ class ApiToken extends Model<IApiTokenData> implements IApiTokenModel {
      */
     constructor(data: IApiTokenData | null = null) {
         super(data)
-        this.observeWith(ApiTokenObserver)
+        this.setObserverConstructor(ApiTokenObserver)
     }
 
     /**

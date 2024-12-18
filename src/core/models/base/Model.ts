@@ -1,11 +1,12 @@
  
-import BaseModel from '@src/core/base/BaseModel';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import { db } from '@src/core/domains/database/services/Database';
 import { IBelongsToOptions, IEloquent, IHasManyOptions, IRelationship, IdGeneratorFn } from '@src/core/domains/eloquent/interfaces/IEloquent';
 import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
 import HasMany from '@src/core/domains/eloquent/relational/HasMany';
 import EloquentRelationship from '@src/core/domains/eloquent/utils/EloquentRelationship';
+import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
+import { IObserver, IObserverEvent } from '@src/core/domains/observer/interfaces/IObserver';
 import { ICtor } from '@src/core/interfaces/ICtor';
 import { GetAttributesOptions, IModel, ModelConstructor } from '@src/core/interfaces/IModel';
 import IModelAttributes from '@src/core/interfaces/IModelData';
@@ -13,7 +14,6 @@ import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
 import { app } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
 
-import AttributeChangeListener from '../broadcast/AttributeChangeListener';
  
 
 /**
@@ -23,8 +23,13 @@ import AttributeChangeListener from '../broadcast/AttributeChangeListener';
  * 
  * @template Attributes Type extending IModelData, representing the structure of the model's data.
  */
-export default abstract class Model<Attributes extends IModelAttributes> extends BaseModel implements IModel<Attributes> {
+export default abstract class Model<Attributes extends IModelAttributes> implements IModel<Attributes> {
 
+    [key: string]: unknown;
+
+    /**
+     * The ID generator function for the model.
+     */
     protected idGeneratorFn: IdGeneratorFn | undefined;
 
     /**
@@ -92,6 +97,18 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
      * Must be set by child classes or will be automatically generated.
      */
     public table!: string;
+
+    /**
+         * The observer instance attached to this model.
+         * If not set, observeWith must be called to define it.
+         */
+    public observer?: IObserver;
+
+    /**
+     * Custom observation methods for specific properties.
+     * Key is the property name, value is the name of the custom observation method.
+     */
+    public observeProperties: Record<string, string> = {};
     
     /**
      * Constructs a new instance of the Model class.
@@ -99,14 +116,13 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
      * @param {Attributes | null} data - Initial data to populate the model.
      */
     constructor(data: Attributes | null) {
-        super();
         this.attributes = { ...data } as Attributes;
         this.original = { ...data } as Attributes;
         if(!this.table) {
             this.table = this.getDefaultTable()
         }
     }
-     
+
     /**
      * Gets the document manager for database operations.
      * 
@@ -198,6 +214,77 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
     }
 
     /**
+     * Sets the observer for this model instance.
+     * The observer is responsible for handling events broadcasted by the model.
+     * @param {IObserver} observer - The observer to set.
+     * @returns {void}
+     */
+    setObserverConstructor(observerConstructor?: ObserveConstructor): void {
+        if(typeof observerConstructor === 'undefined') {
+            this.observer = undefined;
+        }
+        this.observer = new (observerConstructor as ObserveConstructor)();
+    }
+
+    /**
+     * Retrieves the observer instance for this model.
+     * @returns {IObserver | undefined} The observer instance, or undefined if not set.
+     */
+    getObserver(): IObserver | undefined {
+        return this.observer
+    }
+
+    /**
+     * Sets a custom observer method for a specific attribute.
+     * When an `AttributeChange` event is triggered for the attribute,
+     * the specified method will be called on the observer with the
+     * event payload.
+     * @param {string} attribute - The attribute to observe.
+     * @param {string} method - The method to call on the observer.
+     */
+    setObserveProperty(attribute: string, method: string): void {
+        this.observeProperties[attribute] = method
+    }
+
+    /**
+     * Calls the specified method on the observer with the given event and attributes.
+     * If no observer is defined, returns the attributes unchanged.
+     * @param {IObserverEvent} event - The event to call on the observer.
+     * @param {Attributes} attributes - The attributes to pass to the observer.
+     * @returns {Promise<Attributes>} The attributes returned by the observer, or the original attributes if no observer is defined.
+     */
+    protected async observeAttributes(event: IObserverEvent, attributes: Attributes | null): Promise<Attributes | null> {
+        if(!this.observer) {
+            return attributes
+        }
+
+        return await this.observer.on(event, attributes) as Attributes | null
+    }
+
+    /**
+     * Observes changes to a specific property on the model using a custom observer method.
+     * If an observer is defined and a custom method is set for the given property key in `observeProperties`,
+     * the method is invoked with the model's attributes.
+     * 
+     * @param {string} key - The key of the property to observe.
+     * @returns {Promise<Attributes | null>} The attributes processed by the observer's custom method, or the original attributes if no observer or custom method is defined.
+     */
+
+    protected async observeProperty(key: string) {
+        if(!this.observer) {
+            return this.attributes
+        }
+
+        // Check if this attribute key has been assigned a custom method
+        if(Object.keys(this.observeProperties).includes(key)) {
+            const observerMethod = this.observeProperties[key];
+            this.attributes = await this.observer.onCustom(observerMethod, this.attributes)
+        }
+
+        return this.attributes
+    }
+
+    /**
      * Sets or retrieves the value of a specific attribute from the model's data.
      * If called with a single argument, returns the value of the attribute.
      * If called with two arguments, sets the value of the attribute.
@@ -255,22 +342,7 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
             this.attributes[key] = value as Attributes[K];
         }
 
-        // Subscribe to the event
-        this.broadcastSubscribeOnce<AttributeChangeListener>({
-            listener: AttributeChangeListener,
-            callback: async (event) => {
-                this.attributes = event.attributes as Attributes
-            }
-        })
-
-        // Broadcast the event 
-        this.broadcastDispatch(
-            new AttributeChangeListener({
-                key: key as string,
-                value,
-                attributes: this.attributes
-            })
-        )
+        this.attributes = await this.observeProperty(key as string)
     }
     
     /**
@@ -564,23 +636,22 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
      */
     async save(): Promise<void> {
         if (this.attributes && !this.getId()) {
-            this.attributes = await this.observeData('creating', this.attributes);
+            this.attributes = await this.observeAttributes('creating', this.attributes);
             await this.setTimestamp('createdAt');
             await this.setTimestamp('updatedAt');
 
             const preparedAttributes = this.prepareDocument() ?? {};
             this.attributes = await (await this.queryBuilder().insert(preparedAttributes)).first()?.toObject() as Attributes;
             this.attributes = await this.refresh();
-
-            this.attributes = await this.observeData('created', this.attributes);
+            this.attributes = await this.observeAttributes('created', this.attributes);
             return;
         }
 
-        this.attributes = await this.observeData('updating', this.attributes);
+        this.attributes = await this.observeAttributes('updating', this.attributes)
         this.setTimestamp('updatedAt');
         await this.update();
         this.attributes = await this.refresh();
-        this.attributes = await this.observeData('updated', this.attributes);
+        this.attributes = await this.observeAttributes('updated', this.attributes)
         this.original = { ...this.attributes } as Attributes
     }
 
@@ -591,11 +662,11 @@ export default abstract class Model<Attributes extends IModelAttributes> extends
      */
     async delete(): Promise<void> {
         if (!this.attributes) return;
-        this.attributes = await this.observeData('deleting', this.attributes);
+        this.attributes = await this.observeAttributes('deleting', this.attributes);
         await this.queryBuilder().where(this.primaryKey, this.getId()).delete();
         this.attributes = null;
         this.original = null;
-        await this.observeData('deleted', this.attributes);
+        await this.observeAttributes('deleted', this.attributes);
     }
 
     /**

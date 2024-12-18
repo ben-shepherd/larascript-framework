@@ -33,6 +33,7 @@ class ProxyModelHandler implements ProxyHandler<any> {
 
         // Handle method calls
         if (typeof value === 'function' && this._invokableMethod(target, prop)) {
+            console.log('[ProxyModelHandler] Method call', {prop, value});
             return value.bind(target);
         }
 

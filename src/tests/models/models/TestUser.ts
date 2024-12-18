@@ -13,7 +13,7 @@ export default class TestUser extends User {
 
     constructor(data: IUserData | null = null) {
         super(data);
-        this.observeWith(TestUserObserver, true)
+        this.setObserverConstructor(TestUserObserver)
     }
 
 }

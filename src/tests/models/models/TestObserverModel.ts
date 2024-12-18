@@ -9,13 +9,10 @@ export interface TestObserverModelData extends IModelAttributes {
 
 class TestObserverModel extends Model<TestObserverModelData> {
 
-    observeProperties: Record<string, string> = {
-        name: 'onNameChange'
-    }
-
     constructor(data: TestObserverModelData | null = null) {
         super(data);
-        this.observeWith(TestObserver);
+        this.setObserverConstructor(TestObserver);
+        this.setObserveProperty('name', 'onNameChange');
     }
 
     public table: string = 'tests';

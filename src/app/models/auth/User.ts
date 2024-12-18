@@ -35,7 +35,7 @@ export default class User extends Model<IUserData> implements IUserModel {
      */
     constructor(data: IUserData | null = null) {
         super(data);
-        this.observeWith(UserObserver);
+        this.setObserverConstructor(UserObserver);
     }
 
     /**
