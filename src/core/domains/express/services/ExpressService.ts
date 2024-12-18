@@ -9,9 +9,8 @@ import SecurityRules, { SecurityIdentifiers } from '@src/core/domains/express/se
 import { Middleware } from '@src/core/interfaces/Middleware.t';
 import { app } from '@src/core/services/App';
 import expressClient from 'express';
-
-import { logger } from '../../logger/services/LoggerService';
-import { validate } from '../../validator/services/ValidatorService';
+import { logger } from '@src/core/domains/logger/services/LoggerService';
+import { validate } from '@src/core/domains/validator/services/ValidatorService';
 
 /**
  * Short hand for `app('express')`
