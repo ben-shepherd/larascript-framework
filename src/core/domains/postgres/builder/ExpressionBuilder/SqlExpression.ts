@@ -205,33 +205,6 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
         return this.buildSelect();
     }
 
-
-    // Column Methods
-    setColumns(columns: TColumnOption[]): this {
-        this.columns = columns;
-        return this;
-    }
-
-    addColumn(column: TColumnOption): this {
-        if (!this.columns) this.columns = [];
-        this.columns.push(column);
-        return this
-    }
-
-    getColumns(): TColumnOption[] {
-        return this.columns ?? []
-    }
-
-    setDistinctColumns(columns: TColumnOption[]): this {
-        console.log('[SqlExpression] setDistinctColumns', columns);
-        this.distinctColumns = columns;
-        return this   
-    }
-
-    getDistinctColumns(): TColumnOption[] {
-        return this.distinctColumns || []
-    }
-
     // Where Clause Methods
     setWhere(where: TWhereClause[]): this {
         this.whereClauses = where;

@@ -149,21 +149,38 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
         return this.table
     }
 
+    // Column Methods
+    setColumns(columns: TColumnOption[]): this {
+        this.columns = columns;
+        return this;
+    }
+    
+    addColumn(column: TColumnOption): this {
+        if (!this.columns) this.columns = [];
+        this.columns.push(column);
+        return this
+    }
+    
+    getColumns(): TColumnOption[] {
+        return this.columns ?? []
+    }
+    
+    setDistinctColumns(columns: TColumnOption[]): this {
+        console.log('[SqlExpression] setDistinctColumns', columns);
+        this.distinctColumns = columns;
+        return this   
+    }
+    
+    getDistinctColumns(): TColumnOption[] {
+        return this.distinctColumns || []
+    }
+    
+
     abstract setSelect(): this;
 
     abstract setSelectRaw<T = unknown>(value: T, bindings?: BindingsUtility): this;
 
     abstract getRawSelect<T = unknown>(): T | null;
-
-    abstract setColumns(columns: TColumnOption[]): this;
-
-    abstract getColumns(): TColumnOption[];
-
-    abstract addColumn(column: TColumnOption): this;
-
-    abstract setDistinctColumns(columns: TColumnOption[]): this;
-
-    abstract getDistinctColumns(): TColumnOption[];
 
     abstract addBinding(column: string, binding: unknown): this;
 
