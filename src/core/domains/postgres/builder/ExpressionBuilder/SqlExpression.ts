@@ -1,6 +1,6 @@
 import BaseExpression, { NullableObjectOrArray, RawWhere } from "@src/core/domains/eloquent/base/BaseExpression";
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
-import { TColumnOption, TGroupBy, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { TColumnOption, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
 import DeleteFrom from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/DeleteFrom";
 import FromTable from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/FromTable";
@@ -291,26 +291,6 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
         return this.withs ?? []
     }
 
-    // Order By Methods
-    setOrderBy(orderBy: TOrderBy[] | null): this {
-        this.orderByClauses = orderBy;
-        return this;
-    }
-    
-    orderBy(orderBy: TOrderBy): this {
-        if(!this.orderByClauses) this.orderByClauses = [];
-        this.orderByClauses.push(orderBy);
-        return this
-    }
-
-    getOrderBy(): TOrderBy[] | null {
-        return this.orderByClauses ?? []
-    }
-
-    setOrderByClauses(orderByClauses: TOrderBy[]) {
-        this.orderByClauses = orderByClauses
-        return this
-    }
 
     // Offset/Limit Methods
     setOffsetLimit(offsetLimit: TOffsetLimit | null): this {
@@ -417,15 +397,6 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
         return this.bindingsUtility.getTypes()
     }
 
-    // Group By Methods
-    getGroupBy(): TGroupBy[] | null {
-        return this.groupBy
-    }
-
-    setGroupBy(columns: TGroupBy[]): this {
-        this.groupBy = columns
-        return this
-    }
 
     // Utility Methods
     protected validateArrayObjects(objects: object[], message = 'Expected an array of objects') {

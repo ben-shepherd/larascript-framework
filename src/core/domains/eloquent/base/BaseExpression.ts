@@ -201,12 +201,6 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
 
     abstract getRawWhere<T = unknown>(): T | null;
 
-    abstract setOrderBy(orderBy: TOrderBy[]): this;
-
-    abstract getOrderBy(): TOrderBy[] | null;
-
-    abstract orderBy(orderBy: TOrderBy): this;
-
     abstract setOffsetAndLimit(offset: TOffsetLimit | null): this;
 
     abstract setLimit(limit: number | null): this;
@@ -235,11 +229,38 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
 
     abstract getUpdate(): object | object[] | null;
 
-    abstract setGroupBy(columns: TGroupBy[]): this;
-
-    abstract getGroupBy(): TGroupBy[] | null;
-
     abstract setDelete(): this;
+
+    // Order By Methods
+    setOrderBy(orderBy: TOrderBy[] | null): this {
+        this.orderByClauses = orderBy;
+        return this;
+    }
+        
+    orderBy(orderBy: TOrderBy): this {
+        if(!this.orderByClauses) this.orderByClauses = [];
+        this.orderByClauses.push(orderBy);
+        return this
+    }
+    
+    getOrderBy(): TOrderBy[] | null {
+        return this.orderByClauses ?? []
+    }
+    
+    setOrderByClauses(orderByClauses: TOrderBy[]) {
+        this.orderByClauses = orderByClauses
+        return this
+    }
+
+    // Group By Methods
+    getGroupBy(): TGroupBy[] | null {
+        return this.groupBy
+    }
+    
+    setGroupBy(columns: TGroupBy[]): this {
+        this.groupBy = columns
+        return this
+    }
 
     /**
      * Clones the query builder expression.
