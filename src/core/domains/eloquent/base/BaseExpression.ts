@@ -99,6 +99,14 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
     }
 
     /**
+     * Builds and returns the final expression result.
+     * 
+     * @template T - The type of the built expression result
+     * @returns {T} The constructed expression result
+     */
+    abstract build<T = unknown>(): T;
+
+    /**
      * Returns the default values for the expression properties as an ExpressionDefaults object.
      * 
      * The defaults include settings for build type, table details, column selections, 
@@ -130,11 +138,16 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
         }
     }
 
-    abstract build<T = unknown>(): T;
-
-    abstract setTable(table: string, abbreviation?: string): this;
-
-    abstract getTable(): string;
+    // Table Methods
+    setTable(table: string, abbreviation?: string): this {
+        this.table = table;
+        this.tableAbbreviation = abbreviation ?? null
+        return this;
+    }
+    
+    getTable(): string {
+        return this.table
+    }
 
     abstract setSelect(): this;
 

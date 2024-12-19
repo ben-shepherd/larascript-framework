@@ -205,16 +205,6 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
         return this.buildSelect();
     }
 
-    // Table Methods
-    setTable(table: string, abbreviation?: string): this {
-        this.table = table;
-        this.tableAbbreviation = abbreviation ?? null
-        return this;
-    }
-
-    getTable(): string {
-        return this.table
-    }
 
     // Column Methods
     setColumns(columns: TColumnOption[]): this {
