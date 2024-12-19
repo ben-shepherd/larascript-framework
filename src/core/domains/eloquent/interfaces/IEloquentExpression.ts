@@ -91,14 +91,9 @@ interface IEloquentExpression<BindingsUtility = unknown> {
      */
     setDistinctColumns(columns: TColumnOption[]): this;
 
-    /**
-     * Adds a single binding to the builder.
-     * This method wraps the given binding in an array and passes it to the underlying addBindings method.
-     * 
-     * @param {unknown} binding The value to bind.
-     * @returns {this} The query builder instance.
-     */
-    addBinding(column: string, binding: unknown): this;
+    setBindings(bindings: BindingsUtility): this;
+    
+    getBindings(): BindingsUtility | null;
 
     /**
      * Gets the current where clauses.

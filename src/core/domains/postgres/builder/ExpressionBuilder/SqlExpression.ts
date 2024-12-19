@@ -349,18 +349,9 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
     }
 
     // Binding Methods
-    setBindings(bindings: BindingsHelper): this {
-        this.bindingsUtility = bindings;
-        return this
-    }
-
     addBinding(column: string, binding: unknown): this {
         this.bindingsUtility.addBinding(column, binding);
         return this
-    }
-
-    getBindings(): BindingsHelper {
-        return this.bindingsUtility
     }
 
     getBindingValues(): unknown[] {

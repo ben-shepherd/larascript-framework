@@ -182,8 +182,6 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
 
     abstract getRawSelect<T = unknown>(): T | null;
 
-    abstract addBinding(column: string, binding: unknown): this;
-
     abstract setWhere(where: TWhereClause[]): this;
 
     abstract addWhere(where: TWhereClause): this;
@@ -277,6 +275,16 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
     
     getOffsetLimit(): TOffsetLimit | null {
         return this.offsetLimit
+    }
+
+    // Binding Methods
+    setBindings(bindings: BindingsUtility): this {
+        this.bindingsUtility = bindings;
+        return this
+    }
+    
+    getBindings(): BindingsUtility | null {
+        return this.bindingsUtility
     }
 
     /**
