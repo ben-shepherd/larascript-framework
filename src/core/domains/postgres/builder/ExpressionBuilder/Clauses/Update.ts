@@ -11,7 +11,7 @@ class Update {
      * @param abbreviation - The abbreviation for the table name.
      * @returns The SQL string for the FROM clause.
      */
-    static toSql(table: string, update: object | object[], wheres: TWhereClause[], bindings: BindingsHelper): string {
+    static toSql(table: string, update: object | object[], wheres: TWhereClause[] | null, bindings: BindingsHelper): string {
         let sql = '';
         const updatesArray = Array.isArray(update) ? update : [update];
 
@@ -31,7 +31,7 @@ class Update {
      * @param bindings - An instance of the BindingsHelper class.
      * @returns The SQL string for the UPDATE query.
      */
-    static createUpdateSql(table: string, update: object, wheres: TWhereClause[], bindings: BindingsHelper): string {
+    static createUpdateSql(table: string, update: object, wheres: TWhereClause[] | null, bindings: BindingsHelper): string {
         table = SqlExpression.formatTableNameWithQuotes(table);
         return `UPDATE ${table} ${this.set(update, bindings)} ${this.where(wheres, bindings)}`.trimEnd() + ';'
     }
@@ -70,8 +70,8 @@ class Update {
      * @param {BindingsHelper} bindings - An instance of the BindingsHelper class.
      * @returns {string} The SQL string for the WHERE clause.
      */
-    static where(wheres: TWhereClause[], bindings: BindingsHelper): string {
-        if(wheres.length === 0) return '';
+    static where(wheres: TWhereClause[] | null, bindings: BindingsHelper): string {
+        if(!wheres || wheres.length === 0) return '';
 
         let sql = 'WHERE ';
 

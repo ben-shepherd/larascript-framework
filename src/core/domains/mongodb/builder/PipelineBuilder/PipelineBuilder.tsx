@@ -1,160 +1,148 @@
+import BaseExpression from "@src/core/domains/eloquent/base/BaseExpression";
 import { TColumnOption, TGroupBy, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
-import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 
-class PipelineBuilder implements IEloquentExpression {
+class PipelineBuilder extends BaseExpression<unknown> {
 
-    bindingsUtility: undefined;
-    
-    getTable(): string {
-        throw new Error("Method not implemented.")
-    }
+    bindingsUtility: unknown;
 
     setTable(table: string, abbreviation?: string): this {
-        throw new Error("Method not implemented.")
+        return this;
+    }
+
+    getTable(): string {
+        return '';
     }
 
     setSelect(): this {
-        throw new Error("Method not implemented.")
+        return this;
     }
 
     setSelectRaw(sql: string, bindings: unknown): this {
-        throw new Error("Method not implemented.")
-    }
-
-    getColumns(): TColumnOption[] {
-        throw new Error("Method not implemented.")
+        return this;
     }
 
     setColumns(columns: TColumnOption[]): this {
-        throw new Error("Method not implemented.")
+        return this;
+    }
+
+    getColumns(): TColumnOption[] {
+        return [];
     }
 
     addColumn(column: TColumnOption): this {
-        throw new Error("Method not implemented.")
-    }
-
-    getDistinctColumns(): TColumnOption[] {
-        throw new Error("Method not implemented.")
+        return this;
     }
 
     setDistinctColumns(columns: TColumnOption[]): this {
-        throw new Error("Method not implemented.")
+        return this;
+    }
+
+    getDistinctColumns(): TColumnOption[] {
+        return [];
     }
 
     addBinding(column: string, binding: unknown): this {
-        throw new Error("Method not implemented.")
-    }
-
-    getBindingValues(): unknown[] {
-        throw new Error("Method not implemented.")
-    }
-
-    getBindingTypes(): (number | undefined)[] {
-        throw new Error("Method not implemented.")
-    }
-
-    getWhere(): TWhereClause[] {
-        throw new Error("Method not implemented.")
+        return this;
     }
 
     setWhere(where: TWhereClause[]): this {
-        throw new Error("Method not implemented.")
+        return this;
     }
 
     addWhere(where: TWhereClause): this {
-        throw new Error("Method not implemented.")
+        return this;
+    }
+
+    getWhere(): TWhereClause[] {
+        return [];
     }
 
     where(column: string, operator: TOperator, value: TWhereClauseValue | TWhereClauseValue[], logicalOperator?: TLogicalOperator): this {
-        throw new Error("Method not implemented.")
+        return this;
     }
 
     whereRaw(sql: string, bindings?: unknown): this {
-        throw new Error("Method not implemented.")
+        return this;
+    }
+
+    setOrderBy(orderBy: TOrderBy[]): this {
+        return this;
     }
 
     getOrderBy(): TOrderBy[] | null {
-        throw new Error("Method not implemented.")
-    }
-
-    setOrderBy(orderBy: TOrderBy[] | null): this {
-        throw new Error("Method not implemented.")
+        return null;
     }
 
     orderBy(orderBy: TOrderBy): this {
-        throw new Error("Method not implemented.")
+        return this;
     }
 
     setOffsetAndLimit(offset: TOffsetLimit | null): this {
-        throw new Error("Method not implemented.")
+        return this;
     }
 
     setLimit(limit: number | null): this {
-        throw new Error("Method not implemented.")
+        return this;
     }
 
     setOffset(offset: number | null): this {
-        throw new Error("Method not implemented.")
+        return this;
     }
 
     getOffsetLimit(): TOffsetLimit | null {
-        throw new Error("Method not implemented.")
-    }
-
-    getJoins(): TJoin[] {
-        throw new Error("Method not implemented.")
+        return null;
     }
 
     setJoins(joins: TJoin[] | TJoin): this {
-        throw new Error("Method not implemented.")
+        return this;
+    }
+
+    getJoins(): TJoin[] {
+        return [];
     }
 
     join(options: TJoin): this {
-        throw new Error("Method not implemented.")
-    }
-
-    getWiths(): TWith[] {
-        throw new Error("Method not implemented.")
+        return this;
     }
 
     setWiths(withs: TWith[]): this {
-        throw new Error("Method not implemented.")
+        return this;
+    }
+
+    getWiths(): TWith[] {
+        return [];
     }
 
     with(options: TWith): this {
-        throw new Error("Method not implemented.")
-    }
-
-    getInsert(): object | object[] | null {
-        throw new Error("Method not implemented.")
+        return this;
     }
 
     setInsert(documents: object | object[]): this {
-        throw new Error("Method not implemented.")
+        return this;
     }
 
-    getUpdate(): object | object[] | null {
-        throw new Error("Method not implemented.")
+    getInsert(): object | object[] | null {
+        return null;
     }
 
     setUpdate(document: object | object[]): this {
-        throw new Error("Method not implemented.")
+        return this;
+    }
+
+    getUpdate(): object | object[] | null {
+        return null;
+    }
+
+    setGroupBy(columns: TGroupBy[]): this {
+        return this;
     }
 
     getGroupBy(): TGroupBy[] | null {
-        throw new Error("Method not implemented.")
-    }
-
-    setGroupBy(columns: TGroupBy[] | null): this {
-        throw new Error("Method not implemented.")
+        return null;
     }
 
     setDelete(): this {
-        throw new Error("Method not implemented.")
-    }
-
-    clone(): IEloquentExpression<unknown> {
-        throw new Error("Method not implemented.")
+        return this;
     }
 
     build<T = any[]>(): T {

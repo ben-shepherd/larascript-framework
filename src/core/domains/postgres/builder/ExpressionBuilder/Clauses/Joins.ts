@@ -10,7 +10,11 @@ class Joins {
      * @param joins - An array of joins to convert to a SQL string.
      * @returns The SQL string for the joins.
      */
-    static toSql(joins: TJoin[], prefix: string = ''): string {
+    static toSql(joins: TJoin[] | null, prefix: string = ''): string {
+
+        if(!joins) {
+            return '';
+        }
 
         let sql = `${prefix}`;
 

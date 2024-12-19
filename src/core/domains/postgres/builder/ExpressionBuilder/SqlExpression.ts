@@ -1,7 +1,6 @@
-import BaseExpression from "@src/core/domains/eloquent/base/BaseExpression";
+import BaseExpression, { NullableObjectOrArray, RawSelect, RawWhere } from "@src/core/domains/eloquent/base/BaseExpression";
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
 import { TColumnOption, TGroupBy, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
-import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
 import DeleteFrom from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/DeleteFrom";
 import FromTable from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/FromTable";
@@ -15,66 +14,19 @@ import Update from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses
 import Where from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/Where";
 import { z } from "zod";
 
-type BuildType = 'select' | 'insert' | 'update' | 'delete';
-type RawSelect = { sql: string, bindings: unknown };
-type RawWhere = { sql: string, bindings: unknown };
-type NullableObjectOrArray = object | object[] | null;
+class SqlExpression extends BaseExpression<BindingsHelper> {
+    
+    bindingsUtility: BindingsHelper = new BindingsHelper();
 
-const getDefaults = () => ({
-    buildType: 'select',
-    bindings: new BindingsHelper(),
-    table: '',
-    tableAbbreviation: null,
-    columns: [],
-    rawSelect: null,
-    distinctColumns: null,
-    whereClauses: [],
-    whereColumnTypes: {},
-    whereRaw: null,
-    joins: [],
-    withs: [],
-    orderByClauses: null,
-    offset: null,
-    inserts: null,
-    updates: null,
-    groupBy: null,
-})
-
-class SqlExpression extends BaseExpression implements IEloquentExpression {
-
-    public bindingsUtility                             = getDefaults().bindings;
-
-    protected buildType: BuildType                     = getDefaults().buildType as BuildType;
-
-    protected table: string                            = getDefaults().table;
-
-    protected tableAbbreviation?: string | null        = getDefaults().tableAbbreviation;
-
-    protected columns: TColumnOption[]                 = getDefaults().columns;
-
-    protected rawSelect: RawSelect | null              = getDefaults().rawSelect;
-
-    protected distinctColumns: TColumnOption[] | null  = getDefaults().distinctColumns;
-
-    protected whereClauses: TWhereClause[]             = getDefaults().whereClauses;
-
-    protected whereColumnTypes: Record<string, string> = getDefaults().whereColumnTypes;
-
-    protected rawWhere: RawWhere | null                = getDefaults().whereRaw;
-
-    protected joins: TJoin[]                           = getDefaults().joins;
-
-    protected withs: TWith[]                           = getDefaults().withs;
-
-    protected orderByClauses: TOrderBy[] | null        = getDefaults().orderByClauses;
-
-    protected offsetLimit: TOffsetLimit | null         = getDefaults().offset;
-
-    protected inserts: NullableObjectOrArray           = getDefaults().inserts;
-
-    protected updates: NullableObjectOrArray           = getDefaults().updates;
-
-    protected groupBy: TGroupBy[] | null               = getDefaults().groupBy;
+    /**
+     * Sets the default values for the expression properties. 
+     */
+    protected setDefaults(): void {
+        super.setDefaults({
+            ...super.getDefaults(),
+            bindings: new BindingsHelper()
+        })
+    }
 
     // Static Utility Methods
     public static readonly formatColumnWithQuotes = (column: string): string => {
@@ -164,7 +116,7 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         const selectColumns  = SelectColumns.toSql(this.columns, this.distinctColumns, this.rawSelect ?? undefined).trimEnd();
         const fromTable      = FromTable.toSql(this.table, this.tableAbbreviation).trimEnd();
         const join           = Joins.toSql(this.joins, oneSpacePrefix).trimEnd();
-        const where          = Where.toSql(this.whereClauses, this.rawWhere ?? undefined, this.bindingsUtility, oneSpacePrefix).trimEnd();
+        const where          = Where.toSql(this.whereClauses, this.rawWhere, this.bindingsUtility, oneSpacePrefix).trimEnd();
         const groupBy        = GroupBy.toSql(this.groupBy, oneSpacePrefix).trimEnd();
         const orderBy        = OrderBy.toSql(this.orderByClauses, oneSpacePrefix).trimEnd();
         const offsetLimit    = OffsetLimit.toSql(this.offsetLimit ?? {}, oneSpacePrefix).trimEnd();
@@ -224,7 +176,7 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         // Construct the components of the SQL query
         const oneSpacePrefix = ' ';
         const deleteFrom     = DeleteFrom.toSql(this.table);
-        const where          = Where.toSql(this.whereClauses, this.rawWhere ?? undefined, this.bindingsUtility, oneSpacePrefix).trimEnd();
+        const where          = Where.toSql(this.whereClauses, this.rawWhere ?? null, this.bindingsUtility, oneSpacePrefix).trimEnd();
         
         // Construct the SQL query
         let sql = deleteFrom;
@@ -265,12 +217,13 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
     }
 
     addColumn(column: TColumnOption): this {
+        if (!this.columns) this.columns = [];
         this.columns.push(column);
         return this
     }
 
     getColumns(): TColumnOption[] {
-        return this.columns
+        return this.columns ?? []
     }
 
     setDistinctColumns(columns: TColumnOption[]): this {
@@ -290,11 +243,13 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
     }
 
     addWhere(where: TWhereClause): this {
-        this.whereClauses.push(where);
+        if(!this.whereClauses) this.whereClauses = [];
+        this.whereClauses.push(where)
         return this
     }
 
     where(column: string, operator: TOperator, value: TWhereClauseValue | TWhereClauseValue[] = null, logicalOperator: TLogicalOperator = 'and'): this {
+        if (!this.whereClauses) this.whereClauses = [];
         this.whereClauses.push({ column, operator, value, logicalOperator, tableName: this.table });
         return this;
     }
@@ -305,15 +260,15 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
     }
 
     getWhereClauses(): TWhereClause[] {
-        return this.whereClauses
+        return this.whereClauses ?? []
     }
 
     getWhere(): TWhereClause[] {
-        return this.whereClauses
+        return this.whereClauses ?? []
     }
 
     getRawWhere(): RawWhere | null {
-        return this.rawWhere
+        return this.rawWhere ?? null
     }
 
     setWhereClauses(whereClauses: TWhereClause[]) {
@@ -327,7 +282,7 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
     }
 
     getWhereColumnTypes(): Record<string, string> {
-        return this.whereColumnTypes
+        return this.whereColumnTypes ?? {}
     }
 
     setWhereColumnTypes(whereColumnTypes: Record<string, string>) {
@@ -342,12 +297,13 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
     }
 
     join(options: TJoin): this {
+        if (!this.joins) this.joins = [];
         this.joins.push(options);
         return this
     }
 
     getJoins(): TJoin[] {
-        return this.joins
+        return this.joins ?? []
     }
 
     // With Methods
@@ -357,12 +313,13 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
     }
 
     with(options: TWith): this {
-        this.withs.push(options)
+        if (!this.withs) this.withs = [];
+        this.withs.push(options);
         return this
     }
 
     getWiths(): TWith[] {
-        return this.withs
+        return this.withs ?? []
     }
 
     // Order By Methods
@@ -378,7 +335,7 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
     }
 
     getOrderBy(): TOrderBy[] | null {
-        return this.orderByClauses
+        return this.orderByClauses ?? []
     }
 
     setOrderByClauses(orderByClauses: TOrderBy[]) {
@@ -420,11 +377,11 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
     }
 
     getInserts(): NullableObjectOrArray {
-        return this.inserts
+        return this.inserts ?? []
     }
 
     getInsert(): NullableObjectOrArray {
-        return this.inserts
+        return this.inserts ?? []
     }
 
     setUpdate(documents: object | object[]): this {
@@ -435,11 +392,11 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
     }
 
     getUpdates(): NullableObjectOrArray {
-        return this.updates
+        return this.updates ?? []
     }
 
     getUpdate(): NullableObjectOrArray {
-        return this.updates
+        return this.updates ?? []
     }
 
     setUpdates(updates: NullableObjectOrArray) {

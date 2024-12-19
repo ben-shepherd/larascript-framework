@@ -15,7 +15,7 @@ class SelectColumns {
      * @param {string[] | null} distinctColumnsOptions - An array of columns to append for the DISTINCT ON clause.
      * @returns {string} The SQL string for the SELECT query.
      */
-    public static toSql(columnOptions: TColumnOption[], distinctColumnsOptions: TColumnOption[] | null = null, rawSelect?: RawSelect): string {
+    public static toSql(columnOptions: TColumnOption[] | null, distinctColumnsOptions: TColumnOption[] | null = null, rawSelect?: RawSelect): string {
         let sql = 'SELECT ';
 
         if(rawSelect) {

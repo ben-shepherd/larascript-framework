@@ -3,10 +3,7 @@ import { TColumnOption, TGroupBy, TJoin, TLogicalOperator, TOffsetLimit, TOperat
 
 interface IEloquentExpression<BindingsUtility = unknown> {
 
-    /**
-     * Binding utility
-     */
-    bindingsUtility: BindingsUtility;
+    bindingsUtility: BindingsUtility | null;
 
     /**
      * Abstract class representing a builder for a database query expression.
