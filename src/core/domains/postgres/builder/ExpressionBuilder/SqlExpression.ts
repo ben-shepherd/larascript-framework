@@ -1,4 +1,4 @@
-import BaseExpression, { NullableObjectOrArray, RawWhere } from "@src/core/domains/eloquent/base/BaseExpression";
+import BaseExpression, { RawWhere } from "@src/core/domains/eloquent/base/BaseExpression";
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
 import { TColumnOption, TJoin, TLogicalOperator, TOperator, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
@@ -290,31 +290,6 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
     getWiths(): TWith[] {
         return this.withs ?? []
     }
-
-    // Insert/Update Methods
-
-    getInserts(): NullableObjectOrArray {
-        return this.inserts ?? []
-    }
-
-    getInsert(): NullableObjectOrArray {
-        return this.inserts ?? []
-    }
-
-    getUpdates(): NullableObjectOrArray {
-        return this.updates ?? []
-    }
-
-    getUpdate(): NullableObjectOrArray {
-        return this.updates ?? []
-    }
-
-    setUpdates(updates: NullableObjectOrArray) {
-        this.updates = updates
-        return this
-    }
-
-
 
     setSelectRaw<RawSelect = string>(value: RawSelect, bindings: unknown): this {
         this.buildType = 'select';

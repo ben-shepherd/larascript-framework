@@ -191,13 +191,36 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
     }
     
     setDistinctColumns(columns: TColumnOption[]): this {
-        console.log('[SqlExpression] setDistinctColumns', columns);
         this.distinctColumns = columns;
         return this   
     }
     
     getDistinctColumns(): TColumnOption[] {
         return this.distinctColumns || []
+    }
+
+    
+    // Insert/Update Methods
+    getInsert(): NullableObjectOrArray {
+        return this.inserts ?? []
+    }
+
+    setInserts(inserts: NullableObjectOrArray) {
+        this.inserts = inserts
+        return this
+    }
+
+    setUpdates(updates: NullableObjectOrArray) {
+        this.updates = updates
+        return this
+    }
+
+    getUpdates(): NullableObjectOrArray {
+        return this.updates ?? []
+    }
+
+    getUpdate(): NullableObjectOrArray {
+        return this.updates ?? []
     }
 
     abstract setSelectRaw<T = unknown>(value: T, bindings?: BindingsUtility): this;
@@ -232,10 +255,6 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
     abstract getWiths(): TWith[];
 
     abstract with(options: TWith): this;
-
-    abstract getInsert(): object | object[] | null;
-
-    abstract getUpdate(): object | object[] | null;
 
     // Order By Methods
     setOrderBy(orderBy: TOrderBy[] | null): this {
