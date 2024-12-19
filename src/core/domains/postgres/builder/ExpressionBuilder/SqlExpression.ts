@@ -1,4 +1,4 @@
-import BaseExpression, { NullableObjectOrArray, RawSelect, RawWhere } from "@src/core/domains/eloquent/base/BaseExpression";
+import BaseExpression, { NullableObjectOrArray, RawWhere } from "@src/core/domains/eloquent/base/BaseExpression";
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
 import { TColumnOption, TGroupBy, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
@@ -14,9 +14,15 @@ import Update from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses
 import Where from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/Where";
 import { z } from "zod";
 
+type SqlRaw = { sql: string, bindings: unknown }
+
 class SqlExpression extends BaseExpression<BindingsHelper> {
     
     bindingsUtility: BindingsHelper = new BindingsHelper();
+
+    protected rawSelect: SqlRaw | null = null;
+    
+    protected rawWhere: SqlRaw | null = null;
 
     /**
      * Sets the default values for the expression properties. 
@@ -254,8 +260,8 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
         return this;
     }
 
-    whereRaw(sql: string, bindings: unknown): this {
-        this.rawWhere = { sql, bindings };
+    whereRaw<T = unknown>(value: T, bindings: unknown): this {
+        this.rawWhere = { sql: value, bindings } as unknown as SqlRaw;
         return this
     }
 
@@ -267,8 +273,8 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
         return this.whereClauses ?? []
     }
 
-    getRawWhere(): RawWhere | null {
-        return this.rawWhere ?? null
+    getRawWhere<T = SqlRaw>(): T | null {
+        return this.rawWhere as T | null
     }
 
     setWhereClauses(whereClauses: TWhereClause[]) {
@@ -415,14 +421,14 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
         return this;
     }
 
-    setSelectRaw(sql: string, bindings: unknown): this {
+    setSelectRaw<RawSelect = string>(value: RawSelect, bindings: unknown): this {
         this.buildType = 'select';
-        this.rawSelect = { sql, bindings };
+        this.rawSelect = { sql: value, bindings } as SqlRaw;
         return this
     }
 
-    getRawSelect(): RawSelect | null {
-        return this.rawSelect
+    getRawSelect<T = SqlRaw>(): T | null {
+        return this.rawSelect as T | null
     }
 
     // Binding Methods

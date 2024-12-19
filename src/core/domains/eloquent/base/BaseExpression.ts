@@ -13,11 +13,11 @@ type ExpressionDefaults<BindingsUtility = unknown> = {
     tableAbbreviation: string | null;
     bindings: BindingsUtility | null;
     columns: TColumnOption[] | null;
-    rawSelect: RawSelect | null;
+    rawSelect: unknown;
     distinctColumns: TColumnOption[] | null;
     whereClauses: TWhereClause[] | null;
     whereColumnTypes: Record<string, string> | null;
-    whereRaw: RawWhere | null;
+    whereRaw: unknown;
     joins: TJoin[] | null;
     withs: TWith[] | null;
     orderByClauses: TOrderBy[] | null;
@@ -40,7 +40,7 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
 
     protected columns: TColumnOption[] | null                  = this.getDefaults().columns;
 
-    protected rawSelect: RawSelect | null                      = this.getDefaults().rawSelect;
+    protected rawSelect: unknown                               = this.getDefaults().rawSelect;
 
     protected distinctColumns: TColumnOption[] | null          = this.getDefaults().distinctColumns;
 
@@ -48,7 +48,7 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
 
     protected whereColumnTypes: Record<string, string> | null  = this.getDefaults().whereColumnTypes;
 
-    protected rawWhere: RawWhere | null                        = this.getDefaults().whereRaw;
+    protected rawWhere: unknown                                = this.getDefaults().whereRaw;
 
     protected joins: TJoin[] | null                            = this.getDefaults().joins;
 
@@ -63,10 +63,6 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
     protected updates: NullableObjectOrArray                   = this.getDefaults().updates;
 
     protected groupBy: TGroupBy[] | null                       = this.getDefaults().groupBy;
-
-    constructor() {
-        this.setDefaults()
-    }
     
     /**
      * Sets the default values for the expression properties. 
@@ -142,7 +138,9 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
 
     abstract setSelect(): this;
 
-    abstract setSelectRaw(sql: string, bindings: unknown): this;
+    abstract setSelectRaw<T = unknown>(value: T, bindings?: BindingsUtility): this;
+
+    abstract getRawSelect<T = unknown>(): T | null;
 
     abstract setColumns(columns: TColumnOption[]): this;
 
@@ -169,7 +167,9 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
         logicalOperator?: TLogicalOperator
     ): this;
 
-    abstract whereRaw(sql: string, bindings?: unknown): this;
+    abstract whereRaw<T = unknown>(value: T, bindings?: unknown): this;
+
+    abstract getRawWhere<T = unknown>(): T | null;
 
     abstract setOrderBy(orderBy: TOrderBy[]): this;
 

@@ -43,7 +43,14 @@ interface IEloquentExpression<BindingsUtility = unknown> {
      * 
      * @returns {this} The instance of the query builder for method chaining.
      */
-    setSelectRaw(sql: string, bindings: unknown): this;
+    setSelectRaw<RawSelect = unknown>(rawSelect: RawSelect, bindings?: BindingsUtility): this;
+
+    /**
+     * Gets the current raw select.
+     * 
+     * @returns {RawSelect | null} The current raw select.
+     */
+    getRawSelect<RawSelect = unknown>(): RawSelect | null;
 
     /**
      * Gets the current columns in the SQL query.
@@ -133,6 +140,13 @@ interface IEloquentExpression<BindingsUtility = unknown> {
      * @returns {this} The query builder instance for chaining.
      */
     whereRaw(sql: string, bindings?: unknown): this;
+
+    /**
+     * Gets the current raw where.
+     * 
+     * @returns {T | null} The current raw where.
+     */
+    getRawWhere<T = unknown>(): T | null;
 
     /**
      * Gets the current order by clauses.
