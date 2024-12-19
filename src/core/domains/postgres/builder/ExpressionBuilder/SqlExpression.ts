@@ -42,8 +42,7 @@ const getDefaults = () => ({
 
 class SqlExpression extends BaseExpression implements IEloquentExpression {
 
-    // Class Properties
-    public bindings                                    = getDefaults().bindings;
+    public bindingsUtility                             = getDefaults().bindings;
 
     protected buildType: BuildType                     = getDefaults().buildType as BuildType;
 
@@ -82,15 +81,18 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         if(column === '*') {
             return column
         }
-        if(column.startsWith('"') && column.endsWith('"')){
-            return column
+        if(!column.startsWith('"')) {
+            column = `"${column}`
         }
-        return `"${column}"`
+        if(!column.endsWith('"')){
+            column = `${column}"`
+        }
+        return column
     };
 
     public static readonly formatTableNameWithQuotes = (tableName: string): string => {
         if(!tableName.startsWith('"')) {
-            tableName = `"${tableName}"`
+            tableName = `"${tableName}`
         }
         if(!tableName.endsWith('"')){
             tableName = `${tableName}"`
@@ -162,7 +164,7 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         const selectColumns  = SelectColumns.toSql(this.columns, this.distinctColumns, this.rawSelect ?? undefined).trimEnd();
         const fromTable      = FromTable.toSql(this.table, this.tableAbbreviation).trimEnd();
         const join           = Joins.toSql(this.joins, oneSpacePrefix).trimEnd();
-        const where          = Where.toSql(this.whereClauses, this.rawWhere ?? undefined, this.bindings, oneSpacePrefix).trimEnd();
+        const where          = Where.toSql(this.whereClauses, this.rawWhere ?? undefined, this.bindingsUtility, oneSpacePrefix).trimEnd();
         const groupBy        = GroupBy.toSql(this.groupBy, oneSpacePrefix).trimEnd();
         const orderBy        = OrderBy.toSql(this.orderByClauses, oneSpacePrefix).trimEnd();
         const offsetLimit    = OffsetLimit.toSql(this.offsetLimit ?? {}, oneSpacePrefix).trimEnd();
@@ -192,7 +194,7 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
 
         this.validateArrayObjects(insertsArray);
 
-        return Insert.toSql(this.table, insertsArray, this.bindings);
+        return Insert.toSql(this.table, insertsArray, this.bindingsUtility);
     }
 
     /**
@@ -209,7 +211,7 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
 
         this.validateArrayObjects(updatesArray);
 
-        return Update.toSql(this.table, updatesArray, this.whereClauses, this.bindings);
+        return Update.toSql(this.table, updatesArray, this.whereClauses, this.bindingsUtility);
     }
 
     /**
@@ -222,7 +224,7 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
         // Construct the components of the SQL query
         const oneSpacePrefix = ' ';
         const deleteFrom     = DeleteFrom.toSql(this.table);
-        const where          = Where.toSql(this.whereClauses, this.rawWhere ?? undefined, this.bindings, oneSpacePrefix).trimEnd();
+        const where          = Where.toSql(this.whereClauses, this.rawWhere ?? undefined, this.bindingsUtility, oneSpacePrefix).trimEnd();
         
         // Construct the SQL query
         let sql = deleteFrom;
@@ -468,25 +470,25 @@ class SqlExpression extends BaseExpression implements IEloquentExpression {
 
     // Binding Methods
     setBindings(bindings: BindingsHelper): this {
-        this.bindings = bindings;
+        this.bindingsUtility = bindings;
         return this
     }
 
     addBinding(column: string, binding: unknown): this {
-        this.bindings.addBinding(column, binding);
+        this.bindingsUtility.addBinding(column, binding);
         return this
     }
 
     getBindings(): BindingsHelper {
-        return this.bindings
+        return this.bindingsUtility
     }
 
     getBindingValues(): unknown[] {
-        return this.bindings.getValues();
+        return this.bindingsUtility.getValues();
     }
 
     getBindingTypes(): (number | undefined)[] {
-        return this.bindings.getTypes()
+        return this.bindingsUtility.getTypes()
     }
 
     // Group By Methods

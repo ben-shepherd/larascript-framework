@@ -115,7 +115,7 @@ export type IdGeneratorFn<T = unknown> = <ReturnType = T>(...args: any[]) => Ret
 
 export type TransactionFn<Model extends IModel = IModel> = (query: IEloquent<ModelWithAttributes<Model>>) => Promise<void>;
 
-export interface IEloquent<Model extends IModel = IModel> {
+export interface IEloquent<Model extends IModel = IModel, Expression extends IEloquentExpression = IEloquentExpression> {
     
     // eloquent methods
     setConnectionName(connectionName: string): IEloquent<Model>;
@@ -134,14 +134,14 @@ export interface IEloquent<Model extends IModel = IModel> {
     generateId<T = unknown>(): T | null;
 
     // results
-    fetchRows<T = unknown>(expression: IEloquentExpression, ...args: any[]): Promise<T>;
+    fetchRows<T = unknown>(expression: Expression, ...args: any[]): Promise<T>;
 
     // formatting
     // asModel<Model extends IModel>(): IEloquent<Model, Model>; 
     setFormatter(formatterFn?: TFormatterFn): IEloquent<Model>;
     
     // execution
-    execute<T = Model['attributes']>(builder: IEloquentExpression): Promise<T>
+    execute<T = Model['attributes']>(builder: Expression): Promise<T>
     raw<T = unknown>(expression: string, bindings?: unknown[]): Promise<T>;
 
     // db methods

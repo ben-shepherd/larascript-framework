@@ -26,7 +26,7 @@ import { PrefixToTargetPropertyOptions } from "@src/core/util/PrefixedPropertyGr
  * @abstract
  */
 
-abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
+abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpression = IEloquentExpression> implements IEloquent<Model, Expression> {
 
     /**
      * The connection name to use for the query builder
@@ -275,7 +275,7 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
      * @param args 
      */
      
-    abstract fetchRows<T = unknown>(expression: IEloquentExpression, ...args: any[]): Promise<T>;
+    abstract fetchRows<T = unknown>(expression: Expression, ...args: any[]): Promise<T>;
 
     /**
      * Sets the formatter function for the query builder. This function will be
@@ -486,7 +486,7 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
     }
 
      
-    async execute<T>(builder: IEloquentExpression): Promise<T> {
+    async execute<T>(builder: Expression): Promise<T> {
         throw new InvalidMethodException()
     }
 

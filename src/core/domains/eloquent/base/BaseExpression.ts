@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 import { TColumnOption, TGroupBy, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
-import { deepClone } from "@src/core/util/deepClone";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
+import { deepClone } from "@src/core/util/deepClone";
 
-abstract class BaseExpression<Bindings = unknown> implements IEloquentExpression<Bindings> {
+abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExpression<BindingsUtility> {
 
-    abstract bindings: Bindings;
+    abstract bindingsUtility: BindingsUtility;
 
     abstract build<T = unknown>(): T;
 
@@ -28,10 +28,6 @@ abstract class BaseExpression<Bindings = unknown> implements IEloquentExpression
     abstract getDistinctColumns(): TColumnOption[];
 
     abstract addBinding(column: string, binding: unknown): this;
-
-    abstract getBindingValues(): unknown[];
-
-    abstract getBindingTypes(): (number | undefined)[];
 
     abstract setWhere(where: TWhereClause[]): this;
 
@@ -91,9 +87,9 @@ abstract class BaseExpression<Bindings = unknown> implements IEloquentExpression
     /**
      * Clones the query builder expression.
      *
-     * @returns {IEloquentExpression<Bindings>} A new cloned query builder expression.
+     * @returns {IEloquentExpression<BindingsUtility>} A new cloned query builder expression.
      */
-    clone(): IEloquentExpression<Bindings> {
+    clone(): IEloquentExpression<BindingsUtility> {
         return deepClone(this);
     }
 

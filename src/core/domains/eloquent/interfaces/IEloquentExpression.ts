@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { TColumnOption, TGroupBy, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
-interface IEloquentExpression<Bindings = unknown> {
+interface IEloquentExpression<BindingsUtility = unknown> {
 
     /**
      * Binding utility
      */
-    bindings: Bindings;
+    bindingsUtility: BindingsUtility;
 
     /**
      * Abstract class representing a builder for a database query expression.
@@ -95,18 +95,6 @@ interface IEloquentExpression<Bindings = unknown> {
      * @returns {this} The query builder instance.
      */
     addBinding(column: string, binding: unknown): this;
-
-    /**
-     * Retrieves the list of values that have been added to the builder as bindings.
-     * @returns {unknown[]} The list of values
-     */
-    getBindingValues(): unknown[];
-
-    /**
-     * Retrieves the list of column types that have been added to the builder as bindings.
-     * @returns {number[]} The list of column types
-     */
-    getBindingTypes(): (number | undefined)[];
 
     /**
      * Gets the current where clauses.
@@ -308,9 +296,9 @@ interface IEloquentExpression<Bindings = unknown> {
     /**
      * Returns a clone of the query builder.
      * 
-     * @returns {IEloquentExpression<Bindings>} A clone of the query builder.
+     * @returns {IEloquentExpression<BindingsUtility>} A clone of the query builder.
      */
-    clone(): IEloquentExpression<Bindings>;
+    clone(): IEloquentExpression<BindingsUtility>;
 }
 
 export default IEloquentExpression;
