@@ -17,7 +17,7 @@ interface IEloquentExpression<BindingsUtility = unknown> {
     setTable(table: string, abbreviation?: string): this;
 
     // Select operations
-    setSelect(): this;
+    setBuildTypeSelect(): this;
     setSelectRaw<T = unknown>(rawSelect: T, bindings?: BindingsUtility): this;
     getRawSelect<T = unknown>(): T | null;
 
@@ -59,18 +59,18 @@ interface IEloquentExpression<BindingsUtility = unknown> {
 
     // Insert operations
     getInsert(): object | object[] | null;
-    setInsert(documents: object | object[]): this;
+    setBuildTypeInsert(documents: object | object[]): this;
 
     // Update operations
     getUpdate(): object | object[] | null;
-    setUpdate(document: object | object[]): this;
+    setBuildTypeUpdate(document: object | object[]): this;
 
     // Group operations
     getGroupBy(): TGroupBy[] | null;
     setGroupBy(columns: TGroupBy[] | null): this;
 
     // Delete operations
-    setDelete(): this;
+    setBuildTypeDelete(): this;
 }
 
 export default IEloquentExpression;

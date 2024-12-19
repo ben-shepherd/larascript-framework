@@ -98,6 +98,31 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
         this.groupBy           = values.groupBy;
     }
 
+    // Set Build Types
+    setBuildTypeSelect(): this {
+        this.buildType = 'select';
+        return this;
+    }
+    
+    setBuildTypeDelete(): this {
+        this.buildType = 'delete';
+        return this;
+    }
+
+    setBuildTypeInsert(documents: object | object[]): this {
+        documents = Array.isArray(documents) ? documents : [documents]
+        this.inserts = documents
+        this.buildType = 'insert'
+        return this
+    }
+
+    setBuildTypeUpdate(documents: object | object[]): this {
+        documents = Array.isArray(documents) ? documents : [documents]
+        this.updates = documents
+        this.buildType = 'update'
+        return this
+    }
+
     /**
      * Builds and returns the final expression result.
      * 
@@ -174,9 +199,6 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
     getDistinctColumns(): TColumnOption[] {
         return this.distinctColumns || []
     }
-    
-
-    abstract setSelect(): this;
 
     abstract setSelectRaw<T = unknown>(value: T, bindings?: BindingsUtility): this;
 
@@ -211,15 +233,9 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
 
     abstract with(options: TWith): this;
 
-    abstract setInsert(documents: object | object[]): this;
-
     abstract getInsert(): object | object[] | null;
 
-    abstract setUpdate(document: object | object[]): this;
-
     abstract getUpdate(): object | object[] | null;
-
-    abstract setDelete(): this;
 
     // Order By Methods
     setOrderBy(orderBy: TOrderBy[] | null): this {

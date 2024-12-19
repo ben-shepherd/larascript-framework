@@ -292,12 +292,6 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
     }
 
     // Insert/Update Methods
-    setInsert(documents: object | object[]): this {
-        documents = Array.isArray(documents) ? documents : [documents]
-        this.inserts = documents
-        this.buildType = 'insert'
-        return this
-    }
 
     getInserts(): NullableObjectOrArray {
         return this.inserts ?? []
@@ -305,13 +299,6 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
 
     getInsert(): NullableObjectOrArray {
         return this.inserts ?? []
-    }
-
-    setUpdate(documents: object | object[]): this {
-        documents = Array.isArray(documents) ? documents : [documents]
-        this.updates = documents
-        this.buildType = 'update'
-        return this
     }
 
     getUpdates(): NullableObjectOrArray {
@@ -327,16 +314,7 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
         return this
     }
 
-    // Select Methods
-    setSelect(): this {
-        this.buildType = 'select';
-        return this;
-    }
 
-    setDelete(): this {
-        this.buildType = 'delete';
-        return this;
-    }
 
     setSelectRaw<RawSelect = string>(value: RawSelect, bindings: unknown): this {
         this.buildType = 'select';

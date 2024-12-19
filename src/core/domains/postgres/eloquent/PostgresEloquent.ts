@@ -180,7 +180,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      */
     async find(id: string | number): Promise<Model | null> {
         return await captureError<Model | null>(async () => {
-            this.expression.setSelect()
+            this.expression.setBuildTypeSelect()
             
             const res = await this.fetchRows(
                 this.expression
@@ -235,7 +235,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      */
     async first(): Promise<Model | null> {
         return await captureError<Model | null>(async () => {
-            this.expression.setSelect()
+            this.expression.setBuildTypeSelect()
 
             const previousLimit = this.expression.getOffsetLimit()
 
@@ -277,7 +277,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      */
     async last(): Promise<Model | null> {
         return await captureError<Model | null>(async () => {
-            this.expression.setSelect()
+            this.expression.setBuildTypeSelect()
             
             const res = await this.fetchRows()
             
@@ -297,7 +297,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      */
     async get(): Promise<Collection<Model>> {
         return await captureError(async () => {
-            this.expression.setSelect()
+            this.expression.setBuildTypeSelect()
 
             const res = await this.fetchRows()
 
@@ -318,7 +318,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      */
     async all(): Promise<Collection<Model>> {
         return await captureError(async () => {
-            this.expression.setSelect()
+            this.expression.setBuildTypeSelect()
 
             const res = await this.fetchRows(
                 this.expression
@@ -356,7 +356,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
                 // Execute the insert query
                 const res = await this.execute(
                     this.expression
-                        .setInsert(documentWithId as object)
+                        .setBuildTypeInsert(documentWithId as object)
                 )
                 
                 // Add the result to the results array
@@ -390,7 +390,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
             for(const document of documentsArray) {
                 await this.clone().execute(
                     this.expression
-                        .setUpdate(document)
+                        .setBuildTypeUpdate(document)
                 )
             }
 
@@ -425,7 +425,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
 
             const previousExpression = this.expression.clone() as SqlExpression
 
-            this.expression.setDelete()
+            this.expression.setBuildTypeDelete()
 
             await this.execute();
 
@@ -550,7 +550,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
             
             const previousExpression = this.expression.clone() as SqlExpression
 
-            this.expression.setSelect()
+            this.expression.setBuildTypeSelect()
             this.selectRaw(selectRaw)
             this.groupBy(null)
             this.orderBy(null)

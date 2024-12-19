@@ -13,7 +13,7 @@ class PipelineBuilder extends BaseExpression<unknown> {
         return '';
     }
 
-    setSelect(): this {
+    setBuildTypeSelect(): this {
         return this;
     }
 
@@ -117,7 +117,7 @@ class PipelineBuilder extends BaseExpression<unknown> {
         return this;
     }
 
-    setInsert(documents: object | object[]): this {
+    setBuildTypeInsert(documents: object | object[]): this {
         return this;
     }
 
@@ -125,7 +125,7 @@ class PipelineBuilder extends BaseExpression<unknown> {
         return null;
     }
 
-    setUpdate(document: object | object[]): this {
+    setBuildTypeUpdate(document: object | object[]): this {
         return this;
     }
 
@@ -141,7 +141,7 @@ class PipelineBuilder extends BaseExpression<unknown> {
         return null;
     }
 
-    setDelete(): this {
+    setBuildTypeDelete(): this {
         return this;
     }
 
