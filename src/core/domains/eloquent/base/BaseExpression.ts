@@ -201,14 +201,6 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
 
     abstract getRawWhere<T = unknown>(): T | null;
 
-    abstract setOffsetAndLimit(offset: TOffsetLimit | null): this;
-
-    abstract setLimit(limit: number | null): this;
-
-    abstract setOffset(offset: number | null): this;
-
-    abstract getOffsetLimit(): TOffsetLimit | null;
-
     abstract setJoins(joins: TJoin[] | TJoin): this;
 
     abstract getJoins(): TJoin[];
@@ -260,6 +252,31 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
     setGroupBy(columns: TGroupBy[]): this {
         this.groupBy = columns
         return this
+    }
+
+    // Offset/Limit Methods
+    setOffsetLimit(offsetLimit: TOffsetLimit | null): this {
+        this.offsetLimit = offsetLimit
+        return this
+    }
+    
+    setOffsetAndLimit(offset: TOffsetLimit | null = null): this {
+        this.offsetLimit = offset;
+        return this;
+    }
+    
+    setLimit(limit: number | null = null): this {
+        this.offsetLimit = {limit: limit ?? undefined, offset: this.offsetLimit?.offset};
+        return this
+    }
+    
+    setOffset(offset: number | null = null): this {
+        this.offsetLimit = { limit: this.offsetLimit?.limit, offset: offset ?? undefined };
+        return this
+    }
+    
+    getOffsetLimit(): TOffsetLimit | null {
+        return this.offsetLimit
     }
 
     /**

@@ -1,6 +1,6 @@
 import BaseExpression, { NullableObjectOrArray, RawWhere } from "@src/core/domains/eloquent/base/BaseExpression";
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
-import { TColumnOption, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { TColumnOption, TJoin, TLogicalOperator, TOperator, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
 import DeleteFrom from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/DeleteFrom";
 import FromTable from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/FromTable";
@@ -289,32 +289,6 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
 
     getWiths(): TWith[] {
         return this.withs ?? []
-    }
-
-
-    // Offset/Limit Methods
-    setOffsetLimit(offsetLimit: TOffsetLimit | null): this {
-        this.offsetLimit = offsetLimit
-        return this
-    }
-
-    setOffsetAndLimit(offset: TOffsetLimit | null = null): this {
-        this.offsetLimit = offset;
-        return this;
-    }
-
-    setLimit(limit: number | null = null): this {
-        this.offsetLimit = {limit: limit ?? undefined, offset: this.offsetLimit?.offset};
-        return this
-    }
-
-    setOffset(offset: number | null = null): this {
-        this.offsetLimit = { limit: this.offsetLimit?.limit, offset: offset ?? undefined };
-        return this
-    }
-
-    getOffsetLimit(): TOffsetLimit | null {
-        return this.offsetLimit
     }
 
     // Insert/Update Methods
