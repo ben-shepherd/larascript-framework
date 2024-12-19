@@ -1,9 +1,11 @@
+import apiRoutes from "@src/app/routes/api";
 import BaseProvider from "@src/core/base/Provider";
 import ExpressProvider from "@src/core/domains/express/providers/ExpressProvider";
 import healthRoutes from "@src/core/domains/express/routes/healthRoutes";
 import Kernel from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
-import apiRoutes from "@src/app/routes/api";
+
+import AppService from "../services/AppService";
 
 /**
  * AppProvider class
@@ -12,16 +14,14 @@ import apiRoutes from "@src/app/routes/api";
 export default class AppProvider extends BaseProvider {
 
     /**
-     * Register method
-     * Called when the provider is being registered
-     * Use this method to set up any initial configurations or services
+     * Register Services
+     * 
      * @returns Promise<void>
      */
     public async register(): Promise<void> {
-        this.log('Registering AppProvider');
 
-        // Register your services here
-        // Example:App.setContainer('serviceKey', new ServiceClass(this.config));
+        // Register the AppService in the App container
+        App.setContainer('app', new AppService(this.config));
     }
 
     /**
@@ -31,14 +31,13 @@ export default class AppProvider extends BaseProvider {
      * @returns Promise<void>
      */
     public async boot(): Promise<void> {
-        this.log('Booting AppProvider');
 
         // Bind routes to Express
         this.addApiRoutes();
 
         // Boot your services here
         // Example of setting a service in the App container:
-        // Example: App.setContainer('myService').someBootMethod();
+        // Example: app('myService').someBootMethod();
     }
 
     /**
