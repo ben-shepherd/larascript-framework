@@ -202,17 +202,7 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
      * @returns {string} The SQL query string representation of the current expression.
      */
     toSql(): string {
-        return this.buildSelect();
-    }
-
-    // Where Clause Methods
-    getWhereColumnTypes(): Record<string, string> {
-        return this.whereColumnTypes ?? {}
-    }
-
-    setWhereColumnTypes(whereColumnTypes: Record<string, string>) {
-        this.whereColumnTypes = whereColumnTypes
-        return this
+        return this.build();
     }
 
     // Join Methods

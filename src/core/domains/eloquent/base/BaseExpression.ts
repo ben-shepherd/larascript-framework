@@ -46,8 +46,6 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
 
     protected whereClauses: TWhereClause[] | null              = this.getDefaults().whereClauses;
 
-    protected whereColumnTypes: Record<string, string> | null  = this.getDefaults().whereColumnTypes;
-
     protected rawWhere: unknown                                = this.getDefaults().whereRaw;
 
     protected joins: TJoin[] | null                            = this.getDefaults().joins;
@@ -87,7 +85,6 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
         this.rawSelect         = values.rawSelect;
         this.distinctColumns   = values.distinctColumns;
         this.whereClauses      = values.whereClauses;
-        this.whereColumnTypes  = values.whereColumnTypes;
         this.rawWhere          = values.whereRaw;
         this.joins             = values.joins;
         this.withs             = values.withs;
