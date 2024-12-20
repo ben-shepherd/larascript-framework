@@ -1,4 +1,4 @@
-import BaseExpression from "@src/core/domains/eloquent/base/BaseExpression";
+import BaseExpression, { buildTypes } from "@src/core/domains/eloquent/base/BaseExpression";
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
 import { TColumnOption } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
@@ -91,18 +91,16 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
             throw new Error('Table name is required');
         }
 
-        const fnMap = {
+        if(!buildTypes.includes(this.buildType)) {
+            throw new ExpressionException(`Invalid build type: ${this.buildType}`);
+        }
+
+        return {
             'select': () => this.buildSelect(),
             'insert': () => this.buildInsert(),
             'update': () => this.buildUpdate(),
             'delete': () => this.buildDelete()
-        }
-
-        if(!fnMap[this.buildType]) {
-            throw new ExpressionException(`Invalid build type: ${this.buildType}`);
-        }
-
-        return fnMap[this.buildType]() as T;
+        }[this.buildType]() as T;
     }
 
     /**

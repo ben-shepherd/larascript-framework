@@ -26,7 +26,7 @@ type ExpressionDefaults<BindingsUtility = unknown> = {
     updates: NullableObjectOrArray | null;
     groupBy: TGroupBy[] | null;
 }
-
+export const buildTypes = ['select', 'insert', 'update', 'delete'] as const;
 
 abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExpression<BindingsUtility> {
 
