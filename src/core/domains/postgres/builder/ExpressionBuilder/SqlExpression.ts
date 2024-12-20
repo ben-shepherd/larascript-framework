@@ -1,6 +1,6 @@
 import BaseExpression from "@src/core/domains/eloquent/base/BaseExpression";
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
-import { TColumnOption, TJoin, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { TColumnOption } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
 import DeleteFrom from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/DeleteFrom";
 import FromTable from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/FromTable";
@@ -205,38 +205,6 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
         return this.build();
     }
 
-    // Join Methods
-    setJoins(joins: TJoin[] | TJoin): this {
-        this.joins = Array.isArray(joins) ? joins : [joins];
-        return this        
-    }
-
-    join(options: TJoin): this {
-        if (!this.joins) this.joins = [];
-        this.joins.push(options);
-        return this
-    }
-
-    getJoins(): TJoin[] {
-        return this.joins ?? []
-    }
-
-    // With Methods
-    setWiths(withs: TWith[] | TWith): this {
-        this.withs = Array.isArray(withs) ? withs : [withs];
-        return this
-    }
-
-    with(options: TWith): this {
-        if (!this.withs) this.withs = [];
-        this.withs.push(options);
-        return this
-    }
-
-    getWiths(): TWith[] {
-        return this.withs ?? []
-    }
-
     // Binding Methods
     addBinding(column: string, binding: unknown): this {
         this.bindingsUtility.addBinding(column, binding);
@@ -250,7 +218,6 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
     getBindingTypes(): (number | undefined)[] {
         return this.bindingsUtility.getTypes()
     }
-
 
     // Utility Methods
     protected validateArrayObjects(objects: object[], message = 'Expected an array of objects') {

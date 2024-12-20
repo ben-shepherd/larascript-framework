@@ -267,17 +267,37 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
         return this
     }
 
-    abstract setJoins(joins: TJoin[] | TJoin): this;
+    // Join Methods
+    setJoins(joins: TJoin[] | TJoin): this {
+        this.joins = Array.isArray(joins) ? joins : [joins];
+        return this        
+    }
 
-    abstract getJoins(): TJoin[];
+    join(options: TJoin): this {
+        if (!this.joins) this.joins = [];
+        this.joins.push(options);
+        return this
+    }
 
-    abstract join(options: TJoin): this;
+    getJoins(): TJoin[] {
+        return this.joins ?? []
+    }
 
-    abstract setWiths(withs: TWith[]): this;
+    // With Methods
+    setWiths(withs: TWith[] | TWith): this {
+        this.withs = Array.isArray(withs) ? withs : [withs];
+        return this
+    }
 
-    abstract getWiths(): TWith[];
+    with(options: TWith): this {
+        if (!this.withs) this.withs = [];
+        this.withs.push(options);
+        return this
+    }
 
-    abstract with(options: TWith): this;
+    getWiths(): TWith[] {
+        return this.withs ?? []
+    }
 
     // Order By Methods
     setOrderBy(orderBy: TOrderBy[] | null): this {
