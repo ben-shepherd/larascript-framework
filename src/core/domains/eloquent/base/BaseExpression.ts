@@ -4,8 +4,6 @@ import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquent
 import { deepClone } from "@src/core/util/deepClone";
 
 export type BuildType = 'select' | 'insert' | 'update' | 'delete';
-export type RawSelect = { sql: string, bindings: unknown };
-export type RawWhere = { sql: string, bindings: unknown };
 export type NullableObjectOrArray = object | object[] | null;
 type ExpressionDefaults<BindingsUtility = unknown> = {
     buildType: BuildType;

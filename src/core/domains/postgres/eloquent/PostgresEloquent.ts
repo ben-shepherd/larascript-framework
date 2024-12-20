@@ -20,14 +20,14 @@ import pg, { QueryResult } from 'pg';
 class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpression> {
 
     /**
+     * The default ID generator function for the query builder.
+     */ 
+    protected defaultIdGeneratorFn: IdGeneratorFn | null = generateUuidV4 as IdGeneratorFn;
+
+    /**
      * The query builder expression object
      */
     protected expression!: SqlExpression
-
-    /**
-     * The default ID generator function for the query builder.
-     */
-    protected defaultIdGeneratorFn = generateUuidV4;
 
     /**
      * The query builder client

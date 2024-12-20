@@ -29,6 +29,11 @@ import { PrefixToTargetPropertyOptions } from "@src/core/util/PrefixedPropertyGr
 abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpression = IEloquentExpression> implements IEloquent<Model, Expression> {
 
     /**
+     * The default ID generator function for the query builder.
+     */
+    protected defaultIdGeneratorFn: IdGeneratorFn | null = null;
+        
+    /**
      * The connection name to use for the query builder
     */
     protected connectionName!: string;
