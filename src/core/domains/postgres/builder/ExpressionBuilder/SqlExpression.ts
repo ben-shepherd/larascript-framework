@@ -1,6 +1,6 @@
-import BaseExpression, { RawWhere } from "@src/core/domains/eloquent/base/BaseExpression";
+import BaseExpression from "@src/core/domains/eloquent/base/BaseExpression";
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
-import { TColumnOption, TJoin, TLogicalOperator, TOperator, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { TColumnOption, TJoin, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
 import DeleteFrom from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/DeleteFrom";
 import FromTable from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/FromTable";
@@ -206,50 +206,6 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
     }
 
     // Where Clause Methods
-    setWhere(where: TWhereClause[]): this {
-        this.whereClauses = where;
-        return this;
-    }
-
-    addWhere(where: TWhereClause): this {
-        if(!this.whereClauses) this.whereClauses = [];
-        this.whereClauses.push(where)
-        return this
-    }
-
-    where(column: string, operator: TOperator, value: TWhereClauseValue | TWhereClauseValue[] = null, logicalOperator: TLogicalOperator = 'and'): this {
-        if (!this.whereClauses) this.whereClauses = [];
-        this.whereClauses.push({ column, operator, value, logicalOperator, tableName: this.table });
-        return this;
-    }
-
-    whereRaw<T = unknown>(value: T, bindings: unknown): this {
-        this.rawWhere = { sql: value, bindings } as unknown as SqlRaw;
-        return this
-    }
-
-    getWhereClauses(): TWhereClause[] {
-        return this.whereClauses ?? []
-    }
-
-    getWhere(): TWhereClause[] {
-        return this.whereClauses ?? []
-    }
-
-    getRawWhere<T = SqlRaw>(): T | null {
-        return this.rawWhere as T | null
-    }
-
-    setWhereClauses(whereClauses: TWhereClause[]) {
-        this.whereClauses = whereClauses
-        return this
-    }
-
-    setRawWhere(where: RawWhere | null): this {
-        this.rawWhere = where;
-        return this
-    }
-
     getWhereColumnTypes(): Record<string, string> {
         return this.whereColumnTypes ?? {}
     }

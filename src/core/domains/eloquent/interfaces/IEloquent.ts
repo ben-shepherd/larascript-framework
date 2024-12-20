@@ -191,7 +191,7 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     where(filters: object, operator?: TOperator): IEloquent<ModelWithAttributes<Model>>;
     where(column: string, value?: TWhereClauseValue): IEloquent<ModelWithAttributes<Model>>;
     where(column: string, operator?: TOperator, value?: TWhereClauseValue, logicalOperator?: TLogicalOperator): IEloquent<ModelWithAttributes<Model>>;
-    whereRaw<Q = unknown, Bindings = unknown>(query: Q, bindings?: Bindings): IEloquent<ModelWithAttributes<Model>>;
+    whereRaw<T = unknown>(value: T, ...args: unknown[]): IEloquent<ModelWithAttributes<Model>>;
 
     orWhere(column: string, value?: TWhereClauseValue): IEloquent<ModelWithAttributes<Model>>;
     orWhere(column: string, operator?: TOperator, value?: TWhereClauseValue): IEloquent<ModelWithAttributes<Model>>;

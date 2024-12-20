@@ -233,22 +233,42 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
         return this.updates ?? []
     }
 
-    abstract setWhere(where: TWhereClause[]): this;
+    // Where Clause Methods
+    setWhere(where: TWhereClause[]): this {
+        if(!this.whereClauses) this.whereClauses = [];
+        this.whereClauses = where;
+        return this;
+    }
 
-    abstract addWhere(where: TWhereClause): this;
+    getWhere(): TWhereClause[] {
+        return this.whereClauses ?? []
+    }
 
-    abstract getWhere(): TWhereClause[];
+    addWhere(where: TWhereClause): this {
+        if(!this.whereClauses) this.whereClauses = [];
+        this.whereClauses.push(where)
+        return this
+    }
 
-    abstract where(
-        column: string, 
-        operator: TOperator, 
-        value: TWhereClauseValue | TWhereClauseValue[], 
-        logicalOperator?: TLogicalOperator
-    ): this;
+    where(column: string, operator: TOperator, value: TWhereClauseValue | TWhereClauseValue[] = null, logicalOperator: TLogicalOperator = 'and'): this {
+        if (!this.whereClauses) this.whereClauses = [];
+        this.whereClauses.push({ column, operator, value, logicalOperator, tableName: this.table });
+        return this;
+    }
 
-    abstract whereRaw<T = unknown>(value: T, bindings?: unknown): this;
+    whereRaw<T = unknown>(value: T, bindings: unknown): this {
+        this.rawWhere = value
+        return this
+    }
 
-    abstract getRawWhere<T = unknown>(): T | null;
+    getRawWhere<T>(): T | null {
+        return this.rawWhere as T | null
+    }
+
+    setRawWhere<T>(where: T | null): this {
+        this.rawWhere = where;
+        return this
+    }
 
     abstract setJoins(joins: TJoin[] | TJoin): this;
 

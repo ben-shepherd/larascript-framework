@@ -5,6 +5,7 @@ import Eloquent from "@src/core/domains/eloquent/Eloquent";
 import EloquentException from "@src/core/domains/eloquent/exceptions/EloquentExpression";
 import UpdateException from "@src/core/domains/eloquent/exceptions/UpdateException";
 import { IEloquent, IdGeneratorFn, SetModelColumnsOptions, TransactionFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import SqlExpression, { SqlRaw } from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
@@ -15,7 +16,6 @@ import PrefixedPropertyGrouper from "@src/core/util/PrefixedPropertyGrouper";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { bindAll } from 'lodash';
 import pg, { QueryResult } from 'pg';
-import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 
 class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpression> {
 
@@ -128,6 +128,20 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      */
     selectRaw<T = string>(value: T, bindings?: unknown): IEloquent<Model, IEloquentExpression<unknown>> {
         return super.selectRaw<SqlRaw>({ sql: value as string, bindings })
+    }
+
+    /**
+     * Adds a raw where clause to the query builder.
+     *
+     * This method allows the use of a raw SQL expression for the where clause in the query.
+     * It is useful for complex queries where the standard query builder methods are insufficient.
+     *
+     * @param {T} value - The raw SQL expression to use for the where clause.
+     * @param {unknown} [bindings] - The bindings to use with the raw SQL expression.
+     * @returns {IEloquent<Model, IEloquentExpression<unknown>>} The query builder instance for chaining.
+     */
+    whereRaw<T = string>(value: T, bindings?: unknown): IEloquent<Model, IEloquentExpression<unknown>> {
+        return super.whereRaw<SqlRaw>({ sql: value as string, bindings })
     }
 
     /**

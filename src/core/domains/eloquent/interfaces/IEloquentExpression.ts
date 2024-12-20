@@ -33,7 +33,7 @@ interface IEloquentExpression<BindingsUtility = unknown> {
     setWhere(where: TWhereClause[]): this;
     addWhere(where: TWhereClause): this;
     where(column: string, operator: TOperator, value: TWhereClauseValue | TWhereClauseValue[], logicalOperator?: TLogicalOperator): this;
-    whereRaw(sql: string, bindings?: unknown): this;
+    whereRaw<T = unknown>(value: T, ...args: unknown[]): this;
     getRawWhere<T = unknown>(): T | null;
 
     // Order operations

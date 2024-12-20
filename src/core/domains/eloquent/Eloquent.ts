@@ -639,8 +639,8 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
      * @param {Bindings} [bindings] - The bindings to use for the where clause.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    whereRaw<Q = string, Bindings = unknown>(sql: Q, bindings?: Bindings): IEloquent<Model> {
-        this.expression.whereRaw(sql as string, bindings);
+    whereRaw<T>(value: T, ...args: unknown[]): IEloquent<Model> {
+        this.expression.whereRaw<T>(value, ...args);
         return this as unknown as IEloquent<Model>
     }
 
