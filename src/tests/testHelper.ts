@@ -125,6 +125,22 @@ export const getTestConnectionNames = ({ exclude = [] }: { exclude?: string[] } 
     return ['postgres']
 }
 
+/**
+ * Runs the given function once for every test connection name, excluding any in the `exclude` array
+ * @param fn The function to run for each test connection name
+ * @example
+ * await forEveryConnection(async connectionName => {
+ *     console.log(`Running test for connection ${connectionName}`)
+ * })
+ */
+// eslint-disable-next-line no-unused-vars
+export const forEveryConnection = async (fn: (connectionName: string) => Promise<void>) => {
+    const connectionNames = getTestConnectionNames()
+    for(const connectionName of connectionNames) {
+        await fn(connectionName)
+    }
+}
+
 const testHelper = {
     testBootApp,
     runFreshMigrations,
