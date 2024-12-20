@@ -6,7 +6,7 @@ import EloquentException from "@src/core/domains/eloquent/exceptions/EloquentExp
 import UpdateException from "@src/core/domains/eloquent/exceptions/UpdateException";
 import { IEloquent, IdGeneratorFn, SetModelColumnsOptions, TransactionFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
-import SqlExpression from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
+import SqlExpression, { SqlRaw } from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
@@ -15,6 +15,7 @@ import PrefixedPropertyGrouper from "@src/core/util/PrefixedPropertyGrouper";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { bindAll } from 'lodash';
 import pg, { QueryResult } from 'pg';
+import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 
 class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpression> {
 
@@ -74,7 +75,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      */
     setIdGenerator(idGeneratorFn: IdGeneratorFn = this.defaultIdGeneratorFn as IdGeneratorFn): IEloquent<Model, SqlExpression> {
         this.idGeneratorFn = idGeneratorFn
-        return this
+        return this as unknown as IEloquent<Model, SqlExpression>
     }
 
 
@@ -113,6 +114,20 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
         const values = expression.getBindingValues()
 
         return await this.raw<T>(sql, values)
+    }
+
+    /**
+     * Sets a raw select expression for the query builder.
+     * 
+     * This method can be used to set a custom select expression on the query builder.
+     * The expression will be used as the SELECT clause for the query.
+     * 
+     * @param {string} value - The raw select expression to set.
+     * @param {unknown[]} [bindings] - The bindings to use for the expression.
+     * @returns {IEloquent<Model, IEloquentExpression<unknown>>} The query builder instance.
+     */
+    selectRaw<T = string>(value: T, bindings?: unknown): IEloquent<Model, IEloquentExpression<unknown>> {
+        return super.selectRaw<SqlRaw>({ sql: value as string, bindings })
     }
 
     /**
@@ -431,7 +446,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
 
             this.setExpression(previousExpression)
 
-            return this
+            return this as unknown as IEloquent<Model, SqlExpression>
         })
     }
 
@@ -509,7 +524,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
 
             // Execute the callback function
             const cloneEloquentBound = this.clone.bind(this);
-            const clonedEloquent = cloneEloquentBound() as PostgresEloquent<Model>;
+            const clonedEloquent = cloneEloquentBound() as unknown as PostgresEloquent<Model>;
 
             // Set the pool
             clonedEloquent.setPool(boundPgClient as unknown as pg.Pool);

@@ -184,7 +184,7 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
 
     // Select methods
     select(columns?: string | string[]): IEloquent<ModelWithAttributes<Model>>;
-    selectRaw(expression: string, bindings?: unknown[]): IEloquent<ModelWithAttributes<Model>>;
+    selectRaw<T = unknown>(value: T): IEloquent<ModelWithAttributes<Model>>;
     distinct(columns: string | string[]): IEloquent<ModelWithAttributes<Model>>;
 
     // Where methods

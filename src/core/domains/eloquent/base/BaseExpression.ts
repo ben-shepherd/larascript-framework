@@ -199,6 +199,16 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
         return this.distinctColumns || []
     }
 
+    // Select Raw Methods
+    setSelectRaw<T>(value: T): this {
+        this.buildType = 'select';
+        this.rawSelect = value;
+        return this
+    }
+
+    getRawSelect<T>(): T | null {
+        return this.rawSelect as T | null
+    }
     
     // Insert/Update Methods
     getInsert(): NullableObjectOrArray {
@@ -222,10 +232,6 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
     getUpdate(): NullableObjectOrArray {
         return this.updates ?? []
     }
-
-    abstract setSelectRaw<T = unknown>(value: T, bindings?: BindingsUtility): this;
-
-    abstract getRawSelect<T = unknown>(): T | null;
 
     abstract setWhere(where: TWhereClause[]): this;
 

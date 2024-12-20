@@ -417,8 +417,8 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
      * @param {unknown[]} [bindings] - The bindings to use for the expression.
      * @returns {IEloquent<Attributes, IEloquentExpression<unknown>>} The query builder instance.
      */
-    selectRaw(expression: string, bindings?: unknown[]): IEloquent<Model> {
-        this.expression.setSelectRaw(expression, bindings);
+    selectRaw<T>(value: T, ...args: unknown[]): IEloquent<Model> {
+        this.expression.setSelectRaw<T>(value);
         return this as unknown as IEloquent<Model>
     }
 

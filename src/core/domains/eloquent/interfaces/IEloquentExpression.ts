@@ -18,7 +18,7 @@ interface IEloquentExpression<BindingsUtility = unknown> {
 
     // Select operations
     setBuildTypeSelect(): this;
-    setSelectRaw<T = unknown>(rawSelect: T, bindings?: BindingsUtility): this;
+    setSelectRaw<T = unknown>(value: T, ...args: unknown[]): this;
     getRawSelect<T = unknown>(): T | null;
 
     // Column operations

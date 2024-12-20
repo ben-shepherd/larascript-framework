@@ -14,7 +14,7 @@ import Update from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses
 import Where from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/Where";
 import { z } from "zod";
 
-type SqlRaw = { sql: string, bindings: unknown }
+export type SqlRaw = { sql: string, bindings?: unknown }
 
 class SqlExpression extends BaseExpression<BindingsHelper> {
     
@@ -119,7 +119,7 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
 
         // Construct the components of the SQL query
         const oneSpacePrefix = ' ';
-        const selectColumns  = SelectColumns.toSql(this.columns, this.distinctColumns, this.rawSelect ?? undefined).trimEnd();
+        const selectColumns  = SelectColumns.toSql(this.bindingsUtility, this.columns, this.distinctColumns, this.rawSelect).trimEnd();
         const fromTable      = FromTable.toSql(this.table, this.tableAbbreviation).trimEnd();
         const join           = Joins.toSql(this.joins, oneSpacePrefix).trimEnd();
         const where          = Where.toSql(this.whereClauses, this.rawWhere, this.bindingsUtility, oneSpacePrefix).trimEnd();
@@ -289,16 +289,6 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
 
     getWiths(): TWith[] {
         return this.withs ?? []
-    }
-
-    setSelectRaw<RawSelect = string>(value: RawSelect, bindings: unknown): this {
-        this.buildType = 'select';
-        this.rawSelect = { sql: value, bindings } as SqlRaw;
-        return this
-    }
-
-    getRawSelect<T = SqlRaw>(): T | null {
-        return this.rawSelect as T | null
     }
 
     // Binding Methods
