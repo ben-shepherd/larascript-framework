@@ -3,7 +3,7 @@ import { describe } from '@jest/globals';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
 import TestDepartmentModel, { resetTableDepartmentModel } from '@src/tests/eloquent/models/TestDepartmentModel';
 import TestEmployeeModel, { resetTableEmployeeModel } from '@src/tests/eloquent/models/TestEmployeeModel';
-import testHelper from '@src/tests/testHelper';
+import testHelper, { forEveryConnection } from '@src/tests/testHelper';
 
 const resetAndRepopulate = async () => {
     await resetTableEmployeeModel();
@@ -93,31 +93,37 @@ describe('eloquent', () => {
     test('belongs to successful', async () => {
         await resetAndRepopulate();
 
-        const alice = await queryBuilder(TestEmployeeModel).where('name', 'Alice').firstOrFail();
-        const department = await alice.attr('department');
+        await forEveryConnection(async connection => {
 
-        expect(department).toBeTruthy();
-        expect(department?.id).toBe(alice?.attrSync('department')?.id);
-        expect(department?.deptName).toBe('HR');
+            const alice = await queryBuilder(TestEmployeeModel, connection).where('name', 'Alice').firstOrFail();
+            const department = await alice.attr('department');
+
+            expect(department).toBeTruthy();
+            expect(department?.id).toBe(alice?.attrSync('department')?.id);
+            expect(department?.deptName).toBe('HR');
+        })
     })
 
     test('belongs to no relationship', async() => {
+        await forEveryConnection(async connection => {
+            const noRelationship = await queryBuilder(TestEmployeeModel, connection).where('name', 'NoRelationship').firstOrFail();
+            const department = await noRelationship.attr('department');
 
-        const noRelationship = await queryBuilder(TestEmployeeModel).where('name', 'NoRelationship').firstOrFail();
-        const department = await noRelationship.attr('department');
-
-        expect(department).toBe(null);
+            expect(department).toBe(null);
+        })
     })
 
     test('has many successful', async () => {
 
-        const finance = await queryBuilder(TestDepartmentModel).where('deptName', 'Finance').firstOrFail();
-        const employees = await finance.attr('employees');
+        await forEveryConnection(async connection => {
+            const finance = await queryBuilder(TestDepartmentModel, connection).where('deptName', 'Finance').firstOrFail();
+            const employees = await finance.attr('employees');
 
-        expect(employees).toBeTruthy();
-        expect(employees?.count()).toBe(2);
-        expect(employees?.find((employee) => employee?.name === 'Jane')?.name).toBe('Jane');
-        expect(employees?.find((employee) => employee?.name === 'Peter')?.name).toBe('Peter');
+            expect(employees).toBeTruthy();
+            expect(employees?.count()).toBe(2);
+            expect(employees?.find((employee) => employee?.name === 'Jane')?.name).toBe('Jane');
+            expect(employees?.find((employee) => employee?.name === 'Peter')?.name).toBe('Peter');
+        })
     })
 
 
