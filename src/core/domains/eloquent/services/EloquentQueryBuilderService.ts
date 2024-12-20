@@ -25,13 +25,14 @@ class EloquentQueryBuilderService implements IEloquentQueryBuilderService {
         const model = new modelCtor(null)
         const tableName = modelCtor.getTable()
         const formatter = (result: unknown) => modelCtor.create<Model>(result as Model['attributes'] | null)
+        const connection = modelCtor.getConnection()
         
         const eloquentConstructor = app('db')
             .getAdapter(model.connection)
             .getEloquentConstructor<Model>()
 
         return new eloquentConstructor()
-            .setConnectionName(connectionName ?? model.connection)
+            .setConnectionName(connectionName ?? connection)
             .setModelCtor(modelCtor)
             .setModelColumns(modelCtor)
             .setTable(tableName)

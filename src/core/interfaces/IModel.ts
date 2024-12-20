@@ -9,6 +9,7 @@ export type ModelConstructor<M extends IModel = IModel> = {
     create<T extends M>(data?: T['attributes'] | null): T;
     getTable(): string;
     getPrimaryKey(): string;
+    getConnection(): string;
 }
 
 export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>
@@ -39,6 +40,8 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes> 
     attributes: Attributes | null;
     original: Attributes | null;
     relationships: string[];
+    setConnectionName(connectionName: string): void;
+    getConnectionName(): string;
     getIdGeneratorFn(): IdGeneratorFn | undefined;
     attr<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Promise<Attributes[K] | null | undefined>;
     attrSync<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Attributes[K] | null | undefined;
