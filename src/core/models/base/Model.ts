@@ -8,7 +8,7 @@ import EloquentRelationship from '@src/core/domains/eloquent/utils/EloquentRelat
 import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
 import { IObserver, IObserverEvent } from '@src/core/domains/observer/interfaces/IObserver';
 import { ICtor } from '@src/core/interfaces/ICtor';
-import IModelAttributes, { GetAttributesOptions, IModel, ModelConstructor } from "@src/core/interfaces/IModel";
+import { GetAttributesOptions, IModel, IModelAttributes, ModelConstructor } from "@src/core/interfaces/IModel";
 import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
 import { app } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';

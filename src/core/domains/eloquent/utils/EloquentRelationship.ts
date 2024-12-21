@@ -5,7 +5,7 @@ import BelongsTo from "@src/core/domains/eloquent/relational/BelongsTo";
 import HasMany from "@src/core/domains/eloquent/relational/HasMany";
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import IModelAttributes, { IModel } from "@src/core/interfaces/IModel";
+import { IModel, IModelAttributes } from "@src/core/interfaces/IModel";
 
 class EloquentRelationship {
 

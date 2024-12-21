@@ -20,7 +20,7 @@ export type ModelWithAttributes<Model extends IModel, Attributes = Model['attrib
     [K in keyof Attributes]: Attributes[K];
 }
 
-export default interface IModelAttributes {
+export interface IModelAttributes {
     id?: string;
     createdAt?: Date;
     updatedAt?: Date;

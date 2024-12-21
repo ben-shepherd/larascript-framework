@@ -1,4 +1,4 @@
-import IModelAttributes from "@src/core/interfaces/IModel";
+import { IModelAttributes } from "@src/core/interfaces/IModel";
 import Model from "@src/core/models/base/Model";
 
 interface TestDirtyModelAttributes extends IModelAttributes {

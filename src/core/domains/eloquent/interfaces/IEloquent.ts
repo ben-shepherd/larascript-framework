@@ -4,7 +4,7 @@
 import Collection from "@src/core/domains/collections/Collection";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import IModelAttributes, { IModel, ModelConstructor, ModelWithAttributes } from "@src/core/interfaces/IModel";
+import { IModel, IModelAttributes, ModelConstructor, ModelWithAttributes } from "@src/core/interfaces/IModel";
 
 export type TColumnOption = {
     column: string | null;
