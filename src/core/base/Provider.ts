@@ -28,7 +28,9 @@ export default abstract class BaseProvider implements IProvider {
      * @abstract
      * @returns {Promise<void>}
      */
-    abstract register(): Promise<void>;
+    register(): Promise<void> {
+        return Promise.resolve();
+    }
 
     /**
      * Boots the provider

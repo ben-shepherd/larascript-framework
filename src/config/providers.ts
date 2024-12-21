@@ -1,5 +1,6 @@
 import { IAppService } from "@src/app/interfaces/IAppService";
 import AppProvider from "@src/app/providers/AppProvider";
+import RoutesProvider from "@src/app/providers/RoutesProvider";
 import { ILarascriptProviders } from "@src/core/interfaces/ILarascriptProviders";
 import { IProvider } from "@src/core/interfaces/IProvider";
 import LarascriptProviders from "@src/core/providers/LarascriptProviders";
@@ -33,7 +34,7 @@ export default [
     ...LarascriptProviders,
 
     // Add your providers here
+    new RoutesProvider(),
     new AppProvider(),
-
 
 ] as IProvider[];
