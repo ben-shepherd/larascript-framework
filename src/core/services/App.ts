@@ -1,8 +1,8 @@
 import { Providers } from '@src/config/providers';
 import Singleton from '@src/core/base/Singleton';
 import UninitializedContainerError from '@src/core/exceptions/UninitializedContainerError';
-import IAppConfig from "@src/core/interfaces/IAppConfig";
 import Kernel from '@src/core/Kernel';
+
 
 /**
  * @module App
@@ -23,7 +23,7 @@ export const appEnv = (): string | undefined => App.env();
  * and configure the app environment
  */
 
-export class App extends Singleton<IAppConfig> {
+export class App extends Singleton {
 
     /**
      * Environment

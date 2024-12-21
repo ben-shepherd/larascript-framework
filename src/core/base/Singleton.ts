@@ -1,5 +1,7 @@
 import IService from "@src/core/interfaces/IService";
 
+import { ICtor } from "../interfaces/ICtor";
+
 /**
  * Singleton pattern implementation for services.
  *
@@ -34,9 +36,8 @@ export default abstract class Singleton<Config extends Record<any,any> | null = 
      * @param config - Service configuration.
      * @returns The singleton instance of the service.
      */
-    public static getInstance<Service extends Singleton<any>,Config extends Record<any,any> | null>
-    // eslint-disable-next-line no-unused-vars
-    (this: new (config: any) => Service, config: Config | null = null): Service {
+     
+    public static getInstance<Service extends Singleton<any>,Config extends Record<any,any> | null> (this: ICtor<Service>, config: Config | null = null): Service {
         const className = this.name
 
         if(!Singleton.instances.has(className)) {

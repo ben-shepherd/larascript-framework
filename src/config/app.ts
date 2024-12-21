@@ -1,34 +1,17 @@
-import AppProvider from '@src/app/providers/AppProvider';
 import { EnvironmentDevelopment, EnvironmentType } from '@src/core/consts/Environment';
-import IAppConfig from '@src/core/interfaces/IAppConfig';
-import LarascriptProviders from '@src/core/providers/LarascriptProviders';
+
+export type IAppConfig = {
+    environment: EnvironmentType
+}
 
 /**
- * Available app configuration
+ * App configuration
  */
 const appConfig: IAppConfig = {
 
-    /**
-     * The environment the app is running in
-     */
+    // Environment
     environment: (process.env.APP_ENV as EnvironmentType) ?? EnvironmentDevelopment,
     
-    /**
-     * Providers
-     * @deprecated Use the providers.ts file instead (TODO)
-     */
-    providers: [
-
-        /**
-         * Include the core providers
-         */
-        ...LarascriptProviders,
-
-        /**
-         * Add your providers below
-         */
-        new AppProvider(),
-    ]
 };
 
 export default appConfig;

@@ -3,7 +3,7 @@ import EloquentQueryProvider from "@src/core/domains/eloquent/providers/Eloquent
 import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
 import { logger } from "@src/core/domains/logger/services/LoggerService";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
-import Kernel from "@src/core/Kernel";
+import Kernel, { KernelConfig } from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
 import TestApiTokenModel from "@src/tests/models/models/TestApiTokenModel";
 import TestUser from "@src/tests/models/models/TestUser";
@@ -25,7 +25,8 @@ export const getTestDbName = () => testDbName
  * expect(App.container('db')).toBeInstanceOf(TestDatabaseProvider)
  */
 const testBootApp = async () => {
-    await Kernel.boot({
+
+    const config: KernelConfig = {
         environment: EnvironmentTesting,
         providers: [
             new LoggerProvider(),
@@ -37,7 +38,9 @@ const testBootApp = async () => {
             new TestMigrationProvider(),
             new ValidatorProvider()
         ]
-    }, {});
+    }
+
+    await Kernel.boot(config, {});
 }
 
 
