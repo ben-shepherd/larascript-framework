@@ -1,7 +1,7 @@
 import AppProvider from '@src/app/providers/AppProvider';
 import { EnvironmentDevelopment, EnvironmentType } from '@src/core/consts/Environment';
 import IAppConfig from '@src/core/interfaces/IAppConfig';
-import CoreProviders from '@src/core/providers/CoreProviders';
+import LarascriptProviders from '@src/core/providers/LarascriptProviders';
 
 /**
  * Available app configuration
@@ -15,13 +15,14 @@ const appConfig: IAppConfig = {
     
     /**
      * Providers
+     * @deprecated Use the providers.ts file instead (TODO)
      */
     providers: [
 
         /**
          * Include the core providers
          */
-        ...CoreProviders,
+        ...LarascriptProviders,
 
         /**
          * Add your providers below

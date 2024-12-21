@@ -1,16 +1,17 @@
 import { IAuthService } from '@src/core/domains/auth/interfaces/IAuthService';
 import ICommandService from '@src/core/domains/console/interfaces/ICommandService';
 import { IDatabaseService } from '@src/core/domains/database/interfaces/IDatabaseService';
+import { IEloquentQueryBuilderService } from '@src/core/domains/eloquent/interfaces/IEloquentQueryBuilderService';
 import { IEventService } from '@src/core/domains/events/interfaces/IEventService';
 import { IRequestContext } from '@src/core/domains/express/interfaces/ICurrentRequest';
 import IExpressService from '@src/core/domains/express/interfaces/IExpressService';
 import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerService';
 import IValidatorService from '@src/core/domains/validator/interfaces/IValidatorService';
 import readline from 'node:readline';
-import { IEloquentQueryBuilderService } from '@src/core/domains/eloquent/interfaces/IEloquentQueryBuilderService';
 
-export interface ICoreContainers {
-    [key: string]: any;
+export interface ILarascriptProviders {
+
+    [key: string]: unknown;
 
     /**
      * Event Dispatcher Service

@@ -1,10 +1,10 @@
 import commandsConfig from "@src/config/commands";
 import BaseProvider from "@src/core/base/Provider";
 import HelpCommand from "@src/core/domains/console/commands/HelpCommand";
+import ListRoutesCommand from "@src/core/domains/console/commands/ListRoutesCommand";
 import ConsoleService from "@src/core/domains/console/service/ConsoleService";
 import { App } from "@src/core/services/App";
 import readline from 'readline';
-import ListRoutesCommand from "@src/core/domains/console/commands/ListRoutesCommand";
 
 export default class ConsoleProvider extends BaseProvider {
 
@@ -44,12 +44,5 @@ export default class ConsoleProvider extends BaseProvider {
          */
         App.container('console').register().registerAll(commandsConfig)
     }
-
-    /**
-     * Boot method
-     * Called after all providers have been registered
-     * Use this method to perform any actions that require other services to be available
-     */
-    async boot(): Promise<void> {}
 
 }

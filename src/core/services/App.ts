@@ -1,4 +1,4 @@
-import { IContainers } from '@src/config/containers';
+import { Providers } from '@src/config/providers';
 import Singleton from '@src/core/base/Singleton';
 import UninitializedContainerError from '@src/core/exceptions/UninitializedContainerError';
 import IAppConfig from "@src/core/interfaces/IAppConfig";
@@ -8,7 +8,7 @@ import Kernel from '@src/core/Kernel';
  * @module App
  * @description The App service allows you to access kernel containers and configure the app environment
  */
-export const app = <K extends keyof IContainers = keyof IContainers>(name: K): IContainers[K] => {
+export const app = <K extends keyof Providers = keyof Providers>(name: K): Providers[K] => {
     return App.container(name);
 }
 
@@ -58,7 +58,7 @@ export class App extends Singleton<IAppConfig> {
      * @param name The name of the container
      * @param container The container to set
      */
-    public static setContainer<Name extends keyof IContainers & string>(name: Name, container: IContainers[Name]) {
+    public static setContainer<Name extends keyof Providers & string>(name: Name, container: Providers[Name]) {
         const kernel = Kernel.getInstance();
 
         if (kernel.booted()) {
@@ -79,7 +79,7 @@ export class App extends Singleton<IAppConfig> {
      * @param name The name of the container
      * @returns The container if it exists, or throws an UninitializedContainerError if not
      */
-    public static container<K extends keyof IContainers = keyof IContainers>(name: K): IContainers[K] {
+    public static container<K extends keyof Providers = keyof Providers>(name: K): Providers[K] {
         const kernel = Kernel.getInstance();
 
         if(!kernel.containers.has(name)) {
@@ -100,7 +100,7 @@ export class App extends Singleton<IAppConfig> {
      * @returns {IContainers[K] | undefined} The container if found, otherwise undefined.
      * @throws {Error} If an unexpected error occurs.
      */
-    public static safeContainer<K extends keyof IContainers = keyof IContainers>(name: K): IContainers[K] | undefined {
+    public static safeContainer<K extends keyof Providers = keyof Providers>(name: K): Providers[K] | undefined {
         try {
             return this.container(name);
         }
@@ -120,7 +120,7 @@ export class App extends Singleton<IAppConfig> {
      * @param {K} name - The name of the container to check.
      * @returns {boolean} Whether the container is ready or not.
      */
-    public static containerReady<K extends keyof IContainers = keyof IContainers>(name: K): boolean {
+    public static containerReady<K extends keyof Providers = keyof Providers>(name: K): boolean {
         return this.safeContainer(name) !== undefined
     }
 
