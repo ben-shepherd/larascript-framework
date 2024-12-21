@@ -1,99 +1,374 @@
 /* eslint-disable no-unused-vars */
 import { TColumnOption, TGroupBy, TJoin, TLogicalOperator, TOffsetLimit, TOperator, TOrderBy, TWhereClause, TWhereClauseValue, TWith } from "@src/core/domains/eloquent/interfaces/IEloquent";
-import { deepClone } from "@src/core/util/deepClone";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
+import { deepClone } from "@src/core/util/deepClone";
 
-abstract class BaseExpression<Bindings = unknown> implements IEloquentExpression<Bindings> {
+export type BuildType = 'select' | 'insert' | 'update' | 'delete';
+export type NullableObjectOrArray = object | object[] | null;
+type ExpressionDefaults<BindingsUtility = unknown> = {
+    buildType: BuildType;
+    table: string;
+    tableAbbreviation: string | null;
+    bindings: BindingsUtility | null;
+    columns: TColumnOption[] | null;
+    rawSelect: unknown;
+    distinctColumns: TColumnOption[] | null;
+    whereClauses: TWhereClause[] | null;
+    whereColumnTypes: Record<string, string> | null;
+    whereRaw: unknown;
+    joins: TJoin[] | null;
+    withs: TWith[] | null;
+    orderByClauses: TOrderBy[] | null;
+    offset: TOffsetLimit | null;
+    inserts: NullableObjectOrArray | null;
+    updates: NullableObjectOrArray | null;
+    groupBy: TGroupBy[] | null;
+}
+export const buildTypes = ['select', 'insert', 'update', 'delete'] as const;
 
-    abstract bindings: Bindings;
+abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExpression<BindingsUtility> {
 
+    bindingsUtility:  BindingsUtility | null                   = this.getDefaults().bindings;
+
+    protected buildType: BuildType                             = this.getDefaults().buildType;
+
+    protected table: string                                    = this.getDefaults().table;
+
+    protected tableAbbreviation?: string | null                = this.getDefaults().tableAbbreviation;
+
+    protected columns: TColumnOption[] | null                  = this.getDefaults().columns;
+
+    protected rawSelect: unknown                               = this.getDefaults().rawSelect;
+
+    protected distinctColumns: TColumnOption[] | null          = this.getDefaults().distinctColumns;
+
+    protected whereClauses: TWhereClause[] | null              = this.getDefaults().whereClauses;
+
+    protected rawWhere: unknown                                = this.getDefaults().whereRaw;
+
+    protected joins: TJoin[] | null                            = this.getDefaults().joins;
+
+    protected withs: TWith[] | null                            = this.getDefaults().withs;
+
+    protected orderByClauses: TOrderBy[] | null                = this.getDefaults().orderByClauses;
+
+    protected offsetLimit: TOffsetLimit | null                 = this.getDefaults().offset;
+
+    protected inserts: NullableObjectOrArray                   = this.getDefaults().inserts;
+
+    protected updates: NullableObjectOrArray                   = this.getDefaults().updates;
+
+    protected groupBy: TGroupBy[] | null                       = this.getDefaults().groupBy;
+    
+    /**
+     * Sets the default values for the expression properties. 
+     * 
+     * This method allows setting custom default values by merging them with the existing defaults.
+     * If no defaults are provided, the current defaults are used.
+     *
+     * @param {ExpressionDefaults<BindingsUtility>} [defaults] - The custom default values to be merged 
+     * with the existing defaults, represented as an ExpressionDefaults object. Default is an empty object.
+     */
+    protected setDefaults(defaults: ExpressionDefaults<BindingsUtility> = {} as ExpressionDefaults<BindingsUtility>) {
+        const values = {
+            ...this.getDefaults(),
+            ...defaults
+        } as ExpressionDefaults<BindingsUtility>
+
+        this.buildType         = values.buildType;
+        this.bindingsUtility   = values.bindings;
+        this.table             = values.table;
+        this.tableAbbreviation = values.tableAbbreviation;
+        this.columns           = values.columns;
+        this.rawSelect         = values.rawSelect;
+        this.distinctColumns   = values.distinctColumns;
+        this.whereClauses      = values.whereClauses;
+        this.rawWhere          = values.whereRaw;
+        this.joins             = values.joins;
+        this.withs             = values.withs;
+        this.orderByClauses    = values.orderByClauses;
+        this.offsetLimit       = values.offset;
+        this.inserts           = values.inserts;
+        this.updates           = values.updates;
+        this.groupBy           = values.groupBy;
+    }
+
+    // Set Build Types
+    setBuildTypeSelect(): this {
+        this.buildType = 'select';
+        return this;
+    }
+    
+    setBuildTypeDelete(): this {
+        this.buildType = 'delete';
+        return this;
+    }
+
+    setBuildTypeInsert(documents: object | object[]): this {
+        documents = Array.isArray(documents) ? documents : [documents]
+        this.inserts = documents
+        this.buildType = 'insert'
+        return this
+    }
+
+    setBuildTypeUpdate(documents: object | object[]): this {
+        documents = Array.isArray(documents) ? documents : [documents]
+        this.updates = documents
+        this.buildType = 'update'
+        return this
+    }
+
+    /**
+     * Builds and returns the final expression result.
+     * 
+     * @template T - The type of the built expression result
+     * @returns {T} The constructed expression result
+     */
     abstract build<T = unknown>(): T;
 
-    abstract setTable(table: string, abbreviation?: string): this;
+    /**
+     * Returns the default values for the expression properties as an ExpressionDefaults object.
+     * 
+     * The defaults include settings for build type, table details, column selections, 
+     * query conditions, joins, ordering, and more. These defaults are used to 
+     * initialize the properties of an SQL expression.
+     *
+     * @returns {ExpressionDefaults<BindingsUtility>} The default values for
+     * expression properties.
+     */
+    protected getDefaults(): ExpressionDefaults<BindingsUtility> {
+        return {
+            buildType: 'select',
+            table: '',
+            bindings: null,
+            tableAbbreviation: null,
+            columns: null,
+            rawSelect: null,
+            distinctColumns: null,
+            whereClauses: null,
+            whereColumnTypes: null,
+            whereRaw: null,
+            joins: null,
+            withs: null,
+            orderByClauses: null,
+            offset: null,
+            inserts: null,
+            updates: null,
+            groupBy: null,
+        }
+    }
 
-    abstract getTable(): string;
+    // Table Methods
+    setTable(table: string, abbreviation?: string): this {
+        this.table = table;
+        this.tableAbbreviation = abbreviation ?? null
+        return this;
+    }
+    
+    getTable(): string {
+        return this.table
+    }
 
-    abstract setSelect(): this;
+    // Column Methods
+    setColumns(columns: TColumnOption[]): this {
+        this.columns = columns;
+        return this;
+    }
+    
+    addColumn(column: TColumnOption): this {
+        if (!this.columns) this.columns = [];
+        this.columns.push(column);
+        return this
+    }
+    
+    getColumns(): TColumnOption[] {
+        return this.columns ?? []
+    }
+    
+    setDistinctColumns(columns: TColumnOption[]): this {
+        this.distinctColumns = columns;
+        return this   
+    }
+    
+    getDistinctColumns(): TColumnOption[] {
+        return this.distinctColumns || []
+    }
 
-    abstract setSelectRaw(sql: string, bindings: unknown): this;
+    // Select Raw Methods
+    setSelectRaw<T>(value: T): this {
+        this.buildType = 'select';
+        this.rawSelect = value;
+        return this
+    }
 
-    abstract setColumns(columns: TColumnOption[]): this;
+    getRawSelect<T>(): T | null {
+        return this.rawSelect as T | null
+    }
+    
+    // Insert/Update Methods
+    getInsert(): NullableObjectOrArray {
+        return this.inserts ?? []
+    }
 
-    abstract getColumns(): TColumnOption[];
+    setInserts(inserts: NullableObjectOrArray) {
+        this.inserts = inserts
+        return this
+    }
 
-    abstract addColumn(column: TColumnOption): this;
+    setUpdates(updates: NullableObjectOrArray) {
+        this.updates = updates
+        return this
+    }
 
-    abstract setDistinctColumns(columns: TColumnOption[]): this;
+    getUpdates(): NullableObjectOrArray {
+        return this.updates ?? []
+    }
 
-    abstract getDistinctColumns(): TColumnOption[];
+    getUpdate(): NullableObjectOrArray {
+        return this.updates ?? []
+    }
 
-    abstract addBinding(column: string, binding: unknown): this;
+    // Where Clause Methods
+    setWhere(where: TWhereClause[]): this {
+        if(!this.whereClauses) this.whereClauses = [];
+        this.whereClauses = where;
+        return this;
+    }
 
-    abstract getBindingValues(): unknown[];
+    getWhere(): TWhereClause[] {
+        return this.whereClauses ?? []
+    }
 
-    abstract getBindingTypes(): (number | undefined)[];
+    addWhere(where: TWhereClause): this {
+        if(!this.whereClauses) this.whereClauses = [];
+        this.whereClauses.push(where)
+        return this
+    }
 
-    abstract setWhere(where: TWhereClause[]): this;
+    where(column: string, operator: TOperator, value: TWhereClauseValue | TWhereClauseValue[] = null, logicalOperator: TLogicalOperator = 'and'): this {
+        if (!this.whereClauses) this.whereClauses = [];
+        this.whereClauses.push({ column, operator, value, logicalOperator, tableName: this.table });
+        return this;
+    }
 
-    abstract addWhere(where: TWhereClause): this;
+    whereRaw<T = unknown>(value: T, bindings: unknown): this {
+        this.rawWhere = value
+        return this
+    }
 
-    abstract getWhere(): TWhereClause[];
+    getRawWhere<T>(): T | null {
+        return this.rawWhere as T | null
+    }
 
-    abstract where(
-        column: string, 
-        operator: TOperator, 
-        value: TWhereClauseValue | TWhereClauseValue[], 
-        logicalOperator?: TLogicalOperator
-    ): this;
+    setRawWhere<T>(where: T | null): this {
+        this.rawWhere = where;
+        return this
+    }
 
-    abstract whereRaw(sql: string, bindings?: unknown): this;
+    // Join Methods
+    setJoins(joins: TJoin[] | TJoin): this {
+        this.joins = Array.isArray(joins) ? joins : [joins];
+        return this        
+    }
 
-    abstract setOrderBy(orderBy: TOrderBy[]): this;
+    join(options: TJoin): this {
+        if (!this.joins) this.joins = [];
+        this.joins.push(options);
+        return this
+    }
 
-    abstract getOrderBy(): TOrderBy[] | null;
+    getJoins(): TJoin[] {
+        return this.joins ?? []
+    }
 
-    abstract orderBy(orderBy: TOrderBy): this;
+    // With Methods
+    setWiths(withs: TWith[] | TWith): this {
+        this.withs = Array.isArray(withs) ? withs : [withs];
+        return this
+    }
 
-    abstract setOffsetAndLimit(offset: TOffsetLimit | null): this;
+    with(options: TWith): this {
+        if (!this.withs) this.withs = [];
+        this.withs.push(options);
+        return this
+    }
 
-    abstract setLimit(limit: number | null): this;
+    getWiths(): TWith[] {
+        return this.withs ?? []
+    }
 
-    abstract setOffset(offset: number | null): this;
+    // Order By Methods
+    setOrderBy(orderBy: TOrderBy[] | null): this {
+        this.orderByClauses = orderBy;
+        return this;
+    }
+        
+    orderBy(orderBy: TOrderBy): this {
+        if(!this.orderByClauses) this.orderByClauses = [];
+        this.orderByClauses.push(orderBy);
+        return this
+    }
+    
+    getOrderBy(): TOrderBy[] | null {
+        return this.orderByClauses ?? []
+    }
+    
+    setOrderByClauses(orderByClauses: TOrderBy[]) {
+        this.orderByClauses = orderByClauses
+        return this
+    }
 
-    abstract getOffsetLimit(): TOffsetLimit | null;
+    // Group By Methods
+    getGroupBy(): TGroupBy[] | null {
+        return this.groupBy
+    }
+    
+    setGroupBy(columns: TGroupBy[]): this {
+        this.groupBy = columns
+        return this
+    }
 
-    abstract setJoins(joins: TJoin[] | TJoin): this;
+    // Offset/Limit Methods
+    setOffsetLimit(offsetLimit: TOffsetLimit | null): this {
+        this.offsetLimit = offsetLimit
+        return this
+    }
+    
+    setOffsetAndLimit(offset: TOffsetLimit | null = null): this {
+        this.offsetLimit = offset;
+        return this;
+    }
+    
+    setLimit(limit: number | null = null): this {
+        this.offsetLimit = {limit: limit ?? undefined, offset: this.offsetLimit?.offset};
+        return this
+    }
+    
+    setOffset(offset: number | null = null): this {
+        this.offsetLimit = { limit: this.offsetLimit?.limit, offset: offset ?? undefined };
+        return this
+    }
+    
+    getOffsetLimit(): TOffsetLimit | null {
+        return this.offsetLimit
+    }
 
-    abstract getJoins(): TJoin[];
-
-    abstract join(options: TJoin): this;
-
-    abstract setWiths(withs: TWith[]): this;
-
-    abstract getWiths(): TWith[];
-
-    abstract with(options: TWith): this;
-
-    abstract setInsert(documents: object | object[]): this;
-
-    abstract getInsert(): object | object[] | null;
-
-    abstract setUpdate(document: object | object[]): this;
-
-    abstract getUpdate(): object | object[] | null;
-
-    abstract setGroupBy(columns: TGroupBy[]): this;
-
-    abstract getGroupBy(): TGroupBy[] | null;
-
-    abstract setDelete(): this;
+    // Binding Methods
+    setBindings(bindings: BindingsUtility): this {
+        this.bindingsUtility = bindings;
+        return this
+    }
+    
+    getBindings(): BindingsUtility | null {
+        return this.bindingsUtility
+    }
 
     /**
      * Clones the query builder expression.
      *
-     * @returns {IEloquentExpression<Bindings>} A new cloned query builder expression.
+     * @returns {IEloquentExpression<BindingsUtility>} A new cloned query builder expression.
      */
-    clone(): IEloquentExpression<Bindings> {
+    clone(): IEloquentExpression<BindingsUtility> {
         return deepClone(this);
     }
 

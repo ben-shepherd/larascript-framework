@@ -1,7 +1,6 @@
-import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
 import { LogicalOperators, TLogicalOperator, TWhereClause, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
-import SqlExpression from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
+import SqlExpression, { SqlRaw } from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 
 type SqlWhereClause = {
     column: string;
@@ -10,11 +9,6 @@ type SqlWhereClause = {
     value?: TWhereClauseValue;
     logicalOperator?: TLogicalOperator
     appendValue?: boolean;
-}
-
-type RawWhere = {
-    sql: string;
-    bindings: unknown;
 }
 
 type WhereBetweenValue = [TWhereClauseValue, TWhereClauseValue]
@@ -27,9 +21,9 @@ class Where {
      */
     constructor(
         // eslint-disable-next-line no-unused-vars
-        protected filters: TWhereClause[] | undefined,
+        protected filters: TWhereClause[] | null,
         // eslint-disable-next-line no-unused-vars
-        protected rawWhere: RawWhere | undefined,
+        protected rawWhere: SqlRaw | null,
         // eslint-disable-next-line no-unused-vars
         protected bindings: BindingsHelper = new BindingsHelper(),
         // eslint-disable-next-line no-unused-vars
@@ -46,7 +40,7 @@ class Where {
      * @param {string} [prefix] - An optional prefix to prepend to the SQL string.
      * @returns {string} The SQL string for the WHERE clause.
      */
-    static toSql(filters: TWhereClause[] | undefined, rawWhere: RawWhere | undefined, bindings: BindingsHelper = new BindingsHelper(), prefix: string = ''): string {
+    static toSql(filters: TWhereClause[] | null, rawWhere: SqlRaw | null, bindings: BindingsHelper = new BindingsHelper(), prefix: string = ''): string {
         return new Where(filters, rawWhere, bindings).build(prefix)
     }
 
@@ -67,11 +61,7 @@ class Where {
             return `${prefix}${this.whereRaw(this.rawWhere)}`
         }
 
-        if(!this.filters) {
-            throw new ExpressionException('No filters provided')
-        }
-
-        if(this.filters.length === 0) {
+        if(!this.filters || this.filters.length === 0) {
             return ''
         }
 
@@ -171,7 +161,7 @@ class Where {
      * @param {RawWhere} rawWhere - The raw where clause containing the SQL string and bindings to use.
      * @returns {string} The SQL string for the WHERE clause.
      */
-    whereRaw({sql, bindings }: RawWhere): string {
+    whereRaw({sql, bindings }: SqlRaw): string {
         if(Array.isArray(bindings)) {
             bindings.forEach(binding => this.bindings.addBinding(null, binding));
         }

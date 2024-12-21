@@ -1,6 +1,7 @@
 import { EnvironmentTesting } from "@src/core/consts/Environment";
 import EloquentQueryProvider from "@src/core/domains/eloquent/providers/EloquentQueryProvider";
 import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
+import { logger } from "@src/core/domains/logger/services/LoggerService";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 import Kernel from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
@@ -123,6 +124,23 @@ const clearMigrations = async () => {
 export const getTestConnectionNames = ({ exclude = [] }: { exclude?: string[] } = {}) => {
     // return ['mongodb', 'postgres'].filter(connectionName => !exclude.includes(connectionName));
     return ['postgres']
+}
+
+/**
+ * Runs the given function once for every test connection name, excluding any in the `exclude` array
+ * @param fn The function to run for each test connection name
+ * @example
+ * await forEveryConnection(async connectionName => {
+ *     console.log(`Running test for connection ${connectionName}`)
+ * })
+ */
+// eslint-disable-next-line no-unused-vars
+export const forEveryConnection = async (fn: (connectionName: string) => Promise<void>) => {
+    const connectionNames = getTestConnectionNames()
+    for(const connectionName of connectionNames) {
+        logger().console('Running test for connection ' + connectionName)
+        await fn(connectionName)
+    }
 }
 
 const testHelper = {

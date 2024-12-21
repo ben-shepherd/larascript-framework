@@ -1,6 +1,7 @@
 import BaseDatabaseAdapter from "@src/core/domains/database/base/BaseDatabaseAdapter";
 import { IDatabaseGenericConnectionConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
+import { db } from "@src/core/domains/database/services/Database";
 import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { logger } from "@src/core/domains/logger/services/LoggerService";
 import PostgresEloquent from "@src/core/domains/postgres/eloquent/PostgresEloquent";
@@ -13,7 +14,6 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import pg from 'pg';
 import { QueryInterface, Sequelize } from "sequelize";
-import { db } from "@src/core/domains/database/services/Database";
 
 
 
@@ -158,7 +158,7 @@ class PostgresAdapter extends BaseDatabaseAdapter<IPostgresConfig>  {
      * @returns {IDatabaseSchema} The schema interface
      */
     getSchema(): IDatabaseSchema {
-        return new PostgresSchema(this)
+        return new PostgresSchema(this.connectionName)
     }
 
     /**

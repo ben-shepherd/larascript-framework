@@ -4,7 +4,8 @@ import appConfig from '@src/config/app';
 import CommandNotFoundException from '@src/core/domains/console/exceptions/CommandNotFoundException';
 import CommandBootService from '@src/core/domains/console/service/CommandBootService';
 import Kernel, { KernelOptions } from '@src/core/Kernel';
-import { App } from '@src/core/services/App';
+
+import { logger } from './core/domains/logger/services/LoggerService';
 
 (async () => {
     try {
@@ -16,8 +17,7 @@ import { App } from '@src/core/services/App';
          * Boot the kernel
          */
         await Kernel.boot(appConfig, options);
-
-        App.container('logger').info('[App]: Started');
+        logger().info('[App]: Started');
 
         /**
          * Execute commands
@@ -32,7 +32,7 @@ import { App } from '@src/core/services/App';
             return;
         }
 
-        App.container('logger').error('[App]: Failed to start', err);
+        logger().error('[App]: Failed to start', err);
         throw err;
     }
 })();

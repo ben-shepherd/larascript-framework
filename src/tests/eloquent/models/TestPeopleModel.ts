@@ -1,7 +1,7 @@
 import IModelAttributes from "@src/core/interfaces/IModel";
 import Model from "@src/core/models/base/Model";
 import { App } from "@src/core/services/App";
-import testHelper from "@src/tests/testHelper";
+import { forEveryConnection } from "@src/tests/testHelper";
 import { DataTypes } from "sequelize";
 
 const tableName = Model.formatTableName('testsPeople')
@@ -16,8 +16,8 @@ export interface ITestPeopleModelData extends IModelAttributes {
 
 }
 
-export const resetPeopleTable = async (connections: string[] = testHelper.getTestConnectionNames()) => {
-    for(const connectionName of connections) {
+export const resetPeopleTable = async () => {
+    await forEveryConnection(async connectionName => {
         const schema = App.container('db').schema(connectionName);
 
         if(await schema.tableExists(tableName)) {
@@ -38,7 +38,7 @@ export const resetPeopleTable = async (connections: string[] = testHelper.getTes
             createdAt: DataTypes.DATE,
             updatedAt: DataTypes.DATE
         })
-    }
+    })
 }
 
 export default class TestPeopleModel extends Model<ITestPeopleModelData> {

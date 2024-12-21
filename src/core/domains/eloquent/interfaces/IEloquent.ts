@@ -115,7 +115,7 @@ export type IdGeneratorFn<T = unknown> = <ReturnType = T>(...args: any[]) => Ret
 
 export type TransactionFn<Model extends IModel = IModel> = (query: IEloquent<ModelWithAttributes<Model>>) => Promise<void>;
 
-export interface IEloquent<Model extends IModel = IModel> {
+export interface IEloquent<Model extends IModel = IModel, Expression extends IEloquentExpression = IEloquentExpression> {
     
     // eloquent methods
     setConnectionName(connectionName: string): IEloquent<Model>;
@@ -134,14 +134,14 @@ export interface IEloquent<Model extends IModel = IModel> {
     generateId<T = unknown>(): T | null;
 
     // results
-    fetchRows<T = unknown>(expression: IEloquentExpression, ...args: any[]): Promise<T>;
+    fetchRows<T = unknown>(expression: Expression, ...args: any[]): Promise<T>;
 
     // formatting
     // asModel<Model extends IModel>(): IEloquent<Model, Model>; 
     setFormatter(formatterFn?: TFormatterFn): IEloquent<Model>;
     
     // execution
-    execute<T = Model['attributes']>(builder: IEloquentExpression): Promise<T>
+    execute<T = Model['attributes']>(builder: Expression): Promise<T>
     raw<T = unknown>(expression: string, bindings?: unknown[]): Promise<T>;
 
     // db methods
@@ -184,14 +184,14 @@ export interface IEloquent<Model extends IModel = IModel> {
 
     // Select methods
     select(columns?: string | string[]): IEloquent<ModelWithAttributes<Model>>;
-    selectRaw(expression: string, bindings?: unknown[]): IEloquent<ModelWithAttributes<Model>>;
+    selectRaw<T = unknown>(value: T): IEloquent<ModelWithAttributes<Model>>;
     distinct(columns: string | string[]): IEloquent<ModelWithAttributes<Model>>;
 
     // Where methods
     where(filters: object, operator?: TOperator): IEloquent<ModelWithAttributes<Model>>;
     where(column: string, value?: TWhereClauseValue): IEloquent<ModelWithAttributes<Model>>;
     where(column: string, operator?: TOperator, value?: TWhereClauseValue, logicalOperator?: TLogicalOperator): IEloquent<ModelWithAttributes<Model>>;
-    whereRaw<Q = unknown, Bindings = unknown>(query: Q, bindings?: Bindings): IEloquent<ModelWithAttributes<Model>>;
+    whereRaw<T = unknown>(value: T, ...args: unknown[]): IEloquent<ModelWithAttributes<Model>>;
 
     orWhere(column: string, value?: TWhereClauseValue): IEloquent<ModelWithAttributes<Model>>;
     orWhere(column: string, operator?: TOperator, value?: TWhereClauseValue): IEloquent<ModelWithAttributes<Model>>;

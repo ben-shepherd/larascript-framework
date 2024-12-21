@@ -27,7 +27,7 @@ export type SelectOptions = {
 
 }
 
-class MongoDbQueryBuilder {
+class MongoDbQueryBuilderLegacy {
 
     protected identifierConcern = new MongoDbIdentiferConcern()
 
@@ -107,4 +107,4 @@ class MongoDbQueryBuilder {
 /**
  * Default export
  */
-export default MongoDbQueryBuilder
+export default MongoDbQueryBuilderLegacy

@@ -1,30 +1,12 @@
 import BaseSchema from "@src/core/domains/database/base/BaseSchema";
-import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
-import { IDatabaseAdapterSchema } from "@src/core/domains/database/interfaces/IDatabaseAdapterSchema";
+import { logger } from "@src/core/domains/logger/services/LoggerService";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import { IAlterTableOptions } from "@src/core/domains/postgres/interfaces/IPostgresAlterTableOptions";
 import pg from 'pg';
 import { DataTypes, QueryInterfaceCreateTableOptions, QueryInterfaceDropTableOptions } from "sequelize";
 import { ModelAttributes } from 'sequelize/types/model';
-import { logger } from "@src/core/domains/logger/services/LoggerService";
 
-
-class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
-
-    protected adapter!: PostgresAdapter;
-
-    constructor(adapter: PostgresAdapter) {
-        super()
-        this.adapter = adapter;
-    }
-
-    /**
-     * Sets the PostgreSQL adapter.
-     * @param adapter - The PostgresAdapter instance to set.
-     */
-    setAdapter(adapter: IDatabaseAdapter): void {
-        this.adapter = adapter as unknown as PostgresAdapter
-    }
+class PostgresSchema extends BaseSchema<PostgresAdapter> {
 
     /**
      * Creates a new database schema.
@@ -32,13 +14,16 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
      * @returns A promise that resolves when the database schema has been created
      */
     async createDatabase(name: string): Promise<void> {
-        const client = await this.adapter.getPgClientWithDatabase('postgres');
+        const client = await this.getAdapter().getPgClientWithDatabase('postgres');
         try {
             await client.connect()
             await client.query(`CREATE DATABASE ${name}`)
         }
-        // eslint-disable-next-line no-unused-vars
-        catch (err) {}
+         
+        catch (err) {
+            logger().error(`Failed to create database ${name}: ${(err as Error).message}`);
+            throw err;
+        }
         finally {
             await client.end()
         }
@@ -50,12 +35,21 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
          * @returns A promise that resolves to a boolean indicating whether the database exists
          */
     async databaseExists(name: string): Promise<boolean> {
-        const client = await this.adapter.getPgClientWithDatabase('postgres');
-        await client.connect()
-        const result = await client.query(`SELECT FROM pg_database WHERE datname = '${name}'`)
-        const dbExists = typeof result.rowCount === 'number' && result.rowCount > 0
-        await client.end()
-        return dbExists
+        const client = await this.getAdapter().getPgClientWithDatabase('postgres');
+        try {
+            await client.connect()
+            const result = await client.query(`SELECT FROM pg_database WHERE datname = '${name}'`)
+            const dbExists = typeof result.rowCount === 'number' && result.rowCount > 0
+            await client.end()
+            return dbExists
+        }
+        catch (err) {
+            logger().error(`Failed to check if database ${name} exists: ${(err as Error).message}`);
+            throw err;
+        }
+        finally {
+            await client.end();
+        }
     }
 
     /**
@@ -66,7 +60,7 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
      */
     async terminateConnections(database: string, client?: pg.Client): Promise<void> {
         const endConnection: boolean = typeof client === 'undefined';
-        client = client ?? await this.adapter.getPgClientWithDatabase(database);
+        client = client ?? await this.getAdapter().getPgClientWithDatabase(database);
         
         try {
         // Terminate any remaining connections to the target database
@@ -79,6 +73,7 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
         }
         catch (err) {
             logger().error(`Failed to terminate connections to database ${database}: ${(err as Error).message}`);
+            throw err;
         }
         finally {
             if(endConnection) {
@@ -95,7 +90,7 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
      */
     async dropDatabase(name: string): Promise<void> {
 
-        const client = await this.adapter.getPgClientWithDatabase('postgres');
+        const client = await this.getAdapter().getPgClientWithDatabase('postgres');
 
         try {
             await client.connect();
@@ -143,9 +138,15 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
      * @param optons 
      */
     async createTable(tableName: string, attributes: ModelAttributes, optons?: QueryInterfaceCreateTableOptions): Promise<void> {
-        const sequelize = this.adapter.getSequelize();
-        const queryInterface = sequelize.getQueryInterface();
-        await queryInterface.createTable(tableName, this.withDefaultUuuidV4Schema(attributes), optons);
+        try {
+            const sequelize = this.getAdapter().getSequelize();
+            const queryInterface = sequelize.getQueryInterface();
+            await queryInterface.createTable(tableName, this.withDefaultUuuidV4Schema(attributes), optons);
+        }
+        catch (err) {
+            logger().error(`Failed to create table ${tableName}: ${(err as Error).message}`);
+            throw err;
+        }
     }
 
     /**
@@ -154,9 +155,15 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
      * @param options 
      */
     async dropTable(tableName: string, options?: QueryInterfaceDropTableOptions): Promise<void> {
-        const sequelize = this.adapter.getSequelize();
-        const queryInterface = sequelize.getQueryInterface();
-        await queryInterface.dropTable(tableName, options);
+        try {
+            const sequelize = this.getAdapter().getSequelize();
+            const queryInterface = sequelize.getQueryInterface();
+            await queryInterface.dropTable(tableName, options);
+        }
+        catch (err) {
+            logger().error(`Failed to drop table ${tableName}: ${(err as Error).message}`);
+            throw err;
+        }
     }
 
     /**
@@ -165,52 +172,58 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
      * @param options 
      */
     async alterTable(tableName: IAlterTableOptions['tableName'], options: Omit<IAlterTableOptions, 'tableName'>): Promise<void> {
-        const sequelize = this.adapter.getSequelize();
-    
-        if(options.addColumn) {
-            await sequelize.getQueryInterface().addColumn(
-                tableName,
-                options.addColumn.key,
-                options.addColumn.attribute,
-                options.addColumn.options
-            );
+        try {
+            const sequelize = this.getAdapter().getSequelize();
+        
+            if(options.addColumn) {
+                await sequelize.getQueryInterface().addColumn(
+                    tableName,
+                    options.addColumn.key,
+                    options.addColumn.attribute,
+                    options.addColumn.options
+                );
+            }
+            if(options.removeColumn) {
+                await sequelize.getQueryInterface().removeColumn(
+                    tableName,
+                    options.removeColumn.attribute,
+                    options.removeColumn.options
+                )
+            }
+            if(options.changeColumn) {
+                await sequelize.getQueryInterface().changeColumn(
+                    tableName,
+                    options.changeColumn.attributeName,
+                    options.changeColumn.dataTypeOrOptions,
+                    options.changeColumn.options
+                );
+            }
+            if(options.renameColumn) {
+                await sequelize.getQueryInterface().renameColumn(
+                    tableName,
+                    options.renameColumn.attrNameBefore,
+                    options.renameColumn.attrNameAfter,
+                    options.renameColumn.options
+                );
+            }
+            if(options.addIndex) {
+                await sequelize.getQueryInterface().addIndex(
+                    tableName,
+                    options.addIndex.attributes,
+                    options.addIndex.options
+                );
+            }
+            if(options.removeIndex) {
+                await sequelize.getQueryInterface().removeIndex(
+                    tableName,
+                    options.removeIndex.indexName,
+                    options.removeIndex.options
+                );
+            }
         }
-        if(options.removeColumn) {
-            await sequelize.getQueryInterface().removeColumn(
-                tableName,
-                options.removeColumn.attribute,
-                options.removeColumn.options
-            )
-        }
-        if(options.changeColumn) {
-            await sequelize.getQueryInterface().changeColumn(
-                tableName,
-                options.changeColumn.attributeName,
-                options.changeColumn.dataTypeOrOptions,
-                options.changeColumn.options
-            );
-        }
-        if(options.renameColumn) {
-            await sequelize.getQueryInterface().renameColumn(
-                tableName,
-                options.renameColumn.attrNameBefore,
-                options.renameColumn.attrNameAfter,
-                options.renameColumn.options
-            );
-        }
-        if(options.addIndex) {
-            await sequelize.getQueryInterface().addIndex(
-                tableName,
-                options.addIndex.attributes,
-                options.addIndex.options
-            );
-        }
-        if(options.removeIndex) {
-            await sequelize.getQueryInterface().removeIndex(
-                tableName,
-                options.removeIndex.indexName,
-                options.removeIndex.options
-            );
+        catch (err) {
+            logger().error(`Failed to alter table ${tableName}: ${(err as Error).message}`);
+            throw err;
         }
     }
 
@@ -220,18 +233,30 @@ class PostgresSchema extends BaseSchema implements IDatabaseAdapterSchema {
      * @returns 
      */
     async tableExists(tableName: string): Promise<boolean> {
-        const sequelize = this.adapter.getSequelize();
-        const queryInterface = sequelize.getQueryInterface();
-        return await queryInterface.tableExists(tableName);
+        try {
+            const sequelize = this.getAdapter().getSequelize();
+            const queryInterface = sequelize.getQueryInterface();
+            return await queryInterface.tableExists(tableName);
+        }
+        catch (err) {
+            logger().error(`Failed to check if table ${tableName} exists: ${(err as Error).message}`);
+            throw err;
+        }
     }
 
     /**
      * Drop all tables in the database
      */
     async dropAllTables(): Promise<void> {
-        const sequelize = this.adapter.getSequelize();
-        const queryInterface = sequelize.getQueryInterface();
-        await queryInterface.dropAllTables();
+        try {
+            const sequelize = this.getAdapter().getSequelize();
+            const queryInterface = sequelize.getQueryInterface();
+            await queryInterface.dropAllTables();
+        }
+        catch (err) {
+            logger().error(`Failed to drop all tables: ${(err as Error).message}`);
+            throw err;
+        }
     }
 
 }

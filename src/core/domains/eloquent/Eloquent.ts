@@ -26,8 +26,13 @@ import { PrefixToTargetPropertyOptions } from "@src/core/util/PrefixedPropertyGr
  * @abstract
  */
 
-abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
+abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpression = IEloquentExpression> implements IEloquent<Model, Expression> {
 
+    /**
+     * The default ID generator function for the query builder.
+     */
+    protected defaultIdGeneratorFn: IdGeneratorFn | null = null;
+        
     /**
      * The connection name to use for the query builder
     */
@@ -72,6 +77,16 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
      * The id generator function
      */
     protected idGeneratorFn?: IdGeneratorFn;
+
+    
+    /**
+     * Fetches rows from the database based on the provided expression and arguments.
+     * 
+     * @param expression 
+     * @param args 
+     */
+     
+    abstract fetchRows<T = unknown>(expression: Expression, ...args: any[]): Promise<T>;
 
     /**
      * Retrieves the database adapter for the connection name associated with this query builder.
@@ -126,6 +141,44 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
      */
     protected getConnectionName(): string {
         return this.connectionName
+    }
+
+    
+    /**
+     * Adds the id: uuid to the document
+     * @param document The document to add an id to
+     * @returns The document with an id added
+     */
+    protected documentWithGeneratedId<T>(document: T): T {
+        return this.documentStripUndefinedProperties({
+            ...document,
+            id: this.generateId() ?? undefined
+        }) 
+    }
+
+    /**
+     * Removes undefined properties from the document
+     * @param document The document to clean
+     * @returns The cleaned document
+     */
+    protected documentStripUndefinedProperties<T>(document: T): T {
+        for (const key in document) {
+            if (document[key] === undefined) {
+                delete document[key]
+            }
+        }
+        return document
+    }
+
+    /**
+     * Clones the query builder instance.
+     *
+     * The cloned instance will have the same model constructor associated with it.
+     * @returns {IEloquent} The cloned query builder instance
+     */
+    clone(): IEloquent<Model> {
+        return deepClone<IEloquent<Model>>(this as unknown as IEloquent<Model>)
+            .setExpression(this.expression.clone())
     }
 
     /**
@@ -234,32 +287,6 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
     }
 
     /**
-     * Adds the id: uuid to the document
-     * @param document The document to add an id to
-     * @returns The document with an id added
-     */
-    protected documentWithGeneratedId<T>(document: T): T {
-        return this.documentStripUndefinedProperties({
-            ...document,
-            id: this.generateId() ?? undefined
-        }) 
-    }
-
-    /**
-     * Removes undefined properties from the document
-     * @param document The document to clean
-     * @returns The cleaned document
-     */
-    protected documentStripUndefinedProperties<T>(document: T): T {
-        for (const key in document) {
-            if (document[key] === undefined) {
-                delete document[key]
-            }
-        }
-        return document
-    }
-
-    /**
      * Retrieves the constructor of the model associated with the query builder.
      *
      * @returns {ICtor<IModel>} The constructor of the model.
@@ -267,15 +294,6 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
     getModelCtor(): ICtor<IModel> | undefined {
         return this.modelCtor
     }
-
-    /**
-     * Fetches rows from the database based on the provided expression and arguments.
-     * 
-     * @param expression 
-     * @param args 
-     */
-     
-    abstract fetchRows<T = unknown>(expression: IEloquentExpression, ...args: any[]): Promise<T>;
 
     /**
      * Sets the formatter function for the query builder. This function will be
@@ -321,7 +339,7 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
      * function is set.
      */
     generateId<T = unknown>(): T | null {
-        return this.idGeneratorFn ? this.idGeneratorFn() : null
+        return this?.idGeneratorFn ? this.idGeneratorFn() : null
     }
 
     /**
@@ -368,12 +386,14 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
      */
     select(columns?: string | string[]): IEloquent<Model> {
 
+        // Reset the columns
         this.setColumns([]);
 
         if(columns === undefined) {
             return this as unknown as IEloquent<Model>;
         }
 
+        // Set the columns
         const columnsArray = Array.isArray(columns) ? columns : [columns]
 
         if(columnsArray.length === 0) {
@@ -417,8 +437,8 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
      * @param {unknown[]} [bindings] - The bindings to use for the expression.
      * @returns {IEloquent<Attributes, IEloquentExpression<unknown>>} The query builder instance.
      */
-    selectRaw(expression: string, bindings?: unknown[]): IEloquent<Model> {
-        this.expression.setSelectRaw(expression, bindings);
+    selectRaw<T>(value: T, ...args: unknown[]): IEloquent<Model> {
+        this.expression.setSelectRaw<T>(value);
         return this as unknown as IEloquent<Model>
     }
 
@@ -434,116 +454,8 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
         this.expression.setDistinctColumns(columnsTyped);
         return this as unknown as IEloquent<Model>;
     }
+
     
-    /**
-     * Clones the query builder instance.
-     *
-     * The cloned instance will have the same model constructor associated with it.
-     * @returns {IEloquent} The cloned query builder instance
-     */
-    clone(): IEloquent<Model> {
-        return deepClone<IEloquent<Model>>(this as unknown as IEloquent<Model>)
-            .setExpression(this.expression.clone())
-    }
-
-     
-    async createDatabase(name: string): Promise<void> {
-        throw new InvalidMethodException()
-    }
-
-     
-    async databaseExists(name: string): Promise<boolean> {
-        throw new InvalidMethodException()
-    }
-
-     
-    async dropDatabase(name: string): Promise<void> {
-        throw new InvalidMethodException()
-    }
-
-     
-    async createTable(name: string, ...args: any[]): Promise<void> {
-        throw new InvalidMethodException()
-    }
-
-     
-    async dropTable(name: string, ...args: any[]): Promise<void> {
-        throw new InvalidMethodException()
-    }
-
-     
-    async tableExists(name: string): Promise<boolean> {
-        throw new InvalidMethodException()
-    }
-
-     
-    async alterTable(name: string, ...args: any[]): Promise<void> {
-        throw new InvalidMethodException()
-    }
-
-    async dropAllTables(): Promise<void> {
-        throw new InvalidMethodException()
-    }
-
-     
-    async execute<T>(builder: IEloquentExpression): Promise<T> {
-        throw new InvalidMethodException()
-    }
-
-     
-    async raw<T>(expression: string, bindings?: unknown[]): Promise<T> {
-        throw new InvalidMethodException()
-    }
-
-     
-    async find(id: string | number): Promise<Model | null> {
-        throw new InvalidMethodException()
-    }
-
-     
-    async findOrFail(id: string | number): Promise<Model> {
-        throw new InvalidMethodException()
-    }
-
-    async get(): Promise<Collection<Model>> {
-        throw new InvalidMethodException()
-    }
-
-    async all(): Promise<Collection<Model>> {
-        throw new InvalidMethodException()
-    }
-
-    async first(): Promise<Model | null> {
-        throw new InvalidMethodException()
-    }
-
-    async firstOrFail(): Promise<Model> {
-        throw new InvalidMethodException()
-    }
-
-    async last(): Promise<Model | null> {
-        throw new InvalidMethodException()
-    }
-
-    async lastOrFail(): Promise<Model> {
-        throw new InvalidMethodException()
-    }
-
-     
-    async insert(documents: object | object[]): Promise<Collection<Model>> {
-        throw new InvalidMethodException()
-    }
-
-     
-    async update(documents: object | object[]): Promise<Collection<Model>> {
-        throw new InvalidMethodException()
-    }
-
-     
-    async updateAll(documents: object | object[]): Promise<Collection<Model>> {
-        throw new InvalidMethodException()
-    }
-
     /**
      * Sets the group by columns for the query builder.
      *
@@ -562,30 +474,6 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
         
         this.expression.setGroupBy(groupBy);
         return this as unknown as IEloquent<Model>
-    }
-
-    async count(): Promise<number> {
-        throw new InvalidMethodException()
-    }
-
-    async max(column: string): Promise<number> {
-        throw new InvalidMethodException()
-    }
-
-    async min(column: string): Promise<number> {
-        throw new InvalidMethodException()
-    }
-
-    async sum(column: string): Promise<number> {
-        throw new InvalidMethodException()
-    }
-
-    async avg(column: string): Promise<number> {
-        throw new InvalidMethodException()
-    }
-
-    async transaction(callbackFn: TransactionFn<Model>): Promise<void> {
-        throw new InvalidMethodException()
     }
 
     /**
@@ -639,8 +527,8 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
      * @param {Bindings} [bindings] - The bindings to use for the where clause.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    whereRaw<Q = string, Bindings = unknown>(sql: Q, bindings?: Bindings): IEloquent<Model> {
-        this.expression.whereRaw(sql as string, bindings);
+    whereRaw<T>(value: T, ...args: unknown[]): IEloquent<Model> {
+        this.expression.whereRaw<T>(value, ...args);
         return this as unknown as IEloquent<Model>
     }
 
@@ -970,6 +858,125 @@ abstract class Eloquent<Model extends IModel> implements IEloquent<Model> {
         throw new Error("Method not implemented.");
     }
     
+         
+    async createDatabase(name: string): Promise<void> {
+        throw new InvalidMethodException()
+    }
+
+     
+    async databaseExists(name: string): Promise<boolean> {
+        throw new InvalidMethodException()
+    }
+
+     
+    async dropDatabase(name: string): Promise<void> {
+        throw new InvalidMethodException()
+    }
+
+     
+    async createTable(name: string, ...args: any[]): Promise<void> {
+        throw new InvalidMethodException()
+    }
+
+     
+    async dropTable(name: string, ...args: any[]): Promise<void> {
+        throw new InvalidMethodException()
+    }
+
+     
+    async tableExists(name: string): Promise<boolean> {
+        throw new InvalidMethodException()
+    }
+
+     
+    async alterTable(name: string, ...args: any[]): Promise<void> {
+        throw new InvalidMethodException()
+    }
+
+    async dropAllTables(): Promise<void> {
+        throw new InvalidMethodException()
+    }
+
+     
+    async execute<T>(builder: Expression): Promise<T> {
+        throw new InvalidMethodException()
+    }
+
+     
+    async raw<T>(expression: string, bindings?: unknown[]): Promise<T> {
+        throw new InvalidMethodException()
+    }
+
+     
+    async find(id: string | number): Promise<Model | null> {
+        throw new InvalidMethodException()
+    }
+
+     
+    async findOrFail(id: string | number): Promise<Model> {
+        throw new InvalidMethodException()
+    }
+
+    async get(): Promise<Collection<Model>> {
+        throw new InvalidMethodException()
+    }
+
+    async all(): Promise<Collection<Model>> {
+        throw new InvalidMethodException()
+    }
+
+    async first(): Promise<Model | null> {
+        throw new InvalidMethodException()
+    }
+
+    async firstOrFail(): Promise<Model> {
+        throw new InvalidMethodException()
+    }
+
+    async last(): Promise<Model | null> {
+        throw new InvalidMethodException()
+    }
+
+    async lastOrFail(): Promise<Model> {
+        throw new InvalidMethodException()
+    }
+
+    async insert(documents: object | object[]): Promise<Collection<Model>> {
+        throw new InvalidMethodException()
+    }
+     
+    async update(documents: object | object[]): Promise<Collection<Model>> {
+        throw new InvalidMethodException()
+    }
+     
+    async updateAll(documents: object | object[]): Promise<Collection<Model>> {
+        throw new InvalidMethodException()
+    }
+
+    async count(): Promise<number> {
+        throw new InvalidMethodException()
+    }
+
+    async max(column: string): Promise<number> {
+        throw new InvalidMethodException()
+    }
+
+    async min(column: string): Promise<number> {
+        throw new InvalidMethodException()
+    }
+
+    async sum(column: string): Promise<number> {
+        throw new InvalidMethodException()
+    }
+
+    async avg(column: string): Promise<number> {
+        throw new InvalidMethodException()
+    }
+
+    async transaction(callbackFn: TransactionFn<Model>): Promise<void> {
+        throw new InvalidMethodException()
+    }
+
 }
 
 export default Eloquent

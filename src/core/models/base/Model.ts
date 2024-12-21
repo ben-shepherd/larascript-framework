@@ -131,6 +131,15 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     setConnectionName(connectionName: string) {
         this.connection = connectionName;
     }
+
+    /**
+     * Retrieves the name of the database connection associated with the model.
+     * 
+     * @returns {string} The connection name.
+     */
+    getConnectionName(): string {
+        return this.connection;
+    }
             
     /**
      * Gets the schema interface for the database.
@@ -211,6 +220,15 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         return db().getAdapter(this.connection).prepareDocument<Attributes>(this.attributes, {
             jsonStringify: this.json   
         })
+    }
+
+    /**
+     * Retrieves the name of the database connection associated with the model.
+     * 
+     * @returns {string} The connection name.
+     */
+    static getConnection(): string {
+        return this.create().getConnectionName()
     }
 
     /**

@@ -1,18 +1,11 @@
 /* eslint-disable no-unused-vars */
 
 
-import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 
 /**
  * Interface for database schema operations
  */
 export interface IDatabaseAdapterSchema {
-
-    /**
-     * Set the database adapter
-     * @param adapter 
-     */
-    setAdapter(adapter: IDatabaseAdapter): void;
 
     /**
      * Creates a new database schema.

@@ -1,6 +1,7 @@
 
 import { TColumnOption } from "@src/core/domains/eloquent/interfaces/IEloquent";
-import SqlExpression from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
+import SqlExpression, { SqlRaw } from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
+import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
 
 type RawSelect = { sql: string, bindings: unknown };
 
@@ -15,10 +16,11 @@ class SelectColumns {
      * @param {string[] | null} distinctColumnsOptions - An array of columns to append for the DISTINCT ON clause.
      * @returns {string} The SQL string for the SELECT query.
      */
-    public static toSql(columnOptions: TColumnOption[], distinctColumnsOptions: TColumnOption[] | null = null, rawSelect?: RawSelect): string {
+    public static toSql(bindings: BindingsHelper, columnOptions: TColumnOption[] | null, distinctColumnsOptions: TColumnOption[] | null = null, rawSelect: SqlRaw | null = null): string {
         let sql = 'SELECT ';
 
         if(rawSelect) {
+            this.addBindings(bindings, rawSelect.bindings)
             sql += rawSelect.sql
             return sql
         }
@@ -30,6 +32,18 @@ class SelectColumns {
         sql = this.appendColumnsSql(sql, columnsArray);
 
         return sql;
+    }
+
+    protected static addBindings(bindingsUtility: BindingsHelper, bindings?: unknown) {
+        if(!bindings) {
+            return;
+        }
+        if(Array.isArray(bindings)) {
+            bindings.forEach(binding => bindingsUtility.addBinding(null, binding));
+        }
+        else {
+            bindingsUtility.addBinding(null, bindings);
+        }
     }
 
     /**

@@ -7,7 +7,7 @@ import UpdateException from "@src/core/domains/eloquent/exceptions/UpdateExcepti
 import { IEloquent, IdGeneratorFn, SetModelColumnsOptions, TransactionFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
-import SqlExpression from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
+import SqlExpression, { SqlRaw } from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
@@ -17,17 +17,17 @@ import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { bindAll } from 'lodash';
 import pg, { QueryResult } from 'pg';
 
-class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
+class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpression> {
+
+    /**
+     * The default ID generator function for the query builder.
+     */ 
+    protected defaultIdGeneratorFn: IdGeneratorFn | null = generateUuidV4 as IdGeneratorFn;
 
     /**
      * The query builder expression object
      */
     protected expression!: SqlExpression
-
-    /**
-     * The default ID generator function for the query builder.
-     */
-    protected defaultIdGeneratorFn = generateUuidV4;
 
     /**
      * The query builder client
@@ -61,7 +61,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
      * @returns {this} The PostgresEloquent instance for chaining.
      */
     protected resetBindingValues() {
-        this.expression.bindings.reset()
+        this.expression.bindingsUtility.reset()
     }
 
     /**
@@ -73,9 +73,9 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
      * @param {IdGeneratorFn} [idGeneratorFn] - The ID generator function to use.
      * @returns {this} The PostgresEloquent instance for chaining.
      */
-    setIdGenerator(idGeneratorFn: IdGeneratorFn = this.defaultIdGeneratorFn as IdGeneratorFn): IEloquent<Model> {
+    setIdGenerator(idGeneratorFn: IdGeneratorFn = this.defaultIdGeneratorFn as IdGeneratorFn): IEloquent<Model, SqlExpression> {
         this.idGeneratorFn = idGeneratorFn
-        return this
+        return this as unknown as IEloquent<Model, SqlExpression>
     }
 
 
@@ -90,7 +90,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
      * @param {SetModelColumnOptions} [options] - Options object containing the targetProperty to format the columns with.
      * @returns {this} The PostgresEloquent instance for chaining.
      */
-    setModelColumns(modelCtor?: ICtor<IModel>, options?: SetModelColumnsOptions): IEloquent<Model> {
+    setModelColumns(modelCtor?: ICtor<IModel>, options?: SetModelColumnsOptions): IEloquent<Model, SqlExpression> {
         super.setModelColumns(modelCtor, options)
         
         // Store the options for formatting the result rows to objects with a target property.
@@ -109,11 +109,39 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
      * @returns {Promise<T>} A promise that resolves with the query result.
      * @private
      */
-    async execute<T = QueryResult>(expression: IEloquentExpression = this.expression): Promise<T> {
+    async execute<T = QueryResult>(expression: SqlExpression = this.expression): Promise<T> {
         const sql = expression.build<string>()
         const values = expression.getBindingValues()
 
         return await this.raw<T>(sql, values)
+    }
+
+    /**
+     * Sets a raw select expression for the query builder.
+     * 
+     * This method can be used to set a custom select expression on the query builder.
+     * The expression will be used as the SELECT clause for the query.
+     * 
+     * @param {string} value - The raw select expression to set.
+     * @param {unknown[]} [bindings] - The bindings to use for the expression.
+     * @returns {IEloquent<Model, IEloquentExpression<unknown>>} The query builder instance.
+     */
+    selectRaw<T = string>(value: T, bindings?: unknown): IEloquent<Model, IEloquentExpression<unknown>> {
+        return super.selectRaw<SqlRaw>({ sql: value as string, bindings })
+    }
+
+    /**
+     * Adds a raw where clause to the query builder.
+     *
+     * This method allows the use of a raw SQL expression for the where clause in the query.
+     * It is useful for complex queries where the standard query builder methods are insufficient.
+     *
+     * @param {T} value - The raw SQL expression to use for the where clause.
+     * @param {unknown} [bindings] - The bindings to use with the raw SQL expression.
+     * @returns {IEloquent<Model, IEloquentExpression<unknown>>} The query builder instance for chaining.
+     */
+    whereRaw<T = string>(value: T, bindings?: unknown): IEloquent<Model, IEloquentExpression<unknown>> {
+        return super.whereRaw<SqlRaw>({ sql: value as string, bindings })
     }
 
     /**
@@ -127,7 +155,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
      * @throws {QueryException} If the query execution fails.
      * @private
      */
-    async fetchRows<T = QueryResult>(expression: IEloquentExpression = this.expression): Promise<T> {
+    async fetchRows<T = QueryResult>(expression: SqlExpression = this.expression): Promise<T> {
         const res = await this.execute(expression)
         // Map the result to move prefixed columns to the target property
         res.rows = PrefixedPropertyGrouper.handleArray<object>(res.rows, this.formatResultTargetPropertyToObjectOptions)
@@ -168,7 +196,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
             console.log('[PostgresEloquent] raw results count', results?.rows?.length)
         }
 
-        this.expression.bindings.reset()
+        this.expression.bindingsUtility.reset()
 
         return results as T
     }
@@ -181,7 +209,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
      */
     async find(id: string | number): Promise<Model | null> {
         return await captureError<Model | null>(async () => {
-            this.expression.setSelect()
+            this.expression.setBuildTypeSelect()
             
             const res = await this.fetchRows(
                 this.expression
@@ -236,7 +264,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
      */
     async first(): Promise<Model | null> {
         return await captureError<Model | null>(async () => {
-            this.expression.setSelect()
+            this.expression.setBuildTypeSelect()
 
             const previousLimit = this.expression.getOffsetLimit()
 
@@ -278,7 +306,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
      */
     async last(): Promise<Model | null> {
         return await captureError<Model | null>(async () => {
-            this.expression.setSelect()
+            this.expression.setBuildTypeSelect()
             
             const res = await this.fetchRows()
             
@@ -298,7 +326,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
      */
     async get(): Promise<Collection<Model>> {
         return await captureError(async () => {
-            this.expression.setSelect()
+            this.expression.setBuildTypeSelect()
 
             const res = await this.fetchRows()
 
@@ -319,7 +347,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
      */
     async all(): Promise<Collection<Model>> {
         return await captureError(async () => {
-            this.expression.setSelect()
+            this.expression.setBuildTypeSelect()
 
             const res = await this.fetchRows(
                 this.expression
@@ -340,25 +368,31 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
     async insert(documents: object | object[]): Promise<Collection<Model>> {
         return await captureError(async () => {
 
+            // Store the previous expression
             const previousExpression = this.expression.clone() as SqlExpression
 
+            // Convert documents to array
             const documentsArray = Array.isArray(documents) ? documents : [documents]
             const results: unknown[] = [];
 
             for(const document of documentsArray) {
 
+                // Reset the expression
                 this.setExpression(previousExpression)
 
                 const documentWithId = this.documentWithGeneratedId<Model>(document);
 
+                // Execute the insert query
                 const res = await this.execute(
                     this.expression
-                        .setInsert(documentWithId as object)
+                        .setBuildTypeInsert(documentWithId as object)
                 )
                 
+                // Add the result to the results array
                 results.push(res.rows[0])    
             }
 
+            // Reset the expression
             this.setExpression(previousExpression)
 
             return collect<Model>(
@@ -385,7 +419,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
             for(const document of documentsArray) {
                 await this.clone().execute(
                     this.expression
-                        .setUpdate(document)
+                        .setBuildTypeUpdate(document)
                 )
             }
 
@@ -415,18 +449,18 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
      * 
      * @throws {DeleteException} Throws an exception if the query builder state is invalid.
      */
-    async delete(): Promise<IEloquent<Model>> {
+    async delete(): Promise<IEloquent<Model, SqlExpression>> {
         return await captureError(async () => {
 
             const previousExpression = this.expression.clone() as SqlExpression
 
-            this.expression.setDelete()
+            this.expression.setBuildTypeDelete()
 
             await this.execute();
 
             this.setExpression(previousExpression)
 
-            return this
+            return this as unknown as IEloquent<Model, SqlExpression>
         })
     }
 
@@ -504,7 +538,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
 
             // Execute the callback function
             const cloneEloquentBound = this.clone.bind(this);
-            const clonedEloquent = cloneEloquentBound() as PostgresEloquent<Model>;
+            const clonedEloquent = cloneEloquentBound() as unknown as PostgresEloquent<Model>;
 
             // Set the pool
             clonedEloquent.setPool(boundPgClient as unknown as pg.Pool);
@@ -545,7 +579,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
             
             const previousExpression = this.expression.clone() as SqlExpression
 
-            this.expression.setSelect()
+            this.expression.setBuildTypeSelect()
             this.selectRaw(selectRaw)
             this.groupBy(null)
             this.orderBy(null)
@@ -571,7 +605,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model> {
      * @param {string|string[]} [columns] The columns to set for distinct.
      * @returns {this} The query builder instance.
      */
-    groupBy(columns: string[] | string | null): IEloquent<Model> {
+    groupBy(columns: string[] | string | null): IEloquent<Model, SqlExpression> {
         const columnsArray = Array.isArray(columns) ? columns : [columns]
         this.expression.setDistinctColumns(columnsArray.map(column => ({column})))
         return this as unknown as IEloquent<Model>
