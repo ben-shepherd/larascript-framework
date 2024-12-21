@@ -1,9 +1,10 @@
 import { IAppService } from "@src/app/interfaces/IAppService";
-import AppProvider from "@src/app/providers/AppProvider";
+import AppServiceProvider from "@src/app/providers/AppServiceProvider";
 import RoutesProvider from "@src/app/providers/RoutesProvider";
 import { ILarascriptProviders } from "@src/core/interfaces/ILarascriptProviders";
 import { IProvider } from "@src/core/interfaces/IProvider";
 import LarascriptProviders from "@src/core/providers/LarascriptProviders";
+;
 
 /**
  * Interface defining all available service providers in the application.
@@ -28,13 +29,15 @@ export interface Providers extends ILarascriptProviders {
 /**
  * Providers
  */
-export default [
+const providers: IProvider[] = [
 
     // Include the core providers
     ...LarascriptProviders,
 
     // Add your providers here
     new RoutesProvider(),
-    new AppProvider(),
+    new AppServiceProvider(),
 
-] as IProvider[];
+]
+
+export default providers;
