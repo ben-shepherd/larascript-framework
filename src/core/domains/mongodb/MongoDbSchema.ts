@@ -1,17 +1,10 @@
 import BaseSchema from "@src/core/domains/database/base/BaseSchema";
 import CreateDatabaseException from "@src/core/domains/database/exceptions/CreateDatabaseException";
-import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
-import { App } from "@src/core/services/App";
+import { MongoClient } from "mongodb";
+import { logger } from "@src/core/domains/logger/services/LoggerService";
 
-class MongoDBSchema extends BaseSchema implements IDatabaseSchema{
-
-    protected adapter!: MongoDbAdapter;
-
-    constructor(adapter: MongoDbAdapter) {
-        super()
-        this.adapter = adapter;
-    }
+class MongoDBSchema extends BaseSchema<MongoDbAdapter> {
 
     /**
      * Creates a new database schema.
@@ -19,7 +12,7 @@ class MongoDBSchema extends BaseSchema implements IDatabaseSchema{
      * @returns A promise that resolves when the database schema has been created
      */
     async createDatabase(name: string): Promise<void> {
-        const client = await this.adapter.getMongoClientWithDatabase('app')
+        const client = await this.getAdapter().getMongoClientWithDatabase('app')
 
         try {
             const db = client.db(name);
@@ -37,7 +30,8 @@ class MongoDBSchema extends BaseSchema implements IDatabaseSchema{
             }
         }
         catch (err) {
-            throw new CreateDatabaseException(`Error creating database ${name}: ${(err as Error).message}`);
+            logger().error('Error creating database: ' + (err as Error).message);
+            throw err;
         }
         finally {
             await client.close();
@@ -50,7 +44,7 @@ class MongoDBSchema extends BaseSchema implements IDatabaseSchema{
      * @returns A promise that resolves to a boolean indicating whether the database exists
      */
     async databaseExists(name: string): Promise<boolean> {
-        const client = await this.adapter.getMongoClientWithDatabase('app')
+        const client = await this.getAdapter().getMongoClientWithDatabase('app')
 
         try {
             const adminDb = client.db().admin()
@@ -58,13 +52,13 @@ class MongoDBSchema extends BaseSchema implements IDatabaseSchema{
             return dbList.databases.some(db => db.name === name);
         }
         catch (err) {
-            App.container('logger').error(err);
+            logger().error('Error checking if database exists: ' + (err as Error).message);
+            throw err;
         }
         finally {
             client.close()
         }
 
-        return false;
     }
 
     /**
@@ -74,13 +68,14 @@ class MongoDBSchema extends BaseSchema implements IDatabaseSchema{
      * @returns A promise that resolves when the database has been dropped.
      */
     async dropDatabase(name: string): Promise<void> {
-        const client = await this.adapter.getMongoClientWithDatabase('app');
+        const client = await this.getAdapter().getMongoClientWithDatabase('app');
 
         try {
             await client.db(name).dropDatabase();
         }
         catch (err) {
-            App.container('logger').error(err);
+            logger().error('Error dropping database: ' + (err as Error).message);
+            throw err;
         }
         finally {
             client.close()
@@ -94,14 +89,21 @@ class MongoDBSchema extends BaseSchema implements IDatabaseSchema{
      */
     // eslint-disable-next-line no-unused-vars
     async createTable(tableName: string, ...args: any[]): Promise<void> {
-
-        await this.adapter.getDb().createCollection(tableName);
-        await this.adapter.getDb().collection(tableName).insertOne({
-            _create_table: true
-        });
-        await this.adapter.getDb().collection(tableName).deleteMany({
-            _create_table: true
-        });
+        try {
+            const adapter = this.getAdapter();
+            
+            await adapter.getDb().createCollection(tableName);
+            await adapter.getDb().collection(tableName).insertOne({
+                _create_table: true
+            });
+            await adapter.getDb().collection(tableName).deleteMany({
+                _create_table: true
+            });
+        }
+        catch (err) {
+            logger().error('Error creating table: ' + (err as Error).message);
+            throw err;
+        }
     }
 
     /**
@@ -111,7 +113,13 @@ class MongoDBSchema extends BaseSchema implements IDatabaseSchema{
      */
     // eslint-disable-next-line no-unused-vars
     async dropTable(tableName: string, ...args: any[]): Promise<void> {
-        await this.adapter.getDb().dropCollection(tableName);
+        try {
+            await this.getAdapter().getDb().dropCollection(tableName);
+        }
+        catch (err) {
+            logger().error('Error dropping table: ' + (err as Error).message);
+            throw err;
+        }
     }
 
     /**
@@ -121,7 +129,7 @@ class MongoDBSchema extends BaseSchema implements IDatabaseSchema{
      */
     // eslint-disable-next-line no-unused-vars
     async tableExists(tableName: string, ...args: any[]): Promise<boolean> {
-        return (await this.adapter.getDb().listCollections().toArray()).map(c => c.name).includes(tableName);
+        return (await this.getAdapter().getDb().listCollections().toArray()).map(c => c.name).includes(tableName);
     }
 
     /**
@@ -140,15 +148,26 @@ class MongoDBSchema extends BaseSchema implements IDatabaseSchema{
      * @returns A promise resolving when all tables have been dropped
      */
     async dropAllTables(): Promise<void> {
-        const mongoClient = this.adapter.getClient();
-        const db = mongoClient.db();
+        let mongoClient!: MongoClient;
 
-        const collections = await db.listCollections().toArray();
+        try {
+            mongoClient = await this.getAdapter().getMongoClientWithDatabase('app');
+            const mongoDb = mongoClient.db();
 
-        for(const collection of collections) {
-            await db.dropCollection(collection.name);
+            const collections = await mongoDb.listCollections().toArray();
+
+            for(const collection of collections) {
+                await mongoDb.dropCollection(collection.name);
+            }
         }
-
+        catch (err) {
+            logger().error('Error dropping all tables: ' + (err as Error).message);
+        }
+        finally {
+            if (mongoClient) {
+                mongoClient.close();
+            }
+        }
     }
 
 }

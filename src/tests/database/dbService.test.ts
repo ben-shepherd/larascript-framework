@@ -5,7 +5,7 @@ import MongoDbAdapter from '@src/core/domains/mongodb/adapters/MongoDbAdapter';
 import PostgresAdapter from '@src/core/domains/postgres/adapters/PostgresAdapter';
 import { app } from '@src/core/services/App';
 import TestMigrationModel from '@src/tests/migration/models/TestMigrationModel';
-import testHelper from '@src/tests/testHelper';
+import testHelper, { forEveryConnection } from '@src/tests/testHelper';
 import { MongoClient } from 'mongodb';
 import pg from 'pg';
 
@@ -78,10 +78,10 @@ describe('db service', () => {
         }
         
         // Check create migration schema
-        for(const connectionName of testHelper.getTestConnectionNames()) {
-            await db.createMigrationSchema(migrationTableName, connectionName);
+        await forEveryConnection(async (connectionName) => {    
+            await db.getAdapter(connectionName).createMigrationSchema(migrationTableName);
             const tableExists = await db.schema(connectionName).tableExists(migrationTableName);
             expect(tableExists).toBe(true);
-        }
+        })
     });
 });

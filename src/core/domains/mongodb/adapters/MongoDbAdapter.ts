@@ -155,7 +155,7 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
      * @returns {IDatabaseSchema} The schema interface.
      */
     getSchema(): IDatabaseSchema {
-        return new MongoDbSchema(this)
+        return new MongoDbSchema(this.connectionName)
     }
 
     getEloquentConstructor<Model extends IModel>(): ICtor<IEloquent<Model>> {

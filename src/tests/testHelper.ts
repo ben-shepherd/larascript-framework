@@ -1,6 +1,7 @@
 import { EnvironmentTesting } from "@src/core/consts/Environment";
 import EloquentQueryProvider from "@src/core/domains/eloquent/providers/EloquentQueryProvider";
 import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
+import { logger } from "@src/core/domains/logger/services/LoggerService";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 import Kernel from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
@@ -137,6 +138,7 @@ export const getTestConnectionNames = ({ exclude = [] }: { exclude?: string[] } 
 export const forEveryConnection = async (fn: (connectionName: string) => Promise<void>) => {
     const connectionNames = getTestConnectionNames()
     for(const connectionName of connectionNames) {
+        logger().console('Running test for connection ' + connectionName)
         await fn(connectionName)
     }
 }
