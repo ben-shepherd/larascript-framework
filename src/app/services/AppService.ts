@@ -4,9 +4,13 @@ import Service from "@src/core/base/Service";
 class AppService extends Service implements IAppService {
 
     /**
-     * Add your own app methods
-     * Usage: app('app').method()
+     * @returns The app configuration.
+     * Usage: app('app').getConfig()
      */
+    public getConfig() {
+        return this.config;
+    }
+
 }
 
 export default AppService

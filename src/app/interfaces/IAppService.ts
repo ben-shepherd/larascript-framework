@@ -1,3 +1,5 @@
+import { IAppConfig } from "@src/config/app";
+
 export interface IAppService {
-    //method(): Promise<void>;
+    getConfig(): IAppConfig;
 }
