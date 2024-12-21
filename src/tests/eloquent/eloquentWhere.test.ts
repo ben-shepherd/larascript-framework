@@ -67,19 +67,17 @@ describe('eloquent', () => {
         await resetPeopleTable()
     });
 
-    test('test raw where', async () => {
+    test('test raw where (postgres)', async () => {
         await resetPeopleTable()
 
-        await forEveryConnection(async connection => {
-            const query = getTestPeopleModelQuery(connection)
-            const inserted = await populate(connection);
+        const query = getTestPeopleModelQuery('postgres')
+        const inserted = await populate('postgres');
 
-            const resultsOnlyJohn = await query.clone()
-                .whereRaw('"name" = $1', ['John']).first()
+        const resultsOnlyJohn = await query.clone()
+            .whereRaw('"name" = $1', ['John']).first()
                 
-            expect(resultsOnlyJohn?.id).toBe(inserted[2].id);
-            expect(resultsOnlyJohn?.name).toBe('John');
-        })
+        expect(resultsOnlyJohn?.id).toBe(inserted[2].id);
+        expect(resultsOnlyJohn?.name).toBe('John');
     })
 
     test('test equals', async () => {

@@ -143,41 +143,35 @@ describe('eloquent', () => {
         })
     });
 
-    test('test with raw sql', async () => {
+    test('test with raw sql (postgres)', async () => {
+        const query = queryBuilder(TestPeopleModel, 'postgres')
 
-        await forEveryConnection(async connection => {  
-            const query = queryBuilder(TestPeopleModel, connection)
+        const table = query.useTable()
+        const sql = `SELECT * FROM ${table} WHERE name = $1 OR name = $2 ORDER BY name ASC LIMIT 2`;
+        const bindings = ['Alice', 'Bob'];
 
-            const table = query.useTable()
-            const sql = `SELECT * FROM ${table} WHERE name = $1 OR name = $2 ORDER BY name ASC LIMIT 2`;
-            const bindings = ['Alice', 'Bob'];
+        const results = await query.clone().raw(sql, bindings);
+        let rows: ITestEmployeeModelData[] = [];
 
-            const results = await query.clone().raw(sql, bindings);
-            let rows: ITestEmployeeModelData[] = [];
+        if(results &&typeof results === 'object' && 'rows' in results) {
+            rows = results.rows as ITestEmployeeModelData[];
+        }
 
-            if(results &&typeof results === 'object' && 'rows' in results) {
-                rows = results.rows as ITestEmployeeModelData[];
-            }
-
-            expect(rows.length).toBe(2);
-            expect(rows?.[0].name).toBe('Alice');
-            expect(rows?.[1].name).toBe('Bob');
-
-        })
+        expect(rows.length).toBe(2);
+        expect(rows?.[0].name).toBe('Alice');
+        expect(rows?.[1].name).toBe('Bob');
     })
 
-    test('test with raw select columns', async () => {
-        await forEveryConnection(async connection => {  
-            const query = queryBuilder(TestPeopleModel, connection)
+    test('test with raw select columns (postgres)', async () => {
+        const query = queryBuilder(TestPeopleModel, 'postgres')
 
-            const results = await query.clone().selectRaw('"name", "age", "createdAt"').get();
-            expect(results.count()).toBe(4);
+        const results = await query.clone().selectRaw('"name", "age", "createdAt"').get();
+        expect(results.count()).toBe(4);
 
-            for(const column of ['name', 'age', 'createdAt']) {
-                const attribtues = results[0]?.getAttributes() ?? {};
-                expect(column in attribtues).toBe(true);
-            }
-        })
+        for(const column of ['name', 'age', 'createdAt']) {
+            const attribtues = results[0]?.getAttributes() ?? {};
+            expect(column in attribtues).toBe(true);
+        }
     })
 
 });
