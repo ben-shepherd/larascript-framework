@@ -127,6 +127,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      * @returns {IEloquent<Model, IEloquentExpression<unknown>>} The query builder instance.
      */
     selectRaw<T = string>(value: T, bindings?: unknown): IEloquent<Model, IEloquentExpression<unknown>> {
+        this.validateSqlRaw(value)  
         return super.selectRaw<SqlRaw>({ sql: value as string, bindings })
     }
 
@@ -141,6 +142,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      * @returns {IEloquent<Model, IEloquentExpression<unknown>>} The query builder instance for chaining.
      */
     whereRaw<T = string>(value: T, bindings?: unknown): IEloquent<Model, IEloquentExpression<unknown>> {
+        this.validateSqlRaw(value)  
         return super.whereRaw<SqlRaw>({ sql: value as string, bindings })
     }
 
@@ -611,6 +613,19 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
         return this as unknown as IEloquent<Model>
     }
 
+    /**
+     * Validates a SQL raw value.
+     * 
+     * @param {unknown} value The value to validate.
+     * @throws {EloquentException} If the value is not a string.
+     * @private
+     */
+    protected validateSqlRaw(value: unknown): void {
+        if(typeof value === 'string') {
+            return;
+        }
+        throw new EloquentException('Invalid SQL raw value. Expected a string. Received: ' + typeof value)
+    }
 
 }
 
