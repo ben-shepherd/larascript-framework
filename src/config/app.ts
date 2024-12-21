@@ -1,16 +1,15 @@
 import { EnvironmentDevelopment, EnvironmentType } from '@src/core/consts/Environment';
 
+// App configuration type definition
 export type IAppConfig = {
-    environment: EnvironmentType
+    env: EnvironmentType
 }
 
-/**
- * App configuration
- */
+// App configuration
 const appConfig: IAppConfig = {
 
     // Environment
-    environment: (process.env.APP_ENV as EnvironmentType) ?? EnvironmentDevelopment,
+    env: (process.env.APP_ENV as EnvironmentType) ?? EnvironmentDevelopment,
     
 };
 

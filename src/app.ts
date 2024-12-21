@@ -13,7 +13,7 @@ import { logger } from './core/domains/logger/services/LoggerService';
         const args = process.argv.slice(2);
         const cmdBoot  = new CommandBootService();
         const options: KernelOptions = cmdBoot.getKernelOptions(args, {})
-        const environment = appConfig.environment
+        const environment = appConfig.env
         
         /**
          * Boot the kernel
