@@ -21,7 +21,7 @@ export interface Providers extends ILarascriptProviders {
     // App Providers
     app: IAppService;
 
-    // Add your providers here
+    // Add your provider interfaces here
 }
 
 /**
@@ -29,17 +29,11 @@ export interface Providers extends ILarascriptProviders {
  */
 export default [
 
-    /**
-     * Include the core providers
-     */
+    // Include the core providers
     ...LarascriptProviders,
 
-    /**
-     * Add your providers below
-     */
-    new AppProvider(),
-
     // Add your providers here
+    new AppProvider(),
 
 
 ] as IProvider[];
