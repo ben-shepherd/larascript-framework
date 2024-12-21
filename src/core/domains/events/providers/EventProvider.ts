@@ -25,8 +25,6 @@ class EventProvider extends BaseProvider {
         ])
     }
 
-    async boot(): Promise<void> {}
-
     /**
      * Registers all event drivers defined in the configuration with the provided event service.
      * @param eventService The event service to register drivers with.
