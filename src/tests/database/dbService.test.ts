@@ -49,10 +49,10 @@ describe('db service', () => {
         
         // Check clients
         if(testHelper.getTestConnectionNames().includes('mongodb')) {
-            expect(db.getAdapter<MongoDbAdapter>('mongodb').getClient() instanceof MongoClient).toBeTruthy();
+            expect(db.getAdapter('mongodb').getClient() instanceof MongoClient).toBeTruthy();
         }
         if(testHelper.getTestConnectionNames().includes('postgres')) {
-            expect(db.getAdapter<PostgresAdapter>('postgres').getPool() instanceof pg.Pool).toBeTruthy();
+            expect(db.getAdapter('postgres').getPool() instanceof pg.Pool).toBeTruthy();
         }
 
         // Check default connection name
