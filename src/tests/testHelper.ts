@@ -1,7 +1,6 @@
 import { EnvironmentTesting } from "@src/core/consts/Environment";
 import EloquentQueryProvider from "@src/core/domains/eloquent/providers/EloquentQueryProvider";
 import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
-import { logger } from "@src/core/domains/logger/services/LoggerService";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 import Kernel, { KernelConfig } from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
@@ -126,7 +125,8 @@ const clearMigrations = async () => {
  */
 export const getTestConnectionNames = ({ exclude = [] }: { exclude?: string[] } = {}) => {
     // return ['mongodb', 'postgres'].filter(connectionName => !exclude.includes(connectionName));
-    return ['mongodb']
+    // return ['mongodb']
+    return ['postgres']
 }
 
 /**
@@ -141,7 +141,7 @@ export const getTestConnectionNames = ({ exclude = [] }: { exclude?: string[] } 
 export const forEveryConnection = async (fn: (connectionName: string) => Promise<void>) => {
     const connectionNames = getTestConnectionNames()
     for(const connectionName of connectionNames) {
-        logger().console('Running test for connection ' + connectionName)
+        console.log('Running test for connection ' + connectionName)
         await fn(connectionName)
     }
 }
