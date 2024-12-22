@@ -233,6 +233,67 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
         return document
     }
 
+    async first(): Promise<Model | null> {
+        return await captureError(async () => {
+
+            const previousExpression = this.expression.clone()
+
+            this.expression.setBuildTypeSelect()
+            this.expression.setLimit(1)
+
+            const documents = await this.raw(this.expression.build())
+
+            const results = this.normalizeDocuments(documents)
+
+            this.setExpression(previousExpression)
+
+            if(results.length === 0) {
+                return null
+            }
+
+            return (this.formatterFn ? this.formatterFn(results[0]) : results[0]) as Model
+        })
+    }
+
+    async firstOrFail(): Promise<Model> {
+        const document = await this.first()
+        
+        if(!document) {
+            throw new ModelNotFound('Document not found')
+        }
+
+        return document
+    }
+
+    async last(): Promise<Model | null> {
+        return await captureError(async () => {
+
+            const previousExpression = this.expression.clone()
+
+            this.expression.setBuildTypeSelect()
+
+            const documents = await this.get()
+
+            this.setExpression(previousExpression)
+
+            if(documents.isEmpty()) {
+                return null
+            }
+
+            return documents.last()
+        })
+    }
+
+    async lastOrFail(): Promise<Model> {
+        const document = await this.last()
+        
+        if(!document) {
+            throw new ModelNotFound('Document not found')
+        }
+
+        return document
+    }
+
     /**
      * Retrieves a collection of documents from the database using the query builder expression.
      * @returns A promise resolving to a collection of documents
