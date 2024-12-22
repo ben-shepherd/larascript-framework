@@ -3,7 +3,11 @@ import { TColumnOption } from "@src/core/domains/eloquent/interfaces/IEloquent";
 class Project {
 
     static getPipeline(columns: TColumnOption[] | null): object | null {
-        if(!columns) return null;
+        if(!columns?.length) return null;
+
+        if(columns.length === 1 && columns[0].column === '*') {
+            return null
+        }
         
         const project = {};
 

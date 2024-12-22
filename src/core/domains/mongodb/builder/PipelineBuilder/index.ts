@@ -3,6 +3,7 @@ import ExpressionException from "@src/core/domains/eloquent/exceptions/Expressio
 
 import Limit from "./Limit";
 import Match from "./Match";
+import Order from "./Order";
 import Project from "./Project";
 import Skip from "./Skip";
 import Sort from "./Sort";
@@ -78,6 +79,10 @@ class PipelineBuilder extends BaseExpression<unknown> {
         return Skip.getPipeline(this.offsetLimit?.offset ?? null)
     }
 
+    buildOrder() {
+        return Order.getPipeline(this.orderByClauses)
+    }
+
     /**
      * Builds the complete MongoDB aggregation pipeline by combining all stages
      * 
@@ -92,6 +97,7 @@ class PipelineBuilder extends BaseExpression<unknown> {
         const sort = this.buildSort()
         const limit = this.buildLimit()
         const skip = this.buildSkip()
+        const order = this.buildOrder()
 
         const pipeline: object[] = [];
 
@@ -110,10 +116,13 @@ class PipelineBuilder extends BaseExpression<unknown> {
         if(skip) {
             pipeline.push(skip);
         }
-
-        if(pipeline.length === 0) {
-            throw new ExpressionException('Pipeline is empty');
+        if(order) {
+            pipeline.push(order);
         }
+
+        // if(pipeline.length === 0) {
+        //     throw new ExpressionException('Pipeline is empty');
+        // }
 
         return pipeline as T;
     }
