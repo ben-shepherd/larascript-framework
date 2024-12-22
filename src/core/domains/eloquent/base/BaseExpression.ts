@@ -251,7 +251,7 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
         return this;
     }
 
-    whereRaw<T = unknown>(value: T, bindings: unknown): this {
+    whereRaw<T = unknown>(value: T, bindings?: unknown): this {
         this.rawWhere = value
         return this
     }

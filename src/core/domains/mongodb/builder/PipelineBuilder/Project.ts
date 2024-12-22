@@ -5,9 +5,15 @@ class Project {
     static getPipeline(columns: TColumnOption[] | null): object | null {
         if(!columns) return null;
         
-        const columnsArray = columns.filter(column => column).map(column => column.column) as string[]
+        const project = {};
 
-        return { $project: columnsArray.map(column => ({ [column]: 1 })) };
+        columns.forEach(column => {
+            if(column.column) {
+                project[column.column] = 1
+            }
+        })
+
+        return { $project: project };
     }
 
 }
