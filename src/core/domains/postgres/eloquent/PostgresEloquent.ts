@@ -176,7 +176,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
             return this.pool
         }
 
-        return db().getAdapter<PostgresAdapter>().getPool();
+        return db().getAdapter().getPool();
     }
 
     /**
