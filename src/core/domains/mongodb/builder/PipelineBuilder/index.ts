@@ -10,6 +10,9 @@ class PipelineBuilder extends BaseExpression<unknown> {
 
     build<T = unknown>(): T {
 
+        
+        console.log('[PipelineBuilder]', this)
+
         const project = Project.getPipeline(this.columns)
         // const match = Match.getPipeline(this.whereClauses, this.whereRaw)
         // const sort = Sort.getPipeline(this.orderByClauses, this.orderByRaw)

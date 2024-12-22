@@ -125,7 +125,7 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     cloneExpression(): IEloquentExpression;
     resetExpression(): IEloquent<Model>;
     setModelCtor(modelCtor?: ICtor<IModel>): IEloquent<Model>;
-    getModelCtor(): ICtor<IModel> | undefined;
+    getModelCtor(): ModelConstructor<IModel> | undefined;
     setModelColumns(modelCtor?: ICtor<IModel>, options?: SetModelColumnsOptions): IEloquent<Model>;
 
     // id generator
@@ -134,7 +134,7 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     generateId<T = unknown>(): T | null;
 
     // results
-    fetchRows<T = unknown>(expression: Expression, ...args: any[]): Promise<T>;
+    fetchRows<T = unknown>(expression?: Expression, ...args: any[]): Promise<T>;
 
     // formatting
     // asModel<Model extends IModel>(): IEloquent<Model, Model>; 
@@ -142,7 +142,7 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     
     // execution
     execute<T = Model['attributes']>(builder: Expression): Promise<T>
-    raw<T = unknown>(expression: string, bindings?: unknown[]): Promise<T>;
+    raw<T = unknown>(...args: unknown[]): Promise<T>;
 
     // db methods
     createDatabase(name: string): Promise<void>;

@@ -13,7 +13,7 @@ import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquent
 import { TDirection } from "@src/core/domains/eloquent/interfaces/TEnums";
 import With from "@src/core/domains/eloquent/relational/With";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel } from "@src/core/interfaces/IModel";
+import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { deepClone } from "@src/core/util/deepClone";
 import { PrefixToTargetPropertyOptions } from "@src/core/util/PrefixedPropertyGrouper";
@@ -26,7 +26,7 @@ import { PrefixToTargetPropertyOptions } from "@src/core/util/PrefixedPropertyGr
  * @abstract
  */
 
-abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpression = IEloquentExpression> implements IEloquent<Model, Expression> {
+abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpression = IEloquentExpression, Adapter extends IDatabaseAdapter = IDatabaseAdapter> implements IEloquent<Model, Expression> {
 
     /**
      * The default ID generator function for the query builder.
@@ -66,7 +66,7 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
     /**
      * The constructor of the model
      */
-    protected modelCtor?: ICtor<IModel>;
+    protected modelCtor?: ModelConstructor<IModel>;
 
     /**
      * Prefixed properties to target property as object options
@@ -78,7 +78,11 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
      */
     protected idGeneratorFn?: IdGeneratorFn;
 
-    
+    /**
+     * Executes a raw query.
+     */
+    abstract raw<T>(...args: unknown[]): Promise<T>;
+
     /**
      * Fetches rows from the database based on the provided expression and arguments.
      * 
@@ -92,7 +96,7 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
      * Retrieves the database adapter for the connection name associated with this query builder.
      * @returns {IDatabaseAdapter} The database adapter.
      */
-    protected getDatabaseAdapter<T extends IDatabaseAdapter = IDatabaseAdapter>(): T {
+    protected getDatabaseAdapter<T extends IDatabaseAdapter = Adapter>(): T {
         return db().getAdapter<T>(this.getConnectionName())
     }
 
@@ -249,7 +253,7 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
      * @param {ICtor<IModel>} [modelCtor] The constructor of the model to associate with the query builder.
      * @returns {this} The query builder instance for chaining.
      */
-    setModelCtor(modelCtor?: ICtor<IModel>): IEloquent<Model> {
+    setModelCtor(modelCtor?: ModelConstructor<IModel>): IEloquent<Model> {
         this.modelCtor = modelCtor
         return this as unknown as IEloquent<Model>
     }
@@ -289,9 +293,9 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
     /**
      * Retrieves the constructor of the model associated with the query builder.
      *
-     * @returns {ICtor<IModel>} The constructor of the model.
+     * @returns {ModelConstructor<IModel>} The constructor of the model.
      */
-    getModelCtor(): ICtor<IModel> | undefined {
+    getModelCtor(): ModelConstructor<IModel> | undefined {
         return this.modelCtor
     }
 
@@ -901,12 +905,6 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
     async execute<T>(builder: Expression): Promise<T> {
         throw new InvalidMethodException()
     }
-
-     
-    async raw<T>(expression: string, bindings?: unknown[]): Promise<T> {
-        throw new InvalidMethodException()
-    }
-
      
     async find(id: string | number): Promise<Model | null> {
         throw new InvalidMethodException()

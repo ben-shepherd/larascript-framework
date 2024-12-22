@@ -624,7 +624,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
         if(typeof value === 'string') {
             return;
         }
-        throw new EloquentException('Invalid SQL raw value. Expected a string. Received: ' + typeof value)
+        throw new EloquentException('Invalid SQL raw value. Expected a string.')
     }
 
 }

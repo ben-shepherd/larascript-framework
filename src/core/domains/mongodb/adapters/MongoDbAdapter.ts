@@ -3,7 +3,6 @@ import CreateDatabaseException from "@src/core/domains/database/exceptions/Creat
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { db } from "@src/core/domains/database/services/Database";
 import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
-import { logger } from "@src/core/domains/logger/services/LoggerService";
 import ParseMongoDBConnectionString from "@src/core/domains/mongodb/helper/ParseMongoDBConnectionUrl";
 import { IMongoConfig } from "@src/core/domains/mongodb/interfaces/IMongoConfig";
 import MongoDbSchema from "@src/core/domains/mongodb/MongoDbSchema";
@@ -12,7 +11,9 @@ import { extractDefaultMongoCredentials } from "@src/core/domains/mongodb/utils/
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
-import { Db, MongoClient, MongoServerError } from "mongodb";
+import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
+
+import MongoDbEloquent from "../eloquent/MongoDbEloquent";
 
 class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
 
@@ -20,6 +21,11 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
     * The MongoDB database instance
      */
     protected db!: Db;
+
+    /**
+     * The MongoDB client instance
+     */
+    protected client!: MongoClient;
 
     /**
      * Constructor for PostgresAdapter
@@ -48,6 +54,13 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
         return extractDefaultMongoCredentials()
     }
 
+    getClient(): MongoClient {
+        if(!this.client) {
+            throw new Error('MongoDB client is not connected');
+        }
+        return this.client
+    }
+
     /**
      * Get the MongoDB database instance
      * @returns {Db} The MongoDB database instance
@@ -69,20 +82,18 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
      */
     
     async connectDefault(): Promise<void> {
-        logger().warn('MongoDB temporary disabled');
-        return;
+        if (await this.isConnected()) {
+            return;
+        }
 
-        // if (await this.isConnected()) {
-        //     return;
-        // }
-
-        // await this.createDefaultDatabase()
+        await this.createDefaultDatabase()
         
-        // const { uri, options } = this.config
+        const { uri, options } = this.config
 
-        // this.client = new MongoClient(uri, options as MongoClientOptions);
-        // this.db = this.client.db();
+        this.client = new MongoClient(uri, options as MongoClientOptions);
+        this.db = this.client.db();
     }
+    
 
     /**
      * Connect to a specific PostgreSQL database.
@@ -159,7 +170,7 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
     }
 
     getEloquentConstructor<Model extends IModel>(): ICtor<IEloquent<Model>> {
-        throw new Error("Method not implemented.");
+        return MongoDbEloquent as unknown as ICtor<IEloquent<Model>>
     }
 
     createMigrationSchema(tableName: string): Promise<unknown> {
