@@ -139,13 +139,13 @@ describe('eloquent', () => {
             expect(resultsOnlyName.count()).toBe(4);
             expect(resultsOnlyName[0].name).toBe('John');
             const resultsOnlyNameAttributes = resultsOnlyName[0]?.getAttributes() ?? {};
-            expect(Object.keys(resultsOnlyNameAttributes)).toHaveLength(1);
+            expect(Object.keys(resultsOnlyNameAttributes)).toHaveLength(2); // Name and ID
         })
     });
 
     test('test with raw sql (postgres)', async () => {
         
-        forEveryConnection(async connection => {
+        await forEveryConnection(async connection => {
             if(connection !== 'postgres') return;
             
             const query = queryBuilder(TestPeopleModel, 'postgres')

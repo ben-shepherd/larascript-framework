@@ -83,15 +83,28 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
      * @returns An array of documents with normalized id fields
      */
     protected normalizeDocuments(documents: Document | Document[]): Document[] {
-        const documentsArray = Array.isArray(documents) ? documents : [documents]
+        let documentsArray = Array.isArray(documents) ? documents : [documents]
 
-        return documentsArray.map(document => {
+        documentsArray = documentsArray.map(document => {
             if(document._id) {
                 document.id = this.normalizeId(document._id)
                 delete document._id
             }
             return document
         })
+
+        // Filter out columns that specified in the expression
+        const columnsArray = this.expression.getColumns().map(option => option.column).filter(col => col) as string[]
+
+        documentsArray.map((document) => {
+            columnsArray.forEach(column => {
+                if(!document[column]) {
+                    delete document[column]
+                }
+            })
+        })
+
+        return documentsArray
     }
 
     /*
