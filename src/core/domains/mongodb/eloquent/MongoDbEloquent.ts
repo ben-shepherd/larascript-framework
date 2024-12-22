@@ -92,14 +92,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
 
         return documentsArray.map(document => {
             if(document.id) {
-                
-                if(typeof document.id === 'string') {
-                    document._id = ObjectId.createFromHexString(document.id)
-                }
-                else if(document.id instanceof ObjectId) {
-                    document._id = document.id
-                }
-
+                document.id = this.normalizeDocumentId(document.id)
                 delete document.id
             }
 
@@ -114,11 +107,15 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
      */
     async raw<T = NonNullable<Model['attributes']>[]>(aggregation: object[]): Promise<T> {
         return captureError<T>(async () => {
+            console.log('[MongoDbEloquent] raw', JSON.stringify(aggregation, null, 2)   )
             const collection = this.getDbCollection();
 
-            return this.normalizeDocumentIds(
+            const results = this.normalizeDocumentIds(
                 await collection.aggregate(aggregation).toArray()
-            ) as T;
+            ) as T
+
+            console.log('[MongoDbEloquent] raw results', JSON.stringify(results, null, 2))
+            return results;
         })
     }
 
@@ -146,7 +143,13 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
         })
     }
 
-    async findMany<T = unknown>(filter: object): Promise<T> {
+    /**
+     * Finds multiple documents in the database using the given filter.
+     *
+     * @param filter The filter to use for the query.
+     * @returns A promise resolving to the found documents.
+     */
+    async findMany<T = NonNullable<Model['attributes']>[]>(filter: object): Promise<T> {
         return await captureError<T>(async () => {
 
             this.expression.setBuildTypeSelect()
@@ -201,26 +204,24 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
         return document
     }
 
-    // async get(): Promise<Collection<Model>> {
-    //     return await captureError(async () => {
+    async get(): Promise<Collection<Model>> {
+        return await captureError(async () => {
 
-    //         const previousExpression = this.expression.clone()
+            const previousExpression = this.expression.clone()
 
-    //         this.expression.setBuildTypeSelect()
+            this.expression.setBuildTypeSelect()
 
-    //         const collection = this.getDbCollection();
+            const documents = await this.raw(this.expression.build())
 
-    //         const results = this.normalizeDocumentIds(
-    //             await collection.aggregate(this.expression.build()).toArray()
-    //         )
+            const results = this.normalizeDocumentIds(documents)
 
-    //         this.setExpression(previousExpression)
+            this.setExpression(previousExpression)
 
-    //         return collect<Model>(
-    //             (this.formatterFn ? results.map(this.formatterFn) : results) as Model[]
-    //         )
-    //     })
-    // }
+            return collect<Model>(
+                (this.formatterFn ? results.map(this.formatterFn) : results) as Model[]
+            )
+        })
+    }
 
     /**
      * Inserts documents into the database and returns a collection of inserted models.
