@@ -229,7 +229,7 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
     }
 
     // Where Clause Methods
-    setWhere(where: TWhereClause[]): this {
+    setWhere(where: TWhereClause[] | null): this {
         if(!this.whereClauses) this.whereClauses = [];
         this.whereClauses = where;
         return this;

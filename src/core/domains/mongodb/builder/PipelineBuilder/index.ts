@@ -1,8 +1,11 @@
 import BaseExpression from "@src/core/domains/eloquent/base/BaseExpression";
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
 
+import Limit from "./Limit";
 import Match from "./Match";
 import Project from "./Project";
+import Skip from "./Skip";
+import Sort from "./Sort";
 
 export type MongoRaw = object | object[]
 
@@ -22,15 +25,26 @@ class PipelineBuilder extends BaseExpression<unknown> {
         return Match.getPipeline(this.whereClauses, this.rawWhere)
     }
 
+    buildSort() {   
+        return Sort.getPipeline(this.orderByClauses)
+    }
+    
+    buildLimit() {
+        return Limit.getPipeline(this.offsetLimit?.limit ?? null)
+    }
+
+    buildSkip() {
+        return Skip.getPipeline(this.offsetLimit?.offset ?? null)
+    }
+
     build<T = unknown>(): T {
 
         const project = this.buildProject()
         const match = this.buildMatch()
-        // const sort = Sort.getPipeline(this.orderByClauses, this.orderByRaw)
-        // const limit = Limit.getPipeline(this.offsetLimit?.limit)
-        // const skip = Skip.getPipeline(this.offsetLimit?.offset)
+        const sort = this.buildSort()
+        const limit = this.buildLimit()
+        const skip = this.buildSkip()
 
-        // const pipeline = [match, sort, limit, skip, project]
         const pipeline: object[] = [];
 
         if(project) {
@@ -39,12 +53,15 @@ class PipelineBuilder extends BaseExpression<unknown> {
         if(match) {
             pipeline.push(match);
         }
-        // if(sort) {
-        //     pipeline.push(sort);
-        // }
-        // if(limit) {
-        //     pipeline.push(limit);
-        // }
+        if(sort) {
+            pipeline.push(sort);
+        }
+        if(limit) {
+            pipeline.push(limit);
+        }
+        if(skip) {
+            pipeline.push(skip);
+        }
 
         if(pipeline.length === 0) {
             throw new ExpressionException('Pipeline is empty');

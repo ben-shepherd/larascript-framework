@@ -204,12 +204,41 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
         return document
     }
 
+    /**
+     * Retrieves a collection of documents from the database using the query builder expression.
+     * @returns A promise resolving to a collection of documents
+     */
     async get(): Promise<Collection<Model>> {
         return await captureError(async () => {
 
             const previousExpression = this.expression.clone()
 
             this.expression.setBuildTypeSelect()
+
+            const documents = await this.raw(this.expression.build())
+
+            const results = this.normalizeDocumentIds(documents)
+
+            this.setExpression(previousExpression)
+
+            return collect<Model>(
+                (this.formatterFn ? results.map(this.formatterFn) : results) as Model[]
+            )
+        })
+    }
+
+    /**
+     * Retrieves all documents from the database using the query builder expression.
+     * @returns A promise resolving to a collection of documents
+     */
+    async all(): Promise<Collection<Model>> {
+        return await captureError(async () => {
+
+            const previousExpression = this.expression.clone()
+
+            this.expression.setBuildTypeSelect()
+            this.expression.setWhere(null)
+            this.expression.setRawWhere(null)
 
             const documents = await this.raw(this.expression.build())
 

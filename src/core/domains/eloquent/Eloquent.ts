@@ -851,15 +851,8 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
         return this.limit(take)
     }
 
-    /**
-     * Deletes records from the database based on the current query builder state.
-     * 
-     * @returns {Promise<Collection<Model>>} A promise that resolves to a collection of the deleted models.
-     * 
-     * @throws {Error} Throws an error if the method is not implemented.
-     */
-    delete(): Promise<IEloquent<Model>> {
-        throw new Error("Method not implemented.");
+    async delete(): Promise<IEloquent<Model>> {
+        throw new InvalidMethodException()
     }
     
          
