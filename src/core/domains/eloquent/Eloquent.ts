@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import { ConnectionTypeHelpers } from "@src/config/database";
 import Collection from "@src/core/domains/collections/Collection";
 import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 import { db } from "@src/core/domains/database/services/Database";
@@ -93,7 +94,7 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
      * @returns {IDatabaseAdapter} The database adapter.
      */
     protected getDatabaseAdapter<T extends IDatabaseAdapter = IDatabaseAdapter>(): T {
-        return db().getAdapter<T>(this.getConnectionName())
+        return db().getAdapter(this.getConnectionName() as keyof ConnectionTypeHelpers) as unknown as T
     }
 
     /**

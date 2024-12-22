@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import { ConnectionTypeHelpers } from "@src/config/database";
 import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { db } from "@src/core/domains/database/services/Database";
@@ -23,7 +24,7 @@ abstract class BaseSchema<Adapter extends IDatabaseAdapter = IDatabaseAdapter> i
      * @throws {Error} If the connection or adapter is not registered.
      */
     protected getAdapter(): Adapter {
-        return db().getAdapter<Adapter>(this.connectionName);
+        return db().getAdapter(this.connectionName as keyof ConnectionTypeHelpers) as unknown as Adapter;
     }
 
     /**

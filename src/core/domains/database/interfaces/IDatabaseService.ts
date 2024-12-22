@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import { ConnectionTypeHelpers } from "@src/config/database";
 import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
@@ -16,7 +17,7 @@ export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>
 
     setDefaultConnectionName(connectionName: string): void;
 
-    getAdapter<TAdapter extends IDatabaseAdapter = IDatabaseAdapter>(connectionName?: string): TAdapter;
+    getAdapter<K extends keyof ConnectionTypeHelpers = 'default'>(connectionName?: K | string): ConnectionTypeHelpers[K];
 
     getAdapterConstructor<T extends ICtor<IDatabaseAdapter> = ICtor<IDatabaseAdapter>>(connectionName?: string): T;
 

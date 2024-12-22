@@ -7,10 +7,17 @@ import { appEnv } from "@src/core/services/App";
 
 
 const DEFAULT_CONNECTION = (process.env.DATABASE_DEFAULT_CONNECTION as string) ?? 'default';
-
 const MONGODB_CONNECTION = 'mongodb';
-
 const POSTGRES_CONNECTION = 'postgres';
+
+/**
+ * Type helper for the connection adapters
+ */
+export type ConnectionTypeHelpers = {
+    ['default']: PostgresAdapter;
+    [MONGODB_CONNECTION]: MongoDbAdapter;
+    [POSTGRES_CONNECTION]: PostgresAdapter;
+}
 
 const config: IDatabaseConfig = {
 
