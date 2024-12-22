@@ -1,6 +1,6 @@
-import { Collection as CollectJsCollection } from "collect.js";
 import { ICollection, TCollectionOperator, TFilterCallback, TFindCallback, TForeachCallback, TMapCallback } from "@src/core/domains/collections/interfaces/ICollection";
 import ProxyCollectionHandler from "@src/core/domains/collections/ProxyCollectionHandler";
+import { Collection as CollectJsCollection } from "collect.js";
 
 /**
  * Abstract class representing a collection of items
@@ -213,6 +213,14 @@ abstract class Collection<T = unknown> implements ICollection<T> {
     where(column: string, operator: TCollectionOperator, value: any): this {
         this.items = this.toCollectJs().where(column, operator, value).all();
         return this;
+    }
+
+    /**
+     * Checks if the collection is empty
+     * @returns True if the collection is empty, false otherwise
+     */
+    isEmpty(): boolean {
+        return this.items.length === 0;
     }
 
     /**
