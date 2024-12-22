@@ -40,7 +40,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
      * @returns The normalized ObjectId
      * @throws EloquentException if the id is invalid
      */
-    normalizeDocumentId(id: unknown): ObjectId {
+    denormalizeId(id: unknown): ObjectId | string | number {
         if(id instanceof ObjectId) {
             return id
         }
@@ -55,6 +55,26 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
     }
 
     /**
+     * Denormalizes an id to an ObjectId
+     * @param id The id to denormalize
+     * @returns The denormalized ObjectId
+     * @throws EloquentException if the id is invalid
+     */
+    normalizeId(id: string | number | ObjectId): string {
+        if(id instanceof ObjectId) {
+            return id.toString()
+        }
+        if(typeof id === 'string') {
+            return id
+        }
+        if(typeof id === 'number') {
+            return id.toString()
+        }
+        
+        throw new EloquentException('Invalid document id')
+    }
+
+    /**
      * Normalizes document IDs by converting MongoDB _id fields to standard id fields.
      * If the `id` field is an instance of `ObjectId`, it is converted to a string.
      * The original `_id` field is removed from the documents.
@@ -62,17 +82,12 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
      * @param documents - A single document or an array of documents to normalize
      * @returns An array of documents with normalized id fields
      */
-    protected normalizeDocumentIds(documents: Document | Document[]): Document[] {
+    protected normalizeDocuments(documents: Document | Document[]): Document[] {
         const documentsArray = Array.isArray(documents) ? documents : [documents]
 
         return documentsArray.map(document => {
             if(document._id) {
-                document.id = document._id
-
-                if(document.id instanceof ObjectId) {
-                    document.id = document.id.toString()
-                }
-
+                document.id = this.normalizeId(document._id)
                 delete document._id
             }
             return document
@@ -87,12 +102,17 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
     * @param document - The document to denormalize
     * @returns Document with MongoDB compatible _id field
     */
-    protected denormalizeDocumentId(document: Document | Document[]): Document | Document[] {
+    protected denormalizeDocuments(document: Document | Document[]): Document | Document[] {
         const documentsArray = Array.isArray(document) ? document : [document]
 
         return documentsArray.map(document => {
             if(document.id) {
-                document.id = this.normalizeDocumentId(document.id)
+                if(this.idGeneratorFn) {
+                    document._id = document.id
+                }
+                else {
+                    document._id = this.denormalizeId(document.id)
+                }
                 delete document.id
             }
 
@@ -110,7 +130,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
             console.log('[MongoDbEloquent] raw', JSON.stringify(aggregation, null, 2)   )
             const collection = this.getDbCollection();
 
-            const results = this.normalizeDocumentIds(
+            const results = this.normalizeDocuments(
                 await collection.aggregate(aggregation).toArray()
             ) as T
 
@@ -133,7 +153,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
 
             const collection = this.getDbCollection();
 
-            const results = this.normalizeDocumentIds(
+            const results = this.normalizeDocuments(
                 await collection.aggregate(expression.build()).toArray()
             )
 
@@ -156,7 +176,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
 
             const collection = this.getDbCollection();
 
-            const results  = this.normalizeDocumentIds(
+            const results  = this.normalizeDocuments(
                 await collection.find(filter).toArray()
             )
 
@@ -170,18 +190,27 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
      * @returns A promise resolving to the found document, or null if not found
      */
     async find(id: string | number): Promise<Model | null> {
+        let objectId: ObjectId | string | number;
+
+        try {
+            objectId = this.denormalizeId(id)
+        }
+        // eslint-disable-next-line no-unused-vars
+        catch (err) {
+            objectId = id
+        }
+
         return await captureError<Model | null>(async () => {
-            const objectId = this.normalizeDocumentId(id)
 
             const collection = this.getDbCollection();
             
-            const document = await collection.findOne({ _id: objectId })
+            const document = await collection.findOne({ _id: objectId } as object)
             
             if(!document) {
                 return null
             }
 
-            const normalizedDocument = this.normalizeDocumentIds(document)[0]
+            const normalizedDocument = this.normalizeDocuments(document)[0]
 
             return (this.formatterFn ? this.formatterFn(normalizedDocument) : normalizedDocument) as Model
         })
@@ -217,7 +246,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
 
             const documents = await this.raw(this.expression.build())
 
-            const results = this.normalizeDocumentIds(documents)
+            const results = this.normalizeDocuments(documents)
 
             this.setExpression(previousExpression)
 
@@ -242,7 +271,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
 
             const documents = await this.raw(this.expression.build())
 
-            const results = this.normalizeDocumentIds(documents)
+            const results = this.normalizeDocuments(documents)
 
             this.setExpression(previousExpression)
 
@@ -272,23 +301,58 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
         })
     }
 
-    // async update(documents: object | object[]): Promise<Collection<Model>> {
-    //     return captureError(async () => {
-    //         const previousExpression = this.expression.clone()
+    async update(documents: object | object[]): Promise<Collection<Model>> {
+        return captureError(async () => {
+            const previousExpression = this.expression.clone()
 
-    //         const collection = this.getDbCollection();
+            const collection = this.getDbCollection();
 
-    //         const documentsArray = Array.isArray(documents) ? documents : [documents]
+            const documentsArray = Array.isArray(documents) ? documents : [documents]
 
-    //         const normalizedDocuments = this.denormalizeDocumentId(documentsArray)
+            const normalizedDocuments = this.denormalizeDocuments(documentsArray)
+            const normalizedDocumentsArray = Array.isArray(normalizedDocuments) ? normalizedDocuments : [normalizedDocuments]
+            const filter =  this.expression.buildMatchAsFilterObject() ?? {}
 
-    //         const results = await collection.updateMany(documentsArray)
+            const preUpdateResults = await this.raw([
+                {
+                    $project: {
+                        _id: 1
+                    }
+                },
+                {
+                    $match: filter
+                }
+            ])
+            const documentIds = preUpdateResults.map(document => document._id)
 
-    //         this.setExpression(previousExpression)
+            console.log('[MongoDbEloquent] update preUpdateResults', JSON.stringify(preUpdateResults, null, 2))
+            console.log('[MongoDbEloquent] update preUpdateResults documentIds', { documentIds })
 
-    //         return collect<Model>(results)
-    //     })
-    // }
+            console.log('[MongoDbEloquent] update filter', JSON.stringify(filter))
+        
+            for(const document of normalizedDocumentsArray) {
+                const resultUpdate = await collection.updateOne(filter, { $set: document })
+                console.log('[MongoDbEloquent] update result', resultUpdate)
+            }
+
+            this.setExpression(previousExpression)
+
+            const postUpdateResults = await this.raw([
+                {
+                    $match: {
+                        _id: {
+                            $in: documentIds
+                        }
+                    }
+                }
+            ])
+
+            return collect<Model>(
+                (this.formatterFn ? postUpdateResults.map(this.formatterFn) : postUpdateResults) as Model[]
+            )
+        })
+    }
+    
 
 }
 

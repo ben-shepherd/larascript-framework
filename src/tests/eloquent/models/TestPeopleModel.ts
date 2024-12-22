@@ -48,6 +48,8 @@ export default class TestPeopleModel extends Model<ITestPeopleModelData> {
     public fields: string[] = [
         'name',
         'age',
+        'born',
+        'religion',
         'createdAt',
         'updatedAt'
     ];

@@ -144,22 +144,27 @@ describe('eloquent', () => {
     });
 
     test('test with raw sql (postgres)', async () => {
-        const query = queryBuilder(TestPeopleModel, 'postgres')
+        
+        forEveryConnection(async connection => {
+            if(connection !== 'postgres') return;
+            
+            const query = queryBuilder(TestPeopleModel, 'postgres')
 
-        const table = query.useTable()
-        const sql = `SELECT * FROM ${table} WHERE name = $1 OR name = $2 ORDER BY name ASC LIMIT 2`;
-        const bindings = ['Alice', 'Bob'];
+            const table = query.useTable()
+            const sql = `SELECT * FROM ${table} WHERE name = $1 OR name = $2 ORDER BY name ASC LIMIT 2`;
+            const bindings = ['Alice', 'Bob'];
 
-        const results = await query.clone().raw(sql, bindings);
-        let rows: ITestEmployeeModelData[] = [];
+            const results = await query.clone().raw(sql, bindings);
+            let rows: ITestEmployeeModelData[] = [];
 
-        if(results &&typeof results === 'object' && 'rows' in results) {
-            rows = results.rows as ITestEmployeeModelData[];
-        }
+            if(results &&typeof results === 'object' && 'rows' in results) {
+                rows = results.rows as ITestEmployeeModelData[];
+            }
 
-        expect(rows.length).toBe(2);
-        expect(rows?.[0].name).toBe('Alice');
-        expect(rows?.[1].name).toBe('Bob');
+            expect(rows.length).toBe(2);
+            expect(rows?.[0].name).toBe('Alice');
+            expect(rows?.[1].name).toBe('Bob');
+        })
     })
 
     test('test with raw select columns (postgres)', async () => {

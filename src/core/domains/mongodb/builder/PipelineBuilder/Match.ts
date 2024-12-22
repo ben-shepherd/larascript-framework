@@ -1,5 +1,5 @@
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
-import { LogicalOperators, TWhereClause } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { LogicalOperators, TLogicalOperator, TWhereClause } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { z } from "zod";
 
 import { MongoRaw } from ".";
@@ -55,28 +55,49 @@ class Match {
      * ```
      */
     protected static buildWherePipeline(whereClauses: TWhereClause[]): object {
-        const pipeline: object[] = []
+        if (whereClauses.length === 0) return {};
 
-        for(let i = 0; i < whereClauses.length; i++) {
-            const whereClause = whereClauses[i]
-            const nextWhereClause = whereClauses[i + 1] ?? null
-            const nextLogicalOperator = nextWhereClause?.logicalOperator ?? LogicalOperators.AND
+        const result: { $and: object[] } = { $and: [] }
+        const conditions: object[] = [];
 
-            const whereClausePipeline = this.buildWhereClause(whereClause)
+        for (let i = 0; i < whereClauses.length; i++) {
+            const currentWhere = whereClauses[i];
+            const currentWhereFilterObject = this.buildWhereFilterObject(currentWhere);
+            const currentLogicalOperator = currentWhere.logicalOperator ?? LogicalOperators.AND;
+            const currentLogicalOperatorNormalized = this.normalizeLogicalOperator(currentLogicalOperator);
 
-            if(nextLogicalOperator === LogicalOperators.OR) {
-                pipeline.push({ 
-                    $or: whereClausePipeline
-                })
-                continue
+            const previousWhere = whereClauses[i - 1] ?? null
+            const previousLogicalOperator = previousWhere?.logicalOperator ?? LogicalOperators.AND;
+
+            const currentLogicalOperatorMatchPrevious = previousLogicalOperator === currentLogicalOperator
+
+            if(currentLogicalOperatorMatchPrevious) {
+                const lastConditionIndex = conditions.length - 1
+                const lastCondition = conditions[lastConditionIndex] ?? null
+
+                if(lastCondition) { 
+                    conditions[lastConditionIndex][currentLogicalOperatorNormalized] = [
+                        ...lastCondition[currentLogicalOperatorNormalized],
+                        currentWhereFilterObject
+                    ]
+                    continue;
+                }
             }
 
-            pipeline.push({
-                $and: whereClausePipeline
+
+            conditions.push({
+                [currentLogicalOperatorNormalized]: [currentWhereFilterObject]
             })
         }
 
-        return pipeline
+        // If we only have one condition group, return it directly
+        if (conditions.length === 1) {
+            return conditions[0];
+        }
+
+        result.$and = conditions
+
+        return result
     }
 
     /**
@@ -100,7 +121,7 @@ class Match {
      * // Returns: { age: { $gt: 21 } }
      * ```
      */
-    protected static buildWhereClause(whereClause: TWhereClause): object {
+    protected static buildWhereFilterObject(whereClause: TWhereClause): object {
         const { column, operator, value } = whereClause
 
         switch(operator) {
@@ -167,6 +188,17 @@ class Match {
         this.validateBetweenValue(value)
         const betweenValue = value as [number, number]
         return { [column]: { $not: { $gte: betweenValue[0], $lte: betweenValue[1] } } }
+    }
+
+    /**
+     * Normalizes the logical operator to the MongoDB format.
+     * 
+     * @param operator - The logical operator to normalize
+     * @returns The normalized logical operator
+     * @protected
+     */
+    protected static normalizeLogicalOperator(operator: TLogicalOperator): string {
+        return operator === LogicalOperators.OR ? '$or' : '$and'
     }
 
     /**
