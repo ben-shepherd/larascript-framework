@@ -75,12 +75,13 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
     }
 
     /**
-     * Normalizes document IDs by converting MongoDB _id fields to standard id fields.
-     * If the `id` field is an instance of `ObjectId`, it is converted to a string.
-     * The original `_id` field is removed from the documents.
+     * Normalizes MongoDB documents by converting _id fields to standard id format.
+     * If the _id field is an ObjectId, it is converted to string.
+     * The original _id field is removed from the document.
+     * Also filters out columns not specified in the expression.
      *
-     * @param documents - A single document or an array of documents to normalize
-     * @returns An array of documents with normalized id fields
+     * @param documents - Single document or array of documents to normalize
+     * @returns Array of normalized documents with standard id fields
      */
     protected normalizeDocuments(documents: Document | Document[]): Document[] {
         let documentsArray = Array.isArray(documents) ? documents : [documents]
@@ -246,6 +247,10 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
         return document
     }
 
+    /**
+     * Gets the first document matching the current query conditions.
+     * @returns Promise resolving to the first matching document or null if none found
+     */
     async first(): Promise<Model | null> {
         return await captureError(async () => {
 
@@ -268,6 +273,11 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
         })
     }
 
+    /**
+     * Gets the first document matching the current query conditions or throws an exception if none found.
+     * @returns Promise resolving to the first matching document
+     * @throws ModelNotFound if no matching document is found
+     */
     async firstOrFail(): Promise<Model> {
         const document = await this.first()
         
@@ -278,6 +288,10 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
         return document
     }
 
+    /**
+     * Gets the last document matching the current query conditions.
+     * @returns Promise resolving to the last matching document or null if none found
+     */
     async last(): Promise<Model | null> {
         return await captureError(async () => {
 
@@ -297,6 +311,11 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
         })
     }
 
+    /**
+     * Gets the last document matching the current query conditions or throws an exception if none found.
+     * @returns Promise resolving to the last matching document
+     * @throws ModelNotFound if no matching document is found
+     */
     async lastOrFail(): Promise<Model> {
         const document = await this.last()
         
@@ -375,6 +394,11 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
         })
     }
 
+    /**
+     * Updates documents matching the current query conditions.
+     * @param documents - Document or array of documents containing the update values
+     * @returns Promise resolving to a collection of updated documents
+     */
     async update(documents: object | object[]): Promise<Collection<Model>> {
         return captureError(async () => {
             const previousExpression = this.expression.clone()
