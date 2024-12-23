@@ -19,6 +19,23 @@ import PipelineBuilder from "../builder/PipelineBuilder";
 
 export type ModelAttributesWithObjectId<Model extends IModel> = NonNullable<Omit<Model['attributes'], 'id'> & { _id: ObjectId }>
 
+/**
+ * MongoDB-specific implementation of the Eloquent ORM.
+ * Provides MongoDB-specific functionality for querying and manipulating documents.
+ * 
+ * @template Model The model type extending IModel that this eloquent instance works with
+ * @extends {Eloquent<Model, PipelineBuilder, MongoDbAdapter>}
+ * 
+ * @example
+ * ```typescript
+ * class UserModel extends Model {
+ *   // Model definition
+ * }
+ * 
+ * const query = queryBuilder(UserModel)
+ * const users = await query.where('age', '>', 18).get();
+ * ```
+ */
 class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuilder, MongoDbAdapter> {
 
     /**

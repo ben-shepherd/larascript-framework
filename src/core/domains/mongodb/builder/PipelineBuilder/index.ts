@@ -49,12 +49,12 @@ class PipelineBuilder extends BaseExpression<unknown> {
      * Builds the $match stage of the aggregation pipeline as a filter object
      * @returns {object|null} The $match pipeline stage as a filter object or null if no conditions are specified
      */
-    buildMatchAsFilterObject() {
+    buildMatchAsFilterObject(): object | null {
         const match = Match.getPipeline(this.whereClauses, this.rawWhere)?.['$match']
 
         if(!match) return null
         
-        return match
+        return match as object
     }
 
     /**
