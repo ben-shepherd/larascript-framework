@@ -4,8 +4,32 @@ import { z } from "zod";
 
 import { MongoRaw } from ".";
 
-class Match {
+/**
+ * Match class handles building MongoDB $match pipeline stages from SQL-style where clauses.
+ * It converts SQL-like conditions into MongoDB query syntax for filtering documents.
+ * 
+ * @example
+ * ```typescript
+ * // Basic equals match
+ * Match.getPipeline([
+ *     { column: 'name', operator: '=', value: 'John' }
+ * ], null);
+ * // Returns: { $match: { $and: [{ name: { $eq: 'John' } }] } }
+ * 
+ * // Complex conditions with AND/OR
+ * Match.getPipeline([
+ *     { column: 'age', operator: '>', value: 21 },
+ *     { column: 'status', operator: '=', value: 'active', logicalOperator: 'or' }
+ * ], null);
+ * // Returns: { $match: { $or: [{ age: { $gt: 21 } }, { status: { $eq: 'active' } }] } }
+ * 
+ * // Using raw MongoDB query
+ * Match.getPipeline(null, { age: { $gt: 21 } });
+ * // Returns: { $match: { age: { $gt: 21 } } }
+ * ```
+ */
 
+class Match {
 
     /**
      * Builds a MongoDB aggregation pipeline match stage from SQL-style where clauses.
@@ -16,14 +40,14 @@ class Match {
      * @example
      * 
      * // Basic usage with where clauses
-     * Match.getPipeline([
-     *   { column: 'age', operator: '>', value: 21 }
-     * ], null);
-     * // Returns: { $match: { $and: [{ age: { $gt: 21 } }] } }
+     *     Match.getPipeline([
+     *       { column: 'age', operator: '>', value: 21 }
+     *     ], null);
+     *     // Returns: { $match: { $and: [{ age: { $gt: 21 } }] } }
      * 
      * // Using raw MongoDB query
-     * Match.getPipeline(null, { age: { $gt: 21 } });
-     * // Returns: { $match: { age: { $gt: 21 } } }
+     *     Match.getPipeline(null, { age: { $gt: 21 } });
+     *     // Returns: { $match: { age: { $gt: 21 } } }
      */
     static getPipeline(whereClauses: TWhereClause[] | null, whereRaw: MongoRaw | null): object | null {
 
@@ -33,84 +57,63 @@ class Match {
             return { $match: whereRaw };
         }
 
-        return { $match: this.buildWherePipeline(whereClauses as TWhereClause[]) };
+        return { $match: this.buildWhereConditionPipeline(whereClauses as TWhereClause[]) };
     }
 
     /**
-     * Builds a MongoDB pipeline for a where clause.
+     * Builds a MongoDB aggregation pipeline match stage from SQL-style where clauses.
      * 
-     * Takes an array of where clauses and converts them into a MongoDB pipeline format.
-     * Handles logical operators (AND/OR) between clauses and maps SQL-style operators 
-     * to their MongoDB equivalents.
-     * 
-     * @param whereClauses - Array of where clauses to convert to MongoDB format
-     * @returns A MongoDB pipeline object representing the where conditions
-     * @protected
+     * @param whereClauses - Array of where clause conditions with column, operator, and value
+     * @returns A MongoDB $match pipeline stage object, or null if no conditions provided
      * @example
-     * ```typescript
-     * const pipeline = Match.buildWherePipeline([
-     *   { column: 'age', operator: '>', value: 21 },
-     *   { column: 'status', operator: '=', value: 'active', logicalOperator: 'OR' }
-     * ]);
+     * ```
+     * // Basic equals condition
+     *     Match.buildWhereConditionPipeline([
+     *         { column: 'name', operator: '=', value: 'John' }
+     *     ]);
+     * 
+     *     // Returns: { $or: [{ $and: [{ name: { $eq: 'John' } }] }] }
+     *     
+     * // Multiple conditions with AND/OR
+     *     Match.buildWhereConditionPipeline([
+     *         { column: 'age', operator: '>', value: 30 },
+     *         { column: 'name', operator: 'like', value: 'J%', logicalOperator: 'or' }
+     *     ]);
+     * 
+     *     // Returns: { $or: [
+     *     //   { $and: [{ age: { $gt: 30 } }] },
+     *     //   { name: { $regex: '^J.*$' } }
+     *     // ]}
      * ```
      */
-    protected static buildWherePipeline(whereClauses: TWhereClause[]): object {
-        if (whereClauses.length === 0) return {};
+    protected static buildWhereConditionPipeline(whereClauses: TWhereClause[]): object {
 
-        const result: { $and: object[] } = { $and: [] }
-        const conditions: object[] = [];
+        // Create the AND and OR conditions arrays
+        const orConditions: object[] = []
+        const andConditions: object[] = []
 
-        for (let i = 0; i < whereClauses.length; i++) {
-            // Get the current where clause
-            const currentWhere = whereClauses[i];
+        // Loop through the where clauses
+        for(const whereClause of whereClauses) {
+            const currentWhereFilterObject = this.buildWhereFilterObject(whereClause);
+            const currentLogicalOperator = whereClause.logicalOperator ?? LogicalOperators.AND;
 
-            // Build the where filter object
-            const currentWhereFilterObject = this.buildWhereFilterObject(currentWhere);
-
-            // Get the current logical operator
-            const currentLogicalOperator = currentWhere.logicalOperator ?? LogicalOperators.AND;
-
-            // Normalize the logical operator
-            const currentLogicalOperatorNormalized = this.normalizeLogicalOperator(currentLogicalOperator);
-
-            // Get the previous where clause
-            const previousWhere = whereClauses[i - 1] ?? null
-
-            // Get the previous logical operator
-            const previousLogicalOperator = previousWhere?.logicalOperator ?? LogicalOperators.AND;
-
-            // Check if the current logical operator matches the previous logical operator
-            const currentLogicalOperatorMatchPrevious = previousLogicalOperator === currentLogicalOperator
-
-            // If the current logical operator matches the previous logical operator, add the current where filter object to the last condition
-            if(currentLogicalOperatorMatchPrevious) {
-                const lastConditionIndex = conditions.length - 1
-                const lastCondition = conditions[lastConditionIndex] ?? null
-
-                if(lastCondition) { 
-                    conditions[lastConditionIndex][currentLogicalOperatorNormalized] = [
-                        ...lastCondition[currentLogicalOperatorNormalized],
-                        currentWhereFilterObject
-                    ]
-                    continue;
-                }
+            // Add where clause to the correct array
+            if(currentLogicalOperator === LogicalOperators.AND) {
+                andConditions.push(currentWhereFilterObject)
+            }
+            else {
+                orConditions.push(currentWhereFilterObject)
             }
 
-            // Add the current where filter object to the conditions array
-            conditions.push({
-                [currentLogicalOperatorNormalized]: [currentWhereFilterObject]
-            })
         }
 
-        // If we only have one condition group, return it directly
-        if (conditions.length === 1) {
-            return conditions[0];
+        // If there are AND conditions, add them to the OR conditions array
+        if(andConditions.length > 0) {
+            orConditions.push({ $and: andConditions })
         }
 
-        // Add the conditions to the result
-        result.$and = conditions
+        return { $or: orConditions }
 
-        return result
     }
 
     /**
@@ -140,7 +143,7 @@ class Match {
         switch(operator) {
 
         case "=":
-            return { [column]: value }
+            return { [column]: { $eq: value } }
         case "!=":
             return { [column]: { $ne: value } }
         case "<>":
