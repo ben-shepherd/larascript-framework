@@ -11,6 +11,14 @@ import { IEloquent } from "../../eloquent/interfaces/IEloquent";
 import MongoDbAdapter from "../adapters/MongoDbAdapter";
 import PipelineBuilder from "../builder/PipelineBuilder";
 
+/**
+ * Represents a MongoDB document with an ObjectId _id field and model attributes.
+ * Excludes the 'id' field from the model attributes and makes _id required.
+ * @template Model The model type extending IModel
+ */
+
+export type ModelAttributesWithObjectId<Model extends IModel> = NonNullable<Omit<Model['attributes'], 'id'> & { _id: ObjectId }>
+
 class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuilder, MongoDbAdapter> {
 
     /**
@@ -142,7 +150,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
      * @param aggregationPipeline - The aggregation pipeline to execute
      * @returns The results of the aggregation query
      */
-    async raw<T = NonNullable<Model['attributes']>[]>(aggregationPipeline?: object[]): Promise<T> {
+    async raw<T = ModelAttributesWithObjectId<Model>[]>(aggregationPipeline?: object[]): Promise<T> {
         return captureError<T>(async () => {
 
             // Get the pipeline
@@ -154,11 +162,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
             const collection = this.getMongoCollection();
 
             // Get the results
-            const results = this.normalizeDocuments(
-                await collection.aggregate(aggregationPipeline).toArray()
-            ) as T
-
-            return results;
+            return await collection.aggregate(aggregationPipeline).toArray() as T;
         })
     }
 
@@ -499,11 +503,24 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
             // Get the collection
             const collection = this.getMongoCollection();
 
+            const previousExpression = this.expression.clone()
+
+            // Get the pre-delete results for the match filter
+            const preDeleteResults = await this.raw(
+                this.expression
+                    .setColumns([{ column: '_id' }])
+                    .build()
+            )
+            const preDeleteResultsDocumentIds = preDeleteResults.map(document => document._id)
+
             // Get the match filter for the current expression
-            const matchFilter = this.expression.buildMatchAsFilterObject() ?? {}
+            const deleteFilter = { _id: { $in: preDeleteResultsDocumentIds } }
 
             // Delete the documents 
-            await collection.deleteMany(matchFilter)
+            await collection.deleteMany(deleteFilter)
+
+            // Restore the previous expression
+            this.setExpression(previousExpression)
 
         })   
 
@@ -532,6 +549,11 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
 
             // Restore the previous expression
             this.setExpression(previousExpression)
+
+            // If the count is an empty array, return 0
+            if(results?.[0]?.count && results[0].count.length === 0) {
+                return 0
+            }
 
             // Get the count
             const count = results?.[0]?.count?.[0]?.count
