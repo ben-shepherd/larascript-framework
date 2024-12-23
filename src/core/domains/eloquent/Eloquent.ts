@@ -448,11 +448,10 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
     }
 
     /**
-     * Sets the distinct columns for the query builder
      * @param {string|string[]} columns The columns to set for distinct
      * @returns {IEloquent<Model>} The query builder instance
      */
-    distinct(columns: string | string[]): IEloquent<Model> {
+    distinctColumns(columns: string | string[]): IEloquent<Model> {
         columns = Array.isArray(columns) ? columns : [columns];
         const columnsTyped = columns.map(column => ({column})) as TColumnOption[]
         
@@ -467,7 +466,7 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
      * @param {...string} columns - The columns to group by.
      * @returns {this} The query builder instance for chaining.
      */
-    groupBy(columns: string[] | string | null): IEloquent<Model> {
+    distinct(columns: string[] | string | null): IEloquent<Model> {
 
         if(!columns) {
             this.expression.setGroupBy(null);

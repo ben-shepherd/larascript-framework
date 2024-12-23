@@ -583,7 +583,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
 
             this.expression.setBuildTypeSelect()
             this.selectRaw(selectRaw)
-            this.groupBy(null)
+            this.distinct(null)
             this.orderBy(null)
             this.offset(null)
             
@@ -607,7 +607,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      * @param {string|string[]} [columns] The columns to set for distinct.
      * @returns {this} The query builder instance.
      */
-    groupBy(columns: string[] | string | null): IEloquent<Model, SqlExpression> {
+    distinct(columns: string[] | string | null): IEloquent<Model, SqlExpression> {
         const columnsArray = Array.isArray(columns) ? columns : [columns]
         this.expression.setDistinctColumns(columnsArray.map(column => ({column})))
         return this as unknown as IEloquent<Model>

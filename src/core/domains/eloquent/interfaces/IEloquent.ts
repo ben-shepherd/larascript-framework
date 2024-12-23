@@ -223,7 +223,7 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     oldest(column?: string): IEloquent<ModelWithAttributes<Model>>;
 
     // Grouping
-    groupBy(columns: string[] | string | null): IEloquent<ModelWithAttributes<Model>>;
+    distinct(columns: string[] | string | null): IEloquent<ModelWithAttributes<Model>>;
     // having(column: string, operator?: string, value?: any): Promise<IQueryBuilder>;
 
     // Limiting

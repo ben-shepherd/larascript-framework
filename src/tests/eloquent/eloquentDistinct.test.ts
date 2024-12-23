@@ -52,7 +52,7 @@ describe('eloquent', () => {
     test('test group by', async () => {
         await forEveryConnection(async connection => {
             const query = queryBuilder(TestPeopleModel, connection)
-            const results = await query.clone().groupBy('name').get();
+            const results = await query.clone().distinct('name').get();
             expect(results.count()).toBe(4);
             expect(results[0].name).toBe('Alice');
             expect(results[1].name).toBe('Bob');
@@ -61,14 +61,14 @@ describe('eloquent', () => {
 
             const resultChristians = await query.clone()
                 .where('religion', 'Christian')
-                .groupBy('name')
+                .distinct('name')
                 .get();
             expect(resultChristians.count()).toBe(1);
             expect(resultChristians[0].name).toBe('Jane');
 
             const resultMuslims = await query.clone()
                 .where('religion', 'Islam')
-                .groupBy('name')
+                .distinct('name')
                 .get();
             expect(resultMuslims.count()).toBe(2);
             expect(resultMuslims[0].name).toBe('Bob');
@@ -76,7 +76,7 @@ describe('eloquent', () => {
 
             const resultJews = await query.clone()
                 .where('religion', 'Jewish')
-                .groupBy('name')
+                .distinct('name')
                 .get();
             expect(resultJews.count()).toBe(1);
             expect(resultJews[0].name).toBe('Alice');
