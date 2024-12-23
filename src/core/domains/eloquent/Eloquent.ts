@@ -941,7 +941,7 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
         throw new InvalidMethodException()
     }
      
-    async updateAll(documents: object | object[]): Promise<Collection<Model>> {
+    async updateAll(documents: object): Promise<Collection<Model>> {
         throw new InvalidMethodException()
     }
 

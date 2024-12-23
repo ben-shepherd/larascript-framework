@@ -144,7 +144,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
     * @param document - The document to denormalize
     * @returns Document with MongoDB compatible _id field
     */
-    denormalizeDocuments(document: Document | Document[]): Document | Document[] {
+    denormalizeDocuments(document: Document | Document[]): Document[] {
         const documentsArray = Array.isArray(document) ? document : [document]
 
         return documentsArray.map(document => {
@@ -393,7 +393,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
             this.expression.setBuildTypeSelect()
 
             // Get the documents
-            const documents = await this.raw(this.expression.build())
+            const documents = await this.raw()
 
             // Normalize the documents
             const results = this.normalizeDocuments(documents)
@@ -489,13 +489,62 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
             const normalizedDocumentsArray = Array.isArray(normalizedDocuments) ? normalizedDocuments : [normalizedDocuments]
 
             // Get the pre-update results for the match filter
-            const preUpdateResults = await this.findMany(matchFilter)
-            const preUpdateResultsDocumentIds = preUpdateResults.map(document => (document as { _id: ObjectId })._id)
+            const preUpdateResults = await this.raw(
+                new PipelineBuilder()
+                    .setColumns([{ column: '_id' }])
+                    .setWhere(this.expression.getWhere())
+                    .setLimit(1000)
+                    .build()
+            )
+            const preUpdateResultsDocumentIds = preUpdateResults.map(document => document._id)
 
             // Update each document
             for(const document of normalizedDocumentsArray) {
                 await collection.updateOne(matchFilter, { $set: document })
             }
+
+            // Get the post-update results for the match filter
+            const postUpdateResults = await this.findMany({ _id: { $in: preUpdateResultsDocumentIds } })
+
+            // Restore the previous expression
+            this.setExpression(previousExpression)
+
+            // Return the post-update results
+            return collect<Model>(
+                (this.formatterFn ? postUpdateResults.map(this.formatterFn) : postUpdateResults) as Model[]
+            )
+        })
+    }
+
+    /**
+     * Updates all documents matching the current query conditions.
+     * @param document - Document or array of documents containing the update values
+     * @returns Promise resolving to a collection of updated documents
+     */
+    async updateAll(document: object): Promise<Collection<Model>> {
+        return captureError(async () => {
+
+            const collection = this.getMongoCollection();
+
+            // Get the match filter for the current expression
+            const previousExpression = this.expression.clone()
+            const matchFilter = this.expression.buildMatchAsFilterObject() ?? {}
+
+            // Denormalize the documents to be updated
+            const normalizedDocument = this.denormalizeDocuments(document)?.[0] as object
+
+            // Get the pre-update results for the match filter
+            const preUpdateResults = await this.raw(
+                new PipelineBuilder()
+                    .setColumns([{ column: '_id' }])
+                    .setWhere(this.expression.getWhere())
+                    .setLimit(1000)
+                    .build()
+            )
+            const preUpdateResultsDocumentIds = preUpdateResults.map(document => document._id)
+            
+            // Update each document
+            collection.updateMany(matchFilter, { $set: normalizedDocument })
 
             // Get the post-update results for the match filter
             const postUpdateResults = await this.findMany({ _id: { $in: preUpdateResultsDocumentIds } })

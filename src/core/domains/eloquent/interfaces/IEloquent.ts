@@ -163,7 +163,7 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     // Creating and saving-
     insert(documents: object | object[]): Promise<Collection<ModelWithAttributes<Model>>>; 
     update(documents: object | object[]): Promise<Collection<ModelWithAttributes<Model>>>;
-    updateAll(documents: object | object[]): Promise<Collection<ModelWithAttributes<Model>>>;
+    updateAll(documents: object): Promise<Collection<ModelWithAttributes<Model>>>;
     delete(): Promise<IEloquent<ModelWithAttributes<Model>>>;
 
     // selection
