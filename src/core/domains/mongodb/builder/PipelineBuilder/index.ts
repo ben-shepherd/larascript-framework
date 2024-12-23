@@ -121,18 +121,23 @@ class PipelineBuilder extends BaseExpression<unknown> {
      * @throws {ExpressionException} If the resulting pipeline is empty
      */
     build<T = unknown>(): T {
-        const project = this.buildProject()
+
+        // Reset the pipeline
+        this.pipeline = []
+
+        // Build the pipeline stages
         const match = this.buildMatch()
+        const project = this.buildProject()
         const sort = this.buildSort()
         const limit = this.buildLimit()
         const skip = this.buildSkip()
         const order = this.buildOrder()
 
-        if(project) {
-            this.addPipeline([project]);
-        }
         if(match) {
             this.addPipeline([match]);
+        }
+        if(project) {
+            this.addPipeline([project]);
         }
         if(sort) {
             this.addPipeline([sort]);
