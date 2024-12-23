@@ -16,7 +16,7 @@ describe('eloquent', () => {
         await forEveryConnection(async connection => {
             const query = queryBuilder(TestPeopleModel, connection);
 
-            const results = await query.insert([
+            const inserted = await query.insert([
                 {
                     name: 'John',
                     age: 25,
@@ -30,11 +30,11 @@ describe('eloquent', () => {
                     updatedAt: new Date()
                 }
             ])
-
+            const results = await query.clone().orderBy('name').get()
 
             const updatedFirst = await query.clone().where('name', 'John').update({ age: 26 });
             expect(updatedFirst.count()).toBe(1);
-            expect(updatedFirst[0].id).toBe(results[0].id);
+            expect(updatedFirst[0].id).toBe(inserted[0].id);
             expect(updatedFirst[0].age).toBe(26);
 
             const updatedSecond = await query.clone().where('name', 'Jane').update({ age: 31 });
@@ -42,7 +42,7 @@ describe('eloquent', () => {
             expect(updatedSecond[0].id).toBe(results[1].id);
             expect(updatedSecond[0].age).toBe(31);
 
-            const updatedBoth = await query.clone().updateAll({ age: 27 });
+            const updatedBoth = await query.clone().orderBy('name').updateAll({ age: 27 });
             expect(updatedBoth.count()).toBe(2);
             expect(updatedBoth[0].id).toBe(results[0].id);
             expect(updatedBoth[0].age).toBe(27);
