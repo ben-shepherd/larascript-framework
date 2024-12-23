@@ -154,9 +154,9 @@ class Match {
         case "<=":
             return { [column]: { $lte: value } }
         case "like":
-            return { [column]: { $regex: value } }
+            return { [column]: { $regex: value, $options: 'i' } }
         case "not like":
-            return { [column]: { $not: { $regex: value } } }
+            return { [column]: { $not: { $regex: value, $options: 'i' } } }
         case "in":
             return { [column]: { $in: value } }
         case "not in":

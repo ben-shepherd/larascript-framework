@@ -8,6 +8,7 @@ import collect from "../../collections/helper/collect";
 import Eloquent from "../../eloquent/Eloquent";
 import EloquentException from "../../eloquent/exceptions/EloquentExpression";
 import { IEloquent } from "../../eloquent/interfaces/IEloquent";
+import { logger } from "../../logger/services/LoggerService";
 import MongoDbAdapter from "../adapters/MongoDbAdapter";
 import PipelineBuilder from "../builder/PipelineBuilder";
 
@@ -172,8 +173,10 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
 
             // Get the pipeline
             if(!aggregationPipeline) {
-                aggregationPipeline = this.expression.getPipeline()
+                aggregationPipeline = this.expression.build()
             }
+
+            logger().console('[MongoDbEloquent.raw] aggregationPipeline', JSON.stringify(aggregationPipeline))
 
             // Get the collection
             const collection = this.getMongoCollection();
@@ -306,7 +309,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
             this.expression.setLimit(1)
 
             // Get the documents
-            const documents = await this.raw(this.expression.build())
+            const documents = await this.raw()
 
             // Normalize the documents
             const results = this.normalizeDocuments(documents)

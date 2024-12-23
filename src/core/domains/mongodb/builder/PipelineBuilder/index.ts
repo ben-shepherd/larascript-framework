@@ -5,7 +5,6 @@ import Match from "./Match";
 import Order from "./Order";
 import Project from "./Project";
 import Skip from "./Skip";
-import Sort from "./Sort";
 
 export type MongoRaw = object | object[]
 
@@ -57,14 +56,6 @@ class PipelineBuilder extends BaseExpression<unknown> {
         return match as object
     }
 
-    /**
-     * Builds the $sort stage of the aggregation pipeline
-     * @returns {object|null} The $sort pipeline stage or null if no sorting is specified
-     */
-    buildSort() {   
-        return Sort.getPipeline(this.orderByClauses)
-    }
-    
     /**
      * Builds the $limit stage of the aggregation pipeline
      * @returns {object|null} The $limit pipeline stage or null if no limit is specified
@@ -128,10 +119,9 @@ class PipelineBuilder extends BaseExpression<unknown> {
         // Build the pipeline stages
         const match = this.buildMatch()
         const project = this.buildProject()
-        const sort = this.buildSort()
+        const order = this.buildOrder()
         const limit = this.buildLimit()
         const skip = this.buildSkip()
-        const order = this.buildOrder()
 
         if(match) {
             this.addPipeline([match]);
@@ -139,17 +129,14 @@ class PipelineBuilder extends BaseExpression<unknown> {
         if(project) {
             this.addPipeline([project]);
         }
-        if(sort) {
-            this.addPipeline([sort]);
+        if(order) {
+            this.addPipeline([order]);
         }
         if(limit) {
             this.addPipeline([limit]);
         }
         if(skip) {
             this.addPipeline([skip]);
-        }
-        if(order) {
-            this.addPipeline([order]);
         }
 
         return this.pipeline as T;

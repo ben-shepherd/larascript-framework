@@ -6,7 +6,7 @@ class Order {
      * Builds the $sort stage of the aggregation pipeline
      * @returns {object|null} The $sort pipeline stage or null if no sorting is specified
      */
-    static getPipeline(order: TOrderBy[] | null): object | null{
+    static getPipeline(order: TOrderBy[] | null): { $sort: object } | null{
 
         if(!order) {
             return null;
@@ -19,7 +19,7 @@ class Order {
             result[order.column] = this.normalizeOrderDirection(order)
         }
 
-        return result
+        return { $sort: result }
     }
 
     /**
