@@ -10,7 +10,6 @@ class Skip {
      */ 
     static getPipeline(offset: number | null): object | null {
         if(!offset) return null;
-
         return { $skip: offset }
     }
 
