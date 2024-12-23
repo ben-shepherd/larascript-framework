@@ -19,6 +19,7 @@ import PipelineBuilder from "../builder/PipelineBuilder";
  */
 
 export type ModelAttributesWithObjectId<Model extends IModel> = NonNullable<Omit<Model['attributes'], 'id'> & { _id: ObjectId }>
+export type DocumentWithId<Property extends string = '_id'> = Document & { [key in Property]: ObjectId }
 
 /**
  * MongoDB-specific implementation of the Eloquent ORM.
@@ -395,11 +396,12 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
             // Set the build type to select
             this.expression.setBuildTypeSelect()
 
-            // Get the documents
-            const documents = await this.raw()
-
-            // Normalize the documents
-            const results = this.normalizeDocuments(documents)
+            // Fetch the documents, apply the distinct filters and normalize the documents
+            const results = await this.applyDistinctFilters(
+                this.normalizeDocuments(
+                    await this.raw()
+                )
+            )
 
             // Restore the previous expression
             this.setExpression(previousExpression)
@@ -410,6 +412,37 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
         })
     }
 
+    /**
+     * Applies distinct filters to the documents.
+     * @param documents The documents to apply the distinct filters to
+     * @returns The documents with the distinct filters applied
+     */
+    protected async applyDistinctFilters(documents: Document[]): Promise<Document[]> {
+        if(!this.expression.getGroupBy() || this.expression.getGroupBy()?.length === 0) {
+            return documents
+        }
+        
+        const results: Document[] = []
+        const collection = this.getMongoCollection();
+
+        // Get the distinct columns
+        const distinctColumns = this.expression.getGroupBy()?.map(option => option.column) ?? []
+
+        // Apply the distinct filters on each column
+        for(const column of distinctColumns) {
+            const distinctValues: unknown[] = await collection.distinct(column, this.expression.buildMatchAsFilterObject() ?? {})
+
+            // Add the documents that match the distinct values
+            distinctValues.forEach(distinctValue => {
+                results.push(
+                    documents.find(document => document[column] === distinctValue) as Document
+                )
+            })
+        }
+
+        return results
+    }
+ 
     /**
      * Retrieves all documents from the database using the query builder expression.
      * @returns A promise resolving to a collection of documents

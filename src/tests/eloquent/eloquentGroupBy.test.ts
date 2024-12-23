@@ -57,7 +57,7 @@ describe('eloquent', () => {
             expect(results[0].name).toBe('Alice');
             expect(results[1].name).toBe('Bob');
             expect(results[2].name).toBe('Jane');
-            expect(results[3].name).toBe('John');
+            expect(results[3].name).toBe('John'); 
 
             const resultChristians = await query.clone()
                 .where('religion', 'Christian')
