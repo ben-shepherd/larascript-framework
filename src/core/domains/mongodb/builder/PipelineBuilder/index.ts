@@ -1,5 +1,4 @@
 import BaseExpression from "@src/core/domains/eloquent/base/BaseExpression";
-import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
 
 import Limit from "./Limit";
 import Match from "./Match";
@@ -26,6 +25,9 @@ class PipelineBuilder extends BaseExpression<unknown> {
 
     /** Raw MongoDB projections to be merged with builder projections */
     rawSelect: MongoRaw | null = null;
+
+    /** The pipeline to build */
+    pipeline: object[] = [];
 
     /**
      * Builds the $project stage of the aggregation pipeline
@@ -79,8 +81,36 @@ class PipelineBuilder extends BaseExpression<unknown> {
         return Skip.getPipeline(this.offsetLimit?.offset ?? null)
     }
 
+    /**
+     * Builds the $order stage of the aggregation pipeline
+     * @returns {object|null} The $order pipeline stage or null if no ordering is specified
+     */
     buildOrder() {
         return Order.getPipeline(this.orderByClauses)
+    }
+
+    /**
+     * Adds a pipeline stage to the builder
+     * @param pipeline - The pipeline stage to add
+     */ 
+    addPipeline(pipeline: object[]) {
+        this.pipeline.push(...pipeline)
+    }
+
+    /**
+     * Sets the pipeline
+     * @param pipeline - The pipeline to set
+     */
+    setPipeline(pipeline: object[]) {
+        this.pipeline = pipeline
+    }
+
+    /**
+     * Gets the pipeline
+     * @returns {object[]} The pipeline
+     */
+    getPipeline() {
+        return this.pipeline
     }
 
     /**
@@ -91,7 +121,6 @@ class PipelineBuilder extends BaseExpression<unknown> {
      * @throws {ExpressionException} If the resulting pipeline is empty
      */
     build<T = unknown>(): T {
-
         const project = this.buildProject()
         const match = this.buildMatch()
         const sort = this.buildSort()
@@ -99,32 +128,26 @@ class PipelineBuilder extends BaseExpression<unknown> {
         const skip = this.buildSkip()
         const order = this.buildOrder()
 
-        const pipeline: object[] = [];
-
         if(project) {
-            pipeline.push(project);
+            this.addPipeline([project]);
         }
         if(match) {
-            pipeline.push(match);
+            this.addPipeline([match]);
         }
         if(sort) {
-            pipeline.push(sort);
+            this.addPipeline([sort]);
         }
         if(limit) {
-            pipeline.push(limit);
+            this.addPipeline([limit]);
         }
         if(skip) {
-            pipeline.push(skip);
+            this.addPipeline([skip]);
         }
         if(order) {
-            pipeline.push(order);
+            this.addPipeline([order]);
         }
 
-        // if(pipeline.length === 0) {
-        //     throw new ExpressionException('Pipeline is empty');
-        // }
-
-        return pipeline as T;
+        return this.pipeline as T;
     }
 
 }
