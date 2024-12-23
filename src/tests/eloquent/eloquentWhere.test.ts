@@ -151,6 +151,24 @@ describe('eloquent', () => {
 
     })
 
+    test('test complex or', async () => {
+        await resetPeopleTable()
+
+        await forEveryConnection(async connection => {
+            const query = getTestPeopleModelQuery(connection)
+            await populate(connection);
+
+            const results = await query.clone()
+                .where('age', '>', 30)
+                .orWhere('name', 'like', 'J%')
+                .get();
+
+            expect(results.count()).toBe(2);
+            expect(results[0].name).toBe('Jane');
+            expect(results[1].name).toBe('John');
+        })
+    })
+
     test('test greater than and greater than or equal', async () => {
         await resetPeopleTable()
 

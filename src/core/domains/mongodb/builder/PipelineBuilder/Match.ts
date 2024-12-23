@@ -157,9 +157,9 @@ class Match {
         case "<=":
             return { [column]: { $lte: value } }
         case "like":
-            return { [column]: { $regex: value, $options: 'i' } }
+            return this.regex(column, value)
         case "not like":
-            return { [column]: { $not: { $regex: value, $options: 'i' } } }
+            return this.notRegex(column, value)
         case "in":
             return { [column]: { $in: value } }
         case "not in":
@@ -174,6 +174,70 @@ class Match {
             return this.notBetween(column, value)
         }
 
+    }
+
+    /**
+     * Builds a MongoDB regex query object for a LIKE condition.
+     * 
+     * @param column - The column to build the regex query for
+     * @param value - The value to build the regex query for
+     * @returns A MongoDB regex query object
+     */
+    protected static regex(column: string, value: TWhereClause['value']): object {
+        this.validateRegexValue(value)
+        return {
+            [column]: {
+                $regex: this.normalizeRegexValue(value as string),
+                $options: 'i'
+            }
+        }
+    }
+
+    /**
+     * Builds a MongoDB regex query object for a LIKE condition.
+     * 
+     * @param column - The column to build the regex query for
+     * @param value - The value to build the regex query for
+     * @returns A MongoDB regex query object
+    */
+    protected static notRegex(column: string, value: TWhereClause['value']): object {
+        this.validateRegexValue(value)
+        return {
+            [column]: {
+                $not: {
+                    $regex: this.normalizeRegexValue(value as string),
+                    $options: 'i'
+                }
+            }
+        }
+    }
+
+    /**
+     * Validates that a regex value is a string.
+     * 
+     * @param value - The value to validate
+     * @throws {ExpressionException} When value is not a string
+     */
+    protected static validateRegexValue(value: unknown): void {
+        if(typeof value !== 'string') {
+            throw new ExpressionException('Regex value must be a string')
+        }
+    }
+
+    /**
+     * Normalizes a regex value to a valid MongoDB regex pattern.
+     * 
+     * @param value - The regex value to normalize
+     * @returns The normalized regex pattern
+     */
+    protected static normalizeRegexValue(value: string): string {
+        if(value.startsWith('%')) {
+            value = `.+${value.slice(1)}`
+        }
+        if(value.endsWith('%')) {
+            value = `${value.slice(0, -1)}.+`
+        }
+        return value
     }
 
     /**
