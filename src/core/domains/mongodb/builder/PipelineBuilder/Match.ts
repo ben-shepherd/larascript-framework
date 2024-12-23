@@ -61,16 +61,28 @@ class Match {
         const conditions: object[] = [];
 
         for (let i = 0; i < whereClauses.length; i++) {
+            // Get the current where clause
             const currentWhere = whereClauses[i];
+
+            // Build the where filter object
             const currentWhereFilterObject = this.buildWhereFilterObject(currentWhere);
+
+            // Get the current logical operator
             const currentLogicalOperator = currentWhere.logicalOperator ?? LogicalOperators.AND;
+
+            // Normalize the logical operator
             const currentLogicalOperatorNormalized = this.normalizeLogicalOperator(currentLogicalOperator);
 
+            // Get the previous where clause
             const previousWhere = whereClauses[i - 1] ?? null
+
+            // Get the previous logical operator
             const previousLogicalOperator = previousWhere?.logicalOperator ?? LogicalOperators.AND;
 
+            // Check if the current logical operator matches the previous logical operator
             const currentLogicalOperatorMatchPrevious = previousLogicalOperator === currentLogicalOperator
 
+            // If the current logical operator matches the previous logical operator, add the current where filter object to the last condition
             if(currentLogicalOperatorMatchPrevious) {
                 const lastConditionIndex = conditions.length - 1
                 const lastCondition = conditions[lastConditionIndex] ?? null
@@ -84,7 +96,7 @@ class Match {
                 }
             }
 
-
+            // Add the current where filter object to the conditions array
             conditions.push({
                 [currentLogicalOperatorNormalized]: [currentWhereFilterObject]
             })
@@ -95,6 +107,7 @@ class Match {
             return conditions[0];
         }
 
+        // Add the conditions to the result
         result.$and = conditions
 
         return result
