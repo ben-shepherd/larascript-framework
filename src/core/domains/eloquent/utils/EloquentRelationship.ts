@@ -134,6 +134,11 @@ class EloquentRelationship {
             eloquent.setModelColumns(foreignModelCtor, { columnPrefix, targetProperty: relationshipName})
         }
 
+        /**
+         * todo: implement has many relationship
+         * test using 'with' on query builder
+         */
+
         return eloquent
     }
 
