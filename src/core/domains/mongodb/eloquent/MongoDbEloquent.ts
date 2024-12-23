@@ -7,6 +7,7 @@ import Collection from "../../collections/Collection";
 import collect from "../../collections/helper/collect";
 import Eloquent from "../../eloquent/Eloquent";
 import EloquentException from "../../eloquent/exceptions/EloquentExpression";
+import { IEloquent } from "../../eloquent/interfaces/IEloquent";
 import MongoDbAdapter from "../adapters/MongoDbAdapter";
 import PipelineBuilder from "../builder/PipelineBuilder";
 
@@ -23,7 +24,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
      * @returns The MongoDB Collection instance.
      * @throws Error if the model constructor is not set.
      */
-    protected getDbCollection(collectionName?: string): MongoCollection {
+    getMongoCollection(collectionName?: string): MongoCollection {
         const modelCtor = this.getModelCtor()
         if(!modelCtor) {
             throw new Error('Model constructor is not set');
@@ -83,9 +84,12 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
      * @param documents - Single document or array of documents to normalize
      * @returns Array of normalized documents with standard id fields
      */
-    protected normalizeDocuments(documents: Document | Document[]): Document[] {
+    normalizeDocuments(documents: Document | Document[]): Document[] {
+
+        // Get the documents array  
         let documentsArray = Array.isArray(documents) ? documents : [documents]
 
+        // Normalize the documents
         documentsArray = documentsArray.map(document => {
             if(document._id) {
                 document.id = this.normalizeId(document._id)
@@ -96,7 +100,6 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
 
         // Filter out columns that specified in the expression
         const columnsArray = this.expression.getColumns().map(option => option.column).filter(col => col) as string[]
-
         documentsArray.map((document) => {
             columnsArray.forEach(column => {
                 if(!document[column]) {
@@ -116,7 +119,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
     * @param document - The document to denormalize
     * @returns Document with MongoDB compatible _id field
     */
-    protected denormalizeDocuments(document: Document | Document[]): Document | Document[] {
+    denormalizeDocuments(document: Document | Document[]): Document | Document[] {
         const documentsArray = Array.isArray(document) ? document : [document]
 
         return documentsArray.map(document => {
@@ -136,41 +139,57 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
 
     /**
      * Executes a raw MongoDB aggregation query and returns the results.
-     * @param aggregation - The aggregation pipeline to execute
+     * @param aggregationPipeline - The aggregation pipeline to execute
      * @returns The results of the aggregation query
      */
-    async raw<T = NonNullable<Model['attributes']>[]>(aggregation: object[]): Promise<T> {
+    async raw<T = NonNullable<Model['attributes']>[]>(aggregationPipeline?: object[]): Promise<T> {
         return captureError<T>(async () => {
-            console.log('[MongoDbEloquent] raw', JSON.stringify(aggregation, null, 2)   )
-            const collection = this.getDbCollection();
 
+            // Get the pipeline
+            if(!aggregationPipeline) {
+                aggregationPipeline = this.expression.getPipeline()
+            }
+
+            // Get the collection
+            const collection = this.getMongoCollection();
+
+            // Get the results
             const results = this.normalizeDocuments(
-                await collection.aggregate(aggregation).toArray()
+                await collection.aggregate(aggregationPipeline).toArray()
             ) as T
 
-            console.log('[MongoDbEloquent] raw results', JSON.stringify(results, null, 2))
             return results;
         })
     }
 
     /**
-     * Fetches rows from the database using the current query builder expression.
-     * @param expression - The query builder expression to use. Defaults to the current expression.
-     * @returns The fetched rows
+     * Executes a MongoDB aggregation pipeline using the provided pipeline builder expression.
+     * Normalizes the results and applies any configured formatters.
+     * 
+     * @template T The expected return type, defaults to array of model attributes
+     * @param {PipelineBuilder} [expression] The pipeline builder expression to execute. If not provided, uses the instance's expression.
+     * @returns {Promise<T>} A promise that resolves with the query results
+     * @throws {QueryException} If the query execution fails
+     * @private
      */
-    async fetchRows<T = unknown>(expression: PipelineBuilder = this.expression): Promise<T> {
+    async fetchRows<T = NonNullable<Model['attributes']>[]>(expression: PipelineBuilder = this.expression): Promise<T> {
         return await captureError<T>(async () => {
 
+            // Get the previous expression
             const previousExpression = this.expression.clone()
 
+            // Set the build type to select
             this.expression.setBuildTypeSelect()
 
-            const collection = this.getDbCollection();
+            // Get the collection
+            const collection = this.getMongoCollection();
 
+            // Get the results
             const results = this.normalizeDocuments(
                 await collection.aggregate(expression.build()).toArray()
             )
 
+            // Restore the previous expression
             this.setExpression(previousExpression)
 
             return this.formatterFn ? results.map(this.formatterFn) as T : results as T
@@ -188,13 +207,13 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
 
             this.expression.setBuildTypeSelect()
 
-            const collection = this.getDbCollection();
+            const collection = this.getMongoCollection();
 
             const results  = this.normalizeDocuments(
                 await collection.find(filter).toArray()
             )
 
-            return this.formatterFn ? results.map(this.formatterFn) as T : results as T
+            return results as T
         })
     }
 
@@ -216,16 +235,20 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
 
         return await captureError<Model | null>(async () => {
 
-            const collection = this.getDbCollection();
-            
+            // Get the collection
+            const collection = this.getMongoCollection();
+
+            // Get the document
             const document = await collection.findOne({ _id: objectId } as object)
             
             if(!document) {
                 return null
             }
 
+            // Normalize the document
             const normalizedDocument = this.normalizeDocuments(document)[0]
 
+            // Return the document
             return (this.formatterFn ? this.formatterFn(normalizedDocument) : normalizedDocument) as Model
         })
     }
@@ -254,15 +277,20 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
     async first(): Promise<Model | null> {
         return await captureError(async () => {
 
+            // Get the previous expression
             const previousExpression = this.expression.clone()
 
+            // Set the build type to select
             this.expression.setBuildTypeSelect()
             this.expression.setLimit(1)
 
+            // Get the documents
             const documents = await this.raw(this.expression.build())
 
+            // Normalize the documents
             const results = this.normalizeDocuments(documents)
 
+            // Restore the previous expression
             this.setExpression(previousExpression)
 
             if(results.length === 0) {
@@ -295,12 +323,16 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
     async last(): Promise<Model | null> {
         return await captureError(async () => {
 
+            // Get the previous expression
             const previousExpression = this.expression.clone()
 
+            // Set the build type to select
             this.expression.setBuildTypeSelect()
 
+            // Get the documents
             const documents = await this.get()
 
+            // Restore the previous expression
             this.setExpression(previousExpression)
 
             if(documents.isEmpty()) {
@@ -333,14 +365,19 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
     async get(): Promise<Collection<Model>> {
         return await captureError(async () => {
 
+            // Get the previous expression
             const previousExpression = this.expression.clone()
 
+            // Set the build type to select
             this.expression.setBuildTypeSelect()
 
+            // Get the documents
             const documents = await this.raw(this.expression.build())
 
+            // Normalize the documents
             const results = this.normalizeDocuments(documents)
 
+            // Restore the previous expression
             this.setExpression(previousExpression)
 
             return collect<Model>(
@@ -356,16 +393,21 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
     async all(): Promise<Collection<Model>> {
         return await captureError(async () => {
 
+            // Get the previous expression  
             const previousExpression = this.expression.clone()
 
+            // Set the build type to select
             this.expression.setBuildTypeSelect()
             this.expression.setWhere(null)
             this.expression.setRawWhere(null)
 
+            // Get the documents
             const documents = await this.raw(this.expression.build())
 
+            // Normalize the documents
             const results = this.normalizeDocuments(documents)
 
+            // Restore the previous expression
             this.setExpression(previousExpression)
 
             return collect<Model>(
@@ -382,15 +424,27 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
     async insert(documents: object | object[]): Promise<Collection<Model>> {
         return captureError(async () => {
 
-            const collection = this.getDbCollection();
+            // Get the collection
+            const collection = this.getMongoCollection();
 
+            // Denormalize the documents to be inserted
             const documentsArray = Array.isArray(documents) ? documents : [documents]
 
-            const inserted = await collection.insertMany(documentsArray)
-            const insertedIds = Object.values(inserted.insertedIds)
-            const results = await this.findMany<Model[]>({ _id: { $in: insertedIds } })
+            // Apply the id generator function to the documents
+            const normalizedDocuments = documentsArray.map(document => this.idGeneratorFn ? this.idGeneratorFn(document) : document)
 
-            return collect<Model>(results)
+            // Insert the documents 
+            const inserted = await collection.insertMany(normalizedDocuments)
+
+            // Get the inserted ids
+            const insertedIds = Object.values(inserted.insertedIds)
+
+            // Get the results for the inserted ids
+            const results = await this.findMany({ _id: { $in: insertedIds } })
+
+            return collect<Model>(
+                (this.formatterFn ? results.map(this.formatterFn) : results) as Model[]
+            )
         })
     }
 
@@ -401,56 +455,95 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
      */
     async update(documents: object | object[]): Promise<Collection<Model>> {
         return captureError(async () => {
+
+            const collection = this.getMongoCollection();
+
+            // Get the match filter for the current expression
             const previousExpression = this.expression.clone()
+            const matchFilter = this.expression.buildMatchAsFilterObject() ?? {}
 
-            const collection = this.getDbCollection();
-
+            // Denormalize the documents to be updated
             const documentsArray = Array.isArray(documents) ? documents : [documents]
-
             const normalizedDocuments = this.denormalizeDocuments(documentsArray)
             const normalizedDocumentsArray = Array.isArray(normalizedDocuments) ? normalizedDocuments : [normalizedDocuments]
-            const filter =  this.expression.buildMatchAsFilterObject() ?? {}
 
-            const preUpdateResults = await this.raw([
-                {
-                    $project: {
-                        _id: 1
-                    }
-                },
-                {
-                    $match: filter
-                }
-            ])
-            const documentIds = preUpdateResults.map(document => document._id)
+            // Get the pre-update results for the match filter
+            const preUpdateResults = await this.findMany(matchFilter)
+            const preUpdateResultsDocumentIds = preUpdateResults.map(document => (document as { _id: ObjectId })._id)
 
-            console.log('[MongoDbEloquent] update preUpdateResults', JSON.stringify(preUpdateResults, null, 2))
-            console.log('[MongoDbEloquent] update preUpdateResults documentIds', { documentIds })
-
-            console.log('[MongoDbEloquent] update filter', JSON.stringify(filter))
-        
+            // Update each document
             for(const document of normalizedDocumentsArray) {
-                const resultUpdate = await collection.updateOne(filter, { $set: document })
-                console.log('[MongoDbEloquent] update result', resultUpdate)
+                await collection.updateOne(matchFilter, { $set: document })
             }
 
+            // Get the post-update results for the match filter
+            const postUpdateResults = await this.findMany({ _id: { $in: preUpdateResultsDocumentIds } })
+
+            // Restore the previous expression
             this.setExpression(previousExpression)
 
-            const postUpdateResults = await this.raw([
-                {
-                    $match: {
-                        _id: {
-                            $in: documentIds
-                        }
-                    }
-                }
-            ])
-
+            // Return the post-update results
             return collect<Model>(
                 (this.formatterFn ? postUpdateResults.map(this.formatterFn) : postUpdateResults) as Model[]
             )
         })
     }
-    
+
+    /**
+     * Deletes documents matching the current query conditions.
+     * @returns Promise resolving to a collection of deleted documents
+     */
+    async delete(): Promise<IEloquent<Model, PipelineBuilder>> {
+        await captureError(async () => {
+
+            // Get the collection
+            const collection = this.getMongoCollection();
+
+            // Get the match filter for the current expression
+            const matchFilter = this.expression.buildMatchAsFilterObject() ?? {}
+
+            // Delete the documents 
+            await collection.deleteMany(matchFilter)
+
+        })   
+
+        return this as unknown as IEloquent<Model, PipelineBuilder>
+    }
+
+    /**
+     * Counts the number of documents matching the current query conditions.
+     * @returns Promise resolving to the count of documents
+     */
+    async count(): Promise<number> {
+        return await captureError(async () => {
+
+            // Get the previous expression
+            const previousExpression = this.expression.clone()
+
+            // Add the count pipeline stage
+            this.expression.addPipeline([{  
+                $facet: {
+                    count: [{ $count: 'count' }]
+                }
+            }])
+
+            // Get the results
+            const results = await this.raw<{ count: number }>()
+
+            // Restore the previous expression
+            this.setExpression(previousExpression)
+
+            // Get the count
+            const count = results?.[0]?.count?.[0]?.count
+
+            if(!count) {
+                throw new EloquentException('Count not found')
+            }
+
+            return count
+        })   
+    }
+
 
 }
 
