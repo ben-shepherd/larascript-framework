@@ -245,6 +245,12 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
         return this
     }
 
+    addWhereRaw(raw: unknown): this {
+        if(!this.whereClauses) this.whereClauses = [];
+        this.whereClauses.push({ raw } as unknown as TWhereClause)
+        return this
+    }
+
     where(column: string, operator: TOperator, value: TWhereClauseValue | TWhereClauseValue[] = null, logicalOperator: TLogicalOperator = 'and'): this {
         if (!this.whereClauses) this.whereClauses = [];
         this.whereClauses.push({ column, operator, value, logicalOperator, tableName: this.table });

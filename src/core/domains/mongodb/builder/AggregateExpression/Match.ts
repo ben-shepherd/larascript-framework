@@ -138,7 +138,11 @@ class Match {
      * ```
      */
     protected static buildWhereFilterObject(whereClause: TWhereClause): object {
-        const { column, operator, value } = whereClause
+        const { column, operator, value, raw } = whereClause
+
+        if(raw) {
+            return this.raw(raw)
+        }
 
         switch(operator) {
 
@@ -174,6 +178,17 @@ class Match {
             return this.notBetween(column, value)
         }
 
+    }
+
+    protected static raw(raw: unknown): object {
+        const schema = z.object({})
+        const result = schema.safeParse(raw)
+
+        if(!result.success) {
+            throw new ExpressionException('Raw value must be an object')
+        }
+
+        return { $match: raw }
     }
 
     /**

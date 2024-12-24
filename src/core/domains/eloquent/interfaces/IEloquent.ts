@@ -32,6 +32,10 @@ export type TWhereClause = {
     operator: TOperator;
     value: TWhereClauseValue | TWhereClauseValue[];
     logicalOperator?: TLogicalOperator;
+    raw?: unknown;
+}
+export type TWhereClauseRaw = {
+    raw: unknown;
 }
 
 export type TJoin = {

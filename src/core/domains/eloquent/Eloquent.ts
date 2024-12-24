@@ -944,7 +944,7 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
         throw new InvalidMethodException()
     }
 
-    async count(): Promise<number> {
+    async count(column?: string): Promise<number> {
         throw new InvalidMethodException()
     }
 

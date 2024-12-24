@@ -15,7 +15,7 @@ export type MongoRaw = object | object[]
  * @class PipelineBuilder
  * @extends {BaseExpression<unknown>}
  */
-class PipelineBuilder extends BaseExpression<unknown> {
+class AggregateExpression extends BaseExpression<unknown> {
 
     bindingsUtility: unknown;
 
@@ -84,23 +84,25 @@ class PipelineBuilder extends BaseExpression<unknown> {
      * Adds a pipeline stage to the builder
      * @param pipeline - The pipeline stage to add
      */ 
-    addPipeline(pipeline: object[]) {
+    addPipeline(pipeline: object[]): this {
         this.pipeline.push(...pipeline)
+        return this
     }
 
     /**
      * Sets the pipeline
      * @param pipeline - The pipeline to set
      */
-    setPipeline(pipeline: object[]) {
+    setPipeline(pipeline: object[]): this {
         this.pipeline = pipeline
+        return this
     }
 
     /**
      * Gets the pipeline
      * @returns {object[]} The pipeline
      */
-    getPipeline() {
+    getPipeline(): object[] {
         return this.pipeline
     }
 
@@ -111,10 +113,12 @@ class PipelineBuilder extends BaseExpression<unknown> {
      * @returns {T} The complete aggregation pipeline array
      * @throws {ExpressionException} If the resulting pipeline is empty
      */
-    build<T = unknown>(): T {
+    build<T = unknown>(resetPipeline: boolean = true): T {
 
         // Reset the pipeline
-        this.pipeline = []
+        if(resetPipeline) {
+            this.pipeline = []
+        }
 
         // Build the pipeline stages
         const match = this.buildMatch()
@@ -144,4 +148,4 @@ class PipelineBuilder extends BaseExpression<unknown> {
 
 }
 
-export default PipelineBuilder
+export default AggregateExpression

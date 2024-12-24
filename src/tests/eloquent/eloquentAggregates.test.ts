@@ -15,18 +15,21 @@ describe('eloquent', () => {
                 {
                     name: 'Alice',
                     age: 25,
+                    religion: 'Islam',
                     createdAt: new Date(),
                     updatedAt: new Date()
                 },
                 {
                     name: 'Bob',
                     age: 30,
+                    religion: 'Christian',
                     createdAt: new Date(),
                     updatedAt: new Date()
                 },
                 {
                     name: 'John',
                     age: 35,
+                    religion: 'Christian',
                     createdAt: new Date(),
                     updatedAt: new Date()
                 },
@@ -62,6 +65,10 @@ describe('eloquent', () => {
                 .where('age', '<=', 40)
                 .count();
             expect(resultsBetween30And40).toBe(2);  
+
+            const resultsChristian = await query.clone().count('religion');
+            expect(resultsChristian).toBe(3);
+
         })
 
     })

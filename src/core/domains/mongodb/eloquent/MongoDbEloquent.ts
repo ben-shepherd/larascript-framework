@@ -10,7 +10,7 @@ import EloquentException from "../../eloquent/exceptions/EloquentExpression";
 import { IEloquent } from "../../eloquent/interfaces/IEloquent";
 import { logger } from "../../logger/services/LoggerService";
 import MongoDbAdapter from "../adapters/MongoDbAdapter";
-import PipelineBuilder from "../builder/PipelineBuilder";
+import AggregateExpression from "../builder/AggregateExpression";
 
 /**
  * Represents a MongoDB document with an ObjectId _id field and model attributes.
@@ -26,7 +26,7 @@ export type DocumentWithId<Property extends string = '_id'> = Document & { [key 
  * Provides MongoDB-specific functionality for querying and manipulating documents.
  * 
  * @template Model The model type extending IModel that this eloquent instance works with
- * @extends {Eloquent<Model, PipelineBuilder, MongoDbAdapter>}
+ * @extends {Eloquent<Model, AggregateExpression, MongoDbAdapter>}
  * 
  * @example
  * ```typescript
@@ -38,12 +38,12 @@ export type DocumentWithId<Property extends string = '_id'> = Document & { [key 
  * const users = await query.where('age', '>', 18).get();
  * ```
  */
-class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuilder, MongoDbAdapter> {
+class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExpression, MongoDbAdapter> {
 
     /**
      * The query builder expression object
      */
-    protected expression: PipelineBuilder = new PipelineBuilder()
+    protected expression: AggregateExpression = new AggregateExpression()
 
     /**
      * Retrieves the MongoDB Collection instance for the model.
@@ -192,12 +192,12 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
      * Normalizes the results and applies any configured formatters.
      * 
      * @template T The expected return type, defaults to array of model attributes
-     * @param {PipelineBuilder} [expression] The pipeline builder expression to execute. If not provided, uses the instance's expression.
+     * @param {AggregateExpression} [expression] The pipeline builder expression to execute. If not provided, uses the instance's expression.
      * @returns {Promise<T>} A promise that resolves with the query results
      * @throws {QueryException} If the query execution fails
      * @private
      */
-    async fetchRows<T = NonNullable<Model['attributes']>[]>(expression: PipelineBuilder = this.expression): Promise<T> {
+    async fetchRows<T = NonNullable<Model['attributes']>[]>(expression: AggregateExpression = this.expression): Promise<T> {
         return await captureError<T>(async () => {
 
             // Get the previous expression
@@ -526,7 +526,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
 
             // Get the pre-update results for the match filter
             const preUpdateResults = await this.raw(
-                new PipelineBuilder()
+                new AggregateExpression()
                     .setColumns([{ column: '_id' }])
                     .setWhere(this.expression.getWhere())
                     .setLimit(1000)
@@ -571,7 +571,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
 
             // Get the pre-update results for the match filter
             const preUpdateResults = await this.raw(
-                new PipelineBuilder()
+                new AggregateExpression()
                     .setColumns([{ column: '_id' }])
                     .setWhere(this.expression.getWhere())
                     .setLimit(1000)
@@ -599,7 +599,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
      * Deletes documents matching the current query conditions.
      * @returns Promise resolving to a collection of deleted documents
      */
-    async delete(): Promise<IEloquent<Model, PipelineBuilder>> {
+    async delete(): Promise<IEloquent<Model, AggregateExpression>> {
         await captureError(async () => {
 
             // Get the collection
@@ -626,48 +626,261 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, PipelineBuil
 
         })   
 
-        return this as unknown as IEloquent<Model, PipelineBuilder>
+        return this as unknown as IEloquent<Model, AggregateExpression>
     }
 
     /**
      * Counts the number of documents matching the current query conditions.
      * @returns Promise resolving to the count of documents
      */
-    async count(): Promise<number> {
+    async count(column: string = '_id'): Promise<number> {
         return await captureError(async () => {
 
             // Get the previous expression
             const previousExpression = this.expression.clone()
 
-            // Add the count pipeline stage
-            this.expression.addPipeline([{  
-                $facet: {
-                    count: [{ $count: 'count' }]
-                }
-            }])
+            // Get the match filter for the current expression
+            const filter = this.expression.buildMatchAsFilterObject() ?? {}
+            
+            // Build the pipeline
+            const pipeline = new AggregateExpression()
+                .addPipeline([{
+                    $match: {
+                        ...filter,
+                        [column]: { $exists: true }
+                    }
+                }])
+                .addPipeline([{  
+                    $facet: {
+                        count: [
+                            { 
+                                $group: {
+                                    _id: null,
+                                    count: { $sum: 1 }
+                                }
+                            }
+                        ]
+                    }
+                }])
+                .getPipeline()
 
-            // Get the results
-            const results = await this.raw<{ count: number }>()
+            const count = await this.fetchAggregationResult(pipeline, 'count')
 
             // Restore the previous expression
             this.setExpression(previousExpression)
-
-            // If the count is an empty array, return 0
-            if(results?.[0]?.count && results[0].count.length === 0) {
-                return 0
-            }
-
-            // Get the count
-            const count = results?.[0]?.count?.[0]?.count
-
-            if(!count) {
-                throw new EloquentException('Count not found')
-            }
 
             return count
         })   
     }
 
+    /**
+     * Calculates the minimum value of a column.
+     * @param column - The column to calculate the minimum value of
+     * @returns Promise resolving to the minimum value of the column
+     */
+    async min(column: string): Promise<number> {
+        return await captureError(async () => {
+
+            // Get the previous expression
+            const previousExpression = this.expression.clone()
+
+            // Get the match filter for the current expression
+            const filter = this.expression.buildMatchAsFilterObject() ?? {}
+            
+            // Build the pipeline
+            const pipeline = new AggregateExpression()
+                .addPipeline([{
+                    $match: {
+                        ...filter,
+                        [column]: { $exists: true }
+                    }
+                }])
+                .addPipeline([{  
+                    $facet: {
+                        min: [
+                            { 
+                                $group: {
+                                    _id: null,
+                                    min: { $min: `$${column}` }
+                                }
+                            }
+                        ]
+                    }
+                }])
+                .getPipeline()
+
+            const min = await this.fetchAggregationResult(pipeline, 'min')
+
+            // Restore the previous expression
+            this.setExpression(previousExpression)
+
+            return min
+        })   
+    }
+
+    /**
+     * Calculates the maximum value of a column.
+     * @param column - The column to calculate the maximum value of
+     * @returns Promise resolving to the maximum value of the column
+     */
+    async max(column: string): Promise<number> {
+        return await captureError(async () => {
+
+            // Get the previous expression
+            const previousExpression = this.expression.clone()
+
+            // Get the match filter for the current expression
+            const filter = this.expression.buildMatchAsFilterObject() ?? {}
+            
+            // Build the pipeline
+            const pipeline = new AggregateExpression()
+                .addPipeline([{
+                    $match: {
+                        ...filter,
+                        [column]: { $exists: true  }
+                    }
+                }])
+                .addPipeline([{  
+                    $facet: {
+                        max: [
+                            { 
+                                $group: {
+                                    _id: null,
+                                    max: { $max: `$${column}` }
+                                }
+                            }
+                        ]
+                    }
+                }])
+                .getPipeline()
+
+            const max = await this.fetchAggregationResult(pipeline, 'max')
+
+            // Restore the previous expression
+            this.setExpression(previousExpression)
+
+            return max
+        })   
+    }
+
+    /**
+     * Calculates the sum of a column.
+     * @param column - The column to calculate the sum of
+     * @returns Promise resolving to the sum of the column
+     */
+    async sum(column: string): Promise<number> {
+        return await captureError(async () => {
+
+            // Get the previous expression
+            const previousExpression = this.expression.clone()
+
+            // Get the match filter for the current expression
+            const filter = this.expression.buildMatchAsFilterObject() ?? {}
+            
+            // Build the pipeline
+            const pipeline = new AggregateExpression()
+                .addPipeline([{
+                    $match: {
+                        ...filter,
+                        [column]: { $exists: true }
+                    }
+                }])
+                .addPipeline([{  
+                    $facet: {
+                        sum: [
+                            { 
+                                $group: {
+                                    _id: null,
+                                    sum: { $sum: `$${column}` }
+                                }
+                            }
+                        ]
+                    }
+                }])
+                .getPipeline()
+
+            const sum = await this.fetchAggregationResult(pipeline, 'sum')
+
+            // Restore the previous expression
+            this.setExpression(previousExpression)
+
+            return sum
+        })   
+    }
+
+    /**
+     * Calculates the average of a column.
+     * @param column - The column to calculate the average of
+     * @returns Promise resolving to the average of the column
+     */
+    async avg(column: string): Promise<number> {
+        return await captureError(async () => {
+
+            // Get the previous expression
+            const previousExpression = this.expression.clone()
+
+            // Get the match filter for the current expression
+            const filter = this.expression.buildMatchAsFilterObject() ?? {}
+            
+            // Build the pipeline
+            const pipeline = new AggregateExpression()
+                .addPipeline([{
+                    $match: {
+                        ...filter,
+                        [column]: { $exists: true }
+                    }
+                }])
+                .addPipeline([{  
+                    $facet: {
+                        avg: [
+                            { 
+                                $group: {
+                                    _id: null,
+                                    avg: { $avg: `$${column}` }
+                                }
+                            }
+                        ]
+                    }
+                }])
+                .getPipeline()
+
+            const avg = await this.fetchAggregationResult(pipeline, 'avg')
+
+            // Restore the previous expression
+            this.setExpression(previousExpression)
+
+            return avg
+        })   
+    }
+    
+
+    /**
+     * Fetches the result of an aggregation pipeline stage.
+     * @param aggregationPipeline - The aggregation pipeline to execute
+     * @param targetProperty - The property to fetch from the result
+     * @returns The result of the aggregation pipeline stage
+     */
+    protected async fetchAggregationResult(aggregationPipeline: object[], targetProperty: string = 'aggregate_result'): Promise<number> {
+        return await captureError(async () => {
+
+            // Get the results
+            const results = await this.raw<{ [key: string]: number }>(aggregationPipeline)
+
+            // If the count is an empty array, return 0
+            if(results?.[0]?.[targetProperty] && results[0][targetProperty].length === 0) {
+                return 0
+            }
+
+            // Get the aggregate result
+            const aggregateResult = results?.[0]?.[targetProperty]?.[0]?.[targetProperty]
+
+            if(typeof aggregateResult !== 'number') {
+                throw new EloquentException(`${targetProperty} could not be found`)
+            }
+
+            return aggregateResult
+        })   
+    }
 
 }
 
