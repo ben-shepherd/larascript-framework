@@ -534,7 +534,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      *
      * @returns {string} The primary key associated with the model.
      */
-    public static getPrimaryKey(): string {
+    public static   getPrimaryKey(): string {
         return new (this as unknown as ICtor<IModel>)(null).primaryKey;
     }
 

@@ -1,5 +1,6 @@
 import BaseExpression from "@src/core/domains/eloquent/base/BaseExpression";
 
+import Join from "./Join";
 import Limit from "./Limit";
 import Match from "./Match";
 import Order from "./Order";
@@ -54,6 +55,14 @@ class AggregateExpression extends BaseExpression<unknown> {
         if(!match) return null
         
         return match as object
+    }
+
+    /**
+     * Builds the $join stage of the aggregation pipeline
+     * @returns {object|null} The $join pipeline stage or null if no joins are specified
+     */
+    buildJoin() {
+        return Join.getPipeline(this.joins)
     }
 
     /**
@@ -123,12 +132,16 @@ class AggregateExpression extends BaseExpression<unknown> {
         // Build the pipeline stages
         const match = this.buildMatch()
         const project = this.buildProject()
+        const join = this.buildJoin()
         const order = this.buildOrder()
         const limit = this.buildLimit()
         const skip = this.buildSkip()
 
         if(match) {
             this.addPipeline([match]);
+        }
+        if(join) {
+            this.addPipeline(join);
         }
         if(project) {
             this.addPipeline([project]);

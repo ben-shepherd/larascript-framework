@@ -164,7 +164,7 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     setTable(table: string): IEloquent<ModelWithAttributes<Model>>;
     useTable(): string;
 
-    // Creating and saving-
+    // Creating and saving
     insert(documents: object | object[]): Promise<Collection<ModelWithAttributes<Model>>>; 
     update(documents: object | object[]): Promise<Collection<ModelWithAttributes<Model>>>;
     updateAll(documents: object): Promise<Collection<ModelWithAttributes<Model>>>;
@@ -226,9 +226,8 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     newest(column?: string): IEloquent<ModelWithAttributes<Model>>;
     oldest(column?: string): IEloquent<ModelWithAttributes<Model>>;
 
-    // Grouping
+    // Distinct
     distinct(columns: string[] | string | null): IEloquent<ModelWithAttributes<Model>>;
-    // having(column: string, operator?: string, value?: any): Promise<IQueryBuilder>;
 
     // Limiting
     limit(limit: number): IEloquent<ModelWithAttributes<Model>>;
