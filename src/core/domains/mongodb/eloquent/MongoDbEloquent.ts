@@ -175,6 +175,40 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
         return property === 'id' ? '_id' : property
     }
 
+    protected genericJoin(relatedTable: string, localColumn: string, relatedColumn: string): this {
+        super.join(relatedTable, this.normalizeIdProperty(localColumn), this.normalizeIdProperty(relatedColumn))
+        this.expression.addColumn({
+            column: relatedTable,
+        })
+        this.expression.addPipelineStage([
+            {
+                "$unwind": {
+                    "path": `$${relatedTable}`,
+                    "preserveNullAndEmptyArrays": true
+                }
+            }
+        ])
+        return this
+    }
+
+    /**
+     * Adds a join unwind stage to the pipeline
+     * @param relatedTable The name of the related table to join
+     */
+    protected addJoinUnwindStage(relatedTable: string): void {
+        this.expression.addColumn({
+            column: relatedTable,
+        })
+        this.expression.addPipelineStage([
+            {
+                "$unwind": {
+                    "path": `$${relatedTable}`,
+                    "preserveNullAndEmptyArrays": true
+                }
+            }
+        ])
+    }
+
     /**
      * Joins a related table to the current query.
      * @param relatedTable The name of the related table to join
@@ -185,33 +219,26 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
     join(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, IEloquentExpression<unknown>> {
 
         super.join(relatedTable, this.normalizeIdProperty(localColumn), this.normalizeIdProperty(relatedColumn))
-        this.expression.addColumn({
-            column: relatedTable,
-        })
+        this.addJoinUnwindStage(relatedTable)
+
         return this
     }
 
     leftJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, IEloquentExpression<unknown>> {
         super.leftJoin(relatedTable, this.normalizeIdProperty(localColumn), this.normalizeIdProperty(relatedColumn))
-        this.expression.addColumn({
-            column: relatedTable,
-        })
+        this.addJoinUnwindStage(relatedTable)
         return this
     }
 
     rightJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, IEloquentExpression<unknown>> {
         super.rightJoin(relatedTable, this.normalizeIdProperty(localColumn), this.normalizeIdProperty(relatedColumn))
-        this.expression.addColumn({
-            column: relatedTable,
-        })
+        this.addJoinUnwindStage(relatedTable)
         return this
     }
 
     fullJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, IEloquentExpression<unknown>> {
         super.fullJoin(relatedTable, this.normalizeIdProperty(localColumn), this.normalizeIdProperty(relatedColumn))
-        this.expression.addColumn({
-            column: relatedTable,
-        })
+        this.addJoinUnwindStage(relatedTable)
         return this
     }
 

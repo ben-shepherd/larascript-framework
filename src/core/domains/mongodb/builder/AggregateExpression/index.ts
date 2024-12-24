@@ -29,6 +29,9 @@ class AggregateExpression extends BaseExpression<unknown> {
     /** The pipeline to build */
     pipeline: object[] = [];
 
+    /** The pipeline stages to build */
+    pipelineStages: object[] = [];
+
     /**
      * Builds the $project stage of the aggregation pipeline
      * @returns {object|null} The $project pipeline stage or null if no columns are specified
@@ -116,6 +119,15 @@ class AggregateExpression extends BaseExpression<unknown> {
     }
 
     /**
+     * Adds a pipeline stage to the builder
+     * @param pipeline - The pipeline stage to add
+     */ 
+    addPipelineStage(stage: object[]): this {
+        this.pipelineStages.push(...stage)
+        return this
+    }
+
+    /**
      * Builds the complete MongoDB aggregation pipeline by combining all stages
      * 
      * @template T - The expected return type of the pipeline
@@ -155,6 +167,11 @@ class AggregateExpression extends BaseExpression<unknown> {
         if(skip) {
             this.addPipeline([skip]);
         }
+
+        this.pipeline = [
+            ...this.pipeline,
+            ...this.pipelineStages,
+        ]
 
         return this.pipeline as T;
     }
