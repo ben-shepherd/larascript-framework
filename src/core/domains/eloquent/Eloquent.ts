@@ -97,18 +97,6 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
     }
 
     /**
-     * Applies the formatter function to the given array of rows.
-     * If no formatter function is set, the rows are returned as is.
-     * @param {unknown[]} rows The array of rows to apply the formatter to.
-     * @returns {Model[]} The formatted array of rows.
-     */
-    protected applyFormatter(rows: unknown[]): Model[] {
-        return rows.map(row => {
-            return this.formatterFn ? this.formatterFn(row) : row
-        }) as Model[]
-    }
-
-    /**
      * Formats the results
      * @param results The results to format
      * @returns The formatted results
@@ -307,18 +295,6 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
         return this.modelCtor
     }
 
-    /**
-     * Sets the formatter function for the query builder. This function will be
-     * called with each row of the result as an argument. The function should
-     * return the transformed row.
-     *
-     * @param {TFomatterFn} formatterFn The formatter function to set
-     * @returns {this} The query builder instance to enable chaining
-     */
-    setFormatter(formatterFn?: TFormatterFn): IEloquent<Model> {
-        this.formatterFn = formatterFn 
-        return this as unknown as IEloquent<Model>
-    }
 
     /**
      * Sets the ID generator function for the query builder.

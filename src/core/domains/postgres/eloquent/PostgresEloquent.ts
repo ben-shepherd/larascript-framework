@@ -488,7 +488,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
             this.setExpression(previousExpression)
 
             return collect<Model>(
-                this.applyFormatter(results)
+                this.formatResultsAsModels(results as object[])
             )
         })
     }

@@ -145,10 +145,6 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     // results
     fetchRows<T = unknown>(expression?: Expression, ...args: any[]): Promise<T>;
 
-    // formatting
-    // asModel<Model extends IModel>(): IEloquent<Model, Model>; 
-    setFormatter(formatterFn?: TFormatterFn): IEloquent<Model>;
-    
     // execution
     execute<T = Model['attributes']>(builder: Expression): Promise<T>
     raw<T = unknown>(...args: unknown[]): Promise<T>;

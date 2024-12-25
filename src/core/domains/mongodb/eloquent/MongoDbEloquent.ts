@@ -344,14 +344,12 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             const collection = this.getMongoCollection();
 
             // Get the results
-            const results = this.normalizeDocuments(
-                await collection.aggregate(expression.build()).toArray()
-            )
+            const documents = await collection.aggregate(expression.build()).toArray()
 
             // Restore the previous expression
             this.setExpression(previousExpression)
 
-            return this.formatterFn ? results.map(this.formatterFn) as T : results as T
+            return this.formatResultsAsModels(documents) as T
         })
     }
 
@@ -404,11 +402,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
                 return null
             }
 
-            // Normalize the document
-            const normalizedDocument = this.normalizeDocuments(document)[0]
-
-            // Return the document
-            return (this.formatterFn ? this.formatterFn(normalizedDocument) : normalizedDocument) as Model
+            return this.formatResultsAsModels([document])[0]
         })
     }
 
@@ -602,14 +596,11 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             // Get the documents
             const documents = await this.raw(this.expression.build())
 
-            // Normalize the documents
-            const results = this.normalizeDocuments(documents)
-
             // Restore the previous expression
             this.setExpression(previousExpression)
 
             return collect<Model>(
-                (this.formatterFn ? results.map(this.formatterFn) : results) as Model[]
+                this.formatResultsAsModels(documents)
             )
         })
     }
@@ -641,7 +632,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             const results = await this.findMany({ _id: { $in: insertedIds } })
 
             return collect<Model>(
-                (this.formatterFn ? results.map(this.formatterFn) : results) as Model[]
+                this.formatResultsAsModels(results)
             )
         })
     }
@@ -710,7 +701,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
 
             // Return the post-update results
             return collect<Model>(
-                (this.formatterFn ? postUpdateResults.map(this.formatterFn) : postUpdateResults) as Model[]
+                this.formatResultsAsModels(postUpdateResults)
             )
         })
     }
@@ -753,7 +744,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
 
             // Return the post-update results
             return collect<Model>(
-                (this.formatterFn ? postUpdateResults.map(this.formatterFn) : postUpdateResults) as Model[]
+                this.formatResultsAsModels(postUpdateResults)
             )
         })
     }
