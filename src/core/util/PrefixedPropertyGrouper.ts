@@ -42,11 +42,22 @@ class PrefixedPropertyGrouper extends BaseFormatter<PrefixToTargetPropertyOption
 
     formatterOptions: PrefixToTargetPropertyOptions = []
 
+    /**
+     * Formats an array of objects by moving prefixed properties to nested objects.
+     * @param {object[]} arr The array of objects to format.
+     * @param {PrefixToTargetPropertyOptions} options The options for the formatting.
+     * @returns {T} The formatted array of objects.
+     */
     format<T>(arr: object[], options: PrefixToTargetPropertyOptions = this.formatterOptions): T {
         return arr.map((current) => this.handleItem(current as object, options ?? this.formatterOptions)) as T;
     }
-
-    addColumn(column: string, targetProperty: string): void {
+    
+    /**
+     * Adds an option to the formatter.
+     * @param {string} column The column to add.
+     * @param {string} targetProperty The target property to add.
+     */
+    addOption(column: string, targetProperty: string): void {
         this.formatterOptions.push({ columnPrefix: `${column}_`, targetProperty, setTargetPropertyNullWhenObjectAllNullish: true })
     }
 

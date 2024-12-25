@@ -27,7 +27,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
     /**
      * The query builder expression object
      */
-    protected expression!: SqlExpression
+    protected expression: SqlExpression = new SqlExpression()
 
     /**
      * The query builder client
@@ -38,16 +38,6 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      * The formatter to use when formatting the result rows to objects
      */
     protected formatter: PrefixedPropertyGrouper = new PrefixedPropertyGrouper()
-
-    /**
-     * Constructor
-     * @param modelCtor The model constructor to use when creating or fetching models.
-     */
-    constructor() {
-        super()
-        this.setExpressionCtor(SqlExpression)
-        this.formatterList.setFormatter(PrefixedPropertyGrouper)
-    }
 
     /**
      * Sets the query builder client to the given value.
@@ -70,9 +60,14 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
         this.expression.bindingsUtility.reset()
     }
 
-    join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<Model, IEloquentExpression<unknown>> {
-        super.join(related, localColumn, relatedColumn)
-
+    /**
+     * Prepares the join by adding the related columns to the query builder and the formatter.
+     * @param related The related table to join
+     * @param localColumn The local column to join on
+     * @param relatedColumn The related column to join on
+     * @param options The options for the join
+     */
+    protected prepareJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions) {
         if(options?.targetProperty) {
             const sourceProperty = Eloquent.getJoinAsPath(related.getTable(), localColumn, relatedColumn);
 
@@ -80,9 +75,73 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
             this.setModelColumns(related, { columnPrefix: `${sourceProperty}_`, targetProperty: options.targetProperty })
 
             // Add the source property to the formatter to format the result rows to objects with the target property
-            this.formatter.addColumn(sourceProperty, options.targetProperty)
+            this.formatter.addOption(sourceProperty, options.targetProperty)
         }
+    }
 
+    /**
+     * Joins a related table to the current query.
+     * @param related The related table to join
+     * @param localColumn The local column to join on
+     * @param relatedColumn The related column to join on
+     * @param options The options for the join
+     * @returns The current query builder instance
+     */
+    join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<Model, IEloquentExpression<unknown>> {
+        super.join(related, localColumn, relatedColumn)
+        this.prepareJoin(related, localColumn, relatedColumn, options)
+        return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
+    }
+
+    /**
+     * Adds a left join to the query builder.
+     * @param related The related table to join
+     * @param localColumn The local column to join on
+     * @param relatedColumn The related column to join on
+     * @param options The options for the join
+     * @returns The current query builder instance
+     */
+    leftJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<Model, IEloquentExpression<unknown>> {
+        super.leftJoin(related, localColumn, relatedColumn)
+        this.prepareJoin(related, localColumn, relatedColumn, options)
+        return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
+    }
+
+    /**
+     * Adds a right join to the query builder.
+     * @param related The related table to join
+     * @param localColumn The local column to join on
+     * @param relatedColumn The related column to join on
+     * @param options The options for the join
+     * @returns The current query builder instance
+     */
+    rightJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<Model, IEloquentExpression<unknown>> {
+        super.rightJoin(related, localColumn, relatedColumn)
+        this.prepareJoin(related, localColumn, relatedColumn, options)
+        return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
+    }
+
+    /**
+     * Adds a full join to the query builder.
+     * @param related The related table to join
+     * @param localColumn The local column to join on
+     * @param relatedColumn The related column to join on
+     * @param options The options for the join
+     * @returns The current query builder instance
+     */
+    fullJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<Model, IEloquentExpression<unknown>> {
+        super.fullJoin(related, localColumn, relatedColumn)
+        this.prepareJoin(related, localColumn, relatedColumn, options)
+        return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
+    }
+
+    /**
+     * Adds a cross join to the query builder.
+     * @param related The related table to join
+     * @returns The current query builder instance
+     */
+    crossJoin(related: ModelConstructor<IModel>): IEloquent<Model, IEloquentExpression<unknown>> {
+        super.crossJoin(related)
         return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
     }
 
@@ -114,13 +173,6 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      */
     setModelColumns(modelCtor?: ICtor<IModel>, options?: SetModelColumnsOptions): IEloquent<Model, SqlExpression> {
         super.setModelColumns(modelCtor, options)
-        
-        // Store the options for formatting the result rows to objects with a target property.
-        // This will be used when calling fetchRows() to format the result rows to objects with the target property.
-        if(options?.columnPrefix && typeof options?.targetProperty === 'string') {
-            this.formatResultTargetPropertyToObjectOptions.push({columnPrefix: options.columnPrefix, targetProperty: options.targetProperty, setTargetPropertyNullWhenObjectAllNullish: true })
-        }
-
         return this as unknown as IEloquent<Model>
     }
 

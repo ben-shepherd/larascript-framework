@@ -197,6 +197,43 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
     }
 
     /**
+     * Prepares the join by adding the unwind stage, the column to the expression and the formatter option.
+     * @param related The related model constructor
+     * @param localColumn The local column to join on
+     * @param relatedColumn The related column to join on
+     * @param options The options for the join
+     */
+    protected prepareJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): void {
+        localColumn = this.normalizeIdProperty(localColumn)
+        relatedColumn = this.normalizeIdProperty(relatedColumn)
+
+        // Add the unwind stage
+        const path = Eloquent.getJoinAsPath(related.getTable(), localColumn, relatedColumn)
+        this.expression.addPipelineStage([
+            {
+                "$unwind": {
+                    "path": `$${path}`,
+                    "preserveNullAndEmptyArrays": true
+                }
+            } 
+        ])
+
+        // Add the column to the expression
+        this.expression.addColumn({
+            column: Eloquent.getJoinAsPath(related.getTable(), localColumn, relatedColumn),
+            tableName: this.useTable()
+        })
+
+        // Add the formatter option (maps the related object to the target property)
+        if(options?.targetProperty) {
+            this.formatter.addOption(
+                Eloquent.getJoinAsPath(related.getTable(), localColumn, relatedColumn),
+                options.targetProperty
+            )
+        }
+    }
+
+    /**
      * Joins a related table to the current query.
      * @param relatedTable The name of the related table to join
      * @param localColumn The local column to join on
@@ -205,54 +242,61 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      */
     join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<Model, IEloquentExpression<unknown>> {
 
+        // Normalize the columns
         localColumn = this.normalizeIdProperty(localColumn)
         relatedColumn = this.normalizeIdProperty(relatedColumn)
 
+        // Add the join to the expression
         super.join(related, localColumn, relatedColumn)
-
-        this.addJoinUnwindStage(
-            Eloquent.getJoinAsPath(related.getTable(), localColumn, relatedColumn)
-        )
-
-        this.expression.addColumn({
-            column: Eloquent.getJoinAsPath(related.getTable(), localColumn, relatedColumn),
-            tableName: this.useTable()
-        })
-
-        // todo
-        if(options?.targetProperty) {
-            this.formatter.addOption(
-                Eloquent.getJoinAsPath(related.getTable(), localColumn, relatedColumn),
-                options.targetProperty
-            )
-        }
+        
+        // Prepare the join
+        this.prepareJoin(related, localColumn, relatedColumn, options)
 
         return this
     }
 
-    // leftJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, IEloquentExpression<unknown>> {
-    //     super.leftJoin(relatedTable, this.normalizeIdProperty(localColumn), this.normalizeIdProperty(relatedColumn))
-    //     this.addJoinUnwindStage(
-    //         Eloquent.getJoinAsPath(relatedTable, localColumn, relatedColumn)
-    //     )
-    //     return this
-    // }
+    leftJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<Model, IEloquentExpression<unknown>> {
 
-    // rightJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, IEloquentExpression<unknown>> {
-    //     super.rightJoin(relatedTable, this.normalizeIdProperty(localColumn), this.normalizeIdProperty(relatedColumn))
-    //     this.addJoinUnwindStage(
-    //         Eloquent.getJoinAsPath(relatedTable, this.normalizeIdProperty(localColumn), this.normalizeIdProperty(relatedColumn))
-    //     )
-    //     return this
-    // }
+        // Normalize the columns
+        localColumn = this.normalizeIdProperty(localColumn)
+        relatedColumn = this.normalizeIdProperty(relatedColumn)
 
-    // fullJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, IEloquentExpression<unknown>> {
-    //     super.fullJoin(relatedTable, this.normalizeIdProperty(localColumn), this.normalizeIdProperty(relatedColumn))
-    //     this.addJoinUnwindStage(
-    //         Eloquent.getJoinAsPath(relatedTable, localColumn, relatedColumn)
-    //     )
-    //     return this
-    // }
+        // Add the join to the expression
+        super.leftJoin(related, localColumn, relatedColumn)
+        
+        // Prepare the join
+        this.prepareJoin(related, localColumn, relatedColumn, options)
+
+        return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
+    }
+
+    rightJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<Model, IEloquentExpression<unknown>> {
+        // Normalize the columns
+        localColumn = this.normalizeIdProperty(localColumn)
+        relatedColumn = this.normalizeIdProperty(relatedColumn)
+
+        // Add the join to the expression
+        super.rightJoin(related, localColumn, relatedColumn)
+        
+        // Prepare the join
+        this.prepareJoin(related, localColumn, relatedColumn, options)
+
+        return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
+    }
+
+    fullJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<Model, IEloquentExpression<unknown>> {
+        // Normalize the columns
+        localColumn = this.normalizeIdProperty(localColumn)
+        relatedColumn = this.normalizeIdProperty(relatedColumn)
+        
+        // Add the join to the expression
+        super.join(related, localColumn, relatedColumn)
+                
+        // Prepare the join
+        this.prepareJoin(related, localColumn, relatedColumn, options)
+
+        return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
+    }
 
     /**
      * Executes a raw MongoDB aggregation query and returns the results.

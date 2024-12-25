@@ -219,10 +219,10 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
 
     // Joins
     join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<ModelWithAttributes<Model>>;
-    fullJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<ModelWithAttributes<Model>>;
-    leftJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<ModelWithAttributes<Model>>;
-    rightJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<ModelWithAttributes<Model>>;
-    crossJoin(table: string): IEloquent<ModelWithAttributes<Model>>;
+    fullJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<ModelWithAttributes<Model>>;
+    leftJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<ModelWithAttributes<Model>>;
+    rightJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<ModelWithAttributes<Model>>;
+    crossJoin(related: ModelConstructor<IModel>): IEloquent<ModelWithAttributes<Model>>;
     with(relationship: string): IEloquent<ModelWithAttributes<Model>>;
 
     // Ordering

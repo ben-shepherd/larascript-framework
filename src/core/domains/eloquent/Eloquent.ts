@@ -17,9 +17,7 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { deepClone } from "@src/core/util/deepClone";
-import { PrefixToTargetPropertyOptions } from "@src/core/util/PrefixedPropertyGrouper";
 
-import FormatterList from "../formatter/base/FormatterList";
 
 /**
  * Base class for Eloquent query builder.
@@ -70,16 +68,6 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
      * The constructor of the model
      */
     protected modelCtor?: ModelConstructor<IModel>;
-
-    /**
-     * Prefixed properties to target property as object options
-     */
-    protected formatResultTargetPropertyToObjectOptions: PrefixToTargetPropertyOptions = [];
-
-    /**
-     * The formatter list for transforming the results
-     */
-    protected formatterList: FormatterList = new FormatterList()
 
     /**
      * The id generator function
@@ -714,8 +702,7 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
     /**
      * Adds an inner join to the query builder.
      * 
-     * @param {string} table - The table to join.
-     * @param {string} relatedTable - The table to join with.
+     * @param {ModelConstructor<IModel>} related - The table to join with.
      * @param {string} localColumn - The column to join on in the left table.
      * @param {string} relatedColumn - The column to join on in the right table.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
@@ -729,28 +716,28 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
     /**
      * Adds a left join to the query builder.
      * 
-     * @param {string} relatedTable - The table to join with.
+     * @param {ModelConstructor<IModel>} related - The table to join with.
      * @param {string} localColumn - The column to join on in the left table.
      * @param {string} relatedColumn - The column to join on in the right table.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    leftJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model> {
+    leftJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string): IEloquent<Model> {
         const localTable = this.useTable()
-        this.expression.setJoins({ localTable, localColumn, relatedTable, relatedColumn, type: 'left' });
+        this.expression.setJoins({ localTable, localColumn, relatedTable: related.getTable(), relatedColumn, type: 'left' });
         return this as unknown as IEloquent<Model>
     }
 
     /**
      * Adds a right join to the query builder.
-     * 
-     * @param {string} relatedTable - The table to join with.
+        * 
+     * @param {ModelConstructor<IModel>} related - The table to join with.
      * @param {string} localColumn - The column to join on in the left table.
      * @param {string} relatedColumn - The column to join on in the right table.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    rightJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model> {
+    rightJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string): IEloquent<Model> {
         const localTable = this.useTable()
-        this.expression.setJoins({ localTable, localColumn, relatedTable, relatedColumn, type: 'right' });
+        this.expression.setJoins({ localTable, localColumn, relatedTable: related.getTable(), relatedColumn, type: 'right' });
         return this as unknown as IEloquent<Model>
     }
 
@@ -760,25 +747,25 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
      * This method allows for joining two tables using a full join, which returns
      * all records when there is a match in either left or right table records.
      *
-     * @param {string} relatedTable - The table to join with.
+     * @param {ModelConstructor<IModel>} related - The table to join with.
      * @param {string} localColumn - The column to join on in the left table.
      * @param {string} relatedColumn - The column to join on in the right table.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    fullJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model> {
+    fullJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string): IEloquent<Model> {
         const localTable = this.useTable()
-        this.expression.setJoins({ localTable, localColumn, relatedTable, relatedColumn, type: 'full' });
+        this.expression.setJoins({ localTable, localColumn, relatedTable: related.getTable(), relatedColumn, type: 'full' });
         return this as unknown as IEloquent<Model>
     }
 
     /**
      * Adds a cross join to the query builder.
      * 
-     * @param {string} relatedTable - The table to join with.
+     * @param {ModelConstructor<IModel>} related - The table to join with.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    crossJoin(relatedTable: string) {
-        this.expression.setJoins({ relatedTable, type: 'cross' });
+    crossJoin(related: ModelConstructor<IModel>) {
+        this.expression.setJoins({ relatedTable: related.getTable(), type: 'cross' });
         return this as unknown as IEloquent<Model>
     }
 
