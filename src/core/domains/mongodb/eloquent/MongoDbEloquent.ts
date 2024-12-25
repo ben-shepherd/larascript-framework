@@ -1,7 +1,7 @@
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import captureError from "@src/core/util/captureError";
-import MapObjectToProperty from "@src/core/util/MapObjectToProperty";
+import MoveObjectToProperty from "@src/core/util/MoveObjectToProperty";
 import { Document, Collection as MongoCollection, ObjectId } from "mongodb";
 
 import Collection from "../../collections/Collection";
@@ -48,12 +48,10 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      */
     protected expression: AggregateExpression = new AggregateExpression()
 
-    protected formatter = new MapObjectToProperty();
-
-    constructor() {
-        super()
-        this.formatterList.setFormatter(MapObjectToProperty)
-    }
+    /**
+     * The formatter instance
+     */
+    protected formatter = new MoveObjectToProperty();
 
     /**
      * Retrieves the MongoDB Collection instance for the model.
@@ -194,7 +192,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
                     "path": `$${path}`,
                     "preserveNullAndEmptyArrays": true
                 }
-            }
+            } 
         ])
     }
 
@@ -211,21 +209,23 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
         relatedColumn = this.normalizeIdProperty(relatedColumn)
 
         super.join(related, localColumn, relatedColumn)
+
         this.addJoinUnwindStage(
             Eloquent.getJoinAsPath(related.getTable(), localColumn, relatedColumn)
         )
+
         this.expression.addColumn({
             column: Eloquent.getJoinAsPath(related.getTable(), localColumn, relatedColumn),
             tableName: this.useTable()
         })
 
         // todo
-        // if(options?.targetProperty) {
-        //     this.formatter.addColumn({
-        //         column: Join.getJoinAsPath(relatedTable, localColumn, relatedColumn),
-        //         targetProperty: options.targetProperty
-        //     })
-        // }
+        if(options?.targetProperty) {
+            this.formatter.addOption(
+                Eloquent.getJoinAsPath(related.getTable(), localColumn, relatedColumn),
+                options.targetProperty
+            )
+        }
 
         return this
     }
@@ -505,6 +505,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      */
     protected formatResultsAsModels(results: Document[]): Model[] {
         results = this.normalizeDocuments(results)
+        results = this.formatter.format(results)
         return super.formatResultsAsModels(results)
     }
 
