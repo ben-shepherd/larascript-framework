@@ -1,3 +1,4 @@
+import Eloquent from "@src/core/domains/eloquent/Eloquent";
 import { JoinTypes, TJoin } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
 class Join {
@@ -41,7 +42,7 @@ class Join {
                     from: join.relatedTable,
                     localField: join.localColumn,
                     foreignField: join.relatedColumn,
-                    as: join.relatedTable
+                    as: Eloquent.getJoinAsPath(join.relatedTable ?? '', join.localColumn ?? '', join.relatedColumn ?? '')
                 }
             }
         case JoinTypes.RIGHT:
@@ -50,7 +51,7 @@ class Join {
                     from: join.relatedTable,
                     localField: join.relatedColumn,
                     foreignField: join.localColumn,
-                    as: join.localTableAbbreviation
+                    as: Eloquent.getJoinAsPath(join.relatedTable ?? '', join.localColumn ?? '', join.relatedColumn ?? '')
                 }
             }
         }

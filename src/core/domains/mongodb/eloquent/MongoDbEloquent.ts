@@ -1,13 +1,14 @@
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
-import { IModel } from "@src/core/interfaces/IModel";
+import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import captureError from "@src/core/util/captureError";
+import MapObjectToProperty from "@src/core/util/MapObjectToProperty";
 import { Document, Collection as MongoCollection, ObjectId } from "mongodb";
 
 import Collection from "../../collections/Collection";
 import collect from "../../collections/helper/collect";
 import Eloquent from "../../eloquent/Eloquent";
 import EloquentException from "../../eloquent/exceptions/EloquentExpression";
-import { IEloquent } from "../../eloquent/interfaces/IEloquent";
+import { IEloquent, TargetPropertyOptions } from "../../eloquent/interfaces/IEloquent";
 import IEloquentExpression from "../../eloquent/interfaces/IEloquentExpression";
 import { logger } from "../../logger/services/LoggerService";
 import MongoDbAdapter from "../adapters/MongoDbAdapter";
@@ -46,6 +47,13 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      * The query builder expression object
      */
     protected expression: AggregateExpression = new AggregateExpression()
+
+    protected formatter = new MapObjectToProperty();
+
+    constructor() {
+        super()
+        this.formatterList.setFormatter(MapObjectToProperty)
+    }
 
     /**
      * Retrieves the MongoDB Collection instance for the model.
@@ -127,7 +135,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             return document
         })
 
-        // Filter out columns that specified in the expression
+        // Filter out columns that are not specified in the expression
         const columnsArray = this.expression.getColumns().map(option => option.column).filter(col => col) as string[]
         documentsArray.map((document) => {
             columnsArray.forEach(column => {
@@ -175,34 +183,15 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
         return property === 'id' ? '_id' : property
     }
 
-    protected genericJoin(relatedTable: string, localColumn: string, relatedColumn: string): this {
-        super.join(relatedTable, this.normalizeIdProperty(localColumn), this.normalizeIdProperty(relatedColumn))
-        this.expression.addColumn({
-            column: relatedTable,
-        })
-        this.expression.addPipelineStage([
-            {
-                "$unwind": {
-                    "path": `$${relatedTable}`,
-                    "preserveNullAndEmptyArrays": true
-                }
-            }
-        ])
-        return this
-    }
-
     /**
      * Adds a join unwind stage to the pipeline
      * @param relatedTable The name of the related table to join
      */
-    protected addJoinUnwindStage(relatedTable: string): void {
-        this.expression.addColumn({
-            column: relatedTable,
-        })
+    protected addJoinUnwindStage(path: string): void {
         this.expression.addPipelineStage([
             {
                 "$unwind": {
-                    "path": `$${relatedTable}`,
+                    "path": `$${path}`,
                     "preserveNullAndEmptyArrays": true
                 }
             }
@@ -216,37 +205,52 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      * @param relatedColumn The related column to join on
      * @returns The current query builder instance
      */
-    join(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, IEloquentExpression<unknown>> {
+    join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<Model, IEloquentExpression<unknown>> {
 
-        super.join(relatedTable, this.normalizeIdProperty(localColumn), this.normalizeIdProperty(relatedColumn))
-        this.addJoinUnwindStage(relatedTable)
+        localColumn = this.normalizeIdProperty(localColumn)
+        relatedColumn = this.normalizeIdProperty(relatedColumn)
+
+        super.join(related, localColumn, relatedColumn)
+        this.addJoinUnwindStage(
+            Eloquent.getJoinAsPath(related.getTable(), localColumn, relatedColumn)
+        )
+        this.expression.addColumn({
+            column: Eloquent.getJoinAsPath(related.getTable(), localColumn, relatedColumn),
+            tableName: this.useTable()
+        })
+
+        // todo
+        // if(options?.targetProperty) {
+        //     this.formatter.addColumn({
+        //         column: Join.getJoinAsPath(relatedTable, localColumn, relatedColumn),
+        //         targetProperty: options.targetProperty
+        //     })
+        // }
 
         return this
     }
 
-    leftJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, IEloquentExpression<unknown>> {
-        super.leftJoin(relatedTable, this.normalizeIdProperty(localColumn), this.normalizeIdProperty(relatedColumn))
-        this.addJoinUnwindStage(relatedTable)
-        return this
-    }
+    // leftJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, IEloquentExpression<unknown>> {
+    //     super.leftJoin(relatedTable, this.normalizeIdProperty(localColumn), this.normalizeIdProperty(relatedColumn))
+    //     this.addJoinUnwindStage(
+    //         Eloquent.getJoinAsPath(relatedTable, localColumn, relatedColumn)
+    //     )
+    //     return this
+    // }
 
-    rightJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, IEloquentExpression<unknown>> {
-        super.rightJoin(relatedTable, this.normalizeIdProperty(localColumn), this.normalizeIdProperty(relatedColumn))
-        this.addJoinUnwindStage(relatedTable)
-        return this
-    }
+    // rightJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, IEloquentExpression<unknown>> {
+    //     super.rightJoin(relatedTable, this.normalizeIdProperty(localColumn), this.normalizeIdProperty(relatedColumn))
+    //     this.addJoinUnwindStage(
+    //         Eloquent.getJoinAsPath(relatedTable, this.normalizeIdProperty(localColumn), this.normalizeIdProperty(relatedColumn))
+    //     )
+    //     return this
+    // }
 
-    fullJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, IEloquentExpression<unknown>> {
-        super.fullJoin(relatedTable, this.normalizeIdProperty(localColumn), this.normalizeIdProperty(relatedColumn))
-        this.addJoinUnwindStage(relatedTable)
-        return this
-    }
-
-    // crossJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, IEloquentExpression<unknown>> {
-    //     super.crossJoin(relatedTable, localColumn, relatedColumn)
-    //     this.expression.addColumn({
-    //         column: relatedTable,
-    //     })
+    // fullJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model, IEloquentExpression<unknown>> {
+    //     super.fullJoin(relatedTable, this.normalizeIdProperty(localColumn), this.normalizeIdProperty(relatedColumn))
+    //     this.addJoinUnwindStage(
+    //         Eloquent.getJoinAsPath(relatedTable, localColumn, relatedColumn)
+    //     )
     //     return this
     // }
 
@@ -396,19 +400,16 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             this.expression.setLimit(1)
 
             // Get the documents
-            const documents = await this.raw()
-
-            // Normalize the documents
-            const results = this.normalizeDocuments(documents)
+            const documents = this.formatResultsAsModels(await this.raw())
 
             // Restore the previous expression
             this.setExpression(previousExpression)
 
-            if(results.length === 0) {
+            if(documents.length === 0) {
                 return null
             }
 
-            return (this.formatterFn ? this.formatterFn(results[0]) : results[0]) as Model
+            return documents[0]
         })
     }
 
@@ -483,19 +484,28 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             this.expression.setBuildTypeSelect()
 
             // Fetch the documents, apply the distinct filters and normalize the documents
-            const results = await this.applyDistinctFilters(
-                this.normalizeDocuments(
-                    await this.raw()
-                )
+            const documents = await this.raw()
+
+            // Apply the distinct filters and normalize the documents
+            const results = this.formatResultsAsModels(
+                await this.applyDistinctFilters(documents)
             )
 
             // Restore the previous expression
             this.setExpression(previousExpression)
 
-            return collect<Model>(
-                (this.formatterFn ? results.map(this.formatterFn) : results) as Model[]
-            )
+            return collect<Model>(results)
         })
+    }
+
+    /**
+     * Formats the results by normalizing the documents, applying the formatter function, and grouping the prefixed properties.
+     * @param results The results to format
+     * @returns The formatted results
+     */
+    protected formatResultsAsModels(results: Document[]): Model[] {
+        results = this.normalizeDocuments(results)
+        return super.formatResultsAsModels(results)
     }
 
     /**

@@ -4,13 +4,13 @@ import { db } from "@src/core/domains/database/services/Database";
 import Eloquent from "@src/core/domains/eloquent/Eloquent";
 import EloquentException from "@src/core/domains/eloquent/exceptions/EloquentExpression";
 import UpdateException from "@src/core/domains/eloquent/exceptions/UpdateException";
-import { IEloquent, IdGeneratorFn, SetModelColumnsOptions, TransactionFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { IEloquent, IdGeneratorFn, SetModelColumnsOptions, TargetPropertyOptions, TransactionFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import SqlExpression, { SqlRaw } from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel } from "@src/core/interfaces/IModel";
+import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import captureError from "@src/core/util/captureError";
 import PrefixedPropertyGrouper from "@src/core/util/PrefixedPropertyGrouper";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
@@ -35,12 +35,18 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
     protected pool!: pg.PoolClient | pg.Pool;
 
     /**
+     * The formatter to use when formatting the result rows to objects
+     */
+    protected formatter: PrefixedPropertyGrouper = new PrefixedPropertyGrouper()
+
+    /**
      * Constructor
      * @param modelCtor The model constructor to use when creating or fetching models.
      */
     constructor() {
         super()
         this.setExpressionCtor(SqlExpression)
+        this.formatterList.setFormatter(PrefixedPropertyGrouper)
     }
 
     /**
@@ -62,6 +68,22 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      */
     protected resetBindingValues() {
         this.expression.bindingsUtility.reset()
+    }
+
+    join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<Model, IEloquentExpression<unknown>> {
+        super.join(related, localColumn, relatedColumn)
+
+        if(options?.targetProperty) {
+            const sourceProperty = Eloquent.getJoinAsPath(related.getTable(), localColumn, relatedColumn);
+
+            // Add all the columns from the foreign model to the query builder
+            this.setModelColumns(related, { columnPrefix: `${sourceProperty}_`, targetProperty: options.targetProperty })
+
+            // Add the source property to the formatter to format the result rows to objects with the target property
+            this.formatter.addColumn(sourceProperty, options.targetProperty)
+        }
+
+        return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
     }
 
     /**
@@ -147,6 +169,17 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
     }
 
     /**
+     * Formats the result rows to models
+     * @param results The result rows to format
+     * @returns The formatted models
+     */
+    protected formatResultsAsModels(results: object[]): Model[] {
+        results = this.formatter.format(results)
+        results = super.formatResultsAsModels(results)
+        return results as Model[]
+    }
+
+    /**
      * Executes a SQL expression using the connected PostgreSQL client.
      * 
      * This method builds the SQL query from the given expression and executes it using the connected PostgreSQL client.
@@ -156,14 +189,17 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      * @returns {Promise<T>} A promise that resolves with the query result.
      * @throws {QueryException} If the query execution fails.
      * @private
+     * @deprecated Use execute() instead
      */
     async fetchRows<T = QueryResult>(expression: SqlExpression = this.expression): Promise<T> {
-        const res = await this.execute(expression)
-        // Map the result to move prefixed columns to the target property
-        res.rows = PrefixedPropertyGrouper.handleArray<object>(res.rows, this.formatResultTargetPropertyToObjectOptions)
-        // Apply formatter
-        res.rows = this.formatterFn ? res.rows.map(this.formatterFn) : res.rows
-        return res as T 
+        const results = await this.execute(expression)
+        results.rows = this.formatResultsAsModels(results.rows as object[])
+        return results as T
+        // // Map the result to move prefixed columns to the target property
+        // res.rows = PrefixedPropertyGrouper.handleArray<object>(res.rows, this.formatResultTargetPropertyToObjectOptions)
+        // // Apply formatter
+        // res.rows = this.formatterFn ? res.rows.map(this.formatterFn) : res.rows
+        // return res as T 
     }
 
     /**
@@ -270,14 +306,16 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
 
             const previousLimit = this.expression.getOffsetLimit()
 
-            const res = await this.fetchRows(
+            const results = await this.execute(
                 this.expression.setOffsetAndLimit({ limit: 1})
             )
+
+            const models = await this.formatResultsAsModels(results.rows)
 
             // Reset the limit to the previous value
             this.expression.setOffsetAndLimit(previousLimit)
 
-            return res.rows[0] ?? null
+            return models[0] ?? null
         })
     }
 
@@ -310,13 +348,13 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
         return await captureError<Model | null>(async () => {
             this.expression.setBuildTypeSelect()
             
-            const res = await this.fetchRows()
+            const models = await this.fetchRows()
             
-            if(res.rows.length === 0) {
+            if(models.rows.length === 0) {
                 return null
             }
 
-            return res.rows[res.rows.length - 1] ?? null
+            return models.rows[models.rows.length - 1] ?? null
         })
     }
 

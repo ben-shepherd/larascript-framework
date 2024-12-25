@@ -19,6 +19,8 @@ import { App } from "@src/core/services/App";
 import { deepClone } from "@src/core/util/deepClone";
 import { PrefixToTargetPropertyOptions } from "@src/core/util/PrefixedPropertyGrouper";
 
+import FormatterList from "../formatter/base/FormatterList";
+
 /**
  * Base class for Eloquent query builder.
  * Provides database query building and execution functionality.
@@ -75,6 +77,11 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
     protected formatResultTargetPropertyToObjectOptions: PrefixToTargetPropertyOptions = [];
 
     /**
+     * The formatter list for transforming the results
+     */
+    protected formatterList: FormatterList = new FormatterList()
+
+    /**
      * The id generator function
      */
     protected idGeneratorFn?: IdGeneratorFn;
@@ -111,6 +118,18 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
         return rows.map(row => {
             return this.formatterFn ? this.formatterFn(row) : row
         }) as Model[]
+    }
+
+    /**
+     * Formats the results
+     * @param results The results to format
+     * @returns The formatted results
+     */
+    protected formatResultsAsModels(results: object[]): Model[] {
+        if(!this.modelCtor) {
+            throw new EloquentException('Model constructor has not been set')
+        }
+        return results.map(result => (this.modelCtor as ModelConstructor<IModel>).create(result as Model['attributes']))
     }
 
     /**
@@ -681,6 +700,18 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
     }
 
     /**
+     * Constructs a path for a join column.
+     * 
+     * @param {string} relatedTable - The table to join with.
+     * @param {string} localColumn - The column to join on in the left table.
+     * @param {string} relatedColumn - The column to join on in the right table.
+     * @returns {string} The constructed path.
+     */
+    static getJoinAsPath(relatedTable: string, localColumn: string, relatedColumn: string): string {
+        return `${relatedTable}_${localColumn}_${relatedColumn}`.toLocaleLowerCase().trim()
+    }
+
+    /**
      * Adds an inner join to the query builder.
      * 
      * @param {string} table - The table to join.
@@ -689,9 +720,9 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
      * @param {string} relatedColumn - The column to join on in the right table.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    join(relatedTable: string, localColumn: string, relatedColumn: string ): IEloquent<Model> {
+    join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string ): IEloquent<Model> {
         const localTable = this.useTable()
-        this.expression.setJoins({ localTable, localColumn, relatedTable, relatedColumn, type: 'inner' });
+        this.expression.setJoins({ localTable, localColumn, relatedTable: related.getTable(), relatedColumn, type: 'inner' });
         return this as unknown as IEloquent<Model>
     }
 

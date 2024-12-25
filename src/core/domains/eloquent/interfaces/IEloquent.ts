@@ -119,6 +119,11 @@ export type IdGeneratorFn<T = unknown> = <ReturnType = T>(...args: any[]) => Ret
 
 export type TransactionFn<Model extends IModel = IModel> = (query: IEloquent<ModelWithAttributes<Model>>) => Promise<void>;
 
+export type TargetPropertyOptions = {
+    targetProperty: string;
+    setTargetPropertyNullWhenObjectAllNullish?: boolean;
+}
+
 export interface IEloquent<Model extends IModel = IModel, Expression extends IEloquentExpression = IEloquentExpression> {
     
     // eloquent methods
@@ -213,7 +218,7 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     whereNotBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<ModelWithAttributes<Model>>;
 
     // Joins
-    join(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<ModelWithAttributes<Model>>;
+    join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<ModelWithAttributes<Model>>;
     fullJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<ModelWithAttributes<Model>>;
     leftJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<ModelWithAttributes<Model>>;
     rightJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<ModelWithAttributes<Model>>;
