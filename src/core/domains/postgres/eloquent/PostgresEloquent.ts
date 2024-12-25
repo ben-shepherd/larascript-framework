@@ -4,7 +4,7 @@ import { db } from "@src/core/domains/database/services/Database";
 import Eloquent from "@src/core/domains/eloquent/Eloquent";
 import EloquentException from "@src/core/domains/eloquent/exceptions/EloquentExpression";
 import UpdateException from "@src/core/domains/eloquent/exceptions/UpdateException";
-import { IEloquent, IdGeneratorFn, SetModelColumnsOptions, TargetPropertyOptions, TransactionFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { IEloquent, IdGeneratorFn, SetModelColumnsOptions, TransactionFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import SqlExpression, { SqlRaw } from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
@@ -67,16 +67,22 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      * @param relatedColumn The related column to join on
      * @param options The options for the join
      */
-    protected prepareJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions) {
-        if(options?.targetProperty) {
-            const sourceProperty = Eloquent.getJoinAsPath(related.getTable(), localColumn, relatedColumn);
-
-            // Add all the columns from the foreign model to the query builder
-            this.setModelColumns(related, { columnPrefix: `${sourceProperty}_`, targetProperty: options.targetProperty })
-
-            // Add the source property to the formatter to format the result rows to objects with the target property
-            this.formatter.addOption(sourceProperty, options.targetProperty)
+    protected prepareJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string) {
+        if(typeof targetProperty !== 'string' || targetProperty.length === 0) {
+            throw new Error('Target property is required for join')
         }
+        
+        // Generate an arbitrary property name for the join
+        // Example: 'users_department_id'
+        const arbitraryProperty = Eloquent.getJoinAsPath(related.getTable(), localColumn, relatedColumn);
+
+        // Add all the columns from the foreign model to the query builder
+        // This will be used in the query builder to select the columns from the foreign model
+        this.setModelColumns(related, { columnPrefix: `${arbitraryProperty}_`, targetProperty: targetProperty })
+        
+        // Add the source property to the formatter to format the result rows to objects with the target property
+        // This will be used in the formatter to format the result rows to objects with the target property
+        this.formatter.addOption(arbitraryProperty, targetProperty)
     }
 
     /**
@@ -87,9 +93,9 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      * @param options The options for the join
      * @returns The current query builder instance
      */
-    join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<Model, IEloquentExpression<unknown>> {
+    join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<Model, IEloquentExpression<unknown>> {
         super.join(related, localColumn, relatedColumn)
-        this.prepareJoin(related, localColumn, relatedColumn, options)
+        this.prepareJoin(related, localColumn, relatedColumn, targetProperty)
         return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
     }
 
@@ -101,9 +107,9 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      * @param options The options for the join
      * @returns The current query builder instance
      */
-    leftJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<Model, IEloquentExpression<unknown>> {
+    leftJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<Model, IEloquentExpression<unknown>> {
         super.leftJoin(related, localColumn, relatedColumn)
-        this.prepareJoin(related, localColumn, relatedColumn, options)
+        this.prepareJoin(related, localColumn, relatedColumn, targetProperty)
         return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
     }
 
@@ -115,9 +121,9 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      * @param options The options for the join
      * @returns The current query builder instance
      */
-    rightJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<Model, IEloquentExpression<unknown>> {
+    rightJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<Model, IEloquentExpression<unknown>> {
         super.rightJoin(related, localColumn, relatedColumn)
-        this.prepareJoin(related, localColumn, relatedColumn, options)
+        this.prepareJoin(related, localColumn, relatedColumn, targetProperty)
         return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
     }
 
@@ -129,9 +135,9 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      * @param options The options for the join
      * @returns The current query builder instance
      */
-    fullJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<Model, IEloquentExpression<unknown>> {
+    fullJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<Model, IEloquentExpression<unknown>> {
         super.fullJoin(related, localColumn, relatedColumn)
-        this.prepareJoin(related, localColumn, relatedColumn, options)
+        this.prepareJoin(related, localColumn, relatedColumn, targetProperty)
         return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
     }
 
@@ -358,11 +364,11 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
 
             const previousLimit = this.expression.getOffsetLimit()
 
-            const results = await this.execute(
+            const result = await this.execute(
                 this.expression.setOffsetAndLimit({ limit: 1})
             )
 
-            const models = await this.formatResultsAsModels(results.rows)
+            const models = await this.formatResultsAsModels(result.rows)
 
             // Reset the limit to the previous value
             this.expression.setOffsetAndLimit(previousLimit)

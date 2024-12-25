@@ -183,11 +183,9 @@ describe('eloquent', () => {
     test('test inner join', async () => {
         await forEveryConnection(async connection => {
             const employeeQuery = getEmployeeQuery(connection)
-            const departmentTable = TestDepartmentModel.getTable();
 
             const alice = await employeeQuery.clone()
-                .join(departmentTable, 'deptId', 'id')
-                .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+                .join(TestDepartmentModel, 'deptId', 'id', 'department')
                 .where('name', 'Alice')
                 .firstOrFail();
 
@@ -195,8 +193,7 @@ describe('eloquent', () => {
             expect(alice?.attrSync('department')?.deptName).toBe('HR')
         
             const notFoundRelation = await employeeQuery.clone()
-                .join(departmentTable, 'deptId', 'id')
-                .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+                .join(TestDepartmentModel, 'deptId', 'id', 'department')
                 .where('name', 'NoRelationship')
                 .first();
 
@@ -209,19 +206,16 @@ describe('eloquent', () => {
 
         await forEveryConnection(async connection => {
             const employeeQuery = getEmployeeQuery(connection)
-            const departmentTable = TestDepartmentModel.getTable();
 
             const alice = await employeeQuery.clone()
-                .leftJoin(departmentTable, 'deptId', 'id')
-                .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+                .leftJoin(TestDepartmentModel, 'deptId', 'id', 'department')
                 .where('name', 'Alice').firstOrFail();
 
             expect(alice?.attrSync('department')).toBeTruthy();
             expect(alice?.attrSync('department')?.deptName).toBe('HR');
 
             const notFoundRelation = await employeeQuery.clone()
-                .leftJoin(departmentTable, 'deptId', 'id')
-                .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+                .leftJoin(TestDepartmentModel, 'deptId', 'id', 'department')
                 .where('name', 'NoRelationship')
                 .firstOrFail();
 
@@ -236,19 +230,16 @@ describe('eloquent', () => {
 
         await forEveryConnection(async connection => {
             const employeeQuery = getEmployeeQuery(connection)
-            const departmentTable = TestDepartmentModel.getTable();
 
             const alice = await employeeQuery.clone()
-                .rightJoin(departmentTable, 'deptId', 'id')
-                .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+                .rightJoin(TestDepartmentModel, 'deptId', 'id', 'department')
                 .where('name', 'Alice').firstOrFail();
         
             expect(alice?.attrSync('department')).toBeTruthy();
             expect(alice?.attrSync('department')?.deptName).toBe('HR');
 
             const notFoundRelation = await employeeQuery.clone()
-                .rightJoin(departmentTable, 'deptId', 'id')
-                .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+                .rightJoin(TestDepartmentModel, 'deptId', 'id', 'department')
                 .where('name', 'NoRelationship')
                 .first();
 
@@ -261,12 +252,10 @@ describe('eloquent', () => {
 
         await forEveryConnection(async connection => {
             const employeeQuery = getEmployeeQuery(connection)
-            const departmentTable = TestDepartmentModel.getTable();
 
             // Should find matched records
             const alice = await employeeQuery.clone()
-                .fullJoin(departmentTable, 'deptId', 'id')
-                .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+                .fullJoin(TestDepartmentModel, 'deptId', 'id', 'department')
                 .where('name', 'Alice')
                 .firstOrFail();
     
@@ -275,7 +264,7 @@ describe('eloquent', () => {
 
             // Should find unmatched employee (NoRelationship)
             const notFoundRelation = await employeeQuery.clone()
-                .fullJoin(departmentTable, 'deptId', 'id')
+                .fullJoin(TestDepartmentModel, 'deptId', 'id', 'department')
                 .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
                 .where('name', 'NoRelationship')
                 .firstOrFail();
@@ -291,10 +280,9 @@ describe('eloquent', () => {
 
         await forEveryConnection(async connection => {
             const employeeQuery = getEmployeeQuery(connection)
-            const departmentTable = TestDepartmentModel.getTable();
 
             const results = await employeeQuery.clone()
-                .crossJoin(departmentTable)
+                .crossJoin(TestDepartmentModel)
                 .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
                 .all();
     

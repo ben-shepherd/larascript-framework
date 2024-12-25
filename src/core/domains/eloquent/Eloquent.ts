@@ -683,7 +683,7 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
      * @param {string} relatedColumn - The column to join on in the right table.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string ): IEloquent<Model> {
+    join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, ...args: any[]): IEloquent<Model> {
         const localTable = this.useTable()
         this.expression.setJoins({ localTable, localColumn, relatedTable: related.getTable(), relatedColumn, type: 'inner' });
         return this as unknown as IEloquent<Model>
@@ -697,7 +697,7 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
      * @param {string} relatedColumn - The column to join on in the right table.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    leftJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string): IEloquent<Model> {
+    leftJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, ...args: any[]): IEloquent<Model> {
         const localTable = this.useTable()
         this.expression.setJoins({ localTable, localColumn, relatedTable: related.getTable(), relatedColumn, type: 'left' });
         return this as unknown as IEloquent<Model>
@@ -711,7 +711,7 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
      * @param {string} relatedColumn - The column to join on in the right table.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    rightJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string): IEloquent<Model> {
+    rightJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, ...args: any[]): IEloquent<Model> {
         const localTable = this.useTable()
         this.expression.setJoins({ localTable, localColumn, relatedTable: related.getTable(), relatedColumn, type: 'right' });
         return this as unknown as IEloquent<Model>
@@ -728,7 +728,7 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
      * @param {string} relatedColumn - The column to join on in the right table.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    fullJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string): IEloquent<Model> {
+    fullJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, ...args: any[]): IEloquent<Model> {
         const localTable = this.useTable()
         this.expression.setJoins({ localTable, localColumn, relatedTable: related.getTable(), relatedColumn, type: 'full' });
         return this as unknown as IEloquent<Model>

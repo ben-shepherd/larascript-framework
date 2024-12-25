@@ -214,10 +214,10 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     whereNotBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<ModelWithAttributes<Model>>;
 
     // Joins
-    join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<ModelWithAttributes<Model>>;
-    fullJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<ModelWithAttributes<Model>>;
-    leftJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<ModelWithAttributes<Model>>;
-    rightJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<ModelWithAttributes<Model>>;
+    join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<ModelWithAttributes<Model>>;
+    fullJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<ModelWithAttributes<Model>>;
+    leftJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<ModelWithAttributes<Model>>;
+    rightJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<ModelWithAttributes<Model>>;
     crossJoin(related: ModelConstructor<IModel>): IEloquent<ModelWithAttributes<Model>>;
     with(relationship: string): IEloquent<ModelWithAttributes<Model>>;
 

@@ -8,7 +8,7 @@ import Collection from "../../collections/Collection";
 import collect from "../../collections/helper/collect";
 import Eloquent from "../../eloquent/Eloquent";
 import EloquentException from "../../eloquent/exceptions/EloquentExpression";
-import { IEloquent, TargetPropertyOptions } from "../../eloquent/interfaces/IEloquent";
+import { IEloquent } from "../../eloquent/interfaces/IEloquent";
 import IEloquentExpression from "../../eloquent/interfaces/IEloquentExpression";
 import { logger } from "../../logger/services/LoggerService";
 import MongoDbAdapter from "../adapters/MongoDbAdapter";
@@ -203,7 +203,12 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      * @param relatedColumn The related column to join on
      * @param options The options for the join
      */
-    protected prepareJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): void {
+    protected prepareJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): void {
+
+        if(typeof targetProperty !== 'string' || targetProperty.length === 0) {
+            throw new EloquentException('Target property is required for join')
+        }
+
         localColumn = this.normalizeIdProperty(localColumn)
         relatedColumn = this.normalizeIdProperty(relatedColumn)
 
@@ -225,12 +230,10 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
         })
 
         // Add the formatter option (maps the related object to the target property)
-        if(options?.targetProperty) {
-            this.formatter.addOption(
-                Eloquent.getJoinAsPath(related.getTable(), localColumn, relatedColumn),
-                options.targetProperty
-            )
-        }
+        this.formatter.addOption(
+            Eloquent.getJoinAsPath(related.getTable(), localColumn, relatedColumn),
+            targetProperty
+        )
     }
 
     /**
@@ -238,9 +241,10 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      * @param relatedTable The name of the related table to join
      * @param localColumn The local column to join on
      * @param relatedColumn The related column to join on
+     * @param targetProperty The target property to map the related object to
      * @returns The current query builder instance
      */
-    join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<Model, IEloquentExpression<unknown>> {
+    join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<Model, IEloquentExpression<unknown>> {
 
         // Normalize the columns
         localColumn = this.normalizeIdProperty(localColumn)
@@ -250,12 +254,12 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
         super.join(related, localColumn, relatedColumn)
         
         // Prepare the join
-        this.prepareJoin(related, localColumn, relatedColumn, options)
+        this.prepareJoin(related, localColumn, relatedColumn, targetProperty)
 
-        return this
+        return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
     }
 
-    leftJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<Model, IEloquentExpression<unknown>> {
+    leftJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<Model, IEloquentExpression<unknown>> {
 
         // Normalize the columns
         localColumn = this.normalizeIdProperty(localColumn)
@@ -265,12 +269,12 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
         super.leftJoin(related, localColumn, relatedColumn)
         
         // Prepare the join
-        this.prepareJoin(related, localColumn, relatedColumn, options)
+        this.prepareJoin(related, localColumn, relatedColumn, targetProperty)
 
         return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
     }
 
-    rightJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<Model, IEloquentExpression<unknown>> {
+    rightJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<Model, IEloquentExpression<unknown>> {
         // Normalize the columns
         localColumn = this.normalizeIdProperty(localColumn)
         relatedColumn = this.normalizeIdProperty(relatedColumn)
@@ -279,12 +283,12 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
         super.rightJoin(related, localColumn, relatedColumn)
         
         // Prepare the join
-        this.prepareJoin(related, localColumn, relatedColumn, options)
+        this.prepareJoin(related, localColumn, relatedColumn, targetProperty)
 
         return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
     }
 
-    fullJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, options?: TargetPropertyOptions): IEloquent<Model, IEloquentExpression<unknown>> {
+    fullJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<Model, IEloquentExpression<unknown>> {
         // Normalize the columns
         localColumn = this.normalizeIdProperty(localColumn)
         relatedColumn = this.normalizeIdProperty(relatedColumn)
@@ -293,7 +297,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
         super.join(related, localColumn, relatedColumn)
                 
         // Prepare the join
-        this.prepareJoin(related, localColumn, relatedColumn, options)
+        this.prepareJoin(related, localColumn, relatedColumn, targetProperty)
 
         return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
     }
