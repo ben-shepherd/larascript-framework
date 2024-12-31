@@ -411,7 +411,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
             relationship = EloquentRelationship.fromModel(this.constructor as ICtor<IModel>, key as string);
         }
 
-        this.setAttribute(key, await EloquentRelationship.fetchRelationshipData<Attributes, K>(this, relationship));
+        this.setAttribute(key, await EloquentRelationship.fetchRelationshipData<Attributes, K>(this, relationship, this.connection));
 
         return this.getAttributeSync(key);
     }

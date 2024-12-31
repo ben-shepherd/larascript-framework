@@ -148,6 +148,7 @@ describe('eloquent', () => {
                 .where('name', 'Alice')
                 .firstOrFail();
 
+            aliceModel.setConnectionName(connection)
             const department = await aliceModel.attr('department');
 
             const hr = await departmentQuery.clone().where('deptName', 'HR').firstOrFail();

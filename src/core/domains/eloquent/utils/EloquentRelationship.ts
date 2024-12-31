@@ -15,14 +15,14 @@ class EloquentRelationship {
      * @param relationship - The name of the relationship.
      * @returns The related document or null if not found.
      */
-    public static async fetchRelationshipData<Attributes extends IModelAttributes = IModelAttributes, K extends keyof Attributes = keyof Attributes>(model: IModel, relationship: IRelationship) {
+    public static async fetchRelationshipData<Attributes extends IModelAttributes = IModelAttributes, K extends keyof Attributes = keyof Attributes>(model: IModel, relationship: IRelationship, connection: string) {
 
         if(relationship instanceof BelongsTo) {
-            return this.fetchBelongsTo<Attributes, K>(model, relationship)
+            return this.fetchBelongsTo<Attributes, K>(model, relationship, connection)
         }
     
         if(relationship instanceof HasMany) {
-            return this.fetchHasMany<Attributes, K>(model, relationship)
+            return this.fetchHasMany<Attributes, K>(model, relationship, connection)
         }
     
         return null
@@ -35,11 +35,11 @@ class EloquentRelationship {
      * @param relationship - The relationship interface.
      * @returns The related document or null if not found.
      */
-    protected static async fetchBelongsTo<Attributes extends IModelAttributes = IModelAttributes, K extends keyof Attributes = keyof Attributes>(model: IModel, relationship: IRelationship): Promise<Attributes[K] | null> {
+    protected static async fetchBelongsTo<Attributes extends IModelAttributes = IModelAttributes, K extends keyof Attributes = keyof Attributes>(model: IModel, relationship: IRelationship, connection: string): Promise<Attributes[K] | null> {
 
         const localValue = model.getAttributeSync(relationship.getLocalKey()) as TWhereClauseValue;
 
-        return await queryBuilder(relationship.getForeignModelCtor())
+        return await queryBuilder(relationship.getForeignModelCtor(), connection)
             .where(relationship.getForeignKey(), '=', localValue)
             .first() as Attributes[K]
     }
@@ -56,11 +56,11 @@ class EloquentRelationship {
      * @param {IRelationship} relationship - The relationship interface.
      * @returns {Promise<Collection<Attributes[K]>>} A collection of related documents.
      */
-    protected static async fetchHasMany<Attributes extends IModelAttributes = IModelAttributes, K extends keyof Attributes = keyof Attributes>(model: IModel, relationship: IRelationship): Promise<Collection<Attributes[K]>> {
+    protected static async fetchHasMany<Attributes extends IModelAttributes = IModelAttributes, K extends keyof Attributes = keyof Attributes>(model: IModel, relationship: IRelationship, connection: string): Promise<Collection<Attributes[K]>> {
 
         const localValue = model.getAttributeSync(relationship.getLocalKey()) as TWhereClauseValue;
 
-        return await queryBuilder(relationship.getForeignModelCtor())
+        return await queryBuilder(relationship.getForeignModelCtor(), connection)
             .where(relationship.getForeignKey(), '=', localValue)
             .get() as unknown as Collection<Attributes[K]>
     }
