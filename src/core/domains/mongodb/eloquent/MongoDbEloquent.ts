@@ -6,6 +6,7 @@ import { Document, Collection as MongoCollection, ObjectId } from "mongodb";
 
 import Collection from "../../collections/Collection";
 import collect from "../../collections/helper/collect";
+import { db } from "../../database/services/Database";
 import Eloquent from "../../eloquent/Eloquent";
 import EloquentException from "../../eloquent/exceptions/EloquentExpression";
 import { IEloquent } from "../../eloquent/interfaces/IEloquent";
@@ -130,6 +131,14 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
                 document.id = this.normalizeId(document._id)
                 delete document._id
             }
+
+            // Normalize ObjectId properties to string
+            Object.keys(document).forEach(key => {
+                if(document[key] instanceof ObjectId) {
+                    document[key] = document[key].toString()
+                }
+            })
+
             return document
         })
 
@@ -315,7 +324,9 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
                 aggregationPipeline = this.expression.build()
             }
 
-            logger().console('[MongoDbEloquent.raw] aggregationPipeline', JSON.stringify(aggregationPipeline))
+            if(db().showLogs()) {
+                logger().console('[MongoDbEloquent.raw] aggregationPipeline', JSON.stringify(aggregationPipeline))
+            }
 
             // Get the collection
             const collection = this.getMongoCollection();
