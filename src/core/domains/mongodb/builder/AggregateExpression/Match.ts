@@ -110,7 +110,7 @@ class Match {
 
         // If there are no where clauses, return an empty match
         if(whereClauses.length === 0) {
-            return { $match: {} }
+            return {}
         }
 
         // If there are zero OR conditions, and only AND conditions, return the AND conditions

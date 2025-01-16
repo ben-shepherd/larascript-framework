@@ -738,14 +738,15 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             // Denormalize the documents to be updated
             const normalizedDocument = this.denormalizeDocuments(document)?.[0] as object
 
+            // Build aggregate expression to get document IDs for update
+            const preUpdateAggregation: object[] = new AggregateExpression()
+                .setColumns([{ column: '_id' }])
+                .setWhere(this.expression.getWhere())
+                .setLimit(1000)
+                .build()
+
             // Get the pre-update results for the match filter
-            const preUpdateResults = await this.raw(
-                new AggregateExpression()
-                    .setColumns([{ column: '_id' }])
-                    .setWhere(this.expression.getWhere())
-                    .setLimit(1000)
-                    .build()
-            )
+            const preUpdateResults = await this.raw(preUpdateAggregation)
             const preUpdateResultsDocumentIds = preUpdateResults.map(document => document._id)
             
             // Update each document
