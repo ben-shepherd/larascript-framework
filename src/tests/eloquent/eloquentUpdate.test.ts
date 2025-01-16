@@ -32,21 +32,26 @@ describe('eloquent', () => {
             ])
             const results = await query.clone().orderBy('name').get()
 
+            const janeId = results.find(person => person.name === 'Jane')?.id;
+            expect(typeof janeId).toBe('string');
+            const johnId = results.find(person => person.name === 'John')?.id;
+            expect(typeof johnId).toBe('string');
+
             const updatedFirst = await query.clone().where('name', 'John').update({ age: 26 });
             expect(updatedFirst.count()).toBe(1);
-            expect(updatedFirst[0].id).toBe(inserted[0].id);
+            expect(updatedFirst[0].id).toBe(johnId);
             expect(updatedFirst[0].age).toBe(26);
 
             const updatedSecond = await query.clone().where('name', 'Jane').update({ age: 31 });
             expect(updatedSecond.count()).toBe(1);
-            expect(updatedSecond[0].id).toBe(results[1].id);
+            expect(updatedSecond[0].id).toBe(janeId);
             expect(updatedSecond[0].age).toBe(31);
 
             const updatedBoth = await query.clone().orderBy('name').updateAll({ age: 27 });
             expect(updatedBoth.count()).toBe(2);
-            expect(updatedBoth[0].id).toBe(results[0].id);
+            expect(updatedBoth[0].id).toBe(johnId);
             expect(updatedBoth[0].age).toBe(27);
-            expect(updatedBoth[1].id).toBe(results[1].id);
+            expect(updatedBoth[1].id).toBe(janeId);
             expect(updatedBoth[1].age).toBe(27);
 
         })
