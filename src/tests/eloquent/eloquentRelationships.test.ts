@@ -9,79 +9,81 @@ const resetAndRepopulate = async () => {
     await resetTableEmployeeModel();
     await resetTableDepartmentModel();
 
-    const insertedDepartments = await queryBuilder(TestDepartmentModel).insert([
-        {
-            deptName: 'HR',
-            createdAt: new Date(),
-            updatedAt: new Date()
-        },
-        {
-            deptName: 'Sales',
-            createdAt: new Date(),
-            updatedAt: new Date()
-        },
-        {
-            deptName: 'IT',
-            createdAt: new Date(),
-            updatedAt: new Date()
-        },
-        {
-            deptName: 'Finance',
-            createdAt: new Date(),
-            updatedAt: new Date()
-        }
-    ])
+    await forEveryConnection(async connection => {
+        const insertedDepartments = await queryBuilder(TestDepartmentModel, connection).insert([
+            {
+                deptName: 'HR',
+                createdAt: new Date(),
+                updatedAt: new Date()
+            },
+            {
+                deptName: 'Sales',
+                createdAt: new Date(),
+                updatedAt: new Date()
+            },
+            {
+                deptName: 'IT',
+                createdAt: new Date(),
+                updatedAt: new Date()
+            },
+            {
+                deptName: 'Finance',
+                createdAt: new Date(),
+                updatedAt: new Date()
+            }
+        ])
 
-    await queryBuilder(TestEmployeeModel).insert([
-        {
-            deptId: insertedDepartments.find((department) => department?.deptName === 'HR')?.id,
-            name: 'Alice',
-            age: 25,
-            salary: 10000,
-            createdAt: new Date(),
-            updatedAt: new Date()
-        },
-        {
-            deptId: insertedDepartments.find((department) => department?.deptName === 'Sales')?.id,
-            name: 'Bob',
-            salary: 20000,
-            age: 30,
-            createdAt: new Date(),
-            updatedAt: new Date()
-        },
-        {
-            deptId: insertedDepartments.find((department) => department?.deptName === 'IT')?.id,
-            name: 'John',
-            age: 35,
-            salary: 30000,
-            createdAt: new Date(),
-            updatedAt: new Date()
-        },
-        {
-            deptId: insertedDepartments.find((department) => department?.deptName === 'Finance')?.id,
-            name: 'Jane',
-            age: 40,
-            salary: 40000,
-            createdAt: new Date(),
-            updatedAt: new Date()
-        },
-        {
-            deptId: insertedDepartments.find((department) => department?.deptName === 'Finance')?.id,
-            name: 'Peter',
-            age: 50,
-            salary: 50000,
-            createdAt: new Date(),
-            updatedAt: new Date()
-        },
-        {
-            deptId: null,
-            name: 'NoRelationship',
-            age: 40,
-            salary: 50000,
-            createdAt: new Date(),
-            updatedAt: new Date()
-        }
-    ])
+        await queryBuilder(TestEmployeeModel, connection).insert([
+            {
+                deptId: insertedDepartments.find((department) => department?.deptName === 'HR')?.id,
+                name: 'Alice',
+                age: 25,
+                salary: 10000,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            },
+            {
+                deptId: insertedDepartments.find((department) => department?.deptName === 'Sales')?.id,
+                name: 'Bob',
+                salary: 20000,
+                age: 30,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            },
+            {
+                deptId: insertedDepartments.find((department) => department?.deptName === 'IT')?.id,
+                name: 'John',
+                age: 35,
+                salary: 30000,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            },
+            {
+                deptId: insertedDepartments.find((department) => department?.deptName === 'Finance')?.id,
+                name: 'Jane',
+                age: 40,
+                salary: 40000,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            },
+            {
+                deptId: insertedDepartments.find((department) => department?.deptName === 'Finance')?.id,
+                name: 'Peter',
+                age: 50,
+                salary: 50000,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            },
+            {
+                deptId: null,
+                name: 'NoRelationship',
+                age: 40,
+                salary: 50000,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            }
+        ])
+    })
 }
 
 describe('eloquent', () => {
