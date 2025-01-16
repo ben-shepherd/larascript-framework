@@ -5,6 +5,8 @@ import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 
+import { IRelationshipResolver } from "../../eloquent/interfaces/IEqloeuntRelationship";
+
 export type TAdapterComposerFileName = {
 
     // Example: 'mongodb.yml'
@@ -27,6 +29,8 @@ export interface  IDatabaseAdapter {
     getSchema(): IDatabaseSchema;
 
     getEloquentConstructor<Model extends IModel = IModel>(): ICtor<IEloquent<Model>>;
+
+    getRelationshipResolver(connection: string): IRelationshipResolver;
 
     getDockerComposeFileName(): string;
 

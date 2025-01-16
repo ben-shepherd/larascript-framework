@@ -1,10 +1,10 @@
  
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import { db } from '@src/core/domains/database/services/Database';
+import BaseRelationshipResolver from '@src/core/domains/eloquent/base/BaseRelationshipResolver';
 import { IBelongsToOptions, IEloquent, IHasManyOptions, IRelationship, IdGeneratorFn } from '@src/core/domains/eloquent/interfaces/IEloquent';
 import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
 import HasMany from '@src/core/domains/eloquent/relational/HasMany';
-import EloquentRelationship from '@src/core/domains/eloquent/utils/EloquentRelationship';
 import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
 import { IObserver, IObserverEvent } from '@src/core/domains/observer/interfaces/IObserver';
 import { ICtor } from '@src/core/interfaces/ICtor';
@@ -384,7 +384,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      */
     async getAttribute<K extends keyof Attributes = keyof Attributes>(key: K): Promise<Attributes[K] | null> {
 
-        const relationsip = EloquentRelationship.getRelationshipInterface(this, key as string);
+        const relationsip = BaseRelationshipResolver.tryGetRelationshipInterface(this, key as string);
 
         if(relationsip) {
             return this.getAttributeRelationship(key, relationsip);
@@ -407,11 +407,16 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
             return this.attributes[key] 
         }
 
+        // Get the relationship interface
         if(!relationship) {
-            relationship = EloquentRelationship.fromModel(this.constructor as ICtor<IModel>, key as string);
+            relationship = BaseRelationshipResolver.resolveRelationshipInterfaceByModelRelationshipName(this.constructor as ICtor<IModel>, key as string);
         }
 
-        this.setAttribute(key, await EloquentRelationship.fetchRelationshipData<Attributes, K>(this, relationship, this.connection));
+        // Get the relationship resolver
+        const resolver = db().getAdapter(this.connection).getRelationshipResolver()
+
+        // Set the attribute
+        this.setAttribute(key, await resolver.resolveData<Attributes, K>(this, relationship, this.connection));
 
         return this.getAttributeSync(key);
     }

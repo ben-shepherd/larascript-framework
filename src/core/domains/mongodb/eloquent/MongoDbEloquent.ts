@@ -325,7 +325,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             }
 
             if(db().showLogs()) {
-                logger().console('[MongoDbEloquent.raw] aggregationPipeline', JSON.stringify(aggregationPipeline))
+                logger().console('[MongoDbEloquent.raw] aggregation (Collection: ' + (this.modelCtor?.getTable() ?? 'Unknown') + ')', JSON.stringify(aggregationPipeline))
             }
 
             // Get the collection
