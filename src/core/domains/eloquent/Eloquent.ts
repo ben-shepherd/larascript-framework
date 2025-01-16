@@ -105,7 +105,13 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
         if(!this.modelCtor) {
             throw new EloquentException('Model constructor has not been set')
         }
-        return results.map(result => (this.modelCtor as ModelConstructor<IModel>).create(result as Model['attributes']))
+        
+        return results.map(result => {
+            const modelConstructor = this.modelCtor as ModelConstructor<IModel>;
+            const model = modelConstructor.create(result as Model['attributes'])
+            model.setConnectionName(this.connectionName)
+            return model
+        })
     }
 
     /**
