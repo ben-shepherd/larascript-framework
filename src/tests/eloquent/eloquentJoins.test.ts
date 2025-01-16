@@ -192,7 +192,18 @@ describe('eloquent', () => {
 
             expect(alice?.attrSync('department')).toBeTruthy();
             expect(alice?.attrSync('department')?.deptName).toBe('HR')
-        
+
+        })
+    })
+
+    // This test is only relevant for postgres
+    // MongoDB does not support joins, so default behavior uses left join
+    test('test inner join, relation not found, ignore mongodb', async () => {
+        await forEveryConnection(async connection => {
+            if (connection === 'mongodb') return;
+
+            const employeeQuery = getEmployeeQuery(connection)
+
             const notFoundRelation = await employeeQuery.clone()
                 .join(TestDepartmentModel, 'deptId', 'id', 'department')
                 .where('name', 'NoRelationship')
@@ -200,7 +211,6 @@ describe('eloquent', () => {
 
             expect(notFoundRelation).toBe(null)
         })
-
     })
 
     test('test left join', async () => {
@@ -227,9 +237,13 @@ describe('eloquent', () => {
 
     })
 
-    test('test right join', async () => {
+    // This test is only relevant for postgres
+    // MongoDB does not support joins, so default behavior uses left join
+    test('test right join, ignore mongodb', async () => {
 
         await forEveryConnection(async connection => {
+            if (connection === 'mongodb') return;
+
             const employeeQuery = getEmployeeQuery(connection)
 
             const alice = await employeeQuery.clone()
@@ -249,9 +263,13 @@ describe('eloquent', () => {
 
     })
 
-    test('test full join', async () => {
+    // This test is only relevant for postgres
+    // MongoDB does not support joins, so default behavior uses left join
+    test('test full join, ignore mongodb', async () => {
 
         await forEveryConnection(async connection => {
+            if (connection === 'mongodb') return;
+
             const employeeQuery = getEmployeeQuery(connection)
 
             // Should find matched records
@@ -277,9 +295,13 @@ describe('eloquent', () => {
 
     })
 
-    test('test cross join', async () => {
+    // This test is only relevant for postgres
+    // MongoDB does not support joins, so default behavior uses left join
+    test('test cross join, ignore mongodb', async () => {
 
         await forEveryConnection(async connection => {
+            if (connection === 'mongodb') return;
+
             const employeeQuery = getEmployeeQuery(connection)
 
             const results = await employeeQuery.clone()
