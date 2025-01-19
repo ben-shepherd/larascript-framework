@@ -14,25 +14,23 @@ services:
   mongodb:
     container_name: larascript-mongodb
     image: mongo:latest
-    command: ["/bin/bash", "-c", "
-      /init-replica.sh &
-      exec docker-entrypoint.sh mongod --replSet rs0 --bind_ip_all --keyFile /data/mongodb-keyfile"]
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/data/mongodb-keyfile"]
     ports:
-      - "0.0.0.0:27017:27017"
+      - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
       LARASCRIPT_DEFAULT_CREDENTIALS: mongodb://root:example@localhost:27017/app?authSource=admin&replicaSet=rs0
     volumes:
       - mongodb_data:/data/db
-      - ./init-replica.sh:/init-replica.sh
+      - ./init-replica.sh:/docker-entrypoint-initdb.d/init-replica.sh
       - mongodb_keyfile:/data
     networks:
       - app-network
     depends_on:
       - mongodb-setup
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "rs.status()", "--quiet"]
+      test: ["CMD", "mongosh", "admin", "-u", "root", "-p", "example", "--eval", "rs.status()"]
       interval: 10s
       timeout: 5s
       retries: 5
