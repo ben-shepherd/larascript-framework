@@ -1,29 +1,10 @@
 /* eslint-disable no-undef */
 import { describe, expect, test } from '@jest/globals';
-import Repository from '@src/core/base/Repository';
-import { db } from '@src/core/domains/database/services/Database';
-import { logger } from '@src/core/domains/logger/services/LoggerService';
-import TestModel from '@src/tests/models/models/TestModel';
-import testHelper from '@src/tests/testHelper';
-import { DataTypes } from 'sequelize';
+import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
+import testHelper, { forEveryConnection } from '@src/tests/testHelper';
 
-const connections = testHelper.getTestConnectionNames()
+import TestPeopleModel, { resetPeopleTable } from '../eloquent/models/TestPeopleModel';
 
-const resetTable = async () => {
-    for(const connectionName of connections) {
-        const schema = db().schema(connectionName)
-
-        if(await schema.tableExists('tests')) {
-            await schema.dropTable('tests');
-        }
-
-        schema.createTable('tests', {
-            name: DataTypes.STRING,
-            createdAt: DataTypes.DATE,
-            updatedAt: DataTypes.DATE
-        })
-    }
-}
 describe('test model crud', () => {
 
     beforeAll(async () => {
@@ -32,17 +13,22 @@ describe('test model crud', () => {
 
     test('CRUD', async () => {
         
-        for(const connectionName of connections) {
-            logger().console('[Connection]', connectionName)
-            await resetTable()
+        await forEveryConnection(async connectionName => {
+            await resetPeopleTable()
+
+            const builder = queryBuilder(TestPeopleModel, connectionName)
 
             /**
              * Create a model
              */
-            const createdModel = new TestModel({
-                name: 'John'
-            });
+            const createdModel = new TestPeopleModel(null);
+            createdModel.setAttribute('name', 'John')
+            createdModel.setAttribute('age', 30)
+            createdModel.setConnectionName(connectionName)
+
+            expect(createdModel.getId()).toBeFalsy()
             expect(createdModel.getAttributeSync('name')).toEqual('John');
+            expect(createdModel.getAttributeSync('age')).toEqual(30);
             
             await createdModel.save();
             expect(typeof createdModel.getId() === 'string').toBe(true);
@@ -51,8 +37,7 @@ describe('test model crud', () => {
              * Change name attribute
              */
             await createdModel.setAttribute('name', 'Jane');
-            await createdModel.update();
-            await createdModel.refresh();
+            await createdModel.save();
             expect(typeof createdModel.getId() === 'string').toBe(true);
             expect(createdModel.getAttributeSync('name')).toEqual('Jane');
     
@@ -60,10 +45,7 @@ describe('test model crud', () => {
             /**
              * Query with repository
              */
-            const repository = new Repository(TestModel);
-            const fetchedModel = await repository.findOne({
-                name: 'Jane'   
-            })
+            const fetchedModel = await builder.clone().where('name', 'Jane').first()
             expect(fetchedModel).toBeTruthy()
             expect(fetchedModel?.getId() === createdModel.getId()).toBe(true)
             expect(fetchedModel?.getAttributeSync('name')).toEqual('Jane');
@@ -74,8 +56,13 @@ describe('test model crud', () => {
             await createdModel.delete();
             expect(createdModel.getId()).toBeFalsy();
             expect(await createdModel.toObject()).toBeFalsy();
-        }
 
+            /**
+             * Check if the model is deleted
+             */
+            const models = await queryBuilder(TestPeopleModel, connectionName).all()
+            expect(models.count()).toEqual(0)
+        })
     
     })
 });
