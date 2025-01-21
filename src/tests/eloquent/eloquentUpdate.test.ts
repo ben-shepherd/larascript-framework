@@ -48,11 +48,14 @@ describe('eloquent', () => {
             expect(updatedSecond[0].age).toBe(31);
 
             const updatedBoth = await query.clone().orderBy('name').updateAll({ age: 27 });
+            const johnInUpdatedBoth = updatedBoth.find(person => person.name === 'John')
+            const janeInUpdatedBoth = updatedBoth.find(person => person.name === 'Jane')
+            
             expect(updatedBoth.count()).toBe(2);
-            expect(updatedBoth[0].id).toBe(johnId);
-            expect(updatedBoth[0].age).toBe(27);
-            expect(updatedBoth[1].id).toBe(janeId);
-            expect(updatedBoth[1].age).toBe(27);
+            expect(johnInUpdatedBoth?.id).toBe(johnId);
+            expect(johnInUpdatedBoth?.age).toBe(27);
+            expect(janeInUpdatedBoth?.id).toBe(janeId);
+            expect(janeInUpdatedBoth?.age).toBe(27);
 
         })
 
