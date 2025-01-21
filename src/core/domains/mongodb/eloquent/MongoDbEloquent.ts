@@ -1052,6 +1052,18 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
         })   
     }
 
+    /**
+     * It's been decided that transactions should not be implemented for MongoDB.
+     * This is due to the complicated setup required for MongoDB to support transactions, which 
+     * involves setting up MongoDB in a replica set. 
+     * 
+     * Transactions are supported in MongoDB, but it will require using the Mongo Client API directly.
+     * @see https://www.mongodb.com/docs/manual/core/transactions/
+     */
+    transaction(): Promise<void> {
+        throw new Error('Eloquent Transaction not supported for MongoDB. Use the Mongo Client API instead. https://www.mongodb.com/docs/manual/core/transactions/')
+    }
+
 }
 
 export default MongoDbEloquent
