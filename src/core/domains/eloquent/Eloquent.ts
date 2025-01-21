@@ -177,6 +177,15 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
     }
 
     /**
+     * Normalizes the id property
+     * @param property The property to normalize
+     * @returns The normalized property
+     */
+    normalizeIdProperty(property: string): string {
+        return property
+    }
+
+    /**
      * Clones the query builder instance.
      *
      * The cloned instance will have the same model constructor associated with it.

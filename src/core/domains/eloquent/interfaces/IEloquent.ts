@@ -125,6 +125,9 @@ export type TargetPropertyOptions = {
 }
 
 export interface IEloquent<Model extends IModel = IModel, Expression extends IEloquentExpression = IEloquentExpression> {
+
+    // Normalization
+    normalizeIdProperty(property: string): string;
     
     // eloquent methods
     setConnectionName(connectionName: string): IEloquent<Model>;
