@@ -1,53 +1,53 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
+import { ModelWithAttributes } from '@src/core/interfaces/IModel';
 import TestPeopleModel, { resetPeopleTable } from '@src/tests/eloquent/models/TestPeopleModel';
 import testHelper, { forEveryConnection } from '@src/tests/testHelper';
 import pg from 'pg';
 
 describe('eloquent', () => {
 
-    const resetAndRepopulateTable = async (connection: string) => {
+    const resetAndRepopulateTable = async () => {
         await resetPeopleTable()
 
-        return await queryBuilder(TestPeopleModel, connection).clone().insert([
-            {
-                name: 'John',
-                age: 25,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            },
-            {
-                name: 'Jane',
-                age: 30,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            },
-            {
-                name: 'Bob',
-                age: 35,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            },
-            {
-                name: 'Alice',
-                age: 40,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            }
-        ])
+        await forEveryConnection(async connection => {
+            await queryBuilder(TestPeopleModel, connection).clone().insert([
+                {
+                    name: 'John',
+                    age: 25,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                },
+                {
+                    name: 'Jane',
+                    age: 30,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                },
+                {
+                    name: 'Bob',
+                    age: 35,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                },
+                {
+                    name: 'Alice',
+                    age: 40,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                }
+            ])
+        })
     }
 
     beforeAll(async () => {
         await testHelper.testBootApp()
-        await resetPeopleTable()
-
-        await forEveryConnection(async connection => {
-            await resetAndRepopulateTable(connection)
-        })
     });
 
     test('raw query (postgres)', async () => {
+
+        await resetAndRepopulateTable()
 
         const query = queryBuilder(TestPeopleModel, 'postgres')
         const sql = `SELECT * FROM ${query.useTable()} WHERE name = $1 OR name = $2 ORDER BY name DESC LIMIT 2`;
@@ -60,12 +60,26 @@ describe('eloquent', () => {
 
     });
 
-    // test('raw query (mongo) ', async () => {
+    test('raw query (mongo) ', async () => {
 
-    // const query = queryBuilder(TestPeopleModel, 'mongodb')
+        await resetAndRepopulateTable()
 
-    // TODO: implement
+        const query = queryBuilder(TestPeopleModel, 'mongodb')
 
-    // });
+        const aggregate: object[] = [
+            {
+                $match: {   
+                    name: {
+                        $in: ['Alice', 'Bob']
+                    }
+                }
+            }
+        ]
+
+        const results = await query.clone().raw<ModelWithAttributes<TestPeopleModel>[]>(aggregate)
+
+        expect(results.length).toBe(2)
+
+    });
 
 });

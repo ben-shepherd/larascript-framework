@@ -124,9 +124,7 @@ const clearMigrations = async () => {
  * @returns An array of connection names, excluding those specified in the `exclude` parameter.
  */
 export const getTestConnectionNames = ({ exclude = [] }: { exclude?: string[] } = {}) => {
-    // return ['mongodb', 'postgres'].filter(connectionName => !exclude.includes(connectionName));
-    return ['mongodb']
-    // return ['postgres']
+    return ['mongodb', 'postgres'].filter(connectionName => !exclude.includes(connectionName));
 }
 
 /**
