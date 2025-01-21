@@ -49,14 +49,18 @@ describe('eloquent', () => {
 
         await resetAndRepopulateTable()
 
-        const query = queryBuilder(TestPeopleModel, 'postgres')
-        const sql = `SELECT * FROM ${query.useTable()} WHERE name = $1 OR name = $2 ORDER BY name DESC LIMIT 2`;
-        const bindings = ['Alice', 'Bob'];
+        await forEveryConnection(async connection => {
 
-        const results = await query.clone().raw<pg.QueryResult<NonNullable<TestPeopleModel['attributes']>>>(sql, bindings);
-        expect(results.rows.length).toBe(2);
-        expect(results.rows[0].name).toBe('Bob');
-        expect(results.rows[1].name).toBe('Alice');
+            if(connection !== 'postgres') return;
+            const query = queryBuilder(TestPeopleModel, connection)
+            const sql = `SELECT * FROM ${query.useTable()} WHERE name = $1 OR name = $2 ORDER BY name DESC LIMIT 2`;
+            const bindings = ['Alice', 'Bob'];
+
+            const results = await query.clone().raw<pg.QueryResult<NonNullable<TestPeopleModel['attributes']>>>(sql, bindings);
+            expect(results.rows.length).toBe(2);
+            expect(results.rows[0].name).toBe('Bob');
+            expect(results.rows[1].name).toBe('Alice');
+        })
 
     });
 
@@ -64,21 +68,26 @@ describe('eloquent', () => {
 
         await resetAndRepopulateTable()
 
-        const query = queryBuilder(TestPeopleModel, 'mongodb')
+        await forEveryConnection(async connection => {
+            if(connection !== 'mongodb') return;
 
-        const aggregate: object[] = [
-            {
-                $match: {   
-                    name: {
-                        $in: ['Alice', 'Bob']
+            const query = queryBuilder(TestPeopleModel, connection)
+
+            const aggregate: object[] = [
+                {
+                    $match: {   
+                        name: {
+                            $in: ['Alice', 'Bob']
+                        }
                     }
                 }
-            }
-        ]
+            ]
 
-        const results = await query.clone().raw<ModelWithAttributes<TestPeopleModel>[]>(aggregate)
+            const results = await query.clone().raw<ModelWithAttributes<TestPeopleModel>[]>(aggregate)
 
-        expect(results.length).toBe(2)
+            expect(results.length).toBe(2)
+
+        })
 
     });
 
