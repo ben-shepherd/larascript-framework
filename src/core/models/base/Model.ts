@@ -549,7 +549,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {IEloquent<IModel>} The query builder instance.
      */
     private queryBuilder(): IEloquent<IModel> {
-        return app('query').builder(this.constructor as ICtor<IModel>);
+        return app('query').builder(this.constructor as ICtor<IModel>, this.connection);
     }
 
     /**
@@ -647,7 +647,9 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         if (!this.getId() || !this.attributes) return;
 
         const preparedAttributes = this.prepareDocument() ?? {};
-        await this.queryBuilder().where(this.primaryKey, this.getId()).update(preparedAttributes);
+        const builder = this.queryBuilder()
+        const normalizedIdProperty = builder.normalizeIdProperty(this.primaryKey)
+        await builder.where(normalizedIdProperty, this.getId()).update(preparedAttributes);
     }
 
 
@@ -686,7 +688,9 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     async delete(): Promise<void> {
         if (!this.attributes) return;
         this.attributes = await this.observeAttributes('deleting', this.attributes);
-        await this.queryBuilder().where(this.primaryKey, this.getId()).delete();
+        const builder = this.queryBuilder()
+        const normalizedIdProperty = builder.normalizeIdProperty(this.primaryKey)
+        await builder.where(normalizedIdProperty, this.getId()).delete();
         this.attributes = null;
         this.original = null;
         await this.observeAttributes('deleted', this.attributes);

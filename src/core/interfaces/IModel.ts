@@ -9,7 +9,7 @@ export type ModelConstructor<M extends IModel = IModel> = {
     create<T extends M>(data?: T['attributes'] | null): T;
     getTable(): string;
     getPrimaryKey(): string;
-    getConnection(): string;
+    getConnectionName(): string;
 }
 
 export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>
