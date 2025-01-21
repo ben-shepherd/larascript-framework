@@ -3,34 +3,22 @@ version: '3'
 name: larascript
 
 services:
-  mongodb-setup:
-    image: mongo:latest
-    volumes:
-      - mongodb_keyfile:/data
-      - ./generate-keyfile.sh:/generate-keyfile.sh
-      - ./init-replica.sh:/init-replica.sh
-    entrypoint: ["/bin/bash", "/generate-keyfile.sh"]
-    
   mongodb:
     container_name: larascript-mongodb
     image: mongo:latest
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/data/mongodb-keyfile"]
     ports:
       - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
-      LARASCRIPT_DEFAULT_CREDENTIALS: mongodb://root:example@localhost:27017/app?authSource=admin&replicaSet=rs0
+      LARASCRIPT_DEFAULT_CREDENTIALS: mongodb://root:example@localhost:27017/app?authSource=admin
     volumes:
       - mongodb_data:/data/db
-      - ./init-replica.sh:/docker-entrypoint-initdb.d/init-replica.sh
       - mongodb_keyfile:/data
     networks:
       - app-network
-    depends_on:
-      - mongodb-setup
     healthcheck:
-      test: ["CMD", "mongosh", "admin", "-u", "root", "-p", "example", "--eval", "rs.status()"]
+      test: ["CMD", "mongosh", "admin", "-u", "root", "-p", "example", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
