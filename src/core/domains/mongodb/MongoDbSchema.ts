@@ -1,8 +1,8 @@
 import BaseSchema from "@src/core/domains/database/base/BaseSchema";
 import CreateDatabaseException from "@src/core/domains/database/exceptions/CreateDatabaseException";
-import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
-import { MongoClient } from "mongodb";
 import { logger } from "@src/core/domains/logger/services/LoggerService";
+import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
+import captureError from "@src/core/util/captureError";
 
 class MongoDBSchema extends BaseSchema<MongoDbAdapter> {
 
@@ -148,26 +148,15 @@ class MongoDBSchema extends BaseSchema<MongoDbAdapter> {
      * @returns A promise resolving when all tables have been dropped
      */
     async dropAllTables(): Promise<void> {
-        let mongoClient!: MongoClient;
+        return captureError(async () => {
+            const db = this.getAdapter().getDb();
 
-        try {
-            mongoClient = await this.getAdapter().getMongoClientWithDatabase('app');
-            const mongoDb = mongoClient.db();
-
-            const collections = await mongoDb.listCollections().toArray();
+            const collections = await db.listCollections().toArray();
 
             for(const collection of collections) {
-                await mongoDb.dropCollection(collection.name);
+                await db.dropCollection(collection.name);
             }
-        }
-        catch (err) {
-            logger().error('Error dropping all tables: ' + (err as Error).message);
-        }
-        finally {
-            if (mongoClient) {
-                mongoClient.close();
-            }
-        }
+        })
     }
 
 }
