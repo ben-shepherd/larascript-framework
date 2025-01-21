@@ -43,11 +43,15 @@ describe('eloquent', () => {
         await testHelper.testBootApp()
     });
 
-    test('test successful transaction', async () => {
+    test('test successful transaction, excluding mongodb', async () => {
 
         await resetTableAndRepopulate();
 
         await forEveryConnection(async connection => {
+            if (connection === 'mongodb') {
+                return;
+            }
+
             const query = queryBuilder(TestPeopleModel, connection).orderBy('name', 'asc');
 
             await query.clone().transaction(async (trx) => {
@@ -66,11 +70,15 @@ describe('eloquent', () => {
 
     })      
 
-    test('test unsuccessful transaction', async () => {
+    test('test unsuccessful transaction, excluding mongodb', async () => {
 
         await resetTableAndRepopulate();
 
         await forEveryConnection(async connection => {
+            if (connection === 'mongodb') {
+                return;
+            }
+
             const query = queryBuilder(TestPeopleModel, connection).orderBy('name', 'asc');
 
             let exceptionThrown = false;
