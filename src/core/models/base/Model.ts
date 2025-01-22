@@ -447,7 +447,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
 
         const dirty = {} as Record<keyof Attributes, any>;
 
-        Object.entries(this.attributes as object).forEach(([key, value]) => {
+        Object.entries(this.attributes ?? {} as object).forEach(([key, value]) => {
 
             try {
                 if (typeof value === 'object' && JSON.stringify(value) !== JSON.stringify(this.original?.[key])) {
