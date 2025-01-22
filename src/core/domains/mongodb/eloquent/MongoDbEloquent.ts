@@ -120,26 +120,28 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      * @param documents - Single document or array of documents to normalize
      * @returns Array of normalized documents with standard id fields
      */
-    normalizeDocuments(documents: Document | Document[]): Document[] {
+    normalizeDocuments< T extends object = object>(documents: T | T[]): T[] {
 
         // Get the documents array  
         let documentsArray = Array.isArray(documents) ? documents : [documents]
 
         // Normalize the documents
         documentsArray = documentsArray.map(document => {
-            if(document._id) {
-                document.id = this.normalizeId(document._id)
-                delete document._id
+            const typedDocument = document as { _id?: unknown, id?: unknown }
+
+            if(typedDocument._id) {
+                typedDocument.id = this.normalizeId(typedDocument._id as string | number | ObjectId)
+                delete typedDocument._id
             }
 
             // Normalize ObjectId properties to string
-            Object.keys(document).forEach(key => {
-                if(document[key] instanceof ObjectId) {
-                    document[key] = document[key].toString()
+            Object.keys(typedDocument).forEach(key => {
+                if(typedDocument[key] instanceof ObjectId) {
+                    typedDocument[key] = typedDocument[key].toString()
                 }
             })
 
-            return document
+            return typedDocument as T
         })
 
         // Filter out columns that are not specified in the expression
@@ -163,21 +165,23 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
     * @param document - The document to denormalize
     * @returns Document with MongoDB compatible _id field
     */
-    denormalizeDocuments(document: Document | Document[]): Document[] {
+    denormalizeDocuments<T extends object = object>(document: T | T[]): T[] {
         const documentsArray = Array.isArray(document) ? document : [document]
 
         return documentsArray.map(document => {
-            if(document.id) {
+            const typedDocument = document as { _id?: unknown, id?: unknown }
+
+            if(typedDocument.id) {
                 if(this.idGeneratorFn) {
-                    document._id = document.id
+                    typedDocument._id = typedDocument.id
                 }
                 else {
-                    document._id = this.denormalizeId(document.id)
+                    typedDocument._id = this.denormalizeId(typedDocument.id)
                 }
-                delete document.id
+                delete typedDocument.id
             }
 
-            return document
+            return typedDocument as T
         })
     }
 

@@ -17,6 +17,8 @@ import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { bindAll } from 'lodash';
 import pg, { QueryResult } from 'pg';
 
+import PostgresJsonNormalizer from "../normalizers/PostgresJsonNormalizer";
+
 class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpression> {
 
     /**
@@ -58,6 +60,39 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      */
     protected resetBindingValues() {
         this.expression.bindingsUtility.reset()
+    }
+
+    /**
+     * Normalizes the documents by wrapping array values in a special format for Postgres.
+     * 
+     * When inserting JSON arrays directly into Postgres, it can throw a "malformed array literal" error
+     * because Postgres expects arrays in a specific format. To prevent this, we wrap array values in an
+     * object with a special property (e.g. { ArrayValues: [...] }) before stringifying. This allows
+     * Postgres to properly parse the JSON string containing arrays.
+     * 
+     * @param documents The documents to normalize
+     * @returns The normalized documents
+     */
+    normalizeDocuments<T extends object = object>(documents: T | T[]): T[] {
+        const postgresJsonNormalizer = new PostgresJsonNormalizer()
+        const jsonProperties = this.modelCtor?.create().json ?? [];
+        return postgresJsonNormalizer.normalize(documents, jsonProperties) as T[]
+    }
+
+    /**
+     * Denormalizes the documents by parsing the JSON properties
+     * 
+     * When retrieving JSON arrays from Postgres, they are wrapped in a special format (e.g. { ArrayValues: [...] })
+     * that was used during normalization to prevent the "malformed array literal" error. This method unwraps those
+     * array values back to their original format by removing the wrapper object and extracting the array.
+     * 
+     * @param documents The documents to denormalize    
+     * @returns The denormalized documents
+     */
+    denormalizeDocuments<T extends object = object>(documents: T | T[]): T[] {
+        const postgresJsonNormalizer = new PostgresJsonNormalizer()
+        const jsonProperties = this.modelCtor?.create().json ?? [];
+        return postgresJsonNormalizer.denormalize(documents, jsonProperties) as T[]
     }
 
     /**

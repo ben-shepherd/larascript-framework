@@ -27,7 +27,10 @@ import { deepClone } from "@src/core/util/deepClone";
  * @abstract
  */
 
-abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpression = IEloquentExpression, Adapter extends IDatabaseAdapter = IDatabaseAdapter> implements IEloquent<Model, Expression> {
+abstract class Eloquent<
+    Model extends IModel,
+    Expression extends IEloquentExpression = IEloquentExpression,
+    Adapter extends IDatabaseAdapter = IDatabaseAdapter> implements IEloquent<Model, Expression> {
 
     /**
      * The default ID generator function for the query builder.
@@ -183,6 +186,24 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
      */
     normalizeIdProperty(property: string): string {
         return property
+    }
+
+    /**
+     * Normalizes the documents
+     * @param documents The documents to normalize
+     * @returns The normalized documents
+     */
+    normalizeDocuments<T extends object = object>(documents: T | T[]): T[] {
+        return documents as T[]
+    }
+
+    /**
+     * Denormalizes the documents
+     * @param documents The documents to denormalize
+     * @returns The denormalized documents
+     */
+    denormalizeDocuments<T extends object = object>(documents: T | T[]): T[] {
+        return documents as T[]
     }
 
     /**

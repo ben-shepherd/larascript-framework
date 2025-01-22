@@ -128,6 +128,8 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
 
     // Normalization
     normalizeIdProperty(property: string): string;
+    normalizeDocuments<T extends object = object>(documents: T | T[]): T[]
+    denormalizeDocuments<T extends object = object>(documents: T | T[]): T[]
     
     // eloquent methods
     setConnectionName(connectionName: string): IEloquent<Model>;
