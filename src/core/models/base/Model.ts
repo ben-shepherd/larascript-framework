@@ -205,22 +205,6 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
 
     }
 
-    /**
-     * Prepares the document for saving to the database.
-     * Handles JSON stringification for specified fields.
-     * 
-     * @template T The type of the prepared document.
-     * @returns {T} The prepared document.
-     */
-    protected prepareDocument(): Attributes | null {
-        if(!this.attributes) {
-            return null
-        }
-
-        return db().getAdapter(this.connection).prepareDocument<Attributes>(this.attributes, {
-            jsonStringify: this.json   
-        })
-    }
 
     /**
      * Retrieves the name of the database connection associated with the model.
@@ -646,10 +630,9 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     async update(): Promise<void> {
         if (!this.getId() || !this.attributes) return;
 
-        const preparedAttributes = this.prepareDocument() ?? {};
         const builder = this.queryBuilder()
         const normalizedIdProperty = builder.normalizeIdProperty(this.primaryKey)
-        await builder.where(normalizedIdProperty, this.getId()).update(preparedAttributes);
+        await builder.where(normalizedIdProperty, this.getId()).update(this.attributes);
     }
 
 
@@ -665,8 +648,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
             await this.setTimestamp('createdAt');
             await this.setTimestamp('updatedAt');
 
-            const preparedAttributes = this.prepareDocument() ?? {};
-            this.attributes = await (await this.queryBuilder().insert(preparedAttributes)).first()?.toObject() as Attributes;
+            this.attributes = await (await this.queryBuilder().insert(this.attributes as object)).first()?.toObject() as Attributes;
             this.attributes = await this.refresh();
             this.attributes = await this.observeAttributes('created', this.attributes);
             return;
