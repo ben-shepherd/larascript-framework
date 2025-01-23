@@ -1,9 +1,9 @@
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
 import { App } from "@src/core/services/App";
 
-export default class ListRoutesCommand extends BaseCommand {
+export default class RouteListCommand extends BaseCommand {
 
-    signature: string = 'list:routes';
+    signature: string = 'route:list';
 
     description = 'List all available routes. Use --details to see more information.';
 
