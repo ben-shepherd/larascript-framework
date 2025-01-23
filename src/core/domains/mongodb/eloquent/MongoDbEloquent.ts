@@ -77,7 +77,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      * @returns The normalized ObjectId
      * @throws EloquentException if the id is invalid
      */
-    denormalizeId(id: unknown): ObjectId | string | number {
+    normalizeId(id: unknown): ObjectId | string | number {
         if(id instanceof ObjectId) {
             return id
         }
@@ -97,7 +97,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      * @returns The denormalized ObjectId
      * @throws EloquentException if the id is invalid
      */
-    normalizeId(id: string | number | ObjectId): string {
+    denormalizeId(id: string | number | ObjectId): string {
         if(id instanceof ObjectId) {
             return id.toString()
         }
@@ -120,7 +120,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      * @param documents - Single document or array of documents to normalize
      * @returns Array of normalized documents with standard id fields
      */
-    normalizeDocuments< T extends object = object>(documents: T | T[]): T[] {
+    denormalizeDocuments< T extends object = object>(documents: T | T[]): T[] {
 
         // Get the documents array  
         let documentsArray = Array.isArray(documents) ? documents : [documents]
@@ -130,7 +130,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             const typedDocument = document as { _id?: unknown, id?: unknown }
 
             if(typedDocument._id) {
-                typedDocument.id = this.normalizeId(typedDocument._id as string | number | ObjectId)
+                typedDocument.id = this.denormalizeId(typedDocument._id as string | number | ObjectId)
                 delete typedDocument._id
             }
 
@@ -165,21 +165,35 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
     * @param document - The document to denormalize
     * @returns Document with MongoDB compatible _id field
     */
-    denormalizeDocuments<T extends object = object>(document: T | T[]): T[] {
+    normalizeDocuments<T extends object = object>(document: T | T[]): T[] {
         const documentsArray = Array.isArray(document) ? document : [document]
 
         return documentsArray.map(document => {
             const typedDocument = document as { _id?: unknown, id?: unknown }
 
+            // Check if the id should be converted to an ObjectId
             if(typedDocument.id) {
                 if(this.idGeneratorFn) {
                     typedDocument._id = typedDocument.id
                 }
                 else {
-                    typedDocument._id = this.denormalizeId(typedDocument.id)
+                    typedDocument._id = this.normalizeId(typedDocument.id)
                 }
                 delete typedDocument.id
             }
+
+            // Check if the _id should be converted to an ObjectId
+            if(typedDocument._id && typeof typedDocument._id === 'string' && ObjectId.isValid(typedDocument._id)) {
+                typedDocument._id = new ObjectId(typedDocument._id)
+            }
+
+            // Check each property if it should be converted to an ObjectId
+            Object.keys(document).forEach(key => {
+                if(typeof document[key] === 'string' && ObjectId.isValid(document[key])) {
+                    typedDocument[key] = new ObjectId(document[key])
+                }
+            })
+        
 
             return typedDocument as T
         })
@@ -385,10 +399,8 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
 
             const collection = this.getMongoCollection();
 
-            const results  = this.normalizeDocuments(
-                await collection.find(filter).toArray()
-            )
-
+            const results  = await collection.find(filter).toArray()
+            
             return results as T
         })
     }
@@ -402,7 +414,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
         let objectId: ObjectId | string | number;
 
         try {
-            objectId = this.denormalizeId(id)
+            objectId = this.normalizeId(id)
         }
         // eslint-disable-next-line no-unused-vars
         catch (err) {
@@ -561,7 +573,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      * @returns The formatted results
      */
     protected formatResultsAsModels(results: Document[]): Model[] {
-        results = this.normalizeDocuments(results)
+        results = this.denormalizeDocuments(results)
         results = this.formatter.format(results)
         return super.formatResultsAsModels(results)
     }
@@ -666,14 +678,8 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
         // Apply the id generator function to the documents
         documentsArray = documentsArray.map(document => this.idGeneratorFn ? this.idGeneratorFn(document) : document)
 
-        // Check each property if it should be converted to an ObjectId
-        documentsArray.forEach((document, index) => {
-            Object.keys(document).forEach(key => {
-                if(typeof document[key] === 'string' && ObjectId.isValid(document[key])) {
-                    documentsArray[index][key] = new ObjectId(document[key])
-                }
-            })
-        })
+        // Normalize the documents
+        documentsArray = this.normalizeDocuments(documentsArray)
 
         return documentsArray
     }
@@ -694,7 +700,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
 
             // Denormalize the documents to be updated
             const documentsArray = Array.isArray(documents) ? documents : [documents]
-            const normalizedDocuments = this.denormalizeDocuments(documentsArray)
+            const normalizedDocuments = this.normalizeDocuments(documentsArray)
             const normalizedDocumentsArray = Array.isArray(normalizedDocuments) ? normalizedDocuments : [normalizedDocuments]
 
             // Get the pre-update results for the match filter
@@ -740,7 +746,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             const matchFilter = this.expression.buildMatchAsFilterObject() ?? {}
 
             // Denormalize the documents to be updated
-            const normalizedDocument = this.denormalizeDocuments(document)?.[0] as object
+            const normalizedDocument = this.normalizeDocuments(document)?.[0] as object
 
             // Build aggregate expression to get document IDs for update
             const preUpdateAggregation: object[] = new AggregateExpression()
