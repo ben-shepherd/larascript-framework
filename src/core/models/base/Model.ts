@@ -632,7 +632,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
 
         const builder = this.queryBuilder()
         const normalizedIdProperty = builder.normalizeIdProperty(this.primaryKey)
-        await builder.where(normalizedIdProperty, this.getId()).update(this.attributes);
+        await builder.where(normalizedIdProperty, this.getId()).update({...this.attributes});
     }
 
 
