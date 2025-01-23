@@ -1,4 +1,4 @@
-import IModelAttributes from "@src/core/interfaces/IModel";
+import { IModelAttributes } from "@src/core/interfaces/IModel";
 import Model from "@src/core/models/base/Model";
 import { App } from "@src/core/services/App";
 import { forEveryConnection } from "@src/tests/testHelper";
@@ -48,6 +48,8 @@ export default class TestPeopleModel extends Model<ITestPeopleModelData> {
     public fields: string[] = [
         'name',
         'age',
+        'born',
+        'religion',
         'createdAt',
         'updatedAt'
     ];

@@ -9,7 +9,7 @@ export type ModelConstructor<M extends IModel = IModel> = {
     create<T extends M>(data?: T['attributes'] | null): T;
     getTable(): string;
     getPrimaryKey(): string;
-    getConnection(): string;
+    getConnectionName(): string;
 }
 
 export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>
@@ -20,7 +20,7 @@ export type ModelWithAttributes<Model extends IModel, Attributes = Model['attrib
     [K in keyof Attributes]: Attributes[K];
 }
 
-export default interface IModelAttributes {
+export interface IModelAttributes {
     id?: string;
     createdAt?: Date;
     updatedAt?: Date;

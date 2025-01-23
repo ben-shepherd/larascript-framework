@@ -4,7 +4,7 @@
 import Collection from "@src/core/domains/collections/Collection";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import IModelAttributes, { IModel, ModelConstructor, ModelWithAttributes } from "@src/core/interfaces/IModel";
+import { IModel, IModelAttributes, ModelConstructor, ModelWithAttributes } from "@src/core/interfaces/IModel";
 
 export type TColumnOption = {
     column: string | null;
@@ -32,6 +32,10 @@ export type TWhereClause = {
     operator: TOperator;
     value: TWhereClauseValue | TWhereClauseValue[];
     logicalOperator?: TLogicalOperator;
+    raw?: unknown;
+}
+export type TWhereClauseRaw = {
+    raw: unknown;
 }
 
 export type TJoin = {
@@ -116,6 +120,11 @@ export type IdGeneratorFn<T = unknown> = <ReturnType = T>(...args: any[]) => Ret
 export type TransactionFn<Model extends IModel = IModel> = (query: IEloquent<ModelWithAttributes<Model>>) => Promise<void>;
 
 export interface IEloquent<Model extends IModel = IModel, Expression extends IEloquentExpression = IEloquentExpression> {
+
+    // Normalization
+    normalizeIdProperty(property: string): string;
+    normalizeDocuments<T extends object = object>(documents: T | T[]): T[]
+    denormalizeDocuments<T extends object = object>(documents: T | T[]): T[]
     
     // eloquent methods
     setConnectionName(connectionName: string): IEloquent<Model>;
@@ -125,7 +134,7 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     cloneExpression(): IEloquentExpression;
     resetExpression(): IEloquent<Model>;
     setModelCtor(modelCtor?: ICtor<IModel>): IEloquent<Model>;
-    getModelCtor(): ICtor<IModel> | undefined;
+    getModelCtor(): ModelConstructor<IModel> | undefined;
     setModelColumns(modelCtor?: ICtor<IModel>, options?: SetModelColumnsOptions): IEloquent<Model>;
 
     // id generator
@@ -134,15 +143,11 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     generateId<T = unknown>(): T | null;
 
     // results
-    fetchRows<T = unknown>(expression: Expression, ...args: any[]): Promise<T>;
+    fetchRows<T = unknown>(expression?: Expression, ...args: any[]): Promise<T>;
 
-    // formatting
-    // asModel<Model extends IModel>(): IEloquent<Model, Model>; 
-    setFormatter(formatterFn?: TFormatterFn): IEloquent<Model>;
-    
     // execution
     execute<T = Model['attributes']>(builder: Expression): Promise<T>
-    raw<T = unknown>(expression: string, bindings?: unknown[]): Promise<T>;
+    raw<T = unknown>(...args: unknown[]): Promise<T>;
 
     // db methods
     createDatabase(name: string): Promise<void>;
@@ -160,10 +165,10 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     setTable(table: string): IEloquent<ModelWithAttributes<Model>>;
     useTable(): string;
 
-    // Creating and saving-
+    // Creating and saving
     insert(documents: object | object[]): Promise<Collection<ModelWithAttributes<Model>>>; 
     update(documents: object | object[]): Promise<Collection<ModelWithAttributes<Model>>>;
-    updateAll(documents: object | object[]): Promise<Collection<ModelWithAttributes<Model>>>;
+    updateAll(documents: object): Promise<Collection<ModelWithAttributes<Model>>>;
     delete(): Promise<IEloquent<ModelWithAttributes<Model>>>;
 
     // selection
@@ -209,11 +214,11 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     whereNotBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<ModelWithAttributes<Model>>;
 
     // Joins
-    join(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<ModelWithAttributes<Model>>;
-    fullJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<ModelWithAttributes<Model>>;
-    leftJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<ModelWithAttributes<Model>>;
-    rightJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<ModelWithAttributes<Model>>;
-    crossJoin(table: string): IEloquent<ModelWithAttributes<Model>>;
+    join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<ModelWithAttributes<Model>>;
+    fullJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<ModelWithAttributes<Model>>;
+    leftJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<ModelWithAttributes<Model>>;
+    rightJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<ModelWithAttributes<Model>>;
+    crossJoin(related: ModelConstructor<IModel>): IEloquent<ModelWithAttributes<Model>>;
     with(relationship: string): IEloquent<ModelWithAttributes<Model>>;
 
     // Ordering
@@ -222,9 +227,8 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     newest(column?: string): IEloquent<ModelWithAttributes<Model>>;
     oldest(column?: string): IEloquent<ModelWithAttributes<Model>>;
 
-    // Grouping
-    groupBy(columns: string[] | string | null): IEloquent<ModelWithAttributes<Model>>;
-    // having(column: string, operator?: string, value?: any): Promise<IQueryBuilder>;
+    // Distinct
+    distinct(columns: string[] | string | null): IEloquent<ModelWithAttributes<Model>>;
 
     // Limiting
     limit(limit: number): IEloquent<ModelWithAttributes<Model>>;

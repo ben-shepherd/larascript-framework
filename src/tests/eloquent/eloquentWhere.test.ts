@@ -20,39 +20,43 @@ const getYearsInPastSince2050 = (years: number): Date => {
 const dateOneYearInPast = new Date();
 dateOneYearInPast.setFullYear(dateOneYearInPast.getFullYear() - 1);
 
-const populate = async (connection: string) => {
-    const query = queryBuilder(TestPeopleModel, connection);
+const resetAndPopulate = async () => {
+    await resetPeopleTable()
 
-    return await query.insert([
-        {
-            name: 'Alice',
-            age: 25,
-            born: getYearsInPastSince2050(25), // 2025
-            createdAt: new Date(),
-            updatedAt: new Date()
-        },
-        {
-            name: 'Bob',
-            age: 30,
-            born: getYearsInPastSince2050(30), // 2020
-            createdAt: new Date(),
-            updatedAt: new Date()
-        },
-        {
-            name: 'John',
-            age: 35,
-            born: getYearsInPastSince2050(35), // 2015
-            createdAt: dateOneYearInPast,
-            updatedAt: dateOneYearInPast
-        },
-        {
-            name: 'Jane',
-            age: 45,
-            born: getYearsInPastSince2050(45), // 2005
-            createdAt: dateOneYearInPast,
-            updatedAt: dateOneYearInPast
-        }
-    ])
+    await forEveryConnection(async connection => {
+        const query = queryBuilder(TestPeopleModel, connection);
+
+        await query.insert([
+            {
+                name: 'Alice',
+                age: 25,
+                born: getYearsInPastSince2050(25), // 2025
+                createdAt: new Date(),
+                updatedAt: new Date()
+            },
+            {
+                name: 'Bob',
+                age: 30,
+                born: getYearsInPastSince2050(30), // 2020
+                createdAt: new Date(),
+                updatedAt: new Date()
+            },
+            {
+                name: 'John',
+                age: 35,
+                born: getYearsInPastSince2050(35), // 2015
+                createdAt: dateOneYearInPast,
+                updatedAt: dateOneYearInPast
+            },
+            {
+                name: 'Jane',
+                age: 45,
+                born: getYearsInPastSince2050(45), // 2005
+                createdAt: dateOneYearInPast,
+                updatedAt: dateOneYearInPast
+            }
+        ])
+    })  
 }
 
 const getTestPeopleModelQuery = (connection: string) => {
@@ -64,28 +68,33 @@ describe('eloquent', () => {
 
     beforeAll(async () => {
         await testHelper.testBootApp()
-        await resetPeopleTable()
     });
 
     test('test raw where (postgres)', async () => {
-        await resetPeopleTable()
+        await resetAndPopulate();
 
-        const query = getTestPeopleModelQuery('postgres')
-        const inserted = await populate('postgres');
+        await forEveryConnection(async connection => {
+            if(connection !== 'postgres') return
 
-        const resultsOnlyJohn = await query.clone()
-            .whereRaw('"name" = $1', ['John']).first()
+            const query = getTestPeopleModelQuery(connection)
+            const inserted = await query.clone().orderBy('name', 'asc').get()
+
+            const insertedJohn = inserted.find(person => person.name === 'John')
+
+            const resultsOnlyJohn = await query.clone()
+                .whereRaw('"name" = $1', ['John']).first()
                 
-        expect(resultsOnlyJohn?.id).toBe(inserted[2].id);
-        expect(resultsOnlyJohn?.name).toBe('John');
+            expect(resultsOnlyJohn?.id).toBe(insertedJohn?.id);
+            expect(resultsOnlyJohn?.name).toBe('John');
+        })
     })
 
     test('test equals', async () => {
-        await resetPeopleTable()
+        await resetAndPopulate();
 
         await forEveryConnection(async connection => {
             const query = getTestPeopleModelQuery(connection)
-            await populate(connection);
+            await query.clone().orderBy('name', 'asc').get()
 
             const resultsOnlyJohn = await query.clone()
                 .where('name', 'John')
@@ -98,11 +107,12 @@ describe('eloquent', () => {
     })
 
     test('test filters with object', async () => {
-        await resetPeopleTable()
+        await resetAndPopulate();
 
         await forEveryConnection(async connection => {
             const query = getTestPeopleModelQuery(connection)
-            const inserted = await populate(connection);
+            const inserted = await query.clone().orderBy('name', 'asc').get()
+            const insertedJohn = inserted.find(person => person.name === 'John')
 
             const resultsJohnExactMatchNotFound = await query.clone()
                 .where({ name: 'john' })
@@ -113,17 +123,16 @@ describe('eloquent', () => {
                 .where({ name: 'john' }, 'like')
                 .first()
 
-            expect(resultsOnlyJohnFoundUsingLike?.id).toBe(inserted[2].id);
+            expect(resultsOnlyJohnFoundUsingLike?.id).toBe(insertedJohn?.id);
         })
 
     })
 
     test('test equals with OR operator', async () => {
-        await resetPeopleTable()
+        await resetAndPopulate();
 
         await forEveryConnection(async connection => {
             const query = getTestPeopleModelQuery(connection)
-            await populate(connection);
 
             const resultsOnlyJohnOrJane = await query.clone()
                 .where('name', '=', 'John')
@@ -147,12 +156,28 @@ describe('eloquent', () => {
 
     })
 
-    test('test greater than and greater than or equal', async () => {
-        await resetPeopleTable()
+    test('test complex or', async () => {
+        await resetAndPopulate();
 
         await forEveryConnection(async connection => {
             const query = getTestPeopleModelQuery(connection)
-            await populate(connection);
+
+            const results = await query.clone()
+                .where('age', '>', 30)
+                .orWhere('name', 'like', 'J%')
+                .get();
+
+            expect(results.count()).toBe(2);
+            expect(results[0].name).toBe('Jane');
+            expect(results[1].name).toBe('John');
+        })
+    })
+
+    test('test greater than and greater than or equal', async () => {
+        await resetAndPopulate();
+
+        await forEveryConnection(async connection => {
+            const query = getTestPeopleModelQuery(connection)
 
             const resultsGreaterThan35YearsOld = await query.clone().where('age', '>', 35).get();
             expect(resultsGreaterThan35YearsOld.count()).toBe(1);
@@ -168,11 +193,10 @@ describe('eloquent', () => {
     })
 
     test('test less than and less than or equal', async () => {
-        await resetPeopleTable()
+        await resetAndPopulate();
 
         await forEveryConnection(async connection => {
             const query = getTestPeopleModelQuery(connection)
-            await populate(connection);
 
             const resultsLessThan30YearsOld = await query.clone().where('age', '<', 30).get();
             expect(resultsLessThan30YearsOld.count()).toBe(1);
@@ -187,11 +211,10 @@ describe('eloquent', () => {
     });
 
     test('test where in and where not in', async () => {
-        await resetPeopleTable()
+        await resetAndPopulate()
 
         await forEveryConnection(async connection => {
             const query = getTestPeopleModelQuery(connection)
-            await populate(connection);
 
             const results25And30 = await query.clone().whereIn('age', [25, 30]).get();
             expect(results25And30.count()).toBe(2);
@@ -208,11 +231,10 @@ describe('eloquent', () => {
     })
 
     test('test where in between and where not in between', async () => {
-        await resetPeopleTable()
+        await resetAndPopulate()
 
         await forEveryConnection(async connection => {
             const query = getTestPeopleModelQuery(connection)
-            await populate(connection);
 
             const resultBetween31And39 = await query.clone().whereBetween('age', [31, 39]).get();
             expect(resultBetween31And39.count()).toBe(1);

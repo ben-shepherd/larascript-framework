@@ -5,18 +5,16 @@ import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import { appEnv } from "@src/core/services/App";
 
-
+// Default connection name
 const DEFAULT_CONNECTION = (process.env.DATABASE_DEFAULT_CONNECTION as string) ?? 'default';
-const MONGODB_CONNECTION = 'mongodb';
-const POSTGRES_CONNECTION = 'postgres';
 
 /**
  * Type helper for the connection adapters
  */
 export type ConnectionTypeHelpers = {
     ['default']: PostgresAdapter;
-    [MONGODB_CONNECTION]: MongoDbAdapter;
-    [POSTGRES_CONNECTION]: PostgresAdapter;
+    ['postgres']: PostgresAdapter;
+    ['mongodb']: MongoDbAdapter;
 }
 
 const config: IDatabaseConfig = {
@@ -44,24 +42,25 @@ const config: IDatabaseConfig = {
     connections: DatabaseConfig.createConnections([
 
         /**
-         * Default MongoDB connection
-         */
-        DatabaseConfig.createConfig({
-            connectionName: MONGODB_CONNECTION,
-            adapter: MongoDbAdapter,
-            uri: process.env.DATABASE_DEFAULT_URI as string,
-            options: {} // Additional connection options can be specified here
-        }),
-
-        /**
          * Default Postgres connection
          */
         DatabaseConfig.createConfig({
-            connectionName: POSTGRES_CONNECTION,
+            connectionName: process.env.DATABASE_DEFAULT_CONNECTION as string,
             adapter: PostgresAdapter,
             uri: process.env.DATABASE_DEFAULT_URI as string,
             options: {}, // Additional connection options can be specified here
-        })
+        }),
+
+        /**
+         * Default MongoDB connection
+         */
+        DatabaseConfig.createConfig({
+            connectionName: process.env.DATABASE_MONGODB_CONNECTION as string,
+            adapter: MongoDbAdapter,
+            uri: process.env.DATABASE_MONGODB_URI as string,
+            options: {} // Additional connection options can be specified here
+        }),
+
     ])
 };
 

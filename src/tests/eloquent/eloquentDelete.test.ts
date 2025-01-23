@@ -157,16 +157,37 @@ describe('eloquent', () => {
         })
     })
     
-    test('delete with limit', async () => {
+    test('delete with limit (postgres)', async () => {
 
         await resetAndRepopulateTables();
 
         await forEveryConnection(async connection => {
+            if(connection !== 'postgres') return
+
             const employeeQuery = queryBuilder(TestEmployeeModel, connection)
 
             await employeeQuery.clone()
                 .limit(2)
                 .whereRaw(`id IN (SELECT id FROM tests_employees LIMIT 2)`)
+                .delete();
+
+            const resultCount = await employeeQuery.clone().count();
+            expect(resultCount).toBe(3);
+        })
+    })
+
+    
+    test('delete with limit (mongodb)', async () => {
+
+        await resetAndRepopulateTables();
+
+        await forEveryConnection(async connection => {
+            if(connection !== 'mongodb') return
+
+            const employeeQuery = queryBuilder(TestEmployeeModel, connection)
+
+            await employeeQuery.clone()
+                .limit(2)
                 .delete();
 
             const resultCount = await employeeQuery.clone().count();

@@ -4,6 +4,7 @@ import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareO
 import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
+import { IRelationshipResolver } from "@src/core/domains/eloquent/interfaces/IEqloeuntRelationship";
 
 export type TAdapterComposerFileName = {
 
@@ -27,6 +28,8 @@ export interface  IDatabaseAdapter {
     getSchema(): IDatabaseSchema;
 
     getEloquentConstructor<Model extends IModel = IModel>(): ICtor<IEloquent<Model>>;
+
+    getRelationshipResolver(connection: string): IRelationshipResolver;
 
     getDockerComposeFileName(): string;
 

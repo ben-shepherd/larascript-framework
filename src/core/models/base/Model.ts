@@ -1,14 +1,14 @@
  
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import { db } from '@src/core/domains/database/services/Database';
+import BaseRelationshipResolver from '@src/core/domains/eloquent/base/BaseRelationshipResolver';
 import { IBelongsToOptions, IEloquent, IHasManyOptions, IRelationship, IdGeneratorFn } from '@src/core/domains/eloquent/interfaces/IEloquent';
 import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
 import HasMany from '@src/core/domains/eloquent/relational/HasMany';
-import EloquentRelationship from '@src/core/domains/eloquent/utils/EloquentRelationship';
 import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
 import { IObserver, IObserverEvent } from '@src/core/domains/observer/interfaces/IObserver';
 import { ICtor } from '@src/core/interfaces/ICtor';
-import IModelAttributes, { GetAttributesOptions, IModel, ModelConstructor } from "@src/core/interfaces/IModel";
+import { GetAttributesOptions, IModel, IModelAttributes, ModelConstructor } from "@src/core/interfaces/IModel";
 import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
 import { app } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
@@ -205,22 +205,6 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
 
     }
 
-    /**
-     * Prepares the document for saving to the database.
-     * Handles JSON stringification for specified fields.
-     * 
-     * @template T The type of the prepared document.
-     * @returns {T} The prepared document.
-     */
-    protected prepareDocument(): Attributes | null {
-        if(!this.attributes) {
-            return null
-        }
-
-        return db().getAdapter(this.connection).prepareDocument<Attributes>(this.attributes, {
-            jsonStringify: this.json   
-        })
-    }
 
     /**
      * Retrieves the name of the database connection associated with the model.
@@ -384,7 +368,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      */
     async getAttribute<K extends keyof Attributes = keyof Attributes>(key: K): Promise<Attributes[K] | null> {
 
-        const relationsip = EloquentRelationship.getRelationshipInterface(this, key as string);
+        const relationsip = BaseRelationshipResolver.tryGetRelationshipInterface(this, key as string);
 
         if(relationsip) {
             return this.getAttributeRelationship(key, relationsip);
@@ -407,11 +391,16 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
             return this.attributes[key] 
         }
 
+        // Get the relationship interface
         if(!relationship) {
-            relationship = EloquentRelationship.fromModel(this.constructor as ICtor<IModel>, key as string);
+            relationship = BaseRelationshipResolver.resolveRelationshipInterfaceByModelRelationshipName(this.constructor as ICtor<IModel>, key as string);
         }
 
-        this.setAttribute(key, await EloquentRelationship.fetchRelationshipData<Attributes, K>(this, relationship));
+        // Get the relationship resolver
+        const resolver = db().getAdapter(this.connection).getRelationshipResolver()
+
+        // Set the attribute
+        this.setAttribute(key, await resolver.resolveData<Attributes, K>(this, relationship, this.connection));
 
         return this.getAttributeSync(key);
     }
@@ -458,7 +447,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
 
         const dirty = {} as Record<keyof Attributes, any>;
 
-        Object.entries(this.attributes as object).forEach(([key, value]) => {
+        Object.entries(this.attributes ?? {} as object).forEach(([key, value]) => {
 
             try {
                 if (typeof value === 'object' && JSON.stringify(value) !== JSON.stringify(this.original?.[key])) {
@@ -534,7 +523,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      *
      * @returns {string} The primary key associated with the model.
      */
-    public static getPrimaryKey(): string {
+    public static   getPrimaryKey(): string {
         return new (this as unknown as ICtor<IModel>)(null).primaryKey;
     }
 
@@ -544,7 +533,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {IEloquent<IModel>} The query builder instance.
      */
     private queryBuilder(): IEloquent<IModel> {
-        return app('query').builder(this.constructor as ICtor<IModel>);
+        return app('query').builder(this.constructor as ICtor<IModel>, this.connection);
     }
 
     /**
@@ -641,8 +630,9 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     async update(): Promise<void> {
         if (!this.getId() || !this.attributes) return;
 
-        const preparedAttributes = this.prepareDocument() ?? {};
-        await this.queryBuilder().where(this.primaryKey, this.getId()).update(preparedAttributes);
+        const builder = this.queryBuilder()
+        const normalizedIdProperty = builder.normalizeIdProperty(this.primaryKey)
+        await builder.where(normalizedIdProperty, this.getId()).update({...this.attributes});
     }
 
 
@@ -658,8 +648,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
             await this.setTimestamp('createdAt');
             await this.setTimestamp('updatedAt');
 
-            const preparedAttributes = this.prepareDocument() ?? {};
-            this.attributes = await (await this.queryBuilder().insert(preparedAttributes)).first()?.toObject() as Attributes;
+            this.attributes = await (await this.queryBuilder().insert(this.attributes as object)).first()?.toObject() as Attributes;
             this.attributes = await this.refresh();
             this.attributes = await this.observeAttributes('created', this.attributes);
             return;
@@ -681,7 +670,9 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     async delete(): Promise<void> {
         if (!this.attributes) return;
         this.attributes = await this.observeAttributes('deleting', this.attributes);
-        await this.queryBuilder().where(this.primaryKey, this.getId()).delete();
+        const builder = this.queryBuilder()
+        const normalizedIdProperty = builder.normalizeIdProperty(this.primaryKey)
+        await builder.where(normalizedIdProperty, this.getId()).delete();
         this.attributes = null;
         this.original = null;
         await this.observeAttributes('deleted', this.attributes);

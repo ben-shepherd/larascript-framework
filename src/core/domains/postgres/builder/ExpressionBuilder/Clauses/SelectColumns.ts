@@ -1,7 +1,7 @@
 
 import { TColumnOption } from "@src/core/domains/eloquent/interfaces/IEloquent";
-import SqlExpression, { SqlRaw } from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
+import SqlExpression, { SqlRaw } from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 
 type RawSelect = { sql: string, bindings: unknown };
 
@@ -72,6 +72,17 @@ class SelectColumns {
     protected static prepareColumns(options: TColumnOption[] | null): string[] {
         if(options === null || options.length === 0) {
             options = [{column: '*'}]
+        }
+
+        const containsWildcard = options.some(option => option.column === '*');
+        
+        // If the query does not contain a wildcard, add the id column
+        if(!containsWildcard) {
+            const containsId = options.some(option => option.column === 'id');
+
+            if(!containsId) {
+                options.push({column: 'id'});
+            }
         }
 
         // Format the columns

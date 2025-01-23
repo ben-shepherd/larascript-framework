@@ -9,45 +9,48 @@ import testHelper, { forEveryConnection } from '@src/tests/testHelper';
 
 describe('eloquent', () => {
 
-    const resetAndRepopulateTable = async (connection: string) => {
+    const resetAndRepopulateTable = async () => {
         await resetPeopleTable()
 
-        return await queryBuilder(TestPeopleModel, connection).clone().insert([
-            {
-                name: 'John',
-                age: 25,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            },
-            {
-                name: 'Jane',
-                age: 30,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            },
-            {
-                name: 'Bob',
-                age: 35,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            },
-            {
-                name: 'Alice',
-                age: 40,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            }
-        ])
+        await forEveryConnection(async connection => {
+            await queryBuilder(TestPeopleModel, connection).clone().insert([
+                {
+                    name: 'John',
+                    age: 25,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                },
+                {
+                    name: 'Jane',
+                    age: 30,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                },
+                {
+                    name: 'Bob',
+                    age: 35,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                },
+                {
+                    name: 'Alice',
+                    age: 40,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                }
+            ])
+        })
     }
 
     beforeAll(async () => {
         await testHelper.testBootApp()
+        await resetAndRepopulateTable()
     });
 
     test('test find, findOrFail, all and get as model', async () => {
         await forEveryConnection(async connection => {  
-            const inserted = await resetAndRepopulateTable(connection)
             const query = queryBuilder(TestPeopleModel, connection)
+            const inserted = await query.clone().orderBy('name', 'asc').get();
 
             const allResults = await query.clone()
                 .all();
@@ -77,8 +80,8 @@ describe('eloquent', () => {
     test('test find, findOrFail, all and get', async () => {
 
         await forEveryConnection(async connection => {  
-            const inserted = await resetAndRepopulateTable(connection)
             const query = queryBuilder(TestPeopleModel, connection)
+            const inserted = await query.clone().orderBy('name', 'asc').get();
 
             expect(inserted.count()).toBe(4);
             expect(inserted[0].id ?? null).toBeTruthy();
@@ -139,27 +142,32 @@ describe('eloquent', () => {
             expect(resultsOnlyName.count()).toBe(4);
             expect(resultsOnlyName[0].name).toBe('John');
             const resultsOnlyNameAttributes = resultsOnlyName[0]?.getAttributes() ?? {};
-            expect(Object.keys(resultsOnlyNameAttributes)).toHaveLength(1);
+            expect(Object.keys(resultsOnlyNameAttributes)).toHaveLength(2); // Name and ID
         })
     });
 
     test('test with raw sql (postgres)', async () => {
-        const query = queryBuilder(TestPeopleModel, 'postgres')
+        
+        await forEveryConnection(async connection => {
+            if(connection !== 'postgres') return;
+            
+            const query = queryBuilder(TestPeopleModel, 'postgres')
 
-        const table = query.useTable()
-        const sql = `SELECT * FROM ${table} WHERE name = $1 OR name = $2 ORDER BY name ASC LIMIT 2`;
-        const bindings = ['Alice', 'Bob'];
+            const table = query.useTable()
+            const sql = `SELECT * FROM ${table} WHERE name = $1 OR name = $2 ORDER BY name ASC LIMIT 2`;
+            const bindings = ['Alice', 'Bob'];
 
-        const results = await query.clone().raw(sql, bindings);
-        let rows: ITestEmployeeModelData[] = [];
+            const results = await query.clone().raw(sql, bindings);
+            let rows: ITestEmployeeModelData[] = [];
 
-        if(results &&typeof results === 'object' && 'rows' in results) {
-            rows = results.rows as ITestEmployeeModelData[];
-        }
+            if(results &&typeof results === 'object' && 'rows' in results) {
+                rows = results.rows as ITestEmployeeModelData[];
+            }
 
-        expect(rows.length).toBe(2);
-        expect(rows?.[0].name).toBe('Alice');
-        expect(rows?.[1].name).toBe('Bob');
+            expect(rows.length).toBe(2);
+            expect(rows?.[0].name).toBe('Alice');
+            expect(rows?.[1].name).toBe('Bob');
+        })
     })
 
     test('test with raw select columns (postgres)', async () => {

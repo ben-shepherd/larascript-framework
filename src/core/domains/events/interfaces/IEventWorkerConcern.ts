@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import IModelAttributes, { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
+import { IModel, IModelAttributes, ModelConstructor } from "@src/core/interfaces/IModel";
 
 
 export interface WorkerModelAttributes extends IModelAttributes {

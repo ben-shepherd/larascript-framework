@@ -229,7 +229,7 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
     }
 
     // Where Clause Methods
-    setWhere(where: TWhereClause[]): this {
+    setWhere(where: TWhereClause[] | null): this {
         if(!this.whereClauses) this.whereClauses = [];
         this.whereClauses = where;
         return this;
@@ -245,13 +245,19 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
         return this
     }
 
+    addWhereRaw(raw: unknown): this {
+        if(!this.whereClauses) this.whereClauses = [];
+        this.whereClauses.push({ raw } as unknown as TWhereClause)
+        return this
+    }
+
     where(column: string, operator: TOperator, value: TWhereClauseValue | TWhereClauseValue[] = null, logicalOperator: TLogicalOperator = 'and'): this {
         if (!this.whereClauses) this.whereClauses = [];
         this.whereClauses.push({ column, operator, value, logicalOperator, tableName: this.table });
         return this;
     }
 
-    whereRaw<T = unknown>(value: T, bindings: unknown): this {
+    whereRaw<T = unknown>(value: T, bindings?: unknown): this {
         this.rawWhere = value
         return this
     }
