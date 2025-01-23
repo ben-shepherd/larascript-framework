@@ -2,8 +2,7 @@ import ExpressionException from "@src/core/domains/eloquent/exceptions/Expressio
 import { LogicalOperators, TLogicalOperator, TWhereClause, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
-
-import { MongoRaw } from ".";
+import { MongoRaw } from "@src/core/domains/mongodb/builder/AggregateExpression";
 
 /**
  * Match class handles building MongoDB $match pipeline stages from SQL-style where clauses.

@@ -3,17 +3,16 @@ import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import captureError from "@src/core/util/captureError";
 import MoveObjectToProperty from "@src/core/util/MoveObjectToProperty";
 import { Document, Collection as MongoCollection, ObjectId } from "mongodb";
-
-import Collection from "../../collections/Collection";
-import collect from "../../collections/helper/collect";
-import { db } from "../../database/services/Database";
-import Eloquent from "../../eloquent/Eloquent";
-import EloquentException from "../../eloquent/exceptions/EloquentExpression";
-import { IEloquent } from "../../eloquent/interfaces/IEloquent";
-import IEloquentExpression from "../../eloquent/interfaces/IEloquentExpression";
-import { logger } from "../../logger/services/LoggerService";
-import MongoDbAdapter from "../adapters/MongoDbAdapter";
-import AggregateExpression from "../builder/AggregateExpression";
+import Collection from "@src/core/domains/collections/Collection";
+import collect from "@src/core/domains/collections/helper/collect";
+import { db } from "@src/core/domains/database/services/Database";
+import Eloquent from "@src/core/domains/eloquent/Eloquent";
+import EloquentException from "@src/core/domains/eloquent/exceptions/EloquentExpression";
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
+import { logger } from "@src/core/domains/logger/services/LoggerService";
+import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
+import AggregateExpression from "@src/core/domains/mongodb/builder/AggregateExpression";
 
 /**
  * Represents a MongoDB document with an ObjectId _id field and model attributes.

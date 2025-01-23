@@ -2,8 +2,8 @@ import Singleton from "@src/core/base/Singleton";
 import { App } from "@src/core/services/App";
 
 import 'dotenv/config';
-import { EnvironmentType } from "./consts/Environment";
-import { IProvider } from "./interfaces/IProvider";
+import { EnvironmentType } from "@src/core/consts/Environment";
+import { IProvider } from "@src/core/interfaces/IProvider";
 
 export type Containers = {
     [key: string]: any

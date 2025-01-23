@@ -1,11 +1,10 @@
 import BaseExpression from "@src/core/domains/eloquent/base/BaseExpression";
-
-import Join from "./Join";
-import Limit from "./Limit";
-import Match from "./Match";
-import Order from "./Order";
-import Project from "./Project";
-import Skip from "./Skip";
+import Join from "@src/core/domains/mongodb/builder/AggregateExpression/Join";
+import Limit from "@src/core/domains/mongodb/builder/AggregateExpression/Limit";
+import Match from "@src/core/domains/mongodb/builder/AggregateExpression/Match";
+import Order from "@src/core/domains/mongodb/builder/AggregateExpression/Order";
+import Project from "@src/core/domains/mongodb/builder/AggregateExpression/Project";
+import Skip from "@src/core/domains/mongodb/builder/AggregateExpression/Skip";
 
 export type MongoRaw = object | object[]
 

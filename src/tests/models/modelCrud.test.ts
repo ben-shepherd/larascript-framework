@@ -2,8 +2,7 @@
 import { describe, expect, test } from '@jest/globals';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
 import testHelper, { forEveryConnection } from '@src/tests/testHelper';
-
-import TestPeopleModel, { resetPeopleTable } from '../eloquent/models/TestPeopleModel';
+import TestPeopleModel, { resetPeopleTable } from '@src/tests/eloquent/models/TestPeopleModel';
 
 describe('test model crud', () => {
 

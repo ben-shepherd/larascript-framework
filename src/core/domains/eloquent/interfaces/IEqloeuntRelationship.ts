@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { IModel, IModelAttributes } from "@src/core/interfaces/IModel";
-
-import Collection from "../../collections/Collection";
-import { IEloquent, IRelationship } from "./IEloquent";
+import Collection from "@src/core/domains/collections/Collection";
+import { IEloquent, IRelationship } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
 export interface IRelationshipResolver<Model extends IModel = IModel> {
     resolveData<Attributes extends IModelAttributes = IModelAttributes, K extends keyof Attributes = keyof Attributes>(model: Model, relationship: IRelationship, connection: string): Promise<Attributes[K] | Collection<Attributes[K] | null>>;

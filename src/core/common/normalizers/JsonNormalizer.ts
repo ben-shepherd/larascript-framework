@@ -1,4 +1,4 @@
-import { NormalizerInterface } from "../interfaces/NormalizerInterface";
+import { NormalizerInterface } from "@src/core/common/interfaces/NormalizerInterface";
 
 class JsonNormalizer implements NormalizerInterface {
 

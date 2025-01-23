@@ -1,6 +1,5 @@
 import Repository from "@src/core/base/Repository";
-
-import TestPeopleModel from "../eloquent/models/TestPeopleModel";
+import TestPeopleModel from "@src/tests/eloquent/models/TestPeopleModel";
 export default class TestPeopleRepository extends Repository<TestPeopleModel> {
 
     constructor(connectionName?: string) {

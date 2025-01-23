@@ -6,8 +6,7 @@ import HasMany from "@src/core/domains/eloquent/relational/HasMany";
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel, IModelAttributes, ModelConstructor } from "@src/core/interfaces/IModel";
-
-import { IRelationshipResolver } from "../interfaces/IEqloeuntRelationship";
+import { IRelationshipResolver } from "@src/core/domains/eloquent/interfaces/IEqloeuntRelationship";
 
 class BaseRelationshipResolver implements IRelationshipResolver {
 

@@ -1,6 +1,5 @@
 import IService from "@src/core/interfaces/IService";
-
-import { ICtor } from "../interfaces/ICtor";
+import { ICtor } from "@src/core/interfaces/ICtor";
 
 /**
  * Singleton pattern implementation for services.

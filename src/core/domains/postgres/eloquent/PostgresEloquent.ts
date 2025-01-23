@@ -16,8 +16,7 @@ import PrefixedPropertyGrouper from "@src/core/util/PrefixedPropertyGrouper";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { bindAll } from 'lodash';
 import pg, { QueryResult } from 'pg';
-
-import PostgresJsonNormalizer from "../normalizers/PostgresJsonNormalizer";
+import PostgresJsonNormalizer from "@src/core/domains/postgres/normalizers/PostgresJsonNormalizer";
 
 class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpression> {
 

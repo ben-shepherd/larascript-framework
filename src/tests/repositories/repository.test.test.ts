@@ -3,9 +3,8 @@ import { describe, test } from '@jest/globals';
 import Repository from '@src/core/base/Repository';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
 import testHelper, { forEveryConnection } from '@src/tests/testHelper';
-
-import TestPeopleModel, { resetPeopleTable } from '../eloquent/models/TestPeopleModel';
-import TestPeopleRepository from './TestPeopleRepository';
+import TestPeopleModel, { resetPeopleTable } from '@src/tests/eloquent/models/TestPeopleModel';
+import TestPeopleRepository from '@src/tests/repositories/TestPeopleRepository';
 
 const resetAndPopulate = async () => {
     await resetPeopleTable()

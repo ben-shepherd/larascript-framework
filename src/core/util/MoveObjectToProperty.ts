@@ -1,4 +1,4 @@
-import BaseFormatter from "../domains/formatter/base/BaseFormatter"
+import BaseFormatter from "@src/core/domains/formatter/base/BaseFormatter"
 
 export type MoveObjectToPropertyOptions = {
     column: string

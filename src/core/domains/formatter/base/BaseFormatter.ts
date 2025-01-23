@@ -1,4 +1,4 @@
-import { IFormatter } from "../interfaces/IFormatter"
+import { IFormatter } from "@src/core/domains/formatter/interfaces/IFormatter"
 
 abstract class BaseFormatter<Options = unknown> implements IFormatter<Options> {
 

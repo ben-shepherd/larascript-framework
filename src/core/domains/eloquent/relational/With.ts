@@ -1,9 +1,8 @@
 import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
-
-import { db } from "../../database/services/Database";
-import BaseRelationshipResolver from "../base/BaseRelationshipResolver";
+import { db } from "@src/core/domains/database/services/Database";
+import BaseRelationshipResolver from "@src/core/domains/eloquent/base/BaseRelationshipResolver";
 
 class With {
 

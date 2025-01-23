@@ -12,10 +12,9 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
-
-import { IRelationshipResolver } from "../../eloquent/interfaces/IEqloeuntRelationship";
-import MongoDbEloquent from "../eloquent/MongoDbEloquent";
-import MongoRelationshipResolver from "../relationship/MongoRelationshipResolver";
+import { IRelationshipResolver } from "@src/core/domains/eloquent/interfaces/IEqloeuntRelationship";
+import MongoDbEloquent from "@src/core/domains/mongodb/eloquent/MongoDbEloquent";
+import MongoRelationshipResolver from "@src/core/domains/mongodb/relationship/MongoRelationshipResolver";
 
 class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
 
