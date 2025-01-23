@@ -119,11 +119,6 @@ export type IdGeneratorFn<T = unknown> = <ReturnType = T>(...args: any[]) => Ret
 
 export type TransactionFn<Model extends IModel = IModel> = (query: IEloquent<ModelWithAttributes<Model>>) => Promise<void>;
 
-export type TargetPropertyOptions = {
-    targetProperty: string;
-    setTargetPropertyNullWhenObjectAllNullish?: boolean;
-}
-
 export interface IEloquent<Model extends IModel = IModel, Expression extends IEloquentExpression = IEloquentExpression> {
 
     // Normalization
