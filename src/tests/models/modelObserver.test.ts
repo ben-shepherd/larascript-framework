@@ -1,30 +1,12 @@
 /* eslint-disable no-undef */
 import { describe, expect, test } from '@jest/globals';
-import { db } from '@src/core/domains/database/services/Database';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
-import TestObserverModel from '@src/tests/models/models/TestObserverModel';
+import TestObserverModel, { resetTestObserverTable } from '@src/tests/models/models/TestObserverModel';
 import testHelper from '@src/tests/testHelper';
-import { DataTypes } from 'sequelize';
 
 const connections = testHelper.getTestConnectionNames()
 
-const resetTable = async () => {
-    for(const connectionName of connections) {
-        const schema = db().schema(connectionName)
 
-        
-        if(await schema.tableExists('tests')) {
-            await schema.dropTable('tests');
-        }
-
-        schema.createTable('tests', {
-            number: DataTypes.INTEGER,
-            name: DataTypes.STRING,
-            createdAt: DataTypes.DATE,
-            updatedAt: DataTypes.DATE
-        })
-    }
-}
 
 describe('test model observer', () => {
 
@@ -32,12 +14,12 @@ describe('test model observer', () => {
         await testHelper.testBootApp()
     })
 
-    test('CRUD', async () => {
+    test('observer', async () => {
         
         for(const connectionName of connections) {
             logger().console('[Connection]', connectionName)
 
-            await resetTable();
+            await resetTestObserverTable();
 
             const startingNameValue = 'John';
             const expectedNameValue = 'Bob';
