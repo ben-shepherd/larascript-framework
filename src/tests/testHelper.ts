@@ -136,10 +136,18 @@ export const getTestConnectionNames = ({ exclude = [] }: { exclude?: string[] } 
  * })
  */
 // eslint-disable-next-line no-unused-vars
-export const forEveryConnection = async (fn: (connectionName: string) => Promise<void>) => {
-    const connectionNames = getTestConnectionNames()
+export type ForEveryConnectionFn = (connectionName: string) => Promise<void>
+export type ForEveryConnectionOptions = {
+    only?: string[]
+    exclude?: string[]
+}
+export const forEveryConnection = async (fn: ForEveryConnectionFn, options: ForEveryConnectionOptions = {}) => {
+    const connectionNames = getTestConnectionNames(options)
     for(const connectionName of connectionNames) {
-        console.log('Running test for connection ' + connectionName)
+        if(options.only && !options.only.includes(connectionName)) continue;
+        if(options.exclude && options.exclude.includes(connectionName)) continue;
+
+        console.log('[forEveryConnection]: ' + connectionName)
         await fn(connectionName)
     }
 }
