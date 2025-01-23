@@ -22,7 +22,7 @@ export default async (req: Request, res: Response) => {
 
         // Check if the provider is MongoDB
         if (adapter as unknown instanceof MongoDbAdapter) {
-            const mongoClient = (adapter as MongoDbAdapter).getClient();
+            const mongoClient = (adapter as unknown as MongoDbAdapter).getClient();
             await (mongoClient as MongoClient).db().stats();
         }
         
