@@ -194,7 +194,7 @@ abstract class Eloquent<
      * @returns The normalized documents
      */
     normalizeDocuments<T extends object = object>(documents: T | T[]): T[] {
-        return documents as T[]
+        return Array.isArray(documents) ? documents : [documents]
     }
 
     /**
@@ -203,7 +203,7 @@ abstract class Eloquent<
      * @returns The denormalized documents
      */
     denormalizeDocuments<T extends object = object>(documents: T | T[]): T[] {
-        return documents as T[]
+        return Array.isArray(documents) ? documents : [documents]
     }
 
     /**
