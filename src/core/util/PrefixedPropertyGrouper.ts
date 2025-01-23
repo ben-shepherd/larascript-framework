@@ -1,3 +1,4 @@
+import BaseFormatter from "@src/core/domains/formatter/base/BaseFormatter";
 
 export type PrefixToTargetPropertyOptions = {
     columnPrefix: string;
@@ -37,15 +38,35 @@ export type PrefixToTargetPropertyOptions = {
  * // ]
  * ```
  */
-class PrefixedPropertyGrouper {
+class PrefixedPropertyGrouper extends BaseFormatter<PrefixToTargetPropertyOptions> {
 
+    formatterOptions: PrefixToTargetPropertyOptions = []
+
+    /**
+     * Formats an array of objects by moving prefixed properties to nested objects.
+     * @param {object[]} arr The array of objects to format.
+     * @param {PrefixToTargetPropertyOptions} options The options for the formatting.
+     * @returns {T} The formatted array of objects.
+     */
+    format<T>(arr: object[], options: PrefixToTargetPropertyOptions = this.formatterOptions): T {
+        return arr.map((current) => this.handleItem(current as object, options ?? this.formatterOptions)) as T;
+    }
+    
+    /**
+     * Adds an option to the formatter.
+     * @param {string} column The column to add.
+     * @param {string} targetProperty The target property to add.
+     */
+    addOption(column: string, targetProperty: string): void {
+        this.formatterOptions.push({ columnPrefix: `${column}_`, targetProperty, setTargetPropertyNullWhenObjectAllNullish: true })
+    }
 
     /**
      * Processes an array of objects by moving prefixed properties to nested objects.
      * @param {T[]} rows The array of objects to process.
      * @returns {T[]} The processed array of objects.
      */
-    static handleArray<T extends object = object>(arr: T[], options: PrefixToTargetPropertyOptions): T[] {
+    handleArray<T extends object = object>(arr: T[], options: PrefixToTargetPropertyOptions): T[] {
         return arr.map((current) => this.handleItem(current, options));
     }
 
@@ -55,7 +76,7 @@ class PrefixedPropertyGrouper {
      * @param {PrefixToTargetPropertyOptions} options Configuration options.
      * @returns {T} The processed object.
      */
-    static handleItem<T extends object = object>(item: T, options: PrefixToTargetPropertyOptions): T {
+    handleItem<T extends object = object>(item: T, options: PrefixToTargetPropertyOptions): T {
         const result = { ...item };
         
         options.forEach(option => {
@@ -69,7 +90,7 @@ class PrefixedPropertyGrouper {
      * Processes a single option configuration for an object.
      * @private
      */
-    private static processOption<T extends object>(
+    private processOption<T extends object>(
         result: T, 
         item: T, 
         option: PrefixToTargetPropertyOptions[0]
@@ -92,7 +113,7 @@ class PrefixedPropertyGrouper {
      * Extracts properties that match the given prefix and returns them without the prefix.
      * @private
      */
-    private static extractPrefixedProperties<T extends object>(
+    private extractPrefixedProperties<T extends object>(
         item: T, 
         columnPrefix: string
     ): Record<string, any> {
@@ -112,7 +133,7 @@ class PrefixedPropertyGrouper {
      * Deletes the original prefixed properties from the result object.
      * @private
      */
-    private static deletePrefixedProperties<T extends object>(
+    private deletePrefixedProperties<T extends object>(
         result: T, 
         properties: string[], 
         columnPrefix: string
@@ -126,7 +147,7 @@ class PrefixedPropertyGrouper {
      * Checks if all properties in the target object are null and sets the entire object to null if specified.
      * @private
      */
-    private static handleNullChecking<T extends object>(
+    private handleNullChecking<T extends object>(
         result: T, 
         targetProperty: string
     ): void {

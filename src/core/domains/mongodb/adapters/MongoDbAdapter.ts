@@ -12,8 +12,9 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
-
-import MongoDbEloquent from "../eloquent/MongoDbEloquent";
+import { IRelationshipResolver } from "@src/core/domains/eloquent/interfaces/IEqloeuntRelationship";
+import MongoDbEloquent from "@src/core/domains/mongodb/eloquent/MongoDbEloquent";
+import MongoRelationshipResolver from "@src/core/domains/mongodb/relationship/MongoRelationshipResolver";
 
 class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
 
@@ -52,6 +53,14 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
      */
     getDefaultCredentials(): string | null {
         return extractDefaultMongoCredentials()
+    }
+
+    /**
+     * Gets the relationship resolver for the MongoDB adapter.
+     * @returns {IRelationshipResolver} The relationship resolver.
+     */
+    getRelationshipResolver(): IRelationshipResolver {
+        return new MongoRelationshipResolver(this.connectionName)
     }
 
     getClient(): MongoClient {
@@ -99,7 +108,7 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
      * Connect to a specific PostgreSQL database.
      *
      * @param database - The name of the database to connect to.
-     * @returns {Promise<pg.Client>} A promise that resolves with a new instance of PostgreSQL client.
+     * @returns {Promise<MongoClient>} A promise that resolves with a new instance of PostgreSQL client.
      */
     async getMongoClientWithDatabase(database: string = 'app', options: object = {}): Promise<MongoClient> {
         const { host, port, username, password, options: mongoOptions } = ParseMongoDBConnectionString.parse(this.config.uri); 

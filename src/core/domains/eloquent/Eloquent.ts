@@ -17,7 +17,7 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { deepClone } from "@src/core/util/deepClone";
-import { PrefixToTargetPropertyOptions } from "@src/core/util/PrefixedPropertyGrouper";
+
 
 /**
  * Base class for Eloquent query builder.
@@ -27,7 +27,10 @@ import { PrefixToTargetPropertyOptions } from "@src/core/util/PrefixedPropertyGr
  * @abstract
  */
 
-abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpression = IEloquentExpression, Adapter extends IDatabaseAdapter = IDatabaseAdapter> implements IEloquent<Model, Expression> {
+abstract class Eloquent<
+    Model extends IModel,
+    Expression extends IEloquentExpression = IEloquentExpression,
+    Adapter extends IDatabaseAdapter = IDatabaseAdapter> implements IEloquent<Model, Expression> {
 
     /**
      * The default ID generator function for the query builder.
@@ -70,11 +73,6 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
     protected modelCtor?: ModelConstructor<IModel>;
 
     /**
-     * Prefixed properties to target property as object options
-     */
-    protected formatResultTargetPropertyToObjectOptions: PrefixToTargetPropertyOptions = [];
-
-    /**
      * The id generator function
      */
     protected idGeneratorFn?: IdGeneratorFn;
@@ -102,15 +100,21 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
     }
 
     /**
-     * Applies the formatter function to the given array of rows.
-     * If no formatter function is set, the rows are returned as is.
-     * @param {unknown[]} rows The array of rows to apply the formatter to.
-     * @returns {Model[]} The formatted array of rows.
+     * Formats the results
+     * @param results The results to format
+     * @returns The formatted results
      */
-    protected applyFormatter(rows: unknown[]): Model[] {
-        return rows.map(row => {
-            return this.formatterFn ? this.formatterFn(row) : row
-        }) as Model[]
+    protected formatResultsAsModels(results: object[]): Model[] {
+        if(!this.modelCtor) {
+            throw new EloquentException('Model constructor has not been set')
+        }
+        
+        return results.map(result => {
+            const modelConstructor = this.modelCtor as ModelConstructor<IModel>;
+            const model = modelConstructor.create(result as Model['attributes'])
+            model.setConnectionName(this.connectionName)
+            return model
+        })
     }
 
     /**
@@ -173,6 +177,33 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
             }
         }
         return document
+    }
+
+    /**
+     * Normalizes the id property
+     * @param property The property to normalize
+     * @returns The normalized property
+     */
+    normalizeIdProperty(property: string): string {
+        return property
+    }
+
+    /**
+     * Normalizes the documents
+     * @param documents The documents to normalize
+     * @returns The normalized documents
+     */
+    normalizeDocuments<T extends object = object>(documents: T | T[]): T[] {
+        return Array.isArray(documents) ? documents : [documents]
+    }
+
+    /**
+     * Denormalizes the documents
+     * @param documents The documents to denormalize
+     * @returns The denormalized documents
+     */
+    denormalizeDocuments<T extends object = object>(documents: T | T[]): T[] {
+        return Array.isArray(documents) ? documents : [documents]
     }
 
     /**
@@ -300,18 +331,6 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
         return this.modelCtor
     }
 
-    /**
-     * Sets the formatter function for the query builder. This function will be
-     * called with each row of the result as an argument. The function should
-     * return the transformed row.
-     *
-     * @param {TFomatterFn} formatterFn The formatter function to set
-     * @returns {this} The query builder instance to enable chaining
-     */
-    setFormatter(formatterFn?: TFormatterFn): IEloquent<Model> {
-        this.formatterFn = formatterFn 
-        return this as unknown as IEloquent<Model>
-    }
 
     /**
      * Sets the ID generator function for the query builder.
@@ -681,45 +700,56 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
     }
 
     /**
+     * Constructs a path for a join column.
+     * 
+     * @param {string} relatedTable - The table to join with.
+     * @param {string} localColumn - The column to join on in the left table.
+     * @param {string} relatedColumn - The column to join on in the right table.
+     * @returns {string} The constructed path.
+     */
+    static getJoinAsPath(relatedTable: string, localColumn: string, relatedColumn: string): string {
+        return `${relatedTable}_${localColumn}_${relatedColumn}`.toLocaleLowerCase().trim()
+    }
+
+    /**
      * Adds an inner join to the query builder.
      * 
-     * @param {string} table - The table to join.
-     * @param {string} relatedTable - The table to join with.
+     * @param {ModelConstructor<IModel>} related - The table to join with.
      * @param {string} localColumn - The column to join on in the left table.
      * @param {string} relatedColumn - The column to join on in the right table.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    join(relatedTable: string, localColumn: string, relatedColumn: string ): IEloquent<Model> {
+    join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, ...args: any[]): IEloquent<Model> {
         const localTable = this.useTable()
-        this.expression.setJoins({ localTable, localColumn, relatedTable, relatedColumn, type: 'inner' });
+        this.expression.setJoins({ localTable, localColumn, relatedTable: related.getTable(), relatedColumn, type: 'inner' });
         return this as unknown as IEloquent<Model>
     }
 
     /**
      * Adds a left join to the query builder.
      * 
-     * @param {string} relatedTable - The table to join with.
+     * @param {ModelConstructor<IModel>} related - The table to join with.
      * @param {string} localColumn - The column to join on in the left table.
      * @param {string} relatedColumn - The column to join on in the right table.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    leftJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model> {
+    leftJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, ...args: any[]): IEloquent<Model> {
         const localTable = this.useTable()
-        this.expression.setJoins({ localTable, localColumn, relatedTable, relatedColumn, type: 'left' });
+        this.expression.setJoins({ localTable, localColumn, relatedTable: related.getTable(), relatedColumn, type: 'left' });
         return this as unknown as IEloquent<Model>
     }
 
     /**
      * Adds a right join to the query builder.
-     * 
-     * @param {string} relatedTable - The table to join with.
+        * 
+     * @param {ModelConstructor<IModel>} related - The table to join with.
      * @param {string} localColumn - The column to join on in the left table.
      * @param {string} relatedColumn - The column to join on in the right table.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    rightJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model> {
+    rightJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, ...args: any[]): IEloquent<Model> {
         const localTable = this.useTable()
-        this.expression.setJoins({ localTable, localColumn, relatedTable, relatedColumn, type: 'right' });
+        this.expression.setJoins({ localTable, localColumn, relatedTable: related.getTable(), relatedColumn, type: 'right' });
         return this as unknown as IEloquent<Model>
     }
 
@@ -729,25 +759,25 @@ abstract class Eloquent<Model extends IModel, Expression extends IEloquentExpres
      * This method allows for joining two tables using a full join, which returns
      * all records when there is a match in either left or right table records.
      *
-     * @param {string} relatedTable - The table to join with.
+     * @param {ModelConstructor<IModel>} related - The table to join with.
      * @param {string} localColumn - The column to join on in the left table.
      * @param {string} relatedColumn - The column to join on in the right table.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    fullJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<Model> {
+    fullJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, ...args: any[]): IEloquent<Model> {
         const localTable = this.useTable()
-        this.expression.setJoins({ localTable, localColumn, relatedTable, relatedColumn, type: 'full' });
+        this.expression.setJoins({ localTable, localColumn, relatedTable: related.getTable(), relatedColumn, type: 'full' });
         return this as unknown as IEloquent<Model>
     }
 
     /**
      * Adds a cross join to the query builder.
      * 
-     * @param {string} relatedTable - The table to join with.
+     * @param {ModelConstructor<IModel>} related - The table to join with.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    crossJoin(relatedTable: string) {
-        this.expression.setJoins({ relatedTable, type: 'cross' });
+    crossJoin(related: ModelConstructor<IModel>) {
+        this.expression.setJoins({ relatedTable: related.getTable(), type: 'cross' });
         return this as unknown as IEloquent<Model>
     }
 

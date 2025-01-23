@@ -7,6 +7,8 @@ import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareO
 import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
+import BaseRelationshipResolver from "@src/core/domains/eloquent/base/BaseRelationshipResolver";
+import { IRelationshipResolver } from "@src/core/domains/eloquent/interfaces/IEqloeuntRelationship";
 
 abstract class BaseDatabaseAdapter<TConfig extends object = object> extends BaseConfig implements IDatabaseAdapter {
 
@@ -51,6 +53,13 @@ abstract class BaseDatabaseAdapter<TConfig extends object = object> extends Base
             throw new Error('Docker compose file name not set')
         }
         return this.dockerComposeFileName
+    }
+
+    /**
+     * Get the relationship resolver constructor
+     */
+    getRelationshipResolver(): IRelationshipResolver {
+        return new BaseRelationshipResolver(this.connectionName)
     }
 
     /**

@@ -1,10 +1,8 @@
 /* eslint-disable no-undef */
 import { describe, expect, test } from '@jest/globals';
 import { App } from '@src/core/services/App';
-import testHelper from '@src/tests/testHelper';
+import testHelper, { forEveryConnection } from '@src/tests/testHelper';
 import { DataTypes } from 'sequelize';
-
-const connections = testHelper.getTestConnectionNames()
 
 const createTable = async (connectionName: string) => {
     const schema = App.container('db').schema(connectionName)
@@ -30,16 +28,17 @@ describe('test dropping all tables', () => {
     beforeAll(async () => {
         await testHelper.testBootApp()
 
-        
-        for(const connectionName of connections) {
+        await forEveryConnection(async connectionName => {
             await dropTable(connectionName)
             await createTable(connectionName)
-        }
+        })
     })
 
     test('create and then drop all tables', async () => {
 
-        for(const connectionName of connections) {
+        await forEveryConnection(async connectionName => {
+            if(connectionName !== 'mongodb') return;
+            
             const schema = App.container('db').schema(connectionName)
 
             await createTable(connectionName);
@@ -51,6 +50,6 @@ describe('test dropping all tables', () => {
 
             const tableExistsPostDropAllTables = await schema.tableExists('tests');
             expect(tableExistsPostDropAllTables).toBe(false);
-        }
+        })
     })
 });

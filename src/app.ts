@@ -5,8 +5,7 @@ import providers from '@src/config/providers';
 import CommandNotFoundException from '@src/core/domains/console/exceptions/CommandNotFoundException';
 import CommandBootService from '@src/core/domains/console/service/CommandBootService';
 import Kernel, { KernelOptions } from '@src/core/Kernel';
-
-import { logger } from './core/domains/logger/services/LoggerService';
+import { logger } from '@src/core/domains/logger/services/LoggerService';
 
 (async () => {
     try {

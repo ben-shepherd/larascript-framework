@@ -1,7 +1,8 @@
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel } from "@src/core/interfaces/IModel";
-import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
-import EloquentRelationship from "@src/core/domains/eloquent/utils/EloquentRelationship";
+import { db } from "@src/core/domains/database/services/Database";
+import BaseRelationshipResolver from "@src/core/domains/eloquent/base/BaseRelationshipResolver";
 
 class With {
 
@@ -24,9 +25,11 @@ class With {
 
         const eloquent = this.eloquent.clone()
 
-        const relationshipInterface = EloquentRelationship.fromModel(eloquent.getModelCtor() as ICtor<IModel>, this.relationshipName)
+        const resolver = db().getAdapter().getRelationshipResolver()
 
-        return EloquentRelationship.updateEloquent(eloquent, relationshipInterface, this.relationshipName)
+        const relationshipInterface = BaseRelationshipResolver.resolveRelationshipInterfaceByModelRelationshipName(eloquent.getModelCtor() as ICtor<IModel>, this.relationshipName)
+
+        return resolver.attachEloquentRelationship(eloquent, relationshipInterface, this.relationshipName)
     }
 
 }

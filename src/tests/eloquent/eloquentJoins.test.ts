@@ -148,6 +148,7 @@ describe('eloquent', () => {
                 .where('name', 'Alice')
                 .firstOrFail();
 
+            aliceModel.setConnectionName(connection)
             const department = await aliceModel.attr('department');
 
             const hr = await departmentQuery.clone().where('deptName', 'HR').firstOrFail();
@@ -183,45 +184,49 @@ describe('eloquent', () => {
     test('test inner join', async () => {
         await forEveryConnection(async connection => {
             const employeeQuery = getEmployeeQuery(connection)
-            const departmentTable = TestDepartmentModel.getTable();
 
             const alice = await employeeQuery.clone()
-                .join(departmentTable, 'deptId', 'id')
-                .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+                .join(TestDepartmentModel, 'deptId', 'id', 'department')
                 .where('name', 'Alice')
                 .firstOrFail();
 
             expect(alice?.attrSync('department')).toBeTruthy();
             expect(alice?.attrSync('department')?.deptName).toBe('HR')
-        
+
+        })
+    })
+
+    // This test is only relevant for postgres
+    // MongoDB does not support joins, so default behavior uses left join
+    test('test inner join, relation not found, ignore mongodb', async () => {
+        await forEveryConnection(async connection => {
+            if (connection === 'mongodb') return;
+
+            const employeeQuery = getEmployeeQuery(connection)
+
             const notFoundRelation = await employeeQuery.clone()
-                .join(departmentTable, 'deptId', 'id')
-                .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+                .join(TestDepartmentModel, 'deptId', 'id', 'department')
                 .where('name', 'NoRelationship')
                 .first();
 
             expect(notFoundRelation).toBe(null)
         })
-
     })
 
     test('test left join', async () => {
 
         await forEveryConnection(async connection => {
             const employeeQuery = getEmployeeQuery(connection)
-            const departmentTable = TestDepartmentModel.getTable();
 
             const alice = await employeeQuery.clone()
-                .leftJoin(departmentTable, 'deptId', 'id')
-                .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+                .leftJoin(TestDepartmentModel, 'deptId', 'id', 'department')
                 .where('name', 'Alice').firstOrFail();
 
             expect(alice?.attrSync('department')).toBeTruthy();
             expect(alice?.attrSync('department')?.deptName).toBe('HR');
 
             const notFoundRelation = await employeeQuery.clone()
-                .leftJoin(departmentTable, 'deptId', 'id')
-                .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+                .leftJoin(TestDepartmentModel, 'deptId', 'id', 'department')
                 .where('name', 'NoRelationship')
                 .firstOrFail();
 
@@ -232,23 +237,24 @@ describe('eloquent', () => {
 
     })
 
-    test('test right join', async () => {
+    // This test is only relevant for postgres
+    // MongoDB does not support joins, so default behavior uses left join
+    test('test right join, ignore mongodb', async () => {
 
         await forEveryConnection(async connection => {
+            if (connection === 'mongodb') return;
+
             const employeeQuery = getEmployeeQuery(connection)
-            const departmentTable = TestDepartmentModel.getTable();
 
             const alice = await employeeQuery.clone()
-                .rightJoin(departmentTable, 'deptId', 'id')
-                .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+                .rightJoin(TestDepartmentModel, 'deptId', 'id', 'department')
                 .where('name', 'Alice').firstOrFail();
         
             expect(alice?.attrSync('department')).toBeTruthy();
             expect(alice?.attrSync('department')?.deptName).toBe('HR');
 
             const notFoundRelation = await employeeQuery.clone()
-                .rightJoin(departmentTable, 'deptId', 'id')
-                .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+                .rightJoin(TestDepartmentModel, 'deptId', 'id', 'department')
                 .where('name', 'NoRelationship')
                 .first();
 
@@ -257,16 +263,18 @@ describe('eloquent', () => {
 
     })
 
-    test('test full join', async () => {
+    // This test is only relevant for postgres
+    // MongoDB does not support joins, so default behavior uses left join
+    test('test full join, ignore mongodb', async () => {
 
         await forEveryConnection(async connection => {
+            if (connection === 'mongodb') return;
+
             const employeeQuery = getEmployeeQuery(connection)
-            const departmentTable = TestDepartmentModel.getTable();
 
             // Should find matched records
             const alice = await employeeQuery.clone()
-                .fullJoin(departmentTable, 'deptId', 'id')
-                .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
+                .fullJoin(TestDepartmentModel, 'deptId', 'id', 'department')
                 .where('name', 'Alice')
                 .firstOrFail();
     
@@ -275,7 +283,7 @@ describe('eloquent', () => {
 
             // Should find unmatched employee (NoRelationship)
             const notFoundRelation = await employeeQuery.clone()
-                .fullJoin(departmentTable, 'deptId', 'id')
+                .fullJoin(TestDepartmentModel, 'deptId', 'id', 'department')
                 .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
                 .where('name', 'NoRelationship')
                 .firstOrFail();
@@ -287,14 +295,17 @@ describe('eloquent', () => {
 
     })
 
-    test('test cross join', async () => {
+    // This test is only relevant for postgres
+    // MongoDB does not support joins, so default behavior uses left join
+    test('test cross join, ignore mongodb', async () => {
 
         await forEveryConnection(async connection => {
+            if (connection === 'mongodb') return;
+
             const employeeQuery = getEmployeeQuery(connection)
-            const departmentTable = TestDepartmentModel.getTable();
 
             const results = await employeeQuery.clone()
-                .crossJoin(departmentTable)
+                .crossJoin(TestDepartmentModel)
                 .setModelColumns(TestDepartmentModel, { columnPrefix: 'department_', 'targetProperty': 'department' })
                 .all();
     

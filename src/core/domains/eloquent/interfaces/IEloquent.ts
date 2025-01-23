@@ -120,6 +120,11 @@ export type IdGeneratorFn<T = unknown> = <ReturnType = T>(...args: any[]) => Ret
 export type TransactionFn<Model extends IModel = IModel> = (query: IEloquent<ModelWithAttributes<Model>>) => Promise<void>;
 
 export interface IEloquent<Model extends IModel = IModel, Expression extends IEloquentExpression = IEloquentExpression> {
+
+    // Normalization
+    normalizeIdProperty(property: string): string;
+    normalizeDocuments<T extends object = object>(documents: T | T[]): T[]
+    denormalizeDocuments<T extends object = object>(documents: T | T[]): T[]
     
     // eloquent methods
     setConnectionName(connectionName: string): IEloquent<Model>;
@@ -140,10 +145,6 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     // results
     fetchRows<T = unknown>(expression?: Expression, ...args: any[]): Promise<T>;
 
-    // formatting
-    // asModel<Model extends IModel>(): IEloquent<Model, Model>; 
-    setFormatter(formatterFn?: TFormatterFn): IEloquent<Model>;
-    
     // execution
     execute<T = Model['attributes']>(builder: Expression): Promise<T>
     raw<T = unknown>(...args: unknown[]): Promise<T>;
@@ -213,11 +214,11 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     whereNotBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<ModelWithAttributes<Model>>;
 
     // Joins
-    join(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<ModelWithAttributes<Model>>;
-    fullJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<ModelWithAttributes<Model>>;
-    leftJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<ModelWithAttributes<Model>>;
-    rightJoin(relatedTable: string, localColumn: string, relatedColumn: string): IEloquent<ModelWithAttributes<Model>>;
-    crossJoin(table: string): IEloquent<ModelWithAttributes<Model>>;
+    join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<ModelWithAttributes<Model>>;
+    fullJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<ModelWithAttributes<Model>>;
+    leftJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<ModelWithAttributes<Model>>;
+    rightJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<ModelWithAttributes<Model>>;
+    crossJoin(related: ModelConstructor<IModel>): IEloquent<ModelWithAttributes<Model>>;
     with(relationship: string): IEloquent<ModelWithAttributes<Model>>;
 
     // Ordering

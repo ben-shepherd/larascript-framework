@@ -9,45 +9,48 @@ import testHelper, { forEveryConnection } from '@src/tests/testHelper';
 
 describe('eloquent', () => {
 
-    const resetAndRepopulateTable = async (connection: string) => {
+    const resetAndRepopulateTable = async () => {
         await resetPeopleTable()
 
-        return await queryBuilder(TestPeopleModel, connection).clone().insert([
-            {
-                name: 'John',
-                age: 25,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            },
-            {
-                name: 'Jane',
-                age: 30,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            },
-            {
-                name: 'Bob',
-                age: 35,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            },
-            {
-                name: 'Alice',
-                age: 40,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            }
-        ])
+        await forEveryConnection(async connection => {
+            await queryBuilder(TestPeopleModel, connection).clone().insert([
+                {
+                    name: 'John',
+                    age: 25,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                },
+                {
+                    name: 'Jane',
+                    age: 30,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                },
+                {
+                    name: 'Bob',
+                    age: 35,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                },
+                {
+                    name: 'Alice',
+                    age: 40,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                }
+            ])
+        })
     }
 
     beforeAll(async () => {
         await testHelper.testBootApp()
+        await resetAndRepopulateTable()
     });
 
     test('test find, findOrFail, all and get as model', async () => {
         await forEveryConnection(async connection => {  
-            const inserted = await resetAndRepopulateTable(connection)
             const query = queryBuilder(TestPeopleModel, connection)
+            const inserted = await query.clone().orderBy('name', 'asc').get();
 
             const allResults = await query.clone()
                 .all();
@@ -77,8 +80,8 @@ describe('eloquent', () => {
     test('test find, findOrFail, all and get', async () => {
 
         await forEveryConnection(async connection => {  
-            const inserted = await resetAndRepopulateTable(connection)
             const query = queryBuilder(TestPeopleModel, connection)
+            const inserted = await query.clone().orderBy('name', 'asc').get();
 
             expect(inserted.count()).toBe(4);
             expect(inserted[0].id ?? null).toBeTruthy();

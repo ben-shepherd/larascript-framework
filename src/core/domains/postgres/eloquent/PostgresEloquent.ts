@@ -10,12 +10,13 @@ import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter
 import SqlExpression, { SqlRaw } from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel } from "@src/core/interfaces/IModel";
+import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import captureError from "@src/core/util/captureError";
 import PrefixedPropertyGrouper from "@src/core/util/PrefixedPropertyGrouper";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { bindAll } from 'lodash';
 import pg, { QueryResult } from 'pg';
+import PostgresJsonNormalizer from "@src/core/domains/postgres/normalizers/PostgresJsonNormalizer";
 
 class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpression> {
 
@@ -27,7 +28,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
     /**
      * The query builder expression object
      */
-    protected expression!: SqlExpression
+    protected expression: SqlExpression = new SqlExpression()
 
     /**
      * The query builder client
@@ -35,13 +36,9 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
     protected pool!: pg.PoolClient | pg.Pool;
 
     /**
-     * Constructor
-     * @param modelCtor The model constructor to use when creating or fetching models.
+     * The formatter to use when formatting the result rows to objects
      */
-    constructor() {
-        super()
-        this.setExpressionCtor(SqlExpression)
-    }
+    protected formatter: PrefixedPropertyGrouper = new PrefixedPropertyGrouper()
 
     /**
      * Sets the query builder client to the given value.
@@ -62,6 +59,130 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      */
     protected resetBindingValues() {
         this.expression.bindingsUtility.reset()
+    }
+
+    /**
+     * Normalizes the documents by wrapping array values in a special format for Postgres.
+     * 
+     * When inserting JSON arrays directly into Postgres, it can throw a "malformed array literal" error
+     * because Postgres expects arrays in a specific format. To prevent this, we wrap array values in an
+     * object with a special property (e.g. { ArrayValues: [...] }) before stringifying. This allows
+     * Postgres to properly parse the JSON string containing arrays.
+     * 
+     * @param documents The documents to normalize
+     * @returns The normalized documents
+     */
+    normalizeDocuments<T extends object = object>(documents: T | T[]): T[] {
+        const postgresJsonNormalizer = new PostgresJsonNormalizer()
+        const jsonProperties = this.modelCtor?.create().json ?? [];
+        return postgresJsonNormalizer.normalize(documents, jsonProperties) as T[]
+    }
+
+    /**
+     * Denormalizes the documents by parsing the JSON properties
+     * 
+     * When retrieving JSON arrays from Postgres, they are wrapped in a special format (e.g. { ArrayValues: [...] })
+     * that was used during normalization to prevent the "malformed array literal" error. This method unwraps those
+     * array values back to their original format by removing the wrapper object and extracting the array.
+     * 
+     * @param documents The documents to denormalize    
+     * @returns The denormalized documents
+     */
+    denormalizeDocuments<T extends object = object>(documents: T | T[]): T[] {
+        const postgresJsonNormalizer = new PostgresJsonNormalizer()
+        const jsonProperties = this.modelCtor?.create().json ?? [];
+        return postgresJsonNormalizer.denormalize(documents, jsonProperties) as T[]
+    }
+
+    /**
+     * Prepares the join by adding the related columns to the query builder and the formatter.
+     * @param related The related table to join
+     * @param localColumn The local column to join on
+     * @param relatedColumn The related column to join on
+     * @param options The options for the join
+     */
+    protected prepareJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string) {
+        if(typeof targetProperty !== 'string' || targetProperty.length === 0) {
+            throw new Error('Target property is required for join')
+        }
+        
+        // Generate an arbitrary property name for the join
+        // Example: 'users_department_id'
+        const arbitraryProperty = Eloquent.getJoinAsPath(related.getTable(), localColumn, relatedColumn);
+
+        // Add all the columns from the foreign model to the query builder
+        // This will be used in the query builder to select the columns from the foreign model
+        this.setModelColumns(related, { columnPrefix: `${arbitraryProperty}_`, targetProperty: targetProperty })
+        
+        // Add the source property to the formatter to format the result rows to objects with the target property
+        // This will be used in the formatter to format the result rows to objects with the target property
+        this.formatter.addOption(arbitraryProperty, targetProperty)
+    }
+
+    /**
+     * Joins a related table to the current query.
+     * @param related The related table to join
+     * @param localColumn The local column to join on
+     * @param relatedColumn The related column to join on
+     * @param options The options for the join
+     * @returns The current query builder instance
+     */
+    join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<Model, IEloquentExpression<unknown>> {
+        super.join(related, localColumn, relatedColumn)
+        this.prepareJoin(related, localColumn, relatedColumn, targetProperty)
+        return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
+    }
+
+    /**
+     * Adds a left join to the query builder.
+     * @param related The related table to join
+     * @param localColumn The local column to join on
+     * @param relatedColumn The related column to join on
+     * @param options The options for the join
+     * @returns The current query builder instance
+     */
+    leftJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<Model, IEloquentExpression<unknown>> {
+        super.leftJoin(related, localColumn, relatedColumn)
+        this.prepareJoin(related, localColumn, relatedColumn, targetProperty)
+        return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
+    }
+
+    /**
+     * Adds a right join to the query builder.
+     * @param related The related table to join
+     * @param localColumn The local column to join on
+     * @param relatedColumn The related column to join on
+     * @param options The options for the join
+     * @returns The current query builder instance
+     */
+    rightJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<Model, IEloquentExpression<unknown>> {
+        super.rightJoin(related, localColumn, relatedColumn)
+        this.prepareJoin(related, localColumn, relatedColumn, targetProperty)
+        return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
+    }
+
+    /**
+     * Adds a full join to the query builder.
+     * @param related The related table to join
+     * @param localColumn The local column to join on
+     * @param relatedColumn The related column to join on
+     * @param options The options for the join
+     * @returns The current query builder instance
+     */
+    fullJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): IEloquent<Model, IEloquentExpression<unknown>> {
+        super.fullJoin(related, localColumn, relatedColumn)
+        this.prepareJoin(related, localColumn, relatedColumn, targetProperty)
+        return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
+    }
+
+    /**
+     * Adds a cross join to the query builder.
+     * @param related The related table to join
+     * @returns The current query builder instance
+     */
+    crossJoin(related: ModelConstructor<IModel>): IEloquent<Model, IEloquentExpression<unknown>> {
+        super.crossJoin(related)
+        return this as unknown as IEloquent<Model, IEloquentExpression<unknown>>
     }
 
     /**
@@ -92,13 +213,6 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      */
     setModelColumns(modelCtor?: ICtor<IModel>, options?: SetModelColumnsOptions): IEloquent<Model, SqlExpression> {
         super.setModelColumns(modelCtor, options)
-        
-        // Store the options for formatting the result rows to objects with a target property.
-        // This will be used when calling fetchRows() to format the result rows to objects with the target property.
-        if(options?.columnPrefix && typeof options?.targetProperty === 'string') {
-            this.formatResultTargetPropertyToObjectOptions.push({columnPrefix: options.columnPrefix, targetProperty: options.targetProperty, setTargetPropertyNullWhenObjectAllNullish: true })
-        }
-
         return this as unknown as IEloquent<Model>
     }
 
@@ -147,6 +261,17 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
     }
 
     /**
+     * Formats the result rows to models
+     * @param results The result rows to format
+     * @returns The formatted models
+     */
+    protected formatResultsAsModels(results: object[]): Model[] {
+        results = this.formatter.format(results)
+        results = super.formatResultsAsModels(results)
+        return results as Model[]
+    }
+
+    /**
      * Executes a SQL expression using the connected PostgreSQL client.
      * 
      * This method builds the SQL query from the given expression and executes it using the connected PostgreSQL client.
@@ -156,14 +281,17 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      * @returns {Promise<T>} A promise that resolves with the query result.
      * @throws {QueryException} If the query execution fails.
      * @private
+     * @deprecated Use execute() instead
      */
     async fetchRows<T = QueryResult>(expression: SqlExpression = this.expression): Promise<T> {
-        const res = await this.execute(expression)
-        // Map the result to move prefixed columns to the target property
-        res.rows = PrefixedPropertyGrouper.handleArray<object>(res.rows, this.formatResultTargetPropertyToObjectOptions)
-        // Apply formatter
-        res.rows = this.formatterFn ? res.rows.map(this.formatterFn) : res.rows
-        return res as T 
+        const results = await this.execute(expression)
+        results.rows = this.formatResultsAsModels(results.rows as object[])
+        return results as T
+        // // Map the result to move prefixed columns to the target property
+        // res.rows = PrefixedPropertyGrouper.handleArray<object>(res.rows, this.formatResultTargetPropertyToObjectOptions)
+        // // Apply formatter
+        // res.rows = this.formatterFn ? res.rows.map(this.formatterFn) : res.rows
+        // return res as T 
     }
 
     /**
@@ -270,14 +398,16 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
 
             const previousLimit = this.expression.getOffsetLimit()
 
-            const res = await this.fetchRows(
+            const result = await this.execute(
                 this.expression.setOffsetAndLimit({ limit: 1})
             )
+
+            const models = await this.formatResultsAsModels(result.rows)
 
             // Reset the limit to the previous value
             this.expression.setOffsetAndLimit(previousLimit)
 
-            return res.rows[0] ?? null
+            return models[0] ?? null
         })
     }
 
@@ -310,13 +440,13 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
         return await captureError<Model | null>(async () => {
             this.expression.setBuildTypeSelect()
             
-            const res = await this.fetchRows()
+            const models = await this.fetchRows()
             
-            if(res.rows.length === 0) {
+            if(models.rows.length === 0) {
                 return null
             }
 
-            return res.rows[res.rows.length - 1] ?? null
+            return models.rows[models.rows.length - 1] ?? null
         })
     }
 
@@ -398,7 +528,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
             this.setExpression(previousExpression)
 
             return collect<Model>(
-                this.applyFormatter(results)
+                this.formatResultsAsModels(results as object[])
             )
         })
     }

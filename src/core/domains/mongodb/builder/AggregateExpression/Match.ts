@@ -1,8 +1,8 @@
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
-import { LogicalOperators, TLogicalOperator, TWhereClause } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { LogicalOperators, TLogicalOperator, TWhereClause, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { ObjectId } from "mongodb";
 import { z } from "zod";
-
-import { MongoRaw } from ".";
+import { MongoRaw } from "@src/core/domains/mongodb/builder/AggregateExpression";
 
 /**
  * Match class handles building MongoDB $match pipeline stages from SQL-style where clauses.
@@ -107,6 +107,21 @@ class Match {
 
         }
 
+        // If there are no where clauses, return an empty match
+        if(whereClauses.length === 0) {
+            return {}
+        }
+
+        // If there are zero OR conditions, and only AND conditions, return the AND conditions
+        if(orConditions.length === 0 && andConditions.length > 0) {
+            return { $and: andConditions }
+        }
+
+        // If there are zero AND conditions, and only OR conditions, return the OR conditions
+        if(andConditions.length === 0 && orConditions.length > 0) {
+            return { $or: orConditions }
+        }
+
         // If there are AND conditions, add them to the OR conditions array
         if(andConditions.length > 0) {
             orConditions.push({ $and: andConditions })
@@ -138,11 +153,14 @@ class Match {
      * ```
      */
     protected static buildWhereFilterObject(whereClause: TWhereClause): object {
-        const { column, operator, value, raw } = whereClause
+        const { column, operator, raw } = whereClause
+        let value: unknown = whereClause.value
 
         if(raw) {
             return this.raw(raw)
         }
+
+        value = this.normalizeValue(value)
 
         switch(operator) {
 
@@ -161,9 +179,9 @@ class Match {
         case "<=":
             return { [column]: { $lte: value } }
         case "like":
-            return this.regex(column, value)
+            return this.regex(column, value as TWhereClauseValue)
         case "not like":
-            return this.notRegex(column, value)
+            return this.notRegex(column, value as TWhereClauseValue)
         case "in":
             return { [column]: { $in: value } }
         case "not in":
@@ -173,13 +191,32 @@ class Match {
         case "is not null":
             return { [column]: { $ne: null } }
         case "between":
-            return this.between(column, value)
+            return this.between(column, value as TWhereClauseValue)
         case "not between":
-            return this.notBetween(column, value)
+            return this.notBetween(column, value as TWhereClauseValue)
         }
 
     }
 
+    /**
+     * Normalizes a value to a valid MongoDB value.
+     * 
+     * @param value - The value to normalize
+     * @returns The normalized value
+     */
+    protected static normalizeValue(value: unknown): unknown {
+        if(typeof value === 'string' && ObjectId.isValid(value)) {
+            return new ObjectId(value)
+        }
+        return value
+    }
+
+    /**
+     * Builds a MongoDB raw query object.
+     * 
+     * @param raw - The raw query object
+     * @returns A MongoDB raw query object
+     */
     protected static raw(raw: unknown): object {
         const schema = z.object({})
         const result = schema.safeParse(raw)

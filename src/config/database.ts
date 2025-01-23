@@ -42,24 +42,25 @@ const config: IDatabaseConfig = {
     connections: DatabaseConfig.createConnections([
 
         /**
-         * Default MongoDB connection
-         */
-        DatabaseConfig.createConfig({
-            connectionName: 'mongodb',
-            adapter: MongoDbAdapter,
-            uri: process.env.DATABASE_DEFAULT_URI as string,
-            options: {} // Additional connection options can be specified here
-        }),
-
-        /**
          * Default Postgres connection
          */
         DatabaseConfig.createConfig({
-            connectionName: 'postgres',
+            connectionName: process.env.DATABASE_DEFAULT_CONNECTION as string,
             adapter: PostgresAdapter,
             uri: process.env.DATABASE_DEFAULT_URI as string,
             options: {}, // Additional connection options can be specified here
-        })
+        }),
+
+        /**
+         * Default MongoDB connection
+         */
+        DatabaseConfig.createConfig({
+            connectionName: process.env.DATABASE_MONGODB_CONNECTION as string,
+            adapter: MongoDbAdapter,
+            uri: process.env.DATABASE_MONGODB_URI as string,
+            options: {} // Additional connection options can be specified here
+        }),
+
     ])
 };
 

@@ -19,6 +19,7 @@
     "network:up": "cd ./docker && docker-compose -f docker-compose.network.yml up -d network-setup",
     "db:up": "yarn db:postgres:up && yarn db:mongodb:up",
     "db:down": "yarn db:postgres:down && yarn db:mongodb:down",
+    "db:restart": "yarn db:down && yarn db:up",
     "db:postgres:up": "yarn network:up && cd ./docker && docker-compose -f docker-compose.postgres.yml up --build -d postgres",
     "db:postgres:down": "cd ./docker && docker-compose -f docker-compose.postgres.yml down",
     "db:mongodb:up": "yarn network:up && cd ./docker && docker-compose -f docker-compose.mongodb.yml up --build -d mongodb",

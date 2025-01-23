@@ -1,11 +1,10 @@
 import BaseExpression from "@src/core/domains/eloquent/base/BaseExpression";
-
-import Join from "./Join";
-import Limit from "./Limit";
-import Match from "./Match";
-import Order from "./Order";
-import Project from "./Project";
-import Skip from "./Skip";
+import Join from "@src/core/domains/mongodb/builder/AggregateExpression/Join";
+import Limit from "@src/core/domains/mongodb/builder/AggregateExpression/Limit";
+import Match from "@src/core/domains/mongodb/builder/AggregateExpression/Match";
+import Order from "@src/core/domains/mongodb/builder/AggregateExpression/Order";
+import Project from "@src/core/domains/mongodb/builder/AggregateExpression/Project";
+import Skip from "@src/core/domains/mongodb/builder/AggregateExpression/Skip";
 
 export type MongoRaw = object | object[]
 
@@ -28,6 +27,9 @@ class AggregateExpression extends BaseExpression<unknown> {
 
     /** The pipeline to build */
     pipeline: object[] = [];
+
+    /** The pipeline stages to build */
+    pipelineStages: object[] = [];
 
     /**
      * Builds the $project stage of the aggregation pipeline
@@ -116,6 +118,15 @@ class AggregateExpression extends BaseExpression<unknown> {
     }
 
     /**
+     * Adds a pipeline stage to the builder
+     * @param pipeline - The pipeline stage to add
+     */ 
+    addPipelineStage(stage: object[]): this {
+        this.pipelineStages.push(...stage)
+        return this
+    }
+
+    /**
      * Builds the complete MongoDB aggregation pipeline by combining all stages
      * 
      * @template T - The expected return type of the pipeline
@@ -155,6 +166,11 @@ class AggregateExpression extends BaseExpression<unknown> {
         if(skip) {
             this.addPipeline([skip]);
         }
+
+        this.pipeline = [
+            ...this.pipeline,
+            ...this.pipelineStages,
+        ]
 
         return this.pipeline as T;
     }

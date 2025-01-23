@@ -24,17 +24,17 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @param collectionName The name of the collection/table
      * @param modelConstructor The model constructor
      */
-    constructor(modelConstructor: ModelConstructor<Model>) {
-        this.connection = new modelConstructor().connection
+    constructor(modelConstructor: ModelConstructor<Model>, connectionName?: string) {
+        this.connection = connectionName ?? modelConstructor.getConnectionName()
         this.modelConstructor = modelConstructor;
     }
-    
+
     /**
      * Returns a new query builder instance that is a clone of the existing one.
      * @returns A new query builder instance.
      */
     protected query(): IEloquent<Model> {
-        return queryBuilder(this.modelConstructor);
+        return queryBuilder(this.modelConstructor, this.connection);
     }
 
     /**
@@ -67,13 +67,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @returns The found model or null
      */
     async findById(id: string): Promise<Model | null> {
-        const data = await this.query().find(id)
-
-        if(!data) {
-            return null
-        }
-
-        return data ? this.modelConstructor.create(data) : null
+        return await this.query().find(id)
     }
 
     /**
