@@ -16,10 +16,10 @@ class PostgresJsonNormalizer {
      * @param document 
      * @param jsonProperties 
      */
-    public denormalize(document: object, jsonProperties: string[]) {
+    public documentsAsUnsafePostgresArray(document: object, jsonProperties: string[]) {
         jsonProperties.forEach(property => {
             if(document[property]) {
-                document[property] = this.denormalizeValue(document[property])
+                document[property] = this.valueToUnsafe(document[property])
             }
         })
 
@@ -32,11 +32,12 @@ class PostgresJsonNormalizer {
      * @param document 
      * @param jsonProperties 
      */
-    public normalize(document: object, jsonProperties: string[]) {
+    public documentsAsSafePostgresArray(document: object, jsonProperties: string[]) {
         jsonProperties.forEach(property => {
             if(document[property]) {
-                const value = this.normalizeValue(document[property]) as object
+                const value = this.valueToSafe(document[property]) as object
 
+                // Check value is an object, and only contains this[arrayProperty]
                 const onlyContainsValues = Object.keys(value).length === 1 
                     && Object.keys(value)[0] === this.arrayProperty
                     && Array.isArray(value[this.arrayProperty])
@@ -61,10 +62,11 @@ class PostgresJsonNormalizer {
      * 
      * @param value 
      */
-    protected normalizeValue(value: unknown) {
+    protected valueToSafe(value: unknown) {
+
         // Check if it's an array  
         if(Array.isArray(value)) {
-            return JSON.stringify({ [this.arrayProperty]: value })
+            value = { [this.arrayProperty]: value }
         }
 
         // Check if it's an object
@@ -80,7 +82,7 @@ class PostgresJsonNormalizer {
      * 
      * @param value 
      */
-    protected denormalizeValue(value: unknown) {
+    protected valueToUnsafe(value: unknown) {
         
         if(!this.validateValueObjectOrArray(value)) {
             return value

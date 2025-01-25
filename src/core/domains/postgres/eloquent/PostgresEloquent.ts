@@ -75,7 +75,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
     normalizeDocuments<T extends object = object>(documents: T[]): T[] {
         const postgresJsonNormalizer = new PostgresJsonNormalizer()
         const jsonProperties = this.modelCtor?.create().getJsonProperties() ?? [];
-        return documents.map((document) => postgresJsonNormalizer.denormalize(document, jsonProperties)) as T[]
+        return documents.map((document) => postgresJsonNormalizer.documentsAsSafePostgresArray(document, jsonProperties)) as T[]
     }
 
     /**
@@ -91,7 +91,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
     denormalizeDocuments<T extends object = object>(documents: T[]): T[] {
         const postgresJsonNormalizer = new PostgresJsonNormalizer()
         const jsonProperties = this.modelCtor?.create().getJsonProperties() ?? [];
-        return documents.map((document) => postgresJsonNormalizer.denormalize(document, jsonProperties)) as T[]
+        return documents.map((document) => postgresJsonNormalizer.documentsAsUnsafePostgresArray(document, jsonProperties)) as T[]
     }
 
     /**
