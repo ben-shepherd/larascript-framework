@@ -182,4 +182,27 @@ describe('eloquent', () => {
         }
     })
 
+    test('test fetching model using array of ids', async () => {
+
+        await resetPeopleTable()
+
+        await forEveryConnection(async connection => {
+            const query = queryBuilder(TestPeopleModel, connection)
+            await query.clone().insert([
+                {
+                    name: 'John',
+                    age: 25,
+                    roles: ['admin', 'user']
+                }
+            ])
+
+            const john = await query.clone().first();
+            const roles = john?.getAttributes()?.roles;
+            expect(roles).toBeInstanceOf(Array);
+            expect(roles?.length).toBe(2);
+            expect(roles?.includes('admin')).toBe(true);
+            expect(roles?.includes('user')).toBe(true);
+        })
+    })
+
 });
