@@ -1,4 +1,5 @@
  
+import { Scope } from '@src/core/domains/auth/interfaces/IScope';
 import ModelScopes from '@src/core/domains/auth/services/ModelScopes';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import { db } from '@src/core/domains/database/services/Database';
@@ -228,8 +229,8 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * Retrieves the scopes associated with the model.
      * @returns {string[]} The scopes associated with the model.
      */
-    static getScopes(): string[] {
-        return ModelScopes.getScopes(this as unknown as ModelConstructor)
+    static getScopes(scopes: Scope[] = ['all'], additionalScopes: string[] = []): string[] {
+        return ModelScopes.getScopes(this as unknown as ModelConstructor, scopes, additionalScopes)
     }
 
     /**
