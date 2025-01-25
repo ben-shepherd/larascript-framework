@@ -1,7 +1,7 @@
 import { App } from "@src/core/services/App";
 
-import HttpContext from "../base/HttpContext";
 import Middleware from "../base/Middleware";
+import HttpContext from "../data/HttpContext";
 
 /**
  * Middleware that ends the current request context and removes all associated values.

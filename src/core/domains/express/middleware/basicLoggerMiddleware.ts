@@ -1,7 +1,7 @@
 import { App } from '@src/core/services/App';
 
-import HttpContext from '../base/HttpContext';
 import Middleware from '../base/Middleware';
+import HttpContext from '../data/HttpContext';
 
 class BasicLoggerMiddleware extends Middleware {
 

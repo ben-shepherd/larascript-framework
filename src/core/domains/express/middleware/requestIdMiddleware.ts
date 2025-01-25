@@ -1,7 +1,7 @@
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 
-import HttpContext from "../base/HttpContext";
 import Middleware from "../base/Middleware";
+import HttpContext from "../data/HttpContext";
 
 type Props = {
     // eslint-disable-next-line no-unused-vars

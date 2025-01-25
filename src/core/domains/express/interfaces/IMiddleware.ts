@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 
-import HttpContext from "../base/HttpContext";
+import HttpContext from "../data/HttpContext";
 
 export type MiddlewareConstructor = {
     new (...args: any[]): IMiddleware;
