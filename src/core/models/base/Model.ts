@@ -1,4 +1,5 @@
  
+import ModelScopes from '@src/core/domains/auth/services/ModelScopes';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import { db } from '@src/core/domains/database/services/Database';
 import BaseRelationshipResolver from '@src/core/domains/eloquent/base/BaseRelationshipResolver';
@@ -221,6 +222,14 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      */
     static getConnection(): string {
         return this.create().getConnectionName()
+    }
+    
+    /**
+     * Retrieves the scopes associated with the model.
+     * @returns {string[]} The scopes associated with the model.
+     */
+    static getScopes(): string[] {
+        return ModelScopes.getScopes(this as unknown as ModelConstructor)
     }
 
     /**

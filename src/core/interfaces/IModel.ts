@@ -10,6 +10,7 @@ export type ModelConstructor<M extends IModel = IModel> = {
     getTable(): string;
     getPrimaryKey(): string;
     getConnectionName(): string;
+    getScopes(): string[];
 }
 
 export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>
