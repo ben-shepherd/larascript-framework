@@ -12,10 +12,12 @@ import authRoutes from '@src/core/domains/auth/routes/auth';
 import comparePassword from '@src/core/domains/auth/utils/comparePassword';
 import createJwt from '@src/core/domains/auth/utils/createJwt';
 import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';
+import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
 import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
 import { app } from '@src/core/services/App';
 import { JsonWebTokenError } from 'jsonwebtoken';
-import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
+
+import { IPermissionGroup } from '../interfaces/IPermissionsConfig';
 
 /**
  * Shorthand for accessing the auth service
@@ -69,8 +71,9 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * @returns 
      */
     public async createApiTokenFromUser(user: IUserModel, scopes: string[] = []): Promise<IApiTokenModel> {
+        const userScopes = this.getRoleScopes(user);
         const factory = new this.config.factory.apiTokenFactory(this.config.models.apiToken);
-        const apiToken = factory.createFromUser(user, scopes)
+        const apiToken = factory.createFromUser(user, [...userScopes, ...scopes]);
         await apiToken.save();
         return apiToken
     }
@@ -196,6 +199,38 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      */
     getUserRepository(): IUserRepository {
         return new this.config.repositories.user(this.config.models.user);
+    }
+
+    /**
+     * Retrieves the groups from the roles
+     * @param roles 
+     * @returns 
+     */
+    getGroupsFromRoles(roles: string[] | string): IPermissionGroup[] {
+        const rolesArray = typeof roles === 'string' ? [roles] : roles;
+        const groups = this.config.permissions.groups;
+
+        return groups.filter((group) => {
+            const groupRoles = group.roles ?? [];
+            return groupRoles.some((role) => rolesArray.includes(role))
+        });
+    }
+
+    /**
+     * Retrieves the scopes from the roles
+     * @param user 
+     * @returns 
+     */
+    getRoleScopes(user: IUserModel): string[] {
+        const roles = user.getAttributeSync('roles') ?? [];
+        const groups = this.getGroupsFromRoles(roles);
+        let scopes: string[] = [];
+
+        for(const group of groups) {
+            scopes = [...scopes, ...(group.scopes ?? [])];
+        }
+
+        return scopes;
     }
 
 }
