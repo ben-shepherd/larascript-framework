@@ -1,17 +1,17 @@
 import Service from '@src/core/base/Service';
+import Middleware from '@src/core/domains/express/base/Middleware';
 import IExpressConfig from '@src/core/domains/express/interfaces/IExpressConfig';
 import IExpressService from '@src/core/domains/express/interfaces/IExpressService';
+import { MiddlewareConstructor, TExpressMiddlewareFn } from '@src/core/domains/express/interfaces/IMiddleware';
 import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
+import EndRequestContextMiddleware from '@src/core/domains/express/middleware/EndRequestContextMiddleware';
+import RequestIdMiddlewareTest from '@src/core/domains/express/middleware/RequestIdMiddleware';
 import { securityMiddleware } from '@src/core/domains/express/middleware/securityMiddleware';
 import SecurityRules, { SecurityIdentifiers } from '@src/core/domains/express/services/SecurityRules';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
 import { validate } from '@src/core/domains/validator/services/ValidatorService';
 import { app } from '@src/core/services/App';
 import expressClient from 'express';
-import Middleware from '@src/core/domains/express/base/Middleware';
-import { MiddlewareConstructor, TExpressMiddlewareFn } from '@src/core/domains/express/interfaces/IMiddleware';
-import RequestIdMiddlewareTest from '@src/core/domains/express/middleware/RequestIdMiddleware';
-import EndRequestContextMiddleware from '@src/core/domains/express/middleware/endRequestContextMiddleware';
 
 /**
  * Short hand for `app('express')`
@@ -111,11 +111,19 @@ export default class ExpressService extends Service<IExpressConfig> implements I
         const userDefinedMiddlewares = route.middlewares ?? [];
 
         // Add security and validator middlewares
-        const middlewares: TExpressMiddlewareFn[] = [
+        const middlewaresFnsAndConstructors: (MiddlewareConstructor | TExpressMiddlewareFn)[] = [
             ...userDefinedMiddlewares,
             ...this.addValidatorMiddleware(route),
             ...this.addSecurityMiddleware(route),
         ];
+
+        // Convert middlewares to TExpressMiddlewareFn
+        const middlewares: TExpressMiddlewareFn[] = middlewaresFnsAndConstructors.map(middleware => {
+            if(middleware.prototype instanceof Middleware) {
+                return (middleware as MiddlewareConstructor).toExpressMiddleware()
+            }
+            return middleware as TExpressMiddlewareFn
+        })
 
         // Add route handlers
         const handlers = [...middlewares, route?.action]

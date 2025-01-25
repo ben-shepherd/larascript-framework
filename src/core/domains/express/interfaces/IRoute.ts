@@ -1,7 +1,7 @@
+import { MiddlewareConstructor, TExpressMiddlewareFn } from '@src/core/domains/express/interfaces/IMiddleware';
 import { IRouteAction } from '@src/core/domains/express/interfaces/IRouteAction';
 import { IIdentifiableSecurityCallback } from '@src/core/domains/express/interfaces/ISecurity';
 import { ValidatorCtor } from '@src/core/domains/validator/types/ValidatorCtor';
-import { TExpressMiddlewareFn } from '@src/core/domains/express/interfaces/IMiddleware';
 
 export interface IRoute {
     name: string;
@@ -12,7 +12,7 @@ export interface IRoute {
     scopes?: string[];
     scopesPartial?: string[];
     enableScopes?: boolean;
-    middlewares?: TExpressMiddlewareFn[];
+    middlewares?: TExpressMiddlewareFn[] | MiddlewareConstructor[];
     validator?: ValidatorCtor;
     validateBeforeAction?: boolean;
     security?: IIdentifiableSecurityCallback[];
