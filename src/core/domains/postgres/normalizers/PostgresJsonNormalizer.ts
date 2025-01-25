@@ -1,3 +1,4 @@
+import { z } from "zod"
 
 class PostgresJsonNormalizer {
 
@@ -15,10 +16,10 @@ class PostgresJsonNormalizer {
      * @param document 
      * @param jsonProperties 
      */
-    public normalize(document: object, jsonProperties: string[]) {
+    public denormalize(document: object, jsonProperties: string[]) {
         jsonProperties.forEach(property => {
             if(document[property]) {
-                document[property] = this.normalizeValue(document[property])
+                document[property] = this.denormalizeValue(document[property])
             }
         })
 
@@ -31,10 +32,10 @@ class PostgresJsonNormalizer {
      * @param document 
      * @param jsonProperties 
      */
-    public denormalize(document: object, jsonProperties: string[]) {
+    public normalize(document: object, jsonProperties: string[]) {
         jsonProperties.forEach(property => {
             if(document[property]) {
-                const value = this.denormalizeValue(document[property])
+                const value = this.normalizeValue(document[property]) as object
 
                 const onlyContainsValues = Object.keys(value).length === 1 
                     && Object.keys(value)[0] === this.arrayProperty
@@ -74,11 +75,34 @@ class PostgresJsonNormalizer {
         return value
     }
 
+    /**
+     * Denormalizes the value of a JSON property
+     * 
+     * @param value 
+     */
     protected denormalizeValue(value: unknown) {
-        if(typeof value === 'string') {
-            return JSON.parse(value)
+        
+        if(!this.validateValueObjectOrArray(value)) {
+            return value
         }
-        return value
+
+        const valueObject = value as object
+
+        if(typeof valueObject === 'object' && valueObject?.[this.arrayProperty]) {
+            return valueObject[this.arrayProperty]
+        }
+
+        return valueObject
+    }
+
+    /**
+     * Validates if the value is an array or object
+     * 
+     * @param value 
+     */
+    protected validateValueObjectOrArray(value: unknown) {
+        const schema = z.array(z.any()).or(z.record(z.any()))
+        return schema.safeParse(value).success
     }
 
 }
