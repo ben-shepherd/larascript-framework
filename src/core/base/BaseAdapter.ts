@@ -1,4 +1,4 @@
-import AdapterException from "../exceptions/AdapterException";
+import AdapterException from "@src/core/exceptions/AdapterException";
 
 export type AdapterTypes<Adapter = unknown> = {
     [key: string]: Adapter;

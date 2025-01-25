@@ -4,8 +4,7 @@ import HelpCommand from "@src/core/domains/console/commands/HelpCommand";
 import ConsoleService from "@src/core/domains/console/service/ConsoleService";
 import { App } from "@src/core/services/App";
 import readline from 'readline';
-
-import RouteListCommand from "../commands/RouteListCommand";
+import RouteListCommand from "@src/core/domains/console/commands/RouteListCommand";
 
 export default class ConsoleProvider extends BaseProvider {
 

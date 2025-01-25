@@ -1,8 +1,7 @@
 import { NextFunction, Response } from "express";
-
-import HttpContext from "../data/HttpContext";
-import { IMiddleware, MiddlewareConstructor, TExpressMiddlewareFn } from "../interfaces/IMiddleware";
-import { BaseRequest } from "../types/BaseRequest.t";
+import HttpContext from "@src/core/domains/express/data/HttpContext";
+import { IMiddleware, MiddlewareConstructor, TExpressMiddlewareFn } from "@src/core/domains/express/interfaces/IMiddleware";
+import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 
 
 abstract class Middleware<Config extends unknown = unknown> implements IMiddleware {

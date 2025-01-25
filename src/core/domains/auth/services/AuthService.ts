@@ -16,8 +16,7 @@ import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryB
 import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
 import { app } from '@src/core/services/App';
 import { JsonWebTokenError } from 'jsonwebtoken';
-
-import { IPermissionGroup } from '../interfaces/IPermissionsConfig';
+import { IPermissionGroup } from '@src/core/domains/auth/interfaces/IPermissionsConfig';
 
 /**
  * Shorthand for accessing the auth service

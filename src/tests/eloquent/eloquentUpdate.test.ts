@@ -16,7 +16,7 @@ describe('eloquent', () => {
         await forEveryConnection(async connection => {
             const query = queryBuilder(TestPeopleModel, connection);
 
-            const inserted = await query.insert([
+            await query.insert([
                 {
                     name: 'John',
                     age: 25,

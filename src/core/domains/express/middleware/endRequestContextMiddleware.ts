@@ -1,7 +1,6 @@
 import { App } from "@src/core/services/App";
-
-import Middleware from "../base/Middleware";
-import HttpContext from "../data/HttpContext";
+import Middleware from "@src/core/domains/express/base/Middleware";
+import HttpContext from "@src/core/domains/express/data/HttpContext";
 
 /**
  * Middleware that ends the current request context and removes all associated values.

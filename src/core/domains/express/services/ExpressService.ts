@@ -8,11 +8,10 @@ import { logger } from '@src/core/domains/logger/services/LoggerService';
 import { validate } from '@src/core/domains/validator/services/ValidatorService';
 import { app } from '@src/core/services/App';
 import expressClient from 'express';
-
-import Middleware from '../base/Middleware';
-import { MiddlewareConstructor, TExpressMiddlewareFn } from '../interfaces/IMiddleware';
-import RequestIdMiddlewareTest from '../middleware/RequestIdMiddleware';
-import EndRequestContextMiddleware from '../middleware/endRequestContextMiddleware';
+import Middleware from '@src/core/domains/express/base/Middleware';
+import { MiddlewareConstructor, TExpressMiddlewareFn } from '@src/core/domains/express/interfaces/IMiddleware';
+import RequestIdMiddlewareTest from '@src/core/domains/express/middleware/RequestIdMiddleware';
+import EndRequestContextMiddleware from '@src/core/domains/express/middleware/endRequestContextMiddleware';
 
 /**
  * Short hand for `app('express')`

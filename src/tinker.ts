@@ -1,10 +1,10 @@
+/* eslint-disable no-unused-vars */
  
 import 'dotenv/config';
 import 'tsconfig-paths/register';
 
+import { app } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
-
-import { app } from './core/services/App';
 
 (async () => {
 

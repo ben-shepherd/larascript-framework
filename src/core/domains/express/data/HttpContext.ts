@@ -1,6 +1,5 @@
 import { NextFunction, Response } from 'express';
-
-import { BaseRequest } from '../types/BaseRequest.t';
+import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 
 class HttpContext {
 
