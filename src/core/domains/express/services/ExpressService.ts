@@ -2,15 +2,17 @@ import Service from '@src/core/base/Service';
 import IExpressConfig from '@src/core/domains/express/interfaces/IExpressConfig';
 import IExpressService from '@src/core/domains/express/interfaces/IExpressService';
 import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
-import endRequestContextMiddleware from '@src/core/domains/express/middleware/endRequestContextMiddleware';
-import requestIdMiddleware from '@src/core/domains/express/middleware/requestIdMiddleware';
 import { securityMiddleware } from '@src/core/domains/express/middleware/securityMiddleware';
 import SecurityRules, { SecurityIdentifiers } from '@src/core/domains/express/services/SecurityRules';
-import { Middleware } from '@src/core/interfaces/Middleware.t';
-import { app } from '@src/core/services/App';
-import expressClient from 'express';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
 import { validate } from '@src/core/domains/validator/services/ValidatorService';
+import { app } from '@src/core/services/App';
+import expressClient from 'express';
+
+import Middleware from '../base/Middleware';
+import { MiddlewareConstructor, TExpressMiddlewareFn } from '../interfaces/IMiddleware';
+import RequestIdMiddlewareTest from '../middleware/RequestIdMiddleware';
+import EndRequestContextMiddleware from '../middleware/endRequestContextMiddleware';
 
 /**
  * Short hand for `app('express')`
@@ -50,17 +52,34 @@ export default class ExpressService extends Service<IExpressConfig> implements I
 
         // Adds an identifier to the request object
         // This id is used in the requestContext service to store information over a request life cycle
-        this.app.use(requestIdMiddleware())
+        // this.app.use(requestIdMiddleware())
+        this.app.use(RequestIdMiddlewareTest.toExpressMiddleware())
 
         // End the request context
         // This will be called when the request is finished
         // Deletes the request context and associated values
-        this.app.use(endRequestContextMiddleware())
+        this.app.use(EndRequestContextMiddleware.toExpressMiddleware())
 
         // Apply global middlewares
         for (const middleware of this.config?.globalMiddlewares ?? []) {
             this.app.use(middleware);
         }
+    }
+
+    /**
+     * Adds a middleware to the Express instance.
+     * @param middleware - The middleware to add
+     */
+    public useMiddleware(middleware: TExpressMiddlewareFn | MiddlewareConstructor) {
+        
+        if(middleware.prototype instanceof Middleware) {
+            this.app.use((middleware as MiddlewareConstructor).toExpressMiddleware())
+        }
+        else {
+            this.app.use(middleware as TExpressMiddlewareFn)
+        }
+
+        logger().info('[ExpressService] middleware: ' + middleware.name)
     }
 
     /**
@@ -93,7 +112,7 @@ export default class ExpressService extends Service<IExpressConfig> implements I
         const userDefinedMiddlewares = route.middlewares ?? [];
 
         // Add security and validator middlewares
-        const middlewares: Middleware[] = [
+        const middlewares: TExpressMiddlewareFn[] = [
             ...userDefinedMiddlewares,
             ...this.addValidatorMiddleware(route),
             ...this.addSecurityMiddleware(route),
@@ -134,8 +153,8 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      * @param route 
      * @returns middlewares with added validator middleware
      */
-    public addValidatorMiddleware(route: IRoute): Middleware[] {
-        const middlewares: Middleware[] = [];
+    public addValidatorMiddleware(route: IRoute): TExpressMiddlewareFn[] {
+        const middlewares: TExpressMiddlewareFn[] = [];
 
         /**
          * Add validator middleware
@@ -160,8 +179,8 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      * @param route The route to add the middleware to
      * @returns The route's middleware array with the security middleware added
      */
-    public addSecurityMiddleware(route: IRoute): Middleware[] {
-        const middlewares: Middleware[] = [];
+    public addSecurityMiddleware(route: IRoute): TExpressMiddlewareFn[] {
+        const middlewares: TExpressMiddlewareFn[] = [];
 
         /**
          * Enabling Scopes Security
