@@ -19,5 +19,11 @@ export default (req: Request , res: Response, err: Error, code: number = 500) =>
 
     App.container('logger').error(err)
     
-    res.status(code).send({ error: `${err.message}`, stack: err.stack })
+    // Format the stack trace by splitting it into an array of lines
+    const stackLines = err.stack ? err.stack.split('\n').map(line => line.trim()) : [];
+    
+    res.status(code).send({ 
+        error: err.message,
+        stack: stackLines
+    })
 }
