@@ -51,6 +51,7 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes> 
     getAttributes(options: GetAttributesOptions): Attributes | null;
     getOriginal(key: keyof Attributes): Attributes[keyof Attributes] | null
     getDirty(): Record<keyof Attributes, any> | null
+    getJsonProperties(): string[];
     isDirty(): boolean;
     getFields(): string[];
     useTableName(): string;

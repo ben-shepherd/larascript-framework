@@ -160,6 +160,14 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     }
     
     /**
+     * Retrieves the list of properties that should be treated as JSON.
+     * @returns {string[]} The list of JSON properties.
+     */
+    getJsonProperties(): string[] {
+        return this.json;
+    }
+
+    /**
      * Creates a new instance of the model wrapped in a Proxy.
      * 
      * This method uses the Proxy pattern to allow interception and customization of
