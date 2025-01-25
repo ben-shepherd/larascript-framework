@@ -11,6 +11,7 @@ export interface ITestPeopleModelData extends IModelAttributes {
     name: string;
     age: number;
     born?: Date,
+    roles: string[],
     createdAt: Date;
     updatedAt: Date;
 
@@ -35,6 +36,10 @@ export const resetPeopleTable = async () => {
                 type: DataTypes.STRING,
                 allowNull: true
             },
+            roles: {
+                type: DataTypes.ARRAY(DataTypes.STRING),
+                allowNull: true
+            },
             createdAt: DataTypes.DATE,
             updatedAt: DataTypes.DATE
         })
@@ -50,8 +55,11 @@ export default class TestPeopleModel extends Model<ITestPeopleModelData> {
         'age',
         'born',
         'religion',
+        'roles',
         'createdAt',
         'updatedAt'
     ];
+
+    jsonFields = ['roles']
 
 }
