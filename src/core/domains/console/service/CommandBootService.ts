@@ -24,10 +24,11 @@ class CommandBootService implements ICommandBootService {
         options.withoutProvider = [...(options.withoutProvider ?? [])];
 
         if(args.includes('--no-express')) {
-            options.withoutProvider = ['ExpressProvider']
+            options.withoutProvider.push('ExpressProvider')
+            options.withoutProvider.push('RoutesProvider')
         }
         if(args.includes('--no-auth')) {
-            options.withoutProvider?.push('AuthProvider');
+            options.withoutProvider.push('AuthProvider');
         }
         if(args.includes('--no-db')) {
             options.withoutProvider?.push('MongoDBProvider');
