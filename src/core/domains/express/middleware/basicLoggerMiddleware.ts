@@ -1,9 +1,18 @@
-import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { App } from '@src/core/services/App';
-import { NextFunction, Response } from 'express';
 
+import HttpContext from '../base/HttpContext';
+import Middleware from '../base/Middleware';
 
-export const basicLoggerMiddleware = () => async (req: BaseRequest, res: Response, next: NextFunction): Promise<void> => {
-    App.container('logger').info('New request: ', `${req.method} ${req.url}`, 'Headers: ', req.headers);
-    next();
-};
+class BasicLoggerMiddleware extends Middleware {
+
+    public async execute(context: HttpContext): Promise<void> {
+
+        App.container('logger').info('New request: ', `${context.getRequest().method} ${context.getRequest().url}`, 'Headers: ', context.getRequest().headers);
+
+        this.next();
+    }
+
+}
+
+export default BasicLoggerMiddleware;
+
