@@ -8,6 +8,7 @@ import { IEloquent, IdGeneratorFn, SetModelColumnsOptions, TransactionFn } from 
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import SqlExpression, { SqlRaw } from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
+import PostgresJsonNormalizer from "@src/core/domains/postgres/normalizers/PostgresJsonNormalizer";
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
@@ -16,7 +17,6 @@ import PrefixedPropertyGrouper from "@src/core/util/PrefixedPropertyGrouper";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import { bindAll } from 'lodash';
 import pg, { QueryResult } from 'pg';
-import PostgresJsonNormalizer from "@src/core/domains/postgres/normalizers/PostgresJsonNormalizer";
 
 class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpression> {
 
@@ -72,10 +72,10 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      * @param documents The documents to normalize
      * @returns The normalized documents
      */
-    normalizeDocuments<T extends object = object>(documents: T | T[]): T[] {
+    normalizeDocuments<T extends object = object>(documents: T[]): T[] {
         const postgresJsonNormalizer = new PostgresJsonNormalizer()
-        const jsonProperties = this.modelCtor?.create().json ?? [];
-        return postgresJsonNormalizer.normalize(documents, jsonProperties) as T[]
+        const jsonProperties = this.modelCtor?.create().getJsonProperties() ?? [];
+        return documents.map((document) => postgresJsonNormalizer.normalize(document, jsonProperties)) as T[]
     }
 
     /**
@@ -505,9 +505,10 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
 
             // Convert documents to array
             const documentsArray = Array.isArray(documents) ? documents : [documents]
+            const normalizedDocuments = this.normalizeDocuments(documentsArray)
             const results: unknown[] = [];
 
-            for(const document of documentsArray) {
+            for(const document of normalizedDocuments) {
 
                 // Reset the expression
                 this.setExpression(previousExpression)
