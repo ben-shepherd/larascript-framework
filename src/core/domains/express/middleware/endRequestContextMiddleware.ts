@@ -1,18 +1,21 @@
-import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { App } from "@src/core/services/App";
-import { NextFunction, Response } from "express";
 
-
+import HttpContext from "../base/HttpContext";
+import Middleware from "../base/Middleware";
 
 /**
  * Middleware that ends the current request context and removes all associated values.
  */
-const endRequestContextMiddleware = () => (req: BaseRequest, res: Response, next: NextFunction) => {
-    res.once('finish', () => {
-        App.container('requestContext').endRequestContext(req)
-    })
+class EndRequestContextMiddleware extends Middleware {
 
-    next()
+    async execute(context: HttpContext): Promise<void> {
+        context.getResponse().once('finish', () => {
+            App.container('requestContext').endRequestContext(context.getRequest())
+        })
+
+        this.next()
+    }
+
 }
 
-export default endRequestContextMiddleware
+export default EndRequestContextMiddleware
