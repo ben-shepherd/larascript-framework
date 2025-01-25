@@ -1,6 +1,7 @@
-import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
-import { NextFunction, Response } from "express";
+
+import HttpContext from "../base/HttpContext";
+import Middleware from "../base/Middleware";
 
 type Props = {
     // eslint-disable-next-line no-unused-vars
@@ -16,24 +17,34 @@ const defaultProps: Props = {
 }
 
 /**
- * Sets a request id on the request object and sets the response header if desired
- *
- * @param {Props} props - Options to configure the request id middleware
- * @param {string} [props.generator=generateUuidV4] - Function to generate a request id
- * @param {boolean} [props.setHeader=true] - If true, sets the response header with the request id
- * @param {string} [props.headerName='X-Request-Id'] - Name of the response header to set
- * @returns {import("express").RequestHandler} - The middleware function
+ * Middleware to add a request ID to the request and response objects.
  */
-const requestIdMiddleware = ({ generator, setHeader, headerName }: Props = defaultProps) => (req: BaseRequest, res: Response, next: NextFunction) => {
-    const oldValue = req.get(headerName)
-    const id =  oldValue ?? generator()
+class RequestIdMiddleware extends Middleware<Props> {
 
-    if(setHeader) {
-        res.set(headerName, id)
+    constructor({ generator, setHeader, headerName }: Props = defaultProps) {
+        super()
+        this.setConfig({
+            generator,
+            setHeader,
+            headerName
+        })
     }
 
-    req.id = id
-    next()
+    async execute(context: HttpContext): Promise<void> {
+        const { generator, setHeader, headerName } = this.getConfig()
+        
+        const oldValue = context.getRequest().get(headerName)
+        const id =  oldValue ?? generator()
+    
+        if(setHeader) {
+            context.getResponse().set(headerName, id)
+        }
+    
+        context.getRequest().id = id
+        this.next()
+    }
+
 }
 
-export default requestIdMiddleware
+
+export default RequestIdMiddleware
