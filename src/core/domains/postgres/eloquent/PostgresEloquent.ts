@@ -75,7 +75,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
     normalizeDocuments<T extends object = object>(documents: T[]): T[] {
         const postgresJsonNormalizer = new PostgresJsonNormalizer()
         const jsonProperties = this.modelCtor?.create().getJsonProperties() ?? [];
-        return documents.map((document) => postgresJsonNormalizer.normalize(document, jsonProperties)) as T[]
+        return documents.map((document) => postgresJsonNormalizer.denormalize(document, jsonProperties)) as T[]
     }
 
     /**
@@ -88,10 +88,10 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      * @param documents The documents to denormalize    
      * @returns The denormalized documents
      */
-    denormalizeDocuments<T extends object = object>(documents: T | T[]): T[] {
+    denormalizeDocuments<T extends object = object>(documents: T[]): T[] {
         const postgresJsonNormalizer = new PostgresJsonNormalizer()
-        const jsonProperties = this.modelCtor?.create().json ?? [];
-        return postgresJsonNormalizer.denormalize(documents, jsonProperties) as T[]
+        const jsonProperties = this.modelCtor?.create().getJsonProperties() ?? [];
+        return documents.map((document) => postgresJsonNormalizer.denormalize(document, jsonProperties)) as T[]
     }
 
     /**
@@ -266,6 +266,7 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      * @returns The formatted models
      */
     protected formatResultsAsModels(results: object[]): Model[] {
+        results = this.denormalizeDocuments(results)
         results = this.formatter.format(results)
         results = super.formatResultsAsModels(results)
         return results as Model[]
