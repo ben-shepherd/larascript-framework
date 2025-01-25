@@ -1,10 +1,11 @@
 import commandsConfig from "@src/config/commands";
 import BaseProvider from "@src/core/base/Provider";
 import HelpCommand from "@src/core/domains/console/commands/HelpCommand";
-import ListRoutesCommand from "@src/core/domains/console/commands/ListRoutesCommand";
 import ConsoleService from "@src/core/domains/console/service/ConsoleService";
 import { App } from "@src/core/services/App";
 import readline from 'readline';
+
+import RouteListCommand from "../commands/RouteListCommand";
 
 export default class ConsoleProvider extends BaseProvider {
 
@@ -36,7 +37,7 @@ export default class ConsoleProvider extends BaseProvider {
          */
         App.container('console').register().registerAll([
             HelpCommand,
-            ListRoutesCommand
+            RouteListCommand
         ]);
         
         /**
