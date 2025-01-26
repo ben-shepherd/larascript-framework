@@ -1,7 +1,7 @@
 import health from '@src/core/actions/health';
-import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
+import { IRouteLegacy } from '@src/core/domains/express/interfaces/IRouteLegacy';
 
-const healthRoutes: IRoute[] = [
+const healthRoutes: IRouteLegacy[] = [
     {
         name: 'health',
         method: 'get',

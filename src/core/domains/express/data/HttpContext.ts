@@ -1,7 +1,7 @@
-import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
-import { NextFunction, Response } from 'express';
 import HttpContextException from '@src/core/domains/express/exceptions/HttpContextException';
 import { requestContext } from '@src/core/domains/express/services/RequestContext';
+import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
+import { NextFunction, Response } from 'express';
 
 class HttpContext {
 
@@ -13,6 +13,48 @@ class HttpContext {
         // eslint-disable-next-line no-unused-vars
         protected nextFn: NextFunction | undefined
     ) {
+    }
+
+    /**
+     * Gets the method of the request.
+     * @returns {string} The method of the request.
+     */
+    public getMethod() {
+        return this.req.method
+    }
+
+    /**
+     * Gets a query parameter from the request.
+     * @param {string} key - The key of the query parameter to get.
+     * @returns {string | undefined} The value of the query parameter.
+     */
+    public getQueryParam(key: string) {
+        return this.req.query[key]
+    }
+
+    /**
+     * Gets all query parameters from the request.
+     * @returns {Record<string, string>} The query parameters.
+     */
+    public getQueryParams() {
+        return this.req.query
+    }
+
+    /**
+     * Gets a body parameter from the request.
+     * @param {string} key - The key of the body parameter to get.
+     * @returns {string | undefined} The value of the body parameter.
+     */
+    public getBodyParam(key: string) {
+        return this.req.body[key]
+    }
+
+    /**
+     * Gets all body parameters from the request.
+     * @returns {Record<string, string>} The body parameters.
+     */
+    public getBodyParams() {
+        return this.req.body
     }
 
     /**

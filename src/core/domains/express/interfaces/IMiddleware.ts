@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import HttpContext from "@src/core/domains/express/data/HttpContext";
-import { NextFunction, Request, Response } from "express";
 import { IExpressable } from "@src/core/domains/express/interfaces/IExpressable";
+import { NextFunction, Request, Response } from "express";
 
 export type MiddlewareConstructor = {
     new (...args: any[]): IMiddleware;
@@ -13,6 +13,8 @@ export interface IMiddleware extends IExpressable<TExpressMiddlewareFn> {
     execute(context: HttpContext): Promise<void>;
     next(): void;
 }
+
+export type TExpressMiddlewareFnOrClass = TExpressMiddlewareFn | MiddlewareConstructor;
 
 /**
  * Represents an Express middleware function. The function takes an Express Request,

@@ -2,7 +2,6 @@ import ForbiddenResourceError from '@src/core/domains/auth/exceptions/ForbiddenR
 import RateLimitedExceededError from '@src/core/domains/auth/exceptions/RateLimitedExceededError';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
 import AuthRequest from '@src/core/domains/auth/services/AuthRequest';
-import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
 import { ISecurityMiddleware } from '@src/core/domains/express/interfaces/ISecurity';
 import responseError from '@src/core/domains/express/requests/responseError';
 import { ALWAYS } from '@src/core/domains/express/services/Security';
@@ -11,7 +10,9 @@ import { SecurityIdentifiers } from '@src/core/domains/express/services/Security
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { NextFunction, Response } from 'express';
 
-const bindSecurityToRequest = (route: IRoute, req: BaseRequest) => {
+import { IRouteLegacy } from '../interfaces/IRouteLegacy';
+
+const bindSecurityToRequest = (route: IRouteLegacy, req: BaseRequest) => {
     req.security = route.security ?? [];
 }
 
@@ -19,7 +20,7 @@ const bindSecurityToRequest = (route: IRoute, req: BaseRequest) => {
 /**
  * Applies the authorization security check on the request.
  */
-const applyAuthorizeSecurity = async (route: IRoute, req: BaseRequest, res: Response): Promise<void | null> => {
+const applyAuthorizeSecurity = async (route: IRouteLegacy, req: BaseRequest, res: Response): Promise<void | null> => {
 
     const conditions = [ALWAYS]
 

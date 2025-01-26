@@ -3,7 +3,7 @@ import Middleware from '@src/core/domains/express/base/Middleware';
 import IExpressConfig from '@src/core/domains/express/interfaces/IExpressConfig';
 import IExpressService from '@src/core/domains/express/interfaces/IExpressService';
 import { MiddlewareConstructor, TExpressMiddlewareFn } from '@src/core/domains/express/interfaces/IMiddleware';
-import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
+import { IRouteLegacy } from '@src/core/domains/express/interfaces/IRouteLegacy';
 import EndRequestContextMiddleware from '@src/core/domains/express/middleware/EndRequestContextMiddleware';
 import RequestIdMiddlewareTest from '@src/core/domains/express/middleware/RequestIdMiddleware';
 import { securityMiddleware } from '@src/core/domains/express/middleware/securityMiddleware';
@@ -12,6 +12,10 @@ import { logger } from '@src/core/domains/logger/services/LoggerService';
 import { validate } from '@src/core/domains/validator/services/ValidatorService';
 import { app } from '@src/core/services/App';
 import expressClient from 'express';
+
+import { IRoute, IRouter } from '../interfaces/IRoute';
+import Route from '../routing/Route';
+import RouteService from './RouteService';
 
 /**
  * Short hand for `app('express')`
@@ -29,7 +33,7 @@ export default class ExpressService extends Service<IExpressConfig> implements I
 
     private readonly app: expressClient.Express
 
-    private readonly registedRoutes: IRoute[] = [];
+    private readonly registedRoutes: IRouteLegacy[] = [];
 
     /**
      * Config defined in @src/config/http/express.ts
@@ -38,6 +42,13 @@ export default class ExpressService extends Service<IExpressConfig> implements I
     constructor(config: IExpressConfig | null = null) {
         super(config)
         this.app = expressClient()
+    }
+
+    /**
+     * Returns the route instance.
+     */
+    public route(): IRoute {
+        return new Route();
     }
 
     /**
@@ -93,13 +104,26 @@ export default class ExpressService extends Service<IExpressConfig> implements I
         })
     }
 
+    public bindRoutes(router: IRouter): void {
+        // todo: add additional middlewares
+        // const additionalMiddlewares = [
+        //     ...this.addValidatorMiddleware(route),
+        //     ...this.addSecurityMiddleware(route),
+        // ] as TExpressMiddlewareFn[]
+
+        const routeService = new RouteService(this.app, {
+            additionalMiddlewares: []
+        })
+        routeService.bindRoutes(router)
+    }
+
     /**
      * Binds multiple routes to the Express instance.
      * @param routes 
      */
-    public bindRoutes(routes: IRoute[]): void {
+    public bindRoutesLegacy(routes: IRouteLegacy[]): void {
         routes.forEach(route => {
-            this.bindSingleRoute(route)
+            this.bindSingleRouteLegacy(route)
         })
     }
 
@@ -107,7 +131,7 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      * Binds a single route to the Express instance.
      * @param route 
      */
-    public bindSingleRoute(route: IRoute): void {
+    public bindSingleRouteLegacy(route: IRouteLegacy): void {
         const userDefinedMiddlewares = route.middlewares ?? [];
 
         // Add security and validator middlewares
@@ -160,7 +184,7 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      * @param route 
      * @returns middlewares with added validator middleware
      */
-    public addValidatorMiddleware(route: IRoute): TExpressMiddlewareFn[] {
+    public addValidatorMiddleware(route: IRouteLegacy): TExpressMiddlewareFn[] {
         const middlewares: TExpressMiddlewareFn[] = [];
 
         /**
@@ -186,7 +210,7 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      * @param route The route to add the middleware to
      * @returns The route's middleware array with the security middleware added
      */
-    public addSecurityMiddleware(route: IRoute): TExpressMiddlewareFn[] {
+    public addSecurityMiddleware(route: IRouteLegacy): TExpressMiddlewareFn[] {
         const middlewares: TExpressMiddlewareFn[] = [];
 
         /**
@@ -242,7 +266,7 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      * Returns all registered routes.
      * @returns array of IRoute
      */
-    public getRoutes(): IRoute[] {
+    public getRoutes(): IRouteLegacy[] {
         return this.registedRoutes
     }
 
@@ -250,9 +274,9 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      * Logs a route binding to the console.
      * @param route - IRoute instance
      */
-    private logRoute(route: IRoute): void {
+    private logRoute(route: IRouteLegacy): void {
         const indent = '  ';
-        let str = `[Express] binding route ${route.method.toUpperCase()}: '${route.path}' as '${route.name}'`;
+        let str = `[Express] binding route (LEGACY) ${route.method.toUpperCase()}: '${route.path}' as '${route.name}'`;
 
         if (route.scopes?.length || route.scopesPartial?.length) {
             str += `\r\n${indent}SECURITY:`;

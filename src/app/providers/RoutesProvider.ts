@@ -3,6 +3,8 @@ import BaseProvider from "@src/core/base/Provider";
 import healthRoutes from "@src/core/domains/express/routes/healthRoutes";
 import { app } from "@src/core/services/App";
 
+import helloWorldRoutes from "../routes/helloWorldRoutes";
+
 class RoutesProvider extends BaseProvider {
 
     /**
@@ -14,9 +16,11 @@ class RoutesProvider extends BaseProvider {
         const authService = app('auth');
 
         // Bind routes
-        expressService.bindRoutes(authService.getAuthRoutes() ?? [])
-        expressService.bindRoutes(healthRoutes);
-        expressService.bindRoutes(apiRoutes);
+        expressService.bindRoutesLegacy(authService.getAuthRoutes() ?? [])
+        expressService.bindRoutesLegacy(healthRoutes);
+        expressService.bindRoutesLegacy(apiRoutes);
+
+        expressService.bindRoutes(helloWorldRoutes);
 
         // Add more routes here
 

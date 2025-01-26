@@ -1,4 +1,4 @@
-import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
+import { IRouteLegacy } from "@src/core/domains/express/interfaces/IRouteLegacy";
 import { IIdentifiableSecurityCallback } from "@src/core/domains/express/interfaces/ISecurity";
 import { ValidatorCtor } from "@src/core/domains/validator/types/ValidatorCtor";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
@@ -11,7 +11,7 @@ export type SearchOptions = {
     useFuzzySearch?: boolean; // Only applies to MongoDB provider
 }
 
-export interface IRouteResourceOptions extends Pick<IRoute, 'middlewares'> {
+export interface IRouteResourceOptions extends Pick<IRouteLegacy, 'middlewares'> {
     path: string;
     resource: ModelConstructor<IModel>;
     except?: ResourceType[];

@@ -1,4 +1,4 @@
-import { IRoute } from "@src/core/domains/express/interfaces/IRoute"
+import { IRouteLegacy } from "@src/core/domains/express/interfaces/IRouteLegacy"
 import { ResourceType } from "@src/core/domains/express/interfaces/IRouteResourceOptions"
 
 /**
@@ -12,7 +12,7 @@ import { ResourceType } from "@src/core/domains/express/interfaces/IRouteResourc
  * @param route The route to extract the ResourceType from
  * @returns The ResourceType of the route
  */
-const extractResourceType = (route: IRoute): ResourceType => {
+const extractResourceType = (route: IRouteLegacy): ResourceType => {
     const parts = route.name.split('.')
     const lastPart = parts[parts.length - 1]
     return lastPart as ResourceType
@@ -28,7 +28,7 @@ const extractResourceType = (route: IRoute): ResourceType => {
  * @param routes The array of routes to filter
  * @returns The filtered array of routes
  */
-const filterOnly = (only: ResourceType[], routes: IRoute[]): IRoute[] => {
+const filterOnly = (only: ResourceType[], routes: IRouteLegacy[]): IRouteLegacy[] => {
     if(only.length === 0) {
         return routes
     }
@@ -51,7 +51,7 @@ const filterOnly = (only: ResourceType[], routes: IRoute[]): IRoute[] => {
  * @param routes The array of routes to filter
  * @returns The filtered array of routes
  */
-const filterExcept = (except: ResourceType[], routes: IRoute[]): IRoute[] => {
+const filterExcept = (except: ResourceType[], routes: IRouteLegacy[]): IRouteLegacy[] => {
     if(except.length === 0) {
         return routes
     }

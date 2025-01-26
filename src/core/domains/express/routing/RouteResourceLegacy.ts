@@ -5,10 +5,10 @@ import resourceCreate from "@src/core/domains/express/actions/resourceCreate";
 import resourceDelete from "@src/core/domains/express/actions/resourceDelete";
 import resourceShow from "@src/core/domains/express/actions/resourceShow";
 import resourceUpdate from "@src/core/domains/express/actions/resourceUpdate";
-import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
+import { IRouteLegacy } from "@src/core/domains/express/interfaces/IRouteLegacy";
 import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
-import Route from "@src/core/domains/express/routing/Route";
-import RouteGroup from "@src/core/domains/express/routing/RouteGroup";
+import RouteGroupLegacy from "@src/core/domains/express/routing/RouteGroupLegacy";
+import RouteLegacy from "@src/core/domains/express/routing/RouteLegacy";
 import routeGroupUtil from "@src/core/domains/express/utils/routeGroupUtil";
 
 /**
@@ -39,7 +39,7 @@ export const RouteResourceTypes = {
  * @param options.enableScopes - Enable scopes security for these routes
  * @returns A group of routes that can be used to handle requests for the resource
  */
-const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
+const RouteResourceLegacy = (options: IRouteResourceOptions): IRouteLegacy[] => {
     const path = options.path.startsWith('/') ? options.path.slice(1) : options.path
 
     const {
@@ -51,9 +51,9 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
     /**
      * Define all the routes for the resource
      */
-    const routes = RouteGroup([
+    const routes = RouteGroupLegacy([
         // Get all resources
-        Route({
+        RouteLegacy({
             name: `${path}.all`,
             resourceType: RouteResourceTypes.ALL,
             scopes,
@@ -66,7 +66,7 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
             security: options.security
         }),
         // Get resource by id
-        Route({
+        RouteLegacy({
             name: `${path}.show`,
             resourceType: RouteResourceTypes.SHOW,
             scopes,
@@ -79,7 +79,7 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
             security: options.security
         }),
         // Update resource by id
-        Route({
+        RouteLegacy({
             name: `${path}.update`,
             resourceType: RouteResourceTypes.UPDATE,
             scopes,
@@ -93,7 +93,7 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
             security: options.security
         }),
         // Delete resource by id
-        Route({
+        RouteLegacy({
             name: `${path}.destroy`,
             resourceType: RouteResourceTypes.DESTROY,
             scopes,
@@ -106,7 +106,7 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
             security: options.security
         }),
         // Create resource
-        Route({
+        RouteLegacy({
             name: `${path}.create`,
             resourceType: RouteResourceTypes.CREATE,
             scopes,
@@ -128,4 +128,4 @@ const RouteResource = (options: IRouteResourceOptions): IRoute[] => {
     )
 }
 
-export default RouteResource
+export default RouteResourceLegacy
