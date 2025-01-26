@@ -10,7 +10,7 @@ export const ALWAYS = 'always';
 /**
  * Security class with static methods for basic defining security callbacks.
  */
-class Security extends Singleton {
+class SecurityLegacy extends Singleton {
 
     /**
      * The condition for when the security check should be executed.
@@ -28,7 +28,7 @@ class Security extends Singleton {
      * @param condition - The condition value. If the value is 'always', the security check is always executed.
      * @returns The Security class instance for chaining.
      */
-    public static when(condition: string | string[]): typeof Security {
+    public static when(condition: string | string[]): typeof SecurityLegacy {
         condition = typeof condition === 'string' ? [condition] : condition;
         this.getInstance().when = condition;
         return this;
@@ -40,7 +40,7 @@ class Security extends Singleton {
      * @param condition - The condition value(s) to set. If the value is 'always', the security check is never executed.
      * @returns The Security class instance for chaining.
      */
-    public static never(condition: string | string[]): typeof Security {
+    public static never(condition: string | string[]): typeof SecurityLegacy {
         condition = typeof condition === 'string' ? [condition] : condition;
         this.getInstance().never = condition;
         return this;
@@ -174,4 +174,4 @@ class Security extends Singleton {
 
 }
 
-export default Security
+export default SecurityLegacy

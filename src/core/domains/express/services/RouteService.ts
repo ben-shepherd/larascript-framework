@@ -25,12 +25,22 @@ class RouteService {
     ) {
     }
 
+    /**
+     * Binds all routes from the given router.
+     * 
+     * @param route The router containing the routes to bind
+     */
     public bindRoutes(route: IRouter): void {
         route.getRegisteredRoutes().forEach(routeItem => {
             this.bindRoute(routeItem)
         })
     }
 
+    /**
+     * Binds a single route.
+     * 
+     * @param routeItem The route item to bind
+     */
     private bindRoute(routeItem: TRouteItem): void {
 
         // Middlewares from route item

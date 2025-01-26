@@ -51,8 +51,8 @@ abstract class Middleware<Config extends unknown = unknown> implements IMiddlewa
      * Creates a new instance of this class and returns its Express middleware function,
      * allowing it to be used directly with Express's app.use() or route handlers.
      */
-    public static toExpressMiddleware(): TExpressMiddlewareFn {
-        return new (this as unknown as MiddlewareConstructor)().toExpressable()
+    public static toExpressMiddleware(...args: any[]): TExpressMiddlewareFn {
+        return new (this as unknown as MiddlewareConstructor)(...args).toExpressable()
     }
 
     /**

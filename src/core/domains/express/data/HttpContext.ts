@@ -3,6 +3,9 @@ import { requestContext } from '@src/core/domains/express/services/RequestContex
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { NextFunction, Response } from 'express';
 
+import IApiTokenModel from '../../auth/interfaces/IApitokenModel';
+import IUserModel from '../../auth/interfaces/IUserModel';
+
 class HttpContext {
 
     constructor(
@@ -13,6 +16,22 @@ class HttpContext {
         // eslint-disable-next-line no-unused-vars
         protected nextFn: NextFunction | undefined
     ) {
+    }
+
+    /**
+     * Gets the user of the request.
+     * @returns {IUserModel | undefined} The user of the request.
+     */
+    public getUser(): IUserModel | undefined {
+        return this.req?.user as IUserModel | undefined;
+    }
+
+    /**
+     * Gets the API token of the request.
+     * @returns {IApiTokenModel | undefined} The API token of the request.
+     */
+    public getApiToken(): IApiTokenModel | undefined {
+        return this.req?.apiToken ?? undefined;
     }
 
     /**

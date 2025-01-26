@@ -1,3 +1,4 @@
 export interface IExpressable<T = unknown> {
-    toExpressable(): T
+    // eslint-disable-next-line no-unused-vars
+    toExpressable(...args: any[]): T
 }

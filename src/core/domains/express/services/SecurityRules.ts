@@ -4,14 +4,14 @@ import hasRoleSecurity from "@src/core/domains/express/rules/hasRoleSecurity"
 import hasScopeSecurity from "@src/core/domains/express/rules/hasScopeSecurity"
 import rateLimitedSecurity from "@src/core/domains/express/rules/rateLimitedSecurity"
 import resourceOwnerSecurity from "@src/core/domains/express/rules/resourceOwnerSecurity"
-import Security from "@src/core/domains/express/services/Security"
+import SecurityLegacy from "@src/core/domains/express/services/SecurityLegacy"
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t"
 import { IModel } from "@src/core/interfaces/IModel"
 
 /**
  * Security rules
  */
-export interface ISecurityRules {
+export interface ISecurityRulesLegacy {
     // eslint-disable-next-line no-unused-vars
     [key: string]: (...args: any[]) => IIdentifiableSecurityCallback
 }
@@ -30,7 +30,7 @@ export const SecurityIdentifiers = {
     CUSTOM: 'custom'
 } as const;
 
-const SecurityRules: ISecurityRules = {
+const SecurityRules: ISecurityRulesLegacy = {
 
     /**
      * Checks if the request is authorized, i.e. if the user is logged in.
@@ -39,8 +39,8 @@ const SecurityRules: ISecurityRules = {
      */
     [SecurityIdentifiers.AUTHORIZED]: () => ({
         id: SecurityIdentifiers.AUTHORIZED,
-        when: Security.getInstance().getWhenAndReset(),
-        never: Security.getInstance().getNeverAndReset(),
+        when: SecurityLegacy.getInstance().getWhenAndReset(),
+        never: SecurityLegacy.getInstance().getNeverAndReset(),
         arguements: {
             throwExceptionOnUnauthorized: true
         },
@@ -54,8 +54,8 @@ const SecurityRules: ISecurityRules = {
      */
     [SecurityIdentifiers.AUTHORIZED_THROW_EXCEPTION]: () => ({
         id: SecurityIdentifiers.AUTHORIZED_THROW_EXCEPTION,
-        when: Security.getInstance().getWhenAndReset(),
-        never: Security.getInstance().getNeverAndReset(),
+        when: SecurityLegacy.getInstance().getWhenAndReset(),
+        never: SecurityLegacy.getInstance().getNeverAndReset(),
         arguements: {
             throwExceptionOnUnauthorized: true
         },
@@ -70,8 +70,8 @@ const SecurityRules: ISecurityRules = {
     [SecurityIdentifiers.RESOURCE_OWNER]: (attribute: string = 'userId') => ({
         id: SecurityIdentifiers.RESOURCE_OWNER,
         also: SecurityIdentifiers.AUTHORIZED,
-        when: Security.getInstance().getWhenAndReset(),
-        never: Security.getInstance().getNeverAndReset(),
+        when: SecurityLegacy.getInstance().getWhenAndReset(),
+        never: SecurityLegacy.getInstance().getNeverAndReset(),
         arguements: { key: attribute },
         callback: (req: BaseRequest, resource: IModel) => resourceOwnerSecurity(req, resource, attribute)
     }),
@@ -85,8 +85,8 @@ const SecurityRules: ISecurityRules = {
     [SecurityIdentifiers.HAS_ROLE]: (roles: string | string[]) => ({
         id: SecurityIdentifiers.HAS_ROLE,
         also: SecurityIdentifiers.AUTHORIZED,
-        when: Security.getInstance().getWhenAndReset(),
-        never: Security.getInstance().getNeverAndReset(),
+        when: SecurityLegacy.getInstance().getWhenAndReset(),
+        never: SecurityLegacy.getInstance().getNeverAndReset(),
         callback: (req: BaseRequest) => hasRoleSecurity(req, roles)
     }),
 
@@ -96,8 +96,8 @@ const SecurityRules: ISecurityRules = {
      */
     [SecurityIdentifiers.ENABLE_SCOPES]: () => ({
         id: SecurityIdentifiers.ENABLE_SCOPES,
-        when: Security.getInstance().getWhenAndReset(),
-        never: Security.getInstance().getNeverAndReset(),
+        when: SecurityLegacy.getInstance().getWhenAndReset(),
+        never: SecurityLegacy.getInstance().getNeverAndReset(),
         // eslint-disable-next-line no-unused-vars
         callback: (_req: BaseRequest, _resource: IModel) => true,
     }),
@@ -111,8 +111,8 @@ const SecurityRules: ISecurityRules = {
         id: SecurityIdentifiers.HAS_SCOPE,
         also: SecurityIdentifiers.AUTHORIZED,
         arguements: { scopesExactMatch, scopesPartialMatch },
-        when: Security.getInstance().getWhenAndReset(),
-        never: Security.getInstance().getNeverAndReset(),
+        when: SecurityLegacy.getInstance().getWhenAndReset(),
+        never: SecurityLegacy.getInstance().getNeverAndReset(),
         callback: (req: BaseRequest) => hasScopeSecurity(req, scopesExactMatch, scopesPartialMatch)
     }),
 
@@ -123,8 +123,8 @@ const SecurityRules: ISecurityRules = {
      */
     [SecurityIdentifiers.RATE_LIMITED]: (limit: number, perMinuteAmount: number) => ({
         id: SecurityIdentifiers.RATE_LIMITED,
-        never: Security.getInstance().getNeverAndReset(),
-        when: Security.getInstance().getWhenAndReset(),
+        never: SecurityLegacy.getInstance().getNeverAndReset(),
+        when: SecurityLegacy.getInstance().getWhenAndReset(),
         callback: (req: BaseRequest) => rateLimitedSecurity(req, limit, perMinuteAmount),
     }),
 
@@ -137,8 +137,8 @@ const SecurityRules: ISecurityRules = {
     // eslint-disable-next-line no-unused-vars
     [SecurityIdentifiers.CUSTOM]: (identifier: string, callback: SecurityCallback, ...rest: any[]) => ({
         id: identifier,
-        never: Security.getInstance().getNeverAndReset(),
-        when: Security.getInstance().getWhenAndReset(),
+        never: SecurityLegacy.getInstance().getNeverAndReset(),
+        when: SecurityLegacy.getInstance().getWhenAndReset(),
         callback: (req: BaseRequest, ...rest: any[]) => {
             return callback(req, ...rest)
         }
