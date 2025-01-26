@@ -1,6 +1,6 @@
-import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 import Middleware from "@src/core/domains/express/base/Middleware";
 import HttpContext from "@src/core/domains/express/data/HttpContext";
+import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 
 type Props = {
     // eslint-disable-next-line no-unused-vars
@@ -16,8 +16,21 @@ const defaultProps: Props = {
 }
 
 /**
- * Middleware to add a request ID to the request and response objects.
+ * RequestIdMiddleware adds a unique identifier to each HTTP request.
+ * 
+ * This identifier serves as a correlation ID that can be used to track a request
+ * throughout its entire lifecycle across the application. The ID is:
+ * 
+ * 1. Generated using the configured generator (defaults to UUID v4)
+ * 2. Added to the request object as 'id' property
+ * 3. Optionally included in response headers (X-Request-Id by default)
+ * 
+ * Having a request ID enables:
+ * - Correlation of logs across different parts of the application
+ * - Tracking request flow through microservices
+ * - Debugging by following a specific request's journey.
  */
+
 class RequestIdMiddleware extends Middleware<Props> {
 
     constructor({ generator, setHeader, headerName }: Props = defaultProps) {
