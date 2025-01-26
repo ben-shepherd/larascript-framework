@@ -4,9 +4,8 @@ import AuthRequest from '@src/core/domains/auth/services/AuthRequest';
 import responseError from '@src/core/domains/express/requests/responseError';
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { Response } from 'express';
-
-import Middleware from '../base/Middleware';
-import HttpContext from '../data/HttpContext';
+import Middleware from '@src/core/domains/express/base/Middleware';
+import HttpContext from '@src/core/domains/express/data/HttpContext';
 
 class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
 

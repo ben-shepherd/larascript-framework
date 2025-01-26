@@ -1,8 +1,7 @@
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { NextFunction, Response } from 'express';
-
-import HttpContextException from '../exceptions/HttpContextException';
-import { requestContext } from '../services/RequestContext';
+import HttpContextException from '@src/core/domains/express/exceptions/HttpContextException';
+import { requestContext } from '@src/core/domains/express/services/RequestContext';
 
 class HttpContext {
 

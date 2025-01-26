@@ -1,14 +1,14 @@
 /* eslint-disable no-unused-vars */
-import { NextFunction, Request, Response } from "express";
 import HttpContext from "@src/core/domains/express/data/HttpContext";
+import { NextFunction, Request, Response } from "express";
+import { IExpressable } from "@src/core/domains/express/interfaces/IExpressable";
 
 export type MiddlewareConstructor = {
     new (...args: any[]): IMiddleware;
     toExpressMiddleware(): TExpressMiddlewareFn;
 }
 
-export interface IMiddleware {
-    getExpressMiddleware(): TExpressMiddlewareFn;
+export interface IMiddleware extends IExpressable<TExpressMiddlewareFn> {
     getContext(): HttpContext;
     execute(context: HttpContext): Promise<void>;
     next(): void;

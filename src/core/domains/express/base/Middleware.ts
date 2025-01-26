@@ -1,10 +1,11 @@
-import { NextFunction, Response } from "express";
 import HttpContext from "@src/core/domains/express/data/HttpContext";
 import { IMiddleware, MiddlewareConstructor, TExpressMiddlewareFn } from "@src/core/domains/express/interfaces/IMiddleware";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
+import { NextFunction, Response } from "express";
+import { IExpressable } from "@src/core/domains/express/interfaces/IExpressable";
 
 
-abstract class Middleware<Config extends unknown = unknown> implements IMiddleware {
+abstract class Middleware<Config extends unknown = unknown> implements IMiddleware, IExpressable<TExpressMiddlewareFn> {
 
     /**
      * @type {Config}
@@ -20,11 +21,9 @@ abstract class Middleware<Config extends unknown = unknown> implements IMiddlewa
      * Converts this middleware class into an Express-compatible middleware function.
      * Creates a new instance of this class and returns its Express middleware function,
      * allowing it to be used directly with Express's app.use() or route handlers.
-     * 
-     * @returns {TMiddlewareFn} An Express middleware function that takes (req, res, next)
      */
-    public static toExpressMiddleware() {
-        return new (this as unknown as MiddlewareConstructor)().getExpressMiddleware()
+    public static toExpressMiddleware(): TExpressMiddlewareFn {
+        return new (this as unknown as MiddlewareConstructor)().toExpressable()
     }
 
     /**
@@ -68,9 +67,9 @@ abstract class Middleware<Config extends unknown = unknown> implements IMiddlewa
     }
 
     /**
-     * @returns {ExpressMiddlewareFn}
+     * @returns {TExpressMiddlewareFn}
      */
-    public getExpressMiddleware(): TExpressMiddlewareFn {
+    public toExpressable(): TExpressMiddlewareFn {
         return async (req: BaseRequest, res: Response, next: NextFunction) => {
             const context = new HttpContext(req, res, next)
             this.setContext(context)
