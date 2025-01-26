@@ -1,7 +1,8 @@
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { NextFunction, Response } from 'express';
 
-import RequestContext, { requestContext } from '../services/RequestContext';
+import HttpContextException from '../exceptions/HttpContextException';
+import { requestContext } from '../services/RequestContext';
 
 class HttpContext {
 
@@ -56,7 +57,7 @@ class HttpContext {
      */
     public getId(): string {
         if(!this.req.id) {
-            throw new Error('Request ID not found');
+            throw new HttpContextException('Request ID not found');
         }
         return this.req.id;
     }
