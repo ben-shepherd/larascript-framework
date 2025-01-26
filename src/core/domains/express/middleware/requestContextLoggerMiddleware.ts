@@ -1,24 +1,29 @@
 import { EnvironmentDevelopment } from "@src/core/consts/Environment";
-import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { App } from "@src/core/services/App";
-import { NextFunction, Response } from "express";
+
+import Middleware from "../base/Middleware";
+import HttpContext from "../data/HttpContext";
 
 /**
  * Middleware to log the request context
  */
-const requestContextLoggerMiddleware = () => (req: BaseRequest, res: Response, next: NextFunction) => {
+class RequestContextLoggerMiddleware extends Middleware {
 
-    if(App.env() !== EnvironmentDevelopment) {
-        next()
-        return;
+    async execute(context: HttpContext): Promise<void> {
+        if(App.env() !== EnvironmentDevelopment) {
+            this.next()
+            return;
+        }
+    
+        context.getResponse().once('finish', () => {        
+            App.container('logger').info('requestContext: ', App.container('requestContext').getRequestContext())
+            App.container('logger').info('ipContext: ', App.container('requestContext').getIpContext())
+        })
+    
+        this.next()
     }
 
-    res.once('finish', () => {        
-        App.container('logger').info('requestContext: ', App.container('requestContext').getRequestContext())
-        App.container('logger').info('ipContext: ', App.container('requestContext').getIpContext())
-    })
-
-    next()
 }
 
-export default requestContextLoggerMiddleware
+
+export default RequestContextLoggerMiddleware
