@@ -1,13 +1,14 @@
 import { IPartialRouteResourceOptions, IResourceService } from "@src/core/domains/express/interfaces/IResourceService";
-import { IRouteResourceOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
 import { IIdentifiableSecurityCallback } from "@src/core/domains/express/interfaces/ISecurity";
-import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResource";
-import { ALWAYS } from "@src/core/domains/express/services/Security";
 import SecurityReader from "@src/core/domains/express/services/SecurityReader";
 import { SecurityIdentifiers } from "@src/core/domains/express/services/SecurityRules";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { IModel } from "@src/core/interfaces/IModel";
 import { Response } from "express";
+
+import { IRouteResourceOptionsLegacy } from "../../interfaces/IRouteResourceOptionsLegacy";
+import { RouteResourceTypes } from "../../routing/RouteResource";
+import { ALWAYS } from "../SecurityLegacy";
 
 abstract class BaseResourceService implements IResourceService {
 
@@ -62,7 +63,7 @@ abstract class BaseResourceService implements IResourceService {
      * @returns {boolean} - Whether the request is authorized
      */
     validateAuthorization(req: BaseRequest, options: IRouteResourceOptionsLegacy): boolean {
-        const authorizationSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.AUTHORIZED, [RouteResourceTypes.ALL, ALWAYS]);
+        const authorizationSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.AUTHORIZED, [RouteResourceTypes.INDEX, ALWAYS]);
 
         if(authorizationSecurity && !authorizationSecurity.callback(req)) {
             return false;

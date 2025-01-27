@@ -1,8 +1,9 @@
-import { IRouteResourceOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
 import { IIdentifiableSecurityCallback } from "@src/core/domains/express/interfaces/ISecurity";
-import { ALWAYS } from "@src/core/domains/express/services/Security";
 import SecurityRules from "@src/core/domains/express/services/SecurityRules";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
+
+import { IRouteResourceOptionsLegacy } from "../interfaces/IRouteResourceOptionsLegacy";
+import { ALWAYS } from "./SecurityLegacy";
 
 class SecurityReader {
 

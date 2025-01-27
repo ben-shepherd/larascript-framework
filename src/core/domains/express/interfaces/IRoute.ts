@@ -62,7 +62,8 @@ export type TRouteItem = {
 }
 
 export type TRouteResourceOptions = {
-    path: string;
+    prefix: string;
     resource: ModelConstructor<IModel>;
-    resourceType: TResourceType;
+    security?: ISecurityRuleConstructor | ISecurityRuleConstructor[];
+    middlewares?: TExpressMiddlewareFnOrClass | TExpressMiddlewareFnOrClass[];
 }

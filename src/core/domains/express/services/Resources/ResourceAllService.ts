@@ -2,7 +2,6 @@ import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenR
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import { IPageOptions } from "@src/core/domains/express/interfaces/IResourceService";
-import { IRouteResourceOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
 import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResource";
 import Paginate from "@src/core/domains/express/services/Paginate";
 import QueryFilters from "@src/core/domains/express/services/QueryFilters";
@@ -12,10 +11,12 @@ import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import stripGuardedResourceProperties from "@src/core/domains/express/utils/stripGuardedResourceProperties";
 import { Response } from "express";
 
+import { IRouteResourceOptionsLegacy } from "../../interfaces/IRouteResourceOptionsLegacy";
+
 
 class ResourceAllService extends BaseResourceService {
 
-    routeResourceType: string = RouteResourceTypes.ALL
+    routeResourceType: string = RouteResourceTypes.INDEX
 
     /**
      * Handles the resource all action

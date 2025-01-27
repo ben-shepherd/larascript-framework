@@ -4,13 +4,13 @@ import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedErr
 import AuthRequest from '@src/core/domains/auth/services/AuthRequest';
 import { ISecurityMiddleware } from '@src/core/domains/express/interfaces/ISecurity';
 import responseError from '@src/core/domains/express/requests/responseError';
-import { ALWAYS } from '@src/core/domains/express/services/Security';
 import SecurityReader from '@src/core/domains/express/services/SecurityReader';
 import { SecurityIdentifiers } from '@src/core/domains/express/services/SecurityRules';
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { NextFunction, Response } from 'express';
 
 import { IRouteLegacy } from '../interfaces/IRouteLegacy';
+import { ALWAYS } from '../services/SecurityLegacy';
 
 const bindSecurityToRequest = (route: IRouteLegacy, req: BaseRequest) => {
     req.security = route.security ?? [];

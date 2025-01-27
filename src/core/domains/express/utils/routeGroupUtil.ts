@@ -1,5 +1,6 @@
 import { IRouteLegacy } from "@src/core/domains/express/interfaces/IRouteLegacy"
-import { ResourceType } from "@src/core/domains/express/interfaces/IRouteResourceOptions"
+
+import { ResourceType } from "../interfaces/IRouteResourceOptionsLegacy"
 
 /**
  * Given a route, returns the ResourceType of the route by extracting the last

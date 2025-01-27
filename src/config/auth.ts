@@ -1,5 +1,6 @@
 import ApiToken from '@src/app/models/auth/ApiToken';
 import User from '@src/app/models/auth/User';
+import BlogModel from '@src/app/models/BlogModel';
 import ApiTokenRepository from '@src/app/repositories/auth/ApiTokenRepository';
 import UserRepository from '@src/app/repositories/auth/UserRepository';
 import CreateUserValidator from '@src/app/validators/user/CreateUserValidator';
@@ -106,7 +107,9 @@ const config: IAuthConfig = {
             {
                 name: GROUPS.User,
                 roles: [ROLES.USER],
-                scopes: []
+                scopes: [
+                    ...BlogModel.getScopes(['read', 'create'])
+                ]
             },
             {
                 name: GROUPS.Admin,
