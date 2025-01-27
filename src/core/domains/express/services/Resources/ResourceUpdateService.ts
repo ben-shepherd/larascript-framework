@@ -1,7 +1,7 @@
 import Repository from "@src/core/base/Repository";
 import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
-import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
+import { IRouteResourceOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
 import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResource";
 import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
@@ -22,10 +22,10 @@ class ResourceUpdateService extends BaseResourceService {
      * - Sends the results back to the client
      * @param {BaseRequest} req - The request object
      * @param {Response} res - The response object
-     * @param {IRouteResourceOptions} options - The options object
+     * @param {IRouteResourceOptionsLegacy} options - The options object
      * @returns {Promise<void>}
      */
-    async handler(req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void> {
+    async handler(req: BaseRequest, res: Response, options: IRouteResourceOptionsLegacy): Promise<void> {
 
         // Check if the authorization security applies to this route and it is valid
         if(!this.validateAuthorization(req, options)) {

@@ -1,4 +1,4 @@
-import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
+import { IRouteResourceOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
 import { IIdentifiableSecurityCallback } from "@src/core/domains/express/interfaces/ISecurity";
 import { ALWAYS } from "@src/core/domains/express/services/Security";
 import SecurityRules from "@src/core/domains/express/services/SecurityRules";
@@ -14,7 +14,7 @@ class SecurityReader {
      * @param when - The optional when condition. If specified, the security callback will only be found if it matches this condition.
      * @returns The found security callback, or undefined if not found.
      */
-    public static findFromRouteResourceOptions(options: IRouteResourceOptions, id: string, when?: string[] | null): IIdentifiableSecurityCallback | undefined {
+    public static findFromRouteResourceOptions(options: IRouteResourceOptionsLegacy, id: string, when?: string[] | null): IIdentifiableSecurityCallback | undefined {
         return this.find(options.security ?? [], id, when);
     }
 

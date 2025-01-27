@@ -1,7 +1,18 @@
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { NextFunction, Request, Response } from 'express';
 
+import { TSecurityRuleOptions } from '../services/Security/SecurityService';
 import { IRouteLegacy } from './IRouteLegacy';
+
+export type ISecurityRuleConstructor = {
+    // eslint-disable-next-line no-unused-vars
+    new (...args: any[]): ISecurityRule
+}
+
+export interface ISecurityRule<Arguments extends object = object> {
+    // eslint-disable-next-line no-unused-vars
+    toObject(args?: Arguments): TSecurityRuleOptions<Arguments>
+}
 
 /**
  * Authorize Security props

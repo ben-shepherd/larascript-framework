@@ -2,15 +2,15 @@ import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenR
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import { IPageOptions } from "@src/core/domains/express/interfaces/IResourceService";
-import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
+import { IRouteResourceOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
 import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResource";
 import Paginate from "@src/core/domains/express/services/Paginate";
 import QueryFilters from "@src/core/domains/express/services/QueryFilters";
+import { requestContext } from "@src/core/domains/express/services/RequestContext";
 import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import stripGuardedResourceProperties from "@src/core/domains/express/utils/stripGuardedResourceProperties";
 import { Response } from "express";
-import { requestContext } from "@src/core/domains/express/services/RequestContext";
 
 
 class ResourceAllService extends BaseResourceService {
@@ -29,7 +29,7 @@ class ResourceAllService extends BaseResourceService {
      * @param res The response object
      * @param options The resource options
      */
-    async handler(req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void> {
+    async handler(req: BaseRequest, res: Response, options: IRouteResourceOptionsLegacy): Promise<void> {
 
         // Check if the authorization security applies to this route and it is valid
         if(!this.validateAuthorization(req, options)) {
@@ -80,10 +80,10 @@ class ResourceAllService extends BaseResourceService {
     /**
      * Builds the filters object
      * 
-     * @param {IRouteResourceOptions} options - The options object
+     * @param {IRouteResourceOptionsLegacy} options - The options object
      * @returns {object} - The filters object
      */
-    buildBaseAndRequestFilters(req: BaseRequest, options: IRouteResourceOptions): object {
+    buildBaseAndRequestFilters(req: BaseRequest, options: IRouteResourceOptionsLegacy): object {
         const baseFilters = options.allFilters ?? {};
 
         return this.filtersWithPercentSigns({
@@ -96,10 +96,10 @@ class ResourceAllService extends BaseResourceService {
      * Builds the page options
      * 
      * @param {BaseRequest} req - The request object
-     * @param {IRouteResourceOptions} options - The options object
+     * @param {IRouteResourceOptionsLegacy} options - The options object
      * @returns {IPageOptions} - An object containing the page number, page size, and skip
      */
-    buildPageOptions(req: BaseRequest, options: IRouteResourceOptions): IPageOptions  {
+    buildPageOptions(req: BaseRequest, options: IRouteResourceOptionsLegacy): IPageOptions  {
         const paginate = new Paginate().parseRequest(req, options.paginate);
         const page = paginate.getPage(1);
         const pageSize =  paginate.getPageSize() ?? options?.paginate?.pageSize;

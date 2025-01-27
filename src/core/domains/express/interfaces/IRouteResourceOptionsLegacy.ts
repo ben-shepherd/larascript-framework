@@ -6,12 +6,12 @@ import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
 export type ResourceType = 'all' | 'create' | 'update' | 'show' | 'destroy';
 
-export type SearchOptions = {
+export type SearchOptionsLegacy = {
     fields: string[];
     useFuzzySearch?: boolean; // Only applies to MongoDB provider
 }
 
-export interface IRouteResourceOptions extends Pick<IRouteLegacy, 'middlewares'> {
+export interface IRouteResourceOptionsLegacy extends Pick<IRouteLegacy, 'middlewares'> {
     path: string;
     resource: ModelConstructor<IModel>;
     except?: ResourceType[];
@@ -27,5 +27,5 @@ export interface IRouteResourceOptions extends Pick<IRouteLegacy, 'middlewares'>
         pageSize: number;
         allowPageSizeOverride?: boolean;
     },
-    searching?: SearchOptions
+    searching?: SearchOptionsLegacy
 }

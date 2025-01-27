@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
-import { ValidatorCtor } from "../../validator/types/ValidatorCtor";
+import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
+
 import { ControllerConstructor } from "./IController";
 import { TExpressMiddlewareFnOrClass } from "./IMiddleware";
-import { IIdentifiableSecurityCallback } from "./ISecurity";
+import { ISecurityRuleConstructor } from "./ISecurity";
 
 export type RouteConstructor = {
     new (...args: any[]): IRouter;
@@ -14,6 +15,7 @@ export interface IRouteGroupOptions {
     name?: string;
     middlewares?: TExpressMiddlewareFnOrClass | TExpressMiddlewareFnOrClass[];
     controller?: ControllerConstructor;
+    security?: ISecurityRuleConstructor | ISecurityRuleConstructor[]
 }
 
 export type TRouteGroupFn = (routes: IRouter) => void;
@@ -44,19 +46,23 @@ export interface IRoute {
     group(options: IRouteGroupOptions | TRouteGroupFn, routesFn?: TRouteGroupFn): IRouter;
 }
 
+export type TResourceType = 'index' | 'show' | 'create' | 'update' | 'delete';
+
 export type TRouteItem = {
+    path: string;
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    action: string | TExpressMiddlewareFnOrClass;
     name?: string;
     prefix?: string;
     middlewares?: TExpressMiddlewareFnOrClass | TExpressMiddlewareFnOrClass[];
     controller?: ControllerConstructor;
+    security?: ISecurityRuleConstructor | ISecurityRuleConstructor[];
+    resource?: ModelConstructor<IModel>;
+    resourceType?: TResourceType;
+}
+
+export type TRouteResourceOptions = {
     path: string;
-    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-    action: string | TExpressMiddlewareFnOrClass;
-    validator?: ValidatorCtor;
-    validateBeforeAction?: boolean;
-    security?: IIdentifiableSecurityCallback[];
-    scopes?: string[];
-    scopesPartial?: string[];
-    enableScopes?: boolean;
-    resourceType?: 'all' | 'show' | 'create' | 'update' | 'destroy';
+    resource: ModelConstructor<IModel>;
+    resourceType: TResourceType;
 }

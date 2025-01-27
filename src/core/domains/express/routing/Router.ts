@@ -1,5 +1,6 @@
 import { TExpressMiddlewareFnOrClass } from "../interfaces/IMiddleware";
-import { IRouteGroupOptions, IRouter, TRouteGroupFn, TRouteItem } from "../interfaces/IRoute";
+import { IRouteGroupOptions, IRouter, TRouteGroupFn, TRouteItem, TRouteResourceOptions } from "../interfaces/IRoute";
+import ResourceRouter from "./RouteResource";
 
 class Router implements IRouter {
 
@@ -37,24 +38,28 @@ class Router implements IRouter {
     }
     
     /**
-         * Register a PUT route.
-         */
+     * Register a PUT route.
+     */
     public put(path: TRouteItem['path'], action: TRouteItem['action']): void {
         this.register({ path, method: 'PUT', action });
     }
     
     /**
-         * Register a PATCH route.
-         */
+     * Register a PATCH route.
+     */
     public patch(path: TRouteItem['path'], action: TRouteItem['action']): void {
         this.register({ path, method: 'PATCH', action });
     }
     
     /**
-         * Register a DELETE route.
-         */
+     * Register a DELETE route.
+     */
     public delete(path: TRouteItem['path'], action: TRouteItem['action']): void {
         this.register({ path, method: 'DELETE', action });
+    }
+
+    public resource(options: TRouteResourceOptions & Partial<TRouteItem>): void {
+        ResourceRouter.resource(options, this);
     }
        
     /**
@@ -108,7 +113,6 @@ class Router implements IRouter {
         const newOptions = {...this.options, ...options};
         newOptions.name = this.concat(this.options?.name, options?.name);
         newOptions.prefix = this.concat(this.options?.prefix, options?.prefix);
-        newOptions.controller = this.options?.controller ?? options?.controller;
         this.applyOptionsMiddleware(route, newOptions);
         this.options = {...newOptions};
 
@@ -133,21 +137,6 @@ class Router implements IRouter {
     }
 
     /**
-     * Add sub routes.
-     */
-    public addSubRoutes(routeGroupOptions: IRouteGroupOptions, items: TRouteItem[]): void {
-        items.forEach(routeItem => {
-  
-            routeItem.prefix = this.concat(routeGroupOptions.prefix, routeItem.prefix);
-            routeItem.name = this.concat(routeGroupOptions.name, routeItem.name);
-            routeItem.middlewares = routeGroupOptions.middlewares;
-            routeItem.controller = routeGroupOptions.controller;
-
-            this.registered.push(routeItem);
-        });
-    }
-
-    /**
      * Concatenate two strings with a delimiter.
      */
     protected concat(value1?: string, value2?: string, delimiter: string = ''): string {
@@ -159,7 +148,7 @@ class Router implements IRouter {
     /**
      * Register a route.
      */
-    protected register({ path, method, action }: Partial<TRouteItem>): void {
+    public register({ path, method, action }: Partial<TRouteItem>): void {
 
         const routeItem = {
             ...this.options,

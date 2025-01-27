@@ -1,7 +1,8 @@
 import { TExpressMiddlewareFn } from "../interfaces/IMiddleware";
-import { TSecurityRule } from "../services/Security/SecurityService";
+import { ISecurityRule } from "../interfaces/ISecurity";
+import { TSecurityRuleOptions } from "../services/Security/SecurityService";
 
-abstract class SecurityRule<Arguments extends object = object> {
+abstract class SecurityRule<Arguments extends object = object> implements ISecurityRule<Arguments> {
 
     protected id: string;
 
@@ -13,7 +14,7 @@ abstract class SecurityRule<Arguments extends object = object> {
 
     protected arguements?: Arguments;
 
-    constructor({id, when, never, arguements, middleware}: TSecurityRule<Arguments>) {
+    constructor({id, when, never, arguements, middleware}: TSecurityRuleOptions<Arguments>) {
         this.id = id;
         this.when = when;
         this.never = never;
@@ -27,7 +28,7 @@ abstract class SecurityRule<Arguments extends object = object> {
      * @param args The arguments to include in the object
      * @returns The security rule object
      */
-    protected toObject(args: Arguments = {} as Arguments): TSecurityRule<Arguments> {
+    public toObject(args: Arguments = {} as Arguments): TSecurityRuleOptions<Arguments> {
         return {
             id: this.id,
             when: this.when,

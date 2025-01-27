@@ -1,8 +1,8 @@
 import Singleton from "@src/core/base/Singleton";
-import { SearchOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
-import { Request } from "express";
-import { logger } from "@src/core/domains/logger/services/LoggerService";
 import QueryFiltersException from "@src/core/domains/express/exceptions/QueryFiltersException";
+import { SearchOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
+import { logger } from "@src/core/domains/logger/services/LoggerService";
+import { Request } from "express";
 
 class QueryFilters extends Singleton {
 
@@ -15,7 +15,7 @@ class QueryFilters extends Singleton {
      * @throws {QueryFiltersException} Throws an exception if the filters are not a string or an object
      * @returns {this} - The QueryFilters class itself to enable chaining
      */
-    parseRequest(req: Request, options: SearchOptions = {} as SearchOptions): this {
+    parseRequest(req: Request, options: SearchOptionsLegacy = {} as SearchOptionsLegacy): this {
         try {
             const { fields = [] } = options;
             let decodedFilters: object = {};

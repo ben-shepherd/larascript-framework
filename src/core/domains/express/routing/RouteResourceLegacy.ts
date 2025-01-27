@@ -6,7 +6,7 @@ import resourceDelete from "@src/core/domains/express/actions/resourceDelete";
 import resourceShow from "@src/core/domains/express/actions/resourceShow";
 import resourceUpdate from "@src/core/domains/express/actions/resourceUpdate";
 import { IRouteLegacy } from "@src/core/domains/express/interfaces/IRouteLegacy";
-import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
+import { IRouteResourceOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
 import RouteGroupLegacy from "@src/core/domains/express/routing/RouteGroupLegacy";
 import RouteLegacy from "@src/core/domains/express/routing/RouteLegacy";
 import routeGroupUtil from "@src/core/domains/express/utils/routeGroupUtil";
@@ -39,7 +39,7 @@ export const RouteResourceTypes = {
  * @param options.enableScopes - Enable scopes security for these routes
  * @returns A group of routes that can be used to handle requests for the resource
  */
-const RouteResourceLegacy = (options: IRouteResourceOptions): IRouteLegacy[] => {
+const RouteResourceLegacy = (options: IRouteResourceOptionsLegacy): IRouteLegacy[] => {
     const path = options.path.startsWith('/') ? options.path.slice(1) : options.path
 
     const {
