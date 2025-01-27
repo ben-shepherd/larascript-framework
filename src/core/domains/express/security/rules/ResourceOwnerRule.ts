@@ -1,19 +1,27 @@
-import { IModel } from "@src/core/interfaces/IModel";
 
-import SecurityRule from "../../base/SecurityRule";
-import { SecurityEnum } from "../../enums/SecurityEnum";
-import ResourceOwnerMiddleware from "../middleware/ResourceOwnerMiddleware";
+import AbstractSecurityRule from "../../abstract/AbstractSecurityRule";
+import HttpContext from "../../data/HttpContext";
+import { TRouteItem } from "../../interfaces/IRoute";
 
-class ResourceOwnerRule extends SecurityRule {
+type TResourceOwnerRuleOptions = {
+    primaryKey: string;
+}
 
-    constructor(model: IModel, attribute: string = 'userId') {
-        super({
-            id: SecurityEnum.RESOURCE_OWNER,
-            also: SecurityEnum.AUTHORIZED,
-            when: null,
-            never: null,
-            middleware: ResourceOwnerMiddleware.toExpressMiddleware(model, attribute)
-        });
+class ResourceOwnerRule extends AbstractSecurityRule<TResourceOwnerRuleOptions> {
+
+    async execute(context: HttpContext, routeItem: TRouteItem): Promise<boolean> {
+        const user = context.getUser();
+
+        if(!user) {
+            return false;
+        }
+    
+        // if(typeof resource.getAttributeSync !== 'function') {
+        //     throw new Error('Resource is not an instance of IModel');
+        // }
+    
+        // return resource.getAttributeSync(attribute) === user?.getId()
+        return false;
     }
 
 }

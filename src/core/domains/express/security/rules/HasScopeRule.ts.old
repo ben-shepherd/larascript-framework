@@ -1,8 +1,8 @@
-import SecurityRule from "../../base/SecurityRule";
+import AbstractSecurityRule from "../../abstract/AbstractSecurityRule";
 import { SecurityEnum } from "../../enums/SecurityEnum";
-import HasScopeMiddleware from "../middleware/HasScopeMiddleware";
+import HasScopeMiddleware from "../middleware-deprecated/HasScopeMiddleware";
 
-class EnableScopeRule extends SecurityRule {
+class EnableScopeRule extends AbstractSecurityRule {
 
     constructor(scopesExactMatch: string | string[] = [], scopesPartialMatch: string | string[] = []) {
         super({

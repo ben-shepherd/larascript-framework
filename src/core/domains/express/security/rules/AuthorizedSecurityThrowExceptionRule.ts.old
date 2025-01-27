@@ -10,11 +10,11 @@
     }
  */
 
-import SecurityRule from "../../base/SecurityRule";
+import AbstractSecurityRule from "../../abstract/AbstractSecurityRule";
 import { SecurityEnum } from "../../enums/SecurityEnum";
-import AuthorizeMiddleware from "../../middleware/authorizeMiddleware";
+import AuthorizeMiddleware from "../../middleware/deprecated/AuthorizeMiddleware";
 
-class AuthorizedSecurityThrowExceptionRule extends SecurityRule {
+class AuthorizedSecurityThrowExceptionRule extends AbstractSecurityRule {
 
     constructor() {
         super({

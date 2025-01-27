@@ -1,4 +1,6 @@
+import { TRouteItem } from "./IRoute";
+
 export interface IExpressable<T = unknown> {
     // eslint-disable-next-line no-unused-vars
-    toExpressable(...args: any[]): T
+    toExpressable(routeItem?: TRouteItem): T
 }

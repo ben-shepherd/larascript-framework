@@ -1,6 +1,6 @@
 import Singleton from "@src/core/base/Singleton";
 import { IIdentifiableSecurityCallback, SecurityCallback } from "@src/core/domains/express/interfaces/ISecurity";
-import SecurityRules, { SecurityIdentifiers } from "@src/core/domains/express/services/SecurityRules";
+import SecurityRulesLegacy, { SecurityIdentifiersLegacy } from "@src/core/domains/express/services/SecurityRulesLegacy";
 
 /**
  * The default condition for when the security check should be executed.
@@ -94,7 +94,7 @@ class SecurityLegacy extends Singleton {
      * @returns A security callback that can be used in the security definition.
      */
     public static resourceOwner(attribute: string = 'userId'): IIdentifiableSecurityCallback {
-        return SecurityRules[SecurityIdentifiers.RESOURCE_OWNER](attribute);
+        return SecurityRulesLegacy[SecurityIdentifiersLegacy.RESOURCE_OWNER](attribute);
     }
 
     /**
@@ -105,7 +105,7 @@ class SecurityLegacy extends Singleton {
      * @returns A security callback that can be used in the security definition.
      */
     public static enableScopes(): IIdentifiableSecurityCallback {
-        return SecurityRules[SecurityIdentifiers.ENABLE_SCOPES]();
+        return SecurityRulesLegacy[SecurityIdentifiersLegacy.ENABLE_SCOPES]();
     }
 
     /**
@@ -127,7 +127,7 @@ class SecurityLegacy extends Singleton {
      * @returns A security callback that can be used in the security definition.
      */
     public static authorized(): IIdentifiableSecurityCallback {
-        return SecurityRules[SecurityIdentifiers.AUTHORIZED]();
+        return SecurityRulesLegacy[SecurityIdentifiersLegacy.AUTHORIZED]();
     }
 
     /**
@@ -137,7 +137,7 @@ class SecurityLegacy extends Singleton {
      * @returns A security callback that can be used in the security definition.
      */
     public static authorizationThrowsException(): IIdentifiableSecurityCallback {
-        return SecurityRules[SecurityIdentifiers.AUTHORIZED_THROW_EXCEPTION]();
+        return SecurityRulesLegacy[SecurityIdentifiersLegacy.AUTHORIZED_THROW_EXCEPTION]();
     }
 
     /**
@@ -146,7 +146,7 @@ class SecurityLegacy extends Singleton {
      * @returns A callback function to be used in the security definition.
      */
     public static hasRole(roles: string | string[]): IIdentifiableSecurityCallback {
-        return SecurityRules[SecurityIdentifiers.HAS_ROLE](roles);
+        return SecurityRulesLegacy[SecurityIdentifiersLegacy.HAS_ROLE](roles);
     }
 
     /**
@@ -156,7 +156,7 @@ class SecurityLegacy extends Singleton {
      * @returns A callback function to be used in the security definition.
      */
     public static rateLimited(limit: number, perMinuteAmount: number = 1): IIdentifiableSecurityCallback {
-        return SecurityRules[SecurityIdentifiers.RATE_LIMITED](limit, perMinuteAmount);
+        return SecurityRulesLegacy[SecurityIdentifiersLegacy.RATE_LIMITED](limit, perMinuteAmount);
     } 
 
     /**
@@ -169,7 +169,7 @@ class SecurityLegacy extends Singleton {
      */
      
     public static custom(identifier: string, callback: SecurityCallback, ...rest: any[]): IIdentifiableSecurityCallback {
-        return SecurityRules[SecurityIdentifiers.CUSTOM](identifier, callback, ...rest);
+        return SecurityRulesLegacy[SecurityIdentifiersLegacy.CUSTOM](identifier, callback, ...rest);
     }
 
 }

@@ -5,7 +5,7 @@ import { NextFunction, Request, Response } from "express";
 
 export type MiddlewareConstructor = {
     new (...args: any[]): IMiddleware;
-    toExpressMiddleware(): TExpressMiddlewareFn;
+    toExpressMiddleware(...args: any[]): TExpressMiddlewareFn;
 }
 
 export interface IMiddleware extends IExpressable<TExpressMiddlewareFn> {
@@ -26,4 +26,6 @@ export type TExpressMiddlewareFnOrClass = TExpressMiddlewareFn | MiddlewareConst
  * @param next - The Express NextFunction object
  * @returns A Promise that resolves to void or void directly
  */
-export type TExpressMiddlewareFn = (req: Request, res: Response, next: NextFunction) => Promise<void> | void;
+export type TExpressMiddlewareFn = (req: Request, res: Response, next?: NextFunction, ...args: any[]) => Promise<void> | void;
+
+export type TRuleCallbackFn = (req: Request, res: Response, next?: NextFunction) => Promise<boolean> | boolean;

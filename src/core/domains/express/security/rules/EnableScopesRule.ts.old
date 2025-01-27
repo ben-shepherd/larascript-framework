@@ -1,7 +1,7 @@
-import SecurityRule from "../../base/SecurityRule";
+import AbstractSecurityRule from "../../abstract/AbstractSecurityRule";
 import { SecurityEnum } from "../../enums/SecurityEnum";
 
-class EnableScopeRule extends SecurityRule {
+class EnableScopeRule extends AbstractSecurityRule {
 
     constructor() {
         super({

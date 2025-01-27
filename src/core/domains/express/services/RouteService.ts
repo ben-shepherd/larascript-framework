@@ -26,6 +26,15 @@ class RouteService {
     }
 
     /**
+     * Sets the additional middlewares to be used for all routes.
+     * 
+     * @param middlewares The middlewares to set
+     */
+    public setAdditionalMiddlewares(middlewares: TExpressMiddlewareFnOrClass[]): void {
+        this.options.additionalMiddlewares = middlewares
+    }
+
+    /**
      * Binds all routes from the given router.
      * 
      * @param route The router containing the routes to bind
@@ -110,7 +119,7 @@ class RouteService {
             await controller[action]()
         }
 
-        return this.createExpressMiddlewareFn(executeFn)
+        return this.createExpressMiddlewareFn(executeFn, routeItem)
     }
 
     /**
@@ -131,7 +140,7 @@ class RouteService {
         // Convert middleware classes to middleware functions
         return middlewaresArray.map(middlware => {
             if(middlware.prototype instanceof Middleware) {
-                return (middlware as MiddlewareConstructor).toExpressMiddleware()
+                return (middlware as MiddlewareConstructor).toExpressMiddleware({ routeItem })
             }
 
             return middlware as TExpressMiddlewareFn
@@ -145,9 +154,9 @@ class RouteService {
      * @param executeFn The function to execute when the middleware is called
      * @returns An Express middleware function
      */
-    protected createExpressMiddlewareFn(executeFn: ExecuteFn): TExpressMiddlewareFn {
-        return (req: expressClient.Request, res: expressClient.Response, next: expressClient.NextFunction) => {
-            executeFn(new HttpContext(req, res, next))
+    protected createExpressMiddlewareFn(executeFn: ExecuteFn, routeItem: TRouteItem): TExpressMiddlewareFn {
+        return (req: expressClient.Request, res: expressClient.Response, next: expressClient.NextFunction | undefined) => {
+            executeFn(new HttpContext(req, res, next, routeItem))
         }
     }
 

@@ -7,7 +7,7 @@ export class HelloWorldController extends Controller {
         this.jsonResponse({
             message,
             queryParams: context.getQueryParams(),
-            bodyParams: context.getBodyParams(),
+            bodyParams: context.getBody(),
             method: context.getMethod(),
         })
     }

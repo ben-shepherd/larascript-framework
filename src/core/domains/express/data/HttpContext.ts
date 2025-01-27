@@ -5,6 +5,7 @@ import { NextFunction, Response } from 'express';
 
 import IApiTokenModel from '../../auth/interfaces/IApitokenModel';
 import IUserModel from '../../auth/interfaces/IUserModel';
+import { TRouteItem } from '../interfaces/IRoute';
 
 class HttpContext {
 
@@ -14,8 +15,18 @@ class HttpContext {
         // eslint-disable-next-line no-unused-vars
         protected res: Response,
         // eslint-disable-next-line no-unused-vars
-        protected nextFn: NextFunction | undefined
+        protected nextFn: NextFunction | undefined,
+        // eslint-disable-next-line no-unused-vars
+        protected routeItem?: TRouteItem
     ) {
+    }
+
+    /**
+     * Gets the route item of the request.
+     * @returns {TRouteItem} The route item of the request.
+     */
+    public getRouteItem(): TRouteItem | undefined {
+        return this.routeItem
     }
 
     /**
@@ -60,19 +71,10 @@ class HttpContext {
     }
 
     /**
-     * Gets a body parameter from the request.
-     * @param {string} key - The key of the body parameter to get.
-     * @returns {string | undefined} The value of the body parameter.
-     */
-    public getBodyParam(key: string) {
-        return this.req.body[key]
-    }
-
-    /**
      * Gets all body parameters from the request.
      * @returns {Record<string, string>} The body parameters.
      */
-    public getBodyParams() {
+    public getBody() {
         return this.req.body
     }
 

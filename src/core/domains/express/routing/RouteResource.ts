@@ -22,13 +22,14 @@ class ResourceRouter {
     public static resource({ prefix, resource, ...rest }: TRouteResourceOptions, router: Router = new Router()): Router {
 
         const routeItemOptions: TPartialRouteItemOptions = {
-            resource,
+            resourceConstructor: resource,
             ...rest,
         }
 
         router.group({
             prefix,
             controller: ResourceController,
+            ...rest
         }, (router) => {
             
             router.get('/', 'index', {

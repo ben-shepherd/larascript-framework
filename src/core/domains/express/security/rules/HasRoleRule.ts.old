@@ -1,9 +1,9 @@
 
-import SecurityRule from "../../base/SecurityRule";
+import AbstractSecurityRule from "../../abstract/AbstractSecurityRule";
 import { SecurityEnum } from "../../enums/SecurityEnum";
-import HasRoleMiddleware from "../middleware/HasRoleMiddleware";
+import HasRoleMiddleware from "../middleware-deprecated/HasRoleMiddleware";
 
-class HasRoleRule extends SecurityRule {
+class HasRoleRule extends AbstractSecurityRule {
 
     constructor(roles: string | string[]) {
         super({

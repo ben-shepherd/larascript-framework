@@ -1,10 +1,10 @@
-import SecurityRule from "../../base/SecurityRule";
+import AbstractSecurityRule from "../../abstract/AbstractSecurityRule";
 import { SecurityEnum } from "../../enums/SecurityEnum";
-import RateLimitedMiddleware from "../middleware/RateLimitedMiddleware";
+import RateLimitedMiddleware from "../middleware-deprecated/RateLimitedMiddleware";
 
-class RateLimitedRule extends SecurityRule {
+class RateLimitedRule extends AbstractSecurityRule {
 
-    constructor(limit: number, perMinuteAmount: number) {
+    constructor(limit: number = 100, perMinuteAmount: number = 60) {
         super({
             id: SecurityEnum.RATE_LIMITED,
             when: null,

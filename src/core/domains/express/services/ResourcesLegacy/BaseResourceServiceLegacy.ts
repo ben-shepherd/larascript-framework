@@ -1,7 +1,6 @@
 import { IPartialRouteResourceOptions, IResourceService } from "@src/core/domains/express/interfaces/IResourceService";
 import { IIdentifiableSecurityCallback } from "@src/core/domains/express/interfaces/ISecurity";
-import SecurityReader from "@src/core/domains/express/services/SecurityReader";
-import { SecurityIdentifiers } from "@src/core/domains/express/services/SecurityRules";
+import SecurityReaderLegacy from "@src/core/domains/express/services/SecurityReaderLegacy";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { IModel } from "@src/core/interfaces/IModel";
 import { Response } from "express";
@@ -9,6 +8,7 @@ import { Response } from "express";
 import { IRouteResourceOptionsLegacy } from "../../interfaces/IRouteResourceOptionsLegacy";
 import { RouteResourceTypes } from "../../routing/RouteResource";
 import { ALWAYS } from "../SecurityLegacy";
+import { SecurityIdentifiersLegacy } from "../SecurityRulesLegacy";
 
 abstract class BaseResourceServiceLegacy implements IResourceService {
 
@@ -63,7 +63,7 @@ abstract class BaseResourceServiceLegacy implements IResourceService {
      * @returns {boolean} - Whether the request is authorized
      */
     validateAuthorization(req: BaseRequest, options: IRouteResourceOptionsLegacy): boolean {
-        const authorizationSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.AUTHORIZED, [RouteResourceTypes.INDEX, ALWAYS]);
+        const authorizationSecurity = SecurityReaderLegacy.findFromRouteResourceOptions(options, SecurityIdentifiersLegacy.AUTHORIZED, [RouteResourceTypes.INDEX, ALWAYS]);
 
         if(authorizationSecurity && !authorizationSecurity.callback(req)) {
             return false;
@@ -78,7 +78,7 @@ abstract class BaseResourceServiceLegacy implements IResourceService {
      * @returns {IIdentifiableSecurityCallback | undefined} - The found resource owner security or undefined if not found
      */
     getResourceOwnerSecurity(options: IPartialRouteResourceOptions): IIdentifiableSecurityCallback | undefined {
-        return SecurityReader.findFromRouteResourceOptions(options as IRouteResourceOptionsLegacy, SecurityIdentifiers.RESOURCE_OWNER, [this.routeResourceType]);
+        return SecurityReaderLegacy.findFromRouteResourceOptions(options as IRouteResourceOptionsLegacy, SecurityIdentifiersLegacy.RESOURCE_OWNER, [this.routeResourceType]);
     }
 
 

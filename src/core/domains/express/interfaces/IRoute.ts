@@ -3,7 +3,8 @@ import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
 import { ControllerConstructor } from "./IController";
 import { TExpressMiddlewareFnOrClass } from "./IMiddleware";
-import { ISecurityRuleConstructor } from "./ISecurity";
+import { SearchOptionsLegacy } from "./IRouteResourceOptionsLegacy";
+import { ISecurityRule } from "./ISecurity";
 
 export type RouteConstructor = {
     new (...args: any[]): IRouter;
@@ -15,7 +16,7 @@ export interface IRouteGroupOptions {
     name?: string;
     middlewares?: TExpressMiddlewareFnOrClass | TExpressMiddlewareFnOrClass[];
     controller?: ControllerConstructor;
-    security?: ISecurityRuleConstructor | ISecurityRuleConstructor[]
+    security?: ISecurityRule[]
 }
 
 export type TRouteGroupFn = (routes: IRouter) => void;
@@ -40,7 +41,7 @@ export interface IRouter {
 
     group(options: IRouteGroupOptions | TRouteGroupFn, routesFn?: TRouteGroupFn): IRouter;
 
-    resource(options: TRouteResourceOptions & Partial<TRouteItem>): IRouter;
+    resource(options: TRouteResourceOptions): IRouter;
 }
 
 export interface IRoute {
@@ -58,14 +59,21 @@ export type TRouteItem = {
     prefix?: string;
     middlewares?: TExpressMiddlewareFnOrClass | TExpressMiddlewareFnOrClass[];
     controller?: ControllerConstructor;
-    security?: ISecurityRuleConstructor | ISecurityRuleConstructor[];
-    resource?: ModelConstructor<IModel>;
+    security?: ISecurityRule[];
+    resourceConstructor?: ModelConstructor<IModel>;
     resourceType?: TResourceType;
+    showFilters?: object;
+    allFilters?: object;
+    paginate?: {
+        pageSize: number;
+        allowPageSizeOverride?: boolean;
+    },
+    searching?: SearchOptionsLegacy
 }
 
 export type TRouteResourceOptions = {
     prefix: string;
     resource: ModelConstructor<IModel>;
-    security?: ISecurityRuleConstructor | ISecurityRuleConstructor[];
+    security?: ISecurityRule[];
     middlewares?: TExpressMiddlewareFnOrClass | TExpressMiddlewareFnOrClass[];
 }

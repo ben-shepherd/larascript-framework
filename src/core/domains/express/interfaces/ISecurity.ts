@@ -1,17 +1,29 @@
+/* eslint-disable no-unused-vars */
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { NextFunction, Request, Response } from 'express';
 
-import { TSecurityRuleOptions } from '../services/Security/SecurityService';
 import { IRouteLegacy } from './IRouteLegacy';
 
-export type ISecurityRuleConstructor = {
-    // eslint-disable-next-line no-unused-vars
-    new (...args: any[]): ISecurityRule
+export type TSecurityRuleOptions<RuleOptions extends object = object> = {
+    id: string;
+    also?: string | null;
+    when: string[] | null;
+    never: string[] | null;
+    ruleOptions?: RuleOptions;
 }
 
-export interface ISecurityRule<Arguments extends object = object> {
-    // eslint-disable-next-line no-unused-vars
-    toObject(args?: Arguments): TSecurityRuleOptions<Arguments>
+export type TSecurityRuleConstructor<Rule extends ISecurityRule = ISecurityRule> = {
+    new (...args: any[]): Rule
+}
+
+export interface ISecurityRule<RuleOptions extends object = object> {
+    setRuleOptions(options: RuleOptions): ISecurityRule<RuleOptions>;
+    toObject(args?: RuleOptions): TSecurityRuleOptions<RuleOptions>
+    getId(): string
+    getWhen(): string[] | null
+    getNever(): string[] | null
+    getAlso(): string | null
+    getRuleOptions(): RuleOptions
 }
 
 /**
@@ -23,8 +35,8 @@ export interface ISecurityAuthorizeProps {
 
 /**
  * The callback function
+ * @deprecated
  */
-// eslint-disable-next-line no-unused-vars
 export type SecurityCallback = (req: BaseRequest, ...args: any[]) => boolean;
 
 /**
@@ -35,6 +47,7 @@ export type SecurityCallback = (req: BaseRequest, ...args: any[]) => boolean;
  * when - The condition for when the security check should be executed. Defaults to 'always'.
  * never - The condition for when the security check should never be executed.
  * callback - The security callback function.
+ * @deprecated
  */
 export type IIdentifiableSecurityCallback = {
     id: string;
@@ -45,12 +58,20 @@ export type IIdentifiableSecurityCallback = {
     callback: SecurityCallback;
 }
 
-// eslint-disable-next-line no-unused-vars
+ 
 export type ISecurityMiddleware = ({ route }: { route: IRouteLegacy }) => (req: BaseRequest, res: Response, next: NextFunction) => Promise<void>;
 
 /**
  * Security request to be included in BaseRequest
+ * @deprecated
  */
-export default interface ISecurityRequest extends Request {
+export default interface ISecurityRequestLegacy extends Request {
     security?: IIdentifiableSecurityCallback[]
+}
+
+/**
+ * Security request to be included in BaseRequest
+ */
+export interface ISecurityRequest extends Request {
+    security?: ISecurityRule[]
 }

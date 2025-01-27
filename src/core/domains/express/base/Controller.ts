@@ -1,5 +1,6 @@
 import HttpContext from "../data/HttpContext";
 import { IController } from "../interfaces/IController";
+import { TRouteItem } from "../interfaces/IRoute";
 
 class Controller implements IController {
 
@@ -8,6 +9,11 @@ class Controller implements IController {
      */
     protected context!: HttpContext;
 
+    /**
+     * The constructor of the controller.
+     * @param context The context of the controller.
+     * @param options The route item options.
+     */
     constructor(context: HttpContext) {
         this.context = context
     }
@@ -18,6 +24,14 @@ class Controller implements IController {
      */
     public setContext(context: HttpContext) {   
         this.context = context
+    }
+
+    /**
+     * Gets the route item options.
+     * @returns The route item options.
+     */
+    public getRouteOptions(): TRouteItem | undefined {
+        return this.context.getRouteItem()
     }
 
     /**

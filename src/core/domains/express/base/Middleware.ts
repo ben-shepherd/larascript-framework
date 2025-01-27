@@ -4,6 +4,8 @@ import { IMiddleware, MiddlewareConstructor, TExpressMiddlewareFn } from "@src/c
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { NextFunction, Response } from "express";
 
+import { TRouteItem } from "../interfaces/IRoute";
+
 /**
  * Abstract base class that transforms Express middleware into a class-based format.
  * 
@@ -51,8 +53,8 @@ abstract class Middleware<Config extends unknown = unknown> implements IMiddlewa
      * Creates a new instance of this class and returns its Express middleware function,
      * allowing it to be used directly with Express's app.use() or route handlers.
      */
-    public static toExpressMiddleware(...args: any[]): TExpressMiddlewareFn {
-        return new (this as unknown as MiddlewareConstructor)(...args).toExpressable()
+    public static toExpressMiddleware(routeItem?: TRouteItem): TExpressMiddlewareFn {
+        return new (this as unknown as MiddlewareConstructor)().toExpressable(routeItem)
     }
 
     /**
@@ -98,9 +100,9 @@ abstract class Middleware<Config extends unknown = unknown> implements IMiddlewa
     /**
      * @returns {TExpressMiddlewareFn}
      */
-    public toExpressable(): TExpressMiddlewareFn {
-        return async (req: BaseRequest, res: Response, next: NextFunction) => {
-            const context = new HttpContext(req, res, next)
+    public toExpressable(routeItem?: TRouteItem): TExpressMiddlewareFn {
+        return async (req: BaseRequest, res: Response, next: NextFunction | undefined) => {
+            const context = new HttpContext(req, res, next, routeItem)
             this.setContext(context)
             await this.execute(context)
         }
