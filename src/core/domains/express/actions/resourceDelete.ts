@@ -1,5 +1,5 @@
-import ResourceDeleteService from '@src/core/domains/express/services/Resources/ResourceDeleteService';
-import ResourceErrorService from '@src/core/domains/express/services/Resources/ResourceErrorService';
+import ResourceDeleteServiceLegacy from '@src/core/domains/express/services/ResourcesLegacy/ResourceDeleteService';
+import ResourceErrorService from '@src/core/domains/express/services/ResourcesLegacy/ResourceErrorService';
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { Response } from 'express';
 
@@ -15,7 +15,7 @@ import { IRouteResourceOptionsLegacy } from '../interfaces/IRouteResourceOptions
  */
 export default async (req: BaseRequest, res: Response, options: IRouteResourceOptionsLegacy): Promise<void> => {
     try {
-        const resourceDeleteService = new ResourceDeleteService();
+        const resourceDeleteService = new ResourceDeleteServiceLegacy();
         await resourceDeleteService.handler(req, res, options);
     }
     catch (err) {

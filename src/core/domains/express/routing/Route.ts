@@ -21,14 +21,14 @@ class Route implements IRoute {
     /**
      * Add resource routes to the router.
      */
-    public static resource(options: TRouteResourceOptions, router: Router = new Router()): Router {
+    public static resource(options: TRouteResourceOptions, router: Router = new Router()): IRouter {
         return ResourceRouter.resource(options, router);
     }
 
     /**
      * Add resource routes to the router.
      */
-    public resource(options: TRouteResourceOptions, router: Router = new Router()): Router {
+    public resource(options: TRouteResourceOptions, router: Router = new Router()): IRouter {
         return ResourceRouter.resource(options, router);
     }
 

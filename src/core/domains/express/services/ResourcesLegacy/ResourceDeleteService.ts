@@ -1,7 +1,7 @@
 import Repository from "@src/core/base/Repository";
 import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
-import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
+import BaseResourceServiceLegacy from "@src/core/domains/express/services/ResourcesLegacy/BaseResourceServiceLegacy";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { Response } from "express";
@@ -10,7 +10,7 @@ import { IRouteResourceOptionsLegacy } from "../../interfaces/IRouteResourceOpti
 import { RouteResourceTypes } from "../../routing/RouteResource";
 
 
-class ResourceDeleteService extends BaseResourceService {
+class ResourceDeleteService extends BaseResourceServiceLegacy {
 
     routeResourceType: string = RouteResourceTypes.DELETE
 

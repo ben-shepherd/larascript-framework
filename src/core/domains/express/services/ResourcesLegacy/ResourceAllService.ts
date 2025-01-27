@@ -6,7 +6,7 @@ import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResou
 import Paginate from "@src/core/domains/express/services/Paginate";
 import QueryFilters from "@src/core/domains/express/services/QueryFilters";
 import { requestContext } from "@src/core/domains/express/services/RequestContext";
-import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
+import BaseResourceServiceLegacy from "@src/core/domains/express/services/ResourcesLegacy/BaseResourceServiceLegacy";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import stripGuardedResourceProperties from "@src/core/domains/express/utils/stripGuardedResourceProperties";
 import { Response } from "express";
@@ -14,7 +14,7 @@ import { Response } from "express";
 import { IRouteResourceOptionsLegacy } from "../../interfaces/IRouteResourceOptionsLegacy";
 
 
-class ResourceAllService extends BaseResourceService {
+class ResourceAllService extends BaseResourceServiceLegacy {
 
     routeResourceType: string = RouteResourceTypes.INDEX
 

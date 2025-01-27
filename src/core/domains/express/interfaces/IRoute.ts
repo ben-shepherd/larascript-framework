@@ -39,6 +39,8 @@ export interface IRouter {
     delete(path: TRouteItem['path'], action: TRouteItem['action'], options?: TPartialRouteItemOptions): void;
 
     group(options: IRouteGroupOptions | TRouteGroupFn, routesFn?: TRouteGroupFn): IRouter;
+
+    resource(options: TRouteResourceOptions & Partial<TRouteItem>): IRouter;
 }
 
 export interface IRoute {

@@ -58,8 +58,8 @@ class Router implements IRouter {
         this.register({ path, method: 'DELETE', action });
     }
 
-    public resource(options: TRouteResourceOptions & Partial<TRouteItem>): void {
-        ResourceRouter.resource(options, this);
+    public resource(options: TRouteResourceOptions): IRouter {
+        return ResourceRouter.resource(options, this);
     }
        
     /**
@@ -157,20 +157,29 @@ class Router implements IRouter {
             action: action ?? '',
         }
 
-        console.log('[Router] register', routeItem)
         this.registered.push(routeItem);
+    }
+
+    protected getPrefix(prefix: string): string {
+        const prefixWithoutPrefixForwardSlash = prefix.startsWith('/') ? prefix.slice(1) : prefix;
+        return prefixWithoutPrefixForwardSlash;
     }
 
     /**
      * Get the path with the prefix and formatted parameters.
      */
     protected getPath(path: string): string {
+
+        // Remove suffix forward slash if it ends with a forward slash
+        const prefixString = this.options?.prefix ?? '';
+        const prefixWithoutSuffixForwardSlash = prefixString.endsWith('/') ? prefixString.slice(0, -1) : prefixString;
+
         // Add prefix if it doesn't start with a forward slash
         const pathWithPrefixForwardSlash = path.startsWith('/') ? path : `/${path}`;
         // Remove suffix forward slash if it ends with a forward slash
         const pathWitoutSuffixForwardSlash = pathWithPrefixForwardSlash.endsWith('/') ? pathWithPrefixForwardSlash.slice(0, -1) : pathWithPrefixForwardSlash;
         // Combine prefix and path
-        const combinedPath = this.concat(this.options?.prefix, pathWitoutSuffixForwardSlash);
+        const combinedPath = this.concat(prefixWithoutSuffixForwardSlash, pathWitoutSuffixForwardSlash);
         // Format path parameters to express format (e.g. /{id} -> /:id)
         const formattedPath = combinedPath.replace(/\{(\w+)\}/g, ':$1');
 

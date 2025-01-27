@@ -10,7 +10,7 @@ import { IRouteResourceOptionsLegacy } from "../../interfaces/IRouteResourceOpti
 import { RouteResourceTypes } from "../../routing/RouteResource";
 import { ALWAYS } from "../SecurityLegacy";
 
-abstract class BaseResourceService implements IResourceService {
+abstract class BaseResourceServiceLegacy implements IResourceService {
 
     /**
      * The route resource type (RouteResourceTypes)
@@ -103,4 +103,4 @@ abstract class BaseResourceService implements IResourceService {
 
 }
 
-export default BaseResourceService
+export default BaseResourceServiceLegacy
