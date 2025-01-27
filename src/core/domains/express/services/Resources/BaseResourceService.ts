@@ -2,6 +2,7 @@ import HttpContext from "../../data/HttpContext";
 import ResourceException from "../../exceptions/ResourceException";
 import { TRouteItem } from "../../interfaces/IRoute";
 import ResourceOwnerRule from "../../security/rules/ResourceOwnerRule";
+import { requestContext } from "../RequestContext";
 import SecurityReader from "../SecurityReader";
 import { SecurityIdentifiersLegacy } from "../SecurityRulesLegacy";
 
@@ -23,7 +24,7 @@ abstract class BaseResourceService {
          * @returns {boolean} - Whether the request is authorized
          */
         validateAuthorization(context: HttpContext): boolean {
-            return context.getUser() !== undefined; 
+            return requestContext().getByRequest<string>(context.getRequest(), 'userId') !== undefined;
         }
 
         /**
