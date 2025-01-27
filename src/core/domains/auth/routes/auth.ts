@@ -6,10 +6,22 @@ import user from "@src/core/domains/auth/actions/user";
 import authConsts from "@src/core/domains/auth/consts/authConsts";
 import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
 import { IRouteLegacy } from "@src/core/domains/express/interfaces/IRouteLegacy";
-import AuthorizeMiddleware from "@src/core/domains/express/middleware/authorizeMiddleware";
+import AuthorizeMiddleware from "@src/core/domains/express/middleware/deprecated/AuthorizeMiddleware";
 import RouteLegacy from "@src/core/domains/express/routing/RouteLegacy";
 
+import Route from "../../express/routing/Route";
 import RouteGroupLegacy from "../../express/routing/RouteGroupLegacy";
+
+export default (config: IAuthConfig) => Route.group({
+    prefix: '/auth',
+    middlewares: [AuthorizeMiddleware]
+}, (router) => {
+    router.post('/login', login)
+    router.post('/create', create)
+    router.patch('/update', update)
+    router.get('/user', user)
+    router.post('/revoke', revoke)
+})
 
 export const routes = (config: IAuthConfig): IRouteLegacy[] => {
     return RouteGroupLegacy([
@@ -53,4 +65,4 @@ export const routes = (config: IAuthConfig): IRouteLegacy[] => {
     ])
 }
 
-export default routes;
+// export default routes;

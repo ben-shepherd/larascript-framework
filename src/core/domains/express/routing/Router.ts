@@ -24,6 +24,13 @@ class Router implements IRouter {
     }
 
     /**
+     * Set the registered routes.
+     */
+    public setRegisteredRoutes(routes: TRouteItem[]): void {
+        this.registered = routes;
+    }
+
+    /**
      * Register a GET route.
      */
     public get(path: TRouteItem['path'], action: TRouteItem['action']): void {

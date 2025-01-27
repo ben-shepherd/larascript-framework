@@ -103,6 +103,10 @@ export default class ExpressService extends Service<IExpressConfig> implements I
     }
 
     public bindRoutes(router: IRouter): void {
+        if(router.getRegisteredRoutes().length === 0) {
+            return
+        }
+
         const routeService = new RouteService(this.app)
         routeService.setAdditionalMiddlewares([SecurityMiddleware])
         routeService.bindRoutes(router)

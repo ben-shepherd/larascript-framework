@@ -29,6 +29,8 @@ export interface IRouter {
 
     getRegisteredRoutes(): TRouteItem[];
 
+    setRegisteredRoutes(routes: TRouteItem[]): void;
+
     get(path: TRouteItem['path'], action: TRouteItem['action'], options?: TPartialRouteItemOptions): void;
 
     post(path: TRouteItem['path'], action: TRouteItem['action'], options?: TPartialRouteItemOptions): void;

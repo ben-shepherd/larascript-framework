@@ -17,7 +17,8 @@ import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryB
 import { app } from '@src/core/services/App';
 import { JsonWebTokenError } from 'jsonwebtoken';
 
-import { IRouteLegacy } from '../../express/interfaces/IRouteLegacy';
+import { IRouter } from '../../express/interfaces/IRoute';
+
 
 /**
  * Shorthand for accessing the auth service
@@ -179,18 +180,21 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
      * 
      * @returns an array of IRoute objects, or null if auth routes are disabled
      */
-    getAuthRoutes(): IRouteLegacy[] | null {
+    getAuthRoutes(): IRouter | null {
         if (!this.config.enableAuthRoutes) {
             return null
         }
 
-        const routes = authRoutes(this.config);
+        const router = authRoutes(this.config);
 
+        /**
+         * todo
+         */
         if (!this.config.enableAuthRoutesAllowCreate) {
-            return routes.filter((route) => route.name !== 'authCreate');
+            router.setRegisteredRoutes(router.getRegisteredRoutes().filter((route) => route.name !== 'authCreate'));
         }
 
-        return routes;
+        return router;
     }
 
     /**
