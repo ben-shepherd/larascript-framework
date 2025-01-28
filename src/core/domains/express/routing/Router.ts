@@ -2,6 +2,43 @@ import { TExpressMiddlewareFnOrClass } from "@src/core/domains/express/interface
 import { IRouteGroupOptions, IRouter, TPartialRouteItemOptions, TRouteGroupFn, TRouteItem, TRouteResourceOptions } from "@src/core/domains/express/interfaces/IRoute";
 import ResourceRouter from "@src/core/domains/express/routing/RouterResource";
 
+/**
+ * Router handles registration and organization of Express routes
+ * 
+ * This class provides a fluent interface for defining routes with:
+ * - HTTP method registration (GET, POST, PUT, etc)
+ * - Route grouping with shared prefixes and middleware
+ * - Resource routing for RESTful CRUD operations
+ * - Route naming and organization
+ * - Security rule application
+ * 
+ * Example usage:
+ * ```
+ * const router = new Router();
+ * 
+ * router.group({
+ *   prefix: '/api',
+ *   middlewares: [AuthMiddleware]
+ * }, (router) => {
+ *   router.get('/users', 'index');
+ *   router.post('/users', 'create');
+ * });
+ * 
+ * router.resource({
+ *   prefix: '/blogs',
+ *   resource: BlogModel,
+ *   security: [SecurityRules.resourceOwner()]
+ * });
+ * ```
+ * 
+ * The router:
+ * - Maintains a registry of all registered routes
+ * - Handles route group nesting and inheritance
+ * - Delegates resource routing to ResourceRouter
+ * - Applies middleware and security rules
+ * - Manages route prefixing and naming
+ */
+
 class Router implements IRouter {
 
     /**
@@ -112,6 +149,9 @@ class Router implements IRouter {
         return this;
     }
 
+    /**
+     * Reset the options to the previous state.
+     */
     protected resetOptions(): void {
         this.baseOptions = {...(this.previousBaseOptions ?? {})};
     }
@@ -180,11 +220,9 @@ class Router implements IRouter {
      * Get the path with the prefix and formatted parameters.
      */
     protected getPath(path: string): string {
-
         // Remove suffix forward slash if it ends with a forward slash
         const prefixString = this.baseOptions?.prefix ?? '';
         const prefixWithoutSuffixForwardSlash = prefixString.endsWith('/') ? prefixString.slice(0, -1) : prefixString;
-
         // Add prefix if it doesn't start with a forward slash
         const pathWithPrefixForwardSlash = path.startsWith('/') ? path : `/${path}`;
         // Remove suffix forward slash if it ends with a forward slash

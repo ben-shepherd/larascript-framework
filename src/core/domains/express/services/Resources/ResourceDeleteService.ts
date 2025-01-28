@@ -1,11 +1,10 @@
-import Repository from "@src/core/base/Repository";
 import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
+import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import HttpContext from "@src/core/domains/express/data/HttpContext";
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import { RouteResourceTypes } from "@src/core/domains/express/routing/RouterResource";
 import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
-import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { ModelConstructor } from "@src/core/interfaces/IModel";
 
 
@@ -27,7 +26,7 @@ class ResourceDeleteService extends BaseResourceService {
     async handler(context: HttpContext): Promise<{ success: boolean }> {
 
         // Check if the authorization security applies to this route and it is valid
-        if(!this.validateAuthorization(context)) {
+        if(!this.validateAuthorized(context)) {
             throw new UnauthorizedError()
         }
         
@@ -39,16 +38,14 @@ class ResourceDeleteService extends BaseResourceService {
 
         const modelConstructor = routeOptions.resourceConstructor as ModelConstructor
 
-        const repository = new Repository(modelConstructor)
+        const builder = queryBuilder(modelConstructor)
+            .where(modelConstructor.getPrimaryKey(), context.getRequest().params?.id)
 
-        const result = await repository.findById(context.getRequest().params?.id)
+        const result = await builder.firstOrFail()
 
-        if(!result) {
-            throw new ModelNotFound()
-        }
-
+        
         // Check if the resource owner security applies to this route and it is valid
-        if(!this.validateRequestHasResourceOwner(context)) {
+        if(!this.validateResourceAccess(context, result)) {
             throw new ForbiddenResourceError()
         }
 

@@ -14,6 +14,34 @@ export const RouteResourceTypes = {
     DELETE: 'delete'
 } as const
 
+/**
+ * ResourceRouter provides a standardized way to create RESTful resource routes
+ * 
+ * It automatically generates the following routes for a given resource:
+ * - GET / - Index route to list resources
+ * - GET /:id - Show route to get a single resource
+ * - POST / - Create route to add a new resource
+ * - PUT /:id - Update route to modify an existing resource
+ * - DELETE /:id - Delete route to remove a resource
+ * 
+ * Usage:
+ * ```
+ * routes.resource({
+ *   prefix: '/blogs',
+ *   resource: BlogModel,
+ *   middlewares: [AuthMiddleware],
+ *   security: [SecurityRules.resourceOwner('user_id')]
+ * })
+ * ```
+ * 
+ * The router:
+ * - Maps routes to ResourceController methods
+ * - Applies provided middleware and security rules
+ * - Sets up proper route parameters
+ * - Handles resource type tracking for security validation
+ * - Maintains consistent RESTful routing patterns
+ */
+
 class ResourceRouter {
 
     /**

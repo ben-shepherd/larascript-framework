@@ -40,7 +40,7 @@ class ResourceIndexService extends BaseResourceService {
         }
         
         // Check if the authorization security applies to this route and it is valid
-        if(!this.validateAuthorization(context)) {
+        if(!this.validateAuthorized(context)) {
             throw new UnauthorizedError()
         }
         
@@ -64,8 +64,8 @@ class ResourceIndexService extends BaseResourceService {
 
         // Check if the resource owner security applies to this route and it is valid
         // If it is valid, we add the owner's id to the filters
-        if(this.validateRequestHasResourceOwner(context)) {
-            const attribute = this.getResourceOwnerModelAttribute(routeOptions);
+        if(this.validateResourceOwnerApplicable(context)) {
+            const attribute = this.getResourceAttribute(routeOptions);
             const userId = context.getRequest().user?.getId()
 
             if(!userId) { 

@@ -11,6 +11,27 @@ import HttpContext from "../../data/HttpContext";
 import responseError from "../../requests/responseError";
 import BaseResourceService from "../../services/Resources/BaseResourceService";
 
+/**
+ * ResourceController handles CRUD operations for resources (database models)
+ * 
+ * This controller provides standardized endpoints for:
+ * - Listing resources (index) with pagination and filtering
+ * - Showing individual resources (show) 
+ * - Creating new resources (create)
+ * - Updating existing resources (update)
+ * - Deleting resources (delete)
+ *
+ * It works with any model that implements the required interfaces and uses services
+ * to handle the business logic for each operation. The controller:
+ * 
+ * - Delegates operations to specialized services (ResourceIndexService, ResourceCreateService etc)
+ * - Handles authorization checks through the services
+ * - Manages resource ownership validation where configured
+ * - Strips protected properties before returning responses
+ * - Provides consistent error handling
+ *
+ * Used by defining routes with Route.resource() and specifying the model, middleware and security rules
+ */
 class ResourceController  extends Controller {
 
     protected indexService = new ResourceIndexService();

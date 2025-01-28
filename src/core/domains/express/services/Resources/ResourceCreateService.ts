@@ -34,38 +34,34 @@ class ResourceCreateService extends BaseResourceService {
         }
 
         // Check if the authorization security applies to this route and it is valid
-        if(!this.validateAuthorization(context)) {
+        if(!this.validateAuthorized(context)) {
             throw new UnauthorizedError()
         }
         
         // Build the page options, filters
         const modelConstructor = routeOptions.resourceConstructor as ModelConstructor
-        const modelInstance = modelConstructor.create()
+        const model = modelConstructor.create()
 
         // Fill the model instance with the request body
-        modelInstance.fill(req.body)
+        model.fill(req.body)
 
         // Check if the resource owner security applies to this route and it is valid
         // If it is valid, we add the owner's id to the filters
-        if(this.validateRequestHasResourceOwner(context)) {
-            const propertyKey = this.getResourceOwnerModelAttribute(routeOptions, 'userId');
+        if(this.validateResourceOwnerApplicable(context)) {
+            const attribute = this.getResourceAttribute(routeOptions, 'userId');
             const userId = App.container('requestContext').getByRequest<string>(req, 'userId');
             
             if(!userId) {
                 throw new ForbiddenResourceError()
             }
 
-            if(typeof propertyKey !== 'string') {
-                throw new Error('Malformed resourceOwner security. Expected parameter \'key\' to be a string but received ' + typeof propertyKey);
-            }
-
-            modelInstance.setAttribute(propertyKey, userId)
+            model.setAttribute(attribute, userId)
         }
 
-        await modelInstance.save();
+        await model.save();
 
         // Strip the guarded properties from the model instance
-        const modelAttributesStripped = await stripGuardedResourceProperties(modelInstance)
+        const modelAttributesStripped = await stripGuardedResourceProperties(model)
 
         // Send the results
         return modelAttributesStripped[0]
