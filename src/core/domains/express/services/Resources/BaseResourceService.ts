@@ -68,9 +68,9 @@ abstract class BaseResourceService {
          * @param {string} defaultKey - The default key to use if the resource owner security is not found
          * @returns {string} - The resource owner property key
          */
-        getResourceOwnerPropertyKey(routeOptions: TRouteItem, defaultKey: string = 'userId'): string {
+        getResourceOwnerModelAttribute(routeOptions: TRouteItem, defaultKey: string = 'userId'): string {
             const resourceOwnerSecurity = this.getResourceOwnerSecurity(routeOptions)
-            return resourceOwnerSecurity?.getRuleOptions()?.primaryKey as string ?? defaultKey;
+            return resourceOwnerSecurity?.getRuleOptions()?.attribute as string ?? defaultKey;
         }
 
 }

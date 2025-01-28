@@ -1,26 +1,33 @@
 
+import { IModel } from "@src/core/interfaces/IModel";
+
 import AbstractSecurityRule from "../../abstract/AbstractSecurityRule";
 import HttpContext from "../../data/HttpContext";
+import ResourceException from "../../exceptions/ResourceException";
+import { SecurityIdentifiersLegacy } from "../../services/SecurityRulesLegacy";
 
 type TResourceOwnerRuleOptions = {
-    primaryKey: string;
+    attribute: string;
 }
 
 class ResourceOwnerRule extends AbstractSecurityRule<TResourceOwnerRuleOptions> {
 
-    async execute(context: HttpContext): Promise<boolean> {
+    protected id = SecurityIdentifiersLegacy.RESOURCE_OWNER;
+
+    async execute(context: HttpContext, resource: IModel): Promise<boolean> {
         const user = context.getUser();
 
         if(!user) {
             return false;
         }
+        
+        const attribute = this.getRuleOptions().attribute;
+
+        if(!attribute) {
+            throw new ResourceException('Attribute is required');
+        }
     
-        // if(typeof resource.getAttributeSync !== 'function') {
-        //     throw new Error('Resource is not an instance of IModel');
-        // }
-    
-        // return resource.getAttributeSync(attribute) === user?.getId()
-        return false;
+        return resource.getAttributeSync(attribute) === user?.getId()
     }
 
 }

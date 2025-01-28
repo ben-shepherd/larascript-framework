@@ -1,21 +1,45 @@
 import HttpContext from "../data/HttpContext";
-import { TRouteItem } from "../interfaces/IRoute";
-import { ISecurityRule, TSecurityRuleOptions } from "../interfaces/ISecurity";
+import ResourceException from "../exceptions/ResourceException";
+import { ISecurityRule } from "../interfaces/ISecurity";
 
 abstract class AbstractSecurityRule<RuleOptions extends object = object> implements ISecurityRule<RuleOptions> {
 
-    protected id!: string;
+    /**
+     * The ID of the security rule.
+     */
+    protected abstract id: string;
 
+    /**
+     * The conditions under which the security rule should be applied.
+     */
     protected when!: string[] | null;
 
+    /**
+     * The conditions under which the security rule should not be applied.
+     */
     protected never!: string[] | null;
 
+    /**
+     * The ID of the security rule to include in the security rule object.
+     */
     protected also!: string | null;
 
-    options?: RuleOptions;
+    /**
+     * The options for the security rule.
+     */
+    public options?: RuleOptions;
 
+    /**
+     * Executes the security rule.
+     * 
+     * @param context The context
+     * @param args The arguments
+     * @returns The result of the security rule
+     */
     // eslint-disable-next-line no-unused-vars
-    abstract execute(context: HttpContext, routeItem: TRouteItem): Promise<boolean>;
+    protected async execute(context: HttpContext, ...args: any[]): Promise<boolean> {
+        return true;
+    }
 
     /**
      * Sets the options for the security rule.
@@ -38,33 +62,41 @@ abstract class AbstractSecurityRule<RuleOptions extends object = object> impleme
     }
 
     /**
-     * Converts the security rule to an object.
+     * Gets the ID of the security rule.
      * 
-     * @param args The arguments to include in the object
-     * @returns The security rule object
+     * @returns The ID of the security rule
      */
-    public toObject(): TSecurityRuleOptions<RuleOptions> {
-        return {
-            id: this.id,
-            when: this.when,
-            never: this.never,
-            also: this.also,
-            ruleOptions: this.options,
-        }
-    }
-
     public getId(): string {
+        if(!this.id) {
+            throw new ResourceException('Security rule ID is not set');
+        }
+
         return this.id;
     }
 
+    /**
+     * Gets the conditions under which the security rule should be applied.
+     * 
+     * @returns The conditions under which the security rule should be applied
+     */
     public getWhen(): string[] | null {
         return this.when;
     }
 
+    /**
+     * Gets the conditions under which the security rule should not be applied.
+     * 
+     * @returns The conditions under which the security rule should not be applied
+     */
     public getNever(): string[] | null {
         return this.never;
     }
 
+    /**
+     * Gets the ID of the security rule to include in the security rule object.
+     * 
+     * @returns The ID of the security rule to include in the security rule object
+     */
     public getAlso(): string | null {
         return this.also;
     }

@@ -40,12 +40,16 @@ class ResourceCreateService extends BaseResourceService {
         }
         
         // Build the page options, filters
-        const modalInstance = new (routeOptions.resourceConstructor as ModelConstructor)(req.body);
+        const modelConstructor = routeOptions.resourceConstructor as ModelConstructor
+        const modelInstance = modelConstructor.create()
+
+        // Fill the model instance with the request body
+        modelInstance.fill(req.body)
 
         // Check if the resource owner security applies to this route and it is valid
         // If it is valid, we add the owner's id to the filters
         if(this.validateResourceOwner(context)) {
-            const propertyKey = this.getResourceOwnerPropertyKey(routeOptions, 'userId');
+            const propertyKey = this.getResourceOwnerModelAttribute(routeOptions, 'userId');
             const userId = App.container('requestContext').getByRequest<string>(req, 'userId');
             
             if(!userId) {
@@ -56,13 +60,13 @@ class ResourceCreateService extends BaseResourceService {
                 throw new Error('Malformed resourceOwner security. Expected parameter \'key\' to be a string but received ' + typeof propertyKey);
             }
 
-            modalInstance.setAttribute(propertyKey, userId)
+            modelInstance.setAttribute(propertyKey, userId)
         }
 
-        await modalInstance.save();
+        await modelInstance.save();
 
         // Strip the guarded properties from the model instance
-        const modelAttributesStripped = await stripGuardedResourceProperties(modalInstance)
+        const modelAttributesStripped = await stripGuardedResourceProperties(modelInstance)
 
         // Send the results
         return modelAttributesStripped[0]

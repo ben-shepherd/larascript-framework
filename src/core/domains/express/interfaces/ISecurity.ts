@@ -18,12 +18,11 @@ export type TSecurityRuleConstructor<Rule extends ISecurityRule = ISecurityRule>
 
 export interface ISecurityRule<RuleOptions extends object = object> {
     setRuleOptions(options: RuleOptions): ISecurityRule<RuleOptions>;
-    toObject(args?: RuleOptions): TSecurityRuleOptions<RuleOptions>
+    getRuleOptions(): RuleOptions
     getId(): string
     getWhen(): string[] | null
     getNever(): string[] | null
     getAlso(): string | null
-    getRuleOptions(): RuleOptions
 }
 
 /**

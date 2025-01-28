@@ -67,7 +67,7 @@ class ResourceIndexService extends BaseResourceService {
         // Check if the resource owner security applies to this route and it is valid
         // If it is valid, we add the owner's id to the filters
         if(this.validateResourceOwner(context)) {
-            const propertyKey = this.getResourceOwnerPropertyKey(routeOptions, 'userId');
+            const propertyKey = this.getResourceOwnerModelAttribute(routeOptions, 'userId');
             const userId = requestContext().getByRequest<string>(req, 'userId');
 
             if(!userId) { 

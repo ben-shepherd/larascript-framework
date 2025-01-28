@@ -1,3 +1,4 @@
+
 import AbstractSecurityRule from "../abstract/AbstractSecurityRule";
 import { TSecurityRuleConstructor } from "../interfaces/ISecurity";
 import ResourceOwnerRule from "../security/rules/ResourceOwnerRule";
@@ -14,14 +15,16 @@ class SecurityRules {
         return new ruleConstructor().setRuleOptions(options ?? {}) as Rule;
     }
 
-    /*
+    /**
      * Creates a new resource owner security rule.
      * 
-     * @param primaryKey The primary key of the resource
+     * @param attribute The attribute of the resource that contains the owner ID
      * @returns The resource owner security rule
      */
-    public static resourceOwner(primaryKey: string = 'userId'): ResourceOwnerRule {
-        return this.create(ResourceOwnerRule, { primaryKey })
+    public static resourceOwner(attribute: string = 'userId'): ResourceOwnerRule {
+        return this.create(ResourceOwnerRule, { 
+            attribute: attribute
+        });
     }
 
 }
