@@ -82,6 +82,7 @@ class ResourceController  extends Controller {
     
             if(error instanceof ForbiddenResourceError) {
                 responseError(context.getRequest(), context.getResponse(), error, 403)
+                return;
             }
     
             responseError(context.getRequest(), context.getResponse(), error as Error)

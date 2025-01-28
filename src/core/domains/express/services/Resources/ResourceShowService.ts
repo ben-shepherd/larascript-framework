@@ -45,39 +45,28 @@ class ResourceShowService extends BaseResourceService {
         const builder = queryBuilder(modelConstructor) 
             .limit(1)
 
-        // Check if the resource owner security applies to this route and it is valid
-        // If it is valid, we add the owner's id to the filters
-        if(this.validateRequestHasResourceOwner(context)) {
-            const propertyKey = this.getResourceOwnerModelAttribute(routeOptions, 'userId');
-            const requestUserId = requestContext().getByRequest<string>(context.getRequest(), 'userId');
-            
-            if(!requestUserId) {
-                throw new ForbiddenResourceError()
-            }
-
-            if(typeof propertyKey !== 'string') {
-                throw new Error('Malformed resourceOwner security. Expected parameter \'key\' to be a string but received ' + typeof propertyKey);
-            }
-
-            builder.where(propertyKey, '=', requestUserId)
-        }
-
         // Attach the id to the query
         builder.where(modelConstructor.getPrimaryKey(), context.getRequest().params?.id)
 
         // Fetch the results
         const result = await builder.firstOrFail()
 
-        // Check if the user has access to the resource
-        if(!this.validateResourceOwnerAccess(context, result)) {
-            throw new ForbiddenResourceError()
+        // Check if the resource owner security applies to this route and it is valid
+        // If it is valid, we add the owner's id to the filters
+        if(this.validateRequestHasResourceOwner(context)) {
+            const requestUserId = requestContext().getByRequest<string>(context.getRequest(), 'userId');
+            
+            if(!requestUserId) {
+                throw new ForbiddenResourceError()
+            }
+
+            if(!this.validateResourceOwnerAccess(context, result)) {
+                throw new ForbiddenResourceError()
+            }
         }
 
-        // Strip the guarded properties
-        const resultGuardedStrip = (await stripGuardedResourceProperties(result))[0]
-
         // Send the results
-        return resultGuardedStrip
+        return (await stripGuardedResourceProperties(result))[0]
     }
       
 }
