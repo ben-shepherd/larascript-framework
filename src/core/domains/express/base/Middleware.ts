@@ -3,8 +3,7 @@ import { IExpressable } from "@src/core/domains/express/interfaces/IExpressable"
 import { IMiddleware, MiddlewareConstructor, TExpressMiddlewareFn } from "@src/core/domains/express/interfaces/IMiddleware";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { NextFunction, Response } from "express";
-
-import { TRouteItem } from "../interfaces/IRoute";
+import { TRouteItem } from "@src/core/domains/express/interfaces/IRoute";
 
 /**
  * Abstract base class that transforms Express middleware into a class-based format.

@@ -9,8 +9,7 @@ import { IRouteLegacy } from "@src/core/domains/express/interfaces/IRouteLegacy"
 import RouteGroupLegacy from "@src/core/domains/express/routing/RouteGroupLegacy";
 import RouteLegacy from "@src/core/domains/express/routing/RouteLegacy";
 import routeGroupUtil from "@src/core/domains/express/utils/routeGroupUtil";
-
-import { IRouteResourceOptionsLegacy } from "../interfaces/IRouteResourceOptionsLegacy";
+import { IRouteResourceOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptionsLegacy";
 
 /**
  * Resource types that can be utilized when adding Security to a route

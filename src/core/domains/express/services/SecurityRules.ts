@@ -1,7 +1,7 @@
 
-import AbstractSecurityRule from "../abstract/AbstractSecurityRule";
-import { TSecurityRuleConstructor } from "../interfaces/ISecurity";
-import ResourceOwnerRule from "../security/rules/ResourceOwnerRule";
+import AbstractSecurityRule from "@src/core/domains/express/abstract/AbstractSecurityRule";
+import { TSecurityRuleConstructor } from "@src/core/domains/express/interfaces/ISecurity";
+import ResourceOwnerRule from "@src/core/domains/express/security/rules/ResourceOwnerRule";
 
 class SecurityRules {
 

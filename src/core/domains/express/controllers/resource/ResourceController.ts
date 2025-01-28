@@ -1,9 +1,9 @@
-import Controller from "../../base/Controller";
-import ResourceCreateService from "../../services/Resources/ResourceCreateService";
-import ResourceDeleteService from "../../services/Resources/ResourceDeleteService";
-import ResourceIndexService from "../../services/Resources/ResourceIndexService";
-import ResourceShowService from "../../services/Resources/ResourceShowService";
-import ResourceUpdateService from "../../services/Resources/ResourceUpdateService";
+import Controller from "@src/core/domains/express/base/Controller";
+import ResourceCreateService from "@src/core/domains/express/services/Resources/ResourceCreateService";
+import ResourceDeleteService from "@src/core/domains/express/services/Resources/ResourceDeleteService";
+import ResourceIndexService from "@src/core/domains/express/services/Resources/ResourceIndexService";
+import ResourceShowService from "@src/core/domains/express/services/Resources/ResourceShowService";
+import ResourceUpdateService from "@src/core/domains/express/services/Resources/ResourceUpdateService";
 
 class ResourceController  extends Controller {
 

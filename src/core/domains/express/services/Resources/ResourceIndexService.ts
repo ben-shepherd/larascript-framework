@@ -9,11 +9,10 @@ import { requestContext } from "@src/core/domains/express/services/RequestContex
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import stripGuardedResourceProperties from "@src/core/domains/express/utils/stripGuardedResourceProperties";
 import { IModelAttributes, ModelConstructor } from "@src/core/interfaces/IModel";
-
-import HttpContext from "../../data/HttpContext";
-import ResourceException from "../../exceptions/ResourceException";
-import { TRouteItem } from "../../interfaces/IRoute";
-import BaseResourceService from "./BaseResourceService";
+import HttpContext from "@src/core/domains/express/data/HttpContext";
+import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
+import { TRouteItem } from "@src/core/domains/express/interfaces/IRoute";
+import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
 
 class ResourceIndexService extends BaseResourceService {
 

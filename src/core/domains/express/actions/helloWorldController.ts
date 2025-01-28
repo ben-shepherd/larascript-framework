@@ -1,5 +1,5 @@
-import Controller from "../base/Controller";
-import HttpContext from "../data/HttpContext";
+import Controller from "@src/core/domains/express/base/Controller";
+import HttpContext from "@src/core/domains/express/data/HttpContext";
 
 export class HelloWorldController extends Controller {
 

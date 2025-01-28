@@ -1,6 +1,6 @@
-import HttpContext from "../data/HttpContext";
-import { IController } from "../interfaces/IController";
-import { TRouteItem } from "../interfaces/IRoute";
+import HttpContext from "@src/core/domains/express/data/HttpContext";
+import { IController } from "@src/core/domains/express/interfaces/IController";
+import { TRouteItem } from "@src/core/domains/express/interfaces/IRoute";
 
 class Controller implements IController {
 

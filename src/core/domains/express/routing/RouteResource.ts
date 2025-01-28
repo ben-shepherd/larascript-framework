@@ -1,7 +1,7 @@
 
-import ResourceController from "../controllers/resource/ResourceController";
-import { TPartialRouteItemOptions, TRouteResourceOptions } from "../interfaces/IRoute";
-import Router from "./Router";
+import ResourceController from "@src/core/domains/express/controllers/resource/ResourceController";
+import { TPartialRouteItemOptions, TRouteResourceOptions } from "@src/core/domains/express/interfaces/IRoute";
+import Router from "@src/core/domains/express/routing/Router";
 
 /**
  * Resource types that can be utilized when adding Security to a route

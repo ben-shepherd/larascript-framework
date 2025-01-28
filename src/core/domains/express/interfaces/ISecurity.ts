@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { NextFunction, Request, Response } from 'express';
-
-import { IRouteLegacy } from './IRouteLegacy';
+import { IRouteLegacy } from '@src/core/domains/express/interfaces/IRouteLegacy';
 
 export type TSecurityRuleOptions<RuleOptions extends object = object> = {
     id: string;

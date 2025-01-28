@@ -5,9 +5,8 @@ import BaseResourceServiceLegacy from "@src/core/domains/express/services/Resour
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { Response } from "express";
-
-import { IRouteResourceOptionsLegacy } from "../../interfaces/IRouteResourceOptionsLegacy";
-import { RouteResourceTypes } from "../../routing/RouteResource";
+import { IRouteResourceOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptionsLegacy";
+import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResource";
 
 
 class ResourceDeleteService extends BaseResourceServiceLegacy {

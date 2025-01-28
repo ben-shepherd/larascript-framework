@@ -2,8 +2,7 @@ import ResourceAllServiceLegacy from '@src/core/domains/express/services/Resourc
 import ResourceErrorService from '@src/core/domains/express/services/ResourcesLegacy/ResourceErrorService';
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { Response } from 'express';
-
-import { IRouteResourceOptionsLegacy } from '../interfaces/IRouteResourceOptionsLegacy';
+import { IRouteResourceOptionsLegacy } from '@src/core/domains/express/interfaces/IRouteResourceOptionsLegacy';
 
 /**
  * Finds all records in the resource's repository

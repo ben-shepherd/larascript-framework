@@ -1,8 +1,7 @@
 
 import { IModel } from "@src/core/interfaces/IModel";
-
-import Middleware from "../../base/Middleware";
-import HttpContext from "../../data/HttpContext";
+import Middleware from "@src/core/domains/express/base/Middleware";
+import HttpContext from "@src/core/domains/express/data/HttpContext";
 
 class ResourceOwnerMiddleware extends Middleware {
 

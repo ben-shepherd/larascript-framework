@@ -10,8 +10,7 @@ import BaseResourceServiceLegacy from "@src/core/domains/express/services/Resour
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import stripGuardedResourceProperties from "@src/core/domains/express/utils/stripGuardedResourceProperties";
 import { Response } from "express";
-
-import { IRouteResourceOptionsLegacy } from "../../interfaces/IRouteResourceOptionsLegacy";
+import { IRouteResourceOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptionsLegacy";
 
 
 class ResourceAllService extends BaseResourceServiceLegacy {

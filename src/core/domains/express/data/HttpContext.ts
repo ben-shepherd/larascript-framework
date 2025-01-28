@@ -2,10 +2,9 @@ import HttpContextException from '@src/core/domains/express/exceptions/HttpConte
 import { requestContext } from '@src/core/domains/express/services/RequestContext';
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { NextFunction, Response } from 'express';
-
-import IApiTokenModel from '../../auth/interfaces/IApitokenModel';
-import IUserModel from '../../auth/interfaces/IUserModel';
-import { TRouteItem } from '../interfaces/IRoute';
+import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
+import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
+import { TRouteItem } from '@src/core/domains/express/interfaces/IRoute';
 
 class HttpContext {
 

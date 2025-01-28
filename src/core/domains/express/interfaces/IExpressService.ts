@@ -2,8 +2,7 @@
 import IExpressConfig from "@src/core/domains/express/interfaces/IExpressConfig";
 import { IRouteLegacy } from "@src/core/domains/express/interfaces/IRouteLegacy";
 import express from "express";
-
-import { IRoute, IRouter } from "./IRoute";
+import { IRoute, IRouter } from "@src/core/domains/express/interfaces/IRoute";
 
 export default interface IExpressService {
     init(): void;

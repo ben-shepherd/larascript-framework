@@ -6,12 +6,11 @@ import stripGuardedResourceProperties from "@src/core/domains/express/utils/stri
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { IModelAttributes, ModelConstructor } from "@src/core/interfaces/IModel";
 import { Response } from "express";
-
-import HttpContext from "../../data/HttpContext";
-import ResourceException from "../../exceptions/ResourceException";
-import { IRouteResourceOptionsLegacy } from "../../interfaces/IRouteResourceOptionsLegacy";
-import { RouteResourceTypes } from "../../routing/RouteResource";
-import BaseResourceService from "./BaseResourceService";
+import HttpContext from "@src/core/domains/express/data/HttpContext";
+import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
+import { IRouteResourceOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptionsLegacy";
+import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResource";
+import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
 
 
 class ResourceUpdateService extends BaseResourceService {

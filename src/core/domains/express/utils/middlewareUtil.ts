@@ -1,7 +1,7 @@
 
-import Middleware from '../base/Middleware';
-import { MiddlewareConstructor, TExpressMiddlewareFn, TExpressMiddlewareFnOrClass } from '../interfaces/IMiddleware';
-import { TRouteItem } from '../interfaces/IRoute';
+import Middleware from '@src/core/domains/express/base/Middleware';
+import { MiddlewareConstructor, TExpressMiddlewareFn, TExpressMiddlewareFnOrClass } from '@src/core/domains/express/interfaces/IMiddleware';
+import { TRouteItem } from '@src/core/domains/express/interfaces/IRoute';
 
 
 class MiddlewareUtil {

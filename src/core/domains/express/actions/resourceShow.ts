@@ -1,9 +1,8 @@
 import ResourceShowServiceLegacy from '@src/core/domains/express/services/ResourcesLegacy/ResourceShowService';
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { Response } from 'express';
-
-import { IRouteResourceOptionsLegacy } from '../interfaces/IRouteResourceOptionsLegacy';
-import ResourceErrorService from '../services/ResourcesLegacy/ResourceErrorService';
+import { IRouteResourceOptionsLegacy } from '@src/core/domains/express/interfaces/IRouteResourceOptionsLegacy';
+import ResourceErrorService from '@src/core/domains/express/services/ResourcesLegacy/ResourceErrorService';
 
 /**
  * Finds a resource by id

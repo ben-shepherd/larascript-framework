@@ -5,8 +5,7 @@ import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import IUserRepository from "@src/core/domains/auth/interfaces/IUserRepository";
 import IService from "@src/core/interfaces/IService";
-
-import { IRouter } from "../../express/interfaces/IRoute";
+import { IRouter } from "@src/core/domains/express/interfaces/IRoute";
 
 
 /**

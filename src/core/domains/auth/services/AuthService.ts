@@ -16,8 +16,7 @@ import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
 import { app } from '@src/core/services/App';
 import { JsonWebTokenError } from 'jsonwebtoken';
-
-import { IRouter } from '../../express/interfaces/IRoute';
+import { IRouter } from '@src/core/domains/express/interfaces/IRoute';
 
 
 /**

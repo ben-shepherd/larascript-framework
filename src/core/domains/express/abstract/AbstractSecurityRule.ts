@@ -1,6 +1,6 @@
-import HttpContext from "../data/HttpContext";
-import ResourceException from "../exceptions/ResourceException";
-import { ISecurityRule } from "../interfaces/ISecurity";
+import HttpContext from "@src/core/domains/express/data/HttpContext";
+import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
+import { ISecurityRule } from "@src/core/domains/express/interfaces/ISecurity";
 
 abstract class AbstractSecurityRule<RuleOptions extends object = object> implements ISecurityRule<RuleOptions> {
 

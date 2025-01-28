@@ -8,9 +8,8 @@ import SecurityReaderLegacy from '@src/core/domains/express/services/SecurityRea
 import { SecurityIdentifiersLegacy } from '@src/core/domains/express/services/SecurityRulesLegacy';
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { NextFunction, Response } from 'express';
-
-import { IRouteLegacy } from '../interfaces/IRouteLegacy';
-import { ALWAYS } from '../services/SecurityLegacy';
+import { IRouteLegacy } from '@src/core/domains/express/interfaces/IRouteLegacy';
+import { ALWAYS } from '@src/core/domains/express/services/SecurityLegacy';
 
 const bindSecurityToRequest = (route: IRouteLegacy, req: BaseRequest) => {
     // req.security = route.security ?? [];

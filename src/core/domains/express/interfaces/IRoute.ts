@@ -1,10 +1,9 @@
 /* eslint-disable no-unused-vars */
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
-
-import { ControllerConstructor } from "./IController";
-import { TExpressMiddlewareFnOrClass } from "./IMiddleware";
-import { SearchOptionsLegacy } from "./IRouteResourceOptionsLegacy";
-import { ISecurityRule } from "./ISecurity";
+import { ControllerConstructor } from "@src/core/domains/express/interfaces/IController";
+import { TExpressMiddlewareFnOrClass } from "@src/core/domains/express/interfaces/IMiddleware";
+import { SearchOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptionsLegacy";
+import { ISecurityRule } from "@src/core/domains/express/interfaces/ISecurity";
 
 export type RouteConstructor = {
     new (...args: any[]): IRouter;

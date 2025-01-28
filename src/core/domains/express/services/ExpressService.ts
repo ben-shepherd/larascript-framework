@@ -9,11 +9,10 @@ import RequestIdMiddlewareTest from '@src/core/domains/express/middleware/deprec
 import { logger } from '@src/core/domains/logger/services/LoggerService';
 import { app } from '@src/core/services/App';
 import expressClient from 'express';
-
-import { IRoute, IRouter } from '../interfaces/IRoute';
-import SecurityMiddleware from '../middleware/SecurityMiddleware';
-import Route from '../routing/Route';
-import RouterBindService from './RouterBindService';
+import { IRoute, IRouter } from '@src/core/domains/express/interfaces/IRoute';
+import SecurityMiddleware from '@src/core/domains/express/middleware/SecurityMiddleware';
+import Route from '@src/core/domains/express/routing/Route';
+import RouterBindService from '@src/core/domains/express/services/RouterBindService';
 
 /**
  * Short hand for `app('express')`

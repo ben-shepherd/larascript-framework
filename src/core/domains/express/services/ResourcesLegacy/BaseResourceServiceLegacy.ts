@@ -4,11 +4,10 @@ import SecurityReaderLegacy from "@src/core/domains/express/services/SecurityRea
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { IModel } from "@src/core/interfaces/IModel";
 import { Response } from "express";
-
-import { IRouteResourceOptionsLegacy } from "../../interfaces/IRouteResourceOptionsLegacy";
-import { RouteResourceTypes } from "../../routing/RouteResource";
-import { ALWAYS } from "../SecurityLegacy";
-import { SecurityIdentifiersLegacy } from "../SecurityRulesLegacy";
+import { IRouteResourceOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptionsLegacy";
+import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResource";
+import { ALWAYS } from "@src/core/domains/express/services/SecurityLegacy";
+import { SecurityIdentifiersLegacy } from "@src/core/domains/express/services/SecurityRulesLegacy";
 
 abstract class BaseResourceServiceLegacy implements IResourceService {
 

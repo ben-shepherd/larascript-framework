@@ -1,11 +1,10 @@
 
 import RateLimitedExceededError from "@src/core/domains/auth/exceptions/RateLimitedExceededError";
 import { Request } from "express";
-
-import Middleware from "../../base/Middleware";
-import HttpContext from "../../data/HttpContext";
-import { IPDatesArrayTTL } from "../../interfaces/ICurrentRequest";
-import { requestContext } from "../../services/RequestContext";
+import Middleware from "@src/core/domains/express/base/Middleware";
+import HttpContext from "@src/core/domains/express/data/HttpContext";
+import { IPDatesArrayTTL } from "@src/core/domains/express/interfaces/ICurrentRequest";
+import { requestContext } from "@src/core/domains/express/services/RequestContext";
 
 class RateLimitedMiddleware extends Middleware {
 

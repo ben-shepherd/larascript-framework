@@ -1,12 +1,11 @@
 import expressClient from 'express';
-
-import { logger } from '../../logger/services/LoggerService';
-import Middleware from '../base/Middleware';
-import HttpContext from '../data/HttpContext';
-import RouteException from '../exceptions/RouteException';
-import { MiddlewareConstructor, TExpressMiddlewareFn, TExpressMiddlewareFnOrClass } from '../interfaces/IMiddleware';
-import { IRouter, TRouteItem } from "../interfaces/IRoute";
-import MiddlewareUtil from '../utils/middlewareUtil';
+import { logger } from '@src/core/domains/logger/services/LoggerService';
+import Middleware from '@src/core/domains/express/base/Middleware';
+import HttpContext from '@src/core/domains/express/data/HttpContext';
+import RouteException from '@src/core/domains/express/exceptions/RouteException';
+import { MiddlewareConstructor, TExpressMiddlewareFn, TExpressMiddlewareFnOrClass } from '@src/core/domains/express/interfaces/IMiddleware';
+import { IRouter, TRouteItem } from "@src/core/domains/express/interfaces/IRoute";
+import MiddlewareUtil from '@src/core/domains/express/utils/middlewareUtil';
 
 // eslint-disable-next-line no-unused-vars
 type ExecuteFn = (context: HttpContext) => Promise<void>;

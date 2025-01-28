@@ -1,8 +1,7 @@
 import { IAction } from '@src/core/domains/express/interfaces/IAction';
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { Response } from 'express';
-
-import { IRouteResourceOptionsLegacy } from '../interfaces/IRouteResourceOptionsLegacy';
+import { IRouteResourceOptionsLegacy } from '@src/core/domains/express/interfaces/IRouteResourceOptionsLegacy';
 
 /**
  * This function returns a new action function that calls the given action

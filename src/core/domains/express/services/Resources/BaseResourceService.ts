@@ -1,11 +1,11 @@
 
-import HttpContext from "../../data/HttpContext";
-import ResourceException from "../../exceptions/ResourceException";
-import { TRouteItem } from "../../interfaces/IRoute";
-import ResourceOwnerRule from "../../security/rules/ResourceOwnerRule";
-import { requestContext } from "../RequestContext";
-import SecurityReader from "../SecurityReader";
-import { SecurityIdentifiersLegacy } from "../SecurityRulesLegacy";
+import HttpContext from "@src/core/domains/express/data/HttpContext";
+import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
+import { TRouteItem } from "@src/core/domains/express/interfaces/IRoute";
+import ResourceOwnerRule from "@src/core/domains/express/security/rules/ResourceOwnerRule";
+import { requestContext } from "@src/core/domains/express/services/RequestContext";
+import SecurityReader from "@src/core/domains/express/services/SecurityReader";
+import { SecurityIdentifiersLegacy } from "@src/core/domains/express/services/SecurityRulesLegacy";
 
 abstract class BaseResourceService {
 
