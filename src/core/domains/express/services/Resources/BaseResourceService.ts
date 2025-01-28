@@ -1,3 +1,4 @@
+
 import HttpContext from "../../data/HttpContext";
 import ResourceException from "../../exceptions/ResourceException";
 import { TRouteItem } from "../../interfaces/IRoute";
@@ -14,7 +15,7 @@ abstract class BaseResourceService {
         abstract routeResourceType: string;
 
         // eslint-disable-next-line no-unused-vars
-        abstract handler(context: HttpContext): Promise<void>;
+        abstract handler(context: HttpContext): Promise<unknown>;
 
         /**
          * Checks if the request is authorized to perform the action
@@ -61,6 +62,16 @@ abstract class BaseResourceService {
             return SecurityReader.find<ResourceOwnerRule>(routeOptions, id, when);
         }
 
+        /**
+         * Gets the resource owner property key from the route options
+         * @param {TRouteItem} routeOptions - The route options
+         * @param {string} defaultKey - The default key to use if the resource owner security is not found
+         * @returns {string} - The resource owner property key
+         */
+        getResourceOwnerPropertyKey(routeOptions: TRouteItem, defaultKey: string = 'userId'): string {
+            const resourceOwnerSecurity = this.getResourceOwnerSecurity(routeOptions)
+            return resourceOwnerSecurity?.getRuleOptions()?.primaryKey as string ?? defaultKey;
+        }
 
 }
 

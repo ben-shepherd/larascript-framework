@@ -8,7 +8,7 @@ import QueryFilters from "@src/core/domains/express/services/QueryFilters";
 import { requestContext } from "@src/core/domains/express/services/RequestContext";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import stripGuardedResourceProperties from "@src/core/domains/express/utils/stripGuardedResourceProperties";
-import { ModelConstructor } from "@src/core/interfaces/IModel";
+import { IModelAttributes, ModelConstructor } from "@src/core/interfaces/IModel";
 
 import HttpContext from "../../data/HttpContext";
 import ResourceException from "../../exceptions/ResourceException";
@@ -31,11 +31,10 @@ class ResourceIndexService extends BaseResourceService {
      * @param res The response object
      * @param options The resource options
      */
-    async handler(context: HttpContext): Promise<void> {
+    async handler(context: HttpContext): Promise<IModelAttributes[]> {
 
         // Get the request, response and options
         const req = context.getRequest()
-        const res = context.getResponse()
         const routeOptions = context.getRouteItem()
 
         if(!routeOptions) {
@@ -52,8 +51,12 @@ class ResourceIndexService extends BaseResourceService {
         const filters = this.buildBaseAndRequestFilters(req, routeOptions);
 
         // Create a query builder
-        const builder = queryBuilder(routeOptions.resourceConstructor as ModelConstructor)
-            .where(filters, 'like')
+        const builder = queryBuilder(routeOptions.resourceConstructor as ModelConstructor);
+                
+        // Apply the filters
+        if(Object.keys(filters).length > 0) {
+            builder.where(filters, 'like')
+        }
         
         // Apply the page options
         if(pageOptions.pageSize && pageOptions.skip) {
@@ -64,8 +67,7 @@ class ResourceIndexService extends BaseResourceService {
         // Check if the resource owner security applies to this route and it is valid
         // If it is valid, we add the owner's id to the filters
         if(this.validateResourceOwner(context)) {
-            const resourceOwnerSecurity = this.getResourceOwnerSecurity(routeOptions)
-            const propertyKey = resourceOwnerSecurity?.getRuleOptions()?.primaryKey as string ?? 'userId';
+            const propertyKey = this.getResourceOwnerPropertyKey(routeOptions, 'userId');
             const userId = requestContext().getByRequest<string>(req, 'userId');
 
             if(!userId) { 
@@ -84,7 +86,7 @@ class ResourceIndexService extends BaseResourceService {
         const resultsGuardedStripped = await stripGuardedResourceProperties(results)
 
         // Send the results
-        res.send(resultsGuardedStripped)
+        return resultsGuardedStripped
     }
 
 
