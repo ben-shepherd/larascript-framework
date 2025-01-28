@@ -1,5 +1,5 @@
 import { TExpressMiddlewareFnOrClass } from "../interfaces/IMiddleware";
-import { IRouteGroupOptions, IRouter, TRouteGroupFn, TRouteItem, TRouteResourceOptions } from "../interfaces/IRoute";
+import { IRouteGroupOptions, IRouter, TPartialRouteItemOptions, TRouteGroupFn, TRouteItem, TRouteResourceOptions } from "../interfaces/IRoute";
 import ResourceRouter from "./RouteResource";
 
 class Router implements IRouter {
@@ -7,9 +7,9 @@ class Router implements IRouter {
     /**
      * The route group options.
      */
-    options: IRouteGroupOptions | null = null;
+    baseOptions: IRouteGroupOptions | null = null;
 
-    previousOptions: IRouteGroupOptions | null = null;
+    previousBaseOptions: IRouteGroupOptions | null = null;
 
     /**
      * The registered routes.
@@ -33,38 +33,41 @@ class Router implements IRouter {
     /**
      * Register a GET route.
      */
-    public get(path: TRouteItem['path'], action: TRouteItem['action']): void {
-        this.register({ path, method: 'GET', action });
+    public get(path: TRouteItem['path'], action: TRouteItem['action'], options: TPartialRouteItemOptions = {}): void {
+        this.register({ path, method: 'GET', action, ...options });
     }
     
     /**
          * Register a POST route.
          */
-    public post(path: TRouteItem['path'], action: TRouteItem['action']): void {
-        this.register({ path, method: 'POST', action });
+    public post(path: TRouteItem['path'], action: TRouteItem['action'], options: TPartialRouteItemOptions = {}): void {
+        this.register({ path, method: 'POST', action, ...options });
     }
     
     /**
      * Register a PUT route.
      */
-    public put(path: TRouteItem['path'], action: TRouteItem['action']): void {
-        this.register({ path, method: 'PUT', action });
+    public put(path: TRouteItem['path'], action: TRouteItem['action'], options: TPartialRouteItemOptions = {}): void {
+        this.register({ path, method: 'PUT', action, ...options });
     }
     
     /**
      * Register a PATCH route.
      */
-    public patch(path: TRouteItem['path'], action: TRouteItem['action']): void {
-        this.register({ path, method: 'PATCH', action });
+    public patch(path: TRouteItem['path'], action: TRouteItem['action'], options: TPartialRouteItemOptions = {}): void {
+        this.register({ path, method: 'PATCH', action, ...options });
     }
     
     /**
      * Register a DELETE route.
      */
-    public delete(path: TRouteItem['path'], action: TRouteItem['action']): void {
-        this.register({ path, method: 'DELETE', action });
+    public delete(path: TRouteItem['path'], action: TRouteItem['action'], options: TPartialRouteItemOptions = {}): void {
+        this.register({ path, method: 'DELETE', action, ...options });
     }
 
+    /**
+     * Register a resource route.
+     */
     public resource(options: TRouteResourceOptions): IRouter {
         return ResourceRouter.resource(options, this);
     }
@@ -83,7 +86,7 @@ class Router implements IRouter {
     public group(options: IRouteGroupOptions | TRouteGroupFn, routerFn?: TRouteGroupFn): IRouter {
 
         // Save the current options
-        this.previousOptions = {...this.options};
+        this.previousBaseOptions = {...this.baseOptions};
         
         // If the first argument is a function, it is a router function
         if (typeof options === 'function') {
@@ -110,18 +113,18 @@ class Router implements IRouter {
     }
 
     protected resetOptions(): void {
-        this.options = {...(this.previousOptions ?? {})};
+        this.baseOptions = {...(this.previousBaseOptions ?? {})};
     }
 
     /**
      * Apply the options to the route.
      */
     public applyOptions(route: IRouter, options: IRouteGroupOptions): void {
-        const newOptions = {...this.options, ...options};
-        newOptions.name = this.concat(this.options?.name, options?.name);
-        newOptions.prefix = this.concat(this.options?.prefix, options?.prefix);
+        const newOptions = {...this.baseOptions, ...options};
+        newOptions.name = this.concat(this.baseOptions?.name, options?.name);
+        newOptions.prefix = this.concat(this.baseOptions?.prefix, options?.prefix);
         this.applyOptionsMiddleware(route, newOptions);
-        this.options = {...newOptions};
+        this.baseOptions = {...newOptions};
 
     }
 
@@ -129,10 +132,10 @@ class Router implements IRouter {
      * Apply the middleware options to the route.
      */
     public applyOptionsMiddleware(route: IRouter, options: IRouteGroupOptions): void {
-        const currentMiddlewareOrDefault = this.options?.middlewares ?? [] as TExpressMiddlewareFnOrClass[];
+        const currentMiddlewareOrDefault = this.baseOptions?.middlewares ?? [] as TExpressMiddlewareFnOrClass[];
         const currentMiddleware = (Array.isArray(currentMiddlewareOrDefault) ? currentMiddlewareOrDefault : [currentMiddlewareOrDefault]) as TExpressMiddlewareFnOrClass[];
         
-        const optionsMiddlewareOrDefault = route.options?.middlewares ?? [] as TExpressMiddlewareFnOrClass[];
+        const optionsMiddlewareOrDefault = route.baseOptions?.middlewares ?? [] as TExpressMiddlewareFnOrClass[];
         const optionsMiddleware = (Array.isArray(optionsMiddlewareOrDefault) ? optionsMiddlewareOrDefault : [optionsMiddlewareOrDefault]) as TExpressMiddlewareFnOrClass[];
 
         options.middlewares = [...currentMiddleware, ...optionsMiddleware] as TExpressMiddlewareFnOrClass[];
@@ -155,13 +158,14 @@ class Router implements IRouter {
     /**
      * Register a route.
      */
-    public register({ path, method, action }: Partial<TRouteItem>): void {
+    public register({ path, method, action, ...options }: Partial<TRouteItem> & TPartialRouteItemOptions): void {
 
         const routeItem = {
-            ...this.options,
+            ...this.baseOptions,
             path: this.getPath(path ?? ''),
             method: method ?? 'GET',
             action: action ?? '',
+            ...options
         }
 
         this.registered.push(routeItem);
@@ -178,7 +182,7 @@ class Router implements IRouter {
     protected getPath(path: string): string {
 
         // Remove suffix forward slash if it ends with a forward slash
-        const prefixString = this.options?.prefix ?? '';
+        const prefixString = this.baseOptions?.prefix ?? '';
         const prefixWithoutSuffixForwardSlash = prefixString.endsWith('/') ? prefixString.slice(0, -1) : prefixString;
 
         // Add prefix if it doesn't start with a forward slash

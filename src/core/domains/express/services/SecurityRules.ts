@@ -21,7 +21,7 @@ class SecurityRules {
      * @returns The resource owner security rule
      */
     public static resourceOwner(primaryKey: string = 'userId'): ResourceOwnerRule {
-        return this.create<ResourceOwnerRule>(ResourceOwnerRule, { primaryKey })
+        return this.create(ResourceOwnerRule, { primaryKey })
     }
 
 }

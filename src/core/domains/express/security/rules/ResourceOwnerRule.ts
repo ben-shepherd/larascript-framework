@@ -1,7 +1,6 @@
 
 import AbstractSecurityRule from "../../abstract/AbstractSecurityRule";
 import HttpContext from "../../data/HttpContext";
-import { TRouteItem } from "../../interfaces/IRoute";
 
 type TResourceOwnerRuleOptions = {
     primaryKey: string;
@@ -9,7 +8,7 @@ type TResourceOwnerRuleOptions = {
 
 class ResourceOwnerRule extends AbstractSecurityRule<TResourceOwnerRuleOptions> {
 
-    async execute(context: HttpContext, routeItem: TRouteItem): Promise<boolean> {
+    async execute(context: HttpContext): Promise<boolean> {
         const user = context.getUser();
 
         if(!user) {

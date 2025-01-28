@@ -25,7 +25,7 @@ export type TPartialRouteItemOptions = Omit<TRouteItem, 'path' | 'method' | 'act
 
 export interface IRouter {
 
-    options: IRouteGroupOptions | null;
+    baseOptions: IRouteGroupOptions | null;
 
     getRegisteredRoutes(): TRouteItem[];
 
@@ -62,6 +62,7 @@ export type TRouteItem = {
     middlewares?: TExpressMiddlewareFnOrClass | TExpressMiddlewareFnOrClass[];
     controller?: ControllerConstructor;
     security?: ISecurityRule[];
+    scopes?: string[];
     resourceConstructor?: ModelConstructor<IModel>;
     resourceType?: TResourceType;
     showFilters?: object;

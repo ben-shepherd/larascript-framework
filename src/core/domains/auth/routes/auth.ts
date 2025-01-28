@@ -13,13 +13,23 @@ import Route from "../../express/routing/Route";
  */
 const authRouter = (config: IAuthConfig) => Route.group({
     prefix: '/auth',
-    middlewares: [AuthorizeMiddleware]
 }, (router) => {
+    
     router.post('/login', login)
+
     router.post('/create', create)
-    router.patch('/update', update)
-    router.get('/user', user)
-    router.post('/revoke', revoke)
+
+    router.patch('/update', update, {
+        middlewares: [AuthorizeMiddleware]
+    })
+
+    router.get('/user', user, {
+        middlewares: [AuthorizeMiddleware]
+    })
+
+    router.post('/revoke', revoke, {
+        middlewares: [AuthorizeMiddleware]
+    })
 })
 
 export default authRouter;

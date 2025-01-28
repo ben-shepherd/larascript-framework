@@ -13,7 +13,7 @@ import expressClient from 'express';
 import { IRoute, IRouter } from '../interfaces/IRoute';
 import SecurityMiddleware from '../middleware/SecurityMiddleware';
 import Route from '../routing/Route';
-import RouteService from './RouteService';
+import RouterBindService from './RouterBindService';
 
 /**
  * Short hand for `app('express')`
@@ -107,9 +107,9 @@ export default class ExpressService extends Service<IExpressConfig> implements I
             return
         }
 
-        const routeService = new RouteService(this.app)
-        routeService.setAdditionalMiddlewares([SecurityMiddleware])
-        routeService.bindRoutes(router)
+        const routerBindService = new RouterBindService(this.app)
+        routerBindService.setAdditionalMiddlewares([SecurityMiddleware])
+        routerBindService.bindRoutes(router)
     }
 
     /**

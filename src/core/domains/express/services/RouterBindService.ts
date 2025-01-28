@@ -15,7 +15,7 @@ type IRouteServiceOptions = {
     additionalMiddlewares?: TExpressMiddlewareFnOrClass[]
 }
 
-class RouteService {
+class RouterBindService {
      
     constructor(
         // eslint-disable-next-line no-unused-vars
@@ -37,10 +37,10 @@ class RouteService {
     /**
      * Binds all routes from the given router.
      * 
-     * @param route The router containing the routes to bind
+     * @param router The router containing the routes to bind
      */
-    public bindRoutes(route: IRouter): void {
-        route.getRegisteredRoutes().forEach(routeItem => {
+    public bindRoutes(router: IRouter): void {
+        router.getRegisteredRoutes().forEach(routeItem => {
             this.bindRoute(routeItem)
         })
     }
@@ -58,8 +58,8 @@ class RouteService {
 
         // Get middlewares
         const middlewares: TExpressMiddlewareFn[] = [
-            ...MiddlewareUtil.convertToExpressMiddlewares(routeItemMiddlewares),
-            ...MiddlewareUtil.convertToExpressMiddlewares(additionalMiddlewares)
+            ...MiddlewareUtil.convertToExpressMiddlewares(routeItemMiddlewares, routeItem),
+            ...MiddlewareUtil.convertToExpressMiddlewares(additionalMiddlewares, routeItem)
         ]
 
         // Get action
@@ -97,7 +97,11 @@ class RouteService {
             return this.getActionFromController(routeItem)
         }
 
-        return routeItem.action as TExpressMiddlewareFn
+        const executeFn: ExecuteFn = async (context: HttpContext) => {
+            await (routeItem.action as TExpressMiddlewareFn)(context.getRequest(), context.getResponse(), context.getNext())
+        }
+
+        return this.createExpressMiddlewareFn(executeFn, routeItem)
     }
 
     /**
@@ -155,11 +159,11 @@ class RouteService {
      * @returns An Express middleware function
      */
     protected createExpressMiddlewareFn(executeFn: ExecuteFn, routeItem: TRouteItem): TExpressMiddlewareFn {
-        return (req: expressClient.Request, res: expressClient.Response, next: expressClient.NextFunction | undefined) => {
-            executeFn(new HttpContext(req, res, next, routeItem))
+        return async (req: expressClient.Request, res: expressClient.Response, next: expressClient.NextFunction | undefined) => {
+            await executeFn(new HttpContext(req, res, next, routeItem))
         }
     }
 
 }
 
-export default RouteService;
+export default RouterBindService;

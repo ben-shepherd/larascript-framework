@@ -1,11 +1,10 @@
 import ForbiddenResourceError from '@src/core/domains/auth/exceptions/ForbiddenResourceError';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
 import AuthRequest from '@src/core/domains/auth/services/AuthRequest';
-import responseError from '@src/core/domains/express/requests/responseError';
-import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
-import { Response } from 'express';
 import Middleware from '@src/core/domains/express/base/Middleware';
 import HttpContext from '@src/core/domains/express/data/HttpContext';
+import responseError from '@src/core/domains/express/requests/responseError';
+import { ray } from 'node-ray';
 
 class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
 
@@ -19,10 +18,14 @@ class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
             await AuthRequest.attemptAuthorizeRequest(context.getRequest());
             
             // Validate the scopes if the authorization was successful
-            this.validateScopes(this.config.scopes, context.getRequest(), context.getResponse())
+            this.validateScopes(context)
             this.next();
+
+            ray('AuthorizeMiddleware executed')
         }
         catch (error) {
+            ray('AuthorizeMiddleware error', error)
+
             if(error instanceof UnauthorizedError) {
                 responseError(context.getRequest(), context.getResponse(), error, 401)
                 return;
@@ -47,13 +50,15 @@ class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
      * @param req The request object
      * @param res The response object
      */
-    // eslint-disable-next-line no-unused-vars
-    validateScopes(scopes: string[], req: BaseRequest, res: Response): void | null {
+     
+    validateScopes(context: HttpContext): void | null {
+        const scopes = context.getRouteItem()?.scopes ?? []
+
         if(scopes.length === 0) {
             return;
         }
 
-        const apiToken = req.apiToken;
+        const apiToken = context.getRequest().apiToken;
 
         if(!apiToken) {
             throw new UnauthorizedError();

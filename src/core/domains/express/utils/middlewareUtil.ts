@@ -1,5 +1,8 @@
+
 import Middleware from '../base/Middleware';
 import { MiddlewareConstructor, TExpressMiddlewareFn, TExpressMiddlewareFnOrClass } from '../interfaces/IMiddleware';
+import { TRouteItem } from '../interfaces/IRoute';
+
 
 class MiddlewareUtil {
 
@@ -9,7 +12,7 @@ class MiddlewareUtil {
      * @param routeItem The route item containing the middlewares
      * @returns An array of Express middleware functions
      */
-    static convertToExpressMiddlewares(fnAndClassMiddlewares: TExpressMiddlewareFnOrClass[]): TExpressMiddlewareFn[] {
+    static convertToExpressMiddlewares(fnAndClassMiddlewares: TExpressMiddlewareFnOrClass[], routeItem?: TRouteItem): TExpressMiddlewareFn[] {
 
         // A mix of middleware classes and middleware functions
         const middlewaresArray = (
@@ -21,7 +24,7 @@ class MiddlewareUtil {
         // Convert middleware classes to middleware functions
         return middlewaresArray.map(middleware => {
             if(middleware.prototype instanceof Middleware) {
-                return (middleware as MiddlewareConstructor).toExpressMiddleware()
+                return (middleware as MiddlewareConstructor).toExpressMiddleware(routeItem)
             }
 
             return middleware as TExpressMiddlewareFn

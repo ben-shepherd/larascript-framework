@@ -1,15 +1,10 @@
+import { IAppConfig } from '@src/config/app';
 import { EnvironmentTesting } from '@src/core/consts/Environment';
-import LoggerProvider from '@src/core/domains/logger/providers/LoggerProvider';
-import IAppConfig from '@src/core/interfaces/IAppConfig';
 
 require('dotenv').config();
 
 const testAppConfig: IAppConfig = {
-    environment: EnvironmentTesting,
-
-    providers: [
-        new LoggerProvider()
-    ]
+    env: EnvironmentTesting
 };
 
 export default testAppConfig;
