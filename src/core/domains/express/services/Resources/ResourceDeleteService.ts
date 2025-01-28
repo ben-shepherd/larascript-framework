@@ -1,12 +1,12 @@
 import Repository from "@src/core/base/Repository";
 import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
-import ModelNotFound from "@src/core/exceptions/ModelNotFound";
-import { ModelConstructor } from "@src/core/interfaces/IModel";
 import HttpContext from "@src/core/domains/express/data/HttpContext";
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
-import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResource";
+import { RouteResourceTypes } from "@src/core/domains/express/routing/RouterResource";
 import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
+import ModelNotFound from "@src/core/exceptions/ModelNotFound";
+import { ModelConstructor } from "@src/core/interfaces/IModel";
 
 
 class ResourceDeleteService extends BaseResourceService {
@@ -48,7 +48,7 @@ class ResourceDeleteService extends BaseResourceService {
         }
 
         // Check if the resource owner security applies to this route and it is valid
-        if(!this.validateResourceOwner(context)) {
+        if(!this.validateRequestHasResourceOwner(context)) {
             throw new ForbiddenResourceError()
         }
 

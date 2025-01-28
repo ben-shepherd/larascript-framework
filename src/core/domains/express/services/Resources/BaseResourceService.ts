@@ -6,6 +6,7 @@ import ResourceOwnerRule from "@src/core/domains/express/security/rules/Resource
 import { requestContext } from "@src/core/domains/express/services/RequestContext";
 import SecurityReader from "@src/core/domains/express/services/SecurityReader";
 import { SecurityIdentifiersLegacy } from "@src/core/domains/express/services/SecurityRulesLegacy";
+import { IModel } from "@src/core/interfaces/IModel";
 
 abstract class BaseResourceService {
 
@@ -35,7 +36,7 @@ abstract class BaseResourceService {
          * @param {IRouteResourceOptionsLegacy} options - The options object
          * @returns {boolean} - Whether the request is authorized and resource owner security is set
          */
-        validateResourceOwner(context: HttpContext): boolean {
+        validateRequestHasResourceOwner(context: HttpContext): boolean {
             const routeOptions = context.getRouteItem()
 
             if(!routeOptions) {
@@ -49,6 +50,41 @@ abstract class BaseResourceService {
             }
     
             return false;
+        }
+
+        /**
+         * Checks if the request is authorized to perform the action and if the resource owner security is set
+         * 
+         * @param {BaseRequest} req - The request object
+         * @param {IRouteResourceOptionsLegacy} options - The options object
+         * @returns {boolean} - Whether the request is authorized and resource owner security is set
+         */
+        validateResourceOwnerAccess(context: HttpContext, resource: IModel): boolean {
+            const routeOptions = context.getRouteItem()
+
+            if(!routeOptions) {
+                throw new ResourceException('Route options are required')
+            }
+
+            const resourceOwnerSecurity = this.getResourceOwnerSecurity(routeOptions);
+
+            if(!resourceOwnerSecurity) {
+                return false;
+            }
+
+            const resourceOwnerId = resource.getAttributeSync(resourceOwnerSecurity.getRuleOptions()?.attribute as string)
+
+            if(!resourceOwnerId) {
+                return false;
+            }
+
+            const requestUserId = requestContext().getByRequest<string>(context.getRequest(), 'userId');
+
+            if(!requestUserId) {
+                return false;
+            }
+
+            return resourceOwnerId === requestUserId;
         }
 
         /**
@@ -70,7 +106,13 @@ abstract class BaseResourceService {
          */
         getResourceOwnerModelAttribute(routeOptions: TRouteItem, defaultKey: string = 'userId'): string {
             const resourceOwnerSecurity = this.getResourceOwnerSecurity(routeOptions)
-            return resourceOwnerSecurity?.getRuleOptions()?.attribute as string ?? defaultKey;
+            const attribute = resourceOwnerSecurity?.getRuleOptions()?.attribute as string ?? defaultKey;
+
+            if(typeof attribute !== 'string') {
+                throw new ResourceException('Malformed resourceOwner security. Expected parameter \'attribute\' to be a string but received ' + typeof attribute);
+            }
+
+            return attribute;
         }
 
 }

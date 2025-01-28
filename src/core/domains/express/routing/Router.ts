@@ -1,6 +1,6 @@
 import { TExpressMiddlewareFnOrClass } from "@src/core/domains/express/interfaces/IMiddleware";
 import { IRouteGroupOptions, IRouter, TPartialRouteItemOptions, TRouteGroupFn, TRouteItem, TRouteResourceOptions } from "@src/core/domains/express/interfaces/IRoute";
-import ResourceRouter from "@src/core/domains/express/routing/RouteResource";
+import ResourceRouter from "@src/core/domains/express/routing/RouterResource";
 
 class Router implements IRouter {
 

@@ -1,18 +1,17 @@
 import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
+import HttpContext from "@src/core/domains/express/data/HttpContext";
+import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import { IPageOptions } from "@src/core/domains/express/interfaces/IResourceService";
-import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResource";
+import { TRouteItem } from "@src/core/domains/express/interfaces/IRoute";
+import { RouteResourceTypes } from "@src/core/domains/express/routing/RouterResource";
 import Paginate from "@src/core/domains/express/services/Paginate";
 import QueryFilters from "@src/core/domains/express/services/QueryFilters";
-import { requestContext } from "@src/core/domains/express/services/RequestContext";
+import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import stripGuardedResourceProperties from "@src/core/domains/express/utils/stripGuardedResourceProperties";
 import { IModelAttributes, ModelConstructor } from "@src/core/interfaces/IModel";
-import HttpContext from "@src/core/domains/express/data/HttpContext";
-import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
-import { TRouteItem } from "@src/core/domains/express/interfaces/IRoute";
-import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
 
 class ResourceIndexService extends BaseResourceService {
 
@@ -65,27 +64,22 @@ class ResourceIndexService extends BaseResourceService {
 
         // Check if the resource owner security applies to this route and it is valid
         // If it is valid, we add the owner's id to the filters
-        if(this.validateResourceOwner(context)) {
-            const propertyKey = this.getResourceOwnerModelAttribute(routeOptions, 'userId');
-            const userId = requestContext().getByRequest<string>(req, 'userId');
+        if(this.validateRequestHasResourceOwner(context)) {
+            const attribute = this.getResourceOwnerModelAttribute(routeOptions);
+            const userId = context.getRequest().user?.getId()
 
             if(!userId) { 
                 throw new ForbiddenResourceError()
             }
 
-            if(typeof propertyKey !== 'string') {
-                throw new Error('Malformed resourceOwner security. Expected parameter \'key\' to be a string but received ' + typeof propertyKey);
-            }
-
-            builder.where(propertyKey, '=', userId)
+            builder.where(attribute, '=', userId)
         }
 
         // Fetch the results
         const results  = (await builder.get()).toArray()
-        const resultsGuardedStripped = await stripGuardedResourceProperties(results)
 
         // Send the results
-        return resultsGuardedStripped
+        return await stripGuardedResourceProperties(results)
     }
 
 

@@ -1,16 +1,16 @@
 import Repository from "@src/core/base/Repository";
 import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
+import HttpContext from "@src/core/domains/express/data/HttpContext";
+import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
+import { IRouteResourceOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptionsLegacy";
+import { RouteResourceTypes } from "@src/core/domains/express/routing/RouterResource";
+import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import stripGuardedResourceProperties from "@src/core/domains/express/utils/stripGuardedResourceProperties";
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { IModelAttributes, ModelConstructor } from "@src/core/interfaces/IModel";
 import { Response } from "express";
-import HttpContext from "@src/core/domains/express/data/HttpContext";
-import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
-import { IRouteResourceOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptionsLegacy";
-import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResource";
-import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
 
 
 class ResourceUpdateService extends BaseResourceService {
@@ -52,15 +52,15 @@ class ResourceUpdateService extends BaseResourceService {
         }
 
         // Check if the resource owner security applies to this route and it is valid
-        if(!this.validateResourceOwner(context)) {
+        if(!this.validateRequestHasResourceOwner(context)) {
             throw new ForbiddenResourceError()
         }
 
         await result.fill(context.getRequest().body);
         await result.save();
-
+        
         // Send the results
-        return await stripGuardedResourceProperties(result)[0]
+        return (await stripGuardedResourceProperties(result))[0]
     }
         
 }

@@ -1,6 +1,6 @@
 import { IRoute, IRouteGroupOptions, IRouter, TRouteGroupFn, TRouteResourceOptions } from "@src/core/domains/express/interfaces/IRoute";
 import Router from "@src/core/domains/express/routing/Router";
-import ResourceRouter from "@src/core/domains/express/routing/RouteResource";
+import ResourceRouter from "@src/core/domains/express/routing/RouterResource";
 
 class Route implements IRoute {
 
