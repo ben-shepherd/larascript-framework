@@ -3,6 +3,8 @@ import AbstractSecurityRule from "@src/core/domains/express/abstract/AbstractSec
 import { TSecurityRuleConstructor } from "@src/core/domains/express/interfaces/ISecurity";
 import ResourceOwnerRule from "@src/core/domains/express/security/rules/ResourceOwnerRule";
 
+import HasRoleRule from "../security/rules/HasRoleRule";
+
 class SecurityRules {
 
     /**
@@ -24,6 +26,18 @@ class SecurityRules {
     public static resourceOwner(attribute: string = 'userId'): ResourceOwnerRule {
         return this.create(ResourceOwnerRule, { 
             attribute: attribute
+        });
+    }
+
+    /**
+     * Creates a new has role security rule.
+     * 
+     * @param roles The roles to check
+     * @returns The has role security rule
+     */
+    public static hasRole(roles: string | string[]): HasRoleRule {
+        return this.create(HasRoleRule, {
+            roles: roles
         });
     }
 

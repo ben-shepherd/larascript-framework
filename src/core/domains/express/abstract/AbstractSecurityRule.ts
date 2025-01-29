@@ -37,7 +37,7 @@ abstract class AbstractSecurityRule<RuleOptions extends object = object> impleme
      * @returns The result of the security rule
      */
     // eslint-disable-next-line no-unused-vars
-    protected async execute(context: HttpContext, ...args: any[]): Promise<boolean> {
+    public async execute(context: HttpContext, ...args: any[]): Promise<boolean> {
         return true;
     }
 

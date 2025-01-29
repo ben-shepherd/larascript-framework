@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-vars */
+import { IRouteLegacy } from '@src/core/domains/express/interfaces/IRouteLegacy';
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { NextFunction, Request, Response } from 'express';
-import { IRouteLegacy } from '@src/core/domains/express/interfaces/IRouteLegacy';
+
+import HttpContext from '../data/HttpContext';
 
 export type TSecurityRuleOptions<RuleOptions extends object = object> = {
     id: string;
@@ -22,6 +24,7 @@ export interface ISecurityRule<RuleOptions extends object = object> {
     getWhen(): string[] | null
     getNever(): string[] | null
     getAlso(): string | null
+    execute(context: HttpContext, ...args: any[]): Promise<boolean>
 }
 
 /**
