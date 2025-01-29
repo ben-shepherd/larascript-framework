@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
-import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { ControllerConstructor } from "@src/core/domains/express/interfaces/IController";
 import { TExpressMiddlewareFnOrClass } from "@src/core/domains/express/interfaces/IMiddleware";
 import { SearchOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptionsLegacy";
 import { ISecurityRule } from "@src/core/domains/express/interfaces/ISecurity";
+import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
 export type RouteConstructor = {
     new (...args: any[]): IRouter;
@@ -62,8 +62,15 @@ export type TRouteItem = {
     controller?: ControllerConstructor;
     security?: ISecurityRule[];
     scopes?: string[];
-    resourceConstructor?: ModelConstructor<IModel>;
-    resourceType?: TResourceType;
+    resource?: {
+        type: TResourceType
+        modelConstructor: ModelConstructor<IModel>;
+        filters?: {
+            show?: object;
+            all?: object;
+        },
+        
+    },
     showFilters?: object;
     allFilters?: object;
     paginate?: {

@@ -6,7 +6,7 @@ import ResourceOwnerRule from "@src/core/domains/express/security/rules/Resource
 import { requestContext } from "@src/core/domains/express/services/RequestContext";
 import SecurityReader from "@src/core/domains/express/services/SecurityReader";
 import { SecurityIdentifiersLegacy } from "@src/core/domains/express/services/SecurityRulesLegacy";
-import { IModel } from "@src/core/interfaces/IModel";
+import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
 /**
  * BaseResourceService is an abstract base class for handling CRUD operations on resources.
@@ -37,11 +37,22 @@ abstract class BaseResourceService {
         // eslint-disable-next-line no-unused-vars
         abstract handler(context: HttpContext): Promise<unknown>;
 
+        getModelConstructor(context: HttpContext): ModelConstructor {
+            const routeOptions = context.getRouteItem()
+
+            if(!routeOptions) {
+                throw new ResourceException('Route options are required')
+            }
+
+            return routeOptions.resource?.modelConstructor as ModelConstructor
+        }
+
         /**
          * Checks if the request is authorized to perform the action
          * 
          * @param {BaseRequest} req - The request object
          * @param {IRouteResourceOptionsLegacy} options - The options object
+
          * @returns {boolean} - Whether the request is authorized
          */
         validateAuthorized(context: HttpContext): boolean {

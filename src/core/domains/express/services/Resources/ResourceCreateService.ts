@@ -5,7 +5,7 @@ import ResourceException from "@src/core/domains/express/exceptions/ResourceExce
 import { RouteResourceTypes } from "@src/core/domains/express/routing/RouterResource";
 import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
 import stripGuardedResourceProperties from "@src/core/domains/express/utils/stripGuardedResourceProperties";
-import { IModelAttributes, ModelConstructor } from "@src/core/interfaces/IModel";
+import { IModelAttributes } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 
 class ResourceCreateService extends BaseResourceService {
@@ -39,8 +39,9 @@ class ResourceCreateService extends BaseResourceService {
         }
         
         // Build the page options, filters
-        const modelConstructor = routeOptions.resourceConstructor as ModelConstructor
+        const modelConstructor = this.getModelConstructor(context)
         const model = modelConstructor.create()
+
 
         // Fill the model instance with the request body
         model.fill(req.body)

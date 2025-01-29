@@ -5,7 +5,6 @@ import HttpContext from "@src/core/domains/express/data/HttpContext";
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import { RouteResourceTypes } from "@src/core/domains/express/routing/RouterResource";
 import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
-import { ModelConstructor } from "@src/core/interfaces/IModel";
 
 
 class ResourceDeleteService extends BaseResourceService {
@@ -36,7 +35,7 @@ class ResourceDeleteService extends BaseResourceService {
             throw new ResourceException('Route options are required')
         }
 
-        const modelConstructor = routeOptions.resourceConstructor as ModelConstructor
+        const modelConstructor = this.getModelConstructor(context)
 
         const builder = queryBuilder(modelConstructor)
             .where(modelConstructor.getPrimaryKey(), context.getRequest().params?.id)

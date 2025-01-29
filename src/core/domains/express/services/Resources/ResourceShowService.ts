@@ -6,7 +6,7 @@ import ResourceException from "@src/core/domains/express/exceptions/ResourceExce
 import { RouteResourceTypes } from "@src/core/domains/express/routing/RouterResource";
 import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
 import stripGuardedResourceProperties from "@src/core/domains/express/utils/stripGuardedResourceProperties";
-import { IModelAttributes, ModelConstructor } from "@src/core/interfaces/IModel";
+import { IModelAttributes } from "@src/core/interfaces/IModel";
 
 
 class ResourceShowService extends BaseResourceService {
@@ -38,7 +38,7 @@ class ResourceShowService extends BaseResourceService {
             throw new ResourceException('Route options are required')
         }
 
-        const modelConstructor = context.getRouteItem()?.resourceConstructor as ModelConstructor
+        const modelConstructor = this.getModelConstructor(context)
         
         // Query builder
         const builder = queryBuilder(modelConstructor) 

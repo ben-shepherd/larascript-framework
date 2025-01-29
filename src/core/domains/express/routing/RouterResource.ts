@@ -50,7 +50,7 @@ class ResourceRouter {
     public static resource({ prefix, resource, ...rest }: TRouteResourceOptions, router: Router = new Router()): Router {
 
         const routeItemOptions: TPartialRouteItemOptions = {
-            resourceConstructor: resource,
+            prefix,
             ...rest,
         }
 
@@ -62,23 +62,40 @@ class ResourceRouter {
             
             router.get('/', 'index', {
                 ...routeItemOptions,
-                resourceType: RouteResourceTypes.INDEX,
+                resource: {
+                    type: RouteResourceTypes.INDEX,
+                    modelConstructor: resource,
+                }
             });
             router.get('/:id', 'show', {
                 ...routeItemOptions,
-                resourceType: RouteResourceTypes.SHOW,
+                resource: {
+                    type: RouteResourceTypes.SHOW,
+                    modelConstructor: resource,
+                }
             });
+
             router.post('/', 'create', {
                 ...routeItemOptions,
-                resourceType: RouteResourceTypes.CREATE,
+                resource: {
+                    type: RouteResourceTypes.CREATE,
+                    modelConstructor: resource,
+                }
             });
+
             router.put('/:id', 'update', {
                 ...routeItemOptions,
-                resourceType: RouteResourceTypes.UPDATE,
+                resource: {
+                    type: RouteResourceTypes.UPDATE,
+                    modelConstructor: resource,
+                }
             });
             router.delete('/:id', 'delete', {
                 ...routeItemOptions,
-                resourceType: RouteResourceTypes.DELETE,
+                resource: {
+                    type: RouteResourceTypes.DELETE,
+                    modelConstructor: resource,
+                }
             });
         })
 

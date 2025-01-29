@@ -11,7 +11,7 @@ import QueryFilters from "@src/core/domains/express/services/QueryFilters";
 import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import stripGuardedResourceProperties from "@src/core/domains/express/utils/stripGuardedResourceProperties";
-import { IModelAttributes, ModelConstructor } from "@src/core/interfaces/IModel";
+import { IModelAttributes } from "@src/core/interfaces/IModel";
 
 class ResourceIndexService extends BaseResourceService {
 
@@ -49,8 +49,9 @@ class ResourceIndexService extends BaseResourceService {
         const filters = this.buildBaseAndRequestFilters(req, routeOptions);
 
         // Create a query builder
-        const builder = queryBuilder(routeOptions.resourceConstructor as ModelConstructor);
+        const builder = queryBuilder(this.getModelConstructor(context));
                 
+
         // Apply the filters
         if(Object.keys(filters).length > 0) {
             builder.where(filters, 'like')
