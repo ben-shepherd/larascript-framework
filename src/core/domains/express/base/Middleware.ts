@@ -1,9 +1,11 @@
 import HttpContext from "@src/core/domains/express/data/HttpContext";
 import { IExpressable } from "@src/core/domains/express/interfaces/IExpressable";
 import { IMiddleware, MiddlewareConstructor, TExpressMiddlewareFn } from "@src/core/domains/express/interfaces/IMiddleware";
+import { TRouteItem } from "@src/core/domains/express/interfaces/IRoute";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { NextFunction, Response } from "express";
-import { TRouteItem } from "@src/core/domains/express/interfaces/IRoute";
+
+import responseError from "../requests/responseError";
 
 /**
  * Abstract base class that transforms Express middleware into a class-based format.
@@ -101,9 +103,14 @@ abstract class Middleware<Config extends unknown = unknown> implements IMiddlewa
      */
     public toExpressable(routeItem?: TRouteItem): TExpressMiddlewareFn {
         return async (req: BaseRequest, res: Response, next: NextFunction | undefined) => {
-            const context = new HttpContext(req, res, next, routeItem)
-            this.setContext(context)
-            await this.execute(context)
+            try {
+                const context = new HttpContext(req, res, next, routeItem)
+                this.setContext(context)
+                await this.execute(context)
+            }
+            catch(err) {
+                responseError(req, res, err as Error)
+            }
         }
     }
 

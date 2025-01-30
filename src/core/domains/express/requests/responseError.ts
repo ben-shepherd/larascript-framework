@@ -17,7 +17,7 @@ export default (req: Request , res: Response, err: Error, code: number = 500) =>
         return;
     }
 
-    App.container('logger').error(err)
+    App.container('logger').error(err, err.stack)
     
     // Format the stack trace by splitting it into an array of lines
     const stackLines = err.stack ? err.stack.split('\n').map(line => line.trim()) : [];
