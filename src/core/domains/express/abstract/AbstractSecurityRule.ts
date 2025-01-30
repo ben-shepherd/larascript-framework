@@ -7,7 +7,7 @@ abstract class AbstractSecurityRule<RuleOptions extends object = object> impleme
     /**
      * The ID of the security rule.
      */
-    protected abstract id: string;
+    protected abstract readonly id: string;
 
     /**
      * The conditions under which the security rule should be applied.

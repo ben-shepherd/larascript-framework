@@ -2,6 +2,8 @@
 import { IdGeneratorFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import IHasObserver from "@src/core/domains/observer/interfaces/IHasObserver";
 
+import { Scope } from "../domains/auth/interfaces/IScope";
+
 export type GetAttributesOptions = {excludeGuarded: boolean}
 
 export type ModelConstructor<M extends IModel = IModel> = {
@@ -10,7 +12,7 @@ export type ModelConstructor<M extends IModel = IModel> = {
     getTable(): string;
     getPrimaryKey(): string;
     getConnectionName(): string;
-    getScopes(): string[];
+    getScopes(scopes: Scope[], additionalScopes?: string[]): string[];
 }
 
 export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>

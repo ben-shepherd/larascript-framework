@@ -47,7 +47,7 @@ class ResourceRouter {
     /**
      * Add resource routes to the router.
      */
-    public static resource({ prefix, resource, ...rest }: TRouteResourceOptions, router: Router = new Router()): Router {
+    public static resource({ prefix, resource, scopes: additionalScopes = [], ...rest }: TRouteResourceOptions, router: Router = new Router()): Router {
 
         const routeItemOptions: TPartialRouteItemOptions = {
             prefix,
@@ -65,6 +65,7 @@ class ResourceRouter {
                 resource: {
                     type: RouteResourceTypes.INDEX,
                     modelConstructor: resource,
+                    scopes: resource.getScopes(['read'], additionalScopes)
                 }
             });
             router.get('/:id', 'show', {
@@ -72,6 +73,7 @@ class ResourceRouter {
                 resource: {
                     type: RouteResourceTypes.SHOW,
                     modelConstructor: resource,
+                    scopes: resource.getScopes(['read'], additionalScopes)
                 }
             });
 
@@ -80,6 +82,7 @@ class ResourceRouter {
                 resource: {
                     type: RouteResourceTypes.CREATE,
                     modelConstructor: resource,
+                    scopes: resource.getScopes(['create'], additionalScopes)
                 }
             });
 
@@ -88,13 +91,16 @@ class ResourceRouter {
                 resource: {
                     type: RouteResourceTypes.UPDATE,
                     modelConstructor: resource,
+                    scopes: resource.getScopes(['write'], additionalScopes)
                 }
             });
+
             router.delete('/:id', 'delete', {
                 ...routeItemOptions,
                 resource: {
                     type: RouteResourceTypes.DELETE,
                     modelConstructor: resource,
+                    scopes: resource.getScopes(['delete'], additionalScopes)
                 }
             });
         })

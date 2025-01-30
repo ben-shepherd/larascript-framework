@@ -10,7 +10,7 @@ type THasRoleRuleOptions = {
 
 class HasRoleRule extends AbstractSecurityRule<THasRoleRuleOptions> {
 
-    protected id = SecurityEnum.HAS_ROLE;
+    protected readonly id = SecurityEnum.HAS_ROLE;
 
     async execute(context: HttpContext): Promise<boolean> {
         const user = context.getUser();

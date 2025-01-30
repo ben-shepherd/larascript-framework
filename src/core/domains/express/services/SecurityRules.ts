@@ -4,6 +4,8 @@ import { TSecurityRuleConstructor } from "@src/core/domains/express/interfaces/I
 import ResourceOwnerRule from "@src/core/domains/express/security/rules/ResourceOwnerRule";
 
 import HasRoleRule from "../security/rules/HasRoleRule";
+import ResourceScopeRule from "../security/rules/ResourceScopeRule";
+import ScopeRule from "../security/rules/ScopeRule";
 
 class SecurityRules {
 
@@ -39,6 +41,28 @@ class SecurityRules {
         return this.create(HasRoleRule, {
             roles: roles
         });
+    }
+
+    /**
+     * Creates a new enable scopes security rule.
+     * 
+     * @param scopes The scopes to check
+     * @returns The enable scopes security rule
+     */
+    public static scopes(scopes: string | string[], exactMatch: boolean = true): ScopeRule {
+        return this.create(ScopeRule, {
+            scopes: scopes,
+            exactMatch: exactMatch
+        });
+    }
+
+    /**
+     * Creates a new resource scopes security rule.
+     * 
+     * @returns The resource scopes security rule
+     */
+    public static resourceScopes(): ResourceScopeRule {
+        return this.create(ResourceScopeRule);
     }
 
 }

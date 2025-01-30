@@ -69,7 +69,7 @@ export type TRouteItem = {
             show?: object;
             all?: object;
         },
-        
+        scopes?: string[];
     },
     showFilters?: object;
     allFilters?: object;
@@ -85,4 +85,5 @@ export type TRouteResourceOptions = {
     resource: ModelConstructor<IModel>;
     security?: ISecurityRule[];
     middlewares?: TExpressMiddlewareFnOrClass | TExpressMiddlewareFnOrClass[];
+    scopes?: string[];
 }

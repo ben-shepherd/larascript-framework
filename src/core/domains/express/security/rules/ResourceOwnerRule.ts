@@ -1,9 +1,9 @@
 
-import { IModel } from "@src/core/interfaces/IModel";
 import AbstractSecurityRule from "@src/core/domains/express/abstract/AbstractSecurityRule";
 import HttpContext from "@src/core/domains/express/data/HttpContext";
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import { SecurityIdentifiersLegacy } from "@src/core/domains/express/services/SecurityRulesLegacy";
+import { IModel } from "@src/core/interfaces/IModel";
 
 type TResourceOwnerRuleOptions = {
     attribute: string;
@@ -11,7 +11,7 @@ type TResourceOwnerRuleOptions = {
 
 class ResourceOwnerRule extends AbstractSecurityRule<TResourceOwnerRuleOptions> {
 
-    protected id = SecurityIdentifiersLegacy.RESOURCE_OWNER;
+    protected readonly id = SecurityIdentifiersLegacy.RESOURCE_OWNER;
 
     async execute(context: HttpContext, resource: IModel): Promise<boolean> {
         const user = context.getUser();

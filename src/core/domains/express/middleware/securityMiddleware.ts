@@ -39,12 +39,12 @@ class SecurityMiddleware extends Middleware {
             return;
         }
         
-        // /**
-        //  * Check if the authorized user passes the has scope security
-        //  */
-        // if (applyHasScopeSecurity(req, res) === null) {
-        //     return;
-        // }
+        /**
+         * Check if the authorized user passes the has scope security
+         */
+        if (await this.applyHasScopeSecurity(context) === null) {
+            return;
+        }
                 
         this.next();
     }
@@ -79,6 +79,27 @@ class SecurityMiddleware extends Middleware {
             return null;
         }
     
+    }
+
+    /**
+     * Applies the has scope security
+     * @param context The HttpContext
+     * @returns void | null
+     */
+    protected async applyHasScopeSecurity(context: HttpContext): Promise<void | null> {
+        const routeOptions = context.getRouteItem()
+
+        if(!routeOptions) {
+            throw new SecurityException('Route options not found');
+        }   
+
+        // Check if the hasScope security has been defined and validate
+        const securityScopes = SecurityReader.find(routeOptions, SecurityEnum.ENABLE_SCOPES);
+ 
+        if (securityScopes && !(await securityScopes.execute(context))) {
+            responseError(context.getRequest(), context.getResponse(), new ForbiddenResourceError(), 403)
+            return null;
+        }
     }
 
 }
