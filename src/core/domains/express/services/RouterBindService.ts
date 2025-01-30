@@ -15,13 +15,27 @@ type IRouteServiceOptions = {
 }
 
 class RouterBindService {
-     
-    constructor(
-        // eslint-disable-next-line no-unused-vars
-        private app: expressClient.Express,
-        // eslint-disable-next-line no-unused-vars
-        private options: IRouteServiceOptions = {}
-    ) {
+
+    private app!: expressClient.Express;
+
+    private options: IRouteServiceOptions = {}
+    
+    /**
+     * Sets the Express instance to be used.
+     * 
+     * @param app The Express instance to set
+     */
+    public setExpress(app: expressClient.Express): void {
+        this.app = app
+    }
+
+    /**
+     * Sets the options to be used.
+     * 
+     * @param options The options to set
+     */
+    public setOptions(options: IRouteServiceOptions): void {
+        this.options = options
     }
 
     /**

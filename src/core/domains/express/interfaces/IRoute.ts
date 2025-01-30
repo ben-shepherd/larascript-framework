@@ -91,3 +91,10 @@ export type TRouteResourceOptions = {
     middlewares?: TExpressMiddlewareFnOrClass | TExpressMiddlewareFnOrClass[];
     scopes?: string[];
 }
+
+
+export interface IPageOptions {
+    page: number;
+    pageSize?: number;
+    skip?: number;
+}

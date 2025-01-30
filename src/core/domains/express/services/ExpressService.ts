@@ -3,8 +3,7 @@ import Middleware from '@src/core/domains/express/base/Middleware';
 import IExpressConfig from '@src/core/domains/express/interfaces/IExpressConfig';
 import IExpressService from '@src/core/domains/express/interfaces/IExpressService';
 import { MiddlewareConstructor, TExpressMiddlewareFn } from '@src/core/domains/express/interfaces/IMiddleware';
-import { IRoute, IRouter } from '@src/core/domains/express/interfaces/IRoute';
-import { IRouteLegacy } from '@src/core/domains/express/interfaces/IRouteLegacy';
+import { IRoute, IRouter, TRouteItem } from '@src/core/domains/express/interfaces/IRoute';
 import EndRequestContextMiddleware from '@src/core/domains/express/middleware/deprecated/EndRequestContextMiddleware';
 import RequestIdMiddlewareTest from '@src/core/domains/express/middleware/deprecated/RequestIdMiddleware';
 import SecurityMiddleware from '@src/core/domains/express/middleware/SecurityMiddleware';
@@ -30,7 +29,9 @@ export default class ExpressService extends Service<IExpressConfig> implements I
 
     private readonly app: expressClient.Express
 
-    private readonly registedRoutes: IRouteLegacy[] = [];
+    private routerBindService!: RouterBindService;
+
+    protected registeredRoutes: TRouteItem[] = []
 
     /**
      * Config defined in @src/config/http/express.ts
@@ -38,6 +39,7 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      */
     constructor(config: IExpressConfig | null = null) {
         super(config)
+        this.routerBindService = new RouterBindService()
         this.app = expressClient()
     }
 
@@ -46,6 +48,13 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      */
     public route(): IRoute {
         return new Route();
+    }
+
+    /**
+     * Returns the registered routes.
+     */
+    public getRegisteredRoutes(): TRouteItem[] {
+        return this.registeredRoutes
     }
 
     /**
@@ -106,143 +115,37 @@ export default class ExpressService extends Service<IExpressConfig> implements I
             return
         }
 
-        const routerBindService = new RouterBindService(this.app)
-        routerBindService.setAdditionalMiddlewares([SecurityMiddleware])
-        routerBindService.bindRoutes(router)
+        this.routerBindService.setExpress(this.app)
+        this.routerBindService.setOptions({ additionalMiddlewares: [SecurityMiddleware] })
+        this.routerBindService.bindRoutes(router)
+        this.registeredRoutes.push(...router.getRegisteredRoutes())
     }
 
-    /**
-     * Binds multiple routes to the Express instance.
-     * @param routes 
-     */
-    public bindRoutesLegacy(routes: IRouteLegacy[]): void {
-        routes.forEach(route => {
-            this.bindSingleRouteLegacy(route)
-        })
-    }
+    // /**
+    //  * Adds validator middleware to the route.
+    //  * @param route 
+    //  * @returns middlewares with added validator middleware
+    //  * @deprecated This will be reworked
+    //  */
+    // public addValidatorMiddleware(route: IRouteLegacy): TExpressMiddlewareFn[] {
+    //     return []
+    //     // const middlewares: TExpressMiddlewareFn[] = [];
 
-    /**
-     * Binds a single route to the Express instance.
-     * @param route 
-     */
-    public bindSingleRouteLegacy(route: IRouteLegacy): void {
-        const userDefinedMiddlewares = route.middlewares ?? [];
+    //     // /**
+    //     //  * Add validator middleware
+    //     //  */
+    //     // if (route?.validator) {
+    //     //     const validatorMiddleware = validate().middleware()
+    //     //     const validator = route.validator
+    //     //     const validateBeforeAction = route?.validateBeforeAction ?? true
 
-        // Add security and validator middlewares
-        const middlewaresFnsAndConstructors: (MiddlewareConstructor | TExpressMiddlewareFn)[] = [
-            ...userDefinedMiddlewares,
-            ...this.addValidatorMiddleware(route),
-            // ...this.addSecurityMiddleware(route),
-        ];
+    //     //     middlewares.push(
+    //     //         validatorMiddleware({ validatorConstructor: validator, validateBeforeAction })
+    //     //     );
+    //     // }
 
-        // Convert middlewares to TExpressMiddlewareFn
-        const middlewares: TExpressMiddlewareFn[] = middlewaresFnsAndConstructors.map(middleware => {
-            if(middleware.prototype instanceof Middleware) {
-                return (middleware as MiddlewareConstructor).toExpressMiddleware()
-            }
-            return middleware as TExpressMiddlewareFn
-        })
-
-        // Add route handlers
-        const handlers = [...middlewares, route?.action]
-
-        // Log route
-        this.logRoute(route)
-
-        // Bind route
-        switch (route.method) {
-        case 'get':
-            this.app.get(route.path, handlers);
-            break;
-        case 'post':
-            this.app.post(route.path, handlers);
-            break;
-        case 'patch':
-            this.app.patch(route.path, handlers);
-            break;
-        case 'put':
-            this.app.put(route.path, handlers);
-            break;
-        case 'delete':
-            this.app.delete(route.path, handlers);
-            break;
-        default:
-            throw new Error(`Unsupported method ${route.method} for path ${route.path}`);
-        }
-
-        this.registedRoutes.push(route)
-    }
-
-    /**
-     * Adds validator middleware to the route.
-     * @param route 
-     * @returns middlewares with added validator middleware
-     * @deprecated This will be reworked
-     */
-    public addValidatorMiddleware(route: IRouteLegacy): TExpressMiddlewareFn[] {
-        return []
-        // const middlewares: TExpressMiddlewareFn[] = [];
-
-        // /**
-        //  * Add validator middleware
-        //  */
-        // if (route?.validator) {
-        //     const validatorMiddleware = validate().middleware()
-        //     const validator = route.validator
-        //     const validateBeforeAction = route?.validateBeforeAction ?? true
-
-        //     middlewares.push(
-        //         validatorMiddleware({ validatorConstructor: validator, validateBeforeAction })
-        //     );
-        // }
-
-        // return middlewares;
-    }
-
-    /**
-     * Adds security middleware to the route. If the route has enableScopes
-     * and scopes is present, it adds the HAS_SCOPE security rule to the route.
-     * Then it adds the security middleware to the route's middleware array.
-     * @param route The route to add the middleware to
-     * @returns The route's middleware array with the security middleware added
-     */
-    public addSecurityMiddleware(): TExpressMiddlewareFn[] {
-        return [SecurityMiddleware.toExpressMiddleware()]
-        // const middlewares: TExpressMiddlewareFn[] = [];
-
-        // /**
-        //  * Enabling Scopes Security
-        //   * - If enableScopes has not been defined in the route, check if it has been defined in the security rules
-        //  *  - If yes, set enableScopes to true
-        //  */
-        // const hasEnableScopesSecurity = route.security?.find(security => security.id === SecurityIdentifiers.ENABLE_SCOPES);
-        // const enableScopes = route.enableScopes ?? typeof hasEnableScopesSecurity !== 'undefined';
-
-        // if (enableScopes) {
-        //     route.enableScopes = true
-        // }
-
-        // /**
-        //  * Check if scopes is present, add related security rule
-        //  */
-        // if (route?.enableScopes && (route?.scopes?.length || route?.scopesPartial?.length)) {
-        //     route.security = [
-        //         ...(route.security ?? []),
-        //         SecurityRules[SecurityIdentifiers.HAS_SCOPE](route.scopes, route.scopesPartial)
-        //     ]
-        // }
-
-        // /**
-        //  * Add security middleware
-        //  */
-        // if (route?.security) {
-        //     middlewares.push(
-        //         securityMiddleware({ route })
-        //     )
-        // }
-
-        // return middlewares;
-    }
+    //     // return middlewares;
+    // }
 
     /**
      * Returns the Express instance.
@@ -257,56 +160,6 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      */
     public isEnabled(): boolean {
         return this.config?.enabled ?? false
-    }
-
-    /**
-     * Returns all registered routes.
-     * @returns array of IRoute
-     */
-    public getRoutes(): IRouteLegacy[] {
-        return this.registedRoutes
-    }
-
-    /**
-     * Logs a route binding to the console.
-     * @param route - IRoute instance
-     */
-    private logRoute(route: IRouteLegacy): void {
-        const indent = '  ';
-        let str = `[Express] binding route (LEGACY) ${route.method.toUpperCase()}: '${route.path}' as '${route.name}'`;
-
-        if (route.scopes?.length || route.scopesPartial?.length) {
-            str += `\r\n${indent}SECURITY:`;
-
-            if (route.scopes?.length) {
-                str += indent + `with exact scopes: [${(route.scopes ?? []).join(', ')}]`
-            }
-
-            if (route.scopesPartial?.length) {
-                str += indent + `with partial scopes: [${route.scopesPartial.join(', ')}]`
-            }
-
-            if (route?.enableScopes) {
-                str += indent + '(scopes enabled)'
-            }
-            else {
-                str += indent + '(scopes disabled)'
-            }
-        }
-
-        for(const security of (route?.security ?? [])) {
-            str += `\r\n${indent}SECURITY:${indent}${security.id}`
-
-            if(Array.isArray(security.when)) {
-                str += indent + `with when: [${security.when.join(', ')}]`
-            }
-
-            if(Array.isArray(security.never)) {
-                str += indent + `with never: [${security.never.join(', ')}]`
-            }
-        }
-
-        logger().info(str)
     }
 
 }

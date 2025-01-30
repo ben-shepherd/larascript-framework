@@ -20,16 +20,14 @@ export default class RouteListCommand extends BaseCommand {
         this.input.writeLine('--- Available Routes ---');
         this.input.writeLine();
 
-        expressService.getRoutes().forEach(route => {
+        expressService.getRegisteredRoutes().forEach(route => {
             if (showDetails) {
                 this.input.writeLine(`Path: ${route.path}`);
                 this.input.writeLine(`  Name: ${route.name}`);
                 this.input.writeLine(`  Method: ${route.method}`);
-                this.input.writeLine(`  Action: ${route.action.name}`);
-                this.input.writeLine(`  Middleware: [${route.middlewares?.map(m => m.name).join(', ') ?? ''}]`);
-                this.input.writeLine(`  Validators: [${route.validator?.name ?? ''}]`);
+                this.input.writeLine(`  Action: ${route.action}`);
                 this.input.writeLine(`  Scopes: [${route.scopes?.join(', ') ?? ''}]`);
-                this.input.writeLine(`  Security: [${route.security?.map(s => s.id).join(', ')}]`);
+                this.input.writeLine(`  Security: [${route.security?.map(s => s.getId()).join(', ')}]`);
                 this.input.writeLine();
                 return;
             }
