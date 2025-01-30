@@ -5,6 +5,8 @@ import { SearchOptionsLegacy } from "@src/core/domains/express/interfaces/IRoute
 import { ISecurityRule } from "@src/core/domains/express/interfaces/ISecurity";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
+import SecurityRules from "../services/SecurityRules";
+
 export type RouteConstructor = {
     new (...args: any[]): IRouter;
     group(options: IRouteGroupOptions | TRouteGroupFn, routesFn?: TRouteGroupFn): IRouter;
@@ -43,6 +45,8 @@ export interface IRouter {
     group(options: IRouteGroupOptions | TRouteGroupFn, routesFn?: TRouteGroupFn): IRouter;
 
     resource(options: TRouteResourceOptions): IRouter;
+
+    security(): typeof SecurityRules;
 }
 
 export interface IRoute {

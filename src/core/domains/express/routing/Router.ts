@@ -2,6 +2,8 @@ import { TExpressMiddlewareFnOrClass } from "@src/core/domains/express/interface
 import { IRouteGroupOptions, IRouter, TPartialRouteItemOptions, TRouteGroupFn, TRouteItem, TRouteResourceOptions } from "@src/core/domains/express/interfaces/IRoute";
 import ResourceRouter from "@src/core/domains/express/routing/RouterResource";
 
+import SecurityRules from "../services/SecurityRules";
+
 /**
  * Router handles registration and organization of Express routes
  * 
@@ -107,6 +109,13 @@ class Router implements IRouter {
      */
     public resource(options: TRouteResourceOptions): IRouter {
         return ResourceRouter.resource(options, this);
+    }
+
+    /**
+     * Get the security rules.
+     */
+    public security(): typeof SecurityRules {
+        return SecurityRules;
     }
        
     /**

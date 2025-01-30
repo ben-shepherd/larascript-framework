@@ -2,6 +2,7 @@ import Middleware from "@src/core/domains/express/base/Middleware";
 import HttpContext from "@src/core/domains/express/data/HttpContext";
 
 import ForbiddenResourceError from "../../auth/exceptions/ForbiddenResourceError";
+import RateLimitedExceededError from "../../auth/exceptions/RateLimitedExceededError";
 import { SecurityEnum } from "../enums/SecurityEnum";
 import SecurityException from "../exceptions/SecurityException";
 import responseError from "../requests/responseError";
@@ -17,20 +18,12 @@ class SecurityMiddleware extends Middleware {
          */
         this.bindSecurityToRequest(context);
 
-        // /**
-        //  * Check if the rate limit has been exceeded
-        //  */
-        // if(await applyRateLimitSecurity(req, res) === null) {
-        //     return;
-        // }
-        
-        // /**
-        //  * Authorizes the user
-        //  * Depending on option 'throwExceptionOnUnauthorized', can allow continue processing on failed auth
-        //  */
-        // if (await applyAuthorizeSecurity(route, req, res) === null) {
-        //     return;
-        // }
+        /**
+         * Check if the rate limit has been exceeded
+         */
+        if(await this.applyRateLimitSecurity(context) === null) {
+            return;
+        }
         
         /**
          * Check if the authorized user passes the has role security
@@ -98,6 +91,28 @@ class SecurityMiddleware extends Middleware {
  
         if (securityScopes && !(await securityScopes.execute(context))) {
             responseError(context.getRequest(), context.getResponse(), new ForbiddenResourceError(), 403)
+            return null;
+        }
+    }
+
+    /**
+     * Applies the rate limit security
+     * @param context The HttpContext
+     * @returns void | null
+     */
+    protected async applyRateLimitSecurity(context: HttpContext): Promise<void | null> {
+
+        const routeOptions = context.getRouteItem()
+
+        if(!routeOptions) {
+            throw new SecurityException('Route options not found');
+        }
+    
+        // Find the rate limited security
+        const securityRateLimit = SecurityReader.find(routeOptions, SecurityEnum.RATE_LIMITED);
+    
+        if (securityRateLimit && !(await securityRateLimit.execute(context))) {
+            responseError(context.getRequest(), context.getResponse(), new RateLimitedExceededError(), 429)
             return null;
         }
     }

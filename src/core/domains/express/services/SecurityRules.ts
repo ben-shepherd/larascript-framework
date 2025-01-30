@@ -4,6 +4,7 @@ import { TSecurityRuleConstructor } from "@src/core/domains/express/interfaces/I
 import ResourceOwnerRule from "@src/core/domains/express/security/rules/ResourceOwnerRule";
 
 import HasRoleRule from "../security/rules/HasRoleRule";
+import RateLimitedRule from "../security/rules/RateLimitedRule";
 import ResourceScopeRule from "../security/rules/ResourceScopeRule";
 import ScopeRule from "../security/rules/ScopeRule";
 
@@ -15,7 +16,7 @@ class SecurityRules {
      * @param options The options for the security rule
      * @returns The security rule
      */
-    public static create<Rule extends AbstractSecurityRule = AbstractSecurityRule>(ruleConstructor: TSecurityRuleConstructor<Rule>, options?: Rule['options']): Rule {
+    protected static create<Rule extends AbstractSecurityRule = AbstractSecurityRule>(ruleConstructor: TSecurityRuleConstructor<Rule>, options?: Rule['options']): Rule {
         return new ruleConstructor().setRuleOptions(options ?? {}) as Rule;
     }
 
@@ -63,6 +64,20 @@ class SecurityRules {
      */
     public static resourceScopes(): ResourceScopeRule {
         return this.create(ResourceScopeRule);
+    }
+
+    /**
+     * Creates a new rate limited security rule.
+     * 
+     * @param limit The limit of requests per minute
+     * @param perMinuteAmount The amount of minutes to check
+     * @returns The rate limited security rule
+     */
+    public static rateLimited(limit: number, perMinuteAmount: number): RateLimitedRule {
+        return this.create(RateLimitedRule, {
+            limit: limit,
+            perMinuteAmount: perMinuteAmount
+        });
     }
 
 }
