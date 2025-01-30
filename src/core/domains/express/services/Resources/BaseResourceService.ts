@@ -5,8 +5,9 @@ import { TRouteItem } from "@src/core/domains/express/interfaces/IRoute";
 import ResourceOwnerRule from "@src/core/domains/express/security/rules/ResourceOwnerRule";
 import { requestContext } from "@src/core/domains/express/services/RequestContext";
 import SecurityReader from "@src/core/domains/express/services/SecurityReader";
-import { SecurityIdentifiersLegacy } from "@src/core/domains/express/services/SecurityRulesLegacy";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
+
+import { SecurityEnum } from "../../enums/SecurityEnum";
 
 /**
  * BaseResourceService is an abstract base class for handling CRUD operations on resources.
@@ -124,7 +125,7 @@ abstract class BaseResourceService {
          * @returns {IIdentifiableSecurityCallback | undefined} - The found resource owner security or undefined if not found
          */
         getResourceOwnerRule(routeOptions: TRouteItem): ResourceOwnerRule | undefined {
-            const id = SecurityIdentifiersLegacy.RESOURCE_OWNER;
+            const id = SecurityEnum.RESOURCE_OWNER;
             const when = [this.routeResourceType];
             return SecurityReader.find<ResourceOwnerRule>(routeOptions, id, when);
         }

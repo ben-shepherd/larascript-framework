@@ -1,6 +1,13 @@
+
+/**
+ * The default condition for when the security check should be executed.
+ */
+export const ALWAYS = 'always';
+
+/**
+ * The security rule identifiers.
+ */
 export const SecurityEnum = {
-    AUTHORIZED: 'authorized',
-    AUTHORIZED_THROW_EXCEPTION: 'authorizedThrowException',
     RESOURCE_OWNER: 'resourceOwner',
     HAS_ROLE: 'hasRole',
     HAS_SCOPE: 'hasScope',

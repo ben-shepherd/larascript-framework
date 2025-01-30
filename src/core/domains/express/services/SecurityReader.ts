@@ -1,7 +1,7 @@
+import { ALWAYS } from "@src/core/domains/express/enums/SecurityEnum";
+import { TRouteItem } from "@src/core/domains/express/interfaces/IRoute";
 import { ISecurityRule } from "@src/core/domains/express/interfaces/ISecurity";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
-import { TRouteItem } from "@src/core/domains/express/interfaces/IRoute";
-import { ALWAYS } from "@src/core/domains/express/services/SecurityLegacy";
 
 class SecurityReader {
 

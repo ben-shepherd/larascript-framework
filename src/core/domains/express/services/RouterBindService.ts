@@ -40,15 +40,6 @@ class RouterBindService {
      */
     public bindRoutes(router: IRouter): void {
         router.getRegisteredRoutes().forEach(routeItem => {
-            console.log('[RouterBindService] binding route', routeItem.path, {
-                options: routeItem,
-                security: routeItem.security?.map(s => {
-                    return {
-                        id: s.getId(),
-                        options: JSON.stringify(s.getRuleOptions())
-                    }
-                })
-            })
             this.bindRoute(routeItem)
         })
     }
