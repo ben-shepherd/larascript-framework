@@ -1,13 +1,7 @@
 import health from '@src/core/actions/health';
-import { IRouteLegacy } from '@src/core/domains/express/interfaces/IRouteLegacy';
 
-const healthRoutes: IRouteLegacy[] = [
-    {
-        name: 'health',
-        method: 'get',
-        path: '/health',
-        action: health
-    }
-]
+import Route from '../routing/Route';
 
-export default healthRoutes;
+export default Route.group(router => {
+    router.get('/health', health)
+})

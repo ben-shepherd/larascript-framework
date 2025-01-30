@@ -3,16 +3,16 @@ import Middleware from '@src/core/domains/express/base/Middleware';
 import IExpressConfig from '@src/core/domains/express/interfaces/IExpressConfig';
 import IExpressService from '@src/core/domains/express/interfaces/IExpressService';
 import { MiddlewareConstructor, TExpressMiddlewareFn } from '@src/core/domains/express/interfaces/IMiddleware';
+import { IRoute, IRouter } from '@src/core/domains/express/interfaces/IRoute';
 import { IRouteLegacy } from '@src/core/domains/express/interfaces/IRouteLegacy';
 import EndRequestContextMiddleware from '@src/core/domains/express/middleware/deprecated/EndRequestContextMiddleware';
 import RequestIdMiddlewareTest from '@src/core/domains/express/middleware/deprecated/RequestIdMiddleware';
-import { logger } from '@src/core/domains/logger/services/LoggerService';
-import { app } from '@src/core/services/App';
-import expressClient from 'express';
-import { IRoute, IRouter } from '@src/core/domains/express/interfaces/IRoute';
 import SecurityMiddleware from '@src/core/domains/express/middleware/SecurityMiddleware';
 import Route from '@src/core/domains/express/routing/Route';
 import RouterBindService from '@src/core/domains/express/services/RouterBindService';
+import { logger } from '@src/core/domains/logger/services/LoggerService';
+import { app } from '@src/core/services/App';
+import expressClient from 'express';
 
 /**
  * Short hand for `app('express')`
