@@ -91,10 +91,7 @@ export type TRouteResourceOptions = {
     security?: ISecurityRule[];
     middlewares?: TExpressMiddlewareFnOrClass | TExpressMiddlewareFnOrClass[];
     scopes?: string[];
-    filters?: {
-        show?: object;
-        index?: object;
-    }
+    filters?: object;
     searching?: {
         fields?: string[];
     }
