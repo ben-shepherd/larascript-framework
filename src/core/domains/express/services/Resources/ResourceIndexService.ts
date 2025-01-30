@@ -103,7 +103,7 @@ class ResourceIndexService extends BaseResourceService {
         const req = context.getRequest()
         const options = context.getRouteItem() as TRouteItem
 
-        const baseFilters = options?.resource?.filters?.index ?? {};
+        const baseFilters = options?.resource?.filters?.[this.routeResourceType] ?? {};
 
         // Build the filters with percent signs
         // Example: { title: 'foo' } becomes { title: '%foo%' }

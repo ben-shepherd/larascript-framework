@@ -74,7 +74,7 @@ class ResourceRouter {
                     type: RouteResourceTypes.INDEX,
                     modelConstructor: resource,
                     scopes: resource.getScopes(['read'], additionalScopes),
-                    filters: filters?.index ?? {},
+                    filters: filters ?? {},
                     searching: searching ?? {}
                 }
             });
@@ -84,7 +84,7 @@ class ResourceRouter {
                     type: RouteResourceTypes.SHOW,
                     modelConstructor: resource,
                     scopes: resource.getScopes(['read'], additionalScopes),
-                    filters: filters?.show ?? {},
+                    filters: filters ?? {},
                     searching: searching ?? {}
                 }
             });
