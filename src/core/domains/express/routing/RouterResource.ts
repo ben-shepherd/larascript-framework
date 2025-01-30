@@ -30,7 +30,15 @@ export const RouteResourceTypes = {
  *   prefix: '/blogs',
  *   resource: BlogModel,
  *   middlewares: [AuthMiddleware],
- *   security: [SecurityRules.resourceOwner('user_id')]
+ *   security: [SecurityRules.resourceOwner('user_id')],
+ *   filters: {
+ *       index: {
+ *           title: 'Example'
+ *       },
+ *       show: {
+ *           title: 'Example'
+ *       }
+ *   }
  * })
  * ```
  * 
@@ -47,7 +55,7 @@ class ResourceRouter {
     /**
      * Add resource routes to the router.
      */
-    public static resource({ prefix, resource, scopes: additionalScopes = [], ...rest }: TRouteResourceOptions, router: Router = new Router()): Router {
+    public static resource({ prefix, resource, scopes: additionalScopes = [], filters, searching, ...rest }: TRouteResourceOptions, router: Router = new Router()): Router {
 
         const routeItemOptions: TPartialRouteItemOptions = {
             prefix,
@@ -65,7 +73,9 @@ class ResourceRouter {
                 resource: {
                     type: RouteResourceTypes.INDEX,
                     modelConstructor: resource,
-                    scopes: resource.getScopes(['read'], additionalScopes)
+                    scopes: resource.getScopes(['read'], additionalScopes),
+                    filters: filters?.index ?? {},
+                    searching: searching ?? {}
                 }
             });
             router.get('/:id', 'show', {
@@ -73,7 +83,9 @@ class ResourceRouter {
                 resource: {
                     type: RouteResourceTypes.SHOW,
                     modelConstructor: resource,
-                    scopes: resource.getScopes(['read'], additionalScopes)
+                    scopes: resource.getScopes(['read'], additionalScopes),
+                    filters: filters?.show ?? {},
+                    searching: searching ?? {}
                 }
             });
 
@@ -82,7 +94,8 @@ class ResourceRouter {
                 resource: {
                     type: RouteResourceTypes.CREATE,
                     modelConstructor: resource,
-                    scopes: resource.getScopes(['create'], additionalScopes)
+                    scopes: resource.getScopes(['create'], additionalScopes),
+                    searching: searching ?? {}
                 }
             });
 
@@ -91,7 +104,8 @@ class ResourceRouter {
                 resource: {
                     type: RouteResourceTypes.UPDATE,
                     modelConstructor: resource,
-                    scopes: resource.getScopes(['write'], additionalScopes)
+                    scopes: resource.getScopes(['write'], additionalScopes),
+                    searching: searching ?? {}
                 }
             });
 
@@ -100,7 +114,8 @@ class ResourceRouter {
                 resource: {
                     type: RouteResourceTypes.DELETE,
                     modelConstructor: resource,
-                    scopes: resource.getScopes(['delete'], additionalScopes)
+                    scopes: resource.getScopes(['delete'], additionalScopes),
+                    searching: searching ?? {}
                 }
             });
         })

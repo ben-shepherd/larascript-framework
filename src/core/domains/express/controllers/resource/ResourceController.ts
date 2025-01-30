@@ -8,6 +8,7 @@ import ResourceShowService from "@src/core/domains/express/services/Resources/Re
 import ResourceUpdateService from "@src/core/domains/express/services/Resources/ResourceUpdateService";
 
 import HttpContext from "../../data/HttpContext";
+import { TRouteItem } from "../../interfaces/IRoute";
 import responseError from "../../requests/responseError";
 import BaseResourceService from "../../services/Resources/BaseResourceService";
 
@@ -92,6 +93,27 @@ class ResourceController  extends Controller {
      */
     protected async handler(context: HttpContext, service: BaseResourceService) {
         try {
+            const routeItem = context.getRouteItem() as TRouteItem
+
+            console.log('[Express] resource handler', {
+                path: routeItem.path,
+                method: routeItem.method,
+                resource: service.routeResourceType,
+                details: {
+                    security: routeItem.security?.map(security => {
+                        return {
+                            id: security.getId(),
+                            options: JSON.stringify(security.getRuleOptions())
+                        }
+                    }),
+                    filters: {
+                        show: routeItem.resource?.filters?.show ?? {},
+                        index: routeItem.resource?.filters?.index ?? {}
+                    },
+                    searching: JSON.stringify(routeItem.resource?.searching ?? {})
+                }
+            })
+
             const result = await service.handler(context)
             this.jsonResponse(result as object)
         }

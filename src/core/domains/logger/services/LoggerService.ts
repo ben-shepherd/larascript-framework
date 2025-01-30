@@ -56,6 +56,14 @@ class LoggerService implements ILoggerService {
     }
 
     /**
+     * Logs an exception to the console with the 'error' log level.
+     * @param {Error} err The exception to log.
+     */
+    exception(err: Error) {
+        this.error(err.message, err.stack)
+    }
+
+    /**
      * Logs the given arguments to the console with the 'error' log level.
      * @param {...any[]} args The arguments to log to the console.
      */

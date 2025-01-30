@@ -8,7 +8,6 @@ export type ResourceType = 'all' | 'create' | 'update' | 'show' | 'destroy';
 
 export type SearchOptionsLegacy = {
     fields: string[];
-    useFuzzySearch?: boolean; // Only applies to MongoDB provider
 }
 
 export interface IRouteResourceOptionsLegacy extends Pick<IRouteLegacy, 'middlewares'> {

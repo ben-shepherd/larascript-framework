@@ -46,7 +46,7 @@ class ResourceIndexService extends BaseResourceService {
         
         // Build the page options, filters
         const pageOptions = this.buildPageOptions(req, routeOptions);
-        const filters = this.buildBaseAndRequestFilters(req, routeOptions);
+        const filters = this.getQueryFilters(context);
 
         // Create a query builder
         const builder = queryBuilder(this.getModelConstructor(context));
@@ -85,19 +85,53 @@ class ResourceIndexService extends BaseResourceService {
 
 
     /**
-     * Builds the filters object
+     * Builds the filters object by combining base filters defined in route options with
+     * request filters from the query string. 
+     * 
+     * The base filters are defined in the route's
+     * resource.filters.index configuration, while request filters come from the 'filters'
+     * query parameter. 
+     * 
+     * The combined filters are processed to add SQL LIKE wildcards and
+     * stripped of any fields that don't exist on the resource model.
      * 
      * @param {BaseRequest} req - The request object
      * @param {TRouteItem} options - The options object
      * @returns {object} - The filters object
      */
-    buildBaseAndRequestFilters(req: BaseRequest, options: TRouteItem): object {
-        const baseFilters = options.allFilters ?? {};
+    getQueryFilters(context: HttpContext): object {
+        const req = context.getRequest()
+        const options = context.getRouteItem() as TRouteItem
 
-        return this.filtersWithPercentSigns({
+        const baseFilters = options?.resource?.filters?.index ?? {};
+
+        // Build the filters with percent signs
+        // Example: { title: 'foo' } becomes { title: '%foo%' }
+        const filters = this.filtersWithPercentSigns({
             ...baseFilters,
             ...(new QueryFilters).parseRequest(req, options?.searching).getFilters()
         })
+
+        // Strip the non-resource fields from the filters
+        // Example: { title: 'foo', badProperty: '123' } becomes { title: 'foo' }
+        const filtersStrippedNonResourceFields = this.stripNonResourceFields(context, filters)
+        
+        return filtersStrippedNonResourceFields
+    }
+
+    /**
+     * Strips the non-resource fields from the filters
+     * 
+     * @param {object} filters - The filters object
+     * @returns {object} - The stripped filters object
+     */
+    stripNonResourceFields(context: HttpContext, filters: object): object {
+        const resourceFields = this.getModelConstructor(context).getFields()
+
+        return Object.keys(filters).filter(key => resourceFields.includes(key)).reduce((acc, key) => {
+            acc[key] = filters[key];
+            return acc;
+        }, {});
     }
 
     /**

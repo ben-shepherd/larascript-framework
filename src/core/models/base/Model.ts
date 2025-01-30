@@ -234,6 +234,16 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     }
 
     /**
+     * Retrieves the fields defined on the model.
+     * The fields are the list of fields that are allowed to be set on the model.
+     * This is used for mass assignment.
+     * @returns The list of fields defined on the model.
+     */
+    static getFields(): string[] {
+        return this.create().getFields()
+    }
+
+    /**
      * Sets the observer for this model instance.
      * The observer is responsible for handling events broadcasted by the model.
      * @param {IObserver} observer - The observer to set.

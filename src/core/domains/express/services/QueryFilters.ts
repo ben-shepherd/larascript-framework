@@ -1,8 +1,8 @@
 import Singleton from "@src/core/base/Singleton";
 import QueryFiltersException from "@src/core/domains/express/exceptions/QueryFiltersException";
+import { SearchOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptionsLegacy";
 import { logger } from "@src/core/domains/logger/services/LoggerService";
 import { Request } from "express";
-import { SearchOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptionsLegacy";
 
 class QueryFilters extends Singleton {
 
@@ -26,26 +26,25 @@ class QueryFilters extends Singleton {
             else if(typeof req.query.filters === 'object') {
                 decodedFilters = req.query?.filters ?? {};
             }
-            else {
-                throw new QueryFiltersException('Filters must be a string or an object')
-            }
             
-            let filters: object = {};
+            let filters: object = decodedFilters
 
-            fields.forEach((field: string) => {
-                if (field in decodedFilters) {
-                    filters = {
-                        ...filters,
-                        [field]: decodedFilters[field]
+            if(fields.length > 0) {
+                fields.forEach((field: string) => {
+                    if (field in decodedFilters) {
+                        filters = {
+                            ...filters,
+                            [field]: decodedFilters[field]
+                        }
                     }
-                }
-            })
+                })
+            }
             
             this.filters = filters
         }
          
         catch (err) { 
-            logger().error(err)
+            logger().exception(err as Error)
         }
 
         return this;

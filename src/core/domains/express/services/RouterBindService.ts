@@ -54,6 +54,10 @@ class RouterBindService {
      */
     public bindRoutes(router: IRouter): void {
         router.getRegisteredRoutes().forEach(routeItem => {
+            if(routeItem.path.startsWith('/blog')) {
+                console.log('[Express] binding route', routeItem)
+            }
+            
             this.bindRoute(routeItem)
         })
     }

@@ -13,6 +13,7 @@ export type ModelConstructor<M extends IModel = IModel> = {
     getPrimaryKey(): string;
     getConnectionName(): string;
     getScopes(scopes: Scope[], additionalScopes?: string[]): string[];
+    getFields(): string[];
 }
 
 export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>

@@ -71,12 +71,13 @@ export type TRouteItem = {
         modelConstructor: ModelConstructor<IModel>;
         filters?: {
             show?: object;
-            all?: object;
+            index?: object;
         },
         scopes?: string[];
+        searching?: {
+            fields?: string[];
+        }
     },
-    showFilters?: object;
-    allFilters?: object;
     paginate?: {
         pageSize: number;
         allowPageSizeOverride?: boolean;
@@ -90,6 +91,13 @@ export type TRouteResourceOptions = {
     security?: ISecurityRule[];
     middlewares?: TExpressMiddlewareFnOrClass | TExpressMiddlewareFnOrClass[];
     scopes?: string[];
+    filters?: {
+        show?: object;
+        index?: object;
+    }
+    searching?: {
+        fields?: string[];
+    }
 }
 
 
