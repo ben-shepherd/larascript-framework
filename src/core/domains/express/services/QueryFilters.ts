@@ -1,8 +1,11 @@
 import Singleton from "@src/core/base/Singleton";
 import QueryFiltersException from "@src/core/domains/express/exceptions/QueryFiltersException";
-import { SearchOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptionsLegacy";
 import { logger } from "@src/core/domains/logger/services/LoggerService";
 import { Request } from "express";
+
+type Options = {
+    allowedFields?: string[]
+}
 
 class QueryFilters extends Singleton {
 
@@ -15,9 +18,9 @@ class QueryFilters extends Singleton {
      * @throws {QueryFiltersException} Throws an exception if the filters are not a string or an object
      * @returns {this} - The QueryFilters class itself to enable chaining
      */
-    parseRequest(req: Request, options: SearchOptionsLegacy = {} as SearchOptionsLegacy): this {
+    parseRequest(req: Request, options: Options = {}): this {
         try {
-            const { fields = [] } = options;
+            const { allowedFields: fields = [] } = options;
             let decodedFilters: object = {};
 
             if(typeof req.query?.filters === 'string') {
@@ -27,20 +30,7 @@ class QueryFilters extends Singleton {
                 decodedFilters = req.query?.filters ?? {};
             }
             
-            let filters: object = decodedFilters
-
-            if(fields.length > 0) {
-                fields.forEach((field: string) => {
-                    if (field in decodedFilters) {
-                        filters = {
-                            ...filters,
-                            [field]: decodedFilters[field]
-                        }
-                    }
-                })
-            }
-            
-            this.filters = filters
+            this.filters = this.stripNonAllowedFields(decodedFilters, fields)
         }
          
         catch (err) { 
@@ -49,7 +39,20 @@ class QueryFilters extends Singleton {
 
         return this;
     }
-
+    
+    /**
+     * Strips the non-allowed fields from the filters
+     * 
+     * @param {object} filters - The filters object
+     * @param {string[]} allowedFields - The allowed fields
+     * @returns {object} - The stripped filters object
+     */
+    protected stripNonAllowedFields(filters: object, allowedFields: string[]): object {
+        return Object.keys(filters).filter(key => allowedFields.includes(key)).reduce((acc, key) => {
+            acc[key] = filters[key];
+            return acc;
+        }, {});
+    }
 
     /**
      * Returns the parsed filters from the request query string.
