@@ -9,7 +9,9 @@ import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
 import HasMany from '@src/core/domains/eloquent/relational/HasMany';
 import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
 import { IObserver, IObserverEvent } from '@src/core/domains/observer/interfaces/IObserver';
+import FactoryException from '@src/core/exceptions/FactoryException';
 import { ICtor } from '@src/core/interfaces/ICtor';
+import IFactory, { FactoryConstructor } from '@src/core/interfaces/IFactory';
 import { GetAttributesOptions, IModel, IModelAttributes, ModelConstructor } from "@src/core/interfaces/IModel";
 import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
 import { app } from '@src/core/services/App';
@@ -110,9 +112,15 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * Key is the property name, value is the name of the custom observation method.
      */
     public observeProperties: Record<string, string> = {};
+
+    /**
+     * The factory instance for the model.
+     */
+    public factory!: FactoryConstructor<Model<Attributes>>;
     
     /**
      * Constructs a new instance of the Model class.
+
      * 
      * @param {Attributes | null} data - Initial data to populate the model.
      */
@@ -244,7 +252,33 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     }
 
     /**
+     * Retrieves the factory instance for the model.
+     * @returns The factory instance for the model.
+     */
+    static make<Model extends IModel>(data?: Model['attributes']): Model {
+        const instance = this.create()
+        const factory = instance.getFactory()
+        return factory.make(data) as Model
+    }
+
+
+    /**
+     * Retrieves the factory instance for the model.
+     * @returns The factory instance for the model.
+     */
+    getFactory(): IFactory<Model<Attributes>> {
+        if(!this.factory) {
+            throw new FactoryException('Factory is not set for this model')
+        }
+
+
+        return new this.factory()
+    }
+
+
+    /**
      * Sets the observer for this model instance.
+
      * The observer is responsible for handling events broadcasted by the model.
      * @param {IObserver} observer - The observer to set.
      * @returns {void}

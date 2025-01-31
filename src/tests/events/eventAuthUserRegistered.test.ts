@@ -40,7 +40,7 @@ describe('mock queable event', () => {
         events().mockEvent(TestUserCreatedListener)
         events().mockEvent(TestUserCreatedSubscriber)
 
-        const testUser = new TestUserFactory().createWithData({
+        const testUser = new TestUserFactory().create({
             email: 'test@example.com',
             hashedPassword: 'password',
             roles: [],

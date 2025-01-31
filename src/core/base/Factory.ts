@@ -35,8 +35,27 @@ export default abstract class Factory<Model extends IModel = IModel> implements 
      * @param data The data to pass to the model constructor.
      * @returns A new instance of the model.
      */
-    createWithData<Data extends IModelAttributes = IModelAttributes>(data: Data | null = null): Model {
+    create<Data extends IModelAttributes = IModelAttributes>(data: Data | null = null): Model {
         return this.modelCtor.create(data);
+    }
+
+    /**
+     * Get the definition of the model.
+     * 
+     * @returns The definition of the model.
+     */
+    getDefinition(): Model['attributes'] {
+        return {} as Model['attributes']
+    }
+
+    /**
+     * Make a new instance of the model.
+     * 
+     * @param data The data to pass to the model constructor.
+     * @returns A new instance of the model.
+     */
+    make(data?: Model['attributes']): Model {
+        return this.create({...this.getDefinition(), ...data})
     }
 
 }

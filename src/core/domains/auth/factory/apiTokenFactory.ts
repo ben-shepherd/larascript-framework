@@ -21,7 +21,7 @@ class ApiTokenFactory extends Factory<IApiTokenModel> implements IApiTokenFactor
      * @returns {IApiTokenModel}
      */
     createFromUser(user: IUserModel, scopes: string[] = []): IApiTokenModel {
-        return this.createWithData({
+        return this.create({
             userId: user?.id,
             token: tokenFactory(),
             scopes: scopes,

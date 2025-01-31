@@ -3,6 +3,7 @@ import { IdGeneratorFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import IHasObserver from "@src/core/domains/observer/interfaces/IHasObserver";
 
 import { Scope } from "../domains/auth/interfaces/IScope";
+import IFactory, { FactoryConstructor } from "./IFactory";
 
 export type GetAttributesOptions = {excludeGuarded: boolean}
 
@@ -14,6 +15,7 @@ export type ModelConstructor<M extends IModel = IModel> = {
     getConnectionName(): string;
     getScopes(scopes: Scope[], additionalScopes?: string[]): string[];
     getFields(): string[];
+    make<M extends IModel>(data?: M['attributes']): M;
 }
 
 export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>
@@ -44,9 +46,12 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes> 
     attributes: Attributes | null;
     original: Attributes | null;
     relationships: string[];
+    factory: FactoryConstructor<IModel>;
+    getFactory(): IFactory<IModel>;
     setConnectionName(connectionName: string): void;
     getConnectionName(): string;
     getIdGeneratorFn(): IdGeneratorFn | undefined;
+
     attr<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Promise<Attributes[K] | null | undefined>;
     attrSync<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Attributes[K] | null | undefined;
     setAttribute(key: keyof Attributes, value?: unknown): Promise<void>;
