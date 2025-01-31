@@ -4,8 +4,8 @@ import IApiTokenRepository from "@src/core/domains/auth/interfaces/IApiTokenRepo
 import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import IUserRepository from "@src/core/domains/auth/interfaces/IUserRepository";
-import IService from "@src/core/interfaces/IService";
 import { IRouter } from "@src/core/domains/express/interfaces/IRoute";
+import IService from "@src/core/interfaces/IService";
 
 
 /**
@@ -102,7 +102,7 @@ export interface IAuthService extends IService {
      * @returns {IRoute[] | null} An array of routes, or null if auth routes are disabled
      * @memberof IAuthService
      */
-    getAuthRoutes(): IRouter | null;
+    getAuthRoutes(): IRouter;
 
     /**
      * Gets the user repository.

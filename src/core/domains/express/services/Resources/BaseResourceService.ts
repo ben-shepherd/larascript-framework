@@ -38,6 +38,12 @@ abstract class BaseResourceService {
         // eslint-disable-next-line no-unused-vars
         abstract handler(context: HttpContext): Promise<unknown>;
 
+        /**
+         * Gets the model constructor from the route options
+         * @param {HttpContext} context - The HTTP context
+         * @returns {ModelConstructor} - The model constructor
+         * @throws {ResourceException} - If the route options are not found
+         */
         getModelConstructor(context: HttpContext): ModelConstructor {
             const routeOptions = context.getRouteItem()
 
@@ -107,7 +113,7 @@ abstract class BaseResourceService {
             const resourceOwnerId = resource.getAttributeSync(resourceOwnerSecurity.getRuleOptions()?.attribute as string)
 
             if(!resourceOwnerId) {
-                return false;
+                throw new ResourceException('An attribute is required to check resource owner security')
             }
 
             const requestUserId = requestContext().getByRequest<string>(context.getRequest(), 'userId');

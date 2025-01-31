@@ -14,9 +14,11 @@ import comparePassword from '@src/core/domains/auth/utils/comparePassword';
 import createJwt from '@src/core/domains/auth/utils/createJwt';
 import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
+import { IRouter } from '@src/core/domains/express/interfaces/IRoute';
 import { app } from '@src/core/services/App';
 import { JsonWebTokenError } from 'jsonwebtoken';
-import { IRouter } from '@src/core/domains/express/interfaces/IRoute';
+
+import Router from '../../express/routing/Router';
 
 
 /**
@@ -177,11 +179,11 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
     /**
      * Returns the auth routes
      * 
-     * @returns an array of IRoute objects, or null if auth routes are disabled
+     * @returns an array of IRoute objects, or a blank router if auth routes are disabled
      */
-    getAuthRoutes(): IRouter | null {
+    getAuthRoutes(): IRouter {
         if (!this.config.enableAuthRoutes) {
-            return null
+            return new Router()
         }
 
         const router = authRoutes(this.config);

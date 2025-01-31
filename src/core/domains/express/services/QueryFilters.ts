@@ -1,5 +1,4 @@
 import Singleton from "@src/core/base/Singleton";
-import QueryFiltersException from "@src/core/domains/express/exceptions/QueryFiltersException";
 import { logger } from "@src/core/domains/logger/services/LoggerService";
 import { Request } from "express";
 
@@ -7,6 +6,24 @@ type Options = {
     allowedFields?: string[]
 }
 
+/**
+ * QueryFilters is a singleton class that handles parsing and validating URL query string filters
+ * for Express.js applications. It processes the 'filters' parameter from request query strings,
+ * which can be either a URL-encoded JSON string or an object.
+ * 
+ * Key features:
+ * - Parses URL-encoded filter parameters from request queries
+ * - Supports both string (encoded JSON) and object filter formats
+ * - Validates filters against allowed fields
+ * - Provides a fluent interface through method chaining
+ * - Implements the Singleton pattern to ensure a single instance
+ * 
+ * Example usage:
+ * GET /api/users?filters={"status":"active","role":"admin"}
+ * 
+ * The class will decode and parse these filters, ensuring only allowed fields
+ * are included in the final filters object.
+ */
 class QueryFilters extends Singleton {
 
     protected filters: object | undefined = undefined
