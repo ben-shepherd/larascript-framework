@@ -45,8 +45,9 @@ class ResourceIndexService extends BaseResourceService {
         }
         
         // Build the page options, filters
-        const pageOptions = this.buildPageOptions(req, routeOptions);
+        const pageOptions = this.buildPageOptions(context);
         const filters = this.getQueryFilters(context);
+
 
         // Create a query builder
         const builder = queryBuilder(this.getModelConstructor(context));
@@ -161,11 +162,16 @@ class ResourceIndexService extends BaseResourceService {
      * @param {IRouteResourceOptionsLegacy} options - The options object
      * @returns {IPageOptions} - An object containing the page number, page size, and skip
      */
-    buildPageOptions(req: BaseRequest, options: TRouteItem): IPageOptions  {
-        const paginate = new Paginate().parseRequest(req, options.paginate);
+    buildPageOptions(context: HttpContext): IPageOptions  {
+        const req = context.getRequest()
+        const options = context.getRouteItem() as TRouteItem
+
+        const paginate = new Paginate().parseRequest(req, options.resource?.paginate);
         const page = paginate.getPage(1);
-        const pageSize =  paginate.getPageSize() ?? options?.paginate?.pageSize;
+        const pageSize =  paginate.getPageSize() ?? options?.resource?.paginate?.pageSize;
         const skip = pageSize ? (page - 1) * pageSize : undefined;
+
+
 
         return { skip, page, pageSize };
     }
