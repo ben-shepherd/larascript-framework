@@ -18,16 +18,7 @@ export default abstract class Factory<Model extends IModel = IModel> implements 
     /**
      * The constructor of the model to create.
      */
-    protected modelCtor: ModelConstructor<Model>;
-
-    /**
-     * Creates a new instance of the factory.
-     *
-     * @param modelCtor The constructor of the model to create.
-     */
-    constructor(modelCtor: ModelConstructor<Model>) {
-        this.modelCtor = modelCtor;
-    }
+    protected abstract model: ModelConstructor<Model>;
 
     /**
      * Creates a new instance of the model.
@@ -36,7 +27,7 @@ export default abstract class Factory<Model extends IModel = IModel> implements 
      * @returns A new instance of the model.
      */
     create<Data extends IModelAttributes = IModelAttributes>(data: Data | null = null): Model {
-        return this.modelCtor.create(data);
+        return this.model.create(data);
     }
 
     /**

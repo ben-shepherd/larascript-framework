@@ -1,5 +1,9 @@
 import User from '@src/app/models/auth/User';
+import { GROUPS, ROLES } from '@src/config/auth';
 import Factory from '@src/core/base/Factory';
+
+import IUserModel from '../interfaces/IUserModel';
+import hashPassword from '../utils/hashPassword';
 
 /**
  * Factory for creating User models.
@@ -9,13 +13,20 @@ import Factory from '@src/core/base/Factory';
  */
 export default class UserFactory extends Factory<User> {
 
-    /**
-     * Constructor
-     *
-     * @constructor
-     */
-    constructor() {
-        super(User)
+    protected model = User;
+
+    getDefinition(): IUserModel['attributes'] {
+        return {
+            email: this.faker.internet.email(),
+            password: this.faker.internet.password(),
+            hashedPassword: hashPassword(this.faker.internet.password()),
+            groups: [GROUPS.User],
+            roles: [ROLES.USER],
+
+            firstName: this.faker.person.firstName(),
+            lastName: this.faker.person.lastName(),
+        } as IUserModel['attributes']
     }
-    
+
 }
+

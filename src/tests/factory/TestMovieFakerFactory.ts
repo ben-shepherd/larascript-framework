@@ -3,11 +3,10 @@ import { TestMovieModel } from "@src/tests/models/models/TestMovie";
 
 class TestMovieFactory extends Factory<TestMovieModel> {
 
-    constructor() {
-        super(TestMovieModel)
-    }
+    protected model = TestMovieModel;
 
     getDefinition(): TestMovieModel['attributes'] {
+
         return {
             authorId: this.faker.number.int({ min: 1, max: 100 }).toString(),
             name: this.faker.person.fullName(),

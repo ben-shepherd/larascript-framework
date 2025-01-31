@@ -9,13 +9,6 @@ import TestUser from '@src/tests/models/models/TestUser';
  */
 export default class TestUserFactory extends Factory<TestUser> {
 
-    /**
-     * Constructor
-     *
-     * @constructor
-     */
-    constructor() {
-        super(TestUser)
-    }
-    
+    protected model = TestUser;
+
 }

@@ -1,18 +1,27 @@
+import ApiToken from '@src/app/models/auth/ApiToken'
 import Factory from '@src/core/base/Factory'
 import { IApiTokenFactory } from '@src/core/domains/auth/interfaces/IApiTokenFactory'
 import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel'
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel'
 import tokenFactory from '@src/core/domains/auth/utils/generateToken'
-import { ModelConstructor } from '@src/core/interfaces/IModel'
+import { generateUuidV4 } from '@src/core/util/uuid/generateUuidV4'
 
 /**
  * Factory for creating ApiToken models.
  */
 class ApiTokenFactory extends Factory<IApiTokenModel> implements IApiTokenFactory {
 
-    constructor(modelCtor: ModelConstructor<IApiTokenModel>) {
-        super(modelCtor)
+    protected model = ApiToken
+
+    getDefinition(): ApiToken['attributes'] {
+        return {
+            userId: this.faker.string.uuid(),
+            token: generateUuidV4(),
+            scopes: [],
+            revokedAt: null,
+        } as unknown as ApiToken['attributes']
     }
+
 
     /**
      * Creates a new ApiToken model from the User
