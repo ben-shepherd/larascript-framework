@@ -4,8 +4,7 @@ import { TExpressMiddlewareFnOrClass } from "@src/core/domains/express/interface
 import { SearchOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptionsLegacy";
 import { ISecurityRule } from "@src/core/domains/express/interfaces/ISecurity";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
-
-import SecurityRules from "../services/SecurityRules";
+import SecurityRules from "@src/core/domains/express/services/SecurityRules";
 
 export type RouteConstructor = {
     new (...args: any[]): IRouter;

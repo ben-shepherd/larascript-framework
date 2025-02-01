@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { IModel } from "./IModel";
+import { IModel } from "@src/core/interfaces/IModel";
 
 export type FactoryConstructor<Model extends IModel = IModel> = {
     new (...args: any[]): IFactory<Model>;

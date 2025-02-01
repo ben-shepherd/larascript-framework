@@ -1,8 +1,7 @@
 import { TExpressMiddlewareFnOrClass } from "@src/core/domains/express/interfaces/IMiddleware";
 import { IRouteGroupOptions, IRouter, TPartialRouteItemOptions, TRouteGroupFn, TRouteItem, TRouteResourceOptions } from "@src/core/domains/express/interfaces/IRoute";
 import ResourceRouter from "@src/core/domains/express/routing/RouterResource";
-
-import SecurityRules from "../services/SecurityRules";
+import SecurityRules from "@src/core/domains/express/services/SecurityRules";
 
 /**
  * Router handles registration and organization of Express routes

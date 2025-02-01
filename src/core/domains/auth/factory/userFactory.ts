@@ -1,9 +1,8 @@
 import User from '@src/app/models/auth/User';
 import { GROUPS, ROLES } from '@src/config/auth';
 import Factory from '@src/core/base/Factory';
-
-import IUserModel from '../interfaces/IUserModel';
-import hashPassword from '../utils/hashPassword';
+import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
+import hashPassword from '@src/core/domains/auth/utils/hashPassword';
 
 /**
  * Factory for creating User models.

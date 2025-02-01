@@ -9,7 +9,6 @@ import { RouteResourceTypes } from "@src/core/domains/express/routing/RouterReso
 import Paginate from "@src/core/domains/express/services/Paginate";
 import QueryFilters from "@src/core/domains/express/services/QueryFilters";
 import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
-import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import stripGuardedResourceProperties from "@src/core/domains/express/utils/stripGuardedResourceProperties";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
 
@@ -32,7 +31,6 @@ class ResourceIndexService extends BaseResourceService {
     async handler(context: HttpContext): Promise<IModelAttributes[]> {
 
         // Get the request, response and options
-        const req = context.getRequest()
         const routeOptions = context.getRouteItem()
 
         if(!routeOptions) {

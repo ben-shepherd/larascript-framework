@@ -6,8 +6,7 @@ import ResourceOwnerRule from "@src/core/domains/express/security/rules/Resource
 import { requestContext } from "@src/core/domains/express/services/RequestContext";
 import SecurityReader from "@src/core/domains/express/services/SecurityReader";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
-
-import { SecurityEnum } from "../../enums/SecurityEnum";
+import { SecurityEnum } from "@src/core/domains/express/enums/SecurityEnum";
 
 /**
  * BaseResourceService is an abstract base class for handling CRUD operations on resources.

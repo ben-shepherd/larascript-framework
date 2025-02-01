@@ -17,8 +17,7 @@ import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryB
 import { IRouter } from '@src/core/domains/express/interfaces/IRoute';
 import { app } from '@src/core/services/App';
 import { JsonWebTokenError } from 'jsonwebtoken';
-
-import Router from '../../express/routing/Router';
+import Router from '@src/core/domains/express/routing/Router';
 
 
 /**

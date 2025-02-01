@@ -3,8 +3,7 @@ import AbstractSecurityRule from "@src/core/domains/express/abstract/AbstractSec
 import HttpContext from "@src/core/domains/express/data/HttpContext";
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import { IModel } from "@src/core/interfaces/IModel";
-
-import { SecurityEnum } from "../../enums/SecurityEnum";
+import { SecurityEnum } from "@src/core/domains/express/enums/SecurityEnum";
 
 type TResourceOwnerRuleOptions = {
     attribute: string;

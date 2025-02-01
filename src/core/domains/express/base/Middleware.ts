@@ -4,8 +4,7 @@ import { IMiddleware, MiddlewareConstructor, TExpressMiddlewareFn } from "@src/c
 import { TRouteItem } from "@src/core/domains/express/interfaces/IRoute";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import { NextFunction, Response } from "express";
-
-import responseError from "../requests/responseError";
+import responseError from "@src/core/domains/express/requests/responseError";
 
 /**
  * Abstract base class that transforms Express middleware into a class-based format.

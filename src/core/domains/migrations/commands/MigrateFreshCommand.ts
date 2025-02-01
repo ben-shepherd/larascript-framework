@@ -19,7 +19,10 @@ class MigrateFreshCommand extends BaseMigrationCommand {
      * Execute the command
      */
     async execute() {
-        if(!await this.confirm()) {
+        // Check if the user wants to run seeds
+        const confirmFlag: boolean = typeof this.getArguementByKey('confirm')?.value === 'string';
+
+        if(confirmFlag || !await this.confirm()) {
             return;
         }
 

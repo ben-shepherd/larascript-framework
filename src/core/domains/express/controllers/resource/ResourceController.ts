@@ -6,11 +6,10 @@ import ResourceDeleteService from "@src/core/domains/express/services/Resources/
 import ResourceIndexService from "@src/core/domains/express/services/Resources/ResourceIndexService";
 import ResourceShowService from "@src/core/domains/express/services/Resources/ResourceShowService";
 import ResourceUpdateService from "@src/core/domains/express/services/Resources/ResourceUpdateService";
-
-import HttpContext from "../../data/HttpContext";
-import { TRouteItem } from "../../interfaces/IRoute";
-import responseError from "../../requests/responseError";
-import BaseResourceService from "../../services/Resources/BaseResourceService";
+import HttpContext from "@src/core/domains/express/data/HttpContext";
+import { TRouteItem } from "@src/core/domains/express/interfaces/IRoute";
+import responseError from "@src/core/domains/express/requests/responseError";
+import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
 
 /**
  * ResourceController handles CRUD operations for resources (database models)

@@ -2,8 +2,7 @@
 import { IRouteLegacy } from '@src/core/domains/express/interfaces/IRouteLegacy';
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { NextFunction, Request, Response } from 'express';
-
-import HttpContext from '../data/HttpContext';
+import HttpContext from '@src/core/domains/express/data/HttpContext';
 
 export type TSecurityRuleOptions<RuleOptions extends object = object> = {
     id: string;

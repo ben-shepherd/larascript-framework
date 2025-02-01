@@ -1,8 +1,8 @@
 
-import AbstractSecurityRule from "../../abstract/AbstractSecurityRule";
-import HttpContext from "../../data/HttpContext";
-import { SecurityEnum } from "../../enums/SecurityEnum";
-import SecurityException from "../../exceptions/SecurityException";
+import AbstractSecurityRule from "@src/core/domains/express/abstract/AbstractSecurityRule";
+import HttpContext from "@src/core/domains/express/data/HttpContext";
+import { SecurityEnum } from "@src/core/domains/express/enums/SecurityEnum";
+import SecurityException from "@src/core/domains/express/exceptions/SecurityException";
 
 type THasRoleRuleOptions = {
     roles: string | string[];

@@ -1,7 +1,6 @@
 import { ALWAYS } from "@src/core/domains/express/enums/SecurityEnum";
 import { TRouteItem } from "@src/core/domains/express/interfaces/IRoute";
 import { ISecurityRule } from "@src/core/domains/express/interfaces/ISecurity";
-import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 
 class SecurityReader {
 
@@ -26,19 +25,6 @@ class SecurityReader {
      */
     public static findFromRouteResourceOptions(routeOptions: TRouteItem, id: string, when?: string[] | null): ISecurityRule | undefined {
         return this.find(routeOptions, id, when);
-    }
-
-    /**
-     * Finds a security callback from the security callbacks associated with the given request.
-     *
-     * @param req - The request object containing the security callbacks.
-     * @param id - The id of the security callback to find.
-     * @param when - The optional when condition. If specified, the security callback will only be found if it matches this condition.
-     * @returns The found security callback, or undefined if not found.
-     */
-    public static findFromRequest(req: BaseRequest, id: string, when?: string[] | null): ISecurityRule | undefined {
-        // return this.find(req, id, when);
-        return undefined;
     }
 
     /**

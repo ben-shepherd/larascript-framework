@@ -2,11 +2,10 @@
 import AbstractSecurityRule from "@src/core/domains/express/abstract/AbstractSecurityRule";
 import { TSecurityRuleConstructor } from "@src/core/domains/express/interfaces/ISecurity";
 import ResourceOwnerRule from "@src/core/domains/express/security/rules/ResourceOwnerRule";
-
-import HasRoleRule from "../security/rules/HasRoleRule";
-import RateLimitedRule from "../security/rules/RateLimitedRule";
-import ResourceScopeRule from "../security/rules/ResourceScopeRule";
-import ScopeRule from "../security/rules/ScopeRule";
+import HasRoleRule from "@src/core/domains/express/security/rules/HasRoleRule";
+import RateLimitedRule from "@src/core/domains/express/security/rules/RateLimitedRule";
+import ResourceScopeRule from "@src/core/domains/express/security/rules/ResourceScopeRule";
+import ScopeRule from "@src/core/domains/express/security/rules/ScopeRule";
 
 class SecurityRules {
 

@@ -10,6 +10,7 @@ import Route from "@src/core/domains/express/routing/Route";
 /**
  * todo: missing validator
  */
+// eslint-disable-next-line no-unused-vars
 const authRouter = (config: IAuthConfig) => Route.group({
     prefix: '/auth',
 }, (router) => {
