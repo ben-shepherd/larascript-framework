@@ -15,7 +15,7 @@ const USE_TEST_DB = false;
 
     if(USE_TEST_DB) {
         await testHelper.testBootApp();
-        await app('console').reader(['migrate:fresh', '--seed']).handle();
+        await app('console').reader(['migrate:fresh', '--seed', '--confirm']).handle();
     }
     else {
         await Kernel.boot({
