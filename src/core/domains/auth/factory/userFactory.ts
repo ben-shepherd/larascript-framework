@@ -1,5 +1,6 @@
 import User from '@src/app/models/auth/User';
 import Factory from '@src/core/base/Factory';
+import { IModel, IModelAttributes, ModelConstructor } from '@src/core/interfaces/IModel';
 
 /**
  * Factory for creating User models.
@@ -9,13 +10,6 @@ import Factory from '@src/core/base/Factory';
  */
 export default class UserFactory extends Factory<User> {
 
-    /**
-     * Constructor
-     *
-     * @constructor
-     */
-    constructor() {
-        super(User)
-    }
+    protected model: ModelConstructor<IModel<IModelAttributes>> = User;
     
 }

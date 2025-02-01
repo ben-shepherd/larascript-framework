@@ -2,14 +2,14 @@ import Middleware from "@src/core/domains/express/base/Middleware";
 import HttpContext from "@src/core/domains/express/data/HttpContext";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
 
-type Props = {
+type Options = {
     // eslint-disable-next-line no-unused-vars
     generator: (...args: any[]) => string;
     setHeader: boolean;
     headerName: string;
 }
 
-const defaultProps: Props = {
+const defaultOptions: Options = {
     generator: generateUuidV4,
     setHeader: true,
     headerName: 'X-Request-Id'
@@ -31,9 +31,9 @@ const defaultProps: Props = {
  * - Debugging by following a specific request's journey.
  */
 
-class RequestIdMiddleware extends Middleware<Props> {
+class RequestIdMiddleware extends Middleware<Options> {
 
-    constructor({ generator, setHeader, headerName }: Props = defaultProps) {
+    constructor({ generator, setHeader, headerName }: Options = defaultOptions) {
         super()
         this.setConfig({
             generator,

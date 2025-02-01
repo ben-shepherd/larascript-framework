@@ -28,6 +28,9 @@ class ModelScopes {
      *     ]
      */
     public static getScopes(model: ModelConstructor, scopes: Scope[] = ['all'], additionalScopes: string[] = []): string[] {
+        if(scopes?.[0] === 'all') {
+            scopes = ['read', 'write', 'delete', 'create'];
+        }
         return [...scopes.map((scope) => `${(model.name)}:${scope}`), ...additionalScopes];
     }
 

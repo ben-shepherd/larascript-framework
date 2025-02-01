@@ -1,14 +1,12 @@
 import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
-import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
-import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResource";
+import HttpContext from "@src/core/domains/express/data/HttpContext";
+import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
+import { RouteResourceTypes } from "@src/core/domains/express/routing/RouterResource";
 import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
-import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import stripGuardedResourceProperties from "@src/core/domains/express/utils/stripGuardedResourceProperties";
-import { Response } from "express";
-import { requestContext } from "@src/core/domains/express/services/RequestContext";
-
+import { IModelAttributes } from "@src/core/interfaces/IModel";
 
 
 class ResourceShowService extends BaseResourceService {
@@ -27,46 +25,38 @@ class ResourceShowService extends BaseResourceService {
      * @param res The response object
      * @param options The resource options
      */
-    async handler(req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void> {
+    async handler(context: HttpContext): Promise<IModelAttributes> {
 
         // Check if the authorization security applies to this route and it is valid
-        if(!this.validateAuthorization(req, options)) {
+        if(!this.validateAuthorized(context)) {
             throw new UnauthorizedError()
         }
 
-        // Query builder
-        const builder = queryBuilder(options.resource) 
-            .limit(1)
+        const routeOptions = context.getRouteItem()
 
-        // Check if the resource owner security applies to this route and it is valid
-        // If it is valid, we add the owner's id to the filters
-        if(this.validateResourceOwner(req, options)) {
-            const resourceOwnerSecurity = this.getResourceOwnerSecurity(options)
-            const propertyKey = resourceOwnerSecurity?.arguements?.key as string;
-            const userId = requestContext().getByRequest<string>(req, 'userId');
-            
-            if(!userId) {
-                throw new ForbiddenResourceError()
-            }
-
-            if(typeof propertyKey !== 'string') {
-                throw new Error('Malformed resourceOwner security. Expected parameter \'key\' to be a string but received ' + typeof propertyKey);
-            }
-
-            builder.where(propertyKey, '=', userId)
+        if(!routeOptions) {
+            throw new ResourceException('Route options are required')
         }
 
+        const modelConstructor = this.getModelConstructor(context)
+        
+        // Query builder
+        const builder = queryBuilder(modelConstructor) 
+            .limit(1)
+
         // Attach the id to the query
-        builder.where(options.resource.getPrimaryKey(), req.params?.id)
+        builder.where(modelConstructor.getPrimaryKey(), context.getRequest().params?.id)
 
         // Fetch the results
-        const resultAsModel = await builder.firstOrFail()
+        const result = await builder.firstOrFail()
 
-        // Strip the guarded properties
-        const resultGuardedStrip = (await stripGuardedResourceProperties(resultAsModel))[0]
+        // Check if the resource owner security applies to this route and it is valid
+        if(!this.validateResourceAccess(context, result)) {
+            throw new ForbiddenResourceError()
+        }
 
         // Send the results
-        res.send(resultGuardedStrip)
+        return (await stripGuardedResourceProperties(result))[0]
     }
       
 }

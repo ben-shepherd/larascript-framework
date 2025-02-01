@@ -1,17 +1,15 @@
-import Repository from "@src/core/base/Repository";
 import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
-import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
-import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResource";
+import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
+import HttpContext from "@src/core/domains/express/data/HttpContext";
+import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
+import { RouteResourceTypes } from "@src/core/domains/express/routing/RouterResource";
 import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
-import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
-import ModelNotFound from "@src/core/exceptions/ModelNotFound";
-import { Response } from "express";
 
 
 class ResourceDeleteService extends BaseResourceService {
 
-    routeResourceType: string = RouteResourceTypes.DESTROY
+    routeResourceType: string = RouteResourceTypes.DELETE
 
     /**
      * Handles the resource delete action
@@ -21,26 +19,32 @@ class ResourceDeleteService extends BaseResourceService {
      * - Sends the results back to the client
      * @param {BaseRequest} req - The request object
      * @param {Response} res - The response object
-     * @param {IRouteResourceOptions} options - The options object
+     * @param {IRouteResourceOptionsLegacy} options - The options object
      * @returns {Promise<void>}
      */
-    async handler(req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void> {
+    async handler(context: HttpContext): Promise<{ success: boolean }> {
 
         // Check if the authorization security applies to this route and it is valid
-        if(!this.validateAuthorization(req, options)) {
+        if(!this.validateAuthorized(context)) {
             throw new UnauthorizedError()
         }
         
-        const repository = new Repository(options.resource)
+        const routeOptions = context.getRouteItem()
 
-        const result = await repository.findById(req.params?.id)
-
-        if(!result) {
-            throw new ModelNotFound()
+        if(!routeOptions) {
+            throw new ResourceException('Route options are required')
         }
 
+        const modelConstructor = this.getModelConstructor(context)
+
+        const builder = queryBuilder(modelConstructor)
+            .where(modelConstructor.getPrimaryKey(), context.getRequest().params?.id)
+
+        const result = await builder.firstOrFail()
+
+        
         // Check if the resource owner security applies to this route and it is valid
-        if(!this.validateResourceOwnerCallback(req, options, result)) {
+        if(!this.validateResourceAccess(context, result)) {
             throw new ForbiddenResourceError()
         }
 
@@ -48,7 +52,7 @@ class ResourceDeleteService extends BaseResourceService {
         await result.delete()
 
         // Send the results
-        res.send({ success: true })
+        return { success: true }
     }
         
 }

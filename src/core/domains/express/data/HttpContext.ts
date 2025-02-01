@@ -1,8 +1,10 @@
+import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
+import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
+import HttpContextException from '@src/core/domains/express/exceptions/HttpContextException';
+import { TRouteItem } from '@src/core/domains/express/interfaces/IRoute';
+import { requestContext } from '@src/core/domains/express/services/RequestContext';
 import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
 import { NextFunction, Response } from 'express';
-
-import HttpContextException from '../exceptions/HttpContextException';
-import { requestContext } from '../services/RequestContext';
 
 class HttpContext {
 
@@ -12,8 +14,80 @@ class HttpContext {
         // eslint-disable-next-line no-unused-vars
         protected res: Response,
         // eslint-disable-next-line no-unused-vars
-        protected nextFn: NextFunction | undefined
+        protected nextFn: NextFunction | undefined,
+        // eslint-disable-next-line no-unused-vars
+        protected routeItem?: TRouteItem
     ) {
+    }
+
+    /**
+     * Converts the HttpContext to an object.
+     * @returns {Record<string, unknown>} The HttpContext as an object.
+     */
+    public toObject(): Record<string, unknown> {
+        return {
+            req: this.req,
+            res: this.res,
+            nextFn: this.nextFn,
+            routeItem: this.routeItem
+        }
+    }
+    
+    /**
+     * Gets the route item of the request.
+     * @returns {TRouteItem} The route item of the request.
+     */
+    public getRouteItem(): TRouteItem | undefined {
+        return this.routeItem
+    }
+
+    /**
+     * Gets the user of the request.
+     * @returns {IUserModel | undefined} The user of the request.
+     */
+    public getUser(): IUserModel | undefined {
+        return this.req?.user as IUserModel | undefined;
+    }
+
+    /**
+     * Gets the API token of the request.
+     * @returns {IApiTokenModel | undefined} The API token of the request.
+     */
+    public getApiToken(): IApiTokenModel | undefined {
+        return this.req?.apiToken ?? undefined;
+    }
+
+    /**
+     * Gets the method of the request.
+     * @returns {string} The method of the request.
+     */
+    public getMethod() {
+        return this.req.method
+    }
+
+    /**
+     * Gets a query parameter from the request.
+     * @param {string} key - The key of the query parameter to get.
+     * @returns {string | undefined} The value of the query parameter.
+     */
+    public getQueryParam(key: string) {
+        return this.req.query[key]
+    }
+
+    /**
+     * Gets all query parameters from the request.
+     * @returns {Record<string, string>} The query parameters.
+     */
+    public getQueryParams() {
+        return this.req.query
+    }
+
+    /**
+     * Gets all body parameters from the request.
+     * @returns {Record<string, string>} The body parameters.
+     */
+    public getBody() {
+        return this.req.body
     }
 
     /**

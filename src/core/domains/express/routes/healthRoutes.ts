@@ -1,13 +1,7 @@
 import health from '@src/core/actions/health';
-import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
 
-const healthRoutes: IRoute[] = [
-    {
-        name: 'health',
-        method: 'get',
-        path: '/health',
-        action: health
-    }
-]
+import Route from '../routing/Route';
 
-export default healthRoutes;
+export default Route.group(router => {
+    router.get('/health', health)
+})

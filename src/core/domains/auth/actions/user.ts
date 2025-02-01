@@ -2,6 +2,8 @@ import IAuthorizedRequest from '@src/core/domains/auth/interfaces/IAuthorizedReq
 import responseError from '@src/core/domains/express/requests/responseError';
 import { Response } from 'express';
 
+
+
 /**
  * Returns the currently logged in user
  *

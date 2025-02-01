@@ -1,105 +1,158 @@
-import { IPartialRouteResourceOptions, IResourceService } from "@src/core/domains/express/interfaces/IResourceService";
-import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
-import { IIdentifiableSecurityCallback } from "@src/core/domains/express/interfaces/ISecurity";
-import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResource";
-import { ALWAYS } from "@src/core/domains/express/services/Security";
+
+import HttpContext from "@src/core/domains/express/data/HttpContext";
+import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
+import { TRouteItem } from "@src/core/domains/express/interfaces/IRoute";
+import ResourceOwnerRule from "@src/core/domains/express/security/rules/ResourceOwnerRule";
+import { requestContext } from "@src/core/domains/express/services/RequestContext";
 import SecurityReader from "@src/core/domains/express/services/SecurityReader";
-import { SecurityIdentifiers } from "@src/core/domains/express/services/SecurityRules";
-import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
-import { IModel } from "@src/core/interfaces/IModel";
-import { Response } from "express";
+import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
-abstract class BaseResourceService implements IResourceService {
+import { SecurityEnum } from "../../enums/SecurityEnum";
 
-    /**
-     * The route resource type (RouteResourceTypes)
-     */
-    abstract routeResourceType: string;
+/**
+ * BaseResourceService is an abstract base class for handling CRUD operations on resources.
+ * It provides common functionality for:
+ * 
+ * - Authorization validation
+ * - Resource owner security validation 
+ * - Resource attribute access control
+ *
+ * This class is extended by specific resource services like:
+ * - ResourceIndexService (listing resources)
+ * - ResourceShowService (showing single resource)
+ * - ResourceCreateService (creating resources)
+ * - ResourceUpdateService (updating resources) 
+ * - ResourceDeleteService (deleting resources)
+ *
+ * Each child class implements its own handler() method with specific CRUD logic
+ * while inheriting the security and validation methods from this base class.
+ */
 
-    // eslint-disable-next-line no-unused-vars
-    abstract handler(req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void>;
+abstract class BaseResourceService {
 
-    /**
-     * Checks if the request is authorized to perform the action and if the resource owner security is set
-     * 
-     * @param {BaseRequest} req - The request object
-     * @param {IRouteResourceOptions} options - The options object
-     * @returns {boolean} - Whether the request is authorized and resource owner security is set
-     */
-    validateResourceOwner(req: BaseRequest, options: IRouteResourceOptions): boolean {
-        const resourceOwnerSecurity = this.getResourceOwnerSecurity(options);
-    
-        if(this.validateAuthorization(req, options) && resourceOwnerSecurity ) {
-            return true;
+        /**
+         * The route resource type (RouteResourceTypes)
+         */
+        abstract routeResourceType: string;
+
+        // eslint-disable-next-line no-unused-vars
+        abstract handler(context: HttpContext): Promise<unknown>;
+
+        /**
+         * Gets the model constructor from the route options
+         * @param {HttpContext} context - The HTTP context
+         * @returns {ModelConstructor} - The model constructor
+         * @throws {ResourceException} - If the route options are not found
+         */
+        getModelConstructor(context: HttpContext): ModelConstructor {
+            const routeOptions = context.getRouteItem()
+
+            if(!routeOptions) {
+                throw new ResourceException('Route options are required')
+            }
+
+            return routeOptions.resource?.modelConstructor as ModelConstructor
         }
-    
-        return false;
-    }
 
-    /**
-     * Checks if the request is authorized to perform the action and if the resource owner security is set on the given resource instance
-     * 
-     * @param {BaseRequest} req - The request object
-     * @param {IRouteResourceOptions} options - The options object
-     * @param {IModel} resourceInstance - The resource instance
-     * @returns {boolean} - Whether the request is authorized and resource owner security is set on the given resource instance
-     */
-    validateResourceOwnerCallback(req: BaseRequest, options: IRouteResourceOptions, resourceInstance: IModel): boolean {
-        const resourceOwnerSecurity = this.getResourceOwnerSecurity(options);
-        
-        if(this.validateAuthorization(req, options) && resourceOwnerSecurity?.callback(req, resourceInstance)) {
-            return true;
+        /**
+         * Checks if the request is authorized to perform the action
+         * 
+         * @param {BaseRequest} req - The request object
+         * @param {IRouteResourceOptionsLegacy} options - The options object
+
+         * @returns {boolean} - Whether the request is authorized
+         */
+        validateAuthorized(context: HttpContext): boolean {
+            return requestContext().getByRequest<string>(context.getRequest(), 'userId') !== undefined;
         }
-        
-        return false;
-    }
-        
-    /**
-     * Checks if the request is authorized to perform the action
-     * 
-     * @param {BaseRequest} req - The request object
-     * @param {IRouteResourceOptions} options - The options object
-     * @returns {boolean} - Whether the request is authorized
-     */
-    validateAuthorization(req: BaseRequest, options: IRouteResourceOptions): boolean {
-        const authorizationSecurity = SecurityReader.findFromRouteResourceOptions(options, SecurityIdentifiers.AUTHORIZED, [RouteResourceTypes.ALL, ALWAYS]);
 
-        if(authorizationSecurity && !authorizationSecurity.callback(req)) {
+        /**
+         * Checks if the request is authorized to perform the action and if the resource owner security is set
+         * 
+         * @param {BaseRequest} req - The request object
+         * @param {IRouteResourceOptionsLegacy} options - The options object
+         * @returns {boolean} - Whether the request is authorized and resource owner security is set
+         */
+        validateResourceOwnerApplicable(context: HttpContext): boolean {
+            const routeOptions = context.getRouteItem()
+
+            if(!routeOptions) {
+                throw new ResourceException('Route options are required')
+            }
+
+            const resourceOwnerSecurity = this.getResourceOwnerRule(routeOptions);
+    
+            if(this.validateAuthorized(context) && resourceOwnerSecurity ) {
+                return true;
+            }
+    
             return false;
         }
-        
-        return true;
-    }
 
-    /**
-     * Finds the resource owner security from the given options
-     * @param {IRouteResourceOptions} options - The options object
-     * @returns {IIdentifiableSecurityCallback | undefined} - The found resource owner security or undefined if not found
-     */
-    getResourceOwnerSecurity(options: IPartialRouteResourceOptions): IIdentifiableSecurityCallback | undefined {
-        return SecurityReader.findFromRouteResourceOptions(options as IRouteResourceOptions, SecurityIdentifiers.RESOURCE_OWNER, [this.routeResourceType]);
-    }
+        /**
+         * Checks if the request is authorized to perform the action and if the resource owner security is set
+         * 
+         * @param {BaseRequest} req - The request object
+         * @param {IRouteResourceOptionsLegacy} options - The options object
+         * @returns {boolean} - Whether the request is authorized and resource owner security is set
+         */
+        validateResourceAccess(context: HttpContext, resource: IModel): boolean {
+            const routeOptions = context.getRouteItem()
 
+            if(!routeOptions) {
+                throw new ResourceException('Route options are required')
+            }
 
-    /**
-     * Returns a new object with the same key-value pairs as the given object, but
-     * with an additional key-value pair for each key, where the key is wrapped in
-     * percent signs (e.g. "foo" becomes "%foo%"). This is useful for building
-     * filters in MongoDB queries.
-     * @param {object} filters - The object to transform
-     * @returns {object} - The transformed object
-     */
-    filtersWithPercentSigns(filters: object): object {
-        return {
-            ...filters,
-            ...Object.keys(filters).reduce((acc, curr) => {
-                const value = filters[curr];
-                acc[curr] = `%${value}%`;
-                return acc;
-            }, {})
+            const resourceOwnerSecurity = this.getResourceOwnerRule(routeOptions);
+
+            // If the resource owner security is not set, we allow access
+            if(!resourceOwnerSecurity) {
+                return true;
+            }
+
+            const resourceOwnerId = resource.getAttributeSync(resourceOwnerSecurity.getRuleOptions()?.attribute as string)
+
+            if(!resourceOwnerId) {
+                throw new ResourceException('An attribute is required to check resource owner security')
+            }
+
+            const requestUserId = requestContext().getByRequest<string>(context.getRequest(), 'userId');
+
+            if(!requestUserId) {
+                return false;
+            }
+
+            return resourceOwnerId === requestUserId;
         }
-    }
+
+        /**
+         * Finds the resource owner security from the given options
+         * @param {TRouteItem} routeOptions - The options object
+         * @returns {IIdentifiableSecurityCallback | undefined} - The found resource owner security or undefined if not found
+         */
+        getResourceOwnerRule(routeOptions: TRouteItem): ResourceOwnerRule | undefined {
+            const id = SecurityEnum.RESOURCE_OWNER;
+            const when = [this.routeResourceType];
+            return SecurityReader.find<ResourceOwnerRule>(routeOptions, id, when);
+        }
+
+        /**
+         * Gets the resource owner property key from the route options
+         * @param {TRouteItem} routeOptions - The route options
+         * @param {string} defaultKey - The default key to use if the resource owner security is not found
+         * @returns {string} - The resource owner property key
+         */
+        getResourceAttribute(routeOptions: TRouteItem, defaultKey: string = 'userId'): string {
+            const resourceOwnerSecurity = this.getResourceOwnerRule(routeOptions)
+            const attribute = resourceOwnerSecurity?.getRuleOptions()?.attribute as string ?? defaultKey;
+
+            if(typeof attribute !== 'string') {
+                throw new ResourceException('Malformed resourceOwner security. Expected parameter \'attribute\' to be a string but received ' + typeof attribute);
+            }
+
+            return attribute;
+        }
 
 }
 
-export default BaseResourceService
+export default BaseResourceService;

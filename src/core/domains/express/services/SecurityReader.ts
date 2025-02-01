@@ -1,21 +1,31 @@
-import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
-import { IIdentifiableSecurityCallback } from "@src/core/domains/express/interfaces/ISecurity";
-import { ALWAYS } from "@src/core/domains/express/services/Security";
-import SecurityRules from "@src/core/domains/express/services/SecurityRules";
+import { ALWAYS } from "@src/core/domains/express/enums/SecurityEnum";
+import { TRouteItem } from "@src/core/domains/express/interfaces/IRoute";
+import { ISecurityRule } from "@src/core/domains/express/interfaces/ISecurity";
 import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 
 class SecurityReader {
 
     /**
-     * Finds a security callback in the security callbacks of the given route resource options.
+     * Converts the security rule constructors into an array of security rule options.
+     * 
+     * @param routeOptions - The route resource options containing the security rule constructors.
+     * @returns An array of security rule options.
+     */
+    protected static getSecurityRulesArray(routeOptions: TRouteItem): ISecurityRule[] {
+        return routeOptions.security ?? [];
+    }
+
+    /**
+     * Finds a security callback in the security callbacks of the given route r
+     * esource options.
      *
-     * @param options - The route resource options containing the security callbacks.
+     * @param routeOptions - The route resource options containing the security callbacks.
      * @param id - The id of the security callback to find.
      * @param when - The optional when condition. If specified, the security callback will only be found if it matches this condition.
      * @returns The found security callback, or undefined if not found.
      */
-    public static findFromRouteResourceOptions(options: IRouteResourceOptions, id: string, when?: string[] | null): IIdentifiableSecurityCallback | undefined {
-        return this.find(options.security ?? [], id, when);
+    public static findFromRouteResourceOptions(routeOptions: TRouteItem, id: string, when?: string[] | null): ISecurityRule | undefined {
+        return this.find(routeOptions, id, when);
     }
 
     /**
@@ -26,8 +36,9 @@ class SecurityReader {
      * @param when - The optional when condition. If specified, the security callback will only be found if it matches this condition.
      * @returns The found security callback, or undefined if not found.
      */
-    public static findFromRequest(req: BaseRequest, id: string, when?: string[] | null): IIdentifiableSecurityCallback | undefined {
-        return this.find(req.security ?? [], id, when);
+    public static findFromRequest(req: BaseRequest, id: string, when?: string[] | null): ISecurityRule | undefined {
+        // return this.find(req, id, when);
+        return undefined;
     }
 
     /**
@@ -39,8 +50,11 @@ class SecurityReader {
      * @param when - The when condition to match. If not provided, the method will return the first match.
      * @returns The security callback if found, or undefined if not found.
      */
-    public static find(security: IIdentifiableSecurityCallback[], id: string, when?: string[] | null): IIdentifiableSecurityCallback | undefined {
-        let result: IIdentifiableSecurityCallback | undefined = undefined;
+    public static find<Rule extends ISecurityRule = ISecurityRule>(routeOptions: TRouteItem, id: string, when?: string[] | null): Rule | undefined {
+
+        const securityRules = this.getSecurityRulesArray(routeOptions);
+
+        let result: ISecurityRule | undefined = undefined;
 
         when = when ?? null;
         when = when && typeof when === 'string' ? [when] : when;
@@ -79,12 +93,12 @@ class SecurityReader {
         /**
          * Find by 'id'
          */
-        result = security?.find(security => {
-            const matchesIdentifier = security.id === id
+        result = securityRules.find(security => {
+            const matchesIdentifier = security.getId() === id
 
             return matchesIdentifier && 
-                conditionNeverPassable(when, security.never) === false &&
-                conditionPassable(security.when);
+                conditionNeverPassable(when, security.getNever()) === false &&
+                conditionPassable(security.getWhen());
         });
 
         /**
@@ -95,20 +109,20 @@ class SecurityReader {
         if(!result)  {
 
             // We need to find the unrelated security rule that has the ID in 'also' 
-            const unrelatedSecurityRule = security?.find(security => {
-                return security.also === id && 
-                    conditionNeverPassable(when, security.never) === false &&
-                    conditionPassable(security.when);
+            const unrelatedSecurityRule = securityRules.find(security => {
+                return security.getAlso() === id && 
+                    conditionNeverPassable(when, security.getNever()) === false &&
+                    conditionPassable(security.getWhen());
             });
 
             // The 'unrelatedSecurityRule' contains the 'also' property. 
             // We can use it to fetch the desired security rule.
             if(unrelatedSecurityRule) {
-                return SecurityRules[unrelatedSecurityRule.also as string]();
+                return unrelatedSecurityRule as Rule;
             }
         }
 
-        return result
+        return result as Rule;
     }
 
 }

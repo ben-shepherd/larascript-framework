@@ -1,13 +1,12 @@
-import Repository from "@src/core/base/Repository";
 import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
-import { IRouteResourceOptions } from "@src/core/domains/express/interfaces/IRouteResourceOptions";
-import { RouteResourceTypes } from "@src/core/domains/express/routing/RouteResource";
+import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
+import HttpContext from "@src/core/domains/express/data/HttpContext";
+import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
+import { RouteResourceTypes } from "@src/core/domains/express/routing/RouterResource";
 import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
-import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import stripGuardedResourceProperties from "@src/core/domains/express/utils/stripGuardedResourceProperties";
-import ModelNotFound from "@src/core/exceptions/ModelNotFound";
-import { Response } from "express";
+import { IModelAttributes } from "@src/core/interfaces/IModel";
 
 
 class ResourceUpdateService extends BaseResourceService {
@@ -22,34 +21,40 @@ class ResourceUpdateService extends BaseResourceService {
      * - Sends the results back to the client
      * @param {BaseRequest} req - The request object
      * @param {Response} res - The response object
-     * @param {IRouteResourceOptions} options - The options object
+     * @param {IRouteResourceOptionsLegacy} options - The options object
      * @returns {Promise<void>}
      */
-    async handler(req: BaseRequest, res: Response, options: IRouteResourceOptions): Promise<void> {
+    async handler(context: HttpContext): Promise<IModelAttributes> {
 
         // Check if the authorization security applies to this route and it is valid
-        if(!this.validateAuthorization(req, options)) {
+        if(!this.validateAuthorized(context)) {
             throw new UnauthorizedError()
         }
         
-        const repository = new Repository(options.resource)
+        const routeOptions = context.getRouteItem()
 
-        const result = await repository.findById(req.params?.id)
-
-        if (!result) {
-            throw new ModelNotFound();
+        if(!routeOptions) {
+            throw new ResourceException('Route options are required')
         }
 
+        const modelConstructor = this.getModelConstructor(context)
+
+        const builder = queryBuilder(modelConstructor)
+            .where(modelConstructor.getPrimaryKey(), context.getRequest().params?.id)
+
+
+        const result = await builder.firstOrFail()
+
         // Check if the resource owner security applies to this route and it is valid
-        if(!this.validateResourceOwnerCallback(req, options, result)) {
+        if(!this.validateResourceAccess(context, result)) {
             throw new ForbiddenResourceError()
         }
 
-        await result.fill(req.body);
+        await result.fill(context.getRequest().body);
         await result.save();
-
+        
         // Send the results
-        res.send(await stripGuardedResourceProperties(result))
+        return (await stripGuardedResourceProperties(result))[0]
     }
         
 }

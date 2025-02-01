@@ -1,7 +1,9 @@
 import apiRoutes from "@src/app/routes/api";
 import BaseProvider from "@src/core/base/Provider";
 import healthRoutes from "@src/core/domains/express/routes/healthRoutes";
+import Router from "@src/core/domains/express/routing/Router";
 import { app } from "@src/core/services/App";
+
 
 class RoutesProvider extends BaseProvider {
 
@@ -12,9 +14,10 @@ class RoutesProvider extends BaseProvider {
 
         const expressService = app('express');
         const authService = app('auth');
+        const authRouter = authService.getAuthRoutes();
 
         // Bind routes
-        expressService.bindRoutes(authService.getAuthRoutes() ?? [])
+        expressService.bindRoutes(authRouter ?? new Router())
         expressService.bindRoutes(healthRoutes);
         expressService.bindRoutes(apiRoutes);
 

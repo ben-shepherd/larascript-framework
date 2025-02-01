@@ -1,4 +1,5 @@
 import Repository from "@src/core/base/Repository";
+import { logger } from "@src/core/domains/logger/services/LoggerService";
 import MigrationTypeEnum from "@src/core/domains/migrations/enums/MigrationTypeEnum";
 import MigrationFactory from "@src/core/domains/migrations/factory/MigrationFactory";
 import { IMigration, MigrationType } from "@src/core/domains/migrations/interfaces/IMigration";
@@ -10,7 +11,6 @@ import FileNotFoundError from "@src/core/exceptions/FileNotFoundError";
 import { ModelConstructor } from "@src/core/interfaces/IModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
 import { app } from "@src/core/services/App";
-import { logger } from "@src/core/domains/logger/services/LoggerService";
 
 
 interface MigrationDetail {
@@ -269,7 +269,7 @@ class MigrationService implements IMigrationService {
             logger().info('[Migration] createSchema', err)
 
             if (err instanceof Error) {
-                logger().error(err)
+                logger().exception(err)
             }
         }
     }

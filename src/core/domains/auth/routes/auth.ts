@@ -3,53 +3,32 @@ import login from "@src/core/domains/auth/actions/login";
 import revoke from "@src/core/domains/auth/actions/revoke";
 import update from "@src/core/domains/auth/actions/update";
 import user from "@src/core/domains/auth/actions/user";
-import authConsts from "@src/core/domains/auth/consts/authConsts";
 import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
-import { IRoute } from "@src/core/domains/express/interfaces/IRoute";
-import AuthorizeMiddleware from "@src/core/domains/express/middleware/authorizeMiddleware";
+import AuthorizeMiddleware from "@src/core/domains/express/middleware/deprecated/AuthorizeMiddleware";
 import Route from "@src/core/domains/express/routing/Route";
-import RouteGroup from "@src/core/domains/express/routing/RouteGroup";
 
-export const routes = (config: IAuthConfig): IRoute[] => {
-    return RouteGroup([
-        Route({
-            name: authConsts.routes.authLogin,
-            method: 'post',
-            path: '/auth/login',
-            action: login 
-        }),
-        Route({
-            name: authConsts.routes.authCreate,
-            method: 'post',
-            path: '/auth/create',
-            action: create,
-            validator: config.validators.createUser,
-            validateBeforeAction: true
-        }),
-        Route({
-            name: authConsts.routes.authUpdate,
-            method: 'patch',
-            path: '/auth/user',
-            action: update,
-            middlewares: [AuthorizeMiddleware],
-            validator: config.validators.updateUser,
-            validateBeforeAction: true
-        }),
-        Route({
-            name: authConsts.routes.authUser,
-            method: 'get',
-            path: '/auth/user',
-            action: user,
-            middlewares: [AuthorizeMiddleware]
-        }),
-        Route({
-            name: authConsts.routes.authRevoke,
-            method: 'post',
-            path: '/auth/revoke',
-            action: revoke,
-            middlewares: [AuthorizeMiddleware]
-        })
-    ])
-}
+/**
+ * todo: missing validator
+ */
+const authRouter = (config: IAuthConfig) => Route.group({
+    prefix: '/auth',
+}, (router) => {
+    
+    router.post('/login', login)
 
-export default routes;
+    router.post('/create', create)
+
+    router.patch('/update', update, {
+        middlewares: [AuthorizeMiddleware]
+    })
+
+    router.get('/user', user, {
+        middlewares: [AuthorizeMiddleware]
+    })
+
+    router.post('/revoke', revoke, {
+        middlewares: [AuthorizeMiddleware]
+    })
+})
+
+export default authRouter;

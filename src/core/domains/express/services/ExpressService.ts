@@ -3,13 +3,13 @@ import Middleware from '@src/core/domains/express/base/Middleware';
 import IExpressConfig from '@src/core/domains/express/interfaces/IExpressConfig';
 import IExpressService from '@src/core/domains/express/interfaces/IExpressService';
 import { MiddlewareConstructor, TExpressMiddlewareFn } from '@src/core/domains/express/interfaces/IMiddleware';
-import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
-import EndRequestContextMiddleware from '@src/core/domains/express/middleware/EndRequestContextMiddleware';
-import RequestIdMiddlewareTest from '@src/core/domains/express/middleware/RequestIdMiddleware';
-import { securityMiddleware } from '@src/core/domains/express/middleware/securityMiddleware';
-import SecurityRules, { SecurityIdentifiers } from '@src/core/domains/express/services/SecurityRules';
+import { IRoute, IRouter, TRouteItem } from '@src/core/domains/express/interfaces/IRoute';
+import EndRequestContextMiddleware from '@src/core/domains/express/middleware/deprecated/EndRequestContextMiddleware';
+import RequestIdMiddlewareTest from '@src/core/domains/express/middleware/deprecated/RequestIdMiddleware';
+import SecurityMiddleware from '@src/core/domains/express/middleware/SecurityMiddleware';
+import Route from '@src/core/domains/express/routing/Route';
+import RouterBindService from '@src/core/domains/express/services/RouterBindService';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
-import { validate } from '@src/core/domains/validator/services/ValidatorService';
 import { app } from '@src/core/services/App';
 import expressClient from 'express';
 
@@ -29,7 +29,9 @@ export default class ExpressService extends Service<IExpressConfig> implements I
 
     private readonly app: expressClient.Express
 
-    private readonly registedRoutes: IRoute[] = [];
+    private routerBindService!: RouterBindService;
+
+    protected registeredRoutes: TRouteItem[] = []
 
     /**
      * Config defined in @src/config/http/express.ts
@@ -37,7 +39,22 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      */
     constructor(config: IExpressConfig | null = null) {
         super(config)
+        this.routerBindService = new RouterBindService()
         this.app = expressClient()
+    }
+
+    /**
+     * Returns the route instance.
+     */
+    public route(): IRoute {
+        return new Route();
+    }
+
+    /**
+     * Returns the registered routes.
+     */
+    public getRegisteredRoutes(): TRouteItem[] {
+        return this.registeredRoutes
     }
 
     /**
@@ -93,135 +110,42 @@ export default class ExpressService extends Service<IExpressConfig> implements I
         })
     }
 
-    /**
-     * Binds multiple routes to the Express instance.
-     * @param routes 
-     */
-    public bindRoutes(routes: IRoute[]): void {
-        routes.forEach(route => {
-            this.bindSingleRoute(route)
-        })
+    public bindRoutes(router: IRouter): void {
+        if(router.getRegisteredRoutes().length === 0) {
+            return
+        }
+
+        this.routerBindService.setExpress(this.app)
+        this.routerBindService.setOptions({ additionalMiddlewares: [SecurityMiddleware] })
+        this.routerBindService.bindRoutes(router)
+        this.registeredRoutes.push(...router.getRegisteredRoutes())
     }
 
-    /**
-     * Binds a single route to the Express instance.
-     * @param route 
-     */
-    public bindSingleRoute(route: IRoute): void {
-        const userDefinedMiddlewares = route.middlewares ?? [];
+    // /**
+    //  * Adds validator middleware to the route.
+    //  * @param route 
+    //  * @returns middlewares with added validator middleware
+    //  * @deprecated This will be reworked
+    //  */
+    // public addValidatorMiddleware(route: IRouteLegacy): TExpressMiddlewareFn[] {
+    //     return []
+    //     // const middlewares: TExpressMiddlewareFn[] = [];
 
-        // Add security and validator middlewares
-        const middlewaresFnsAndConstructors: (MiddlewareConstructor | TExpressMiddlewareFn)[] = [
-            ...userDefinedMiddlewares,
-            ...this.addValidatorMiddleware(route),
-            ...this.addSecurityMiddleware(route),
-        ];
+    //     // /**
+    //     //  * Add validator middleware
+    //     //  */
+    //     // if (route?.validator) {
+    //     //     const validatorMiddleware = validate().middleware()
+    //     //     const validator = route.validator
+    //     //     const validateBeforeAction = route?.validateBeforeAction ?? true
 
-        // Convert middlewares to TExpressMiddlewareFn
-        const middlewares: TExpressMiddlewareFn[] = middlewaresFnsAndConstructors.map(middleware => {
-            if(middleware.prototype instanceof Middleware) {
-                return (middleware as MiddlewareConstructor).toExpressMiddleware()
-            }
-            return middleware as TExpressMiddlewareFn
-        })
+    //     //     middlewares.push(
+    //     //         validatorMiddleware({ validatorConstructor: validator, validateBeforeAction })
+    //     //     );
+    //     // }
 
-        // Add route handlers
-        const handlers = [...middlewares, route?.action]
-
-        // Log route
-        this.logRoute(route)
-
-        // Bind route
-        switch (route.method) {
-        case 'get':
-            this.app.get(route.path, handlers);
-            break;
-        case 'post':
-            this.app.post(route.path, handlers);
-            break;
-        case 'patch':
-            this.app.patch(route.path, handlers);
-            break;
-        case 'put':
-            this.app.put(route.path, handlers);
-            break;
-        case 'delete':
-            this.app.delete(route.path, handlers);
-            break;
-        default:
-            throw new Error(`Unsupported method ${route.method} for path ${route.path}`);
-        }
-
-        this.registedRoutes.push(route)
-    }
-
-    /**
-     * Adds validator middleware to the route.
-     * @param route 
-     * @returns middlewares with added validator middleware
-     */
-    public addValidatorMiddleware(route: IRoute): TExpressMiddlewareFn[] {
-        const middlewares: TExpressMiddlewareFn[] = [];
-
-        /**
-         * Add validator middleware
-         */
-        if (route?.validator) {
-            const validatorMiddleware = validate().middleware()
-            const validator = route.validator
-            const validateBeforeAction = route?.validateBeforeAction ?? true
-
-            middlewares.push(
-                validatorMiddleware({ validatorConstructor: validator, validateBeforeAction })
-            );
-        }
-
-        return middlewares;
-    }
-
-    /**
-     * Adds security middleware to the route. If the route has enableScopes
-     * and scopes is present, it adds the HAS_SCOPE security rule to the route.
-     * Then it adds the security middleware to the route's middleware array.
-     * @param route The route to add the middleware to
-     * @returns The route's middleware array with the security middleware added
-     */
-    public addSecurityMiddleware(route: IRoute): TExpressMiddlewareFn[] {
-        const middlewares: TExpressMiddlewareFn[] = [];
-
-        /**
-         * Enabling Scopes Security
-          * - If enableScopes has not been defined in the route, check if it has been defined in the security rules
-         *  - If yes, set enableScopes to true
-         */
-        const hasEnableScopesSecurity = route.security?.find(security => security.id === SecurityIdentifiers.ENABLE_SCOPES);
-        const enableScopes = route.enableScopes ?? typeof hasEnableScopesSecurity !== 'undefined';
-
-        if (enableScopes) {
-            route.enableScopes = true
-        }
-
-        /**
-         * Check if scopes is present, add related security rule
-         */
-        if (route?.enableScopes && (route?.scopes?.length || route?.scopesPartial?.length)) {
-            route.security = [
-                ...(route.security ?? []),
-                SecurityRules[SecurityIdentifiers.HAS_SCOPE](route.scopes, route.scopesPartial)
-            ]
-        }
-
-        /**
-         * Add security middleware
-         */
-        if (route?.security) {
-            middlewares.push(
-                securityMiddleware({ route })
-            )
-        }
-
-        return middlewares;
-    }
+    //     // return middlewares;
+    // }
 
     /**
      * Returns the Express instance.
@@ -236,56 +160,6 @@ export default class ExpressService extends Service<IExpressConfig> implements I
      */
     public isEnabled(): boolean {
         return this.config?.enabled ?? false
-    }
-
-    /**
-     * Returns all registered routes.
-     * @returns array of IRoute
-     */
-    public getRoutes(): IRoute[] {
-        return this.registedRoutes
-    }
-
-    /**
-     * Logs a route binding to the console.
-     * @param route - IRoute instance
-     */
-    private logRoute(route: IRoute): void {
-        const indent = '  ';
-        let str = `[Express] binding route ${route.method.toUpperCase()}: '${route.path}' as '${route.name}'`;
-
-        if (route.scopes?.length || route.scopesPartial?.length) {
-            str += `\r\n${indent}SECURITY:`;
-
-            if (route.scopes?.length) {
-                str += indent + `with exact scopes: [${(route.scopes ?? []).join(', ')}]`
-            }
-
-            if (route.scopesPartial?.length) {
-                str += indent + `with partial scopes: [${route.scopesPartial.join(', ')}]`
-            }
-
-            if (route?.enableScopes) {
-                str += indent + '(scopes enabled)'
-            }
-            else {
-                str += indent + '(scopes disabled)'
-            }
-        }
-
-        for(const security of (route?.security ?? [])) {
-            str += `\r\n${indent}SECURITY:${indent}${security.id}`
-
-            if(Array.isArray(security.when)) {
-                str += indent + `with when: [${security.when.join(', ')}]`
-            }
-
-            if(Array.isArray(security.never)) {
-                str += indent + `with never: [${security.never.join(', ')}]`
-            }
-        }
-
-        logger().info(str)
     }
 
 }

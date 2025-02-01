@@ -6,6 +6,7 @@ import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IApiTokenRepository from '@src/core/domains/auth/interfaces/IApiTokenRepository';
 import { IAuthConfig } from '@src/core/domains/auth/interfaces/IAuthConfig';
 import { IAuthService } from '@src/core/domains/auth/interfaces/IAuthService';
+import { IPermissionGroup } from '@src/core/domains/auth/interfaces/IPermissionsConfig';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import IUserRepository from '@src/core/domains/auth/interfaces/IUserRepository';
 import authRoutes from '@src/core/domains/auth/routes/auth';
@@ -13,10 +14,12 @@ import comparePassword from '@src/core/domains/auth/utils/comparePassword';
 import createJwt from '@src/core/domains/auth/utils/createJwt';
 import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
-import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
+import { IRouter } from '@src/core/domains/express/interfaces/IRoute';
 import { app } from '@src/core/services/App';
 import { JsonWebTokenError } from 'jsonwebtoken';
-import { IPermissionGroup } from '@src/core/domains/auth/interfaces/IPermissionsConfig';
+
+import Router from '../../express/routing/Router';
+
 
 /**
  * Shorthand for accessing the auth service
@@ -176,20 +179,23 @@ export default class AuthService extends Service<IAuthConfig> implements IAuthSe
     /**
      * Returns the auth routes
      * 
-     * @returns an array of IRoute objects, or null if auth routes are disabled
+     * @returns an array of IRoute objects, or a blank router if auth routes are disabled
      */
-    getAuthRoutes(): IRoute[] | null {
+    getAuthRoutes(): IRouter {
         if (!this.config.enableAuthRoutes) {
-            return null
+            return new Router()
         }
 
-        const routes = authRoutes(this.config);
+        const router = authRoutes(this.config);
 
+        /**
+         * todo
+         */
         if (!this.config.enableAuthRoutesAllowCreate) {
-            return routes.filter((route) => route.name !== 'authCreate');
+            router.setRegisteredRoutes(router.getRegisteredRoutes().filter((route) => route.name !== 'authCreate'));
         }
 
-        return routes;
+        return router;
     }
 
     /**

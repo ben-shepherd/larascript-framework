@@ -1,180 +1,122 @@
-import ForbiddenResourceError from '@src/core/domains/auth/exceptions/ForbiddenResourceError';
-import RateLimitedExceededError from '@src/core/domains/auth/exceptions/RateLimitedExceededError';
-import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
-import AuthRequest from '@src/core/domains/auth/services/AuthRequest';
-import { IRoute } from '@src/core/domains/express/interfaces/IRoute';
-import { ISecurityMiddleware } from '@src/core/domains/express/interfaces/ISecurity';
-import responseError from '@src/core/domains/express/requests/responseError';
-import { ALWAYS } from '@src/core/domains/express/services/Security';
-import SecurityReader from '@src/core/domains/express/services/SecurityReader';
-import { SecurityIdentifiers } from '@src/core/domains/express/services/SecurityRules';
-import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
-import { NextFunction, Response } from 'express';
+import Middleware from "@src/core/domains/express/base/Middleware";
+import HttpContext from "@src/core/domains/express/data/HttpContext";
 
-const bindSecurityToRequest = (route: IRoute, req: BaseRequest) => {
-    req.security = route.security ?? [];
-}
+import ForbiddenResourceError from "../../auth/exceptions/ForbiddenResourceError";
+import RateLimitedExceededError from "../../auth/exceptions/RateLimitedExceededError";
+import { SecurityEnum } from "../enums/SecurityEnum";
+import SecurityException from "../exceptions/SecurityException";
+import responseError from "../requests/responseError";
+import SecurityReader from "../services/SecurityReader";
 
+class SecurityMiddleware extends Middleware {
 
-/**
- * Applies the authorization security check on the request.
- */
-const applyAuthorizeSecurity = async (route: IRoute, req: BaseRequest, res: Response): Promise<void | null> => {
-
-    const conditions = [ALWAYS]
-
-    if (route.resourceType) {
-        conditions.push(route.resourceType)
-    }
-
-    // Check if the authorize security has been defined for this route
-    const authorizeSecurity = SecurityReader.findFromRequest(req, SecurityIdentifiers.AUTHORIZED, conditions);
-
-    if (authorizeSecurity) {
-        try {
-            // Authorize the request
-            req = await AuthRequest.attemptAuthorizeRequest(req);
-
-            // Validate the authentication
-            if (!authorizeSecurity.callback(req)) {
-                responseError(req, res, new UnauthorizedError(), 401);
-                return null;
-            }
-        }
-        catch (err) {
-
-            // Conditionally throw error
-            if (err instanceof UnauthorizedError && authorizeSecurity.arguements?.throwExceptionOnUnauthorized) {
-                throw err;
-            }
-
-            // Continue processing    
-        }
-    }
-}
-
-/**
- * Checks if the hasRole security has been defined and validates it.
- * If the hasRole security is defined and the validation fails, it will send a 403 response with a ForbiddenResourceError.
- */
-const applyHasRoleSecurity = (req: BaseRequest, res: Response): void | null => {
-    // Check if the hasRole security has been defined and validate
-    const securityHasRole = SecurityReader.findFromRequest(req, SecurityIdentifiers.HAS_ROLE);
-
-    if (securityHasRole && !securityHasRole.callback(req)) {
-        responseError(req, res, new ForbiddenResourceError(), 403)
-        return null;
-    }
-
-}
-
-/**
- * Checks if the hasRole security has been defined and validates it.
- * If the hasRole security is defined and the validation fails, it will send a 403 response with a ForbiddenResourceError.
- */
-const applyHasScopeSecurity = (req: BaseRequest, res: Response): void | null => {
-
-    // Check if the hasRole security has been defined and validate
-    const securityHasScope = SecurityReader.findFromRequest(req, SecurityIdentifiers.HAS_SCOPE);
-
-    if (securityHasScope && !securityHasScope.callback(req)) {
-        responseError(req, res, new ForbiddenResourceError(), 403)
-        return null;
-    }
-
-}
-
-/**
- * Checks if the rate limited security has been defined and validates it.
- * If the rate limited security is defined and the validation fails, it will send a 429 response with a RateLimitedExceededError.
- */
-const applyRateLimitSecurity = async (req: BaseRequest, res: Response): Promise<void | null> => {
-    
-    // Find the rate limited security
-    const securityRateLimit = SecurityReader.findFromRequest(req, SecurityIdentifiers.RATE_LIMITED);
-
-    if (securityRateLimit && !securityRateLimit.callback(req)) {
-        responseError(req, res, new RateLimitedExceededError(), 429)
-        return null;
-    }
-}
-
-/**
- * Security middleware for Express routes.
- * 
- * This middleware check for defined security rules defined on the route.
- * - Authorized (allow continue of processing, this is particular useful for RouteResource actions)
- * - Authorized throw exceptions (Returns a 401 immediately if authorization fails)
- * - Checks rate limits
- * - Check authorized scopes
- * - Check authorized roles
- *
- * @param {IRoute} route - The Express route
- * @return {(req: BaseRequest, res: Response, next: NextFunction) => Promise<void>}
- */
-export const securityMiddleware: ISecurityMiddleware = ({ route }) => async (req: BaseRequest, res: Response, next: NextFunction): Promise<void> => {
-    try {
+    public async execute(context: HttpContext): Promise<void> {
 
         /**
          * Adds security rules to the Express Request
          * This is used below to find the defined security rules
          */
-        bindSecurityToRequest(route, req);
-
+        this.bindSecurityToRequest(context);
 
         /**
          * Check if the rate limit has been exceeded
          */
-        if(await applyRateLimitSecurity(req, res) === null) {
+        if(await this.applyRateLimitSecurity(context) === null) {
             return;
         }
-
-        /**
-         * Authorizes the user
-         * Depending on option 'throwExceptionOnUnauthorized', can allow continue processing on failed auth
-         */
-        if (await applyAuthorizeSecurity(route, req, res) === null) {
-            return;
-        }
-
+        
         /**
          * Check if the authorized user passes the has role security
          */
-        if (applyHasRoleSecurity(req, res) === null) {
+        if (await this.applyHasRoleSecurity(context) === null) {
             return;
         }
-
+        
         /**
          * Check if the authorized user passes the has scope security
          */
-        if (applyHasScopeSecurity(req, res) === null) {
+        if (await this.applyHasScopeSecurity(context) === null) {
             return;
         }
-
-        /**
-         * All security checks have passed
-         */
-        next();
+                
+        this.next();
     }
-    catch (error) {
-        if (error instanceof UnauthorizedError) {
-            responseError(req, res, error, 401)
-            return;
+
+    /**
+     * Binds the security rules to the Express Request
+     * @param context The HttpContext
+     */
+    protected bindSecurityToRequest(context: HttpContext): void {
+        const routeOptions = context.getRouteItem()
+        const security = routeOptions?.security ?? []
+        context.getRequest().security = security;
+    }
+
+    /**
+     * Applies the has role security
+     * @param context The HttpContext
+     * @returns void | null
+     */
+    protected async applyHasRoleSecurity(context: HttpContext): Promise<void | null> {
+        const routeOptions = context.getRouteItem()
+
+        if(!routeOptions) {
+            throw new SecurityException('Route options not found');
         }
 
-        if (error instanceof RateLimitedExceededError) {
-            responseError(req, res, error, 429)
-            return;
+        // Check if the hasRole security has been defined and validate
+        const securityHasRole = SecurityReader.find(routeOptions, SecurityEnum.HAS_ROLE);
+ 
+        if (securityHasRole && !(await securityHasRole.execute(context))) {
+            responseError(context.getRequest(), context.getResponse(), new ForbiddenResourceError(), 403)
+            return null;
         }
+    
+    }
 
-        if (error instanceof ForbiddenResourceError) {
-            responseError(req, res, error, 403)
-            return;
-        }
+    /**
+     * Applies the has scope security
+     * @param context The HttpContext
+     * @returns void | null
+     */
+    protected async applyHasScopeSecurity(context: HttpContext): Promise<void | null> {
+        const routeOptions = context.getRouteItem()
 
-        if (error instanceof Error) {
-            responseError(req, res, error)
-            return;
+        if(!routeOptions) {
+            throw new SecurityException('Route options not found');
+        }   
+
+        // Check if the hasScope security has been defined and validate
+        const securityScopes = SecurityReader.find(routeOptions, SecurityEnum.ENABLE_SCOPES);
+ 
+        if (securityScopes && !(await securityScopes.execute(context))) {
+            responseError(context.getRequest(), context.getResponse(), new ForbiddenResourceError(), 403)
+            return null;
         }
     }
-};
+
+    /**
+     * Applies the rate limit security
+     * @param context The HttpContext
+     * @returns void | null
+     */
+    protected async applyRateLimitSecurity(context: HttpContext): Promise<void | null> {
+
+        const routeOptions = context.getRouteItem()
+
+        if(!routeOptions) {
+            throw new SecurityException('Route options not found');
+        }
+    
+        // Find the rate limited security
+        const securityRateLimit = SecurityReader.find(routeOptions, SecurityEnum.RATE_LIMITED);
+    
+        if (securityRateLimit && !(await securityRateLimit.execute(context))) {
+            responseError(context.getRequest(), context.getResponse(), new RateLimitedExceededError(), 429)
+            return null;
+        }
+    }
+
+}
+
+export default SecurityMiddleware;
