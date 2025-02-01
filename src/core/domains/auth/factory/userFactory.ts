@@ -21,7 +21,6 @@ export default class UserFactory extends Factory<User> {
             hashedPassword: hashPassword(this.faker.internet.password()),
             groups: [GROUPS.User],
             roles: [ROLES.USER],
-
             firstName: this.faker.person.firstName(),
             lastName: this.faker.person.lastName(),
         } as IUserModel['attributes']

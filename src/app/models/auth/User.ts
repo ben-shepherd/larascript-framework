@@ -1,4 +1,5 @@
 import UserObserver from "@src/app/observers/UserObserver";
+import UserFactory from "@src/core/domains/auth/factory/userFactory";
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
 import Model from "@src/core/models/base/Model";
@@ -25,9 +26,12 @@ export interface UserAttributes extends IModelAttributes {
  */
 export default class User extends Model<UserAttributes> implements IUserModel {
 
+    factory = UserFactory;
+
     /**
      * Table name
      */
+
     public table: string = 'users';
 
     /**
