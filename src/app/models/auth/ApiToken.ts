@@ -1,5 +1,6 @@
 import User from '@src/app/models/auth/User';
 import ApiTokenObserver from '@src/app/observers/ApiTokenObserver';
+import ApiTokenFactory from '@src/core/domains/auth/factory/apiTokenFactory';
 import IApiTokenModel, { ApiTokenAttributes } from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import Scopes from '@src/core/domains/auth/services/Scopes';
@@ -14,9 +15,15 @@ import Model from '@src/core/models/base/Model';
  */
 class ApiToken extends Model<ApiTokenAttributes> implements IApiTokenModel {
 
+    public factory = ApiTokenFactory;
+
+    public table: string = 'api_tokens';
+
+
     /**
      * The user model constructor
      */
+
     protected userModelCtor: ModelConstructor<IUserModel> = User
 
     /**

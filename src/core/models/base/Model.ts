@@ -255,10 +255,8 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * Retrieves the factory instance for the model.
      * @returns The factory instance for the model.
      */
-    static make<Model extends IModel>(data?: Model['attributes']): Model {
-        const instance = this.create()
-        const factory = instance.getFactory()
-        return factory.make(data) as Model
+    static factory<Model extends IModel>(): IFactory<Model> {
+        return this.create().getFactory() as IFactory<Model>
     }
 
 
@@ -266,6 +264,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * Retrieves the factory instance for the model.
      * @returns The factory instance for the model.
      */
+
     getFactory(): IFactory<Model<Attributes>> {
         if(!this.factory) {
             throw new FactoryException('Factory is not set for this model')

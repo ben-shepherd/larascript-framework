@@ -9,9 +9,9 @@ import { generateUuidV4 } from '@src/core/util/uuid/generateUuidV4'
 /**
  * Factory for creating ApiToken models.
  */
-class ApiTokenFactory extends Factory<IApiTokenModel> implements IApiTokenFactory {
+class ApiTokenFactory extends Factory<ApiToken> implements IApiTokenFactory {
 
-    protected model = ApiToken
+    protected model = ApiToken 
 
     getDefinition(): ApiToken['attributes'] {
         return {
@@ -21,7 +21,6 @@ class ApiTokenFactory extends Factory<IApiTokenModel> implements IApiTokenFactor
             revokedAt: null,
         } as unknown as ApiToken['attributes']
     }
-
 
     /**
      * Creates a new ApiToken model from the User

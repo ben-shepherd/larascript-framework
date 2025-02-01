@@ -28,15 +28,8 @@ export default class User extends Model<UserAttributes> implements IUserModel {
 
     factory = UserFactory;
 
-    /**
-     * Table name
-     */
-
     public table: string = 'users';
 
-    /**
-     * @param data User data
-     */
     constructor(data: UserAttributes | null = null) {
         super(data);
         this.setObserverConstructor(UserObserver);

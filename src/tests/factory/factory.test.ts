@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import testHelper from '@src/tests/testHelper';
 import { TestMovieModel } from '@src/tests/models/models/TestMovie';
+import testHelper from '@src/tests/testHelper';
 
 describe('create a movie model using factories', () => {
 
@@ -12,7 +12,7 @@ describe('create a movie model using factories', () => {
 
 
     test('create a movie', async () => {
-        const movie = TestMovieModel.make();
+        const movie = TestMovieModel.factory().make();
 
         expect(movie).toBeTruthy();
         expect(typeof movie.getAttributeSync('authorId') === 'string').toEqual(true);
@@ -23,11 +23,12 @@ describe('create a movie model using factories', () => {
     });
 
     test('create a movie with data', async () => {
-        const movie = TestMovieModel.make({
+        const movie = TestMovieModel.factory().make({
             authorId: '1',
             name: 'Test Movie',
             yearReleased: 2024,
         });
+
 
         expect(movie).toBeTruthy();
         expect(movie.getAttributeSync('authorId') === '1').toEqual(true);
