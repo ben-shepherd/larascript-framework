@@ -4,7 +4,6 @@ import AuthRequest from '@src/core/domains/auth/services/AuthRequest';
 import Middleware from '@src/core/domains/express/base/Middleware';
 import HttpContext from '@src/core/domains/express/data/HttpContext';
 import responseError from '@src/core/domains/express/requests/responseError';
-import { ray } from 'node-ray';
 
 class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
 
@@ -20,12 +19,8 @@ class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
             // Validate the scopes if the authorization was successful
             this.validateScopes(context)
             this.next();
-
-            ray('AuthorizeMiddleware executed')
         }
         catch (error) {
-            ray('AuthorizeMiddleware error', error)
-
             if(error instanceof UnauthorizedError) {
                 responseError(context.getRequest(), context.getResponse(), error, 401)
                 return;
