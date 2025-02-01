@@ -35,7 +35,7 @@ describe('attempt to run app with normal appConfig', () => {
         /**
          * Create a test user
          */
-        testUser = new TestUserFactory().createWithData({
+        testUser = new TestUserFactory().create({
             email,
             hashedPassword,
             roles: [],

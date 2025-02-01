@@ -95,7 +95,12 @@ export type TRouteResourceOptions = {
     searching?: {
         fields?: string[];
     }
+    paginate?: {
+        pageSize: number;
+        allowPageSizeOverride?: boolean;
+    }
 }
+
 
 
 export interface IPageOptions {
