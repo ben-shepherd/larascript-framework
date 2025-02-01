@@ -55,7 +55,7 @@ class ResourceRouter {
     /**
      * Add resource routes to the router.
      */
-    public static resource({ prefix, resource, scopes: additionalScopes = [], filters, searching, ...rest }: TRouteResourceOptions, router: Router = new Router()): Router {
+    public static resource({ prefix, resource, scopes: additionalScopes = [], filters, searching, paginate, ...rest }: TRouteResourceOptions, router: Router = new Router()): Router {
 
         const routeItemOptions: TPartialRouteItemOptions = {
             prefix,
@@ -75,19 +75,22 @@ class ResourceRouter {
                     modelConstructor: resource,
                     scopes: resource.getScopes(['read'], additionalScopes),
                     filters: filters ?? {},
-                    searching: searching ?? {}
+                    searching: searching ?? {},
+                    paginate: paginate ?? {}
                 }
             });
             router.get('/:id', 'show', {
                 ...routeItemOptions,
                 resource: {
+
                     type: RouteResourceTypes.SHOW,
                     modelConstructor: resource,
                     scopes: resource.getScopes(['read'], additionalScopes),
                     filters: filters ?? {},
-                    searching: searching ?? {}
+                    searching: searching ?? {},
                 }
             });
+
 
             router.post('/', 'create', {
                 ...routeItemOptions,
@@ -98,6 +101,7 @@ class ResourceRouter {
                     searching: searching ?? {}
                 }
             });
+
 
             router.put('/:id', 'update', {
                 ...routeItemOptions,

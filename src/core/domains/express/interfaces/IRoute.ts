@@ -76,11 +76,11 @@ export type TRouteItem = {
         scopes?: string[];
         searching?: {
             fields?: string[];
-        }
-    },
-    paginate?: {
-        pageSize: number;
-        allowPageSizeOverride?: boolean;
+        },
+        paginate?: {
+            pageSize?: number;
+            allowPageSizeOverride?: boolean;
+        },
     },
     searching?: SearchOptionsLegacy
 }
