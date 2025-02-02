@@ -75,7 +75,6 @@ class SecurityReader {
             return false;
         }
 
-
         /**
          * Find by 'id'
          */
@@ -87,26 +86,6 @@ class SecurityReader {
                 conditionPassable(security.getWhen());
         });
 
-        /**
-         * Includes security rule defined in optional 'also' property
-         * 
-         * Example: hasScope rule requires authorized rule
-         */
-        if(!result)  {
-
-            // We need to find the unrelated security rule that has the ID in 'also' 
-            const unrelatedSecurityRule = securityRules.find(security => {
-                return security.getAlso() === id && 
-                    conditionNeverPassable(when, security.getNever()) === false &&
-                    conditionPassable(security.getWhen());
-            });
-
-            // The 'unrelatedSecurityRule' contains the 'also' property. 
-            // We can use it to fetch the desired security rule.
-            if(unrelatedSecurityRule) {
-                return unrelatedSecurityRule as Rule;
-            }
-        }
 
         return result as Rule;
     }

@@ -5,7 +5,6 @@ import HttpContext from '../context/HttpContext';
 
 export type TSecurityRuleOptions<RuleOptions extends object = object> = {
     id: string;
-    also?: string | null;
     when: string[] | null;
     never: string[] | null;
     ruleOptions?: RuleOptions;
@@ -21,7 +20,6 @@ export interface ISecurityRule<RuleOptions extends object = object> {
     getId(): string
     getWhen(): string[] | null
     getNever(): string[] | null
-    getAlso(): string | null
     execute(context: HttpContext, ...args: any[]): Promise<boolean>
 }
 
