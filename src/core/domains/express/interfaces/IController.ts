@@ -4,6 +4,7 @@ import { TRouteItem } from "@src/core/domains/express/interfaces/IRoute"
 
 export interface ControllerConstructor {
     new (context: HttpContext): IController
+    executeAction(action: string, context: HttpContext): Promise<void>
 }
 
 export interface IController {

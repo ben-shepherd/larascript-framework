@@ -19,7 +19,24 @@ class Controller implements IController {
     }
 
     /**
+     * Executes an action on the controller.
+     * @param action The action to execute.
+     * @param context The context of the controller.
+     * @returns The result of the action.
+     */
+    static executeAction(action: string, context: HttpContext): Promise<void> {
+
+        // Inject URL params as action arguments
+        const params = context.getParams()
+        const actionArgs = Object.keys(params).map(key => params[key])
+
+        const controller = new this(context)
+        return controller[action](...actionArgs)
+    }
+
+    /**
      * Sets the context of the controller.
+
      * @param context The context to set.
      */
     public setContext(context: HttpContext) {   

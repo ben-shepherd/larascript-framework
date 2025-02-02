@@ -14,9 +14,10 @@ class HttpContext {
         // eslint-disable-next-line no-unused-vars
         protected res: Response,
         // eslint-disable-next-line no-unused-vars
-        protected nextFn: NextFunction | undefined,
+        protected nextFn?: NextFunction,
         // eslint-disable-next-line no-unused-vars
         protected routeItem?: TRouteItem
+
     ) {
     }
 
@@ -66,10 +67,30 @@ class HttpContext {
     }
 
     /**
+     * Gets all parameters from the request.
+     * @returns {Record<string, string>} The parameters.
+     */
+    public getParams() {
+        return this.req.params
+    }
+
+    /**
+     * Gets a parameter from the request.
+     * @param {string} key - The key of the parameter to get.
+     * @returns {string | undefined} The value of the parameter.
+     */
+    public getParam(key: string) {
+        return this.req.params[key]
+    }
+
+
+    /**
      * Gets a query parameter from the request.
      * @param {string} key - The key of the query parameter to get.
      * @returns {string | undefined} The value of the query parameter.
      */
+
+
     public getQueryParam(key: string) {
         return this.req.query[key]
     }

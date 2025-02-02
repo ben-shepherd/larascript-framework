@@ -132,8 +132,7 @@ class RouterBindService {
         const action = routeItem.action as string
 
         const executeFn: ExecuteFn = async (context: HttpContext) => {
-            const controller = new controllerConstructor(context)
-            await controller[action]()
+            await controllerConstructor.executeAction(action, context)
         }
 
         return this.createExpressMiddlewareFn(executeFn, routeItem)

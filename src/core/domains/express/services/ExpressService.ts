@@ -6,7 +6,7 @@ import { MiddlewareConstructor, TExpressMiddlewareFn } from '@src/core/domains/e
 import { IRoute, IRouter, TRouteItem } from '@src/core/domains/express/interfaces/IRoute';
 import EndRequestContextMiddleware from '@src/core/domains/express/middleware/deprecated/EndRequestContextMiddleware';
 import RequestIdMiddlewareTest from '@src/core/domains/express/middleware/deprecated/RequestIdMiddleware';
-import SecurityMiddleware from '@src/core/domains/express/middleware/SecurityMiddleware';
+import SecurityMiddleware from '@src/core/domains/express/middleware/securityMiddleware';
 import Route from '@src/core/domains/express/routing/Route';
 import RouterBindService from '@src/core/domains/express/services/RouterBindService';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
@@ -120,32 +120,6 @@ export default class ExpressService extends Service<IExpressConfig> implements I
         this.routerBindService.bindRoutes(router)
         this.registeredRoutes.push(...router.getRegisteredRoutes())
     }
-
-    // /**
-    //  * Adds validator middleware to the route.
-    //  * @param route 
-    //  * @returns middlewares with added validator middleware
-    //  * @deprecated This will be reworked
-    //  */
-    // public addValidatorMiddleware(route: IRouteLegacy): TExpressMiddlewareFn[] {
-    //     return []
-    //     // const middlewares: TExpressMiddlewareFn[] = [];
-
-    //     // /**
-    //     //  * Add validator middleware
-    //     //  */
-    //     // if (route?.validator) {
-    //     //     const validatorMiddleware = validate().middleware()
-    //     //     const validator = route.validator
-    //     //     const validateBeforeAction = route?.validateBeforeAction ?? true
-
-    //     //     middlewares.push(
-    //     //         validatorMiddleware({ validatorConstructor: validator, validateBeforeAction })
-    //     //     );
-    //     // }
-
-    //     // return middlewares;
-    // }
 
     /**
      * Returns the Express instance.
