@@ -1,4 +1,4 @@
-import Route from "@src/core/domains/express/routing/Route"
+import Route from "@src/core/domains/http/router/Route"
 import { Request, Response } from "express"
 
 export default Route.group(router => {

@@ -1,6 +1,6 @@
 import ApiToken from '@src/app/models/auth/ApiToken';
 import IAuthorizedRequest from '@src/core/domains/auth/interfaces/IAuthorizedRequest';
-import responseError from '@src/core/domains/express/requests/responseError';
+import responseError from '@src/core/domains/http/handlers/responseError';
 import { App } from '@src/core/services/App';
 import { Response } from 'express';
 

@@ -2,7 +2,7 @@ import { UserAttributes } from '@src/app/models/auth/User';
 import UserFactory from '@src/core/domains/auth/factory/userFactory';
 import { auth } from '@src/core/domains/auth/services/AuthService';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';
-import responseError from '@src/core/domains/express/requests/responseError';
+import responseError from '@src/core/domains/http/handlers/responseError';
 import ValidationError from '@src/core/exceptions/ValidationError';
 import { App } from '@src/core/services/App';
 import { Request, Response } from 'express';

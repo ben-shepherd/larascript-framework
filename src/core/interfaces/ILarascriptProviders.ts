@@ -3,8 +3,8 @@ import ICommandService from '@src/core/domains/console/interfaces/ICommandServic
 import { IDatabaseService } from '@src/core/domains/database/interfaces/IDatabaseService';
 import { IEloquentQueryBuilderService } from '@src/core/domains/eloquent/interfaces/IEloquentQueryBuilderService';
 import { IEventService } from '@src/core/domains/events/interfaces/IEventService';
-import { IRequestContext } from '@src/core/domains/express/interfaces/ICurrentRequest';
-import IExpressService from '@src/core/domains/express/interfaces/IExpressService';
+import { IRequestContext } from '@src/core/domains/http/interfaces/ICurrentRequest';
+import IExpressService from '@src/core/domains/http/interfaces/IExpressService';
 import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerService';
 import IValidatorService from '@src/core/domains/validator/interfaces/IValidatorService';
 import readline from 'node:readline';

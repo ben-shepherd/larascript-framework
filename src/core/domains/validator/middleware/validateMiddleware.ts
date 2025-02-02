@@ -1,5 +1,5 @@
-import responseError from '@src/core/domains/express/requests/responseError';
-import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
+import responseError from '@src/core/domains/http/handlers/responseError';
+import { BaseRequest } from '@src/core/domains/http/interfaces/BaseRequest.t';
 import { ValidatorMiddlewareProps } from '@src/core/domains/validator/interfaces/IValidatorService';
 import { NextFunction, Response } from 'express';
 

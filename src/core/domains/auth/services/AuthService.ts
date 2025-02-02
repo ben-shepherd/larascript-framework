@@ -14,11 +14,11 @@ import comparePassword from '@src/core/domains/auth/utils/comparePassword';
 import createJwt from '@src/core/domains/auth/utils/createJwt';
 import decodeJwt from '@src/core/domains/auth/utils/decodeJwt';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
-import { IRouter } from '@src/core/domains/express/interfaces/IRoute';
+import { IRouter } from '@src/core/domains/http/interfaces/IRoute';
 import { app } from '@src/core/services/App';
 import { JsonWebTokenError } from 'jsonwebtoken';
 
-import Router from '../../express/routing/Router';
+import Router from '../../http/router/Router';
 
 
 /**

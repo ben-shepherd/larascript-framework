@@ -3,7 +3,7 @@ import ConsoleProvider from "@src/core/domains/console/providers/ConsoleProvider
 import DatabaseProvider from "@src/core/domains/database/providers/DatabaseProvider";
 import EloquentQueryProvider from "@src/core/domains/eloquent/providers/EloquentQueryProvider";
 import EventProvider from "@src/core/domains/events/providers/EventProvider";
-import ExpressProvider from "@src/core/domains/express/providers/ExpressProvider";
+import HttpProvider from "@src/core/domains/http/providers/HttpProvider";
 import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
 import MakeProvider from "@src/core/domains/make/providers/MakeProvider";
 import MigrationProvider from "@src/core/domains/migrations/providers/MigrationProvider";
@@ -56,11 +56,11 @@ const LarascriptProviders: IProvider[] = [
     new EloquentQueryProvider(),
 
     /**
-     * Express provider
+     * Http provider
      *
-     * Provides an Express.js server
+     * Provides Http environment using Express.js
      */
-    new ExpressProvider(),
+    new HttpProvider(),
 
     /**
      * Auth provider

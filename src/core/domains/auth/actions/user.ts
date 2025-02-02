@@ -1,5 +1,5 @@
 import IAuthorizedRequest from '@src/core/domains/auth/interfaces/IAuthorizedRequest';
-import responseError from '@src/core/domains/express/requests/responseError';
+import responseError from '@src/core/domains/http/handlers/responseError';
 import { Response } from 'express';
 
 

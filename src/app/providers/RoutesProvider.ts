@@ -1,6 +1,6 @@
 import apiRoutes from "@src/app/routes/api";
 import BaseProvider from "@src/core/base/Provider";
-import healthRoutes from "@src/core/domains/express/routes/healthRoutes";
+import healthRoutes from "@src/core/domains/http/routes/healthRoutes";
 import { app } from "@src/core/services/App";
 
 

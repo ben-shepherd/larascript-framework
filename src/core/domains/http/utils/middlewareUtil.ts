@@ -1,0 +1,37 @@
+
+import { MiddlewareConstructor, TExpressMiddlewareFn, TExpressMiddlewareFnOrClass } from '@src/core/domains/http/interfaces/IMiddleware';
+import { TRouteItem } from '@src/core/domains/http/interfaces/IRoute';
+
+import Middleware from '../base/Middleware';
+
+
+class MiddlewareUtil {
+
+    /**
+     * Converts an array of middleware classes and middleware functions into an array of Express middleware functions.
+     * 
+     * @param routeItem The route item containing the middlewares
+     * @returns An array of Express middleware functions
+     */
+    static convertToExpressMiddlewares(fnAndClassMiddlewares: TExpressMiddlewareFnOrClass[], routeItem?: TRouteItem): TExpressMiddlewareFn[] {
+
+        // A mix of middleware classes and middleware functions
+        const middlewaresArray = (
+            Array.isArray(fnAndClassMiddlewares) 
+                ? fnAndClassMiddlewares 
+                : [fnAndClassMiddlewares]
+        ) as TExpressMiddlewareFnOrClass[]
+
+        // Convert middleware classes to middleware functions
+        return middlewaresArray.map(middleware => {
+            if(middleware.prototype instanceof Middleware) {
+                return (middleware as MiddlewareConstructor).toExpressMiddleware(routeItem)
+            }
+
+            return middleware as TExpressMiddlewareFn
+        })
+    } 
+
+}
+
+export default MiddlewareUtil;

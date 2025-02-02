@@ -1,7 +1,7 @@
 import User, { UserAttributes } from '@src/app/models/auth/User';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';
-import responseError from '@src/core/domains/express/requests/responseError';
-import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
+import responseError from '@src/core/domains/http/handlers/responseError';
+import { BaseRequest } from '@src/core/domains/http/interfaces/BaseRequest.t';
 import { Response } from 'express';
 
 /**

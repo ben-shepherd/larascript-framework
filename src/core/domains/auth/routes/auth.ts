@@ -4,8 +4,8 @@ import revoke from "@src/core/domains/auth/actions/revoke";
 import update from "@src/core/domains/auth/actions/update";
 import user from "@src/core/domains/auth/actions/user";
 import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
-import AuthorizeMiddleware from "@src/core/domains/express/middleware/deprecated/AuthorizeMiddleware";
-import Route from "@src/core/domains/express/routing/Route";
+import AuthorizeMiddleware from "@src/core/domains/http/middleware/AuthorizeMiddleware";
+import Route from "@src/core/domains/http/router/Route";
 
 /**
  * todo: missing validator

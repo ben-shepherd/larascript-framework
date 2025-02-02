@@ -1,6 +1,6 @@
 import HelloWorldController from "@src/core/domains/express/actions/helloWorldController";
 import BasicLoggerMiddleware from "@src/core/domains/express/middleware/BasicLoggerMiddleware";
-import Route from "@src/core/domains/express/routing/Route";
+import Route from "@src/core/domains/http/router/Route";
 
 const helloWorldRoutes = Route.group({
     prefix: '/hello',
