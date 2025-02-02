@@ -10,6 +10,7 @@ import HasMany from '@src/core/domains/eloquent/relational/HasMany';
 import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
 import { IObserver, IObserverEvent } from '@src/core/domains/observer/interfaces/IObserver';
 import { ICtor } from '@src/core/interfaces/ICtor';
+import IFactory, { FactoryConstructor } from '@src/core/interfaces/IFactory';
 import { GetAttributesOptions, IModel, IModelAttributes, ModelConstructor } from "@src/core/interfaces/IModel";
 import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
 import { app } from '@src/core/services/App';
@@ -110,7 +111,13 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * Key is the property name, value is the name of the custom observation method.
      */
     public observeProperties: Record<string, string> = {};
+
+    /**
+     * The factory instance for the model.
+     */
+    protected factory!: FactoryConstructor<Model<Attributes>>;
     
+
     /**
      * Constructs a new instance of the Model class.
      * 
@@ -233,6 +240,38 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         return ModelScopes.getScopes(this as unknown as ModelConstructor, scopes, additionalScopes)
     }
 
+    /**
+     * Retrieves the fields defined on the model.
+     * The fields are the list of fields that are allowed to be set on the model.
+     * This is used for mass assignment.
+     * @returns The list of fields defined on the model.
+     */
+    static getFields(): string[] {
+        return this.create().getFields()
+    }
+
+    /**
+     * Retrieves the factory instance for the model.
+     * @returns The factory instance for the model.
+     */
+    static factory(): IFactory<IModel> {
+        return this.create().getFactory()
+    }
+
+    /**
+     * Retrieves the factory instance for the model.
+     * @returns The factory instance for the model.
+     */
+    getFactory(): IFactory<IModel> {
+        if(!this.factory) {
+            throw new Error('Factory not set')
+        }
+
+        return new this.factory()
+    }
+
+    /**
+     * Retrieves the factory instance for the model.
     /**
      * Sets the observer for this model instance.
      * The observer is responsible for handling events broadcasted by the model.

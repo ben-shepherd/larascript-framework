@@ -1,5 +1,5 @@
 import unauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
-import responseError from '@src/core/domains/express/requests/responseError';
+import responseError from '@src/core/domains/http/handlers/responseError';
 import { App } from '@src/core/services/App';
 import { Request, Response } from 'express';
 

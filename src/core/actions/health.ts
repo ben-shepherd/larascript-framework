@@ -1,4 +1,4 @@
-import responseError from "@src/core/domains/express/requests/responseError";
+import responseError from "@src/core/domains/http/handlers/responseError";
 import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import { App } from "@src/core/services/App";

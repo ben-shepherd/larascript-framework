@@ -1,0 +1,11 @@
+import Controller from "@src/core/domains/http/base/Controller";
+
+class #name# extends Controller {
+
+    async invoke() {
+        this.jsonResponse({}, 200)
+    }
+
+}
+
+export default #name#;

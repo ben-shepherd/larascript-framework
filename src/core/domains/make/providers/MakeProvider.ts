@@ -1,6 +1,6 @@
 import BaseProvider from "@src/core/base/Provider";
-import MakeActionCommand from "@src/core/domains/make/commands/MakeActionCommand";
 import MakeCmdCommand from "@src/core/domains/make/commands/MakeCmdCommand";
+import MakeController from "@src/core/domains/make/commands/MakeControllerCommand";
 import MakeListenerCommand from "@src/core/domains/make/commands/MakeListenerCommand";
 import MakeMiddlewareCommand from "@src/core/domains/make/commands/MakeMiddlewareCommand";
 import MakeMigrationCommand from "@src/core/domains/make/commands/MakeMigrationCommand";
@@ -9,12 +9,12 @@ import MakeObserverCommand from "@src/core/domains/make/commands/MakeObserverCom
 import MakeProviderCommand from "@src/core/domains/make/commands/MakeProviderCommand";
 import MakeRepositoryCommand from "@src/core/domains/make/commands/MakeRepositoryCommand";
 import MakeRoutesCommand from "@src/core/domains/make/commands/MakeRoutesCommand";
+import MakeSeederCommand from "@src/core/domains/make/commands/MakeSeederCommand";
 import MakeServiceCommand from "@src/core/domains/make/commands/MakeServiceCommand";
 import MakeSingletonCommand from "@src/core/domains/make/commands/MakeSingletonCommand";
 import MakeSubscriberCommand from "@src/core/domains/make/commands/MakeSubscriberCommand";
 import MakeValidatorCommand from "@src/core/domains/make/commands/MakeValidatorCommand";
 import { App } from "@src/core/services/App";
-import MakeSeederCommand from "@src/core/domains/make/commands/MakeSeederCommand";
 
 export default class MakeProvider extends BaseProvider {
 
@@ -33,7 +33,7 @@ export default class MakeProvider extends BaseProvider {
             MakeProviderCommand,
             MakeRoutesCommand,
             MakeMiddlewareCommand,
-            MakeActionCommand,
+            MakeController,
             MakeValidatorCommand,
             MakeMigrationCommand,
             MakeSeederCommand

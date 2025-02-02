@@ -1,22 +1,35 @@
+/* eslint-disable no-unused-vars */
  
 import 'dotenv/config';
 import 'tsconfig-paths/register';
 
+import appConfig from '@src/config/app';
+import Kernel from '@src/core/Kernel';
+import LarascriptProviders from '@src/core/providers/LarascriptProviders';
+import { app } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
 
-import { app } from './core/services/App';
+const USE_TEST_DB = false;
 
 (async () => {
 
-    await testHelper.testBootApp();
+    if(USE_TEST_DB) {
+        await testHelper.testBootApp();
+        await app('console').reader(['migrate:fresh', '--seed']).handle();
+    }
+    else {
+        await Kernel.boot({
+            environment: appConfig.env,
+            providers: LarascriptProviders
+        }, {});
+    }
 
-    const auth    = app('auth');
     const db      = app('db');
     const events  = app('events')     
-    const cnsl    = app('console');
     const query   = app('query');
-   
-    // ADD YOUR CODE HERE
 
+    /**
+    * ADD YOUR CODE HERE
+    */
     
 })(); 

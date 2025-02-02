@@ -1,4 +1,5 @@
 import Factory from '@src/core/base/Factory';
+import { IModel, IModelAttributes, ModelConstructor } from '@src/core/interfaces/IModel';
 import TestUser from '@src/tests/models/models/TestUser';
 
 /**
@@ -9,13 +10,6 @@ import TestUser from '@src/tests/models/models/TestUser';
  */
 export default class TestUserFactory extends Factory<TestUser> {
 
-    /**
-     * Constructor
-     *
-     * @constructor
-     */
-    constructor() {
-        super(TestUser)
-    }
+    protected model: ModelConstructor<IModel<IModelAttributes>> = TestUser;
     
 }

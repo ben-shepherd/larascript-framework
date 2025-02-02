@@ -3,8 +3,6 @@ import { TColumnOption } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
 import SqlExpression, { SqlRaw } from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 
-type RawSelect = { sql: string, bindings: unknown };
-
 class SelectColumns {
 
     /**
