@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 import { ControllerConstructor } from "@src/core/domains/express/interfaces/IController";
 import { TExpressMiddlewareFnOrClass } from "@src/core/domains/express/interfaces/IMiddleware";
-import { SearchOptionsLegacy } from "@src/core/domains/express/interfaces/IRouteResourceOptionsLegacy";
 import { ISecurityRule } from "@src/core/domains/express/interfaces/ISecurity";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
+import { TSortDirection } from "../services/Resources/SortOptions";
 import SecurityRules from "../services/SecurityRules";
 
 export type RouteConstructor = {
@@ -81,9 +81,15 @@ export type TRouteItem = {
             pageSize?: number;
             allowPageSizeOverride?: boolean;
         },
-    },
-    searching?: SearchOptionsLegacy
+        sorting?: {
+            fieldKey: string;
+            directionKey: string;
+            defaultField?: string;
+            defaultDirection?: TSortDirection;
+        }
+    }
 }
+
 
 export type TRouteResourceOptions = {
     prefix: string;
@@ -98,6 +104,12 @@ export type TRouteResourceOptions = {
     paginate?: {
         pageSize: number;
         allowPageSizeOverride?: boolean;
+    }
+    sorting?: {
+        fieldKey: string;
+        directionKey: string;
+        defaultField?: string;
+        defaultDirection?: TSortDirection;
     }
 }
 

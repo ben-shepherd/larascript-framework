@@ -9,9 +9,10 @@ import { RouteResourceTypes } from "@src/core/domains/express/routing/RouterReso
 import Paginate from "@src/core/domains/express/services/Paginate";
 import QueryFilters from "@src/core/domains/express/services/QueryFilters";
 import BaseResourceService from "@src/core/domains/express/services/Resources/BaseResourceService";
-import { BaseRequest } from "@src/core/domains/express/types/BaseRequest.t";
 import stripGuardedResourceProperties from "@src/core/domains/express/utils/stripGuardedResourceProperties";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
+
+import SortOptions from "./SortOptions";
 
 class ResourceIndexService extends BaseResourceService {
 
@@ -62,6 +63,14 @@ class ResourceIndexService extends BaseResourceService {
             builder.take(pageOptions.pageSize ?? null)
                 .skip(pageOptions.skip)
         }
+
+        // Apply the sort options
+        const sortOptions = this.buildSortOptions(context);
+
+        if(sortOptions) {
+            builder.orderBy(sortOptions.field, sortOptions.sortDirection)
+        }
+
 
         // Check if the resource owner security applies to this route and it is valid
         // If it is valid, we add the owner's id to the filters
@@ -172,6 +181,28 @@ class ResourceIndexService extends BaseResourceService {
 
         return { skip, page, pageSize };
     }
+
+    /**
+     * Builds the sort options
+     * 
+     * @param {BaseRequest} req - The request object
+     * @returns {SortOptions} - The sort options
+     */
+    buildSortOptions(context: HttpContext): SortOptions | undefined {
+        const req = context.getRequest()
+        const routeOptions = context.getRouteItem() as TRouteItem
+        const sortOptions = routeOptions.resource?.sorting;
+        const result = SortOptions.parseRequest(req, sortOptions);
+        
+        // Check if the sorting field is a valid field on the model
+        if(!this.getModelConstructor(context).getFields().includes(result.field)) {
+            return undefined
+        }
+
+        return result
+    }
+
+
 
 }
 
