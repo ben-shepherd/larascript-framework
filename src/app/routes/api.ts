@@ -1,8 +1,9 @@
 import Route from "@src/core/domains/http/router/Route"
-import { Request, Response } from "express"
+
+import ExampleController from "../controllers/ExampleController"
 
 export default Route.group(router => {
-    router.get('/', (req: Request, res: Response) => {
-        res.send('OK!')
-    })
+
+    router.get('/', [ExampleController, 'example'])
+    
 })
