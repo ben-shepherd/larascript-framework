@@ -20,19 +20,6 @@ class HttpContext {
 
     ) {
     }
-
-    /**
-     * Converts the HttpContext to an object.
-     * @returns {Record<string, unknown>} The HttpContext as an object.
-     */
-    public toObject(): Record<string, unknown> {
-        return {
-            req: this.req,
-            res: this.res,
-            nextFn: this.nextFn,
-            routeItem: this.routeItem
-        }
-    }
     
     /**
      * Gets the route item of the request.
