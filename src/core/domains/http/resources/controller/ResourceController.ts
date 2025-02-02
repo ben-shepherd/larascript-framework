@@ -9,7 +9,6 @@ import ResourceUpdateService from "@src/core/domains/http/resources/services/Res
 
 import HttpContext from "../../context/HttpContext";
 import responseError from "../../handlers/responseError";
-import { TRouteItem } from "../../interfaces/IRouter";
 import AbastractBaseResourceService from "../abstract/AbastractBaseResourceService";
 
 /**
@@ -93,27 +92,6 @@ class ResourceController  extends Controller {
      */
     protected async handler(context: HttpContext, service: AbastractBaseResourceService) {
         try {
-            const routeItem = context.getRouteItem() as TRouteItem
-
-            console.log('[Express] resource handler', {
-                path: routeItem.path,
-                method: routeItem.method,
-                resource: service.routeResourceType,
-                details: {
-                    security: routeItem.security?.map(security => {
-                        return {
-                            id: security.getId(),
-                            options: JSON.stringify(security.getRuleOptions())
-                        }
-                    }),
-                    filters: {
-                        show: routeItem.resource?.filters?.show ?? {},
-                        index: routeItem.resource?.filters?.index ?? {}
-                    },
-                    searching: JSON.stringify(routeItem.resource?.searching ?? {})
-                }
-            })
-
             const result = await service.handler(context)
             this.jsonResponse(result as object)
         }
