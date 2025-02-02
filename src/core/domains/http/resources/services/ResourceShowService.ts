@@ -8,6 +8,19 @@ import { RouteResourceTypes } from "@src/core/domains/http/router/RouterResource
 import stripGuardedResourceProperties from "@src/core/domains/http/utils/stripGuardedResourceProperties";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
 
+/**
+ * Service class that handles retrieving individual resources through HTTP requests
+ * 
+ * This service:
+ * - Validates authorization for viewing the resource
+ * - Fetches a single resource by ID
+ * - Validates resource ownership if enabled
+ * - Strips protected properties before returning
+ * 
+ * Used by ResourceController to handle GET requests for individual resources.
+ * Provides standardized show/view functionality while enforcing security rules
+ * and data protection.
+ */
 
 class ResourceShowService extends AbastractBaseResourceService {
 

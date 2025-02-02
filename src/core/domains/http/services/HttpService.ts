@@ -16,9 +16,10 @@ import Middleware from '../base/Middleware';
 import BasicLoggerMiddleware from '../middleware/BasicLoggerMiddleware';
 
 /**
- * Short hand for `app('express')`
+ * Short hand for `app('http')`
  */
-export const express = () => app('express');
+export const http = () => app('http');
+
 
 /**
  * ExpressService class

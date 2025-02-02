@@ -2,6 +2,33 @@ import ResourceException from "@src/core/domains/express/exceptions/ResourceExce
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import { ISecurityRule } from "@src/core/domains/http/interfaces/ISecurity";
 
+/**
+ * AbstractSecurityRule is a base class for implementing security rules in HTTP requests.
+ * 
+ * This abstract class provides the foundation for creating security rules that can be applied
+ * to routes and endpoints. Security rules are used to enforce access control, validate requests,
+ * and implement other security-related checks.
+ * 
+ * Key features:
+ * - Configurable conditions for when rules should be applied (when/never)
+ * - Generic type support for rule-specific options
+ * - Extensible execute() method for implementing rule logic
+ * 
+ * Example usage:
+ * ```ts
+ * class AdminOnlyRule extends AbstractSecurityRule {
+ *   protected readonly id = 'admin-only';
+ *   
+ *   public async execute(context: HttpContext): Promise<boolean> {
+ *     return context.user?.role === 'admin';
+ *   }
+ * }
+ * ```
+ * 
+ * Security rules can be attached to routes and will be evaluated before
+ * the route handler executes. If any rule returns false or throws an exception,
+ * the request will be rejected.
+ */
 abstract class AbstractSecurityRule<RuleOptions extends object = object> implements ISecurityRule<RuleOptions> {
 
     /**

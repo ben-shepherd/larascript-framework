@@ -8,6 +8,27 @@ import stripGuardedResourceProperties from "@src/core/domains/http/utils/stripGu
 import { IModelAttributes } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 
+/**
+ * Service class that handles creating new resources through HTTP requests
+ * 
+ * This service:
+ * - Validates authorization for creating resources
+ * - Creates a new model instance with request data
+ * - Sets resource ownership if enabled
+ * - Saves the new resource
+ * - Strips protected properties before returning
+ * 
+ * Used by ResourceController to handle POST requests for creating resources.
+ * Provides standardized create functionality while enforcing security rules
+ * and data protection.
+ *
+ * Key features:
+ * - Authorization validation
+ * - Resource ownership assignment
+ * - Protected property stripping
+ * - Standardized resource creation
+ */
+
 class ResourceCreateService extends AbastractBaseResourceService {
 
     routeResourceType: string = RouteResourceTypes.CREATE

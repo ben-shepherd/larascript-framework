@@ -6,6 +6,25 @@ import HttpContext from '@src/core/domains/http/context/HttpContext';
 import responseError from '@src/core/domains/http/handlers/responseError';
 import { ray } from 'node-ray';
 
+/**
+ * AuthorizeMiddleware handles authentication and authorization for HTTP requests
+ * 
+ * This middleware:
+ * - Validates the authorization header and authenticates the request
+ * - Attaches the authenticated user and API token to the request context
+ * - Validates that the API token has the required scopes for the route
+ * - Returns appropriate error responses for unauthorized/forbidden requests
+ *
+ * Key features:
+ * - Request authentication via AuthRequest service
+ * - Scope-based authorization
+ * - Standardized error handling for auth failures
+ * - Integration with request context for user/token storage
+ *
+ * Used as middleware on routes requiring authentication. Can be configured with
+ * required scopes that are validated against the API token's allowed scopes.
+ */
+
 class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
 
     async execute(context: HttpContext): Promise<void> {

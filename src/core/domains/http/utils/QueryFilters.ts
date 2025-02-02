@@ -20,6 +20,7 @@ type Options = {
  * 
  * Example usage:
  * GET /api/users?filters={"status":"active","role":"admin"}
+ * GET /api/users?filters[status]=active&filters[role]=admin
  * 
  * The class will decode and parse these filters, ensuring only allowed fields
  * are included in the final filters object.

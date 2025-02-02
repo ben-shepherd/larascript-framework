@@ -33,12 +33,13 @@ export const RouteResourceTypes = {
  *   security: [SecurityRules.resourceOwner('user_id')],
  *   filters: {
  *       index: {
- *           title: 'Example'
+ *           active: true
  *       },
  *       show: {
- *           title: 'Example'
+ *           active: true
  *       }
  *   }
+
  * })
  * ```
  * 

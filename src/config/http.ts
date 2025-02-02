@@ -27,9 +27,10 @@ const config: IExpressConfig = {
      * Logging
      */
     logging: {
-        requests: true,
-        boundRouteDetails: true
+        requests: false,
+        boundRouteDetails: false
     }
+
 };
 
 export default config

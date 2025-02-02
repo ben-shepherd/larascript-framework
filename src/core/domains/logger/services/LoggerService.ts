@@ -124,15 +124,7 @@ class LoggerService implements ILoggerService {
      * @param {...any[]} args The arguments to output to the console.
      */
     console(...args: any[]) {
-        const logger = winston.createLogger({
-            level:'info',
-            format: winston.format.json(),
-            transports: [
-                new winston.transports.Console({ format: winston.format.simple() })
-            ]
-        })
-
-        logger.info([...args])
+        console.log([...args])
     }
 
 }

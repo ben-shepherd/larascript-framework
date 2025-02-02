@@ -14,6 +14,26 @@ import { IModelAttributes } from "@src/core/interfaces/IModel";
 
 import SortOptions from "../../utils/SortOptions";
 
+/**
+ * Service class that handles retrieving collections of resources through HTTP requests
+ * 
+ * This service:
+ * - Validates authorization for viewing the resource collection
+ * - Applies pagination and filtering options from the request
+ * - Fetches filtered and paginated results
+ * - Strips protected properties before returning
+ * 
+ * Used by ResourceController to handle GET requests for resource collections.
+ * Provides standardized index/list functionality while enforcing security rules
+ * and data protection.
+ *
+ * Key features:
+ * - Pagination support via pageSize and skip parameters
+ * - Filtering via query parameters
+ * - Authorization checks
+ * - Protected property stripping
+ */
+
 class ResourceIndexService extends AbastractBaseResourceService {
 
     routeResourceType: string = RouteResourceTypes.INDEX

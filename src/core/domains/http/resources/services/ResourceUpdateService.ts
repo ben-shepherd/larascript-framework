@@ -8,7 +8,20 @@ import { RouteResourceTypes } from "@src/core/domains/http/router/RouterResource
 import stripGuardedResourceProperties from "@src/core/domains/http/utils/stripGuardedResourceProperties";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
 
-
+/**
+ * Service class that handles updating existing resources through HTTP requests
+ * 
+ * This service:
+ * - Validates authorization for the update action
+ * - Fetches the existing resource by ID
+ * - Validates resource ownership if enabled
+ * - Updates the resource with request data
+ * - Strips protected properties before returning
+ * 
+ * Used by ResourceController to handle PUT/PATCH requests to update resources.
+ * Provides standardized update functionality while enforcing security rules
+ * and data protection.
+ */
 class ResourceUpdateService extends AbastractBaseResourceService {
 
     routeResourceType: string = RouteResourceTypes.UPDATE

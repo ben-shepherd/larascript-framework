@@ -1,11 +1,31 @@
-import Singleton from "@src/core/base/Singleton";
 import { Request } from "express";
 
 export type ParseRequestOptions = {
     allowPageSizeOverride?: boolean
 }
 
-class Paginate extends Singleton {
+/**
+ * Paginate class
+ * 
+ * A utility class for handling pagination in HTTP requests. It extracts and manages
+ * pagination parameters (page number and page size) from Express request query strings.
+ * 
+ * Example usage:
+ * ```ts
+ * const paginate = new Paginate();
+ * paginate.parseRequest(req);
+ * 
+ * const page = paginate.getPage(); // Gets current page, defaults to 1
+ * const pageSize = paginate.getPageSize(10); // Gets page size with default of 10
+ * ```
+ * 
+ * The class supports:
+ * - Parsing page and pageSize from request query parameters
+ * - Configurable page size override through options
+ * - Default values for both page and pageSize
+ * - Method chaining for fluent API usage
+ */
+class Paginate {
 
     protected page: number | undefined = undefined
 

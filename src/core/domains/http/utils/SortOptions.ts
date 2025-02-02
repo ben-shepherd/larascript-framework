@@ -17,6 +17,34 @@ const DEFAULT_SORT_OPTIONS: TSortOptions = {
     defaultDirection: 'asc'
 }
 
+/**
+ * SortOptions class
+ * 
+ * A utility class for handling sorting parameters in HTTP requests. It extracts and processes
+ * sort field and direction parameters from Express request query strings.
+ * 
+ * The class supports:
+ * - Parsing sort field and direction from request query parameters
+ * - Configurable parameter keys through TSortOptions
+ * - Default values for both field and direction
+ * - Multiple direction formats: 
+ *   - Text: 'asc'/'desc'
+ *   - Numeric: 1/-1
+ *   - Prefix: '-fieldname' for desc
+ * 
+ * Example usage:
+ * ```ts
+ * // GET /api/users?sort=name&direction=desc
+ * const sortOptions = SortOptions.parseRequest(req);
+ * 
+ * // Access sort parameters
+ * const field = sortOptions.field; // 'name'
+ * const direction = sortOptions.sortDirection; // 'desc'
+ * ```
+ * 
+ * The class implements the Singleton pattern to ensure a single instance
+ * and provides a static parseRequest method for convenient usage.
+ */
 class SortOptions extends Singleton {
 
     field: string = '';

@@ -1,13 +1,30 @@
 import Middleware from '@src/core/domains/http/base/Middleware';
 import HttpContext from '@src/core/domains/http/context/HttpContext';
-import { App } from '@src/core/services/App';
 
+import { logger } from '../../logger/services/LoggerService';
+
+/**
+ * BasicLoggerMiddleware logs basic information about incoming requests
+ * 
+ * This middleware:
+ * - Logs the request method and URL
+ * - Logs the request headers
+ * - Logs the request body
+ */
 class BasicLoggerMiddleware extends Middleware {
 
     public async execute(context: HttpContext): Promise<void> {
 
-        App.container('logger').info('New request: ', `${context.getRequest().method} ${context.getRequest().url}`, 'Headers: ', context.getRequest().headers);
+        const detailed = {
+            method: context.getRequest().method,
+            url: context.getRequest().url,
+            headers: context.getRequest().headers,
+            body: context.getRequest().body,
+            ip: context.getRequest().ip,
+            userAgent: context.getRequest().headers['user-agent'],
+        }
 
+        logger().console('New request: ', detailed);
         this.next();
     }
 
