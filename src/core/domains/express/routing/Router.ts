@@ -108,7 +108,13 @@ class Router implements IRouter {
      * Register a resource route.
      */
     public resource(options: TRouteResourceOptions): IRouter {
-        return ResourceRouter.resource(options, this);
+        const router = ResourceRouter.resource(options);
+
+        router.getRegisteredRoutes().map(route => {
+            this.register(route)
+        })
+
+        return this
     }
 
     /**

@@ -5,4 +5,9 @@ export default interface IExpressConfig {
     port: number;
     globalMiddlewares?: express.RequestHandler[];
     currentRequestCleanupDelay?: number;
+    logging?: {
+        boundRouteDetails?: boolean;
+        requests?: boolean;
+    }
+
 }

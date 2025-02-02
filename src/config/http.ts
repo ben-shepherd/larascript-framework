@@ -21,7 +21,15 @@ const config: IExpressConfig = {
     globalMiddlewares: [
         express.json(),
         bodyParser.urlencoded({ extended: true }),
-    ]
+    ],
+
+    /**
+     * Logging
+     */
+    logging: {
+        requests: true,
+        boundRouteDetails: true
+    }
 };
 
 export default config

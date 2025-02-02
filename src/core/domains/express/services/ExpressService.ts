@@ -5,13 +5,15 @@ import IExpressService from '@src/core/domains/express/interfaces/IExpressServic
 import { MiddlewareConstructor, TExpressMiddlewareFn } from '@src/core/domains/express/interfaces/IMiddleware';
 import { IRoute, IRouter, TRouteItem } from '@src/core/domains/express/interfaces/IRoute';
 import EndRequestContextMiddleware from '@src/core/domains/express/middleware/deprecated/EndRequestContextMiddleware';
-import RequestIdMiddlewareTest from '@src/core/domains/express/middleware/deprecated/RequestIdMiddleware';
+import RequestIdMiddleware from '@src/core/domains/express/middleware/deprecated/RequestIdMiddleware';
 import SecurityMiddleware from '@src/core/domains/express/middleware/securityMiddleware';
 import Route from '@src/core/domains/express/routing/Route';
 import RouterBindService from '@src/core/domains/express/services/RouterBindService';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
 import { app } from '@src/core/services/App';
 import expressClient from 'express';
+
+import BasicLoggerMiddleware from '../middleware/deprecated/BasicLoggerMiddleware';
 
 /**
  * Short hand for `app('express')`
@@ -69,17 +71,23 @@ export default class ExpressService extends Service<IExpressConfig> implements I
         // Adds an identifier to the request object
         // This id is used in the requestContext service to store information over a request life cycle
         // this.app.use(requestIdMiddleware())
-        this.app.use(RequestIdMiddlewareTest.toExpressMiddleware())
+        this.app.use(RequestIdMiddleware.toExpressMiddleware())
 
         // End the request context
         // This will be called when the request is finished
         // Deletes the request context and associated values
         this.app.use(EndRequestContextMiddleware.toExpressMiddleware())
 
+        // Log requests
+        if(this.config?.logging?.requests) {
+            this.app.use(BasicLoggerMiddleware.toExpressMiddleware())
+        }
+
         // Apply global middlewares
         for (const middleware of this.config?.globalMiddlewares ?? []) {
             this.app.use(middleware);
         }
+
     }
 
     /**
@@ -115,7 +123,7 @@ export default class ExpressService extends Service<IExpressConfig> implements I
             return
         }
 
-        this.routerBindService.setExpress(this.app)
+        this.routerBindService.setExpress(this.app, this.config)
         this.routerBindService.setOptions({ additionalMiddlewares: [SecurityMiddleware] })
         this.routerBindService.bindRoutes(router)
         this.registeredRoutes.push(...router.getRegisteredRoutes())

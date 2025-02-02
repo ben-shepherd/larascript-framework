@@ -9,6 +9,7 @@ import expressClient from 'express';
 
 import Controller from '../base/Controller';
 import { ControllerConstructor } from '../interfaces/IController';
+import IExpressConfig from '../interfaces/IExpressConfig';
 
 // eslint-disable-next-line no-unused-vars
 type ExecuteFn = (context: HttpContext) => Promise<void>;
@@ -22,15 +23,21 @@ class RouterBindService {
     private app!: expressClient.Express;
 
     private options: IRouteServiceOptions = {}
-    
+
+    private config!: IExpressConfig | null
+
     /**
      * Sets the Express instance to be used.
+
      * 
+
      * @param app The Express instance to set
      */
-    public setExpress(app: expressClient.Express): void {
+    public setExpress(app: expressClient.Express, config: IExpressConfig | null): void {
         this.app = app
+        this.config = config
     }
+
 
     /**
      * Sets the options to be used.
@@ -58,6 +65,7 @@ class RouterBindService {
     public bindRoutes(router: IRouter): void {
         router.getRegisteredRoutes().forEach(routeItem => {
             this.bindRoute(routeItem)
+            this.logBoundRouteDetails(routeItem)
         })
     }
 
@@ -195,6 +203,24 @@ class RouterBindService {
         return async (req: expressClient.Request, res: expressClient.Response, next: expressClient.NextFunction | undefined) => {
             await executeFn(new HttpContext(req, res, next, routeItem))
         }
+    }
+
+    /**
+     * Logs the route details.
+     * 
+     * @param route The route to log
+     */
+    protected logBoundRouteDetails(route: TRouteItem): void {
+        if(!this.config?.logging?.boundRouteDetails) {
+            return
+        }
+
+        console.log({
+            path: route.path,
+            method: route.method,
+            security: route?.security,
+            resource: route?.resource
+        })
     }
 
 }
