@@ -7,6 +7,9 @@ import MiddlewareUtil from '@src/core/domains/express/utils/middlewareUtil';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
 import expressClient from 'express';
 
+import Controller from '../base/Controller';
+import { ControllerConstructor } from '../interfaces/IController';
+
 // eslint-disable-next-line no-unused-vars
 type ExecuteFn = (context: HttpContext) => Promise<void>;
 
@@ -106,14 +109,32 @@ class RouterBindService {
      * @returns The action as an Express middleware function
      */
     protected getAction(routeItem: TRouteItem): TExpressMiddlewareFn {
+
+        // Only provided a string action (method name)
         if(typeof routeItem.action === 'string') {
             return this.getActionFromController(routeItem)
         }
 
+        // Provided an array of [controller, action]
+        if(Array.isArray(routeItem.action)) {
+            if(routeItem.action.length !== 2) { 
+                throw new RouteException(`Invalid action provided for route '${routeItem.path}'. Expected an array of [controller, action]`)
+            }
+            return this.getActionFromController({ ...routeItem, controller: routeItem.action?.[0], action: routeItem.action?.[1] ?? 'invoke' })
+        }
+
+
+        // Only provided a controller constructor, use the invoke method
+        if(routeItem.action.prototype instanceof Controller) {
+            return this.getActionFromController({ ...routeItem, action: 'invoke', controller: routeItem.action as ControllerConstructor })
+        }
+
+        // Normal Express middleware function
         const executeFn: ExecuteFn = async (context: HttpContext) => {
             await (routeItem.action as TExpressMiddlewareFn)(context.getRequest(), context.getResponse(), context.getNext())
         }
 
+        // Create the middleware function
         return this.createExpressMiddlewareFn(executeFn, routeItem)
     }
 
@@ -125,7 +146,7 @@ class RouterBindService {
      */
     protected getActionFromController(routeItem: TRouteItem): TExpressMiddlewareFn {
         if(!routeItem.controller) {
-            throw new RouteException(`A controller is required with a route action ('${routeItem.action}')`)
+            throw new RouteException(`Invalid route ('${routeItem.path}'). A controller is required with a route action '${routeItem.action}'.`)
         }
 
         const controllerConstructor = routeItem.controller  

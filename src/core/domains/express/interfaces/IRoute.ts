@@ -59,7 +59,7 @@ export type TResourceType = 'index' | 'show' | 'create' | 'update' | 'delete';
 export type TRouteItem = {
     path: string;
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-    action: string | TExpressMiddlewareFnOrClass;
+    action: string | TExpressMiddlewareFnOrClass | ControllerConstructor | [ControllerConstructor, string];
     name?: string;
     prefix?: string;
     middlewares?: TExpressMiddlewareFnOrClass | TExpressMiddlewareFnOrClass[];
