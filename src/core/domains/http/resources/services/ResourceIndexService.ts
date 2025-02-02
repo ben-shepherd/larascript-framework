@@ -1,5 +1,4 @@
 import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
-import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
@@ -57,11 +56,6 @@ class ResourceIndexService extends AbastractBaseResourceService {
 
         if(!routeOptions) {
             throw new ResourceException('Route options are required')
-        }
-        
-        // Check if the authorization security applies to this route and it is valid
-        if(!this.validateAuthorized(context)) {
-            throw new UnauthorizedError()
         }
         
         // Build the page options, filters
