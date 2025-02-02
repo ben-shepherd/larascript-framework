@@ -1,5 +1,4 @@
 import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
-import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
@@ -39,11 +38,6 @@ class ResourceShowService extends AbastractBaseResourceService {
      * @param options The resource options
      */
     async handler(context: HttpContext): Promise<IModelAttributes> {
-
-        // Check if the authorization security applies to this route and it is valid
-        if(!this.validateAuthorized(context)) {
-            throw new UnauthorizedError()
-        }
 
         const routeOptions = context.getRouteItem()
 

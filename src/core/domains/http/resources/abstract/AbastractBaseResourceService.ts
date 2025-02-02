@@ -116,12 +116,25 @@ abstract class AbastractBaseResourceService {
                 return true;
             }
 
-            const resourceOwnerId = resource.getAttributeSync(resourceOwnerSecurity.getRuleOptions()?.attribute as string)
+            // Get the attribute from the resource owner security
+            const attribute = resourceOwnerSecurity.getRuleOptions()?.attribute as string
 
-            if(!resourceOwnerId) {
+            if(!attribute) {
                 throw new ResourceException('An attribute is required to check resource owner security')
             }
 
+            if(!resource.getFields().includes(attribute)) {
+                throw new ResourceException('The attribute ' + attribute + ' is not a valid attribute for the resource ' + resource.constructor.name)
+            }
+
+            // Get the resource owner id
+            const resourceOwnerId = resource.getAttributeSync(attribute)
+
+            if(!resourceOwnerId) {
+                return false;
+            }
+
+            // Get the request user id
             const requestUserId = requestContext().getByRequest<string>(context.getRequest(), 'userId');
 
             if(!requestUserId) {
