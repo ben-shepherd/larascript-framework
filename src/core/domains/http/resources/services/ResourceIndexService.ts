@@ -1,4 +1,3 @@
-import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
@@ -90,12 +89,7 @@ class ResourceIndexService extends AbastractBaseResourceService {
         // If it is valid, we add the owner's id to the filters
         if(this.validateResourceOwnerApplicable(context)) {
             const attribute = this.getResourceAttribute(routeOptions);
-            const userId = context.getRequest().user?.getId()
-
-            if(!userId) { 
-                throw new ForbiddenResourceError()
-            }
-
+            const userId = context.getRequest().user?.getId() as string
             builder.where(attribute, '=', userId)
         }
 
