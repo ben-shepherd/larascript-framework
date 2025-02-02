@@ -1,8 +1,8 @@
  
 import { KeyPair, ParsedArgumentsArray } from '@src/core/domains/console/parsers/CommandArgumentParser';
 import BaseMakeFileCommand from '@src/core/domains/make/base/BaseMakeFileCommand';
-import MakeActionCommand from '@src/core/domains/make/commands/MakeActionCommand';
 import MakeCmdCommand from '@src/core/domains/make/commands/MakeCmdCommand';
+import MakeController from '@src/core/domains/make/commands/MakeControllerCommand';
 import MakeListenerCommand from '@src/core/domains/make/commands/MakeListenerCommand';
 import MakeMiddlewareCommand from '@src/core/domains/make/commands/MakeMiddlewareCommand';
 import MakeMigrationCommand from '@src/core/domains/make/commands/MakeMigrationCommand';
@@ -83,8 +83,8 @@ const getCommandCtorByType = (type: typeof targetDirectories[string]): CommandCt
         return MakeRoutesCommand;
     case 'Middleware':
         return MakeMiddlewareCommand;
-    case 'Action':
-        return MakeActionCommand;
+    case 'Controller':
+        return MakeController;
     case 'Validator':
         return MakeValidatorCommand;
     case 'Migration':

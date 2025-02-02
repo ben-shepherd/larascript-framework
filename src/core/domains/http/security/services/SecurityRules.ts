@@ -16,7 +16,7 @@ class SecurityRules {
      * @param options The options for the security rule
      * @returns The security rule
      */
-    protected static create<Rule extends AbstractSecurityRule = AbstractSecurityRule>(ruleConstructor: TSecurityRuleConstructor<Rule>, options?: Rule['options']): Rule {
+    public static create<Rule extends AbstractSecurityRule = AbstractSecurityRule>(ruleConstructor: TSecurityRuleConstructor<Rule>, options?: Rule['options']): Rule {
         return new ruleConstructor().setRuleOptions(options ?? {}) as Rule;
     }
 
