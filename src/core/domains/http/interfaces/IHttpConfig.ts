@@ -1,6 +1,6 @@
 import express from "express";
 
-export default interface IExpressConfig {
+export default interface IHttpConfig {
     enabled: boolean;
     port: number;
     globalMiddlewares?: express.RequestHandler[];

@@ -9,7 +9,7 @@ import ResourceUpdateService from "@src/core/domains/http/resources/services/Res
 
 import HttpContext from "../../context/HttpContext";
 import responseError from "../../handlers/responseError";
-import { TRouteItem } from "../../interfaces/IRoute";
+import { TRouteItem } from "../../interfaces/IRouter";
 import AbastractBaseResourceService from "../abstract/AbastractBaseResourceService";
 
 /**

@@ -2,8 +2,8 @@ import httpConfig from '@src/config/http';
 import BaseProvider from "@src/core/base/Provider";
 import RequestContext from '@src/core/domains/http/context/RequestContext';
 import RequestContextCleaner from '@src/core/domains/http/context/RequestContextCleaner';
-import ExpressService from '@src/core/domains/http/express/ExpressService';
-import IExpressConfig from "@src/core/domains/http/interfaces/IExpressConfig";
+import IHttpConfig from '@src/core/domains/http/interfaces/IHttpConfig';
+import HttpService from '@src/core/domains/http/services/HttpService';
 import { App } from "@src/core/services/App";
 
 export default class HttpProvider extends BaseProvider {
@@ -13,7 +13,7 @@ export default class HttpProvider extends BaseProvider {
      *
      * @default httpConfig
      */
-    protected config: IExpressConfig = httpConfig;
+    protected config: IHttpConfig = httpConfig;
 
     /**
      * Register method
@@ -23,12 +23,13 @@ export default class HttpProvider extends BaseProvider {
      * @returns Promise<void>
      */
     public async register(): Promise<void> {
-        this.log('Registering ExpressProvider');
+        this.log('Registering HttpProvider');
 
 
         // Register the Express service in the container
         // This will be available in any provider or service as App.container('express')
-        App.setContainer('express', new ExpressService(this.config));
+        App.setContainer('http', new HttpService(this.config));
+
 
         // Register the RequestContext service in the container
         // This will be available in any provider or service as App.container('requestContext')
@@ -48,23 +49,23 @@ export default class HttpProvider extends BaseProvider {
          * If Express is not enabled, return from the boot method
          */
         if (!this.config.enabled) {
-            this.log('Express is not enabled');
             return;
         }
 
-        this.log('Booting ExpressProvider');
+        this.log('Booting HttpProvider');
 
         /**
          * Get the Express instance from the container
          * Initialize Express
          */
-        const express = App.container('express');
-        express.init();
+        const http = App.container('http');
+        http.init();
+
 
         /**
          * Start listening for connections
          */
-        await express.listen();
+        await http.listen();
 
         /**
          * Start the RequestContextCleaner
@@ -74,7 +75,8 @@ export default class HttpProvider extends BaseProvider {
         })
 
         // Log that Express is successfully listening
-        this.log('Express successfully listening on port ' + express.getConfig()?.port);
+        this.log('Express successfully listening on port ' + http.getConfig()?.port);
     }
+
 
 }

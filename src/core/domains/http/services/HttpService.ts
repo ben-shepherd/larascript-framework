@@ -1,8 +1,8 @@
 import Service from '@src/core/base/Service';
-import IExpressConfig from '@src/core/domains/http/interfaces/IExpressConfig';
-import IExpressService from '@src/core/domains/http/interfaces/IExpressService';
+import { default as IExpressConfig, default as IHttpConfig } from '@src/core/domains/http/interfaces/IHttpConfig';
+import IHttpService from '@src/core/domains/http/interfaces/IHttpService';
 import { MiddlewareConstructor, TExpressMiddlewareFn } from '@src/core/domains/http/interfaces/IMiddleware';
-import { IRoute, IRouter, TRouteItem } from '@src/core/domains/http/interfaces/IRoute';
+import { IRoute, IRouter, TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
 import EndRequestContextMiddleware from '@src/core/domains/http/middleware/EndRequestContextMiddleware';
 import RequestIdMiddleware from '@src/core/domains/http/middleware/RequestIdMiddleware';
 import SecurityMiddleware from '@src/core/domains/http/middleware/SecurityMiddleware';
@@ -23,9 +23,10 @@ export const express = () => app('express');
 /**
  * ExpressService class
  * Responsible for initializing and configuring ExpressJS
- * @implements IExpressService
+ * @implements IHttpService
  */
-export default class ExpressService extends Service<IExpressConfig> implements IExpressService {
+export default class HttpService extends Service<IHttpConfig> implements IHttpService {
+
 
     protected config!: IExpressConfig | null;
 

@@ -1,7 +1,7 @@
 import RouteException from '@src/core/domains/express/exceptions/RouteException';
 import HttpContext from '@src/core/domains/http/context/HttpContext';
 import { MiddlewareConstructor, TExpressMiddlewareFn, TExpressMiddlewareFnOrClass } from '@src/core/domains/http/interfaces/IMiddleware';
-import { IRouter, TRouteItem } from "@src/core/domains/http/interfaces/IRoute";
+import { IRouter, TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
 import MiddlewareUtil from '@src/core/domains/http/utils/middlewareUtil';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
 import expressClient from 'express';
@@ -9,7 +9,7 @@ import expressClient from 'express';
 import Controller from '../base/Controller';
 import Middleware from '../base/Middleware';
 import { ControllerConstructor } from '../interfaces/IController';
-import IExpressConfig from '../interfaces/IExpressConfig';
+import IExpressConfig from '../interfaces/IHttpConfig';
 
 // eslint-disable-next-line no-unused-vars
 type ExecuteFn = (context: HttpContext) => Promise<void>;

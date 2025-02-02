@@ -1,5 +1,5 @@
 import { TExpressMiddlewareFnOrClass } from "@src/core/domains/http/interfaces/IMiddleware";
-import { IRouteGroupOptions, IRouter, TPartialRouteItemOptions, TRouteGroupFn, TRouteItem, TRouteResourceOptions } from "@src/core/domains/http/interfaces/IRoute";
+import { IRouteGroupOptions, IRouter, TPartialRouteItemOptions, TRouteGroupFn, TRouteItem, TRouteResourceOptions } from "@src/core/domains/http/interfaces/IRouter";
 import ResourceRouter from "@src/core/domains/http/router/RouterResource";
 
 import SecurityRules from "../security/services/SecurityRules";

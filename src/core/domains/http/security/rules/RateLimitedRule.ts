@@ -4,7 +4,7 @@ import { Request } from "express";
 import HttpContext from "../../context/HttpContext";
 import { requestContext } from "../../context/RequestContext";
 import { SecurityEnum } from "../../enums/SecurityEnum";
-import { IPDatesArrayTTL } from "../../interfaces/ICurrentRequest";
+import { IPDatesArrayTTL } from "../../interfaces/IRequestContext";
 import AbstractSecurityRule from "../abstract/AbstractSecurityRule";
 
 type TRateLimitedRuleOptions = {

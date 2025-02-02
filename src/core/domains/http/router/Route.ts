@@ -1,4 +1,4 @@
-import { IRoute, IRouteGroupOptions, IRouter, TRouteGroupFn, TRouteResourceOptions } from "@src/core/domains/http/interfaces/IRoute";
+import { IRoute, IRouteGroupOptions, IRouter, TRouteGroupFn, TRouteResourceOptions } from "@src/core/domains/http/interfaces/IRouter";
 import Router from "@src/core/domains/http/router/Router";
 import ResourceRouter from "@src/core/domains/http/router/RouterResource";
 

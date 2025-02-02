@@ -2,15 +2,15 @@ import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
 import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import HttpContextException from '@src/core/domains/express/exceptions/HttpContextException';
 import { requestContext } from '@src/core/domains/http/context/RequestContext';
-import { BaseRequest } from '@src/core/domains/http/interfaces/BaseRequest.t';
-import { TRouteItem } from '@src/core/domains/http/interfaces/IRoute';
+import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
+import { TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
 import { NextFunction, Response } from 'express';
 
 class HttpContext {
 
     constructor(
         // eslint-disable-next-line no-unused-vars
-        protected req: BaseRequest,
+        protected req: TBaseRequest,
         // eslint-disable-next-line no-unused-vars
         protected res: Response,
         // eslint-disable-next-line no-unused-vars
@@ -159,9 +159,9 @@ class HttpContext {
 
     /**
      * Gets the request object.
-     * @returns {BaseRequest} The request object.
+     * @returns {TBaseRequest} The request object.
      */
-    public getRequest(): BaseRequest {
+    public getRequest(): TBaseRequest {
         return this.req;
     }
 

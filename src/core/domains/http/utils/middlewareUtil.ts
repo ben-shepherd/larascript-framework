@@ -1,6 +1,6 @@
 
 import { MiddlewareConstructor, TExpressMiddlewareFn, TExpressMiddlewareFnOrClass } from '@src/core/domains/http/interfaces/IMiddleware';
-import { TRouteItem } from '@src/core/domains/http/interfaces/IRoute';
+import { TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
 
 import Middleware from '../base/Middleware';
 

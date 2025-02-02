@@ -1,17 +1,17 @@
 import User, { UserAttributes } from '@src/app/models/auth/User';
 import hashPassword from '@src/core/domains/auth/utils/hashPassword';
 import responseError from '@src/core/domains/http/handlers/responseError';
-import { BaseRequest } from '@src/core/domains/http/interfaces/BaseRequest.t';
+import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
 import { Response } from 'express';
 
 /**
  * Updates the currently logged in user
  * 
- * @param {BaseRequest} req - The request object
+ * @param {TBaseRequest} req - The request object
  * @param {Response} res - The response object
  * @returns {Promise<void>}
  */
-export default async (req: BaseRequest, res: Response) => {
+export default async (req: TBaseRequest, res: Response) => {
     try {
         const user = req.user as User;
         const { password, firstName, lastName } = req.body as Pick<UserAttributes, 'password' | 'firstName' | 'lastName'>;

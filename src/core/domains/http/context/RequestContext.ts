@@ -1,6 +1,6 @@
 import Singleton from "@src/core/base/Singleton";
-import { BaseRequest } from "@src/core/domains/http/interfaces/BaseRequest.t";
-import { IPContextData, IRequestContext, IRequestContextData } from "@src/core/domains/http/interfaces/ICurrentRequest";
+import { TBaseRequest } from "@src/core/domains/http/interfaces/BaseRequest";
+import { IPContextData, IRequestContext, IRequestContextData } from "@src/core/domains/http/interfaces/IRequestContext";
 import getIpAddress from "@src/core/domains/http/utils/getIpAddress";
 import { app } from "@src/core/services/App";
 
@@ -47,12 +47,12 @@ class RequestContext extends Singleton implements IRequestContext {
     /**
      * Sets a value in the current request context
      *
-     * @param {BaseRequest} req - The Express Request object
+     * @param {TBaseRequest} req - The Express Request object
      * @param {string} key - The key of the value to set
      * @param {unknown} value - The value associated with the key
      * @returns {typeof RequestContext} - The CurrentRequest class itself to enable chaining
      */
-    public setByRequest<T = unknown>(req: BaseRequest, key: string, value: T): this {
+    public setByRequest<T = unknown>(req: TBaseRequest, key: string, value: T): this {
         const requestId = req.id as string;
 
         if(!this.requestContext.has(requestId)) {
@@ -67,11 +67,11 @@ class RequestContext extends Singleton implements IRequestContext {
     /**
      * Gets a value from the current request context
      *
-     * @param {BaseRequest} req - The Express Request object
+     * @param {TBaseRequest} req - The Express Request object
      * @param {string} key - The key of the value to retrieve
      * @returns {T | undefined} - The value associated with the key, or undefined if not found
      */
-    public getByRequest<T = unknown>(req: BaseRequest, key?: string): T | undefined {
+    public getByRequest<T = unknown>(req: TBaseRequest, key?: string): T | undefined {
         const requestId = req.id as string;
 
         if (!key) {
@@ -86,12 +86,12 @@ class RequestContext extends Singleton implements IRequestContext {
      * 
      * If the ttlSeconds is not provided, the value will be stored indefinitely (only in memory).
      *
-     * @param {BaseRequest} req - The Express Request object
+     * @param {TBaseRequest} req - The Express Request object
      * @param {string} key - The key of the value to set
      * @param {unknown} value - The value associated with the key
      * @returns {typeof RequestContext} - The CurrentRequest class itself to enable chaining
      */
-    public setByIpAddress<T = unknown>(req: BaseRequest, key: string, value: T, ttlSeconds?: number): this {
+    public setByIpAddress<T = unknown>(req: TBaseRequest, key: string, value: T, ttlSeconds?: number): this {
         const ip = getIpAddress(req);
 
         if(!this.ipContext.has(ip)) {
@@ -109,11 +109,11 @@ class RequestContext extends Singleton implements IRequestContext {
     /**
      * Gets a value from the current request context by the request's IP address
      *
-     * @param {BaseRequest} req - The Express Request object
+     * @param {TBaseRequest} req - The Express Request object
      * @param {string} [key] - The key of the value to retrieve
      * @returns {T | undefined} - The value associated with the key, or undefined if not found
      */
-    public getByIpAddress<T = unknown>(req: BaseRequest, key?: string): T | undefined {
+    public getByIpAddress<T = unknown>(req: TBaseRequest, key?: string): T | undefined {
         const ip = getIpAddress(req);
 
         if (!key) {
@@ -126,10 +126,10 @@ class RequestContext extends Singleton implements IRequestContext {
     /**
      * Ends the current request context and removes all associated values
      *
-     * @param {BaseRequest} req - The Express Request object
+     * @param {TBaseRequest} req - The Express Request object
      * @returns {void}
      */
-    public endRequestContext(req: BaseRequest) {
+    public endRequestContext(req: TBaseRequest) {
         const requestId = req.id as string;
         this.requestContext.delete(requestId);
     }

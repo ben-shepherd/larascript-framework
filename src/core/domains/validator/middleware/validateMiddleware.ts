@@ -1,5 +1,5 @@
 import responseError from '@src/core/domains/http/handlers/responseError';
-import { BaseRequest } from '@src/core/domains/http/interfaces/BaseRequest.t';
+import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
 import { ValidatorMiddlewareProps } from '@src/core/domains/validator/interfaces/IValidatorService';
 import { NextFunction, Response } from 'express';
 
@@ -13,7 +13,7 @@ import { NextFunction, Response } from 'express';
  * @param {{validator: IValidator, validateBeforeAction: boolean}} options
  * @returns {import('express').RequestHandler} The middleware function
  */
-export const validateMiddleware = ({validatorConstructor, validateBeforeAction}: ValidatorMiddlewareProps) => async (req: BaseRequest, res: Response, next: NextFunction): Promise<void> => {
+export const validateMiddleware = ({validatorConstructor, validateBeforeAction}: ValidatorMiddlewareProps) => async (req: TBaseRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         req.validatorConstructor = validatorConstructor
 

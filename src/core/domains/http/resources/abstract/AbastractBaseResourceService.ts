@@ -2,7 +2,7 @@
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import { requestContext } from "@src/core/domains/http/context/RequestContext";
-import { TRouteItem } from "@src/core/domains/http/interfaces/IRoute";
+import { TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
 import ResourceOwnerRule from "@src/core/domains/http/security/rules/ResourceOwnerRule";
 import SecurityReader from "@src/core/domains/http/security/services/SecurityReader";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";

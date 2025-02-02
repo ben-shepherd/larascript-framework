@@ -1,6 +1,6 @@
 import Singleton from "@src/core/base/Singleton";
-import { IPContextData, IPDatesArrayTTL } from "@src/core/domains/http/interfaces/ICurrentRequest";
-import { ICurrentRequestCleanUpConfig } from "@src/core/domains/http/interfaces/ICurrentRequestCleanUpConfig";
+import { IPContextData, IPDatesArrayTTL } from "@src/core/domains/http/interfaces/IRequestContext";
+import { IRequestContextCleanUpConfig } from "@src/core/domains/http/interfaces/IRequestContextCleanUpConfig";
 import { App } from "@src/core/services/App";
 
 /**
@@ -12,9 +12,9 @@ class RequestContextCleaner extends Singleton {
      * Starts the cleanup process. This will run an interval every N seconds specified in the config.
      * If no delay is specified, it will default to 60 seconds.
      * 
-     * @param {ICurrentRequestCleanUpConfig} config The configuration for the cleanup process.
+     * @param {IRequestContextCleanUpConfig} config The configuration for the cleanup process.
      */
-    public static boot(config: ICurrentRequestCleanUpConfig) {
+    public static boot(config: IRequestContextCleanUpConfig) {
         const instance = this.getInstance();
         
         const delayInSeconds = config.delayInSeconds ?? 60;

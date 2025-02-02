@@ -1,6 +1,6 @@
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import { IController } from "@src/core/domains/http/interfaces/IController";
-import { TRouteItem } from "@src/core/domains/http/interfaces/IRoute";
+import { TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
 
 class Controller implements IController {
 

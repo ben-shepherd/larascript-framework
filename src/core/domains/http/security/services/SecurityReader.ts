@@ -1,5 +1,5 @@
 import { ALWAYS } from "@src/core/domains/http/enums/SecurityEnum";
-import { TRouteItem } from "@src/core/domains/http/interfaces/IRoute";
+import { TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
 import { ISecurityRule } from "@src/core/domains/http/interfaces/ISecurity";
 
 class SecurityReader {

@@ -4,7 +4,7 @@ import IApiTokenRepository from "@src/core/domains/auth/interfaces/IApiTokenRepo
 import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
 import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
 import IUserRepository from "@src/core/domains/auth/interfaces/IUserRepository";
-import { IRouter } from "@src/core/domains/http/interfaces/IRoute";
+import { IRouter } from "@src/core/domains/http/interfaces/IRouter";
 import IService from "@src/core/interfaces/IService";
 
 

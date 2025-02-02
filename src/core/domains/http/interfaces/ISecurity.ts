@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { BaseRequest } from '@src/core/domains/http/interfaces/BaseRequest.t';
+import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
 import { IRouteLegacy } from '@src/core/domains/http/interfaces/IRouteLegacy';
 import { NextFunction, Request, Response } from 'express';
 
@@ -38,7 +38,7 @@ export interface ISecurityAuthorizeProps {
  * The callback function
  * @deprecated
  */
-export type SecurityCallback = (req: BaseRequest, ...args: any[]) => boolean;
+export type SecurityCallback = (req: TBaseRequest, ...args: any[]) => boolean;
 
 /**
  * An interface for defining security callbacks with an identifier.
@@ -60,7 +60,7 @@ export type IIdentifiableSecurityCallback = {
 }
 
  
-export type ISecurityMiddleware = ({ route }: { route: IRouteLegacy }) => (req: BaseRequest, res: Response, next: NextFunction) => Promise<void>;
+export type ISecurityMiddleware = ({ route }: { route: IRouteLegacy }) => (req: TBaseRequest, res: Response, next: NextFunction) => Promise<void>;
 
 /**
  * Security request to be included in BaseRequest

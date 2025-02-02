@@ -4,7 +4,7 @@ import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryB
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import { IPageOptions } from "@src/core/domains/http/interfaces/IResourceService";
-import { TRouteItem } from "@src/core/domains/http/interfaces/IRoute";
+import { TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
 import AbastractBaseResourceService from "@src/core/domains/http/resources/abstract/AbastractBaseResourceService";
 import { RouteResourceTypes } from "@src/core/domains/http/router/RouterResource";
 import Paginate from "@src/core/domains/http/utils/Paginate";

@@ -1,8 +1,8 @@
 import HttpContext from "@src/core/domains/http/context/HttpContext";
-import { BaseRequest } from "@src/core/domains/http/interfaces/BaseRequest.t";
+import { TBaseRequest } from "@src/core/domains/http/interfaces/BaseRequest";
 import { IExpressable } from "@src/core/domains/http/interfaces/IExpressable";
 import { IMiddleware, MiddlewareConstructor, TExpressMiddlewareFn } from "@src/core/domains/http/interfaces/IMiddleware";
-import { TRouteItem } from "@src/core/domains/http/interfaces/IRoute";
+import { TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
 import { NextFunction, Response } from "express";
 
 import responseError from "../../http/handlers/responseError";
@@ -102,7 +102,7 @@ abstract class Middleware<Config extends unknown = unknown> implements IMiddlewa
      * @returns {TExpressMiddlewareFn}
      */
     public toExpressable(routeItem?: TRouteItem): TExpressMiddlewareFn {
-        return async (req: BaseRequest, res: Response, next: NextFunction | undefined) => {
+        return async (req: TBaseRequest, res: Response, next: NextFunction | undefined) => {
             try {
                 const context = new HttpContext(req, res, next, routeItem)
                 this.setContext(context)

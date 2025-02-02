@@ -7,4 +7,4 @@ import { Request } from "express";
 /**
  * Extends the express Request object with auth and validator properties.
  */
-export type BaseRequest = Request & IAuthorizedRequest & IValidatorRequest & ISecurityRequest & IRequestIdentifiable;
+export type TBaseRequest = Request & IAuthorizedRequest & IValidatorRequest & ISecurityRequest & IRequestIdentifiable;

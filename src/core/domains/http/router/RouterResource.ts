@@ -1,5 +1,5 @@
 
-import { TPartialRouteItemOptions, TRouteResourceOptions } from "@src/core/domains/http/interfaces/IRoute";
+import { TPartialRouteItemOptions, TRouteResourceOptions } from "@src/core/domains/http/interfaces/IRouter";
 import ResourceController from "@src/core/domains/http/resources/controller/ResourceController";
 import Router from "@src/core/domains/http/router/Router";
 

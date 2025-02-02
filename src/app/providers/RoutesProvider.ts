@@ -12,12 +12,12 @@ class RoutesProvider extends BaseProvider {
      */
     public async boot(): Promise<void> {
 
-        const expressService = app('express');
+        const httpService = app('http');
         
         // Bind routes
-        expressService.bindRoutes(app('auth').getAuthRoutes())
-        expressService.bindRoutes(healthRoutes);
-        expressService.bindRoutes(apiRoutes);
+        httpService.bindRoutes(app('auth').getAuthRoutes())
+        httpService.bindRoutes(healthRoutes);
+        httpService.bindRoutes(apiRoutes);
 
     }
 
