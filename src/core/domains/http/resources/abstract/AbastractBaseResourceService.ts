@@ -5,6 +5,7 @@ import { requestContext } from "@src/core/domains/http/context/RequestContext";
 import { TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
 import ResourceOwnerRule from "@src/core/domains/http/security/rules/ResourceOwnerRule";
 import SecurityReader from "@src/core/domains/http/security/services/SecurityReader";
+import { ValidatorConstructor } from "@src/core/domains/validator/interfaces/IValidator";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
 import { SecurityEnum } from "../../enums/SecurityEnum";
@@ -171,6 +172,19 @@ abstract class AbastractBaseResourceService {
 
             return attribute;
         }
+
+        /**
+         * Gets the validator by type
+         * @param {string} type - The type of validator to get
+         * @param {TRouteItem} routeOptions - The route options
+         * @returns {Validator | undefined} - The validator or undefined if not found
+         */
+        getValidatorByType(type: 'create' | 'update', routeOptions: TRouteItem): ValidatorConstructor | undefined {
+            return routeOptions?.resource?.validation?.[type] ?? undefined
+        }
+
+
+
 
 }
 

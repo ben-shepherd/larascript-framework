@@ -4,6 +4,7 @@ import { TExpressMiddlewareFnOrClass } from "@src/core/domains/http/interfaces/I
 import { ISecurityRule } from "@src/core/domains/http/interfaces/ISecurity";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
+import { ValidatorConstructor } from "../../validator/interfaces/IValidator";
 import SecurityRules from "../security/services/SecurityRules";
 import { TSortDirection } from "../utils/SortOptions";
 
@@ -86,6 +87,10 @@ export type TRouteItem = {
             directionKey: string;
             defaultField?: string;
             defaultDirection?: TSortDirection;
+        },
+        validation?: {
+            create?: ValidatorConstructor;
+            update?: ValidatorConstructor;
         }
     }
 }
@@ -110,6 +115,10 @@ export type TRouteResourceOptions = {
         directionKey: string;
         defaultField?: string;
         defaultDirection?: TSortDirection;
+    },
+    validation?: {
+        create?: ValidatorConstructor;
+        update?: ValidatorConstructor;
     }
 }
 

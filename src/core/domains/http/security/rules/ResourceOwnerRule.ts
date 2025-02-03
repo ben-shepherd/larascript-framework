@@ -5,12 +5,15 @@ import AbstractSecurityRule from "@src/core/domains/http/security/abstract/Abstr
 import { IModel } from "@src/core/interfaces/IModel";
 
 import { SecurityEnum } from "../../enums/SecurityEnum";
+import { RouteResourceTypes } from "../../router/RouterResource";
 
 type TResourceOwnerRuleOptions = {
     attribute: string;
 }
 
-class ResourceOwnerRule extends AbstractSecurityRule<TResourceOwnerRuleOptions> {
+export type TRouteResourceTypes = (typeof RouteResourceTypes)[keyof typeof RouteResourceTypes]
+
+class ResourceOwnerRule extends AbstractSecurityRule<TResourceOwnerRuleOptions, TRouteResourceTypes, TRouteResourceTypes> {
 
     protected readonly id = SecurityEnum.RESOURCE_OWNER;
 

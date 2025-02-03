@@ -29,7 +29,12 @@ import { ISecurityRule } from "@src/core/domains/http/interfaces/ISecurity";
  * the route handler executes. If any rule returns false or throws an exception,
  * the request will be rejected.
  */
-abstract class AbstractSecurityRule<RuleOptions extends object = object> implements ISecurityRule<RuleOptions> {
+abstract class AbstractSecurityRule<
+    RuleOptions extends object = object,
+    WhenConditions extends string = string,
+    NeverConditions extends string = string
+> implements ISecurityRule<RuleOptions> {
+
 
     /**
      * The ID of the security rule.
@@ -39,17 +44,12 @@ abstract class AbstractSecurityRule<RuleOptions extends object = object> impleme
     /**
      * The conditions under which the security rule should be applied.
      */
-    protected when!: string[] | null;
+    protected whenConditions!: string[] | null;
 
     /**
      * The conditions under which the security rule should not be applied.
      */
-    protected never!: string[] | null;
-
-    /**
-     * The ID of the security rule to include in the security rule object.
-     */
-    protected also!: string | null;
+    protected neverConditions!: string[] | null;
 
     /**
      * The options for the security rule.
@@ -102,31 +102,55 @@ abstract class AbstractSecurityRule<RuleOptions extends object = object> impleme
     }
 
     /**
+     * Sets the conditions under which the security rule should be applied.
+     * 
+     * @param when The conditions under which the security rule should be applied
+     * @returns The security rule
+     */
+    public when(when: WhenConditions[] | null): this {
+        this.whenConditions = when;
+        return this;
+    }
+
+
+
+    /**
      * Gets the conditions under which the security rule should be applied.
      * 
      * @returns The conditions under which the security rule should be applied
      */
-    public getWhen(): string[] | null {
-        return this.when;
+
+    public getWhen(): WhenConditions[] | null {
+        return this.whenConditions as WhenConditions[] | null;
     }
+
+
+
+    /**
+     * Sets the conditions under which the security rule should not be applied.
+     * 
+     * @param never The conditions under which the security rule should not be applied
+     * @returns The security rule
+     */
+    public never(never: NeverConditions[] | null): this {
+        this.neverConditions = never;
+        return this;
+    }
+
+
+
 
     /**
      * Gets the conditions under which the security rule should not be applied.
      * 
      * @returns The conditions under which the security rule should not be applied
      */
-    public getNever(): string[] | null {
-        return this.never;
+
+    public getNever(): NeverConditions[] | null {
+        return this.neverConditions as NeverConditions[] | null;
     }
 
-    /**
-     * Gets the ID of the security rule to include in the security rule object.
-     * 
-     * @returns The ID of the security rule to include in the security rule object
-     */
-    public getAlso(): string | null {
-        return this.also;
-    }
+
 
 }
 
