@@ -67,6 +67,23 @@ class Paginate {
         return this.pageSize ?? defaultValue
     }
 
+    /**
+     * Checks if the page is defined.
+     * @returns {boolean} - True if the page is defined, false otherwise.
+     */
+    containsPage(): boolean {
+        return this.page !== undefined;
+    }
+
+    /**
+     * Checks if the page size is defined.
+     * @returns {boolean} - True if the page size is defined, false otherwise.
+     */
+
+    containsPageSize(): boolean {
+        return this.pageSize !== undefined;
+    }
+
 }
 
 export default Paginate

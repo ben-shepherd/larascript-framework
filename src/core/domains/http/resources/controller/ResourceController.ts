@@ -9,11 +9,22 @@ import ResourceUpdateService from "@src/core/domains/http/resources/services/Res
 
 import HttpContext from "../../context/HttpContext";
 import responseError from "../../handlers/responseError";
+import ApiResponse from "../../response/ApiResonse";
 import Paginate from "../../utils/Paginate";
 import AbastractBaseResourceService from "../abstract/AbastractBaseResourceService";
 
+type THandlerOptions = {
+    showPagination: boolean;
+}
+
+const DEFAULT_HANDLER_OPTIONS: THandlerOptions = {
+    showPagination: true
+} as const;
+
 /**
  * ResourceController handles CRUD operations for resources (database models)
+
+
  * 
  * This controller provides standardized endpoints for:
  * - Listing resources (index) with pagination and filtering
@@ -50,7 +61,7 @@ class ResourceController  extends Controller {
      * @returns {Promise<void>}
      */
     public async index(): Promise<void> {
-        await this.handler(this.context, this.indexService)
+        await this.handler(this.context, this.indexService, { showPagination: true })
     }
 
     /**
@@ -58,7 +69,7 @@ class ResourceController  extends Controller {
      * @returns {Promise<void>}
      */
     public async show(): Promise<void> {
-        await this.handler(this.context, this.showService)
+        await this.handler(this.context, this.showService, { showPagination: false })
     }
 
     /**
@@ -66,7 +77,8 @@ class ResourceController  extends Controller {
      * @returns {Promise<void>}
      */
     public async create(): Promise<void> {
-        await this.handler(this.context, this.createService)
+        await this.handler(this.context, this.createService, { showPagination: false })
+
     }
 
     /**
@@ -74,7 +86,8 @@ class ResourceController  extends Controller {
      * @returns {Promise<void>}
      */
     public async update(): Promise<void> {
-        await this.handler(this.context, this.updateService)
+        await this.handler(this.context, this.updateService, { showPagination: false })
+
     }
 
     /**
@@ -82,7 +95,8 @@ class ResourceController  extends Controller {
      * @returns {Promise<void>}
      */
     public async delete(): Promise<void> {
-        await this.handler(this.context, this.deleteService)
+        await this.handler(this.context, this.deleteService, { showPagination: false })
+
     }
 
     /**
@@ -91,10 +105,11 @@ class ResourceController  extends Controller {
      * @param {AbastractBaseResourceService} service - The service
      * @returns {Promise<void>}
      */
-    protected async handler(context: HttpContext, service: AbastractBaseResourceService) {
+    protected async handler(context: HttpContext, service: AbastractBaseResourceService, options: THandlerOptions = DEFAULT_HANDLER_OPTIONS) {
         try {
             const result = await service.handler(context)
             this.response(result)
+
         }
 
         catch(error) {
@@ -119,51 +134,22 @@ class ResourceController  extends Controller {
      * @param {number} code - The code
      * @returns {Promise<void>}
      */
-    protected async response(data: unknown, code: number = 200) {
+    protected async response(data: unknown, code: number = 200, options: THandlerOptions = DEFAULT_HANDLER_OPTIONS) {
 
+        const apiResponse = new ApiResponse();
+        const paginate = new Paginate();
+        const pagination = paginate.parseRequest(this.context.getRequest());
+        
+        apiResponse.addData(data);
+        apiResponse.addTotalCount();
 
-        type TResponse = { 
-            data: unknown,
-            meta: {
-                total?: number;
-                page?: number;
-                pageSize?: number;
-                nextPage?: number;
-                previousPage?: number;
-            }
+        if(options.showPagination && pagination.containsPage()) {
+            apiResponse.addPagination(pagination.getPage(), pagination.getPageSize());
         }
 
 
 
-        const response: TResponse = {
-            meta: {},
-            data
-        }
-
-
-        // Check if data is countable
-        const isCountable = data !== null && typeof data === 'object' && 'length' in data;
-        const totalCount = isCountable ? (data as unknown[]).length : null;
-
-        if(totalCount) {
-            response.meta.total = totalCount;
-        }
-
-        // Add pagination
-        const pagination = new Paginate().parseRequest(this.context.getRequest())
-
-        if(pagination.getPage()) {
-            response.meta.page = pagination.getPage();
-            response.meta.nextPage = response.meta.page + 1;
-            response.meta.previousPage = response.meta.page - 1;
-        }
-
-
-        if(pagination.getPageSize()) {
-            response.meta.pageSize = pagination.getPageSize();
-        }
-
-        this.jsonResponse(response, code);
+        this.jsonResponse(apiResponse.build(), code);
 
     }
 
