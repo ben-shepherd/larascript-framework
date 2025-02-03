@@ -9,6 +9,7 @@ import ResourceUpdateService from "@src/core/domains/http/resources/services/Res
 
 import HttpContext from "../../context/HttpContext";
 import responseError from "../../handlers/responseError";
+import Paginate from "../../utils/Paginate";
 import AbastractBaseResourceService from "../abstract/AbastractBaseResourceService";
 
 /**
@@ -93,8 +94,9 @@ class ResourceController  extends Controller {
     protected async handler(context: HttpContext, service: AbastractBaseResourceService) {
         try {
             const result = await service.handler(context)
-            this.jsonResponse(result as object)
+            this.response(result)
         }
+
         catch(error) {
             if(error instanceof UnauthorizedError) {
                 responseError(context.getRequest(), context.getResponse(), error, 401)
@@ -109,6 +111,60 @@ class ResourceController  extends Controller {
             responseError(context.getRequest(), context.getResponse(), error as Error)
 
         }
+    }
+
+    /**
+     * @description Handles the response
+     * @param {unknown} data - The data
+     * @param {number} code - The code
+     * @returns {Promise<void>}
+     */
+    protected async response(data: unknown, code: number = 200) {
+
+
+        type TResponse = { 
+            data: unknown,
+            meta: {
+                total?: number;
+                page?: number;
+                pageSize?: number;
+                nextPage?: number;
+                previousPage?: number;
+            }
+        }
+
+
+
+        const response: TResponse = {
+            meta: {},
+            data
+        }
+
+
+        // Check if data is countable
+        const isCountable = data !== null && typeof data === 'object' && 'length' in data;
+        const totalCount = isCountable ? (data as unknown[]).length : null;
+
+        if(totalCount) {
+            response.meta.total = totalCount;
+        }
+
+        // Add pagination
+        const pagination = new Paginate().parseRequest(this.context.getRequest())
+
+        if(pagination.getPage()) {
+            response.meta.page = pagination.getPage();
+            response.meta.nextPage = response.meta.page + 1;
+            response.meta.previousPage = response.meta.page - 1;
+        }
+
+
+        if(pagination.getPageSize()) {
+            response.meta.pageSize = pagination.getPageSize();
+        }
+
+        this.jsonResponse(response, code);
+
     }
 
 }
