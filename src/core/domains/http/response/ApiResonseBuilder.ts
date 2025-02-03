@@ -28,7 +28,7 @@ type TResponse = {
  *   data: unknown
  * }
  */
-class ApiResponse {
+class ApiResponseBuilder {
 
     protected data: unknown;
 
@@ -90,8 +90,6 @@ class ApiResponse {
 
     }
 
-
-
     /**
      * Automatically calculates and sets the total count based on the data
      * if the data is an array. If data is not an array, totalCount will be undefined.
@@ -120,4 +118,4 @@ class ApiResponse {
 
 
 
-export default ApiResponse;
+export default ApiResponseBuilder;

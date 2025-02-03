@@ -9,7 +9,7 @@ import ResourceUpdateService from "@src/core/domains/http/resources/services/Res
 
 import HttpContext from "../../context/HttpContext";
 import responseError from "../../handlers/responseError";
-import ApiResponse from "../../response/ApiResonse";
+import ApiResponseBuilder from "../../response/ApiResonseBuilder";
 import Paginate from "../../utils/Paginate";
 import AbastractBaseResourceService from "../abstract/AbastractBaseResourceService";
 
@@ -108,7 +108,7 @@ class ResourceController  extends Controller {
     protected async handler(context: HttpContext, service: AbastractBaseResourceService, options: THandlerOptions = DEFAULT_HANDLER_OPTIONS) {
         try {
             const result = await service.handler(context)
-            this.response(result)
+            this.response(result, 200, options)
 
         }
 
@@ -136,7 +136,7 @@ class ResourceController  extends Controller {
      */
     protected async response(data: unknown, code: number = 200, options: THandlerOptions = DEFAULT_HANDLER_OPTIONS) {
 
-        const apiResponse = new ApiResponse();
+        const apiResponse = new ApiResponseBuilder();
         const paginate = new Paginate();
         const pagination = paginate.parseRequest(this.context.getRequest());
         
