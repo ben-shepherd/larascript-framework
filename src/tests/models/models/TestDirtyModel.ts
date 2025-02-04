@@ -42,7 +42,7 @@ class TestDirtyModel extends Model<TestDirtyModelAttributes> {
         'updatedAt'
     ]
 
-    public json: string[] = ['array', 'object']
+    public json: string[] = ['object']
 
 }
 
