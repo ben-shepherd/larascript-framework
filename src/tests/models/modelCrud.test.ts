@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 import { describe, expect, test } from '@jest/globals';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
-import testHelper, { forEveryConnection } from '@src/tests/testHelper';
 import TestPeopleModel, { resetPeopleTable } from '@src/tests/eloquent/models/TestPeopleModel';
+import testHelper, { forEveryConnection } from '@src/tests/testHelper';
 
 describe('test model crud', () => {
 
@@ -28,10 +28,19 @@ describe('test model crud', () => {
             expect(createdModel.getId()).toBeFalsy()
             expect(createdModel.getAttributeSync('name')).toEqual('John');
             expect(createdModel.getAttributeSync('age')).toEqual(30);
+
+            // Check timestamps are not set
+            expect(createdModel.getAttributeSync('createdAt')).toBeFalsy()
+            expect(createdModel.getAttributeSync('updatedAt')).toBeFalsy()
             
+
             await createdModel.save();
             expect(typeof createdModel.getId() === 'string').toBe(true);
     
+            // Check timestamps are set
+            expect(createdModel.getAttributeSync('createdAt') instanceof Date).toBe(true)
+            expect(createdModel.getAttributeSync('updatedAt') instanceof Date).toBe(true)
+
             /**
              * Change name attribute
              */
