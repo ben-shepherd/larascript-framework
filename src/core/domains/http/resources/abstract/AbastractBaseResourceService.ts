@@ -246,7 +246,9 @@ abstract class AbastractBaseResourceService {
             apiResponse.addTotalCount()
 
             if(options?.showPagination) {
-                apiResponse.addPagination(pagination.getPage(), pagination.getPageSize())
+                const defaultPageSize = context.getRouteItem()?.resource?.paginate?.pageSize ?? undefined
+                
+                apiResponse.addPagination(pagination.getPage(), defaultPageSize)
             }
 
             return apiResponse

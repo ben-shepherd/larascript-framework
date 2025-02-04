@@ -97,10 +97,14 @@ class ResourceIndexService extends AbastractBaseResourceService {
 
         // Fetch the results
         const results  = (await builder.get()).toArray()
+        const attributes = await stripGuardedResourceProperties(results)
 
         // Send the results
-        return this.apiResponse<IModelAttributes[]>(context, await stripGuardedResourceProperties(results), 200)
+        return this.apiResponse<IModelAttributes[]>(context, attributes, 200, {
+            showPagination: true
+        })
     }
+
 
 
 

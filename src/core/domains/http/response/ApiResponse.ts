@@ -43,9 +43,17 @@ class ApiResponse<Data = unknown> implements IApiResponse<Data> {
      */
     build(): TApiResponse<Data> {
 
+        // Reset the meta object
+        this.meta = {}
+
         const response: TApiResponse<Data> = {
             meta: {} as Record<string, unknown>,
             data: this.data
+        }
+
+        response.meta = {
+            ...this.meta,
+            ...this.additionalMeta
         }
 
         if(this.pagination) {
@@ -54,11 +62,6 @@ class ApiResponse<Data = unknown> implements IApiResponse<Data> {
 
         if(this.totalCount) {
             response.meta.totalCount = this.totalCount;
-        }
-
-        response.meta = {
-            ...this.meta,
-            ...this.additionalMeta
         }
 
         return response;
