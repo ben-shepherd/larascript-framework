@@ -5,10 +5,18 @@ import { requestContext } from "@src/core/domains/http/context/RequestContext";
 import { TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
 import ResourceOwnerRule from "@src/core/domains/http/security/rules/ResourceOwnerRule";
 import SecurityReader from "@src/core/domains/http/security/services/SecurityReader";
+import ValidationError from "@src/core/domains/validator/exceptions/ValidationError";
 import { ValidatorConstructor } from "@src/core/domains/validator/interfaces/IValidator";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
 import { SecurityEnum } from "../../enums/SecurityEnum";
+import { IApiResponse } from "../../interfaces/IApiResponse";
+import ApiResponse from "../../response/ApiResponse";
+import Paginate from "../../utils/Paginate";
+
+type TResponseOptions = {
+    showPagination: boolean;
+}
 
 /**
  * BaseResourceService is an abstract base class for handling CRUD operations on resources.
@@ -37,7 +45,8 @@ abstract class AbastractBaseResourceService {
         abstract routeResourceType: string;
 
         // eslint-disable-next-line no-unused-vars
-        abstract handler(context: HttpContext): Promise<unknown>;
+        abstract handler(context: HttpContext): Promise<IApiResponse>;
+
 
         /**
          * Gets the model constructor from the route options
@@ -175,17 +184,76 @@ abstract class AbastractBaseResourceService {
 
         /**
          * Gets the validator by type
-         * @param {string} type - The type of validator to get
-         * @param {TRouteItem} routeOptions - The route options
-         * @returns {Validator | undefined} - The validator or undefined if not found
+         * @param {HttpContext} context - The HTTP context
+         * @returns {ValidatorConstructor | undefined} - The validator or undefined if not found
          */
-        getValidatorByType(type: 'create' | 'update', routeOptions: TRouteItem): ValidatorConstructor | undefined {
-            return routeOptions?.resource?.validation?.[type] ?? undefined
+        getValidator(context: HttpContext): ValidatorConstructor | undefined {
+            const routeOptions = context.getRouteItem()
+
+
+            if(!routeOptions) {
+                throw new ResourceException('Route options are required')
+            }
+
+            const validator = routeOptions.resource?.validation?.[this.routeResourceType] as ValidatorConstructor | undefined
+
+            if(!validator) {
+                return undefined;
+            }
+
+            return validator;
         }
 
+        /**
+         * Validates the request body using the configured validator for this resource type
+         * @param {HttpContext} context - The HTTP context containing the request to validate
+         * @returns {Promise<void>} A promise that resolves when validation is complete
+         * @throws {ValidationError} If validation fails
+         */
+        async getValidationErrors(context: HttpContext): Promise<string[] | undefined> {
+            const validatorConstructor = this.getValidator(context)
+            
+
+            if(!validatorConstructor) {
+                return undefined;
+            }
+
+            const validator = new validatorConstructor()
+            const body = context.getRequest().body
+            const result = await validator.validate(body)
 
 
+            if(!result.success) {
+                return result.joi.error?.details?.map(detail => detail.message)
+            }
+
+            return undefined;
+        }
+
+        /**
+         * Builds and returns the final response object with all added data and metadata
+         * @param {HttpContext} context - The HTTP context
+         * @param {unknown} data - The data to be included in the response
+         * @param {number} code - The HTTP status code  
+         */
+        apiResponse<Data = unknown>(context: HttpContext, data: Data, code: number = 200, options?: TResponseOptions): ApiResponse<Data> {
+            const apiResponse = new ApiResponse<Data>()
+            const paginate = new Paginate()
+            const pagination = paginate.parseRequest(context.getRequest())
+
+            apiResponse.setCode(code)
+            apiResponse.setData(data)
+            apiResponse.addTotalCount()
+
+            if(options?.showPagination) {
+                apiResponse.addPagination(pagination.getPage(), pagination.getPageSize())
+            }
+
+            return apiResponse
+        }
 
 }
+
+
 
 export default AbastractBaseResourceService;

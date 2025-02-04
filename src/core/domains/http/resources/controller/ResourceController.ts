@@ -9,8 +9,6 @@ import ResourceUpdateService from "@src/core/domains/http/resources/services/Res
 
 import HttpContext from "../../context/HttpContext";
 import responseError from "../../handlers/responseError";
-import ApiResponseBuilder from "../../response/ApiResonseBuilder";
-import Paginate from "../../utils/Paginate";
 import AbastractBaseResourceService from "../abstract/AbastractBaseResourceService";
 
 type THandlerOptions = {
@@ -61,7 +59,7 @@ class ResourceController  extends Controller {
      * @returns {Promise<void>}
      */
     public async index(): Promise<void> {
-        await this.handler(this.context, this.indexService, { showPagination: true })
+        await this.handler(this.context, this.indexService)
     }
 
     /**
@@ -69,7 +67,7 @@ class ResourceController  extends Controller {
      * @returns {Promise<void>}
      */
     public async show(): Promise<void> {
-        await this.handler(this.context, this.showService, { showPagination: false })
+        await this.handler(this.context, this.showService)
     }
 
     /**
@@ -77,7 +75,7 @@ class ResourceController  extends Controller {
      * @returns {Promise<void>}
      */
     public async create(): Promise<void> {
-        await this.handler(this.context, this.createService, { showPagination: false })
+        await this.handler(this.context, this.createService)
 
     }
 
@@ -86,7 +84,7 @@ class ResourceController  extends Controller {
      * @returns {Promise<void>}
      */
     public async update(): Promise<void> {
-        await this.handler(this.context, this.updateService, { showPagination: false })
+        await this.handler(this.context, this.updateService)
 
     }
 
@@ -95,7 +93,7 @@ class ResourceController  extends Controller {
      * @returns {Promise<void>}
      */
     public async delete(): Promise<void> {
-        await this.handler(this.context, this.deleteService, { showPagination: false })
+        await this.handler(this.context, this.deleteService)
 
     }
 
@@ -105,11 +103,10 @@ class ResourceController  extends Controller {
      * @param {AbastractBaseResourceService} service - The service
      * @returns {Promise<void>}
      */
-    protected async handler(context: HttpContext, service: AbastractBaseResourceService, options: THandlerOptions = DEFAULT_HANDLER_OPTIONS) {
+    protected async handler(context: HttpContext, service: AbastractBaseResourceService) {
         try {
-            const result = await service.handler(context)
-            this.response(result, 200, options)
-
+            const apiResponse = await service.handler(context)
+            this.jsonResponse(apiResponse.build(), apiResponse.getCode())
         }
 
         catch(error) {
@@ -126,31 +123,6 @@ class ResourceController  extends Controller {
             responseError(context.getRequest(), context.getResponse(), error as Error)
 
         }
-    }
-
-    /**
-     * @description Handles the response
-     * @param {unknown} data - The data
-     * @param {number} code - The code
-     * @returns {Promise<void>}
-     */
-    protected async response(data: unknown, code: number = 200, options: THandlerOptions = DEFAULT_HANDLER_OPTIONS) {
-
-        const apiResponse = new ApiResponseBuilder();
-        const paginate = new Paginate();
-        const pagination = paginate.parseRequest(this.context.getRequest());
-        
-        apiResponse.addData(data);
-        apiResponse.addTotalCount();
-
-        if(options.showPagination && pagination.containsPage()) {
-            apiResponse.addPagination(pagination.getPage(), pagination.getPageSize());
-        }
-
-
-
-        this.jsonResponse(apiResponse.build(), code);
-
     }
 
 }

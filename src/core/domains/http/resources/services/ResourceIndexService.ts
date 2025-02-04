@@ -10,6 +10,7 @@ import QueryFilters from "@src/core/domains/http/utils/QueryFilters";
 import stripGuardedResourceProperties from "@src/core/domains/http/utils/stripGuardedResourceProperties";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
 
+import ApiResponse from "../../response/ApiResponse";
 import SortOptions from "../../utils/SortOptions";
 
 /**
@@ -48,7 +49,8 @@ class ResourceIndexService extends AbastractBaseResourceService {
      * @param res The response object
      * @param options The resource options
      */
-    async handler(context: HttpContext): Promise<IModelAttributes[]> {
+    async handler(context: HttpContext): Promise<ApiResponse<IModelAttributes[]>> {
+
 
         // Get the route options
         const routeOptions = context.getRouteItem()
@@ -97,8 +99,9 @@ class ResourceIndexService extends AbastractBaseResourceService {
         const results  = (await builder.get()).toArray()
 
         // Send the results
-        return await stripGuardedResourceProperties(results)
+        return this.apiResponse<IModelAttributes[]>(context, await stripGuardedResourceProperties(results), 200)
     }
+
 
 
     /**

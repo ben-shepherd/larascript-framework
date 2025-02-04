@@ -8,8 +8,12 @@ import stripGuardedResourceProperties from "@src/core/domains/http/utils/stripGu
 import { IModelAttributes } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 
+import { TResponseErrorMessages } from "../../interfaces/ErrorResponse.t";
+import ApiResponse from "../../response/ApiResponse";
+
 /**
  * Service class that handles creating new resources through HTTP requests
+
  * 
  * This service:
  * - Validates authorization for creating resources
@@ -45,7 +49,8 @@ class ResourceCreateService extends AbastractBaseResourceService {
      * @param res The response object
      * @param options The resource options
      */
-    async handler(context: HttpContext): Promise<IModelAttributes> {
+    async handler(context: HttpContext): Promise<ApiResponse<IModelAttributes | TResponseErrorMessages>> {
+
 
         const req = context.getRequest()
         const routeOptions = context.getRouteItem()
@@ -54,22 +59,18 @@ class ResourceCreateService extends AbastractBaseResourceService {
             throw new ResourceException('Route options are required')
         }
 
-        // Check if the authorization security applies to this route and it is valid
-        if(!this.validateAuthorized(context)) {
-            throw new UnauthorizedError()
-        }
-        
         // Build the page options, filters
         const modelConstructor = this.getModelConstructor(context)
         const model = modelConstructor.create()
 
-
-        // Fill the model instance with the request body
-        model.fill(req.body)
-
         // Check if the resource owner security applies to this route and it is valid
         // If it is valid, we add the owner's id to the filters
         if(this.validateResourceOwnerApplicable(context)) {
+
+            if(!this.validateAuthorized(context)) {
+                throw new UnauthorizedError()
+            }
+
             const attribute = this.getResourceAttribute(routeOptions, 'userId');
             const userId = App.container('requestContext').getByRequest<string>(req, 'userId');
             
@@ -80,13 +81,24 @@ class ResourceCreateService extends AbastractBaseResourceService {
             model.setAttribute(attribute, userId)
         }
 
+        // Validate the request body
+        const validationErrors = await this.getValidationErrors(context)
+
+        if(validationErrors) {
+            return this.apiResponse(context, {
+                errors: validationErrors
+            }, 422)
+        }
+
+        // Fill the model instance with the request body
+        model.fill(req.body)
         await model.save();
 
         // Strip the guarded properties from the model instance
-        const modelAttributesStripped = await stripGuardedResourceProperties(model)
+        const attributes = await stripGuardedResourceProperties(model)
 
         // Send the results
-        return modelAttributesStripped[0]
+        return this.apiResponse(context, attributes[0], 201)
     }
 
 }

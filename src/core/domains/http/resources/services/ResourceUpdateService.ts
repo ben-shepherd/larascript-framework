@@ -8,6 +8,9 @@ import { RouteResourceTypes } from "@src/core/domains/http/router/RouterResource
 import stripGuardedResourceProperties from "@src/core/domains/http/utils/stripGuardedResourceProperties";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
 
+import { TResponseErrorMessages } from "../../interfaces/ErrorResponse.t";
+import ApiResponse from "../../response/ApiResponse";
+
 /**
  * Service class that handles updating existing resources through HTTP requests
  * 
@@ -37,11 +40,12 @@ class ResourceUpdateService extends AbastractBaseResourceService {
      * @param {IRouteResourceOptionsLegacy} options - The options object
      * @returns {Promise<void>}
      */
-    async handler(context: HttpContext): Promise<IModelAttributes> {
+    async handler(context: HttpContext): Promise<ApiResponse<IModelAttributes | TResponseErrorMessages>> {
 
         // Check if the authorization security applies to this route and it is valid
         if(!this.validateAuthorized(context)) {
             throw new UnauthorizedError()
+
         }
         
         const routeOptions = context.getRouteItem()
@@ -49,6 +53,16 @@ class ResourceUpdateService extends AbastractBaseResourceService {
         if(!routeOptions) {
             throw new ResourceException('Route options are required')
         }
+
+        // Validate the request body
+        const validationErrors = await this.getValidationErrors(context)
+
+        if(validationErrors) {
+            return this.apiResponse(context, {
+                errors: validationErrors
+            }, 422)
+        }
+
 
         const modelConstructor = this.getModelConstructor(context)
 
@@ -67,9 +81,11 @@ class ResourceUpdateService extends AbastractBaseResourceService {
         await result.save();
         
         // Send the results
-        return (await stripGuardedResourceProperties(result))[0]
+        return this.apiResponse<IModelAttributes>(context, (await stripGuardedResourceProperties(result))[0], 200)
+
     }
         
+
 }
 
 export default ResourceUpdateService;

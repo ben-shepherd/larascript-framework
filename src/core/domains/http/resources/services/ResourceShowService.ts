@@ -7,6 +7,8 @@ import { RouteResourceTypes } from "@src/core/domains/http/router/RouterResource
 import stripGuardedResourceProperties from "@src/core/domains/http/utils/stripGuardedResourceProperties";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
 
+import ApiResponse from "../../response/ApiResponse";
+
 /**
  * Service class that handles retrieving individual resources through HTTP requests
  * 
@@ -37,7 +39,7 @@ class ResourceShowService extends AbastractBaseResourceService {
      * @param res The response object
      * @param options The resource options
      */
-    async handler(context: HttpContext): Promise<IModelAttributes> {
+    async handler(context: HttpContext): Promise<ApiResponse<IModelAttributes>> {
 
         const routeOptions = context.getRouteItem()
 
@@ -63,7 +65,7 @@ class ResourceShowService extends AbastractBaseResourceService {
         }
 
         // Send the results
-        return (await stripGuardedResourceProperties(result))[0]
+        return this.apiResponse<IModelAttributes>(context, (await stripGuardedResourceProperties(result))[0], 200)
     }
       
 }

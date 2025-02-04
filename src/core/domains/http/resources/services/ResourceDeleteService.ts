@@ -6,6 +6,8 @@ import HttpContext from "@src/core/domains/http/context/HttpContext";
 import AbastractBaseResourceService from "@src/core/domains/http/resources/abstract/AbastractBaseResourceService";
 import { RouteResourceTypes } from "@src/core/domains/http/router/RouterResource";
 
+import ApiResponse from "../../response/ApiResponse";
+
 /**
  * Service class that handles deleting resources through HTTP requests
  * 
@@ -41,7 +43,8 @@ class ResourceDeleteService extends AbastractBaseResourceService {
      * @param {IRouteResourceOptionsLegacy} options - The options object
      * @returns {Promise<void>}
      */
-    async handler(context: HttpContext): Promise<{ success: boolean }> {
+    async handler(context: HttpContext): Promise<ApiResponse> {
+
 
         // Check if the authorization security applies to this route and it is valid
         if(!this.validateAuthorized(context)) {
@@ -71,7 +74,7 @@ class ResourceDeleteService extends AbastractBaseResourceService {
         await result.delete()
 
         // Send the results
-        return { success: true }
+        return this.apiResponse(context, {}, 200)
     }
         
 }
