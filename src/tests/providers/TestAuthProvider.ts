@@ -2,11 +2,10 @@ import AuthProvider from "@src/core/domains/auth/providers/AuthProvider";
 import AuthConfig from "@src/core/domains/auth/services/AuthConfig";
 import JwtAuthService from "@src/core/domains/auth/services/JwtAuthService";
 import parseBooleanFromString from "@src/core/util/parseBooleanFromString";
-
-import TestApiTokenModel from "../models/models/TestApiTokenModel";
-import TestUser from "../models/models/TestUser";
-import TestCreateUserValidator from "../validator/TestCreateUserValidator";
-import TestUpdateUserValidator from "../validator/TestUpdateUserValidator";
+import TestApiTokenModel from "@src/tests/models/models/TestApiTokenModel";
+import TestUser from "@src/tests/models/models/TestUser";
+import TestCreateUserValidator from "@src/tests/validator/TestCreateUserValidator";
+import TestUpdateUserValidator from "@src/tests/validator/TestUpdateUserValidator";
 
 export default class TestAuthProvider extends AuthProvider {
 

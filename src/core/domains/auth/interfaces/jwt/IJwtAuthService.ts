@@ -2,8 +2,7 @@
 import { IApiTokenModel } from "@src/core/domains/auth/interfaces/models/IApiTokenModel";
 import { IUserRepository } from "@src/core/domains/auth/interfaces/repository/IUserRepository";
 import { IRouter } from "@src/core/domains/http/interfaces/IRouter";
-
-import { IUserModel } from "../models/IUserModel";
+import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
 
 
 export interface IJwtAuthService {

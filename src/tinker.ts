@@ -7,8 +7,7 @@ import appConfig from '@src/config/app';
 import Kernel from '@src/core/Kernel';
 import { app } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
-
-import providers from './config/providers';
+import providers from '@src/config/providers';
 
 const USE_TEST_DB = false;
 

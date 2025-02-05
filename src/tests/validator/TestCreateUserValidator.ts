@@ -2,8 +2,7 @@ import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryB
 import BaseValidator from "@src/core/domains/validator/base/BaseValidator";
 import { ValidatorPayload } from "@src/core/domains/validator/interfaces/IValidator";
 import Joi, { ObjectSchema } from "joi";
-
-import TestUser from "../models/models/TestUser";
+import TestUser from "@src/tests/models/models/TestUser";
 
 class TestCreateUserValidator extends BaseValidator {
 
