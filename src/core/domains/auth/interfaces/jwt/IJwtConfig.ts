@@ -1,13 +1,16 @@
-import { ValidatorConstructor } from "@src/core/domains/validator/interfaces/IValidator";
 import { AuthAdapterConstructor } from "@src/core/domains/auth/interfaces/adapter/IAuthAdapter";
 import { IBaseAuthConfig } from "@src/core/domains/auth/interfaces/config/IAuth";
 import { UserConstructor } from "@src/core/domains/auth/interfaces/models/IUserModel";
+import { ValidatorConstructor } from "@src/core/domains/validator/interfaces/IValidator";
+
+import { ApiTokenConstructor } from "../models/IApiTokenModel";
 
 export interface IJwtConfig extends IBaseAuthConfig {
     name: string;
     adapter: AuthAdapterConstructor
-    models: {
-        user: UserConstructor;
+    models?: {
+        user?: UserConstructor;
+        apiToken?: ApiTokenConstructor;
     }
     validators: {
         createUser: ValidatorConstructor;

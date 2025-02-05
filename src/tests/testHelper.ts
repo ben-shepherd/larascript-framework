@@ -63,12 +63,13 @@ export const createAuthTables = async(connectionName?: string) => {
     await schema.createTable(userTable, {
         email: DataTypes.STRING,
         hashedPassword: DataTypes.STRING,
-        groups: DataTypes.JSON,
-        roles: DataTypes.JSON,
+        groups: DataTypes.ARRAY(DataTypes.STRING),
+        roles: DataTypes.ARRAY(DataTypes.STRING),
         firstName: stringNullable,
         lastName: stringNullable,
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE
+
     })
 
     await schema.createTable(apiTokenTable, {

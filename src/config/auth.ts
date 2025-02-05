@@ -2,6 +2,7 @@ import User from '@src/app/models/auth/User';
 import CreateUserValidator from '@src/app/validators/user/CreateUserValidator';
 import UpdateUserValidator from '@src/app/validators/user/UpdateUserValidator';
 import { BaseAuthAdapterTypes } from '@src/core/domains/auth/interfaces/adapter/AuthAdapterTypes.t';
+import ApiToken from '@src/core/domains/auth/models/ApiToken';
 import AuthConfig from '@src/core/domains/auth/services/AuthConfig';
 import JwtAuthService from '@src/core/domains/auth/services/JwtAuthService';
 import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
@@ -40,12 +41,14 @@ export const authConfig = AuthConfig.define([
     AuthConfig.config(JwtAuthService, {
         name: 'jwt',
         models: {
-            user: User
+            user: User,
+            apiToken: ApiToken
         },
         validators: {
             createUser: CreateUserValidator,
             updateUser: UpdateUserValidator
         },
+
         routes: {
             enableAuthRoutes: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES, 'true'),
             enableAuthRoutesAllowCreate: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES_ALLOW_CREATE, 'true'),

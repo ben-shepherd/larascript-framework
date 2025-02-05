@@ -1,13 +1,7 @@
-import { app } from "@src/core/services/App";
-import { JsonWebTokenError } from "jsonwebtoken";
-import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
-import decodeJwt from "@src/core/domains/auth/utils/decodeJwt";
-import { IRouter } from "@src/core/domains/http/interfaces/IRouter";
-import Route from "@src/core/domains/http/router/Route";
-import Router from "@src/core/domains/http/router/Router";
 import BaseAuthAdapter from "@src/core/domains/auth/base/BaseAuthAdapter";
 import AuthController from "@src/core/domains/auth/controllers/AuthController";
 import InvalidSecretException from "@src/core/domains/auth/exceptions/InvalidJwtSettings";
+import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
 import JwtFactory from "@src/core/domains/auth/factory/JwtFactory";
 import { IAclConfig } from "@src/core/domains/auth/interfaces/acl/IAclConfig";
 import { IACLService } from "@src/core/domains/auth/interfaces/acl/IACLService";
@@ -21,10 +15,16 @@ import AuthorizeMiddleware from "@src/core/domains/auth/middleware/AuthorizeMidd
 import ApiToken from "@src/core/domains/auth/models/ApiToken";
 import ApiTokenRepository from "@src/core/domains/auth/repository/ApiTokenRepitory";
 import UserRepository from "@src/core/domains/auth/repository/UserRepository";
+import ACLService from "@src/core/domains/auth/services/ACLService";
 import comparePassword from "@src/core/domains/auth/utils/comparePassword";
 import createJwt from "@src/core/domains/auth/utils/createJwt";
+import decodeJwt from "@src/core/domains/auth/utils/decodeJwt";
 import generateToken from "@src/core/domains/auth/utils/generateToken";
-import ACLService from "@src/core/domains/auth/services/ACLService";
+import { IRouter } from "@src/core/domains/http/interfaces/IRouter";
+import Route from "@src/core/domains/http/router/Route";
+import Router from "@src/core/domains/http/router/Router";
+import { app } from "@src/core/services/App";
+import { JsonWebTokenError } from "jsonwebtoken";
 
 /**
  * Short hand for app('auth.jwt')
@@ -58,8 +58,8 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
 
     constructor(config: IJwtConfig, aclConfig: IAclConfig) {
         super(config, aclConfig);
-        this.apiTokenRepository = new ApiTokenRepository()
-        this.userRepository = new UserRepository()
+        this.apiTokenRepository = new ApiTokenRepository(config.models?.apiToken)
+        this.userRepository = new UserRepository(config.models?.user)
         this.aclService = new ACLService(aclConfig)
     }
 
@@ -187,10 +187,22 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
     }
 
     /**
+     * Create a JWT token from a user
+     * @param user 
+     * @returns 
+     */
+    public async createJwtFromUser(user: IUserModel): Promise<string> {
+        const apiToken = await this.buildApiTokenByUser(user)
+        await apiToken.save()
+        return this.generateJwt(apiToken)
+    }
+
+    /**
      * Refresh a token
      * @param apiToken 
      * @returns 
      */
+
     refreshToken(apiToken: IApiTokenModel): string {
         return this.generateJwt(apiToken)
     }
@@ -259,7 +271,7 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
      * @returns The user repository
      */
     public getUserRepository(): IUserRepository {
-        return new UserRepository(this.config.models.user);
+        return new UserRepository(this.config.models?.user);
     }
 
 }

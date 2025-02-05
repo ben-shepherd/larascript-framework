@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-vars */
-import { IRouter } from "@src/core/domains/http/interfaces/IRouter";
 import { IApiTokenModel } from "@src/core/domains/auth/interfaces/models/IApiTokenModel";
 import { IUserRepository } from "@src/core/domains/auth/interfaces/repository/IUserRepository";
+import { IRouter } from "@src/core/domains/http/interfaces/IRouter";
+
+import { IUserModel } from "../models/IUserModel";
 
 
 export interface IJwtAuthService {
@@ -12,4 +14,5 @@ export interface IJwtAuthService {
     revokeAllTokens(userId: string | number): Promise<void>
     getRouter(): IRouter
     getUserRepository(): IUserRepository
+    createJwtFromUser(user: IUserModel): Promise<string>
 }
