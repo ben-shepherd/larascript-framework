@@ -1,12 +1,11 @@
 import Middleware from "@src/core/domains/http/base/Middleware";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
-
-import ForbiddenResourceError from "../../auth/exceptions/ForbiddenResourceError";
-import RateLimitedExceededError from "../../auth/exceptions/RateLimitedExceededError";
-import SecurityException from "../../express/exceptions/SecurityException";
-import { SecurityEnum } from "../enums/SecurityEnum";
-import responseError from "../handlers/responseError";
-import SecurityReader from "../security/services/SecurityReader";
+import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
+import RateLimitedExceededError from "@src/core/domains/auth/exceptions/RateLimitedExceededError";
+import SecurityException from "@src/core/domains/express/exceptions/SecurityException";
+import { SecurityEnum } from "@src/core/domains/http/enums/SecurityEnum";
+import responseError from "@src/core/domains/http/handlers/responseError";
+import SecurityReader from "@src/core/domains/http/security/services/SecurityReader";
 
 class SecurityMiddleware extends Middleware {
 

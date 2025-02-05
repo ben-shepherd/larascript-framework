@@ -5,11 +5,10 @@ import { IRouter, TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
 import MiddlewareUtil from '@src/core/domains/http/utils/middlewareUtil';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
 import expressClient from 'express';
-
-import Controller from '../base/Controller';
-import Middleware from '../base/Middleware';
-import { ControllerConstructor } from '../interfaces/IController';
-import IExpressConfig from '../interfaces/IHttpConfig';
+import Controller from '@src/core/domains/http/base/Controller';
+import Middleware from '@src/core/domains/http/base/Middleware';
+import { ControllerConstructor } from '@src/core/domains/http/interfaces/IController';
+import IExpressConfig from '@src/core/domains/http/interfaces/IHttpConfig';
 
 // eslint-disable-next-line no-unused-vars
 type ExecuteFn = (context: HttpContext) => Promise<void>;
@@ -238,7 +237,9 @@ class RouterBindService {
             path: route.path,
             method: route.method,
             security: route?.security,
-            resource: route?.resource
+            resource: route?.resource,
+            middlewares: route?.middlewares,
+            config: route?.config
         })
     }
 

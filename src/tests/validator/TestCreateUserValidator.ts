@@ -1,7 +1,8 @@
+import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import BaseValidator from "@src/core/domains/validator/base/BaseValidator";
 import { ValidatorPayload } from "@src/core/domains/validator/interfaces/IValidator";
-import { App } from "@src/core/services/App";
 import Joi, { ObjectSchema } from "joi";
+import TestUser from "@src/tests/models/models/TestUser";
 
 class TestCreateUserValidator extends BaseValidator {
 
@@ -14,9 +15,8 @@ class TestCreateUserValidator extends BaseValidator {
      * @param payload 
      */
     async validateEmailAvailability(payload: ValidatorPayload) {
-        const repository = App.container('auth').userRepository;
         
-        const user = await repository.findOneByEmail(payload.email as string);
+        const user = await queryBuilder(TestUser).where('email', payload.email as string).first();
 
         if(user) {
             this.setErrorMessage({ email: 'User already exists' });

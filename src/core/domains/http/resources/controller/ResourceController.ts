@@ -6,18 +6,9 @@ import ResourceDeleteService from "@src/core/domains/http/resources/services/Res
 import ResourceIndexService from "@src/core/domains/http/resources/services/ResourceIndexService";
 import ResourceShowService from "@src/core/domains/http/resources/services/ResourceShowService";
 import ResourceUpdateService from "@src/core/domains/http/resources/services/ResourceUpdateService";
-
-import HttpContext from "../../context/HttpContext";
-import responseError from "../../handlers/responseError";
-import AbastractBaseResourceService from "../abstract/AbastractBaseResourceService";
-
-type THandlerOptions = {
-    showPagination: boolean;
-}
-
-const DEFAULT_HANDLER_OPTIONS: THandlerOptions = {
-    showPagination: true
-} as const;
+import HttpContext from "@src/core/domains/http/context/HttpContext";
+import responseError from "@src/core/domains/http/handlers/responseError";
+import AbastractBaseResourceService from "@src/core/domains/http/resources/abstract/AbastractBaseResourceService";
 
 /**
  * ResourceController handles CRUD operations for resources (database models)

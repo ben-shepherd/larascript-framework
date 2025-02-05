@@ -1,6 +1,5 @@
 import health from '@src/core/actions/health';
-
-import Route from '../router/Route';
+import Route from '@src/core/domains/http/router/Route';
 
 /**
  * Health routes

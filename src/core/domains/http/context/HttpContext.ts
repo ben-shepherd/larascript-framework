@@ -1,10 +1,12 @@
-import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
-import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
 import HttpContextException from '@src/core/domains/express/exceptions/HttpContextException';
 import { requestContext } from '@src/core/domains/http/context/RequestContext';
 import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
 import { TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
 import { NextFunction, Response } from 'express';
+import { IUserModel } from '@src/core/domains/auth/interfaces/models/IUserModel';
+import { IApiTokenModel } from '@src/core/domains/auth/interfaces/models/IApiTokenModel';
+
+
 
 class HttpContext {
 

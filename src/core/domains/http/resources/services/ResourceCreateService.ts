@@ -7,9 +7,8 @@ import { RouteResourceTypes } from "@src/core/domains/http/router/RouterResource
 import stripGuardedResourceProperties from "@src/core/domains/http/utils/stripGuardedResourceProperties";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
-
-import { TResponseErrorMessages } from "../../interfaces/ErrorResponse.t";
-import ApiResponse from "../../response/ApiResponse";
+import { TResponseErrorMessages } from "@src/core/domains/http/interfaces/ErrorResponse.t";
+import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 
 /**
  * Service class that handles creating new resources through HTTP requests

@@ -1,4 +1,4 @@
-import ApiToken from "@src/app/models/auth/ApiToken";
+import ApiToken from "@src/core/domains/auth/models/ApiToken";
 import BaseMigration from "@src/core/domains/migrations/base/BaseMigration";
 import { DataTypes } from "sequelize";
 

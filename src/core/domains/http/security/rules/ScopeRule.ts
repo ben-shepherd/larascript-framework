@@ -1,8 +1,7 @@
 import SecurityException from "@src/core/domains/express/exceptions/SecurityException";
-
-import HttpContext from "../../context/HttpContext";
-import { SecurityEnum } from "../../enums/SecurityEnum";
-import AbstractSecurityRule from "../abstract/AbstractSecurityRule";
+import HttpContext from "@src/core/domains/http/context/HttpContext";
+import { SecurityEnum } from "@src/core/domains/http/enums/SecurityEnum";
+import AbstractSecurityRule from "@src/core/domains/http/security/abstract/AbstractSecurityRule";
 
 type TEnableScopeRuleOptions = {
     scopes: string | string[];

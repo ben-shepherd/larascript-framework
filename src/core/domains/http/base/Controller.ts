@@ -27,8 +27,13 @@ class Controller implements IController {
     static executeAction(action: string, context: HttpContext): Promise<void> {
 
         // Inject URL params as action arguments
+        // Add the context as the last argument
         const params = context.getParams()
-        const actionArgs = Object.keys(params).map(key => params[key])
+        const actionArgs = [
+            ...Object.keys(params).map(key => params[key]),
+            context
+        ]
+
 
         const controller = new this(context)
         return controller[action](...actionArgs)

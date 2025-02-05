@@ -1,9 +1,8 @@
 /* eslint-disable no-unused-vars */
 import { IdGeneratorFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { TModelScope } from "@src/core/domains/models/utils/ModelScope";
 import IHasObserver from "@src/core/domains/observer/interfaces/IHasObserver";
-
-import { Scope } from "../domains/auth/interfaces/IScope";
-import IFactory from "./IFactory";
+import IFactory from "@src/core/interfaces/IFactory";
 
 export type GetAttributesOptions = {excludeGuarded: boolean}
 
@@ -13,7 +12,7 @@ export type ModelConstructor<M extends IModel = IModel> = {
     getTable(): string;
     getPrimaryKey(): string;
     getConnectionName(): string;
-    getScopes(scopes: Scope[], additionalScopes?: string[]): string[];
+    getScopes(scopes: TModelScope[], additionalScopes?: string[]): string[];
     getFields(): string[];
     factory(): IFactory<IModel>;
 }
@@ -32,7 +31,6 @@ export interface IModelAttributes {
     updatedAt?: Date;
     [key: string]: unknown;
 }
-
 
 export interface IModel<Attributes extends IModelAttributes = IModelAttributes> extends IHasObserver {
     [key: string]: unknown;

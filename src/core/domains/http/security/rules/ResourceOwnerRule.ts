@@ -3,9 +3,8 @@ import ResourceException from "@src/core/domains/express/exceptions/ResourceExce
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import AbstractSecurityRule from "@src/core/domains/http/security/abstract/AbstractSecurityRule";
 import { IModel } from "@src/core/interfaces/IModel";
-
-import { SecurityEnum } from "../../enums/SecurityEnum";
-import { RouteResourceTypes } from "../../router/RouterResource";
+import { SecurityEnum } from "@src/core/domains/http/enums/SecurityEnum";
+import { RouteResourceTypes } from "@src/core/domains/http/router/RouterResource";
 
 type TResourceOwnerRuleOptions = {
     attribute: string;

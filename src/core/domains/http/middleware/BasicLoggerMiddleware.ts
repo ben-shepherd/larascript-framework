@@ -1,7 +1,6 @@
 import Middleware from '@src/core/domains/http/base/Middleware';
 import HttpContext from '@src/core/domains/http/context/HttpContext';
-
-import { logger } from '../../logger/services/LoggerService';
+import { logger } from '@src/core/domains/logger/services/LoggerService';
 
 /**
  * BasicLoggerMiddleware logs basic information about incoming requests

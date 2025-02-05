@@ -1,5 +1,5 @@
-import { IApiResponse, TApiResponse } from "../interfaces/IApiResponse";
-import { TPagination } from "../interfaces/Pagination.t";
+import { IApiResponse, TApiResponse } from "@src/core/domains/http/interfaces/IApiResponse";
+import { TPagination } from "@src/core/domains/http/interfaces/Pagination.t";
 
 /**
  * ApiResponse is a class that builds standardized HTTP API responses.
@@ -145,6 +145,10 @@ class ApiResponse<Data = unknown> implements IApiResponse<Data> {
         return this;
     }
 
+    /**
+     * Returns the HTTP status code of the response
+     * @returns {number} The HTTP status code
+     */
     getCode(): number {
         return this.code;
     }
@@ -167,8 +171,18 @@ class ApiResponse<Data = unknown> implements IApiResponse<Data> {
         return this.additionalMeta;
     }
 
+    /**
+     * Returns the response as an object
+     * @returns {TApiResponse<Data>} The response as an object
+     */
+    toObject(): TApiResponse<Data> {
+        return this.build();
+    }
+
+
 }
 
 
 
 export default ApiResponse;
+

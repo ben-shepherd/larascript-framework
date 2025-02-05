@@ -1,10 +1,16 @@
-import IAuthorizedRequest from "@src/core/domains/auth/interfaces/IAuthorizedRequest";
-import IRequestIdentifiable from "@src/core/domains/auth/interfaces/IRequestIdentifiable";
 import { ISecurityRequest } from "@src/core/domains/http/interfaces/ISecurity";
 import IValidatorRequest from "@src/core/domains/http/interfaces/IValidatorRequest";
 import { Request } from "express";
 
+import IAuthorizedRequest from "./IAuthorizedRequest";
+import { IRequestIdentifiable } from "./IRequestIdentifable";
+
 /**
- * Extends the express Request object with auth and validator properties.
+ * TBaseRequest combines multiple request interfaces to create a comprehensive request type.
+ * It extends Express's Request and includes:
+ * - Authorization capabilities (IAuthorizedRequest)
+ * - Request validation (IValidatorRequest) 
+ * - Security features (ISecurityRequest)
+ * - Request identification (IRequestIdentifiable)
  */
 export type TBaseRequest = Request & IAuthorizedRequest & IValidatorRequest & ISecurityRequest & IRequestIdentifiable;

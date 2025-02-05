@@ -9,9 +9,8 @@ import Paginate from "@src/core/domains/http/utils/Paginate";
 import QueryFilters from "@src/core/domains/http/utils/QueryFilters";
 import stripGuardedResourceProperties from "@src/core/domains/http/utils/stripGuardedResourceProperties";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
-
-import ApiResponse from "../../response/ApiResponse";
-import SortOptions from "../../utils/SortOptions";
+import ApiResponse from "@src/core/domains/http/response/ApiResponse";
+import SortOptions from "@src/core/domains/http/utils/SortOptions";
 
 /**
  * Service class that handles retrieving collections of resources through HTTP requests

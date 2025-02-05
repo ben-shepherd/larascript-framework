@@ -10,6 +10,8 @@ import MigrationProvider from "@src/core/domains/migrations/providers/MigrationP
 import SetupProvider from "@src/core/domains/setup/providers/SetupProvider";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 import { IProvider } from "@src/core/interfaces/IProvider";
+// eslint-disable-next-line no-unused-vars
+import { ILarascriptProviders } from "@src/core/interfaces/ILarascriptProviders";
 
 /**
  * Core providers for the framework
@@ -17,6 +19,7 @@ import { IProvider } from "@src/core/interfaces/IProvider";
  * These providers are loaded by default when the application boots
  *
  * @see {@link IProvider} for more information about providers
+ * @see {@link ILarascriptProviders} for providing type hints for providers
  */
 const LarascriptProviders: IProvider[] = [
 

@@ -7,9 +7,8 @@ import AbastractBaseResourceService from "@src/core/domains/http/resources/abstr
 import { RouteResourceTypes } from "@src/core/domains/http/router/RouterResource";
 import stripGuardedResourceProperties from "@src/core/domains/http/utils/stripGuardedResourceProperties";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
-
-import { TResponseErrorMessages } from "../../interfaces/ErrorResponse.t";
-import ApiResponse from "../../response/ApiResponse";
+import { TResponseErrorMessages } from "@src/core/domains/http/interfaces/ErrorResponse.t";
+import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 
 /**
  * Service class that handles updating existing resources through HTTP requests

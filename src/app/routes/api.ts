@@ -1,6 +1,5 @@
 import Route from "@src/core/domains/http/router/Route"
-
-import ExampleController from "../controllers/ExampleController"
+import ExampleController from "@src/app/controllers/ExampleController"
 
 export default Route.group(router => {
 

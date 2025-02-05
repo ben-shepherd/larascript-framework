@@ -1,8 +1,7 @@
 
 import { MiddlewareConstructor, TExpressMiddlewareFn, TExpressMiddlewareFnOrClass } from '@src/core/domains/http/interfaces/IMiddleware';
 import { TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
-
-import Middleware from '../base/Middleware';
+import Middleware from '@src/core/domains/http/base/Middleware';
 
 /**
  * Utility class for handling middleware conversions and transformations.

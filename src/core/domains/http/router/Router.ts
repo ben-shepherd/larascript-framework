@@ -1,8 +1,7 @@
 import { TExpressMiddlewareFnOrClass } from "@src/core/domains/http/interfaces/IMiddleware";
 import { IRouteGroupOptions, IRouter, TPartialRouteItemOptions, TRouteGroupFn, TRouteItem, TRouteResourceOptions } from "@src/core/domains/http/interfaces/IRouter";
 import ResourceRouter from "@src/core/domains/http/router/RouterResource";
-
-import SecurityRules from "../security/services/SecurityRules";
+import SecurityRules from "@src/core/domains/http/security/services/SecurityRules";
 
 /**
  * Router handles registration and organization of Express routes
@@ -190,7 +189,7 @@ class Router implements IRouter {
         const currentMiddlewareOrDefault = this.baseOptions?.middlewares ?? [] as TExpressMiddlewareFnOrClass[];
         const currentMiddleware = (Array.isArray(currentMiddlewareOrDefault) ? currentMiddlewareOrDefault : [currentMiddlewareOrDefault]) as TExpressMiddlewareFnOrClass[];
         
-        const optionsMiddlewareOrDefault = route.baseOptions?.middlewares ?? [] as TExpressMiddlewareFnOrClass[];
+        const optionsMiddlewareOrDefault = options?.middlewares ?? [] as TExpressMiddlewareFnOrClass[];
         const optionsMiddleware = (Array.isArray(optionsMiddlewareOrDefault) ? optionsMiddlewareOrDefault : [optionsMiddlewareOrDefault]) as TExpressMiddlewareFnOrClass[];
 
         options.middlewares = [...currentMiddleware, ...optionsMiddleware] as TExpressMiddlewareFnOrClass[];

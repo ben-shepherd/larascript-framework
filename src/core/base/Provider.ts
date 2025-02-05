@@ -23,10 +23,22 @@ export default abstract class BaseProvider implements IProvider {
     protected config: any = {};
 
     /**
+     * Bind a value to the container
+     *
+     * @protected
+     * @param {string} key - The key to bind the value to
+     * @param {any} value - The value to bind to the key
+     */
+    protected bind(key: string, value: any): void {
+        App.setContainer(key, value);
+    }
+
+    /**
      * Registers the provider
      *
      * @abstract
      * @returns {Promise<void>}
+
      */
     register(): Promise<void> {
         return Promise.resolve();

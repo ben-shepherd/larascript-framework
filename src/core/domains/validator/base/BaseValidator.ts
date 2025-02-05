@@ -39,7 +39,7 @@ abstract class BaseValidator<P extends ValidatorPayload = ValidatorPayload> impl
         if(result.error) {
             return {
                 success: !result.error,
-                joi: result
+                joi: result,
             }
         }
 

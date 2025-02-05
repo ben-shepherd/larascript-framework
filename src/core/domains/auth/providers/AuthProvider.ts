@@ -1,47 +1,33 @@
-import authConfig from "@src/config/auth";
+
+
+import { aclConfig } from "@src/config/acl";
+import { authConfig } from "@src/config/auth";
 import BaseProvider from "@src/core/base/Provider";
-import GenerateJwtSecret from "@src/core/domains/auth/commands/GenerateJWTSecret";
-import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
-import { App } from "@src/core/services/App";
+import GenerateJwtSecret from "@src/core/domains/auth/commands/GenerateJwtSecret";
+import Auth from "@src/core/domains/auth/services/AuthService";
+import { app } from "@src/core/services/App";
 
-export default class AuthProvider extends BaseProvider {
+class AuthProvider extends BaseProvider{
 
-    /**
-     * The configuration for the auth service
-     */
-    protected config: IAuthConfig = authConfig;
+    protected config = authConfig
 
-    /**
-     * Register method
-     *
-     * Called when the provider is being registered
-     * Use this method to set up any initial configurations or services
-     *
-     * @returns Promise<void>
-     */
-    public async register(): Promise<void> {
+    protected aclConfig = aclConfig
 
-        this.log('Registering AuthProvider');
+    async register() {
+        const authService = new Auth(this.config, this.aclConfig);
+        await authService.boot();
+        
+        // Bind services
+        this.bind('auth', authService);
+        this.bind('auth.jwt', (() => authService.getDefaultAdapter())())
+        this.bind('auth.acl', (() => authService.acl())())
 
-        /**
-         * Setup the registed authService
-         */
-        const authServiceCtor = this.config.service.authService;
-        const authService = new authServiceCtor(this.config);
-
-        /**
-         * Setup the container
-         */
-        App.setContainer('auth', authService);
-
-        /**
-         * Register internal commands
-         */
-        App.container('console').register().registerAll([
-            GenerateJwtSecret
-        ])
+        // Register commands
+        app('console').register().register(GenerateJwtSecret)
     }
 
-    public async boot(): Promise<void> {}
 
 }
+
+export default AuthProvider;
+
