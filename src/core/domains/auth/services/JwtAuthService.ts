@@ -188,10 +188,20 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
     }
 
     /**
+     * Refresh a token
+     * @param apiToken 
+     * @returns 
+     */
+    refreshToken(apiToken: IApiTokenModel): string {
+        return this.generateJwt(apiToken)
+    }
+
+    /**
      * Revokes a token
      * @param apiToken 
      * @returns 
      */
+
     async revokeToken(apiToken: IApiTokenModel): Promise<void> {
         if (apiToken?.revokedAt) {
             return;
@@ -216,20 +226,23 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
     getRouter(): IRouter {
         return Route.group({
             prefix: '/auth',
+            controller: AuthController,
             config: {
                 adapter: 'jwt'
             }
         }, (router) => {
-            router.post('/login', [AuthController, 'login']);
-            router.post('/register', [AuthController, 'register']);
-            router.post('/logout', [AuthController, 'logout']);
+            router.post('/login', 'login');
+            router.post('/register', 'register');
+
 
             router.group({
                 middlewares: [AuthorizeMiddleware]
             }, (router) => {
-                router.get('/user', [AuthController, 'user']);
-                router.get('/refresh', [AuthController, 'refresh']);
+                router.get('/user', 'user');
+                router.post('/refresh', 'refresh');
+                router.post('/logout', 'logout');
             })
+
         })
     }
 

@@ -8,6 +8,7 @@ import { IUserRepository } from "../repository/IUserRepository";
 export interface IJwtAuthService {
     attemptCredentials(email: string, password: string, scopes?: string[]): Promise<string>
     attemptAuthenticateToken(token: string): Promise<IApiTokenModel | null>
+    refreshToken(apiToken: IApiTokenModel): string;
     revokeToken(apiToken: IApiTokenModel): Promise<void>
     revokeAllTokens(userId: string | number): Promise<void>
     getRouter(): IRouter

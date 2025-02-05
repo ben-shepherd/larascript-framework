@@ -239,7 +239,8 @@ class RouterBindService {
             method: route.method,
             security: route?.security,
             resource: route?.resource,
-            middlewares: route?.middlewares
+            middlewares: route?.middlewares,
+            config: route?.config
         })
     }
 

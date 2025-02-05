@@ -6,6 +6,8 @@ import responseError from "../../http/handlers/responseError";
 import ApiResponse from "../../http/response/ApiResponse";
 import ValidationError from "../../validator/exceptions/ValidationError";
 import LoginUseCase from "../usecase/LoginUseCase";
+import LogoutUseCase from "../usecase/LogoutUseCase";
+import RefreshUseCase from "../usecase/RefreshUseCase";
 import RegisterUseCase from "../usecase/RegisterUseCase";
 import UserUseCase from "../usecase/UserUseCase";
 
@@ -30,8 +32,14 @@ class AuthController extends Controller {
 
     protected userUseCase = new UserUseCase();
     
+    protected logoutUseCase = new LogoutUseCase();
+
+    protected refreshUseCase = new RefreshUseCase();
+    
+
     /**
      * Handle the login endpoint
+
      * @param context The HTTP context
      * @returns The API response
      */
@@ -72,9 +80,10 @@ class AuthController extends Controller {
      */
     async logout(context: HttpContext) {
         this.handler(context, async () => {
-            return await this.registerUseCase.handle(context)
+            return await this.logoutUseCase.handle(context)
         })
     }
+
 
 
     /**
@@ -84,7 +93,7 @@ class AuthController extends Controller {
      */
     async refresh(context: HttpContext) {
         this.handler(context, async () => {
-            return await this.registerUseCase.handle(context)
+            return await this.refreshUseCase.handle(context)
         })
     }
 
@@ -96,11 +105,11 @@ class AuthController extends Controller {
      */
     protected async handler(context: HttpContext, callback: () => Promise<ApiResponse>) {
         try {
-
             const apiResponse = await callback();
 
             return this.jsonResponse(
-                apiResponse.toObject()
+                apiResponse.toObject(),
+                apiResponse.getCode()
             )
         }
         catch (error) {

@@ -4,7 +4,7 @@ import HttpContext from "../../http/context/HttpContext";
 import ApiResponse from "../../http/response/ApiResponse";
 import { authJwt } from "../services/JwtAuthService";
 
-class UserUseCase {
+class RefreshUseCase {
 
     /**
      * Handle the user use case
@@ -13,26 +13,23 @@ class UserUseCase {
      */
 
     async handle(context: HttpContext): Promise<ApiResponse> {
-        const userId = context.getUser()?.getId();
+        const apiToken = context.getApiToken();
 
-        if(!userId) {
+        if(!apiToken) {
             throw new UnauthorizedError();
         }
 
-        const user = await authJwt().getUserRepository().findById(userId);
+        const refreshedToken = authJwt().refreshToken(apiToken);
 
-        if(!user) {
-            throw new UnauthorizedError();
-        }
+        return new ApiResponse().setData({
+            token: refreshedToken
+        }).setCode(200)
 
-        const userAttributes = await user.toObject({ excludeGuarded: true });
-
-        return new ApiResponse().setData(userAttributes);
     }
 
 }
 
 
-export default UserUseCase;
+export default RefreshUseCase;
 
 

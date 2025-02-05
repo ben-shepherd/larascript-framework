@@ -13,21 +13,15 @@ class UserUseCase {
      */
 
     async handle(context: HttpContext): Promise<ApiResponse> {
-        const userId = context.getUser()?.getId();
+        const apiToken = context.getApiToken();
 
-        if(!userId) {
+        if(!apiToken) {
             throw new UnauthorizedError();
         }
 
-        const user = await authJwt().getUserRepository().findById(userId);
+        await authJwt().revokeToken(apiToken);
 
-        if(!user) {
-            throw new UnauthorizedError();
-        }
-
-        const userAttributes = await user.toObject({ excludeGuarded: true });
-
-        return new ApiResponse().setData(userAttributes);
+        return new ApiResponse().setCode(204)
     }
 
 }

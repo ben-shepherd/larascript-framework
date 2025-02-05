@@ -14,7 +14,7 @@ import ACLService from "./ACLService";
 export const auth = () => app('auth');
 
 /**
- * Short hand for app('auth.acl')
+ * Short hand for app('auth').acl()
  */
 export const acl = () => app('auth.acl');
 
