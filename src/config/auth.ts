@@ -6,6 +6,26 @@ import AuthConfig from '@src/core/domains/auth/services/AuthConfig';
 import JwtAuthService from '@src/core/domains/auth/services/JwtAuthService';
 import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
 
+/**
+ * Auth Configuration Module
+ * 
+ * This module configures authentication adapters and settings for the application.
+ * It defines available auth adapters (currently JWT) and their configurations.
+ * 
+ * Auth adapters, and related services can be retrieved in the application using:
+ * 
+ * ```ts
+ * // Get auth service
+ * const authService = app('auth')
+ * const aclService = app('auth.acl')
+ * const jwtAdapter = app('auth.jwt')
+ * 
+ * 
+ * // Get specific adapter
+ * app('auth').getAdapter('jwt')
+ * ```
+ * 
+ */
 
 // Type helper for auth adapters
 export interface AuthAdapters extends BaseAuthAdapterTypes {
