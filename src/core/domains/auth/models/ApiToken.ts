@@ -5,9 +5,8 @@ import ApiTokenObserver from '@src/core/domains/auth/observers/ApiTokenObserver'
 import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
 import { IModelAttributes, ModelConstructor } from '@src/core/interfaces/IModel';
 import Model from '@src/core/models/base/Model';
-
-import UserRepository from '../repository/UserRepository';
-import ScopeMatcher from '../utils/ScopeMatcher';
+import UserRepository from '@src/core/domains/auth/repository/UserRepository';
+import ScopeMatcher from '@src/core/domains/auth/utils/ScopeMatcher';
 
 
 

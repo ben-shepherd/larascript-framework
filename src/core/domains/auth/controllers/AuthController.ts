@@ -1,16 +1,16 @@
-import ForbiddenResourceError from "../../auth/exceptions/ForbiddenResourceError";
-import UnauthorizedError from "../../auth/exceptions/UnauthorizedError";
-import Controller from "../../http/base/Controller";
-import HttpContext from "../../http/context/HttpContext";
-import responseError from "../../http/handlers/responseError";
-import ApiResponse from "../../http/response/ApiResponse";
-import ValidationError from "../../validator/exceptions/ValidationError";
-import LoginUseCase from "../usecase/LoginUseCase";
-import LogoutUseCase from "../usecase/LogoutUseCase";
-import RefreshUseCase from "../usecase/RefreshUseCase";
-import RegisterUseCase from "../usecase/RegisterUseCase";
-import UpdateUseCase from "../usecase/UpdateUseCase";
-import UserUseCase from "../usecase/UserUseCase";
+import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
+import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
+import Controller from "@src/core/domains/http/base/Controller";
+import HttpContext from "@src/core/domains/http/context/HttpContext";
+import responseError from "@src/core/domains/http/handlers/responseError";
+import ApiResponse from "@src/core/domains/http/response/ApiResponse";
+import ValidationError from "@src/core/domains/validator/exceptions/ValidationError";
+import LoginUseCase from "@src/core/domains/auth/usecase/LoginUseCase";
+import LogoutUseCase from "@src/core/domains/auth/usecase/LogoutUseCase";
+import RefreshUseCase from "@src/core/domains/auth/usecase/RefreshUseCase";
+import RegisterUseCase from "@src/core/domains/auth/usecase/RegisterUseCase";
+import UpdateUseCase from "@src/core/domains/auth/usecase/UpdateUseCase";
+import UserUseCase from "@src/core/domains/auth/usecase/UserUseCase";
 
 /**
  * Controller handling authentication-related HTTP endpoints.

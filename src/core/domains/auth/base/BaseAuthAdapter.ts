@@ -1,8 +1,8 @@
-import { IRouter } from "../../http/interfaces/IRouter";
-import Router from "../../http/router/Router";
-import { IAclConfig } from "../interfaces/acl/IAclConfig";
-import { IAuthAdapter } from "../interfaces/adapter/IAuthAdapter";
-import { IBaseAuthConfig } from "../interfaces/config/IAuth";
+import { IRouter } from "@src/core/domains/http/interfaces/IRouter";
+import Router from "@src/core/domains/http/router/Router";
+import { IAclConfig } from "@src/core/domains/auth/interfaces/acl/IAclConfig";
+import { IAuthAdapter } from "@src/core/domains/auth/interfaces/adapter/IAuthAdapter";
+import { IBaseAuthConfig } from "@src/core/domains/auth/interfaces/config/IAuth";
 
 /**
  * Base authentication adapter class that implements the IAuthAdapter interface.

@@ -1,10 +1,9 @@
 import Repository from "@src/core/base/Repository";
 import { ModelConstructor } from "@src/core/interfaces/IModel";
-
-import { queryBuilder } from "../../eloquent/services/EloquentQueryBuilderService";
-import { IApiTokenModel } from "../interfaces/models/IApiTokenModel";
-import { IApiTokenRepository } from "../interfaces/repository/IApiTokenRepository";
-import ApiToken from "../models/ApiToken";
+import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
+import { IApiTokenModel } from "@src/core/domains/auth/interfaces/models/IApiTokenModel";
+import { IApiTokenRepository } from "@src/core/domains/auth/interfaces/repository/IApiTokenRepository";
+import ApiToken from "@src/core/domains/auth/models/ApiToken";
 
 class ApiTokenRepository extends Repository<IApiTokenModel> implements IApiTokenRepository {
 

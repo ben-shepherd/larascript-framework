@@ -7,10 +7,9 @@ import { IRequestContext } from '@src/core/domains/http/interfaces/IRequestConte
 import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerService';
 import IValidatorService from '@src/core/domains/validator/interfaces/IValidatorService';
 import readline from 'node:readline';
-
-import { IACLService } from '../domains/auth/interfaces/acl/IACLService';
-import { IJwtAuthService } from '../domains/auth/interfaces/jwt/IJwtAuthService';
-import { IAuthService } from '../domains/auth/interfaces/service/IAuthService';
+import { IACLService } from '@src/core/domains/auth/interfaces/acl/IACLService';
+import { IJwtAuthService } from '@src/core/domains/auth/interfaces/jwt/IJwtAuthService';
+import { IAuthService } from '@src/core/domains/auth/interfaces/service/IAuthService';
 
 export interface ILarascriptProviders {
 

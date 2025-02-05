@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { IUserModel } from "../models/IUserModel"
-import { IAclConfig, IAclGroup, IAclRole } from "./IAclConfig"
+import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel"
+import { IAclConfig, IAclGroup, IAclRole } from "@src/core/domains/auth/interfaces/acl/IAclConfig"
 
 export interface IACLService {
     getConfig(): IAclConfig

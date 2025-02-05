@@ -11,9 +11,8 @@ import RouterBindService from '@src/core/domains/http/router/RouterBindService';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
 import { app } from '@src/core/services/App';
 import expressClient from 'express';
-
-import Middleware from '../base/Middleware';
-import BasicLoggerMiddleware from '../middleware/BasicLoggerMiddleware';
+import Middleware from '@src/core/domains/http/base/Middleware';
+import BasicLoggerMiddleware from '@src/core/domains/http/middleware/BasicLoggerMiddleware';
 
 /**
  * Short hand for `app('http')`

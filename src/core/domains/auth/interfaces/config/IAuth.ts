@@ -1,4 +1,4 @@
-import { AuthAdapterConstructor } from "../adapter/IAuthAdapter";
+import { AuthAdapterConstructor } from "@src/core/domains/auth/interfaces/adapter/IAuthAdapter";
 
 export interface IBaseAuthConfig {
     name: string;

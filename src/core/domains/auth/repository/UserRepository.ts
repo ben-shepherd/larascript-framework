@@ -1,10 +1,9 @@
 import Repository from "@src/core/base/Repository";
 import { ModelConstructor } from "@src/core/interfaces/IModel";
-
-import { queryBuilder } from "../../eloquent/services/EloquentQueryBuilderService";
-import { IUserModel } from "../interfaces/models/IUserModel";
-import { IUserRepository } from "../interfaces/repository/IUserRepository";
-import AuthUser from "../models/AuthUser";
+import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
+import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
+import { IUserRepository } from "@src/core/domains/auth/interfaces/repository/IUserRepository";
+import AuthUser from "@src/core/domains/auth/models/AuthUser";
 
 class UserRepository extends Repository<IUserModel> implements IUserRepository {
 

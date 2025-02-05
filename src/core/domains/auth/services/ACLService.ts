@@ -1,6 +1,6 @@
-import { IACLService } from "../interfaces/acl/IACLService";
-import { IAclConfig, IAclGroup, IAclRole } from "../interfaces/acl/IAclConfig";
-import { IUserModel } from "../interfaces/models/IUserModel";
+import { IACLService } from "@src/core/domains/auth/interfaces/acl/IACLService";
+import { IAclConfig, IAclGroup, IAclRole } from "@src/core/domains/auth/interfaces/acl/IAclConfig";
+import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
 
 /**
  * Access Control List (ACL) Service

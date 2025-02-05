@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { IRouter } from "@src/core/domains/http/interfaces/IRouter";
-
-import { IApiTokenModel } from "../models/IApiTokenModel";
-import { IUserRepository } from "../repository/IUserRepository";
+import { IApiTokenModel } from "@src/core/domains/auth/interfaces/models/IApiTokenModel";
+import { IUserRepository } from "@src/core/domains/auth/interfaces/repository/IUserRepository";
 
 
 export interface IJwtAuthService {

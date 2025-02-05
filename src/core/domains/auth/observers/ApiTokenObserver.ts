@@ -2,8 +2,7 @@ import UserRepository from "@src/app/repositories/auth/UserRepository";
 import { ApiTokenAttributes } from "@src/core/domains/auth/models/ApiToken";
 import { auth } from "@src/core/domains/auth/services/AuthService";
 import Observer from "@src/core/domains/observer/services/Observer";
-
-import { authJwt } from "../services/JwtAuthService";
+import { authJwt } from "@src/core/domains/auth/services/JwtAuthService";
 
 interface IApiTokenObserverData extends ApiTokenAttributes {}
 

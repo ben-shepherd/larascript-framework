@@ -1,8 +1,7 @@
 import { TExpressMiddlewareFnOrClass } from "@src/core/domains/http/interfaces/IMiddleware";
 import { IRouteGroupOptions, IRouter, TPartialRouteItemOptions, TRouteGroupFn, TRouteItem, TRouteResourceOptions } from "@src/core/domains/http/interfaces/IRouter";
 import ResourceRouter from "@src/core/domains/http/router/RouterResource";
-
-import SecurityRules from "../security/services/SecurityRules";
+import SecurityRules from "@src/core/domains/http/security/services/SecurityRules";
 
 /**
  * Router handles registration and organization of Express routes

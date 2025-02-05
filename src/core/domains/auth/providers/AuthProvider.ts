@@ -4,9 +4,8 @@ import { aclConfig } from "@src/config/acl";
 import { authConfig } from "@src/config/auth";
 import BaseProvider from "@src/core/base/Provider";
 import { app } from "@src/core/services/App";
-
-import GenerateJwtSecret from "../commands/GenerateJwtSecret";
-import Auth from "../services/AuthService";
+import GenerateJwtSecret from "@src/core/domains/auth/commands/GenerateJwtSecret";
+import Auth from "@src/core/domains/auth/services/AuthService";
 
 class AuthProvider extends BaseProvider{
 

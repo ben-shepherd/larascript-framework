@@ -1,12 +1,11 @@
 import Middleware from '@src/core/domains/http/base/Middleware';
 import HttpContext from '@src/core/domains/http/context/HttpContext';
 import responseError from '@src/core/domains/http/handlers/responseError';
-
-import { requestContext } from '../../http/context/RequestContext';
-import { TBaseRequest } from '../../http/interfaces/BaseRequest';
-import ForbiddenResourceError from '../exceptions/ForbiddenResourceError';
-import UnauthorizedError from '../exceptions/UnauthorizedError';
-import { auth } from '../services/AuthService';
+import { requestContext } from '@src/core/domains/http/context/RequestContext';
+import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
+import ForbiddenResourceError from '@src/core/domains/auth/exceptions/ForbiddenResourceError';
+import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
+import { auth } from '@src/core/domains/auth/services/AuthService';
 
 /**
  * AuthorizeMiddleware handles authentication and authorization for HTTP requests

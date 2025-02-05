@@ -1,8 +1,8 @@
 
-import HttpContext from "../../http/context/HttpContext";
-import ApiResponse from "../../http/response/ApiResponse";
-import UnauthorizedError from "../exceptions/UnauthorizedError";
-import { authJwt } from "../services/JwtAuthService";
+import HttpContext from "@src/core/domains/http/context/HttpContext";
+import ApiResponse from "@src/core/domains/http/response/ApiResponse";
+import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
+import { authJwt } from "@src/core/domains/auth/services/JwtAuthService";
 
 /**
  * UserUseCase handles retrieving the authenticated user's profile

@@ -2,11 +2,10 @@
 import { TSecurityRuleConstructor } from "@src/core/domains/http/interfaces/ISecurity";
 import AbstractSecurityRule from "@src/core/domains/http/security/abstract/AbstractSecurityRule";
 import ResourceOwnerRule from "@src/core/domains/http/security/rules/ResourceOwnerRule";
-
-import HasRoleRule from "../rules/HasRoleRule";
-import RateLimitedRule from "../rules/RateLimitedRule";
-import ResourceScopeRule from "../rules/ResourceScopeRule";
-import ScopeRule from "../rules/ScopeRule";
+import HasRoleRule from "@src/core/domains/http/security/rules/HasRoleRule";
+import RateLimitedRule from "@src/core/domains/http/security/rules/RateLimitedRule";
+import ResourceScopeRule from "@src/core/domains/http/security/rules/ResourceScopeRule";
+import ScopeRule from "@src/core/domains/http/security/rules/ScopeRule";
 
 class SecurityRules {
 

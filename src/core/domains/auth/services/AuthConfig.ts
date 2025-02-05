@@ -1,6 +1,6 @@
 
-import { AuthAdapterConstructor, IAuthAdapter } from "../interfaces/adapter/IAuthAdapter";
-import { IBaseAuthConfig } from "../interfaces/config/IAuth";
+import { AuthAdapterConstructor, IAuthAdapter } from "@src/core/domains/auth/interfaces/adapter/IAuthAdapter";
+import { IBaseAuthConfig } from "@src/core/domains/auth/interfaces/config/IAuth";
 
 /**
  * AuthConfig is a configuration service for managing authentication adapters.

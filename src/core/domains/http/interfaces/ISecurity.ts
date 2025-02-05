@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { Request } from 'express';
-
-import HttpContext from '../context/HttpContext';
+import HttpContext from '@src/core/domains/http/context/HttpContext';
 
 export type TSecurityRuleOptions<RuleOptions extends object = object> = {
     id: string;

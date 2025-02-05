@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { IUserModel } from "../models/IUserModel";
+import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
 
 export interface IUserRepository {
     create(attributes?: IUserModel): IUserModel

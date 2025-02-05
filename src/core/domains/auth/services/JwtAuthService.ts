@@ -1,31 +1,30 @@
 import { app } from "@src/core/services/App";
 import { JsonWebTokenError } from "jsonwebtoken";
-
-import UnauthorizedError from "../../auth/exceptions/UnauthorizedError";
-import decodeJwt from "../../auth/utils/decodeJwt";
-import { IRouter } from "../../http/interfaces/IRouter";
-import Route from "../../http/router/Route";
-import Router from "../../http/router/Router";
-import BaseAuthAdapter from "../base/BaseAuthAdapter";
-import AuthController from "../controllers/AuthController";
-import InvalidSecretException from "../exceptions/InvalidJwtSettings";
-import JwtFactory from "../factory/JwtFactory";
-import { IAclConfig } from "../interfaces/acl/IAclConfig";
-import { IACLService } from "../interfaces/acl/IACLService";
-import { IJwtAuthService } from "../interfaces/jwt/IJwtAuthService";
-import { IJwtConfig } from "../interfaces/jwt/IJwtConfig";
-import { IApiTokenModel } from "../interfaces/models/IApiTokenModel";
-import { IUserModel } from "../interfaces/models/IUserModel";
-import { IApiTokenRepository } from "../interfaces/repository/IApiTokenRepository";
-import { IUserRepository } from "../interfaces/repository/IUserRepository";
-import AuthorizeMiddleware from "../middleware/AuthorizeMiddleware";
-import ApiToken from "../models/ApiToken";
-import ApiTokenRepository from "../repository/ApiTokenRepitory";
-import UserRepository from "../repository/UserRepository";
-import comparePassword from "../utils/comparePassword";
-import createJwt from "../utils/createJwt";
-import generateToken from "../utils/generateToken";
-import ACLService from "./ACLService";
+import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
+import decodeJwt from "@src/core/domains/auth/utils/decodeJwt";
+import { IRouter } from "@src/core/domains/http/interfaces/IRouter";
+import Route from "@src/core/domains/http/router/Route";
+import Router from "@src/core/domains/http/router/Router";
+import BaseAuthAdapter from "@src/core/domains/auth/base/BaseAuthAdapter";
+import AuthController from "@src/core/domains/auth/controllers/AuthController";
+import InvalidSecretException from "@src/core/domains/auth/exceptions/InvalidJwtSettings";
+import JwtFactory from "@src/core/domains/auth/factory/JwtFactory";
+import { IAclConfig } from "@src/core/domains/auth/interfaces/acl/IAclConfig";
+import { IACLService } from "@src/core/domains/auth/interfaces/acl/IACLService";
+import { IJwtAuthService } from "@src/core/domains/auth/interfaces/jwt/IJwtAuthService";
+import { IJwtConfig } from "@src/core/domains/auth/interfaces/jwt/IJwtConfig";
+import { IApiTokenModel } from "@src/core/domains/auth/interfaces/models/IApiTokenModel";
+import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
+import { IApiTokenRepository } from "@src/core/domains/auth/interfaces/repository/IApiTokenRepository";
+import { IUserRepository } from "@src/core/domains/auth/interfaces/repository/IUserRepository";
+import AuthorizeMiddleware from "@src/core/domains/auth/middleware/AuthorizeMiddleware";
+import ApiToken from "@src/core/domains/auth/models/ApiToken";
+import ApiTokenRepository from "@src/core/domains/auth/repository/ApiTokenRepitory";
+import UserRepository from "@src/core/domains/auth/repository/UserRepository";
+import comparePassword from "@src/core/domains/auth/utils/comparePassword";
+import createJwt from "@src/core/domains/auth/utils/createJwt";
+import generateToken from "@src/core/domains/auth/utils/generateToken";
+import ACLService from "@src/core/domains/auth/services/ACLService";
 
 /**
  * Short hand for app('auth.jwt')

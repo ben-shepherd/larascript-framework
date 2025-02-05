@@ -3,10 +3,9 @@ import { ControllerConstructor } from "@src/core/domains/http/interfaces/IContro
 import { TExpressMiddlewareFnOrClass } from "@src/core/domains/http/interfaces/IMiddleware";
 import { ISecurityRule } from "@src/core/domains/http/interfaces/ISecurity";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
-
-import { ValidatorConstructor } from "../../validator/interfaces/IValidator";
-import SecurityRules from "../security/services/SecurityRules";
-import { TSortDirection } from "../utils/SortOptions";
+import { ValidatorConstructor } from "@src/core/domains/validator/interfaces/IValidator";
+import SecurityRules from "@src/core/domains/http/security/services/SecurityRules";
+import { TSortDirection } from "@src/core/domains/http/utils/SortOptions";
 
 export type RouteConstructor = {
     new (...args: any[]): IRouter;

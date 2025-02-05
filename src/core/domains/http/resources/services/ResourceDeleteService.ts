@@ -5,8 +5,7 @@ import ResourceException from "@src/core/domains/express/exceptions/ResourceExce
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import AbastractBaseResourceService from "@src/core/domains/http/resources/abstract/AbastractBaseResourceService";
 import { RouteResourceTypes } from "@src/core/domains/http/router/RouterResource";
-
-import ApiResponse from "../../response/ApiResponse";
+import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 
 /**
  * Service class that handles deleting resources through HTTP requests

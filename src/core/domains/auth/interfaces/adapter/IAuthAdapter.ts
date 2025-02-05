@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
-import { IRouter } from "../../../http/interfaces/IRouter";
-import { IAclConfig } from "../acl/IAclConfig";
-import { IBaseAuthConfig } from "../config/IAuth";
+import { IRouter } from "@src/core/domains/http/interfaces/IRouter";
+import { IAclConfig } from "@src/core/domains/auth/interfaces/acl/IAclConfig";
+import { IBaseAuthConfig } from "@src/core/domains/auth/interfaces/config/IAuth";
 
 export interface AuthAdapterConstructor<Adapter extends IAuthAdapter = IAuthAdapter> {
     new (config: Adapter['config'], aclConfig: IAclConfig): Adapter;
