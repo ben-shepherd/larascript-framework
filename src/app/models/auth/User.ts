@@ -1,3 +1,4 @@
+import UserFactory from "@src/app/factory/UserFactory";
 import AuthUser from "@src/core/domains/auth/models/AuthUser";
 import UserObserver from "@src/core/domains/auth/observers/UserObserver";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
@@ -27,6 +28,7 @@ export default class User extends AuthUser {
     /**
      * Table name
      */
+
     public table: string = 'users';
 
     /**
@@ -74,6 +76,15 @@ export default class User extends AuthUser {
      */
     getFields(): string[] {
         return super.getFields().filter(field => !['password'].includes(field));
+    }
+
+    /**
+     * Retrieves the factory for the model.
+     * 
+     * @returns The factory for the model.
+     */
+    getFactory(): UserFactory {
+        return new UserFactory();
     }
 
 }
