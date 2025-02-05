@@ -1,16 +1,16 @@
 import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
-import Controller from "@src/core/domains/http/base/Controller";
-import HttpContext from "@src/core/domains/http/context/HttpContext";
-import responseError from "@src/core/domains/http/handlers/responseError";
-import ApiResponse from "@src/core/domains/http/response/ApiResponse";
-import ValidationError from "@src/core/domains/validator/exceptions/ValidationError";
 import LoginUseCase from "@src/core/domains/auth/usecase/LoginUseCase";
 import LogoutUseCase from "@src/core/domains/auth/usecase/LogoutUseCase";
 import RefreshUseCase from "@src/core/domains/auth/usecase/RefreshUseCase";
 import RegisterUseCase from "@src/core/domains/auth/usecase/RegisterUseCase";
 import UpdateUseCase from "@src/core/domains/auth/usecase/UpdateUseCase";
 import UserUseCase from "@src/core/domains/auth/usecase/UserUseCase";
+import Controller from "@src/core/domains/http/base/Controller";
+import HttpContext from "@src/core/domains/http/context/HttpContext";
+import responseError from "@src/core/domains/http/handlers/responseError";
+import ApiResponse from "@src/core/domains/http/response/ApiResponse";
+import ValidationError from "@src/core/domains/validator/exceptions/ValidationError";
 
 /**
  * Controller handling authentication-related HTTP endpoints.
@@ -86,8 +86,6 @@ class AuthController extends Controller {
         })
     }
 
-
-
     /**
      * Handle the refresh endpoint
      * @param context The HTTP context
@@ -99,6 +97,11 @@ class AuthController extends Controller {
         })
     }
 
+    /**
+     * Handle the update endpoint
+     * @param context The HTTP context
+     * @returns The API response
+     */
     async update(context: HttpContext) {
         this.handler(context, async () => {
             return await this.updateUseCase.handle(context)
