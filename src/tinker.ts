@@ -5,9 +5,10 @@ import 'tsconfig-paths/register';
 
 import appConfig from '@src/config/app';
 import Kernel from '@src/core/Kernel';
-import LarascriptProviders from '@src/core/providers/LarascriptProviders';
 import { app } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
+
+import providers from './config/providers';
 
 const USE_TEST_DB = false;
 
@@ -20,7 +21,7 @@ const USE_TEST_DB = false;
     else {
         await Kernel.boot({
             environment: appConfig.env,
-            providers: LarascriptProviders
+            providers: providers
         }, {});
     }
 
