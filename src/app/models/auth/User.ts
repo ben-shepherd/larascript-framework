@@ -1,7 +1,6 @@
 import UserObserver from "@src/app/observers/UserObserver";
-import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
+import AuthUser from "@src/core/domains/auth/models/AuthUser";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
-import Model from "@src/core/models/base/Model";
 
 /**
  * User structure
@@ -23,7 +22,7 @@ export interface UserAttributes extends IModelAttributes {
  *
  * Represents a user in the database.
  */
-export default class User extends Model<UserAttributes> implements IUserModel {
+export default class User extends AuthUser {
 
     /**
      * Table name
@@ -85,73 +84,6 @@ export default class User extends Model<UserAttributes> implements IUserModel {
      */
     getFields(): string[] {
         return super.getFields().filter(field => !['password'].includes(field));
-    }
-
-    /**
-     * Checks if the user has the given role
-     *
-     * @param role The role to check
-     * @returns True if the user has the role, false otherwise
-     */
-    hasRole(roles: string | string[]): boolean {
-        roles = typeof roles === 'string' ? [roles] : roles;
-        const userRoles = this.getAttributeSync('roles') ?? [];
-
-        for(const role of roles) {
-            if(!userRoles.includes(role)) return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Checks if the user has the given role
-     *
-     * @param role The role to check
-     * @returns True if the user has the role, false otherwise
-     */
-    hasGroup(groups: string | string[]): boolean {
-        groups = typeof groups === 'string' ? [groups] : groups;
-        const userGroups = this.getAttributeSync('groups') ?? [];
-
-        for(const group of groups) {
-            if(!userGroups.includes(group)) return false;
-        }
-
-        return true;
-    }
-
-    getEmail(): string | null {
-        return this.getAttributeSync('email');
-    }
-
-
-    setEmail(email: string): Promise<void> {
-        return this.setAttribute('email', email);
-    }
-
-    getHashedPassword(): string | null {
-        return this.getAttributeSync('hashedPassword');
-    }
-
-    setHashedPassword(hashedPassword: string): Promise<void> {
-        return this.setAttribute('hashedPassword', hashedPassword);
-    }
-
-    getRoles(): string[] {
-        return this.getAttributeSync('roles') ?? [];
-    }
-
-    setRoles(roles: string[]): Promise<void> {
-        return this.setAttribute('roles', roles);
-    }
-
-    getGroups(): string[] {
-        return this.getAttributeSync('groups') ?? [];
-    }
-
-    setGroups(groups: string[]): Promise<void> {
-        return this.setAttribute('groups', groups);
     }
 
 }
