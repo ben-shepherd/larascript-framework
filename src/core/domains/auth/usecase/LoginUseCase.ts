@@ -1,7 +1,7 @@
 
-import UnauthorizedError from "../../auth-legacy/exceptions/UnauthorizedError";
 import HttpContext from "../../http/context/HttpContext";
 import ApiResponse from "../../http/response/ApiResponse";
+import UnauthorizedError from "../exceptions/UnauthorizedError";
 import { authJwt } from "../services/JwtAuthService";
 import comparePassword from "../utils/comparePassword";
 

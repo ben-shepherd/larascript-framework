@@ -1,6 +1,6 @@
 import { UserCreatedListener } from "@src/app/events/listeners/UserCreatedListener";
 import { UserAttributes } from "@src/app/models/auth/User";
-import hashPassword from "@src/core/domains/auth-legacy/utils/hashPassword";
+import hashPassword from "@src/core/domains/auth/utils/hashPassword";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import Observer from "@src/core/domains/observer/services/Observer";
 import { ICtor } from "@src/core/interfaces/ICtor";

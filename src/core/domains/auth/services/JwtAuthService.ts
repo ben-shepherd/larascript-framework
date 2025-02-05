@@ -1,8 +1,8 @@
 import { app } from "@src/core/services/App";
 import { JsonWebTokenError } from "jsonwebtoken";
 
-import UnauthorizedError from "../../auth-legacy/exceptions/UnauthorizedError";
-import decodeJwt from "../../auth-legacy/utils/decodeJwt";
+import UnauthorizedError from "../../auth/exceptions/UnauthorizedError";
+import decodeJwt from "../../auth/utils/decodeJwt";
 import { IRouter } from "../../http/interfaces/IRouter";
 import Route from "../../http/router/Route";
 import Router from "../../http/router/Router";
@@ -133,7 +133,6 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
         apiToken.setRevokedAt(null)
         return apiToken
     }
-
 
     /**
      * Generate a JWT token

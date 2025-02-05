@@ -1,5 +1,5 @@
-import ForbiddenResourceError from "@src/core/domains/auth-legacy/exceptions/ForbiddenResourceError";
-import UnauthorizedError from "@src/core/domains/auth-legacy/exceptions/UnauthorizedError";
+import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
+import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import AbastractBaseResourceService from "@src/core/domains/http/resources/abstract/AbastractBaseResourceService";

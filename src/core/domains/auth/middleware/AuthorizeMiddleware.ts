@@ -1,11 +1,11 @@
-import ForbiddenResourceError from '@src/core/domains/auth-legacy/exceptions/ForbiddenResourceError';
-import UnauthorizedError from '@src/core/domains/auth-legacy/exceptions/UnauthorizedError';
 import Middleware from '@src/core/domains/http/base/Middleware';
 import HttpContext from '@src/core/domains/http/context/HttpContext';
 import responseError from '@src/core/domains/http/handlers/responseError';
 
 import { requestContext } from '../../http/context/RequestContext';
 import { TBaseRequest } from '../../http/interfaces/BaseRequest';
+import ForbiddenResourceError from '../exceptions/ForbiddenResourceError';
+import UnauthorizedError from '../exceptions/UnauthorizedError';
 import { auth } from '../services/AuthService';
 
 /**

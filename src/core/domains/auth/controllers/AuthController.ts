@@ -1,5 +1,5 @@
-import ForbiddenResourceError from "../../auth-legacy/exceptions/ForbiddenResourceError";
-import UnauthorizedError from "../../auth-legacy/exceptions/UnauthorizedError";
+import ForbiddenResourceError from "../../auth/exceptions/ForbiddenResourceError";
+import UnauthorizedError from "../../auth/exceptions/UnauthorizedError";
 import Controller from "../../http/base/Controller";
 import HttpContext from "../../http/context/HttpContext";
 import responseError from "../../http/handlers/responseError";

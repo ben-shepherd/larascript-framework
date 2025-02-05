@@ -1,5 +1,5 @@
-import ForbiddenResourceError from "@src/core/domains/auth-legacy/exceptions/ForbiddenResourceError";
-import UnauthorizedError from "@src/core/domains/auth-legacy/exceptions/UnauthorizedError";
+import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
+import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
 import Controller from "@src/core/domains/http/base/Controller";
 import ResourceCreateService from "@src/core/domains/http/resources/services/ResourceCreateService";
 import ResourceDeleteService from "@src/core/domains/http/resources/services/ResourceDeleteService";
@@ -10,14 +10,6 @@ import ResourceUpdateService from "@src/core/domains/http/resources/services/Res
 import HttpContext from "../../context/HttpContext";
 import responseError from "../../handlers/responseError";
 import AbastractBaseResourceService from "../abstract/AbastractBaseResourceService";
-
-type THandlerOptions = {
-    showPagination: boolean;
-}
-
-const DEFAULT_HANDLER_OPTIONS: THandlerOptions = {
-    showPagination: true
-} as const;
 
 /**
  * ResourceController handles CRUD operations for resources (database models)

@@ -1,8 +1,8 @@
 
-import UnauthorizedError from "../../auth-legacy/exceptions/UnauthorizedError";
 import HttpContext from "../../http/context/HttpContext";
 import ApiResponse from "../../http/response/ApiResponse";
 import IValidatorResult from "../../validator/interfaces/IValidatorResult";
+import UnauthorizedError from "../exceptions/UnauthorizedError";
 import { auth } from "../services/AuthService";
 
 /**

@@ -1,4 +1,4 @@
-import ForbiddenResourceError from "@src/core/domains/auth-legacy/exceptions/ForbiddenResourceError";
+import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
