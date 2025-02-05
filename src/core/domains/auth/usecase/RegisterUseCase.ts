@@ -33,9 +33,15 @@ class RegisterUseCase {
         return apiResponse.setData(userAttributes).setCode(201);
     }
 
+    /**
+     * Create a user
+     * @param context The HTTP context
+     * @returns The user
+     */
     async createUser(context: HttpContext): Promise<IUserModel> {
         const userAttributes = {
             email: context.getBody().email,
+
             hashedPassword: hashPassword(context.getBody().password),
             groups: [acl().getDefaultGroup().name],
             roles: [acl().getGroupRoles(acl().getDefaultGroup()).map(role => role.name)],

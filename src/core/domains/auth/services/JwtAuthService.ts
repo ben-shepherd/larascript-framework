@@ -11,6 +11,7 @@ import InvalidSecretException from "../exceptions/InvalidJwtSettings";
 import JwtFactory from "../factory/JwtFactory";
 import { IAclConfig } from "../interfaces/acl/IAclConfig";
 import { IACLService } from "../interfaces/acl/IACLService";
+import { IJwtAuthService } from "../interfaces/jwt/IJwtAuthService";
 import { IJwtConfig } from "../interfaces/jwt/IJwtConfig";
 import { IApiTokenModel } from "../interfaces/models/IApiTokenModel";
 import { IUserModel } from "../interfaces/models/IUserModel";
@@ -47,7 +48,7 @@ export const authJwt = () => app('auth.jwt')
  * const token = await jwtAuth.attemptCredentials(email, password);
  * ```
  */
-class JwtAuthService extends BaseAuthAdapter<IJwtConfig> {
+class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthService {
 
     private apiTokenRepository!: IApiTokenRepository
     
