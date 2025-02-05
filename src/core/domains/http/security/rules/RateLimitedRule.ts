@@ -1,4 +1,4 @@
-import RateLimitedExceededError from "@src/core/domains/auth/exceptions/RateLimitedExceededError";
+import RateLimitedExceededError from "@src/core/domains/auth-legacy/exceptions/RateLimitedExceededError";
 import { Request } from "express";
 
 import HttpContext from "../../context/HttpContext";

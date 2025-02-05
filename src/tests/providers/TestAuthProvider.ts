@@ -1,7 +1,7 @@
 import authConfig from "@src/config/auth";
-import { IAuthConfig } from "@src/core/domains/auth/interfaces/IAuthConfig";
-import AuthProvider from "@src/core/domains/auth/providers/AuthProvider";
-import AuthService from "@src/core/domains/auth/services/AuthService";
+import { IJwtAuthConfig } from "@src/core/domains/auth-legacy/interfaces/IAuthConfig";
+import AuthProvider from "@src/core/domains/auth-legacy/providers/AuthProvider";
+import JwtAuthService from "@src/core/domains/auth-legacy/services/JwtAuthService";
 import TestApiTokenFactory from "@src/tests/factory/TestApiTokenFactory";
 import TestUserFactory from "@src/tests/factory/TestUserFactory";
 import TestApiTokenModel from "@src/tests/models/models/TestApiTokenModel";
@@ -13,10 +13,10 @@ import TestUpdateUserValidator from "@src/tests/validator/TestUpdateUserValidato
 
 export default class TestAuthProvider extends AuthProvider {
 
-    protected config: IAuthConfig = {
+    protected config: IJwtAuthConfig = {
         ...authConfig,
         service: {
-            authService: AuthService
+            authService: JwtAuthService
         },
         models: {
             user: TestUser,

@@ -1,5 +1,5 @@
-import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
-import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
+import IApiTokenModel from '@src/core/domains/auth-legacy/interfaces/IApitokenModel';
+import IUserModel from '@src/core/domains/auth-legacy/interfaces/IUserModel';
 import HttpContextException from '@src/core/domains/express/exceptions/HttpContextException';
 import { requestContext } from '@src/core/domains/http/context/RequestContext';
 import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';

@@ -1,4 +1,4 @@
-import { auth } from "@src/core/domains/auth/services/AuthService";
+import { auth } from "@src/core/domains/auth-legacy/services/JwtAuthService";
 import BaseValidator from "@src/core/domains/validator/base/BaseValidator";
 import { ValidatorPayload } from "@src/core/domains/validator/interfaces/IValidator";
 import Joi, { ObjectSchema } from "joi";

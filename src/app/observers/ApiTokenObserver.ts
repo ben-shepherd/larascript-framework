@@ -1,5 +1,5 @@
 import UserRepository from "@src/app/repositories/auth/UserRepository";
-import { ApiTokenAttributes } from "@src/core/domains/auth/interfaces/IApitokenModel";
+import { ApiTokenAttributes } from "@src/core/domains/auth-legacy/interfaces/IApitokenModel";
 import Observer from "@src/core/domains/observer/services/Observer";
 import { App } from "@src/core/services/App";
 

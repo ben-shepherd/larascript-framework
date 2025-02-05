@@ -1,4 +1,3 @@
-import AuthProvider from "@src/core/domains/auth/providers/AuthProvider";
 import ConsoleProvider from "@src/core/domains/console/providers/ConsoleProvider";
 import DatabaseProvider from "@src/core/domains/database/providers/DatabaseProvider";
 import EloquentQueryProvider from "@src/core/domains/eloquent/providers/EloquentQueryProvider";
@@ -10,6 +9,8 @@ import MigrationProvider from "@src/core/domains/migrations/providers/MigrationP
 import SetupProvider from "@src/core/domains/setup/providers/SetupProvider";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 import { IProvider } from "@src/core/interfaces/IProvider";
+
+import AuthProvider from "../domains/auth-legacy/providers/AuthProvider";
 
 /**
  * Core providers for the framework

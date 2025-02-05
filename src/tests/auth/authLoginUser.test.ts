@@ -1,10 +1,10 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
 import authConfig from '@src/config/auth';
-import IApiTokenModel from '@src/core/domains/auth/interfaces/IApitokenModel';
-import IUserModel from '@src/core/domains/auth/interfaces/IUserModel';
-import { auth } from '@src/core/domains/auth/services/AuthService';
-import hashPassword from '@src/core/domains/auth/utils/hashPassword';
+import IApiTokenModel from '@src/core/domains/auth-legacy/interfaces/IApitokenModel';
+import IUserModel from '@src/core/domains/auth-legacy/interfaces/IUserModel';
+import { auth } from '@src/core/domains/auth-legacy/services/JwtAuthService';
+import hashPassword from '@src/core/domains/auth-legacy/utils/hashPassword';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
 import TestUserFactory from '@src/tests/factory/TestUserFactory';
 import TestApiTokenModel from '@src/tests/models/models/TestApiTokenModel';

@@ -1,6 +1,6 @@
  
-import { Scope } from '@src/core/domains/auth/interfaces/IScope';
-import ModelScopes from '@src/core/domains/auth/services/ModelScopes';
+import { Scope } from '@src/core/domains/auth-legacy/interfaces/IScope';
+import ModelScopes from '@src/core/domains/auth-legacy/services/ModelScopes';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import { db } from '@src/core/domains/database/services/Database';
 import BaseRelationshipResolver from '@src/core/domains/eloquent/base/BaseRelationshipResolver';

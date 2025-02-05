@@ -1,5 +1,5 @@
 import UserObserver from "@src/app/observers/UserObserver";
-import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
+import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
 import Model from "@src/core/models/base/Model";
 
@@ -37,6 +37,7 @@ export default class User extends Model<UserAttributes> implements IUserModel {
         super(data);
         this.setObserverConstructor(UserObserver);
     }
+
 
     /**
      * Guarded fields
@@ -118,6 +119,39 @@ export default class User extends Model<UserAttributes> implements IUserModel {
         }
 
         return true;
+    }
+
+    getEmail(): string | null {
+        return this.getAttributeSync('email');
+    }
+
+
+    setEmail(email: string): Promise<void> {
+        return this.setAttribute('email', email);
+    }
+
+    getHashedPassword(): string | null {
+        return this.getAttributeSync('hashedPassword');
+    }
+
+    setHashedPassword(hashedPassword: string): Promise<void> {
+        return this.setAttribute('hashedPassword', hashedPassword);
+    }
+
+    getRoles(): string[] {
+        return this.getAttributeSync('roles') ?? [];
+    }
+
+    setRoles(roles: string[]): Promise<void> {
+        return this.setAttribute('roles', roles);
+    }
+
+    getGroups(): string[] {
+        return this.getAttributeSync('groups') ?? [];
+    }
+
+    setGroups(groups: string[]): Promise<void> {
+        return this.setAttribute('groups', groups);
     }
 
 }

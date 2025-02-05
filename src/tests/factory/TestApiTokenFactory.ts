@@ -1,4 +1,4 @@
-import ApiTokenFactory from '@src/core/domains/auth/factory/apiTokenFactory';
+import ApiTokenFactory from '@src/core/domains/auth-legacy/factory/apiTokenFactory';
 import { IModel, IModelAttributes, ModelConstructor } from '@src/core/interfaces/IModel';
 
 import TestApiTokenModel from '../models/models/TestApiTokenModel';

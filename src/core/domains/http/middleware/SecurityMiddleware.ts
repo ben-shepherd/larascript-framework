@@ -1,8 +1,8 @@
 import Middleware from "@src/core/domains/http/base/Middleware";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 
-import ForbiddenResourceError from "../../auth/exceptions/ForbiddenResourceError";
-import RateLimitedExceededError from "../../auth/exceptions/RateLimitedExceededError";
+import ForbiddenResourceError from "../../auth-legacy/exceptions/ForbiddenResourceError";
+import RateLimitedExceededError from "../../auth-legacy/exceptions/RateLimitedExceededError";
 import SecurityException from "../../express/exceptions/SecurityException";
 import { SecurityEnum } from "../enums/SecurityEnum";
 import responseError from "../handlers/responseError";

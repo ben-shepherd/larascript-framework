@@ -1,4 +1,3 @@
-import { IAuthService } from '@src/core/domains/auth/interfaces/IAuthService';
 import ICommandService from '@src/core/domains/console/interfaces/ICommandService';
 import { IDatabaseService } from '@src/core/domains/database/interfaces/IDatabaseService';
 import { IEloquentQueryBuilderService } from '@src/core/domains/eloquent/interfaces/IEloquentQueryBuilderService';
@@ -8,6 +7,9 @@ import { IRequestContext } from '@src/core/domains/http/interfaces/IRequestConte
 import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerService';
 import IValidatorService from '@src/core/domains/validator/interfaces/IValidatorService';
 import readline from 'node:readline';
+
+import { IJwtAuthService } from '../domains/auth/interfaces/jwt/IJwtAuthService';
+import { IAuthService } from '../domains/auth/interfaces/service/IAuthService';
 
 export interface ILarascriptProviders {
 
@@ -26,9 +28,16 @@ export interface ILarascriptProviders {
     auth: IAuthService;
 
     /**
+     * JWT Auth service
+     * Provided by '@src/core/domains/auth/providers/AuthProvider'
+     */
+    'auth.jwt': IJwtAuthService;
+
+    /**
      * Database Service
      * Provided by '@src/core/domains/database/providers/DatabaseProvider'
      */
+
     db: IDatabaseService;
 
     /**

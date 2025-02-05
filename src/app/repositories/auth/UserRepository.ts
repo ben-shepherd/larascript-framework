@@ -1,7 +1,7 @@
 import User from "@src/app/models/auth/User";
 import Repository from "@src/core/base/Repository";
-import IUserModel from "@src/core/domains/auth/interfaces/IUserModel";
-import IUserRepository from "@src/core/domains/auth/interfaces/IUserRepository";
+import IUserModel from "@src/core/domains/auth-legacy/interfaces/IUserModel";
+import IUserRepository from "@src/core/domains/auth-legacy/interfaces/IUserRepository";
 
 export default class UserRepository extends Repository<IUserModel> implements IUserRepository {
 

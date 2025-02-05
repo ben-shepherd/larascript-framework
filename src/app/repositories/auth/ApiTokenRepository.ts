@@ -1,7 +1,7 @@
-import ApiToken from "@src/app/models/auth/ApiToken";
 import Repository from "@src/core/base/Repository";
-import IApiTokenModel from "@src/core/domains/auth/interfaces/IApitokenModel";
-import IApiTokenRepository from "@src/core/domains/auth/interfaces/IApiTokenRepository";
+import IApiTokenModel from "@src/core/domains/auth-legacy/interfaces/IApitokenModel";
+import IApiTokenRepository from "@src/core/domains/auth-legacy/interfaces/IApiTokenRepository";
+import ApiToken from "@src/core/domains/auth/models/ApiToken";
 
 
 export default class ApiTokenRepository extends Repository<IApiTokenModel> implements IApiTokenRepository {

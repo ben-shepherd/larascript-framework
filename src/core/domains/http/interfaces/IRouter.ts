@@ -19,7 +19,9 @@ export interface IRouteGroupOptions {
     middlewares?: TExpressMiddlewareFnOrClass | TExpressMiddlewareFnOrClass[];
     controller?: ControllerConstructor;
     security?: ISecurityRule[]
+    config?: Record<string, unknown>;
 }
+
 
 export type TRouteGroupFn = (routes: IRouter) => void;
 
@@ -67,6 +69,7 @@ export type TRouteItem = {
     controller?: ControllerConstructor;
     security?: ISecurityRule[];
     scopes?: string[];
+    config?: Record<string, unknown>;
     resource?: {
         type: TResourceType
         modelConstructor: ModelConstructor<IModel>;

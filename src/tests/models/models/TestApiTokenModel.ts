@@ -1,5 +1,5 @@
-import ApiToken from '@src/app/models/auth/ApiToken';
-import { ApiTokenAttributes } from '@src/core/domains/auth/interfaces/IApitokenModel';
+import { ApiTokenAttributes } from '@src/core/domains/auth-legacy/interfaces/IApitokenModel';
+import ApiToken from '@src/core/domains/auth/models/ApiToken';
 import TestUser from '@src/tests/models/models/TestUser';
 
 class TestApiTokenModel extends ApiToken {
