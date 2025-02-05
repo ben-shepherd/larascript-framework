@@ -5,6 +5,7 @@ import UnauthorizedError from "../../auth-legacy/exceptions/UnauthorizedError";
 import decodeJwt from "../../auth-legacy/utils/decodeJwt";
 import { IRouter } from "../../http/interfaces/IRouter";
 import Route from "../../http/router/Route";
+import Router from "../../http/router/Router";
 import BaseAuthAdapter from "../base/BaseAuthAdapter";
 import AuthController from "../controllers/AuthController";
 import InvalidSecretException from "../exceptions/InvalidJwtSettings";
@@ -224,6 +225,10 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
      * @returns 
      */
     getRouter(): IRouter {
+        if(!this.config.routes.enableAuthRoutes) {
+            return new Router();
+        }
+
         return Route.group({
             prefix: '/auth',
             controller: AuthController,
@@ -231,9 +236,12 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
                 adapter: 'jwt'
             }
         }, (router) => {
-            router.post('/login', 'login');
-            router.post('/register', 'register');
 
+            router.post('/login', 'login');
+
+            if(this.config.routes.enableAuthRoutesAllowCreate) {
+                router.post('/register', 'register');
+            }
 
             router.group({
                 middlewares: [AuthorizeMiddleware]

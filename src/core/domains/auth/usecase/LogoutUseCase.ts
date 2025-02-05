@@ -4,7 +4,15 @@ import HttpContext from "../../http/context/HttpContext";
 import ApiResponse from "../../http/response/ApiResponse";
 import { authJwt } from "../services/JwtAuthService";
 
-class UserUseCase {
+/**
+ * LogoutUseCase handles user logout by revoking their JWT token
+ * 
+ * This class is responsible for:
+ * - Validating the user has a valid API token
+ * - Revoking/invalidating the JWT token via JwtAuthService
+ * - Returning a successful empty response
+ */
+class LogoutUseCase {
 
     /**
      * Handle the user use case
@@ -27,6 +35,6 @@ class UserUseCase {
 }
 
 
-export default UserUseCase;
+export default LogoutUseCase;
 
 

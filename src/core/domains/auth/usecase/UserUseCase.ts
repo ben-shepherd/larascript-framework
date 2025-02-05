@@ -4,6 +4,15 @@ import HttpContext from "../../http/context/HttpContext";
 import ApiResponse from "../../http/response/ApiResponse";
 import { authJwt } from "../services/JwtAuthService";
 
+/**
+ * UserUseCase handles retrieving the authenticated user's profile
+ * 
+ * This class is responsible for:
+ * - Validating that the user is authenticated via their JWT token
+ * - Retrieving the user's data from the user repository
+ * - Returning the user's profile data, excluding guarded attributes
+ * 
+ */
 class UserUseCase {
 
     /**

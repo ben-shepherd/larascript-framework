@@ -16,13 +16,12 @@ export interface AuthAdapters extends BaseAuthAdapterTypes {
 // Define auth configs
 export const authConfig = AuthConfig.define([
 
-    // JWT Authentication
+    // Default JWT Authentication
     AuthConfig.config(JwtAuthService, {
         name: 'jwt',
         models: {
             user: User
         },
-
         validators: {
             createUser: CreateUserValidator,
             updateUser: UpdateUserValidator
@@ -36,6 +35,7 @@ export const authConfig = AuthConfig.define([
             expiresInMinutes: process.env.JWT_EXPIRES_IN_MINUTES ? parseInt(process.env.JWT_EXPIRES_IN_MINUTES) : 60,
         }
     })
-    // Define more auth configs here
+
+    // Define more auth adapters here
 ])
 

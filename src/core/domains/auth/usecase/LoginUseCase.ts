@@ -5,6 +5,22 @@ import ApiResponse from "../../http/response/ApiResponse";
 import { authJwt } from "../services/JwtAuthService";
 import comparePassword from "../utils/comparePassword";
 
+/**
+ * LoginUseCase handles user authentication by validating credentials and generating JWT tokens
+ * 
+ * This class is responsible for:
+ * - Validating user email and password credentials
+ * - Generating JWT tokens for authenticated users
+ * - Returning user data and token on successful login
+ * - Handling authentication errors and unauthorized access
+ * 
+ * The handle() method processes the login request by:
+ * 1. Extracting credentials from the request body
+ * 2. Looking up the user by email
+ * 3. Verifying the password hash matches
+ * 4. Generating a JWT token via JwtAuthService
+ * 5. Returning the token and user data in the response
+ */
 class LoginUseCase {
 
     /**

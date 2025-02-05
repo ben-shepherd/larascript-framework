@@ -6,6 +6,16 @@ import { acl, auth } from "../services/AuthService";
 import { authJwt } from "../services/JwtAuthService";
 import hashPassword from "../utils/hashPassword";
 
+/**
+ * RegisterUseCase handles new user registration
+ * 
+ * This class is responsible for:
+ * - Validating user registration data via configured validator
+ * - Creating new user records with hashed passwords
+ * - Assigning default groups and roles to new users
+ * - Saving user data to the configured user repository
+ * 
+ */
 class RegisterUseCase {
 
     /**

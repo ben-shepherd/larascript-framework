@@ -5,6 +5,17 @@ import ApiResponse from "../../http/response/ApiResponse";
 import IValidatorResult from "../../validator/interfaces/IValidatorResult";
 import { auth } from "../services/AuthService";
 
+/**
+ * UpdateUseCase handles user profile updates
+ * 
+ * This class is responsible for:
+ * - Validating that the user is authenticated
+ * - Validating the update data via configured validator
+ * - Updating the user's profile information
+ * - Saving changes to the user repository
+ * - Returning the updated user data
+ * 
+ */
 class UpdateUseCase {
 
     /**
