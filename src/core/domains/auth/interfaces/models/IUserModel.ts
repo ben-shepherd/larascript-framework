@@ -10,6 +10,7 @@ export interface IUserModel extends IModel {
     setHashedPassword(hashedPassword: string): Promise<void>;
     getRoles(): string[];
     setRoles(roles: string[]): Promise<void>;
+    hasRole(role: string | string[]): boolean;
     getGroups(): string[];
     setGroups(groups: string[]): Promise<void>;
 }

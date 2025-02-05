@@ -1,12 +1,10 @@
- 
-import { Scope } from '@src/core/domains/auth-legacy/interfaces/IScope';
-import ModelScopes from '@src/core/domains/auth-legacy/services/ModelScopes';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import { db } from '@src/core/domains/database/services/Database';
 import BaseRelationshipResolver from '@src/core/domains/eloquent/base/BaseRelationshipResolver';
 import { IBelongsToOptions, IEloquent, IHasManyOptions, IRelationship, IdGeneratorFn } from '@src/core/domains/eloquent/interfaces/IEloquent';
 import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
 import HasMany from '@src/core/domains/eloquent/relational/HasMany';
+import ModelScopes, { TModelScope } from '@src/core/domains/models/utils/ModelScope';
 import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
 import { IObserver, IObserverEvent } from '@src/core/domains/observer/interfaces/IObserver';
 import { ICtor } from '@src/core/interfaces/ICtor';
@@ -116,7 +114,6 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * The factory instance for the model.
      */
     protected factory!: FactoryConstructor<Model<Attributes>>;
-    
 
     /**
      * Constructs a new instance of the Model class.
@@ -236,7 +233,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * Retrieves the scopes associated with the model.
      * @returns {string[]} The scopes associated with the model.
      */
-    static getScopes(scopes: Scope[] = ['all'], additionalScopes: string[] = []): string[] {
+    static getScopes(scopes: TModelScope[] = ['all'], additionalScopes: string[] = []): string[] {
         return ModelScopes.getScopes(this as unknown as ModelConstructor, scopes, additionalScopes)
     }
 

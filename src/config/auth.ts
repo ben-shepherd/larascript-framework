@@ -12,20 +12,16 @@ export interface AuthAdapters extends BaseAuthAdapterTypes {
     default: JwtAuthService
 }
 
-
-// Define default auth adapter
-export const DEFAULT_AUTH_ADAPTER = 'jwt';
-
 // Define auth configs
-
 export const authConfig = AuthConfig.define([
 
     // JWT Authentication
-    AuthConfig.config(JwtAuthService,{
-        name: 'jwt',
+    AuthConfig.config(JwtAuthService, {
+        name: 'default',
         models: {
             user: User
         },
+
         validators: {
             createUser: CreateUserValidator,
             updateUser: UpdateUserValidator

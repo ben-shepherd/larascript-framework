@@ -2,10 +2,14 @@ import User from '@src/app/models/auth/User';
 import ApiTokenObserver from '@src/app/observers/ApiTokenObserver';
 import { IApiTokenModel } from '@src/core/domains/auth/interfaces/models/IApiTokenModel';
 import { IUserModel } from '@src/core/domains/auth/interfaces/models/IUserModel';
-import Scopes from '@src/core/domains/auth/services/Scopes';
 import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
 import { IModelAttributes, ModelConstructor } from '@src/core/interfaces/IModel';
 import Model from '@src/core/models/base/Model';
+
+import ScopeMatcher from '../utils/ScopeMatcher';
+
+
+
 
 export interface ApiTokenAttributes extends IModelAttributes {
     userId: string;
@@ -169,10 +173,10 @@ class ApiToken extends Model<ApiTokenAttributes> implements IApiTokenModel {
         const currentScopes = this.getAttributeSync('scopes') ?? [];
        
         if(exactMatch) {
-            return Scopes.exactMatch(currentScopes, scopes);
+            return ScopeMatcher.exactMatch(currentScopes, scopes);
         }
 
-        return Scopes.partialMatch(currentScopes, scopes);
+        return ScopeMatcher.partialMatch(currentScopes, scopes);
     }
 
 }

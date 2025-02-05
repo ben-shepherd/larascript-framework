@@ -15,7 +15,7 @@ class RoutesProvider extends BaseProvider {
         const httpService = app('http');
         
         // Bind routes
-        httpService.bindRoutes(app('auth').getAuthRoutes())
+        httpService.bindRoutes(app('auth.jwt').getRouter())
         httpService.bindRoutes(healthRoutes);
         httpService.bindRoutes(apiRoutes);
 

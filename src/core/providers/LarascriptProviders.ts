@@ -10,7 +10,8 @@ import SetupProvider from "@src/core/domains/setup/providers/SetupProvider";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 import { IProvider } from "@src/core/interfaces/IProvider";
 
-import AuthProvider from "../domains/auth-legacy/providers/AuthProvider";
+import AuthProvider from "../domains/auth/providers/AuthProvider";
+import { ILarascriptProviders } from "../interfaces/ILarascriptProviders";
 
 /**
  * Core providers for the framework
@@ -18,6 +19,7 @@ import AuthProvider from "../domains/auth-legacy/providers/AuthProvider";
  * These providers are loaded by default when the application boots
  *
  * @see {@link IProvider} for more information about providers
+ * @see {@link ILarascriptProviders} for providing type hints for providers
  */
 const LarascriptProviders: IProvider[] = [
 

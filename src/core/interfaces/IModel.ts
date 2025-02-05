@@ -2,6 +2,7 @@
 import { IdGeneratorFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import IHasObserver from "@src/core/domains/observer/interfaces/IHasObserver";
 
+import { TModelScope } from "../domains/models/utils/ModelScope";
 import IFactory from "./IFactory";
 
 export type GetAttributesOptions = {excludeGuarded: boolean}
@@ -12,7 +13,7 @@ export type ModelConstructor<M extends IModel = IModel> = {
     getTable(): string;
     getPrimaryKey(): string;
     getConnectionName(): string;
-    getScopes(scopes: string[], additionalScopes?: string[]): string[];
+    getScopes(scopes: TModelScope[], additionalScopes?: string[]): string[];
     getFields(): string[];
     factory(): IFactory<IModel>;
 }

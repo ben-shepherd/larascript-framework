@@ -1,4 +1,4 @@
-class Scopes {
+class ScopeMatcher {
 
     /**
      * Returns an object of default scopes that can be used in the system.
@@ -54,4 +54,4 @@ class Scopes {
     }
 
 }
-export default Scopes
+export default ScopeMatcher

@@ -8,6 +8,7 @@ import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerServi
 import IValidatorService from '@src/core/domains/validator/interfaces/IValidatorService';
 import readline from 'node:readline';
 
+import { IACLService } from '../domains/auth/interfaces/acl/IACLService';
 import { IJwtAuthService } from '../domains/auth/interfaces/jwt/IJwtAuthService';
 import { IAuthService } from '../domains/auth/interfaces/service/IAuthService';
 
@@ -34,6 +35,13 @@ export interface ILarascriptProviders {
     'auth.jwt': IJwtAuthService;
 
     /**
+     * ACL service
+     * Provided by '@src/core/domains/auth/providers/AuthProvider'
+     */
+    'auth.acl': IACLService;
+
+    /**
+
      * Database Service
      * Provided by '@src/core/domains/database/providers/DatabaseProvider'
      */

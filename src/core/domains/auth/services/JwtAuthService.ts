@@ -11,6 +11,7 @@ import AuthController from "../controllers/AuthController";
 import InvalidSecretException from "../exceptions/InvalidJwtSettings";
 import JwtFactory from "../factory/JwtFactory";
 import { IAclConfig } from "../interfaces/acl/IAclConfig";
+import { IACLService } from "../interfaces/acl/IACLService";
 import { IJwtConfig } from "../interfaces/jwt/IJwtConfig";
 import { IApiTokenModel } from "../interfaces/models/IApiTokenModel";
 import { IUserModel } from "../interfaces/models/IUserModel";
@@ -22,6 +23,7 @@ import UserRepository from "../repository/UserRepository";
 import comparePassword from "../utils/comparePassword";
 import createJwt from "../utils/createJwt";
 import generateToken from "../utils/generateToken";
+import ACLService from "./ACLService";
 
 /**
  * Short hand for app('auth.jwt')
@@ -51,12 +53,13 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> {
     
     private userRepository!: IUserRepository
 
-    protected aclConfig!: IAclConfig
+    protected aclService!: IACLService
 
     constructor(config: IJwtConfig, aclConfig: IAclConfig) {
         super(config, aclConfig);
         this.apiTokenRepository = new ApiTokenRepository()
         this.userRepository = new UserRepository(config.models.user)
+        this.aclService = new ACLService(aclConfig)
     }
 
     /**
@@ -124,7 +127,7 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> {
         const apiToken = ApiToken.create<IApiTokenModel>()
         apiToken.setUserId(user.id as string)
         apiToken.setToken(generateToken())
-        apiToken.setScopes([...this.getRoleScopes(user), ...scopes])
+        apiToken.setScopes([...this.aclService.getRoleScopesFromUser(user), ...scopes])
         apiToken.setRevokedAt(null)
         return apiToken
     }
@@ -158,15 +161,15 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> {
      */
     async attemptAuthenticateToken(token: string): Promise<IApiTokenModel | null> {
         try {
-            const decoded = decodeJwt(this.getJwtSecret(), token);
+            const { token: decodedToken, uid: decodedUserId } = decodeJwt(this.getJwtSecret(), token);
 
-            const apiToken = await this.apiTokenRepository.findOneActiveToken(decoded.token)
+            const apiToken = await this.apiTokenRepository.findOneActiveToken(decodedToken)
     
             if (!apiToken) {
                 throw new UnauthorizedError()
             }
     
-            const user = await this.userRepository.findById(decoded.uid)
+            const user = await this.userRepository.findById(decodedUserId)
     
             if (!user) {
                 throw new UnauthorizedError()

@@ -11,7 +11,7 @@ class AuthProvider extends BaseProvider{
 
     async register() {
         this.bind('auth', new Auth(authConfig, aclConfig))
-        this.bind('auth.jwt', () => app('auth').getDefaultAdapter())
+        this.bind('auth.jwt', (() => app('auth').getDefaultAdapter())())
     }
 
     async boot() {

@@ -56,15 +56,17 @@ export default class UserObserver extends Observer<UserAttributes> {
         let updatedRoles: string[] = [];
 
         for(const group of data.groups) {
-            const relatedRoles = App.container('auth').config.permissions.groups.find(g => g.name === group)?.roles ?? [];
+            const relatedRoles = App.container('auth.acl').getGroupRoles(group)
+            const relatedRolesNames = relatedRoles.map(role => role.name)
 
             updatedRoles = [
                 ...updatedRoles,
-                ...relatedRoles
+                ...relatedRolesNames
             ]
         }
 
         data.roles = updatedRoles
+
 
         return data
     }

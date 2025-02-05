@@ -1,15 +1,25 @@
-import { AuthAdapters, DEFAULT_AUTH_ADAPTER } from "@src/config/auth";
+import { AuthAdapters } from "@src/config/auth";
 import BaseAdapter from "@src/core/base/BaseAdapter";
 import { app } from "@src/core/services/App";
 
+import { IACLService } from "../interfaces/acl/IACLService";
 import { IAclConfig } from "../interfaces/acl/IAclConfig";
 import { IBaseAuthConfig } from "../interfaces/config/IAuth";
+import { IUserRepository } from "../interfaces/repository/IUserRepository";
 import { IAuthService } from "../interfaces/service/IAuthService";
+import UserRepository from "../repository/UserRepository";
+import ACLService from "./ACLService";
 
 /**
  * Short hand for app('auth')
  */
 export const auth = () => app('auth');
+
+/**
+ * Short hand for app('auth.acl')
+ */
+export const acl = () => app('auth.acl');
+
 
 /**
  * Auth is the main service class that manages authentication adapters in the application.
@@ -30,17 +40,16 @@ export const auth = () => app('auth');
  * const token = await authService.getDefaultAdapter().attemptCredentials(email, password);
  * ```
  */
-
 class Auth extends BaseAdapter<AuthAdapters> implements IAuthService {
 
     private config!: IBaseAuthConfig[];
 
-    private aclConfig!: IAclConfig;
+    private aclService!: IACLService;
 
     constructor(config: IBaseAuthConfig[], aclConfig: IAclConfig) {
         super();
         this.config = config;
-        this.aclConfig = aclConfig;
+        this.aclService = new ACLService(aclConfig);
     }
 
     /**
@@ -48,9 +57,8 @@ class Auth extends BaseAdapter<AuthAdapters> implements IAuthService {
      * @returns The default adapter
      */
     public getDefaultAdapter(): AuthAdapters['default'] {
-        return this.getAdapter(DEFAULT_AUTH_ADAPTER) as AuthAdapters['default'];
+        return this.getAdapter('default') as AuthAdapters['default'];
     }
-
 
     /**
      * Boots the auth service
@@ -65,10 +73,13 @@ class Auth extends BaseAdapter<AuthAdapters> implements IAuthService {
      * Registers the adapters
      */
     protected registerAdapters(): void {
+        const aclConfig = this.aclService.getConfig();
+
         for(const adapter of this.config) {
-            const adapterInstance = new adapter.adapter(adapter, this.aclConfig);
+            const adapterInstance = new adapter.adapter(adapter, aclConfig);
             this.addAdapterOnce(adapter.name, adapterInstance);
         }
+
     }
 
     /**
@@ -78,6 +89,18 @@ class Auth extends BaseAdapter<AuthAdapters> implements IAuthService {
         for(const adapterInstance of Object.values(this.adapters)) {
             await adapterInstance.boot();
         }
+    }
+
+    /**
+     * Get the ACL service
+     * @returns The ACL service
+     */
+    public acl(): IACLService {
+        return this.aclService;
+    }
+
+    public getUserRepository(): IUserRepository {
+        return new UserRepository();
     }
 
 }

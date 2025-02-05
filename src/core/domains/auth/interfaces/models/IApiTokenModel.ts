@@ -12,7 +12,9 @@ export interface IApiTokenModel extends IModel {
     setToken(token: string): Promise<void>
     getScopes(): string[]
     setScopes(scopes: string[]): Promise<void>
+    hasScope(scopes: string | string[], exactMatch?: boolean): boolean
     getRevokedAt(): Date | null
     setRevokedAt(revokedAt: Date | null): Promise<void>
+
 
 }
