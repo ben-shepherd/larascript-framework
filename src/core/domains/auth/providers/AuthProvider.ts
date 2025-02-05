@@ -14,7 +14,9 @@ class AuthProvider extends BaseProvider{
         
         this.bind('auth', authService);
         this.bind('auth.jwt', (() => authService.getDefaultAdapter())())
+        this.bind('auth.acl', (() => authService.acl())())
     }
+
 
 }
 

@@ -18,7 +18,7 @@ export const authConfig = AuthConfig.define([
 
     // JWT Authentication
     AuthConfig.config(JwtAuthService, {
-        name: 'default',
+        name: 'jwt',
         models: {
             user: User
         },

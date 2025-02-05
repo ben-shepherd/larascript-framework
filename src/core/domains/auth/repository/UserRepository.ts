@@ -12,10 +12,14 @@ class UserRepository extends Repository<IUserModel> implements IUserRepository {
         super(userModel);
     }
 
+    create(attributes: IUserModel | null = null): IUserModel {
+        return this.modelConstructor.create(attributes)
+    }
 
     async findById(id: string | number): Promise<IUserModel | null> {
         return await queryBuilder(this.modelConstructor).find(id)
     }
+
 
     async findByIdOrFail(id: string | number): Promise<IUserModel> {
         return await queryBuilder(this.modelConstructor).findOrFail(id)

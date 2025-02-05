@@ -3,6 +3,8 @@ import { ApiTokenAttributes } from "@src/core/domains/auth/models/ApiToken";
 import { auth } from "@src/core/domains/auth/services/AuthService";
 import Observer from "@src/core/domains/observer/services/Observer";
 
+import { authJwt } from "../services/JwtAuthService";
+
 interface IApiTokenObserverData extends ApiTokenAttributes {}
 
 export default class ApiTokenObserver extends Observer<IApiTokenObserverData> {  
@@ -26,7 +28,7 @@ export default class ApiTokenObserver extends Observer<IApiTokenObserverData> {
      */
 
     async addGroupScopes(data: IApiTokenObserverData): Promise<IApiTokenObserverData> {
-        const user = await auth().getUserRepository().findByIdOrFail(data.userId)
+        const user = await authJwt().getUserRepository().findByIdOrFail(data.userId)
 
         if(!user) {
             return data

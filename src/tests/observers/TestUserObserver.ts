@@ -1,4 +1,4 @@
-import UserObserver from "@src/app/observers/UserObserver";
+import UserObserver from "@src/core/domains/auth/observers/UserObserver";
 import { TestUserCreatedListener } from "@src/tests/events/events/auth/TestUserCreatedListener";
 
 /**

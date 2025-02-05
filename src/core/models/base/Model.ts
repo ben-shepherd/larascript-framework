@@ -636,6 +636,16 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @deprecated use `toObject` instead
      */
     async getData(options: GetAttributesOptions = { excludeGuarded: true }): Promise<Attributes | null> {
+        return this.toObject(options);
+    }
+
+    
+    /**
+     * Retrieves the entire model's data as an object.
+     * 
+     * @returns {Promise<Attributes | null>} The model's data as an object, or null if no data is set.
+     */
+    async toObject(options: GetAttributesOptions = { excludeGuarded: true }): Promise<Attributes | null> {
         let data = this.getAttributes();
 
         if (data && options.excludeGuarded) {
@@ -647,15 +657,6 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         return data as Attributes;
     }
 
-    
-    /**
-     * Retrieves the entire model's data as an object.
-     * 
-     * @returns {Promise<Attributes | null>} The model's data as an object, or null if no data is set.
-     */
-    async toObject(): Promise<Attributes | null> {
-        return this.getData({ excludeGuarded: false });
-    }
 
     /**
      * Refreshes the model's data from the database.

@@ -232,6 +232,14 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> {
         })
     }
 
+    /**
+     * Get the user repository
+     * @returns The user repository
+     */
+    public getUserRepository(): IUserRepository {
+        return new UserRepository(this.config.models.user);
+    }
+
 }
 
 

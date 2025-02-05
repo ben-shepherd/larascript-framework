@@ -5,9 +5,7 @@ import { app } from "@src/core/services/App";
 import { IACLService } from "../interfaces/acl/IACLService";
 import { IAclConfig } from "../interfaces/acl/IAclConfig";
 import { IBaseAuthConfig } from "../interfaces/config/IAuth";
-import { IUserRepository } from "../interfaces/repository/IUserRepository";
 import { IAuthService } from "../interfaces/service/IAuthService";
-import UserRepository from "../repository/UserRepository";
 import ACLService from "./ACLService";
 
 /**
@@ -20,26 +18,28 @@ export const auth = () => app('auth');
  */
 export const acl = () => app('auth.acl');
 
-
 /**
- * Auth is the main service class that manages authentication adapters in the application.
- * It extends BaseAdapter to provide adapter management functionality and implements IAuthService.
+ * Auth Service
  * 
- * This class:
- * - Manages multiple authentication strategies (JWT, OAuth, etc.) through adapters
- * - Provides a centralized way to configure and access auth functionality
- * - Handles booting and initialization of auth adapters
- * - Exposes a default adapter for common auth operations
+ * This is the main authentication service that manages different authentication adapters
+ * (like JWT, Session etc) and integrates with ACL (Access Control List).
  * 
- * The service is typically instantiated by AuthProvider and accessed via the 'auth' helper:
- * ```ts
- * // Access auth service
- * const authService = auth();
+ * Key responsibilities:
+ * - Manages multiple authentication adapters (JWT by default)
+ * - Integrates with ACL service for role/permission management
+ * - Provides helper methods to access default and specific adapters
+ * - Handles adapter registration and initialization
  * 
- * // Use default adapter
- * const token = await authService.getDefaultAdapter().attemptCredentials(email, password);
- * ```
+ * The service works with:
+ * - AuthAdapters: Different authentication implementations (JWT etc)
+ * - ACLService: For managing roles and permissions
+ * - IBaseAuthConfig: Configuration for each auth adapter
+ * 
+ * Usage:
+ * - Use auth() helper to access the service
+ * - Use acl() helper to access ACL functionality
  */
+
 class Auth extends BaseAdapter<AuthAdapters> implements IAuthService {
 
     private config!: IBaseAuthConfig[];
@@ -57,7 +57,7 @@ class Auth extends BaseAdapter<AuthAdapters> implements IAuthService {
      * @returns The default adapter
      */
     public getDefaultAdapter(): AuthAdapters['default'] {
-        return this.getAdapter('default') as AuthAdapters['default'];
+        return this.getAdapter('jwt') as AuthAdapters['default'];
     }
 
     /**
@@ -106,15 +106,7 @@ class Auth extends BaseAdapter<AuthAdapters> implements IAuthService {
     public acl(): IACLService {
         return this.aclService;
     }
-
-    /**
-     * Get the user repository
-     * @returns The user repository
-     */
-    public getUserRepository(): IUserRepository {
-        return new UserRepository();
-    }
-
+    
 }
 
 export default Auth;

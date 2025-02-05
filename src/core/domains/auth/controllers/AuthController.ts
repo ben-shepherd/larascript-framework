@@ -1,37 +1,42 @@
 import Controller from "../../http/base/Controller";
 import HttpContext from "../../http/context/HttpContext";
+import RegisterUseCase from "../usecase/RegisterUseCase";
 
 class AuthController extends Controller {
 
-    login(context: HttpContext) {
-        this.jsonResponse({
-            message: 'Todo'
-        })
+    protected registerUseCase = new RegisterUseCase();
+
+    async login(context: HttpContext) {
+        this.jsonResponse(
+            (await this.registerUseCase.handle(context)).toObject()
+        )
     }
     
-    register(context: HttpContext) {
-        this.jsonResponse({
-            message: 'Todo'
-        })
+    async register(context: HttpContext) {
+        this.jsonResponse(
+            (await this.registerUseCase.handle(context)).toObject()
+        )
     }
 
-    user(context: HttpContext) {
-        this.jsonResponse({
-            message: 'Todo'
-        })
+    async user(context: HttpContext) {
+        this.jsonResponse(
+            (await this.registerUseCase.handle(context)).toObject()
+        )
     }
 
-    logout(context: HttpContext) {
-        this.jsonResponse({
-            message: 'Todo'
-        })
+    async logout(context: HttpContext) {
+        this.jsonResponse(
+            (await this.registerUseCase.handle(context)).toObject()
+        )
     }
+
     
-    refresh(context: HttpContext) {
-        this.jsonResponse({
-            message: 'Todo'
-        })
+    async refresh(context: HttpContext) {
+        this.jsonResponse(
+            (await this.registerUseCase.handle(context)).toObject()
+        )
     }
+
     
     
 }

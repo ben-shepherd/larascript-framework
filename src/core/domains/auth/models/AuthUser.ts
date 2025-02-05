@@ -2,6 +2,8 @@ import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel"
 import { IModelAttributes } from "@src/core/interfaces/IModel";
 import Model from "@src/core/models/base/Model";
 
+import UserObserver from "../observers/UserObserver";
+
 /**
  * User structure
  */
@@ -30,6 +32,7 @@ export default class AuthUser extends Model<AuthUserAttributes> implements IUser
      */
     constructor(data: AuthUserAttributes | null = null) {
         super(data);
+        this.setObserverConstructor(UserObserver);
     }
 
 

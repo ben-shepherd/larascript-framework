@@ -32,6 +32,14 @@ class ACLService implements IACLService {
     }
 
     /**
+     * Get the default group
+     * @returns 
+     */
+    getDefaultGroup(): IAclGroup {
+        return this.getGroup(this.aclConfig.defaultGroup);
+    } 
+
+    /**
      * Get the group
      * @param group 
      * @returns 
