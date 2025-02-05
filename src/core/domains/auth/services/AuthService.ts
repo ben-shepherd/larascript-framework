@@ -61,6 +61,14 @@ class Auth extends BaseAdapter<AuthAdapters> implements IAuthService {
     }
 
     /**
+     * Get the JWT adapter
+     * @returns The JWT adapter
+     */
+    public getJwtAdapter(): AuthAdapters['jwt'] {
+        return this.getAdapter('jwt') as AuthAdapters['jwt'];
+    }
+
+    /**
      * Boots the auth service
      * @returns A promise that resolves when the auth service is booted
      */
@@ -99,6 +107,10 @@ class Auth extends BaseAdapter<AuthAdapters> implements IAuthService {
         return this.aclService;
     }
 
+    /**
+     * Get the user repository
+     * @returns The user repository
+     */
     public getUserRepository(): IUserRepository {
         return new UserRepository();
     }

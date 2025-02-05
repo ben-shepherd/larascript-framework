@@ -1,3 +1,4 @@
+import { auth } from "@src/core/domains/auth/services/AuthService";
 import BaseValidator from "@src/core/domains/validator/base/BaseValidator";
 import { ValidatorPayload } from "@src/core/domains/validator/interfaces/IValidator";
 import Joi, { ObjectSchema } from "joi";
@@ -15,7 +16,7 @@ class CreateUserValidator extends BaseValidator {
     async validateEmailAvailability(payload: ValidatorPayload) {
         
         const repository = auth().getUserRepository();
-        const user = await repository.findOneByEmail(payload.email as string);
+        const user = await repository.findByEmail(payload.email as string);
 
         if(user) {
             this.setErrorMessage({ email: 'User already exists' });

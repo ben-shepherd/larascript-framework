@@ -57,7 +57,18 @@ class ACLService implements IACLService {
     }
 
     /**
+     * Get the scopes from the group
+     * @param group 
+     * @returns 
+     */
+    getGroupScopes(group: string | IAclGroup): string[] {
+        const roles = this.getGroupRoles(group);
+        return roles.map(role => role.scopes).flat();
+    }
+
+    /**
      * Retrieves the scopes from the roles
+
     * @param user 
     * @returns 
     */

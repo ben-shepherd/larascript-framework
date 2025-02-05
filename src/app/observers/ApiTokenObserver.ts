@@ -1,11 +1,9 @@
 import UserRepository from "@src/app/repositories/auth/UserRepository";
-import { ApiTokenAttributes } from "@src/core/domains/auth-legacy/interfaces/IApitokenModel";
+import { ApiTokenAttributes } from "@src/core/domains/auth/models/ApiToken";
+import { auth } from "@src/core/domains/auth/services/AuthService";
 import Observer from "@src/core/domains/observer/services/Observer";
-import { App } from "@src/core/services/App";
 
-interface IApiTokenObserverData extends ApiTokenAttributes {
-
-}
+interface IApiTokenObserverData extends ApiTokenAttributes {}
 
 export default class ApiTokenObserver extends Observer<IApiTokenObserverData> {  
     
@@ -28,18 +26,17 @@ export default class ApiTokenObserver extends Observer<IApiTokenObserverData> {
      */
 
     async addGroupScopes(data: IApiTokenObserverData): Promise<IApiTokenObserverData> {
-        const user = await this.userRepository.findById(data.userId);
+        const user = await auth().getUserRepository().findByIdOrFail(data.userId)
 
         if(!user) {
             return data
         }
 
-        const userGroups = user.getAttributeSync('groups') ?? [];
+        const userGroups = user.getGroups()
 
         for(const userGroup of userGroups) {
-            const group = App.container('auth').config.permissions.groups.find(g => g.name === userGroup);
-            const scopes = group?.scopes ?? [];
-            
+            const scopes = auth().acl().getGroupScopes(userGroup)
+
             data.scopes = [
                 ...data.scopes,
                 ...scopes

@@ -4,7 +4,7 @@ import revoke from "@src/core/domains/auth-legacy/actions/revoke";
 import update from "@src/core/domains/auth-legacy/actions/update";
 import user from "@src/core/domains/auth-legacy/actions/user";
 import { IJwtAuthConfig } from "@src/core/domains/auth-legacy/interfaces/IAuthConfig";
-import AuthorizeMiddleware from "@src/core/domains/http/middleware/AuthorizeMiddleware";
+import AuthorizeMiddleware from "@src/core/domains/auth/middleware/AuthorizeMiddleware";
 import Route from "@src/core/domains/http/router/Route";
 
 /**

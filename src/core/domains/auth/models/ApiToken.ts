@@ -6,6 +6,7 @@ import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
 import { IModelAttributes, ModelConstructor } from '@src/core/interfaces/IModel';
 import Model from '@src/core/models/base/Model';
 
+import UserRepository from '../repository/UserRepository';
 import ScopeMatcher from '../utils/ScopeMatcher';
 
 
@@ -82,6 +83,14 @@ class ApiToken extends Model<ApiTokenAttributes> implements IApiTokenModel {
      */
     setUserId(userId: string): Promise<void> {
         return this.setAttribute('userId', userId)
+    }
+
+    /**
+     * Get the user
+     * @returns {IUserModel} The user
+     */
+    async getUser(): Promise<IUserModel> {
+        return await new UserRepository().findByIdOrFail(this.getUserId())
     }
 
     /**

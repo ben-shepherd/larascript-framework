@@ -10,6 +10,7 @@ import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
 // Type helper for auth adapters
 export interface AuthAdapters extends BaseAuthAdapterTypes {
     default: JwtAuthService
+    jwt: JwtAuthService
 }
 
 // Define auth configs

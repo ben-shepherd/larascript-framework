@@ -1,9 +1,13 @@
  
+import { AuthAdapters } from "@src/config/auth";
+
 import { IACLService } from "../acl/IACLService";
-import { IJwtAuthService } from "../jwt/IJwtAuthService";
+import { IUserRepository } from "../repository/IUserRepository";
 
 export interface IAuthService {
-    boot(): Promise<void>
-    getDefaultAdapter(): IJwtAuthService
     acl(): IACLService;
+    boot(): Promise<void>
+    getDefaultAdapter(): AuthAdapters['default']
+    getJwtAdapter(): AuthAdapters['jwt']
+    getUserRepository(): IUserRepository;
 }

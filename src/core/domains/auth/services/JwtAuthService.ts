@@ -4,7 +4,6 @@ import { JsonWebTokenError } from "jsonwebtoken";
 import UnauthorizedError from "../../auth-legacy/exceptions/UnauthorizedError";
 import decodeJwt from "../../auth-legacy/utils/decodeJwt";
 import { IRouter } from "../../http/interfaces/IRouter";
-import AuthorizeMiddleware from "../../http/middleware/AuthorizeMiddleware";
 import Route from "../../http/router/Route";
 import BaseAuthAdapter from "../base/BaseAuthAdapter";
 import AuthController from "../controllers/AuthController";
@@ -17,6 +16,7 @@ import { IApiTokenModel } from "../interfaces/models/IApiTokenModel";
 import { IUserModel } from "../interfaces/models/IUserModel";
 import { IApiTokenRepository } from "../interfaces/repository/IApiTokenRepository";
 import { IUserRepository } from "../interfaces/repository/IUserRepository";
+import AuthorizeMiddleware from "../middleware/AuthorizeMiddleware";
 import ApiToken from "../models/ApiToken";
 import ApiTokenRepository from "../repository/ApiTokenRepitory";
 import UserRepository from "../repository/UserRepository";
@@ -58,7 +58,7 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> {
     constructor(config: IJwtConfig, aclConfig: IAclConfig) {
         super(config, aclConfig);
         this.apiTokenRepository = new ApiTokenRepository()
-        this.userRepository = new UserRepository(config.models.user)
+        this.userRepository = new UserRepository()
         this.aclService = new ACLService(aclConfig)
     }
 

@@ -1,14 +1,17 @@
 import ForbiddenResourceError from '@src/core/domains/auth-legacy/exceptions/ForbiddenResourceError';
 import UnauthorizedError from '@src/core/domains/auth-legacy/exceptions/UnauthorizedError';
-import AuthRequest from '@src/core/domains/auth-legacy/services/AuthRequest';
 import Middleware from '@src/core/domains/http/base/Middleware';
 import HttpContext from '@src/core/domains/http/context/HttpContext';
 import responseError from '@src/core/domains/http/handlers/responseError';
-import { ray } from 'node-ray';
+
+import { requestContext } from '../../http/context/RequestContext';
+import { TBaseRequest } from '../../http/interfaces/BaseRequest';
+import { auth } from '../services/AuthService';
 
 /**
  * AuthorizeMiddleware handles authentication and authorization for HTTP requests
  * 
+
  * This middleware:
  * - Validates the authorization header and authenticates the request
  * - Attaches the authenticated user and API token to the request context
@@ -24,27 +27,21 @@ import { ray } from 'node-ray';
  * Used as middleware on routes requiring authentication. Can be configured with
  * required scopes that are validated against the API token's allowed scopes.
  */
-
 class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
 
     async execute(context: HttpContext): Promise<void> {
         try {
 
-            // Authorize the request
-            // Parses the authorization header
-            // If successful, attaches the user and apiToken to the request
-            // and sets the user in the App
-            await AuthRequest.attemptAuthorizeRequest(context.getRequest());
-            
+            // Attempt to authorize the request
+            await this.attemptAuthorizeRequest(context.getRequest());
+
             // Validate the scopes if the authorization was successful
             this.validateScopes(context)
-            this.next();
 
-            ray('AuthorizeMiddleware executed')
+            // Continue to the next middleware
+            this.next();
         }
         catch (error) {
-            ray('AuthorizeMiddleware error', error)
-
             if(error instanceof UnauthorizedError) {
                 responseError(context.getRequest(), context.getResponse(), error, 401)
                 return;
@@ -59,6 +56,36 @@ class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
                 return;
             }
         }
+    }
+
+    /**
+     * Attempts to authorize a request with a Bearer token.
+     * 
+     * If successful, attaches the user and apiToken to the request. Sets the user in the App.
+     * 
+     * @param req The request to authorize
+     * @returns The authorized request
+     * @throws UnauthorizedError if the token is invalid
+     */
+    public async attemptAuthorizeRequest(req: TBaseRequest): Promise<TBaseRequest> {
+        const authorization = (req.headers.authorization ?? '').replace('Bearer ', '');
+    
+        const apiToken = await auth().getJwtAdapter().attemptAuthenticateToken(authorization)
+    
+        const user = await apiToken?.getUser()
+    
+        if(!user || !apiToken) {
+            throw new UnauthorizedError();
+        }
+    
+        // Set the user and apiToken in the request
+        req.user = user;
+        req.apiToken = apiToken
+        
+        // Set the user id in the request context
+        requestContext().setByRequest(req, 'userId', user?.getId())
+    
+        return req;
     }
 
     /**
