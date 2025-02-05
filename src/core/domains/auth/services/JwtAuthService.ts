@@ -239,8 +239,10 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
                 middlewares: [AuthorizeMiddleware]
             }, (router) => {
                 router.get('/user', 'user');
+                router.patch('/update', 'update');
                 router.post('/refresh', 'refresh');
                 router.post('/logout', 'logout');
+
             })
 
         })

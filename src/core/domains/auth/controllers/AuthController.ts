@@ -9,6 +9,7 @@ import LoginUseCase from "../usecase/LoginUseCase";
 import LogoutUseCase from "../usecase/LogoutUseCase";
 import RefreshUseCase from "../usecase/RefreshUseCase";
 import RegisterUseCase from "../usecase/RegisterUseCase";
+import UpdateUseCase from "../usecase/UpdateUseCase";
 import UserUseCase from "../usecase/UserUseCase";
 
 /**
@@ -35,7 +36,8 @@ class AuthController extends Controller {
     protected logoutUseCase = new LogoutUseCase();
 
     protected refreshUseCase = new RefreshUseCase();
-    
+
+    protected updateUseCase = new UpdateUseCase();
 
     /**
      * Handle the login endpoint
@@ -97,11 +99,18 @@ class AuthController extends Controller {
         })
     }
 
+    async update(context: HttpContext) {
+        this.handler(context, async () => {
+            return await this.updateUseCase.handle(context)
+        })
+    }
+
     /**
      * Handle the request
      * @param context The HTTP context
      * @param callback The callback to handle the request
      * @returns The API response
+
      */
     protected async handler(context: HttpContext, callback: () => Promise<ApiResponse>) {
         try {

@@ -64,16 +64,6 @@ export default class AuthUser extends Model<AuthUserAttributes> implements IUser
     ]
 
     /**
-     * Fields that should be returned as JSON
-     *
-     * These fields will be returned as JSON when the model is serialized.
-     */
-    json = [
-        'groups',
-        'roles'
-    ]
-
-    /**
      * Retrieves the fields defined on the model, minus the password field.
      * As this is a temporary field and shouldn't be saved to the database.
      * 
