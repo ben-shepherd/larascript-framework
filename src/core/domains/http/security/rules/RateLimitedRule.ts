@@ -1,10 +1,12 @@
 import RateLimitedExceededError from "@src/core/domains/auth/exceptions/RateLimitedExceededError";
-import { Request } from "express";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import { requestContext } from "@src/core/domains/http/context/RequestContext";
 import { SecurityEnum } from "@src/core/domains/http/enums/SecurityEnum";
 import { IPDatesArrayTTL } from "@src/core/domains/http/interfaces/IRequestContext";
 import AbstractSecurityRule from "@src/core/domains/http/security/abstract/AbstractSecurityRule";
+import { Request } from "express";
+
+import { TBaseRequest } from "../../interfaces/BaseRequest";
 
 type TRateLimitedRuleOptions = {
     limit: number;
@@ -76,10 +78,11 @@ class RateLimitedRule extends AbstractSecurityRule<TRateLimitedRuleOptions> {
         const context = this.getIpContext(ipContextIdentifier, req);
         const dates = context.value
 
-        requestContext().setByIpAddress<Date[]>(req, ipContextIdentifier, [
+        requestContext().setByIpAddress<Date[]>(req as TBaseRequest, ipContextIdentifier, [
             ...dates,
             new Date()
         ], ttlSeconds)
+
     }
 
     /**
@@ -93,7 +96,7 @@ class RateLimitedRule extends AbstractSecurityRule<TRateLimitedRuleOptions> {
      * @returns The current rate limited context value with the given id, or an empty array if none exists.
      */
     protected getIpContext(id: string, req: Request): IPDatesArrayTTL<Date[]> {
-        return requestContext().getByIpAddress<IPDatesArrayTTL<Date[]>>(req, id) || { value: [], ttlSeconds: null };
+        return requestContext().getByIpAddress<IPDatesArrayTTL<Date[]>>(req as TBaseRequest, id) || { value: [], ttlSeconds: null };
     }
 
     /**
@@ -123,7 +126,7 @@ class RateLimitedRule extends AbstractSecurityRule<TRateLimitedRuleOptions> {
         const newDates = [...dates];
         newDates.pop();
 
-        requestContext().setByIpAddress<Date[]>(req, ipContextIdentifier, newDates, ttlSeconds)
+        requestContext().setByIpAddress<Date[]>(req as TBaseRequest, ipContextIdentifier, newDates, ttlSeconds)
     }
 
 }

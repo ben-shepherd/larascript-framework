@@ -2,10 +2,10 @@
 import { ControllerConstructor } from "@src/core/domains/http/interfaces/IController";
 import { TExpressMiddlewareFnOrClass } from "@src/core/domains/http/interfaces/IMiddleware";
 import { ISecurityRule } from "@src/core/domains/http/interfaces/ISecurity";
-import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
-import { ValidatorConstructor } from "@src/core/domains/validator/interfaces/IValidator";
 import SecurityRules from "@src/core/domains/http/security/services/SecurityRules";
 import { TSortDirection } from "@src/core/domains/http/utils/SortOptions";
+import { ValidatorConstructor } from "@src/core/domains/validator/interfaces/IValidator";
+import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
 export type RouteConstructor = {
     new (...args: any[]): IRouter;
@@ -69,9 +69,12 @@ export type TRouteItem = {
     security?: ISecurityRule[];
     scopes?: string[];
     config?: Record<string, unknown>;
+    validator?: ValidatorConstructor;
+    validateBeforeAction?: boolean;
     resource?: {
         type: TResourceType
         modelConstructor: ModelConstructor<IModel>;
+
         filters?: {
             show?: object;
             index?: object;
@@ -105,6 +108,8 @@ export type TRouteResourceOptions = {
     middlewares?: TExpressMiddlewareFnOrClass | TExpressMiddlewareFnOrClass[];
     scopes?: string[];
     filters?: object;
+    validator?: ValidatorConstructor;
+    validateBeforeAction?: boolean;
     searching?: {
         fields?: string[];
     }
