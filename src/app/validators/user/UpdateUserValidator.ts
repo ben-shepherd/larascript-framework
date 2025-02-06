@@ -3,6 +3,8 @@ import Joi, { ObjectSchema } from "joi";
 
 class UpdateUserValidator extends BaseValidator {
 
+    protected additionalMethodsToValidate: string[] = [];
+
     rules(): ObjectSchema {
         return Joi.object({
             password: Joi.string().min(6),

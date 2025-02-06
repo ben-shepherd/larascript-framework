@@ -8,6 +8,8 @@ import Joi from "joi";
  */
 class Validator extends BaseValidator {
 
+    protected additionalMethodsToValidate: string[] = [];
+
     constructor(rules: Joi.ObjectSchema = Joi.object({})) {
         super()
 

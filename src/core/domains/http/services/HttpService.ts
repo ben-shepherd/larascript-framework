@@ -11,9 +11,10 @@ import SecurityMiddleware from '@src/core/domains/http/middleware/SecurityMiddle
 import Route from '@src/core/domains/http/router/Route';
 import RouterBindService from '@src/core/domains/http/router/RouterBindService';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
-import ValidateMiddleware from '@src/core/domains/validator/middleware/rename/ValidateMiddleware';
+import ValidateMiddleware from '@src/core/domains/validator/middleware/ValidateMiddleware';
 import { app } from '@src/core/services/App';
 import expressClient from 'express';
+
 
 /**
  * Short hand for `app('http')`

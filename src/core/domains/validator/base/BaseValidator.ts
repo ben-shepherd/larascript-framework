@@ -13,7 +13,7 @@ abstract class BaseValidator<P extends ValidatorPayload = ValidatorPayload> impl
     /**
      * Custom validator methods
      */
-    public customValidatorMethods: string[] = [];
+    protected abstract additionalMethodsToValidate: string[];
 
     /**
      * Custom validation error messages
@@ -31,7 +31,13 @@ abstract class BaseValidator<P extends ValidatorPayload = ValidatorPayload> impl
      */
     async validate<T>(payload: P, options?: ValidationOptions): Promise<IValidatorResult<T>> {
 
+        options = {
+            ...this.getJoiOptions(),
+            ...options,
+        }
+
         /**
+
          * Validate the payload with Joi rules
          */
         const result = this.rules().validate(payload, options)
@@ -102,7 +108,7 @@ abstract class BaseValidator<P extends ValidatorPayload = ValidatorPayload> impl
      * @param payload 
      */
     private async runCustomValidatorMethods(payload: P): Promise<void> {
-        for(const method of this.customValidatorMethods ) {
+        for(const method of this.additionalMethodsToValidate ) {
             await this[method](payload);
         }
     }

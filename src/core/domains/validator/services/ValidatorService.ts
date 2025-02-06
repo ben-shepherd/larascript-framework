@@ -5,7 +5,7 @@ import { app } from "@src/core/services/App";
 import Joi from "joi";
 
 import { TExpressMiddlewareFnOrClass } from "../../http/interfaces/IMiddleware";
-import ValidateMiddleware from "../middleware/validateMiddleware";
+import ValidateMiddleware from "../middleware/ValidateMiddleware";
 
 
 /**

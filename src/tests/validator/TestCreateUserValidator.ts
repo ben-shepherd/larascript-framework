@@ -1,13 +1,14 @@
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import BaseValidator from "@src/core/domains/validator/base/BaseValidator";
 import { ValidatorPayload } from "@src/core/domains/validator/interfaces/IValidator";
-import Joi, { ObjectSchema } from "joi";
 import TestUser from "@src/tests/models/models/TestUser";
+import Joi, { ObjectSchema } from "joi";
 
 class TestCreateUserValidator extends BaseValidator {
 
-    public customValidatorMethods = [
+    protected additionalMethodsToValidate: string[] = [
         'validateEmailAvailability'
+
     ]
 
     /**

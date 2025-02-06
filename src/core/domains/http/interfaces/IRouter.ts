@@ -70,7 +70,7 @@ export type TRouteItem = {
     scopes?: string[];
     config?: Record<string, unknown>;
     validator?: ValidatorConstructor;
-    validateBeforeAction?: boolean;
+    validatorExecuteManually?: boolean;
     resource?: {
         type: TResourceType
         modelConstructor: ModelConstructor<IModel>;

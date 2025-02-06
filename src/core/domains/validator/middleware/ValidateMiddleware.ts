@@ -15,11 +15,16 @@ class ValidateMiddleware extends Middleware<ValidatorMiddlewareProps> {
 
     public async execute(context: HttpContext): Promise<void> {
         try {
+            // Get the route item and validator constructor
             const routeItem = context.getRouteItem();
             const validatorConstructor = routeItem?.validator;
-            const validateBeforeAction = routeItem?.validateBeforeAction;
-
-            if(!validatorConstructor) {
+            
+            // If the validator is not set, or the validatorExecuteManually is true,
+            // then we will not execute the validator
+            const validatorExecuteManually = routeItem?.validatorExecuteManually;
+            const skipValidation = !validatorConstructor || (validatorExecuteManually === true);
+        
+            if(skipValidation) {
                 this.next();
                 return;
             }
@@ -27,26 +32,22 @@ class ValidateMiddleware extends Middleware<ValidatorMiddlewareProps> {
             const validator = new validatorConstructor();
             const body = context.getRequest().body;
     
-            if(validateBeforeAction) {
-                const result = await validator.validate(
-                    body,
-                    { 
-                        stripUnknown: true,
-                        ...validator.getJoiOptions() 
-                    }
-                );
-    
-                if(!result.success) {
-                    context.getResponse().status(422).send({
-                        success: false,
-                        errors: (result.joi.error?.details ?? []).map((detail) => detail)
-                    })
-                    return;
+            const result = await validator.validate(
+                body,
+                { 
+                    stripUnknown: true,
+                    ...validator.getJoiOptions() 
                 }
+            );
 
-
+            if(!result.success) {
+                context.getResponse().status(422).send({
+                    success: false,
+                    errors: (result.joi.error?.details ?? []).map((detail) => detail)
+                })
+                return;
             }
-    
+            
             this.next();
         }
         catch (error) {

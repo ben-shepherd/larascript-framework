@@ -6,7 +6,7 @@ import Joi, { ObjectSchema } from "joi";
 
 class CreateUserValidator extends BaseValidator {
 
-    public customValidatorMethods = [
+    protected additionalMethodsToValidate: string[] = [
         'validateEmailAvailability'
     ]
 
