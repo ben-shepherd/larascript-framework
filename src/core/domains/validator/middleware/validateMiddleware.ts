@@ -1,48 +1,63 @@
 import responseError from '@src/core/domains/http/handlers/responseError';
-import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
 import { ValidatorMiddlewareProps } from '@src/core/domains/validator/interfaces/IValidatorService';
-import { NextFunction, Response } from 'express';
+
+import Middleware from '../../http/base/Middleware';
+import HttpContext from '../../http/context/HttpContext';
 
 /**
- * A middleware that validates the request body using the provided validator.
- * If validateBeforeAction is true, it will validate the request body before
- * calling the next middleware. If the validation fails, it will send a 400
- * response with the validation errors. If the validation succeeds, it will
- * call the next middleware.
- *
- * @param {{validator: IValidator, validateBeforeAction: boolean}} options
- * @returns {import('express').RequestHandler} The middleware function
+ * ValidateMiddleware is an Express middleware that handles request validation
+ * using a validator specified in the route configuration.
+ * 
+ * It checks if a validator is defined for the current route and validates 
+ * the request body against the validator's rules if validateBeforeAction is true.
  */
-export const validateMiddleware = ({validatorConstructor, validateBeforeAction}: ValidatorMiddlewareProps) => async (req: TBaseRequest, res: Response, next: NextFunction): Promise<void> => {
-    try {
-        req.validatorConstructor = validatorConstructor
+class ValidateMiddleware extends Middleware<ValidatorMiddlewareProps> {
 
-        const validator = new validatorConstructor();
+    public async execute(context: HttpContext): Promise<void> {
+        try {
+            const routeItem = context.getRouteItem();
+            const validatorConstructor = routeItem?.validator;
+            const validateBeforeAction = routeItem?.validateBeforeAction;
 
-        if(validateBeforeAction) {
-            const result = await validator.validate(
-                req.body,
-                { 
-                    stripUnknown: true,
-                    ...validator.getJoiOptions() 
-                }
-            );
-
-            if(!result.success) {
-                res.send({
-                    success: false,
-                    errors: (result.joi.error?.details ?? []).map((detail) => detail)
-                })
+            if(!validatorConstructor) {
+                this.next();
                 return;
             }
-        }
 
-        next();
-    }
-    catch (error) {
-        if(error instanceof Error) {
-            responseError(req, res, error)
-            return;
+            const validator = new validatorConstructor();
+            const body = context.getRequest().body;
+    
+            if(validateBeforeAction) {
+                const result = await validator.validate(
+                    body,
+                    { 
+                        stripUnknown: true,
+                        ...validator.getJoiOptions() 
+                    }
+                );
+    
+                if(!result.success) {
+                    context.getResponse().status(422).send({
+                        success: false,
+                        errors: (result.joi.error?.details ?? []).map((detail) => detail)
+                    })
+                    return;
+                }
+
+
+            }
+    
+            this.next();
+        }
+        catch (error) {
+            if(error instanceof Error) {
+                responseError(context.getRequest(), context.getResponse(), error)
+                return;
+            }
+
         }
     }
-};
+
+}
+
+export default ValidateMiddleware;

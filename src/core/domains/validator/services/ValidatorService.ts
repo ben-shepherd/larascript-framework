@@ -1,9 +1,12 @@
 import Validator from "@src/core/domains/validator/base/Validator";
 import IValidator from "@src/core/domains/validator/interfaces/IValidator";
 import IValidatorService from "@src/core/domains/validator/interfaces/IValidatorService";
-import { validateMiddleware } from "@src/core/domains/validator/middleware/validateMiddleware";
 import { app } from "@src/core/services/App";
 import Joi from "joi";
+
+import { TExpressMiddlewareFnOrClass } from "../../http/interfaces/IMiddleware";
+import ValidateMiddleware from "../middleware/validateMiddleware";
+
 
 /**
  * Short hand for app('validate')
@@ -31,9 +34,10 @@ class ValidatorService implements IValidatorService {
      * using the validator object created by the validator method.
      * @returns {import('express').RequestHandler} The middleware function
      */
-    public middleware() {
-        return validateMiddleware;
+    public middleware(): TExpressMiddlewareFnOrClass {
+        return ValidateMiddleware.toExpressMiddleware();
     }
+
 
 }
 
