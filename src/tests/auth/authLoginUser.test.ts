@@ -8,8 +8,8 @@ import { logger } from '@src/core/domains/logger/services/LoggerService';
 import TestApiTokenModel from '@src/tests/models/models/TestApiTokenModel';
 import TestUser from '@src/tests/models/models/TestUser';
 import testHelper from '@src/tests/testHelper';
-import TestCreateUserValidator from '@src/tests/validator/TestCreateUserValidator';
-import TestUpdateUserValidator from '@src/tests/validator/TestUpdateUserValidator';
+import TestCreateUserValidator from '@src/tests/validator-legacy/TestCreateUserValidator';
+import TestUpdateUserValidator from '@src/tests/validator-legacy/TestUpdateUserValidator';
 
 
 describe('attempt to run app with normal appConfig', () => {

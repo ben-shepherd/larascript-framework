@@ -3,7 +3,7 @@ import { describe } from '@jest/globals';
 import ValidatorService from '@src/core/domains/validator-legacy/services/ValidatorService';
 import { App } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
-import testValidatorHelper from '@src/tests/validator/testValidatorHelper';
+import testValidatorHelper from '@src/tests/validator-legacy/testValidatorHelper';
 
 describe('test validation', () => {
 
