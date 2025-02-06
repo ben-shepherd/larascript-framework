@@ -1,21 +1,23 @@
 import Service from '@src/core/base/Service';
+import Middleware from '@src/core/domains/http/base/Middleware';
 import { default as IExpressConfig, default as IHttpConfig } from '@src/core/domains/http/interfaces/IHttpConfig';
 import IHttpService from '@src/core/domains/http/interfaces/IHttpService';
 import { MiddlewareConstructor, TExpressMiddlewareFn } from '@src/core/domains/http/interfaces/IMiddleware';
 import { IRoute, IRouter, TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
+import BasicLoggerMiddleware from '@src/core/domains/http/middleware/BasicLoggerMiddleware';
 import EndRequestContextMiddleware from '@src/core/domains/http/middleware/EndRequestContextMiddleware';
 import RequestIdMiddleware from '@src/core/domains/http/middleware/RequestIdMiddleware';
 import SecurityMiddleware from '@src/core/domains/http/middleware/SecurityMiddleware';
 import Route from '@src/core/domains/http/router/Route';
 import RouterBindService from '@src/core/domains/http/router/RouterBindService';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
+import ValidateMiddleware from '@src/core/domains/validator/middleware/rename/ValidateMiddleware';
 import { app } from '@src/core/services/App';
 import expressClient from 'express';
-import Middleware from '@src/core/domains/http/base/Middleware';
-import BasicLoggerMiddleware from '@src/core/domains/http/middleware/BasicLoggerMiddleware';
 
 /**
  * Short hand for `app('http')`
+
  */
 export const http = () => app('http');
 
@@ -63,6 +65,11 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
     /**
      * Initializes ExpressService by applying global middleware defined in config.
      * Global middleware is applied in the order it is defined in the config.
+     * 
+     * Global Middleware Note:
+     *   When middlewares are added globally via app.use(), they don't have access
+     *   to this route context. By adding them here through the RouterBindService,
+     *   each middleware receives the routeItem as part of its context.
      */
     public init() {
         if (!this.config) {
@@ -119,13 +126,29 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
         })
     }
 
+    /**
+     * Binds the routes to the Express instance.
+     * @param router - The router to bind
+     */
     public bindRoutes(router: IRouter): void {
         if(router.getRegisteredRoutes().length === 0) {
             return
+
         }
 
+        // These middlewares are added here instead of as global middlewares because
+        // they need access to the routeItem from the router. The routeItem contains
+        // important metadata like:
+        // - security requirements (used by SecurityMiddleware)
+        // - validator configuration (used by ValidateMiddleware)
+        // - other route-specific settings
+        const additionalMiddlewares = [
+            SecurityMiddleware,
+            ValidateMiddleware
+        ]
+
         this.routerBindService.setExpress(this.app, this.config)
-        this.routerBindService.setOptions({ additionalMiddlewares: [SecurityMiddleware] })
+        this.routerBindService.setOptions({ additionalMiddlewares })
         this.routerBindService.bindRoutes(router)
         this.registeredRoutes.push(...router.getRegisteredRoutes())
     }
