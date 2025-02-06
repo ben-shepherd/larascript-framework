@@ -1,9 +1,9 @@
 
-import HttpContext from "@src/core/domains/http/context/HttpContext";
-import ApiResponse from "@src/core/domains/http/response/ApiResponse";
-import IValidatorResult from "@src/core/domains/validator/interfaces/IValidatorResult";
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
 import { auth } from "@src/core/domains/auth/services/AuthService";
+import HttpContext from "@src/core/domains/http/context/HttpContext";
+import ApiResponse from "@src/core/domains/http/response/ApiResponse";
+import IValidatorResult from "@src/core/domains/validator-legacy/interfaces/IValidatorResult";
 
 /**
  * UpdateUseCase handles user profile updates

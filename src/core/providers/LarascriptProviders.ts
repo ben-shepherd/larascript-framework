@@ -8,7 +8,7 @@ import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
 import MakeProvider from "@src/core/domains/make/providers/MakeProvider";
 import MigrationProvider from "@src/core/domains/migrations/providers/MigrationProvider";
 import SetupProvider from "@src/core/domains/setup/providers/SetupProvider";
-import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
+import ValidatorProvider from "@src/core/domains/validator-legacy/providers/ValidatorProvider";
 import { IProvider } from "@src/core/interfaces/IProvider";
 // eslint-disable-next-line no-unused-vars
 import { ILarascriptProviders } from "@src/core/interfaces/ILarascriptProviders";

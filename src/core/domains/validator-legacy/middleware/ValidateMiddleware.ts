@@ -1,5 +1,5 @@
 import responseError from '@src/core/domains/http/handlers/responseError';
-import { ValidatorMiddlewareProps } from '@src/core/domains/validator/interfaces/IValidatorService';
+import { ValidatorMiddlewareProps } from '@src/core/domains/validator-legacy/interfaces/IValidatorService';
 
 import Middleware from '../../http/base/Middleware';
 import HttpContext from '../../http/context/HttpContext';

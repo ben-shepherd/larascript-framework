@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import IValidatorResult from "@src/core/domains/validator/interfaces/IValidatorResult";
+import IValidatorResult from "@src/core/domains/validator-legacy/interfaces/IValidatorResult";
 import Joi, { ValidationOptions } from "joi";
 
 export type ValidatorConstructor = new (...args: any[]) => IValidator;

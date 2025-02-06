@@ -1,18 +1,17 @@
 import BaseValidator from "@src/core/domains/validator-legacy/base/BaseValidator";
 import Joi, { ObjectSchema } from "joi";
 
-class TestUpdateUserValidator extends BaseValidator {
+class CreateBlogPostValidator extends BaseValidator {
 
     protected additionalMethodsToValidate: string[] = [];
-
+    
     rules(): ObjectSchema {
         return Joi.object({
-            password: Joi.string().min(6),
-            firstName: Joi.string(),
-            lastName: Joi.string(),
+            title: Joi.string().required(),
+            content: Joi.string().required(),
         })
     }
 
 }
 
-export default TestUpdateUserValidator
+export default CreateBlogPostValidator

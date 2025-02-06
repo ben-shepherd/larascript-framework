@@ -1,8 +1,8 @@
 import { AuthAdapterConstructor } from "@src/core/domains/auth/interfaces/adapter/IAuthAdapter";
 import { IBaseAuthConfig } from "@src/core/domains/auth/interfaces/config/IAuth";
-import { UserConstructor } from "@src/core/domains/auth/interfaces/models/IUserModel";
-import { ValidatorConstructor } from "@src/core/domains/validator/interfaces/IValidator";
 import { ApiTokenConstructor } from "@src/core/domains/auth/interfaces/models/IApiTokenModel";
+import { UserConstructor } from "@src/core/domains/auth/interfaces/models/IUserModel";
+import { ValidatorConstructor } from "@src/core/domains/validator-legacy/interfaces/IValidator";
 
 export interface IJwtConfig extends IBaseAuthConfig {
     name: string;

@@ -1,4 +1,4 @@
-import Validator from '@src/core/domains/validator/base/Validator';
+import Validator from '@src/core/domains/validator-legacy/base/Validator';
 import Joi from 'joi';
 
 class UserValidator extends Validator {

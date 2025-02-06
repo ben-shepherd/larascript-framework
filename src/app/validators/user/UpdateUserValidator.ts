@@ -1,4 +1,4 @@
-import BaseValidator from "@src/core/domains/validator/base/BaseValidator";
+import BaseValidator from "@src/core/domains/validator-legacy/base/BaseValidator";
 import Joi, { ObjectSchema } from "joi";
 
 class UpdateUserValidator extends BaseValidator {

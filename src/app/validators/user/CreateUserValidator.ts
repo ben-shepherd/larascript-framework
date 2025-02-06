@@ -1,7 +1,7 @@
 import User from "@src/app/models/auth/User";
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
-import BaseValidator from "@src/core/domains/validator/base/BaseValidator";
-import { ValidatorPayload } from "@src/core/domains/validator/interfaces/IValidator";
+import BaseValidator from "@src/core/domains/validator-legacy/base/BaseValidator";
+import { ValidatorPayload } from "@src/core/domains/validator-legacy/interfaces/IValidator";
 import Joi, { ObjectSchema } from "joi";
 
 class CreateUserValidator extends BaseValidator {

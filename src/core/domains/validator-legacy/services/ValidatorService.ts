@@ -1,6 +1,6 @@
-import Validator from "@src/core/domains/validator/base/Validator";
-import IValidator from "@src/core/domains/validator/interfaces/IValidator";
-import IValidatorService from "@src/core/domains/validator/interfaces/IValidatorService";
+import Validator from "@src/core/domains/validator-legacy/base/Validator";
+import IValidator from "@src/core/domains/validator-legacy/interfaces/IValidator";
+import IValidatorService from "@src/core/domains/validator-legacy/interfaces/IValidatorService";
 import { app } from "@src/core/services/App";
 import Joi from "joi";
 

@@ -1,10 +1,10 @@
-import HttpContext from "@src/core/domains/http/context/HttpContext";
-import ApiResponse from "@src/core/domains/http/response/ApiResponse";
-import IValidatorResult from "@src/core/domains/validator/interfaces/IValidatorResult";
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
 import { acl, auth } from "@src/core/domains/auth/services/AuthService";
 import { authJwt } from "@src/core/domains/auth/services/JwtAuthService";
 import hashPassword from "@src/core/domains/auth/utils/hashPassword";
+import HttpContext from "@src/core/domains/http/context/HttpContext";
+import ApiResponse from "@src/core/domains/http/response/ApiResponse";
+import IValidatorResult from "@src/core/domains/validator-legacy/interfaces/IValidatorResult";
 
 /**
  * RegisterUseCase handles new user registration

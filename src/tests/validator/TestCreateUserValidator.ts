@@ -1,6 +1,6 @@
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
-import BaseValidator from "@src/core/domains/validator/base/BaseValidator";
-import { ValidatorPayload } from "@src/core/domains/validator/interfaces/IValidator";
+import BaseValidator from "@src/core/domains/validator-legacy/base/BaseValidator";
+import { ValidatorPayload } from "@src/core/domains/validator-legacy/interfaces/IValidator";
 import TestUser from "@src/tests/models/models/TestUser";
 import Joi, { ObjectSchema } from "joi";
 

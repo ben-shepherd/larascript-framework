@@ -4,7 +4,7 @@ import { TExpressMiddlewareFnOrClass } from "@src/core/domains/http/interfaces/I
 import { ISecurityRule } from "@src/core/domains/http/interfaces/ISecurity";
 import SecurityRules from "@src/core/domains/http/security/services/SecurityRules";
 import { TSortDirection } from "@src/core/domains/http/utils/SortOptions";
-import { ValidatorConstructor } from "@src/core/domains/validator/interfaces/IValidator";
+import { ValidatorConstructor } from "@src/core/domains/validator-legacy/interfaces/IValidator";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
 export type RouteConstructor = {
