@@ -9,8 +9,11 @@ export type ValidatorConstructor = {
 
 export type IValidatorMessages = Record<string, string>
 
+export type IValidatorAttributes = Record<string, unknown>
+
 export interface IValidator {
-    validate<T extends object>(data: T): Promise<IValidatorResult<T>>
+    validate<T extends IValidatorAttributes>(data: T): Promise<IValidatorResult<T>>
 }
+
 
 

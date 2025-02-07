@@ -1,9 +1,11 @@
-export interface IValidatorResult<T extends object> {
-    validated(): T;
+import { IValidatorAttributes } from "./IValidator";
+
+export interface IValidatorResult<T extends IValidatorAttributes = IValidatorAttributes> {
     passes(): boolean;
     fails(): boolean;
-    errors(): Record<string, string>;
+    errors(): Record<string, string> | undefined;
 }
+
 
 
 

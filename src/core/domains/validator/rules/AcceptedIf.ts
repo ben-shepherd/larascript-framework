@@ -1,39 +1,55 @@
+
 import AbstractRule from "../abstract/AbstractRule";
-import { IRule } from "../interfaces/IRule";
+import { IRule, IRuleError } from "../interfaces/IRule";
+import isTruthy from "../utils/isTruthy";
 
 type AcceptedIfOptions = {
-    field: string,
     anotherField: string,
     value: unknown
 }
 
+
 class AcceptedIf extends AbstractRule<AcceptedIfOptions> implements IRule {
 
-    constructor(field: string, anotherField: string, value: unknown) {
+    protected name: string = 'accepted_if'
+
+    protected errorTemplate: string = 'The :attribute field must be accepted when :another is :value.';
+
+
+    constructor(anotherField: string, value: unknown) {
         super()
-        this.options.field = field
         this.options.anotherField = anotherField
         this.options.value = value
     }
 
-
     public validate(): boolean {
         const {
-            field,
             anotherField,
             value: expectedValue
+
         } = this.options
 
-        const mainFieldValue = this.getAttribute(field)
+        const mainFieldValue = this.getAttribute(this.field)
         const otherFieldValue = this.getAttribute(anotherField)
 
         if (otherFieldValue !== expectedValue) {
             return true
         }
 
-        const acceptedValues = ['yes', 'on', 1, '1', true, 'true']
-        return acceptedValues.includes(mainFieldValue as string | number | boolean)
+        return isTruthy(mainFieldValue)
     }
+
+
+    getError(): IRuleError {
+        return {
+            [this.field]: this.buildError({
+                another: this.options.anotherField,
+                value: this.options.value
+            })
+        }
+    }
+
+
 
 }
 

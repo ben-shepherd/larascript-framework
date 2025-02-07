@@ -1,12 +1,29 @@
+
 import AbstractRule from "../abstract/AbstractRule";
-import { IRule } from "../interfaces/IRule";
+import { IRule, IRuleError } from "../interfaces/IRule";
+import isTruthy from "../utils/isTruthy";
 
 class Accepted extends AbstractRule implements IRule {
 
-    public validate(value: unknown): boolean {
-        return value === true || value === 'true' || value === 1 || value === '1';
+
+    protected name: string = 'accepted'
+
+    protected errorTemplate: string = 'The :attribute field must be accepted.';
+
+
+    public validate(): boolean {
+        return isTruthy(this.getAttribute(this.field))
     }
 
+
+    public getError(): IRuleError {
+        return {
+            [this.field]: this.buildError()
+        }
+    }
+
+
 }
+
 
 export default Accepted;
