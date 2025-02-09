@@ -4,13 +4,12 @@ import { IRule, IRuleError } from "../interfaces/IRule";
 
 class IsString extends AbstractRule implements IRule {
 
-    protected name: string = 'string'
+    protected name: string = 'object'
 
-    protected errorTemplate: string = 'The :attribute field must be a string.';
+    protected errorTemplate: string = 'The :attribute field must be an object.';
 
     public validate(): boolean {
-        const value = this.getData()
-        return typeof value === 'string'
+        return typeof this.getData() === 'object'
     }
 
     public getError(): IRuleError {
@@ -18,7 +17,6 @@ class IsString extends AbstractRule implements IRule {
             [this.field]: this.buildError()
         }
     }
-
 
 }
 

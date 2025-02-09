@@ -29,8 +29,8 @@ class AcceptedIf extends AbstractRule<AcceptedIfOptions> implements IRule {
 
         } = this.options
 
-        const mainFieldValue = this.getAttribute(this.field)
-        const otherFieldValue = this.getAttribute(anotherField)
+        const mainFieldValue = this.getData()
+        const otherFieldValue = this.getAttributes()?.[anotherField]
 
         if (otherFieldValue !== expectedValue) {
             return true

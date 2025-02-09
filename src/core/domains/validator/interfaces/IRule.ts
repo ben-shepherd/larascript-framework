@@ -1,4 +1,3 @@
-import { IValidatorAttributes } from "./IValidator"
 
 /* eslint-disable no-unused-vars */
 export interface IRuleConstructor {
@@ -6,7 +5,7 @@ export interface IRuleConstructor {
 }
 
 export interface IRulesObject {
-    [key: string]: IRule
+    [key: string]: IRule | IRule[]
 }
 
 export interface IRuleError {
@@ -16,10 +15,14 @@ export interface IRuleError {
 
 export interface IRule {
     setField(field: string): this
-    setAttributes(attributes: IValidatorAttributes): this
-    validate(attributes: IValidatorAttributes): boolean
+    setData(data: unknown): this
+    setAttributes(attributes: unknown): this
+    validate(): boolean
     getError(): IRuleError
     getName(): string
+
+
+
 }
 
 

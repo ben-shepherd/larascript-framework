@@ -12,8 +12,9 @@ class Accepted extends AbstractRule implements IRule {
 
 
     public validate(): boolean {
-        return isTruthy(this.getAttribute(this.field))
+        return isTruthy(this.getData())
     }
+
 
 
     public getError(): IRuleError {

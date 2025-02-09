@@ -50,7 +50,7 @@ class DataExtractor {
      * @param paths - Object containing path rules for extraction
      * @returns Extracted data based on the provided rules
      */
-    public static reduce(attributes: TData, paths: TPathsObject) {
+    public static reduce(attributes: TData, paths: TPathsObject): TPathsObject {
         return new DataExtractor().init(paths, attributes)
     }
     
@@ -60,13 +60,13 @@ class DataExtractor {
      * @param attributes - Source data object to extract from
      * @returns Object containing extracted data mapped to the original paths
      */
-    init(paths: TPathsObject, attributes: object): TData {
+    init(paths: TPathsObject, attributes: object): TPathsObject {
         return Object.keys(paths).reduce((acc, path) => {
             return {
                 ...acc,
                 [path]: this.recursiveReducer(path, acc, path, attributes) as object
             }
-        }, {})
+        }, {}) as TPathsObject
     }
 
     /**

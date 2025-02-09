@@ -9,9 +9,10 @@ class Required extends AbstractRule implements IRule {
     protected errorTemplate: string = 'The :attribute field is required.';
 
     public validate(): boolean {
-        const value = this.getAttribute(this.field)
+        const value = this.getData()
         return value !== undefined && value !== null && value !== ''
     }
+
 
 
     public getError(): IRuleError {

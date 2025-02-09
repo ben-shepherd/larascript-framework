@@ -13,9 +13,13 @@ abstract class AbstractRule<TOptions extends object = object> {
 
     protected options: TOptions = {} as TOptions
 
-    protected attributes: Record<string, unknown> = {}
+    protected data: unknown = undefined
+
+    protected attributes: unknown = undefined
 
     protected field!: string;
+
+
 
     public abstract getError(): IRuleError;
 
@@ -25,9 +29,13 @@ abstract class AbstractRule<TOptions extends object = object> {
     }
 
 
-    public setAttributes(attributes: Record<string, unknown>): this {
-        this.attributes = attributes
+    public setData(data: unknown): this {
+        this.data = data
         return this
+    }
+
+    public getData(): unknown {
+        return this.data
     }
 
     public setField(field: string): this {
@@ -35,10 +43,14 @@ abstract class AbstractRule<TOptions extends object = object> {
         return this
     }
 
-    public getAttribute(key: string): unknown {
-        return this.attributes[key]
+    public setAttributes(attributes: unknown): this {
+        this.attributes = attributes
+        return this
     }
 
+    public getAttributes(): unknown {
+        return this.attributes
+    }
 
     public getOption(key: string): unknown {
         return this.options[key]
