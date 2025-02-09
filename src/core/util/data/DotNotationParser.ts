@@ -1,3 +1,5 @@
+import DotNotationParserException from "@src/core/exceptions/DotNotationParserException";
+
 /**
  * Options for parsing rule keys
  * @interface DotNotationParserOptions
@@ -15,10 +17,14 @@ export type DotNotationParserOptions = {
 
     /** The remaining rule key after parsing */
     rest: string;
+
+    /** The parts of the path */
+    parts: string[];
 }
 
 /**
  * Parser for paths that handles both simple keys and nested paths with wildcards.
+
  * Supports formats like:
  * - Simple key: "users" or "0"
  * - Nested path: "users.name" or "users.0"
@@ -66,7 +72,8 @@ class DotNotationParser {
         }
 
         current.appendOptions({
-            index: this.parseIndex(path)
+            index: this.parseIndex(path),
+            parts: [path]
         })
 
         return current
@@ -99,20 +106,17 @@ class DotNotationParser {
         const pathParts = path.split('.')
         const pathPart0 = pathParts[0]
         const pathPart1 = pathParts[1]
-        const rest = pathParts.splice(1).join('.')
-        
-        if(pathPart1 === '*') {
-            current.appendOptions({
-                index: this.parseIndex(pathPart0),
-                all: true
-            })
-            return current;
-        }
+        const rest = [...pathParts].splice(1).join('.')
+        const index = this.parseIndex(pathPart0)
+        const nextIndex = this.parseIndex(pathPart1)
+        const all = pathPart1 === '*'
 
         current.appendOptions({
-            index: this.parseIndex(pathPart0),
-            nextIndex: this.parseIndex(pathPart1),
-            rest: rest
+            index,
+            nextIndex,
+            all,
+            rest,
+            parts: pathParts
         })
 
         return current
@@ -138,9 +142,10 @@ class DotNotationParser {
      */
     public getIndex(): string | number {
         if(typeof this.options.index === 'undefined') {
-            throw new Error('index is not defined')
+            throw new DotNotationParserException('index is not defined')
         }
         return this.options.index
+
     }
 
     /**
@@ -150,13 +155,23 @@ class DotNotationParser {
      */
     public getNextIndex(): string | number {
         if(typeof this.options.nextIndex === 'undefined') {
-            throw new Error('nextIndex is not defined')
+            throw new DotNotationParserException('nextIndex is not defined')
         }
         return this.options.nextIndex
     }
 
     /**
+     * Gets the next index from the parser options
+     * @returns The next index as a string or number
+     */
+    public getNextIndexSafe(): string | number | undefined {
+        return this.options.nextIndex
+    }
+
+
+    /**
      * Checks if the current path has a nested index
+
      * @returns True if both index and nextIndex are defined
      */
     public isNestedIndex() {
@@ -178,10 +193,22 @@ class DotNotationParser {
      */
     public getRest(): string {
         if(typeof this.options.rest === 'undefined') {
-            throw new Error('rest is not defined')
+            throw new DotNotationParserException('rest is not defined')
         }
         return this.options.rest
     }
+
+    /**
+     * Gets the parts of the path
+     * @returns The parts of the path
+     */
+    public getParts(): string[] {
+        return this.options.parts
+    }
+
+
+
+
 
 }
 

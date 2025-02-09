@@ -2,14 +2,14 @@
 import AbstractRule from "../abstract/AbstractRule";
 import { IRule, IRuleError } from "../interfaces/IRule";
 
-class IsString extends AbstractRule implements IRule {
+class IsNumber extends AbstractRule implements IRule {
 
-    protected name: string = 'string'
+    protected name: string = 'number'
 
-    protected errorTemplate: string = 'The :attribute field must be a string.';
+    protected errorTemplate: string = 'The :attribute field must be a number.';
 
     public test(): boolean {
-        return typeof this.getData() === 'string'
+        return typeof this.getData() === 'number'
     }
 
     public getError(): IRuleError {
@@ -21,4 +21,4 @@ class IsString extends AbstractRule implements IRule {
 }
 
 
-export default IsString;
+export default IsNumber;

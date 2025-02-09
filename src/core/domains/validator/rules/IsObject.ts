@@ -8,13 +8,13 @@ class IsString extends AbstractRule implements IRule {
 
     protected errorTemplate: string = 'The :attribute field must be an object.';
 
-    public validate(): boolean {
+    public test(): boolean {
         return typeof this.getData() === 'object'
     }
 
     public getError(): IRuleError {
         return {
-            [this.field]: this.buildError()
+            [this.getPath()]: this.buildError()
         }
     }
 

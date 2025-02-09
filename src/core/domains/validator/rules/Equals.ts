@@ -15,14 +15,13 @@ class Equals extends AbstractRule implements IRule {
         this.matches = matches;
     }
 
-    public validate(): boolean {
+    public test(): boolean {
         return this.getData() === this.matches
     }
 
-
     public getError(): IRuleError {
         return {
-            [this.field]: this.buildError({
+            [this.getPath()]: this.buildError({
                 matches: this.matches
             })
         }

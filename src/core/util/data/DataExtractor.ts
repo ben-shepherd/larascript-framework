@@ -53,7 +53,7 @@ class DataExtractor {
     public static reduce(attributes: TData, paths: TPathsObject): TPathsObject {
         return new DataExtractor().init(paths, attributes)
     }
-    
+
     /**
      * Initializes the extraction process with the given paths and attributes
      * @param paths - Object containing dot notation paths as keys
@@ -91,17 +91,14 @@ class DataExtractor {
         const containsNestedIndex = parsedPath.isNestedIndex()
 
         // If the path contains a nested index, reduce the nested indexes
-        if(containsNestedIndex) {
+        if (containsNestedIndex) {
             acc = this.reduceNestedIndexes(parsedPath, acc, attributes) as object | unknown[]
         }
-
         // If the path contains a non-nested index, reduce the index
-        if(containsNestedIndex === false) {
+        else if (containsNestedIndex === false) {
             acc = this.reduceIndex(parsedPath, acc, attributes) as object | unknown[]
         }
-        
-        // If the path contains a wildcard, reduce all values
-        acc = this.reduceAll(parsedPath, acc, attributes)
+
 
         return acc
     }
@@ -116,7 +113,12 @@ class DataExtractor {
     protected reduceIndex(parsedRuleKey, acc: object, attributes: object) {
         const index = parsedRuleKey.getIndex()
 
-        if(attributes[index]) {
+        if (Array.isArray(attributes)) {
+            return attributes.map(item => {
+                return item[index]
+            })
+        }
+        else if (attributes[index]) {
             return attributes[index]
         }
 
@@ -151,28 +153,46 @@ class DataExtractor {
         // Example: attributes = [{ name: "John" }, { name: "Jane" }]
         // isArray = true
         // isObject = true
-        const isArray = Array.isArray(attributes) 
+        const isArray = Array.isArray(attributes)
         const isObject = !isArray && typeof attributes === 'object'
         
+        // This block handles wildcard paths like "users.*.name"
+        // When a wildcard (*) is encountered:
+        // 1. Parse the remaining path after the wildcard (e.g. "name")
+        // 2. Initialize an empty array at the current index (e.g. users: [])
+        // 3. Recursively process each item in the array at attributes[currentIndex]
+        // For example, with data {users: [{name: "John"}, {name: "Jane"}]} 
+        // and path "users.*.name", this will extract all user names into an array
+        if (parsedPath.isAll()) {
+            const allParsedPath = DotNotationParser.parse(rest)
+            const allNextPath = allParsedPath.getNextIndex()
+
+            acc = {
+                ...acc,
+                [currentIndex]: []
+            }
+
+            return this.recursiveReducer(allNextPath.toString(), acc[currentIndex], attributes[currentIndex], attributes[currentIndex])
+        }
+
         // If the current index is undefined, return the accumulator as is
-        if(attributes[currentIndex] === undefined) {
+        if (attributes[currentIndex] === undefined) {
             return acc
         }
 
         // This section handles nested data reduction for validation rules
         // For example, with data like: { users: [{ name: "John" }, { name: "Jane" }] }
         // And rule key like: "users.0.name"
-
-        const blankObjectOrArray = this.getBlankObjectOrArray(attributes[currentIndex])
-
+        //
         // blankObjectOrArray will be either [] or {} depending on the type of the current value
         // This ensures we maintain the correct data structure when reducing
-        
+        const blankObjectOrArray = this.getBlankObjectOrArray(attributes[currentIndex])
+
         // If the current value is an array, we need to build up a new array
         // If it's an object, we need to build up a new object with the current index as key
         // This preserves the structure while only including validated fields
-        if(isArray) {
-            if(!Array.isArray(acc)) {
+        if (isArray) {
+            if (!Array.isArray(acc)) {
                 acc = []
             }
             acc = [
@@ -180,7 +200,7 @@ class DataExtractor {
                 blankObjectOrArray,
             ]
         }
-        else if(isObject) { 
+        else if (isObject) {
             acc = {
                 ...acc,
                 [currentIndex]: blankObjectOrArray
@@ -189,6 +209,8 @@ class DataExtractor {
 
         // Recursively reduce the rest of the path
         return this.recursiveReducer(rest, acc[currentIndex], attributes[currentIndex][nextIndex], attributes[currentIndex])
+
+
     }
 
     /**
@@ -204,21 +226,21 @@ class DataExtractor {
      * @returns The updated accumulator with validated data from the wildcard path
      */
     protected reduceAll(parsedPath: DotNotationParser, acc: object, attributes: object) {
-        if(!parsedPath.isAll()) {
+        if (!parsedPath.isAll()) {
             return acc;
-
         }
 
         const index = parsedPath.getIndex()
-        
-        if(attributes[index]) {
-            return {
-                ...acc,
-                [index]: attributes[index]
-            }
+        const nextIndex = parsedPath.getNextIndexSafe()
+        const allParsedPath = DotNotationParser.parse(parsedPath.getRest())
+
+        acc = {
+            ...acc,
+            [index]: []
         }
 
-        return acc
+        return this.recursiveReducer(allParsedPath.getRest(), acc[index], attributes[index], attributes[index])
+
     }
 
     /**
@@ -228,10 +250,10 @@ class DataExtractor {
      * @returns A blank object or array
      */
     protected getBlankObjectOrArray(value: unknown): object | unknown[] {
-        if(Array.isArray(value)) {
+        if (Array.isArray(value)) {
             return []
         }
-        
+
         return {}
     }
 

@@ -8,13 +8,13 @@ class IsArray extends AbstractRule implements IRule {
 
     protected errorTemplate: string = 'The :attribute field must be an array.';
 
-    public validate(): boolean {
+    public test(): boolean {
         return Array.isArray(this.getData())
     }
 
     public getError(): IRuleError {
         return {
-            [this.field]: this.buildError()
+            [this.getPath()]: this.buildError()
         }
     }
 

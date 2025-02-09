@@ -94,7 +94,7 @@ class Validator  implements IValidator {
      */
     protected validateRule(key: string, rule: IRule, data: unknown, attributes: unknown): IValidatorResult {
 
-        rule.setField(key)
+        rule.setPath(key)
         rule.setData(data)
         rule.setAttributes(attributes)
         const passes = rule.validate();

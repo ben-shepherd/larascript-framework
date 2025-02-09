@@ -15,14 +15,13 @@ class AcceptedIf extends AbstractRule<AcceptedIfOptions> implements IRule {
 
     protected errorTemplate: string = 'The :attribute field must be accepted when :another is :value.';
 
-
     constructor(anotherField: string, value: unknown) {
         super()
         this.options.anotherField = anotherField
         this.options.value = value
     }
 
-    public validate(): boolean {
+    public test(): boolean {
         const {
             anotherField,
             value: expectedValue
@@ -42,7 +41,7 @@ class AcceptedIf extends AbstractRule<AcceptedIfOptions> implements IRule {
 
     getError(): IRuleError {
         return {
-            [this.field]: this.buildError({
+            [this.getPath()]: this.buildError({
                 another: this.options.anotherField,
                 value: this.options.value
             })
