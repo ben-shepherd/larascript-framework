@@ -1,6 +1,6 @@
-import DotNotationParser from "./DotNotationParser"
+import DotNotationParser from "./DotNotationParser";
 
-type TStateName = 'INDEX' | 'WILDCARD' | 'SKIPPING_WILDCARD' | 'NEXT' | 'EXIT'
+type TStateName = 'INDEX' | 'WILDCARD' | 'SKIPPING_WILDCARD';
 
 type TState = {
     type: TStateName | null,
@@ -13,8 +13,6 @@ const states: Record<TStateName, TStateName> = {
     INDEX: 'INDEX',
     WILDCARD: 'WILDCARD',
     SKIPPING_WILDCARD: 'SKIPPING_WILDCARD',
-    NEXT: 'NEXT',
-    EXIT: 'EXIT'
 }
 
 type TDotNotationDataExtratorOptions = {
@@ -79,96 +77,74 @@ class DotNotationDataExtrator {
 
     /**
      * Core recursive function that processes each path segment and extracts values
-     * 
-     * @param path - Current dot notation path being processed
-     * @param acc - Accumulator holding processed values
-     * @param attributes - Current data being processed
-     * @param recursionLevel - Current depth of recursion (for debugging)
-     * @returns Processed value(s) for the current path
      */
     reducer(path: string, acc: unknown, attributes: unknown, recursionLevel = 1) {
         const state = this.getState(path, acc, attributes)
 
-        // Reducing INDEXES
-        // Condition: index is string or number, does not equal *, must existpe
-        // If the attributes is not an object or array, return attribute
-        // If the attributes is an array of objects, we should iterate through and map 
+        // Process based on state type:
+        
+        // 1. Direct index access - reduce to specific target
         if(state.type === states.INDEX) {
             return this.reduceAttributes(state, recursionLevel)
         }
 
-        // Reducing SKIPPING WILDCARDS
-        // Condition: index is *
-        // Nothing to do, return the current attribtues
+        // 2. Skip current wildcard and process next segment
         if(state.type === states.SKIPPING_WILDCARD) {
             return this.reducer(state.dotPath.getRest() as string, state.acc, state.attributes, recursionLevel + 1)
         }
 
-
-        // Reducing WILDCARDS
-        // Condition: previous INDEX must be a wildcard
-        // Condition: attributes must be an array
-        // Possibly an object, with a matching object[index]
+        // 3. Process wildcard expansion
         if(state.type === states.WILDCARD) {
             return this.reduceAttributes(state, recursionLevel)
         }
-
-        // RECURSIVE
-        // Condition: Contains next index
-        // execute forward for dotPath, storing previous index
-        if(state.type === states.NEXT) {
-            return this.reduceAttributes(state, recursionLevel + 1)
-        }
-
-        // EXITING
-        // Condition: No next index
-        // Return value
-        console.log('[DataExtractor] exit')
 
         return acc
     }
 
     /**
      * Processes attribute values based on the current state and path
-     * 
-     * @param state - Current state object containing path and data information
-     * @param recursionLevel - Current depth of recursion
-     * @returns Processed attribute values
      */
     reduceAttributes(state: TState, recursionLevel = 1) {
-
         const target = state.dotPath.getFirst()
         const nextTarget = state.dotPath.getNext()
         const attributes = state.attributes
         const rest = state.dotPath.getRest()
         const nextRecursionLevel = recursionLevel + 1
 
-        // If the attributes is an object and the target exists and there is a next target, reduce the attributes
-        if(typeof attributes === 'object' && attributes?.[target] && typeof nextTarget !== 'undefined' && nextTarget !== '*') {
+        const isObject = typeof attributes === 'object'
+        const hasTargetProperty = attributes?.[target]
+        const hasDefinedNextTarget = typeof nextTarget !== 'undefined' && nextTarget !== '*'
+        const hasNoRemainingPath = typeof rest === 'undefined'
+
+        // Case 1: Navigate deeper into nested object
+        const shouldNavigateDeeper = isObject && hasTargetProperty && hasDefinedNextTarget
+        if(shouldNavigateDeeper) {
             return this.reducer(
-                state.dotPath.getRest() as string,
+                rest as string,
                 state.acc,
                 attributes[target],
                 nextRecursionLevel
             )
         }
 
-        // If the attributes is an object and the target exists and there is no next target, return the target
-        if(typeof attributes === 'object' && attributes?.[target] && typeof rest === 'undefined') {
+        // Case 2: Return final value when reaching end of path
+        const shouldReturnFinalValue = isObject && typeof attributes?.[target] !== 'undefined' && hasNoRemainingPath
+        if(shouldReturnFinalValue) {
             return attributes[target]
         } 
 
-        // If the attributes is an object and the target exists and there is a next target, reduce the attributes
-        if(typeof attributes === 'object' && attributes?.[target] && typeof rest !== 'undefined') {
+        // Case 3: Continue traversing object path
+        const shouldContinueTraversal = isObject && hasTargetProperty && typeof rest !== 'undefined'
+        if(shouldContinueTraversal) {
             return this.reducer(
-                    state.dotPath.getRest() as string,
-                    state.acc,
-                    attributes[target],
-                    nextRecursionLevel
+                rest as string,
+                state.acc,
+                attributes[target],
+                nextRecursionLevel
             )
         }
 
-        // If the attributes is an array, reduce the array
+        // Case 4: Handle array processing
         if(Array.isArray(attributes)) {
             return this.reduceArray(
                 this.updateState(state, {
@@ -179,16 +155,11 @@ class DotNotationDataExtrator {
             )
         }
 
-
-        return attributes
+        return undefined
     }
 
     /**
      * Processes array values by applying the extraction logic to each element
-     * 
-     * @param state - Current state object containing path and data information
-     * @param recursionLevel - Current depth of recursion
-     * @returns Array of processed values
      */
     reduceArray(state: TState, recursionLevel = 1) {
         const acc: unknown[] = [];
@@ -198,17 +169,18 @@ class DotNotationDataExtrator {
         const attributesIsArray = Array.isArray(attributes);
         const attributesIsObject = typeof attributes === 'object' && !attributesIsArray;
 
-        // Handle object case
-        if(attributesIsObject && attributes?.[target]) {
+        // Handle direct property access on object
+        const shouldAccessObjectProperty = attributesIsObject && attributes?.[target]
+        if(shouldAccessObjectProperty) {
             return attributes[target];
         }
 
-        // Return early if not array
+        // Return early if not processing an array
         if(!attributesIsArray) {
             return attributes;
         }
 
-        // Process each item in the array
+        // Process each array element recursively
         (attributes as unknown[]).forEach(attr => {
             const result = this.reduceAttributes(
                 this.updateState(state, {
@@ -218,7 +190,7 @@ class DotNotationDataExtrator {
                 recursionLevel + 1
             );
 
-            // If result is an array, spread it into acc, otherwise push the single value
+            // Flatten array results or add single values
             if (Array.isArray(result)) {
                 acc.push(...result);
             }
@@ -231,13 +203,7 @@ class DotNotationDataExtrator {
     }
 
     /**
-
      * Updates the current state with new values
-
-     * 
-     * @param state - Current state object
-     * @param update - Partial state updates to apply
-     * @returns Updated state object
      */
     protected updateState(state: TState, update: Partial<TState>): TState {
         return {
@@ -248,58 +214,46 @@ class DotNotationDataExtrator {
 
     /**
      * Determines the current state based on path and attributes
-     * 
-     * @param path - Current dot notation path
-     * @param acc - Current accumulator
-     * @param attributes - Current attributes being processed
-     * @returns State object with type and processing information
      */
     protected getState(path: string, acc: unknown, attributes: unknown) {
         const dotPath = DotNotationParser.parse(path)
-        const index = dotPath.getFirst()
-        const nextIndex = dotPath.getNext()
-        const previousIndex = dotPath.getPrevious()
 
-        const indexIsWildcard = index === '*'
-        const previousIsWildcard = previousIndex === '*';
+        const targetIndex = dotPath.getFirst()
+        const previousTargetIndex = dotPath.getPrevious()
 
-        const attributesStringOrNumber = typeof attributes === 'string' || typeof attributes === 'number';
-        const attributesArrayOrObject = Array.isArray(attributes) || typeof attributes === 'object'
-        const attributesIndexExists = typeof attributes?.[index] !== 'undefined'
-        const attributesIndexValid = attributesStringOrNumber && attributesIndexExists
+        // Check target properties
+        const isWildcardTarget = targetIndex === '*'
+        const isPreviousWildcard = previousTargetIndex === '*'
 
-        // State object
+        // Check attribute types
+        const isAttributePrimitive = typeof attributes === 'string' || typeof attributes === 'number'
+        const isAttributeComplex = Array.isArray(attributes) || typeof attributes === 'object'
+        const hasTargetIndex = typeof attributes?.[targetIndex] !== 'undefined'
+        const isValidPrimitiveAccess = isAttributePrimitive && hasTargetIndex
+
         const state: TState = {
-            type: states.EXIT,
+            type: states.INDEX,
             dotPath,
             acc,
             attributes
         }
         
-        // SKIPPING WILDCARD state
-        if(indexIsWildcard) {
+        // Determine state type based on conditions
+        if(isWildcardTarget) {
             state.type = states.SKIPPING_WILDCARD
             return state
         }
 
-        // INDEX state
-        if(attributesIndexValid || attributesArrayOrObject)  {
+        if(isValidPrimitiveAccess || isAttributeComplex)  {
             state.type = states.INDEX
             return state
         }
 
-        // WILDCARD state
-        if(previousIsWildcard && attributesArrayOrObject) {
+        if(isPreviousWildcard && isAttributeComplex) {
             state.type = states.WILDCARD
             return state
         }
 
-        // NEXT state
-        if(nextIndex) {
-            state.type = states.NEXT
-            return state
-        }
-        
         return state
     }
 
