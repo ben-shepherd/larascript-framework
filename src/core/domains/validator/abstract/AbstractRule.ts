@@ -1,4 +1,3 @@
-import DotNotationParser from "@src/core/util/data/DotNotationParser";
 import forceString from "@src/core/util/str/forceString";
 
 import { logger } from "../../logger/services/LoggerService";
@@ -21,6 +20,7 @@ abstract class AbstractRule<TOptions extends object = object> {
     /** Default error message if error template processing fails */
     protected defaultError: string = 'This field is invalid.'
 
+
     /** Configuration options for the rule */
     protected options: TOptions = {} as TOptions
 
@@ -33,11 +33,13 @@ abstract class AbstractRule<TOptions extends object = object> {
     /** Dot notation path to the field being validated (e.g. "users.*.name") */
     protected path!: string;
 
+
     /**
      * Tests if the current data value passes the validation rule
      * @returns True if validation passes, false if it fails
      */
-    public abstract test(): boolean;
+    public abstract test(): Promise<boolean>;
+
 
     /**
      * Gets the validation error details if validation fails
@@ -57,26 +59,23 @@ abstract class AbstractRule<TOptions extends object = object> {
 
      * @returns True if validation passes, false if it fails
      */
-    public validate(): boolean {
-        if(this.validatableAsArray()) {
-            return this.arrayTests()
-        }
-
-        return this.test()
+    public async validate(): Promise<boolean> {
+        return await this.test()
     }
 
     /**
      * Validates an array of data by testing each item individually
      * @returns True if all items pass validation, false if any fail
+     * @deprecated Unsure if this is needed
      */
-    protected arrayTests(): boolean {
+    protected async arrayTests(): Promise<boolean> {
         const data = this.getData()
 
         if(Array.isArray(data)) {
             for(const item of data) {
                 this.setData(item)
 
-                if(!this.test()) {
+                if(!await this.test()) {
                     return false
                 }
             }
@@ -90,11 +89,10 @@ abstract class AbstractRule<TOptions extends object = object> {
      * Checks if the rule should be validated as an array
      * By checking if the last part of the path contains a wildcard (*)
      * @returns True if the rule should be validated as an array, false otherwise
+     * @deprecated Unsure if this is needed
      */
     protected validatableAsArray(): boolean {
-        const parts = DotNotationParser.parse(this.getPath()).getParts()
-        const secondToLastPart = parts[parts.length - 2] ?? null
-        return secondToLastPart?.includes('*')
+        return false
     }
 
     /**

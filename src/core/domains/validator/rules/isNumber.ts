@@ -8,9 +8,12 @@ class IsNumber extends AbstractRule implements IRule {
 
     protected errorTemplate: string = 'The :attribute field must be a number.';
 
-    public test(): boolean {
+    protected testArrayItems: boolean = true
+
+    public async test(): Promise<boolean> {
         return typeof this.getData() === 'number'
     }
+
 
     public getError(): IRuleError {
         return {

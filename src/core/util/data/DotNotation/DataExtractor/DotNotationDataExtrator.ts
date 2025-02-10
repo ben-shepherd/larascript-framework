@@ -1,6 +1,7 @@
-import DotNotationParser from "./DotNotationParser";
+import DotNotationParser from "../Parser/DotNotationParser";
 
 type TStateName = 'INDEX' | 'WILDCARD' | 'SKIPPING_WILDCARD';
+
 
 type TState = {
     type: TStateName | null,

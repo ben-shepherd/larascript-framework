@@ -1,6 +1,6 @@
  
 import { describe, expect, test } from '@jest/globals';
-import DotNotationParser from '@src/core/util/data/DotNotationParser';
+import DotNotationParser from '@src/core/util/data/DotNotation/Parser/DotNotationParser';
 
 describe('DotNotationParser', () => {
     

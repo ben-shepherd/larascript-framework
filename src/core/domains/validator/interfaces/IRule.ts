@@ -18,7 +18,7 @@ export interface IRule {
     getPath(): string
     setData(data: unknown): this
     setAttributes(attributes: unknown): this
-    validate(): boolean
+    validate(): Promise<boolean>
     getError(): IRuleError
     getName(): string
 

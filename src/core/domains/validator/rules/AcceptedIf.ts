@@ -21,7 +21,7 @@ class AcceptedIf extends AbstractRule<AcceptedIfOptions> implements IRule {
         this.options.value = value
     }
 
-    public test(): boolean {
+    public async test(): Promise<boolean> {
         const {
             anotherField,
             value: expectedValue

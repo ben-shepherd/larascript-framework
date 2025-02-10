@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 
-import DotNotationDataExtrator from '../../core/util/data/DotNotationDataExtrator';
+import DotNotationDataExtrator from '../../../core/util/data/DotNotation/DataExtractor/DotNotationDataExtrator';
 
 describe('DotNotationDataExtractor', () => {
     test('should extract simple key value', () => {

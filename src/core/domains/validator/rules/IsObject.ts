@@ -2,13 +2,13 @@
 import AbstractRule from "../abstract/AbstractRule";
 import { IRule, IRuleError } from "../interfaces/IRule";
 
-class IsString extends AbstractRule implements IRule {
+class isObject extends AbstractRule implements IRule {
 
     protected name: string = 'object'
 
     protected errorTemplate: string = 'The :attribute field must be an object.';
 
-    public test(): boolean {
+    public async test(): Promise<boolean> {
         return typeof this.getData() === 'object'
     }
 
@@ -21,4 +21,4 @@ class IsString extends AbstractRule implements IRule {
 }
 
 
-export default IsString;
+export default isObject;
