@@ -3,6 +3,7 @@ import HttpContext from "@src/core/domains/http/context/HttpContext";
 import { IExpressable } from "@src/core/domains/http/interfaces/IExpressable";
 import { NextFunction, Request, Response } from "express";
 
+
 /**
  * Represents a callback function that can be used to validate a security rule.
  * This type defines a function that:
@@ -58,6 +59,7 @@ export type TExpressMiddlewareFnOrClass = TExpressMiddlewareFn | MiddlewareConst
  * @returns A Promise that resolves to void or void directly
  */
 export type TExpressMiddlewareFn = (req: Request, res: Response, next?: NextFunction, ...args: any[]) => Promise<void> | void;
+
 
 /**
  * Represents a callback function that can be used to validate a security rule.

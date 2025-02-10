@@ -1,14 +1,16 @@
 import RouteException from '@src/core/domains/express/exceptions/RouteException';
+import Controller from '@src/core/domains/http/base/Controller';
+import Middleware from '@src/core/domains/http/base/Middleware';
 import HttpContext from '@src/core/domains/http/context/HttpContext';
+import { ControllerConstructor } from '@src/core/domains/http/interfaces/IController';
+import IExpressConfig from '@src/core/domains/http/interfaces/IHttpConfig';
 import { MiddlewareConstructor, TExpressMiddlewareFn, TExpressMiddlewareFnOrClass } from '@src/core/domains/http/interfaces/IMiddleware';
 import { IRouter, TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
 import MiddlewareUtil from '@src/core/domains/http/utils/middlewareUtil';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
 import expressClient from 'express';
-import Controller from '@src/core/domains/http/base/Controller';
-import Middleware from '@src/core/domains/http/base/Middleware';
-import { ControllerConstructor } from '@src/core/domains/http/interfaces/IController';
-import IExpressConfig from '@src/core/domains/http/interfaces/IHttpConfig';
+
+import { TBaseRequest } from '../interfaces/BaseRequest';
 
 // eslint-disable-next-line no-unused-vars
 type ExecuteFn = (context: HttpContext) => Promise<void>;
@@ -219,7 +221,7 @@ class RouterBindService {
      */
     protected createExpressMiddlewareFn(executeFn: ExecuteFn, routeItem: TRouteItem): TExpressMiddlewareFn {
         return async (req: expressClient.Request, res: expressClient.Response, next: expressClient.NextFunction | undefined) => {
-            await executeFn(new HttpContext(req, res, next, routeItem))
+            await executeFn(new HttpContext(req as TBaseRequest, res, next, routeItem))
         }
     }
 
