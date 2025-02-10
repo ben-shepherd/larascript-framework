@@ -9,6 +9,7 @@ export type DotNotationParserOptions = {
     /** The current index/key being accessed */
     index?: string | number;
 
+    /** The previous index/key in a nested path */
     previousIndex?: string | number;
 
     /** The next index/key in a nested path */
@@ -83,7 +84,8 @@ class DotNotationParser {
 
         current.appendOptions({
             index: this.parseIndex(path),
-            parts: [path]
+            parts: [path],
+            rest: undefined
         })
 
         return current
@@ -162,6 +164,10 @@ class DotNotationParser {
         return this.options.parts[1]
     }
 
+    /**
+     * Gets the previous index from the parser options
+     * @returns The previous index as a string or number
+     */
     public getPrevious(): string | number | undefined {
         return this.options.previousIndex
     }
@@ -193,19 +199,35 @@ class DotNotationParser {
         return this.options.parts
     }
 
-    public getPath(): string {
+    /**
+     * Gets the full path
+     * @returns The full path
+     * @throws Error if path is not defined
+     */
+    public getFullPath(): string {
         if(typeof this.options.path === 'undefined') {
             throw new DotNotationParserException('path is not defined')
         }
         return this.options.path
     }
 
+    /**
+     * Gets the options
+     * @returns The options
+     */
+
     public getOptions(): DotNotationParserOptions {
         return this.options
     }
 
+    /**
+     * Moves the parser forward by a specified number of steps
+     * @param steps - The number of steps to move forward
+     * @returns The updated DotNotationParser instance
+     */
     public forward(steps: number = 1): DotNotationParser {
         let current = new DotNotationParser().parse(this.options.path)
+
 
         for(let i = 0; i < steps; i++) {
             if(typeof current.getRest() === 'undefined') {

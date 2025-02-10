@@ -109,7 +109,7 @@ class DataExtractorOne {
 
         console.log('[recursiveReducer] debug', {
             dotPath: {
-                path: dotPath.getPath(),
+                path: dotPath.getFullPath(),
                 next: dotPath.getNext(),
                 rest: dotPath.getRest()
             },
