@@ -33,13 +33,11 @@ abstract class AbstractRule<TOptions extends object = object> {
     /** Dot notation path to the field being validated (e.g. "users.*.name") */
     protected path!: string;
 
-
     /**
      * Tests if the current data value passes the validation rule
      * @returns True if validation passes, false if it fails
      */
     public abstract test(): Promise<boolean>;
-
 
     /**
      * Gets the validation error details if validation fails
@@ -61,38 +59,6 @@ abstract class AbstractRule<TOptions extends object = object> {
      */
     public async validate(): Promise<boolean> {
         return await this.test()
-    }
-
-    /**
-     * Validates an array of data by testing each item individually
-     * @returns True if all items pass validation, false if any fail
-     * @deprecated Unsure if this is needed
-     */
-    protected async arrayTests(): Promise<boolean> {
-        const data = this.getData()
-
-        if(Array.isArray(data)) {
-            for(const item of data) {
-                this.setData(item)
-
-                if(!await this.test()) {
-                    return false
-                }
-            }
-            return true // Return true if all items passed
-        }
-
-        return false // Return false for non-array data
-    }
-
-    /**
-     * Checks if the rule should be validated as an array
-     * By checking if the last part of the path contains a wildcard (*)
-     * @returns True if the rule should be validated as an array, false otherwise
-     * @deprecated Unsure if this is needed
-     */
-    protected validatableAsArray(): boolean {
-        return false
     }
 
     /**
