@@ -1,6 +1,5 @@
 import forceString from "@src/core/util/str/forceString";
 
-import { logger } from "../../logger/services/LoggerService";
 import { IRuleError } from "../interfaces/IRule";
 
 /**
@@ -20,7 +19,6 @@ abstract class AbstractRule<TOptions extends object = object> {
     /** Default error message if error template processing fails */
     protected defaultError: string = 'This field is invalid.'
 
-
     /** Configuration options for the rule */
     protected options: TOptions = {} as TOptions
 
@@ -33,6 +31,9 @@ abstract class AbstractRule<TOptions extends object = object> {
     /** Dot notation path to the field being validated (e.g. "users.*.name") */
     protected path!: string;
 
+    /** Overridable error message for the rule, undefined by default */
+    protected errorMessage?: string = undefined
+
     /**
      * Tests if the current data value passes the validation rule
      * @returns True if validation passes, false if it fails
@@ -41,14 +42,7 @@ abstract class AbstractRule<TOptions extends object = object> {
 
     /**
      * Validates the data against the rule
-     * If the last part of the path contains a wildcard (*), validates each item in the array
-     * Otherwise validates the single value
      * 
-     * For example:
-     * - For path "users.*.name", validates name field for each user
-     * - For path "email", validates single email value
-     * 
-
      * @returns True if validation passes, false if it fails
      */
     public async validate(): Promise<boolean> {
@@ -150,37 +144,30 @@ abstract class AbstractRule<TOptions extends object = object> {
      */
     public getError(): IRuleError {
         return {
-            [this.getPath()]: this.formatErrorMessage()
+            [this.getPath()]: this.errorMessage ?? this.formatErrorMessage()
         }
     }
 
     /**
      * Builds an error message by replacing placeholders in the error template
-     * @param replace - Object containing key-value pairs to replace in the template
+     * 
+     * @param replacer - Object containing key-value pairs to replace in the template
+     * @param error - The error template string
      * @returns The formatted error message
      */
-    protected formatErrorMessage(replace?: Record<string, unknown>): string {
-        try {
-
-            let error = this.errorTemplate.replace(':attribute', this.getPath())
-
-            if (!replace) {
-                return error
-            }
-
-            for (const [key, value] of Object.entries(replace)) {
-                error = error.replace(`:${key}`, forceString(value))
-            }
-
-
-            return error
+    protected formatErrorMessage(replacer: Record<string, unknown> = {}, error: string = this.errorTemplate): string {
+        // Add attributes to replacer if it doesn't exist
+        if(!replacer['attribute']) {
+            replacer.attribute = this.getPath()
         }
-        catch (err) {
-            logger().exception(err as Error)
-            return this.defaultError
+
+        // Replace placeholders in the error template
+        for (const [key, value] of Object.entries(replacer)) {
+            error = error.replace(`:${key}`, forceString(value))
         }
+
+        return error
     }
-
 
 }
 

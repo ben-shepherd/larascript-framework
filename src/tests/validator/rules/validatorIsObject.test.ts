@@ -29,4 +29,30 @@ describe('test validation', () => {
         expect(result.passes()).toBe(false)
     })
 
+    test('required properties should pass', async () => {
+        const validator = Validator.make({
+            data: [new IsObject(['name', 'age'])]
+        })
+
+
+        const result = await validator.validate({ 
+            data: { name: 'John', age: 30 }
+        })
+        expect(result.passes()).toBe(true)
+    })
+    
+    test('required properties should fail', async () => {
+        const validator = Validator.make({
+            data: [new IsObject(['name', 'age', 'id'])]
+        })
+
+        const result = await validator.validate({ 
+            data: { name: 'John', age: 30 }
+        })
+        expect(result.passes()).toBe(false)
+        expect(result.errors()).toEqual({
+            data: 'The data field must contain the following properties: name, age, id.'
+        })
+
+    })
 });

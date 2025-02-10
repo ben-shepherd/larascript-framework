@@ -81,4 +81,5 @@ describe('test validation', () => {
             data: 'The data field must be an array.'
         })
     })
+
 })

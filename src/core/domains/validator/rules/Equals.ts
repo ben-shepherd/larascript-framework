@@ -1,6 +1,6 @@
 
 import AbstractRule from "../abstract/AbstractRule";
-import { IRule } from "../interfaces/IRule";
+import { IRule, IRuleError } from "../interfaces/IRule";
 
 class Equals extends AbstractRule implements IRule {
 
@@ -17,6 +17,14 @@ class Equals extends AbstractRule implements IRule {
 
     public async test(): Promise<boolean> {
         return this.getData() === this.matches
+    }
+
+    getError(): IRuleError {
+        return {
+            [this.getPath()]: this.formatErrorMessage({
+                matches: this.matches
+            })
+        }
     }
 
 }
