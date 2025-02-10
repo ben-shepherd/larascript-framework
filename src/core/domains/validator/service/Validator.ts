@@ -1,4 +1,4 @@
-import DataExtractor from "@src/core/util/data/DataExtractor";
+import DataExtractorOne from "@src/core/util/data/DataExtractorOne";
 
 import ValidatorResult from "../data/ValidatorResult";
 import { IRule, IRulesObject } from "../interfaces/IRule";
@@ -40,7 +40,7 @@ class Validator  implements IValidator {
         // Extract only the data fields that have validation rules defined
         // This ensures we only validate fields that have rules and maintains
         // the nested structure (e.g. users.0.name) for proper validation
-        const extractedData = DataExtractor.reduce(attributes, this.rules);
+        const extractedData = DataExtractorOne.reduce(attributes, this.rules);
 
         // Validate each field with its corresponding rule
         for (const path of Object.keys(this.rules)) {

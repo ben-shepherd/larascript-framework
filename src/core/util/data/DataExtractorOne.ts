@@ -42,7 +42,7 @@ export type TData = Record<string | number, unknown>
  * ```
 
  */
-class DataExtractor {
+class DataExtractorOne {
 
     /**
      * Static factory method to create and initialize a DataExtractor instance
@@ -51,7 +51,7 @@ class DataExtractor {
      * @returns Extracted data based on the provided rules
      */
     public static reduce(attributes: TData, paths: TPathsObject): TPathsObject {
-        return new DataExtractor().init(paths, attributes)
+        return new DataExtractorOne().init(paths, attributes)
     }
 
     /**
@@ -62,9 +62,11 @@ class DataExtractor {
      */
     init(paths: TPathsObject, attributes: object): TPathsObject {
         return Object.keys(paths).reduce((acc, path) => {
+            const dotPath = DotNotationParser.parse(path)
+
             return {
                 ...acc,
-                [path]: this.recursiveReducer(path, acc, path, attributes) as object
+                [path]: this.recursiveReducer(dotPath, acc, attributes) as object
             }
         }, {}) as TPathsObject
     }
@@ -85,22 +87,120 @@ class DataExtractor {
      * @param attributes - Original source data object
      * @returns Updated accumulator with extracted data
      */
-    protected recursiveReducer(key: string, acc: object | unknown[], curr: unknown, attributes: object): unknown {
+    protected recursiveReducer(dotPath: DotNotationParser, acc: object | unknown[], attributes: object): unknown {
 
-        const parsedPath = DotNotationParser.parse(key)
-        const containsNestedIndex = parsedPath.isNestedIndex()
+        const firstIndex = dotPath.getFirst()
+        const firstIndexValue = attributes[firstIndex]
+        const firstIndexNotUndefined = typeof firstIndexValue !== 'undefined'
+        const firstIndexValueIterable = Array.isArray(firstIndexValue)
+        const firstIndexIsWildcard = dotPath.getFirst() === '*'
 
-        // If the path contains a nested index, reduce the nested indexes
-        if (containsNestedIndex) {
-            acc = this.reduceNestedIndexes(parsedPath, acc, attributes) as object | unknown[]
+        const nextIndex = dotPath.getNext()
+        const nextIndexValue = nextIndex ? attributes[firstIndex]?.[nextIndex] :undefined
+        const nextIndexValueNotUndefined = typeof nextIndexValue !== 'undefined'
+        const nextIndexValueIterable = Array.isArray(nextIndexValue)
+        const hasNextIndex = typeof dotPath.getNext() !== 'undefined';
+
+        const rest = dotPath.getRest()
+
+        const attributesisArray = Array.isArray(attributes)
+        const attributesisObject = !attributesisArray && typeof attributes === 'object'
+        const attributesArrayOrObject = attributesisArray || attributesisObject
+
+        console.log('[recursiveReducer] debug', {
+            dotPath: {
+                path: dotPath.getPath(),
+                next: dotPath.getNext(),
+                rest: dotPath.getRest()
+            },
+            first: {
+                value: firstIndexValue,
+                iterable: firstIndexValueIterable,
+                wildcard: firstIndexIsWildcard
+            },
+            next: {
+                value: nextIndexValue,
+                iterable: nextIndexValueIterable
+            },
+            attributes: attributes,
+            acc: acc,
+        })
+
+        if(attributesisArray && firstIndexIsWildcard) {
+            if(hasNextIndex) {
+                acc = [] as unknown[]
+
+                (attributes as unknown[]).forEach((attributeItem) => {
+                    const reducedAttributeItem = this.recursiveReducer(DotNotationParser.parse(nextIndex as string), attributeItem as object | unknown[], attributeItem as object)
+
+                    acc = [
+                        ...(acc as unknown[]),
+                        reducedAttributeItem
+                    ]
+                })
+            }
+
+            else {
+                acc = (attributes as unknown[]).map((attributesisArrayItem) => {
+                    return attributesisArrayItem
+                })
+            }
+
+            attributes = [...(acc as unknown[])]
+            dotPath.forward()
+
+            return this.recursiveReducer(dotPath, acc, attributes)
         }
-        // If the path contains a non-nested index, reduce the index
-        else if (containsNestedIndex === false) {
-            acc = this.reduceIndex(parsedPath, acc, attributes) as object | unknown[]
+
+
+        if(typeof firstIndexValue !== 'undefined') {
+            acc = {
+                [firstIndex]: firstIndexValue
+            }
+            attributes = attributes[firstIndex]
+        }
+
+        if(!firstIndexIsWildcard && attributesisArray && hasNextIndex) {
+            acc = [
+                ...(attributes as unknown[]).map((attributesItem) => {
+                    return this.recursiveReducer(DotNotationParser.parse(nextIndex as string), attributesItem as object | unknown[], attributesItem as object)
+
+                })
+            ]
+
+            attributes = [...(firstIndexValue as unknown[])]
+        }
+
+        if(firstIndexIsWildcard) {
+            acc = firstIndexValue
+            attributes = firstIndexValue
+            dotPath.forward()
+            return this.recursiveReducer(dotPath, acc, attributes)
         }
 
 
-        return acc
+        if(firstIndexIsWildcard && hasNextIndex && (nextIndexValueNotUndefined || nextIndexValueNotUndefined)) {
+            if(firstIndexValueIterable) {
+                acc = firstIndexValue.map((firstIndexValueItem) => {
+                    return firstIndexValueItem?.[nextIndex as string] 
+                })
+                attributes = [...(acc as unknown[])]
+            }
+            else {
+                acc = {
+                    [firstIndex]: firstIndexValue
+                }
+                attributes = attributes[firstIndex]
+            }
+        }
+
+        dotPath.forward()
+
+        if(acc[firstIndex]) {
+            return acc
+        }
+
+        return this.recursiveReducer(dotPath, acc[firstIndex], attributes)
     }
 
     /**
@@ -146,8 +246,8 @@ class DataExtractor {
         // currentIndex = "users"
         // nextIndex = "0" 
         // rest = "name"
-        const currentIndex = parsedPath.getIndex()
-        const nextIndex = parsedPath.getNextIndex()
+        const currentIndex = parsedPath.getFirst()
+        const nextIndex = parsedPath.getNext()
         const rest = parsedPath.getRest()
 
         // Example: attributes = [{ name: "John" }, { name: "Jane" }]
@@ -155,26 +255,8 @@ class DataExtractor {
         // isObject = true
         const isArray = Array.isArray(attributes)
         const isObject = !isArray && typeof attributes === 'object'
+        const arrayOrObject = isArray || isObject
         
-        // This block handles wildcard paths like "users.*.name"
-        // When a wildcard (*) is encountered:
-        // 1. Parse the remaining path after the wildcard (e.g. "name")
-        // 2. Initialize an empty array at the current index (e.g. users: [])
-        // 3. Recursively process each item in the array at attributes[currentIndex]
-        // For example, with data {users: [{name: "John"}, {name: "Jane"}]} 
-        // and path "users.*.name", this will extract all user names into an array
-        if (parsedPath.isAll()) {
-            const allParsedPath = DotNotationParser.parse(rest)
-            const allNextPath = allParsedPath.getNextIndex()
-
-            acc = {
-                ...acc,
-                [currentIndex]: []
-            }
-
-            return this.recursiveReducer(allNextPath.toString(), acc[currentIndex], attributes[currentIndex], attributes[currentIndex])
-        }
-
         // If the current index is undefined, return the accumulator as is
         if (attributes[currentIndex] === undefined) {
             return acc
@@ -207,39 +289,12 @@ class DataExtractor {
             }
         }
 
-        // Recursively reduce the rest of the path
-        return this.recursiveReducer(rest, acc[currentIndex], attributes[currentIndex][nextIndex], attributes[currentIndex])
-
-
-    }
-
-    /**
-     * Handles wildcard paths ("users.*") by extracting all items at the current index
-     * 
-     * For example, with data like: { users: [{ name: "John" }, { name: "Jane" }] }
-     * And rule key like: "users.*"
-     * This method will extract all items at the users index
-     * 
-     * @param parsedPath - The parsed validation rule key
-     * @param acc - The accumulator object being built up
-     * @param attributes - The original data object being validated
-     * @returns The updated accumulator with validated data from the wildcard path
-     */
-    protected reduceAll(parsedPath: DotNotationParser, acc: object, attributes: object) {
-        if (!parsedPath.isAll()) {
-            return acc;
+        if(typeof rest === 'undefined') {
+            return acc
         }
 
-        const index = parsedPath.getIndex()
-        const nextIndex = parsedPath.getNextIndexSafe()
-        const allParsedPath = DotNotationParser.parse(parsedPath.getRest())
-
-        acc = {
-            ...acc,
-            [index]: []
-        }
-
-        return this.recursiveReducer(allParsedPath.getRest(), acc[index], attributes[index], attributes[index])
+        // Recursively reduce the rest of the path 
+        return this.recursiveReducer(DotNotationParser.parse(rest), acc[currentIndex], attributes[currentIndex])
 
     }
 
@@ -259,4 +314,4 @@ class DataExtractor {
 
 }
 
-export default DataExtractor
+export default DataExtractorOne
