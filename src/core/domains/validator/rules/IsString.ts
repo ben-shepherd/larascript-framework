@@ -7,18 +7,22 @@ class IsString extends AbstractRule implements IRule {
     protected name: string = 'string'
 
     protected errorTemplate: string = 'The :attribute field must be a string.';
+ 
+    public async test(): Promise<boolean> {
 
-    public validate(): boolean {
-        const value = this.getData()
-        return typeof value === 'string'
+        if(Array.isArray(this.getData())) {
+            return (this.getData() as unknown[]).every(item => typeof item === 'string')
+        }
+
+        return typeof this.getData() === 'string'
+
     }
 
     public getError(): IRuleError {
         return {
-            [this.field]: this.buildError()
+            [this.getPath()]: this.buildError()
         }
     }
-
 
 }
 

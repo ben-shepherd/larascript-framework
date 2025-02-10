@@ -14,12 +14,14 @@ export interface IRuleError {
 
 
 export interface IRule {
-    setField(field: string): this
+    setPath(field: string): this
+    getPath(): string
     setData(data: unknown): this
     setAttributes(attributes: unknown): this
-    validate(): boolean
+    validate(): Promise<boolean>
     getError(): IRuleError
     getName(): string
+
 
 
 

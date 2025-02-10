@@ -1,4 +1,4 @@
-import DataExtractor from "@src/core/util/data/DataExtractor";
+import DotNotationDataExtrator from "@src/core/util/data/DotNotation/DataExtractor/DotNotationDataExtrator";
 
 import ValidatorResult from "../data/ValidatorResult";
 import { IRule, IRulesObject } from "../interfaces/IRule";
@@ -40,7 +40,12 @@ class Validator  implements IValidator {
         // Extract only the data fields that have validation rules defined
         // This ensures we only validate fields that have rules and maintains
         // the nested structure (e.g. users.0.name) for proper validation
-        const extractedData = DataExtractor.reduce(attributes, this.rules);
+        // Example Structure:
+        // {
+        //     "users.*": [...],
+        //     "users.*.name": ["John", "Jane"  ]
+        // }
+        const extractedData = this.extractData(attributes);
 
         // Validate each field with its corresponding rule
         for (const path of Object.keys(this.rules)) {
@@ -60,17 +65,27 @@ class Validator  implements IValidator {
         return ValidatorResult.passes<T>();
     }
 
+    protected extractData(attributes: IValidatorAttributes): Record<string, unknown> {
+        const result = DotNotationDataExtrator.reduceMany(attributes, Object.keys(this.rules));
+
+        return Object.keys(result).reduce((acc, key) => {
+            acc[key] = result[key];
+            return acc;
+        }, {} as Record<string, unknown>);
+    }
+
+
     /**
      * Validates an array of rules for a given path and attributes
      * @param path - The path of the field being validated
      * @param rules - The array of rules to validate
      * @param attributes - The attributes to validate against
+
      * @returns A promise resolving to the validation result
      */
     protected async validateRulesArray(path: string, rules: IRule[], data: unknown, attributes: unknown): Promise<IValidatorResult> {
         for (const rule of rules) {
-            const result = this.validateRule(path, rule, data, attributes);
-
+            const result = await this.validateRule(path, rule, data, attributes);
 
             if (result.fails()) {
                 this._errors = {
@@ -92,12 +107,13 @@ class Validator  implements IValidator {
      * @param data - The attributes to validate against
      * @returns A promise resolving to the validation result
      */
-    protected validateRule(key: string, rule: IRule, data: unknown, attributes: unknown): IValidatorResult {
+    protected async validateRule(key: string, rule: IRule, data: unknown, attributes: unknown): Promise<IValidatorResult> {
 
-        rule.setField(key)
+        rule.setPath(key)
         rule.setData(data)
         rule.setAttributes(attributes)
-        const passes = rule.validate();
+        const passes = await rule.validate();
+
 
         console.log('[Validator] validateRule', {
             key,
