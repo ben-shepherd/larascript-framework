@@ -51,9 +51,10 @@ class DotNotationParser {
      * @param path - The path to parse
      * @returns A new DotNotationParser instance with parsed options
      */
-    public static parse(path: string) {
-        return new DotNotationParser().parse(path)
+    public static parse(path: string, previousIndex?: string | number) {
+        return new DotNotationParser().parse(path, previousIndex)
     }
+
 
     /**
      * Constructor for DotNotationParser
@@ -72,20 +73,16 @@ class DotNotationParser {
      */
     public parse(path: string, previousIndex?: string | number): DotNotationParser {
         const current = new DotNotationParser()
+        const parts = path.split('.')
+        const rest = parts.length > 1 ? [...parts].splice(1).join('.') : undefined
 
         current.appendOptions({
-            previousIndex,
-            path: path
-        })
-
-        if(path.includes('.')) {
-            return this.parseNextIndex(path, current)
-        }
-
-        current.appendOptions({
-            index: this.parseIndex(path),
-            parts: [path],
-            rest: undefined
+            path,
+            previousIndex: previousIndex ? this.parseDataType(previousIndex as string) : undefined,
+            index: this.parseDataType(parts[0]),
+            nextIndex: parts[1] ? this.parseDataType(parts[1]) : undefined,
+            parts,
+            rest
         })
 
         return current
@@ -96,7 +93,7 @@ class DotNotationParser {
      * @param value - The value to parse
      * @returns The parsed index as either a number or string
      */
-    protected parseIndex(value: string): string | number {
+    protected parseDataType(value: string): string | number {
         if(isNaN(Number(value))) {
             return value
         }
@@ -145,11 +142,12 @@ class DotNotationParser {
      * @throws Error if index is not defined
      */
     public getFirst(): string | number {
-        if(typeof this.options?.parts?.[0] === 'undefined') {
+        if(typeof this.options.index === 'undefined') {
             throw new DotNotationParserException('first is not defined')
         }
-        return this.options.parts[0]
+        return this.options.index
     }
+
 
 
     protected getNth(index: number): string | undefined  {
