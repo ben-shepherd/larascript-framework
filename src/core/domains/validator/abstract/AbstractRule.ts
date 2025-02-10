@@ -40,12 +40,6 @@ abstract class AbstractRule<TOptions extends object = object> {
     public abstract test(): Promise<boolean>;
 
     /**
-     * Gets the validation error details if validation fails
-     * @returns Object containing error information
-     */
-    public abstract getError(): IRuleError;
-    
-    /**
      * Validates the data against the rule
      * If the last part of the path contains a wildcard (*), validates each item in the array
      * Otherwise validates the single value
@@ -149,13 +143,23 @@ abstract class AbstractRule<TOptions extends object = object> {
     public getPath(): string {
         return this.path
     }
+    
+    /**
+     * Gets the error message for the rule
+     * @returns The error message
+     */
+    public getError(): IRuleError {
+        return {
+            [this.getPath()]: this.formatErrorMessage()
+        }
+    }
 
     /**
      * Builds an error message by replacing placeholders in the error template
      * @param replace - Object containing key-value pairs to replace in the template
      * @returns The formatted error message
      */
-    protected buildError(replace?: Record<string, unknown>): string {
+    protected formatErrorMessage(replace?: Record<string, unknown>): string {
         try {
 
             let error = this.errorTemplate.replace(':attribute', this.getPath())

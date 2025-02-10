@@ -1,6 +1,6 @@
 
 import AbstractRule from "../abstract/AbstractRule";
-import { IRule, IRuleError } from "../interfaces/IRule";
+import { IRule } from "../interfaces/IRule";
 
 class isObject extends AbstractRule implements IRule {
 
@@ -10,12 +10,6 @@ class isObject extends AbstractRule implements IRule {
 
     public async test(): Promise<boolean> {
         return typeof this.getData() === 'object'
-    }
-
-    public getError(): IRuleError {
-        return {
-            [this.getPath()]: this.buildError()
-        }
     }
 
 }

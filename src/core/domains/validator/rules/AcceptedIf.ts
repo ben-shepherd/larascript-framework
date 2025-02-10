@@ -38,17 +38,14 @@ class AcceptedIf extends AbstractRule<AcceptedIfOptions> implements IRule {
         return isTruthy(mainFieldValue)
     }
 
-
     getError(): IRuleError {
         return {
-            [this.getPath()]: this.buildError({
+            [this.getPath()]: this.formatErrorMessage({
                 another: this.options.anotherField,
                 value: this.options.value
             })
         }
     }
-
-
 
 }
 

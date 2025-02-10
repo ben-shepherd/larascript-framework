@@ -1,6 +1,6 @@
 
 import AbstractRule from "../abstract/AbstractRule";
-import { IRule, IRuleError } from "../interfaces/IRule";
+import { IRule } from "../interfaces/IRule";
 import isTruthy from "../utils/isTruthy";
 
 class Accepted extends AbstractRule implements IRule {
@@ -12,13 +12,6 @@ class Accepted extends AbstractRule implements IRule {
     public async test(): Promise<boolean> {
         return isTruthy(this.getData())
     }
-
-    public getError(): IRuleError {
-        return {
-            [this.getPath()]: this.buildError()
-        }
-    }
-
 
 }
 

@@ -1,6 +1,6 @@
 
 import AbstractRule from "../abstract/AbstractRule";
-import { IRule, IRuleError } from "../interfaces/IRule";
+import { IRule } from "../interfaces/IRule";
 
 class IsString extends AbstractRule implements IRule {
 
@@ -16,12 +16,6 @@ class IsString extends AbstractRule implements IRule {
 
         return typeof this.getData() === 'string'
 
-    }
-
-    public getError(): IRuleError {
-        return {
-            [this.getPath()]: this.buildError()
-        }
     }
 
 }

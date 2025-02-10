@@ -1,6 +1,6 @@
 
 import AbstractRule from "../abstract/AbstractRule";
-import { IRule, IRuleError } from "../interfaces/IRule";
+import { IRule } from "../interfaces/IRule";
 
 class IsArray extends AbstractRule implements IRule {
 
@@ -13,13 +13,6 @@ class IsArray extends AbstractRule implements IRule {
     public async test(): Promise<boolean> {
         return Array.isArray(this.getData())
     }
-
-    public getError(): IRuleError {
-        return {
-            [this.getPath()]: this.buildError()
-        }
-    }
-
 
 }
 
