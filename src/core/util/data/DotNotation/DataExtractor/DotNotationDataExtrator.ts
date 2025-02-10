@@ -1,6 +1,6 @@
 import DotNotationParser from "../Parser/DotNotationParser";
 
-type TStateName = 'INDEX' | 'WILDCARD' | 'SKIPPING_WILDCARD';
+type TStateName = 'REDUCABLE' | 'SKIP';
 
 
 type TState = {
@@ -11,10 +11,10 @@ type TState = {
 }
 
 const states: Record<TStateName, TStateName> = {
-    INDEX: 'INDEX',
-    WILDCARD: 'WILDCARD',
-    SKIPPING_WILDCARD: 'SKIPPING_WILDCARD',
+    REDUCABLE: 'REDUCABLE',
+    SKIP: 'SKIP',
 }
+
 
 type TDotNotationDataExtratorOptions = {
     paths: string[]
@@ -82,21 +82,14 @@ class DotNotationDataExtrator {
     reducer(path: string, acc: unknown, attributes: unknown, recursionLevel = 1) {
         const state = this.getState(path, acc, attributes)
 
-        // Process based on state type:
-        
-        // 1. Direct index access - reduce to specific target
-        if(state.type === states.INDEX) {
+        // 1. Reduce to specific target
+        if(state.type === states.REDUCABLE) {
             return this.reduceAttributes(state, recursionLevel)
         }
 
-        // 2. Skip current wildcard and process next segment
-        if(state.type === states.SKIPPING_WILDCARD) {
+        // 2. Skip current, forward to next segment
+        if(state.type === states.SKIP) {
             return this.reducer(state.dotPath.getRest() as string, state.acc, state.attributes, recursionLevel + 1)
-        }
-
-        // 3. Process wildcard expansion
-        if(state.type === states.WILDCARD) {
-            return this.reduceAttributes(state, recursionLevel)
         }
 
         return acc
@@ -218,40 +211,21 @@ class DotNotationDataExtrator {
      */
     protected getState(path: string, acc: unknown, attributes: unknown) {
         const dotPath = DotNotationParser.parse(path)
-
         const targetIndex = dotPath.getFirst()
-        const previousTargetIndex = dotPath.getPrevious()
 
         // Check target properties
-        const isWildcardTarget = targetIndex === '*'
-        const isPreviousWildcard = previousTargetIndex === '*'
-
-        // Check attribute types
-        const isAttributePrimitive = typeof attributes === 'string' || typeof attributes === 'number'
-        const isAttributeComplex = Array.isArray(attributes) || typeof attributes === 'object'
-        const hasTargetIndex = typeof attributes?.[targetIndex] !== 'undefined'
-        const isValidPrimitiveAccess = isAttributePrimitive && hasTargetIndex
+        const isTargetWildcard = targetIndex === '*'
 
         const state: TState = {
-            type: states.INDEX,
+            type: states.REDUCABLE,
             dotPath,
             acc,
             attributes
         }
         
         // Determine state type based on conditions
-        if(isWildcardTarget) {
-            state.type = states.SKIPPING_WILDCARD
-            return state
-        }
-
-        if(isValidPrimitiveAccess || isAttributeComplex)  {
-            state.type = states.INDEX
-            return state
-        }
-
-        if(isPreviousWildcard && isAttributeComplex) {
-            state.type = states.WILDCARD
+        if(isTargetWildcard) {
+            state.type = states.SKIP
             return state
         }
 
