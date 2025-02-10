@@ -15,7 +15,7 @@ class Equals extends AbstractRule implements IRule {
         this.matches = matches;
     }
 
-    public test(): boolean {
+    public async test(): Promise<boolean> {
         return this.getData() === this.matches
     }
 

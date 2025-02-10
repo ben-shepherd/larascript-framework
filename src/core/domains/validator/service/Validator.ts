@@ -114,17 +114,8 @@ class Validator  implements IValidator {
         rule.setAttributes(attributes)
         const passes = await rule.validate();
 
-
-        console.log('[Validator] validateRule', {
-            key,
-            rule,
-            attributes: data,
-            passes
-        })
-
         if (!passes) {
             return ValidatorResult.fails(rule.getError());
-
         }        
 
         return ValidatorResult.passes();

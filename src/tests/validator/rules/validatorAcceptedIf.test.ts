@@ -23,11 +23,6 @@ describe('test validation', () => {
             })
             const good = await goodValidator.validate(data)
 
-            console.log('[accepted if, good]', {
-                data,
-                passes: good.passes(),
-                errors: good.errors()
-            })
             expect(good.passes()).toBe(true);
             expect(Object.keys(good.errors() || {}).length).toBe(0);
         }
