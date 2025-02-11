@@ -3,6 +3,8 @@ import HttpContext from "@src/core/domains/http/context/HttpContext";
 import { IExpressable } from "@src/core/domains/http/interfaces/IExpressable";
 import { NextFunction, Request, Response } from "express";
 
+import { TRouteItem } from "./IRouter";
+
 
 /**
  * Represents a callback function that can be used to validate a security rule.
@@ -17,7 +19,7 @@ import { NextFunction, Request, Response } from "express";
  */
 export type MiddlewareConstructor = {
     new (...args: any[]): IMiddleware;
-    toExpressMiddleware(...args: any[]): TExpressMiddlewareFn;
+    toExpressMiddleware(config?: unknown, routeItem?: TRouteItem): TExpressMiddlewareFn;
 }
 
 /**
@@ -32,11 +34,14 @@ export type MiddlewareConstructor = {
  * This allows middleware to be defined as classes while still being compatible
  * with Express's middleware system through the toExpressMiddleware conversion.
  */
-export interface IMiddleware extends IExpressable<TExpressMiddlewareFn> {
+export interface IMiddleware<Config extends unknown = unknown> extends IExpressable<TExpressMiddlewareFn> {
+    config: Config;
     getContext(): HttpContext;
+    setConfig(config: Config): IMiddleware;
     execute(context: HttpContext): Promise<void>;
     next(): void;
 }
+
 
 /**
  * Represents either an Express middleware function or a middleware class constructor.

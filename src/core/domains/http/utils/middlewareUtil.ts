@@ -1,7 +1,7 @@
 
+import Middleware from '@src/core/domains/http/base/Middleware';
 import { MiddlewareConstructor, TExpressMiddlewareFn, TExpressMiddlewareFnOrClass } from '@src/core/domains/http/interfaces/IMiddleware';
 import { TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
-import Middleware from '@src/core/domains/http/base/Middleware';
 
 /**
  * Utility class for handling middleware conversions and transformations.
@@ -37,7 +37,7 @@ class MiddlewareUtil {
         // Convert middleware classes to middleware functions
         return middlewaresArray.map(middleware => {
             if(middleware.prototype instanceof Middleware) {
-                return (middleware as MiddlewareConstructor).toExpressMiddleware(routeItem)
+                return (middleware as MiddlewareConstructor).toExpressMiddleware(undefined, routeItem)
             }
 
             return middleware as TExpressMiddlewareFn

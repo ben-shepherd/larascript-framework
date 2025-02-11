@@ -42,7 +42,7 @@ abstract class Middleware<Config extends unknown = unknown> implements IMiddlewa
     /**
      * @type {Config}
      */
-    protected config!: Config;
+    config!: Config;
 
     /**
      * @type {HttpContext}
@@ -54,16 +54,26 @@ abstract class Middleware<Config extends unknown = unknown> implements IMiddlewa
      * Creates a new instance of this class and returns its Express middleware function,
      * allowing it to be used directly with Express's app.use() or route handlers.
      */
-    public static toExpressMiddleware(routeItem?: TRouteItem): TExpressMiddlewareFn {
-        return new (this as unknown as MiddlewareConstructor)().toExpressable(routeItem)
+    public static toExpressMiddleware<Middleware extends IMiddleware = IMiddleware>(config?: Middleware['config'], routeItem?: TRouteItem): TExpressMiddlewareFn {
+        const middleware = new (this as unknown as MiddlewareConstructor)()
+
+        if(typeof config !== 'undefined') {
+            middleware.setConfig(config)
+        }
+
+        return middleware.toExpressable(routeItem)
     }
+
+
 
     /**
      * @param {Config} config
      */
-    public setConfig(config: Config) {
+    public setConfig(config: Config): IMiddleware<Config> {
         this.config = config;
+        return this as unknown as IMiddleware<Config>;
     }
+
 
     /**
      * @returns {Config}
