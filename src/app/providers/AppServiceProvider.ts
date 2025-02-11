@@ -1,6 +1,6 @@
 import AppService from "@src/app/services/AppService";
 import BaseProvider from "@src/core/base/Provider";
-import { App } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 
 class AppServiceProvider extends BaseProvider {
 
@@ -8,7 +8,13 @@ class AppServiceProvider extends BaseProvider {
 
         // Register the AppService in the App container
         // Usage example: app('app').getConfig()
-        App.setContainer('app', new AppService(this.config));
+        this.bind('app', new AppService(this.config));
+    }
+
+    async boot(): Promise<void> {
+        
+        // Boot the app
+        await app('app').boot();
     }
 
 }
