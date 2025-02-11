@@ -63,21 +63,16 @@ class RequestContextCleaner extends Singleton {
             // If the TTL is not a number, skip this item
             if(typeof item.ttlSeconds !== 'number') continue;
 
-            // Check if the dates are in the past, remove them if true.
-            for(const date of item.value) {
+            // Calculate the expiration date
+            const expiresAt = new Date(item.createdAt.getTime() + item.ttlSeconds * 1000);
 
-                const expiresAt = new Date(date);
-                expiresAt.setSeconds(expiresAt.getSeconds() + item.ttlSeconds);
-
-                // Remove expired items
-                if(now > expiresAt) {
-                    ipContext.delete(key);
-                }
-
-                // Update size
-                context.set(ip, ipContext)
+            // Remove expired items
+            if(now > expiresAt) {
+                ipContext.delete(key);
             }
 
+            // Update size
+            context.set(ip, ipContext)
             // If the context is empty, remove it from the store
             if(context.size === 0) {
                 context.delete(ip)

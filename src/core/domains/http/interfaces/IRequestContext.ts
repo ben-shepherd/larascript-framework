@@ -3,7 +3,7 @@ import { TBaseRequest } from "@src/core/domains/http/interfaces/BaseRequest";
 
 export interface IRequestContextData extends Map<string, Map<string, unknown>> {}
 
-export type IPDatesArrayTTL<T = unknown> = { value: T; ttlSeconds: number | null };
+export type IPDatesArrayTTL<T = unknown> = { value: T; ttlSeconds: number | null; createdAt: Date };
 
 export type IPContextData<T = unknown> = Map<string, Map<string, IPDatesArrayTTL<T>>>;
 

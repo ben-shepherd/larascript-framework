@@ -95,7 +95,7 @@ class RateLimitedRule extends AbstractSecurityRule<TRateLimitedRuleOptions> {
      * @returns The current rate limited context value with the given id, or an empty array if none exists.
      */
     protected getIpContext(id: string, req: Request): IPDatesArrayTTL<Date[]> {
-        return requestContext().getByIpAddress<IPDatesArrayTTL<Date[]>>(req as TBaseRequest, id) || { value: [], ttlSeconds: null };
+        return requestContext().getByIpAddress<IPDatesArrayTTL<Date[]>>(req as TBaseRequest, id) || { value: [], ttlSeconds: null, createdAt: new Date() };
     }
 
     /**

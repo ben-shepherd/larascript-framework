@@ -1,6 +1,5 @@
 import IExpressConfig from '@src/core/domains/http/interfaces/IHttpConfig';
 import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
-import bodyParser from 'body-parser';
 import express from 'express';
 
 const config: IExpressConfig = {
@@ -20,7 +19,6 @@ const config: IExpressConfig = {
      */
     globalMiddlewares: [
         express.json(),
-        bodyParser.urlencoded({ extended: true }),
     ],
 
     /**

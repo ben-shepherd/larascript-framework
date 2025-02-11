@@ -99,6 +99,7 @@ class RequestContext extends Singleton implements IRequestContext {
         }
 
         this.ipContext.get(ip)!.set(key, {
+            createdAt: new Date(),
             value,
             ttlSeconds: ttlSeconds ?? null
         })

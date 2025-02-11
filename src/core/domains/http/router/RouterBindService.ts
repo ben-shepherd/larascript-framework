@@ -202,7 +202,7 @@ class RouterBindService {
         // Convert middleware classes to middleware functions
         return middlewaresArray.map(middlware => {
             if(middlware.prototype instanceof Middleware) {
-                return (middlware as MiddlewareConstructor).toExpressMiddleware({ routeItem })
+                return (middlware as MiddlewareConstructor).createExpressMiddleware({ routeItem })
             }
 
             return middlware as TExpressMiddlewareFn
