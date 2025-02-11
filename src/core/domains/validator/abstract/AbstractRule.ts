@@ -49,7 +49,13 @@ abstract class AbstractRule<TOptions extends object = object> {
      * @returns True if validation passes, false if it fails
      */
     public async validate(): Promise<boolean> {
-        return await this.test()
+        try {
+            return await this.test()
+        }
+        catch (error) {
+            this.errorMessage = (error as Error).message
+            return false
+        }
     }
 
     /**

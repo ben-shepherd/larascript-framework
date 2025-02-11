@@ -23,10 +23,6 @@ export interface IRule {
     getError(): IRuleError
     getCustomError(): IRuleError | undefined
     getName(): string
-
-
-
-
 }
 
 

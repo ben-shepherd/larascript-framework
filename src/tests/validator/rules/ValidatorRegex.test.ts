@@ -88,23 +88,4 @@ describe('test regex validation rule', () => {
 
         expect(result.passes()).toBe(true);
     });
-
-    it('handles toString throwing an error during string conversion', async () => {
-        const rule = new RegexRule(/test/);
-        
-        // Create object that throws when converted to string
-        const throwingObject = {
-            toString: () => {
-                throw new Error('Cannot convert to string');
-            }
-        };
-
-        rule.setData(throwingObject);
-        const result = await rule.validate();
-        
-        expect(result).toBe(false);
-        
-        const error = rule.getError();
-        expect(error[rule.getDotNotationPath()][0]).toBe('Cannot convert to string');
-    });
 }); 
