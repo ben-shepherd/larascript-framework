@@ -4,7 +4,7 @@ import { IRule } from "../interfaces/IRule";
 
 class IsBoolean extends AbstractRule implements IRule {
 
-    protected name: string = 'boolean'
+    protected name: string = 'is_boolean'
 
     protected errorTemplate: string = 'The :attribute field must be a boolean.';
 

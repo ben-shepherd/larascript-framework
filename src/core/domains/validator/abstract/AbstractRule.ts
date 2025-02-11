@@ -25,6 +25,9 @@ abstract class AbstractRule<TOptions extends object = object> {
     /** The value to validate */
     protected data: unknown = undefined
 
+    /** Custom messages for the rule */ 
+    protected messages: Record<string, string> = {};
+
     /** All attributes/fields being validated */
     protected attributes: unknown = undefined
 
@@ -68,6 +71,17 @@ abstract class AbstractRule<TOptions extends object = object> {
         this.data = data
         return this
     }
+    
+    /**
+     * Sets the custom messages for the rule
+     * @param messages - Object containing custom messages
+     * @returns this - For method chaining
+     */
+    public setMessages(messages: Record<string, string>): this {
+        this.messages = messages
+        return this
+    }
+
 
     /**
      * Gets the current value being validated
@@ -137,6 +151,22 @@ abstract class AbstractRule<TOptions extends object = object> {
     public getPath(): string {
         return this.path
     }
+
+    /**
+     * Gets the custom message for the rule
+     * @returns The custom message
+     */
+    public getCustomError(): IRuleError | undefined {
+        const key = `${this.getPath()}.${this.getName()}`
+        
+        if(this.messages[key]) {
+            return {
+                [this.getPath()]: [this.messages[key]]
+            }
+        }
+
+        return undefined
+    }
     
     /**
      * Gets the error message for the rule
@@ -144,7 +174,7 @@ abstract class AbstractRule<TOptions extends object = object> {
      */
     public getError(): IRuleError {
         return {
-            [this.getPath()]: this.errorMessage ?? this.formatErrorMessage()
+            [this.getPath()]: [this.errorMessage ?? this.formatErrorMessage()]
         }
     }
 

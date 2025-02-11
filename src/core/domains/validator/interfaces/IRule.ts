@@ -9,7 +9,7 @@ export interface IRulesObject {
 }
 
 export interface IRuleError {
-    [key: string]: string
+    [key: string]: string[]
 }
 
 
@@ -18,8 +18,10 @@ export interface IRule {
     getPath(): string
     setData(data: unknown): this
     setAttributes(attributes: unknown): this
+    setMessages(messages: Record<string, string>): this
     validate(): Promise<boolean>
     getError(): IRuleError
+    getCustomError(): IRuleError | undefined
     getName(): string
 
 

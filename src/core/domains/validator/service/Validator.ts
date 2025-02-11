@@ -11,7 +11,7 @@ class Validator  implements IValidator {
 
     private messages: IValidatorMessages;
 
-    protected _errors: Record<string, string> = {};
+    protected _errors: Record<string, string[]> = {};
 
     protected validatedData: Record<string, unknown> = {};
 
@@ -88,13 +88,12 @@ class Validator  implements IValidator {
             const result = await this.validateRule(path, rule, data, attributes);
 
             if (result.fails()) {
-                this._errors = {
-                    ...this._errors,
-                    ...result.errors(),
-                }
-
-                return ValidatorResult.fails(this._errors);
+                this.mergeErrors(path, result.errors() ?? {})
             }
+        }
+
+        if(Object.keys(this._errors).length > 0) {
+            return ValidatorResult.fails(this._errors);
         }
 
         return ValidatorResult.passes();
@@ -112,13 +111,22 @@ class Validator  implements IValidator {
         rule.setPath(key)
         rule.setData(data)
         rule.setAttributes(attributes)
+        rule.setMessages(this.messages)
         const passes = await rule.validate();
 
         if (!passes) {
-            return ValidatorResult.fails(rule.getError());
+            return ValidatorResult.fails(rule.getCustomError() ?? rule.getError());
         }        
 
         return ValidatorResult.passes();
+    }
+
+    mergeErrors(key: string, errors: Record<string, string[]>): void {
+        if(!this._errors[key]) {
+            this._errors[key] = []
+        }
+
+        this._errors[key] = [...this._errors[key], ...errors[key]]
     }
 
     validated(): unknown {

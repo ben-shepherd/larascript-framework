@@ -7,7 +7,7 @@ class ValidatorResult<T extends IValidatorAttributes> implements IValidatorResul
         // eslint-disable-next-line no-unused-vars
         private _passes: boolean,
         // eslint-disable-next-line no-unused-vars
-        private _errors: Record<string, string> | undefined = undefined,
+        private _errors: Record<string, string[]> | undefined = undefined,
 
 
     ) {}
@@ -16,7 +16,7 @@ class ValidatorResult<T extends IValidatorAttributes> implements IValidatorResul
         return new ValidatorResult<T>(true);
     }
 
-    public static fails<T extends IValidatorAttributes = IValidatorAttributes>(errors: Record<string, string>): IValidatorResult<T> {
+    public static fails<T extends IValidatorAttributes = IValidatorAttributes>(errors: Record<string, string[]>): IValidatorResult<T> {
         return new ValidatorResult<T>(false, errors);
     }
 
@@ -28,8 +28,8 @@ class ValidatorResult<T extends IValidatorAttributes> implements IValidatorResul
         return !this._passes;
     }
 
-    public errors(): Record<string, string> | undefined {
-        return this._errors;
+    public errors(): Record<string, string[]> {
+        return this._errors ?? {};
     }
 
 }

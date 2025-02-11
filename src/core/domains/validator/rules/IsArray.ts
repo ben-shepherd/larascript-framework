@@ -4,7 +4,7 @@ import { IRule } from "../interfaces/IRule";
 
 class IsArray extends AbstractRule implements IRule {
 
-    protected name: string = 'array'
+    protected name: string = 'is_array'
 
     protected errorTemplate: string = 'The :attribute field must be an array.';
 
