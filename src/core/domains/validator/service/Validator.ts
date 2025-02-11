@@ -11,14 +11,33 @@ import { IValidatorResult } from "../interfaces/IValidatorResult";
  */
 export const validator: IValidatorMake = (rules: IRulesObject, messages: IValidatorMessages = {}) => Validator.make(rules, messages);
 
-class Validator  implements IValidator {
+/**
+ * Validator class provides data validation functionality with support for custom rules and error messages.
+ * 
+ * The validator checks input data against defined rules and returns validation results including any errors.
+ * It supports dot notation for nested data validation and custom error messages.
+ */
+class Validator implements IValidator {
 
+    /**
+     * Rules to validate against, mapping field paths to validation rules
+     */
     private rules: IRulesObject;
 
+    /**
+     * Custom error messages for validation rules
+     */
     private messages: IValidatorMessages;
 
+    /**
+     * Validation errors found during validation
+     * Undefined before validation is run
+     */
     protected _errors: Record<string, string[]> | undefined = undefined;
 
+    /**
+     * Data that has passed validation
+     */
     protected validatedData: Record<string, unknown> = {};
 
     constructor(
@@ -34,9 +53,14 @@ class Validator  implements IValidator {
     }
 
     /**
-     * Validates the data against the rules and messages
+     * Validates the input data against the defined rules
+     * 
+     * Processes each field according to its validation rules and collects any errors.
+     * Successfully validated fields are stored in validatedData.
+     * Failed validations remove the field from validatedData and store errors.
+     * 
      * @param attributes - The data to validate
-     * @returns A promise resolving to the validation result
+     * @returns Promise resolving to validation result containing pass/fail status, errors if any, and validated data
      */
     async validate<T extends IValidatorAttributes = IValidatorAttributes>(attributes: T): Promise<IValidatorResult<T>> {
         // Reset errors before each validation run
@@ -78,19 +102,19 @@ class Validator  implements IValidator {
      * - Keys are the dot notation paths matching the validation rules
      * - Values are the corresponding data at those paths
      * 
-     * For example, given attributes:
-     * {
+     * @example
+     * ```typescript
+     * // Given attributes:
+     * const data = {
      *   users: [{name: "John"}, {name: "Jane"}]
-     * }
+     * };
      * 
-     * And rules for "users.*" and "users.*.name", it would extract:
+     * // And rules for "users.*" and "users.*.name", it would extract:
      * {
      *   "users.*": [{name: "John"}, {name: "Jane"}],
      *   "users.*.name": ["John", "Jane"]
      * }
-     * 
-     * This ensures we only validate data that has corresponding rules while preserving
-     * the nested structure needed for proper validation.
+     * ```
      * 
      * @param attributes - The full data object to extract from
      * @returns Record mapping rule paths to their corresponding data values
@@ -105,12 +129,16 @@ class Validator  implements IValidator {
     }
 
     /**
-     * Validates an array of rules for a given path and attributes
+     * Validates an array of rules for a given path and data
+     * 
+     * Processes each rule in sequence, collecting errors if validation fails.
+     * Stops processing remaining rules for a field if a rule fails.
+     * 
      * @param path - The path of the field being validated
      * @param rules - The array of rules to validate
-     * @param attributes - The attributes to validate against
-
-     * @returns A promise resolving to the validation result
+     * @param data - The data value to validate
+     * @param attributes - The complete attributes object for cross-field validation
+     * @returns Promise resolving to validation result
      */
     protected async validateRulesArray(path: string, rules: IRule[], data: unknown, attributes: unknown): Promise<IValidatorResult> {
         for(const key of Object.keys(rules)) {
@@ -132,11 +160,17 @@ class Validator  implements IValidator {
     }
 
     /**
-     * Validates a single rule for a given path and attributes
+     * Validates a single rule for a given path and data
+     * 
+     * Sets up the rule with necessary context and runs validation.
+     * Updates validatedData based on validation result.
+     * 
      * @param key - The path of the field being validated
      * @param rule - The rule to validate
-     * @param data - The attributes to validate against
-     * @returns A promise resolving to the validation result
+     * @param data - The data value to validate
+     * @param attributes - The complete attributes object for cross-field validation
+     * @param otherRules - Other rules being applied to the same field
+     * @returns Promise resolving to validation result
      */
     protected async validateRule(key: string, rule: IRule, data: unknown, attributes: unknown, otherRules: IRule[]): Promise<IValidatorResult> {
 

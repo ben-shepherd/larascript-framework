@@ -8,40 +8,6 @@ import Validator from "../service/Validator";
  * Abstract base class for creating custom validators with type-safe validation rules and error messages.
  * Extend this class to create specific validators for different data structures.
  * 
- * @example
- * ```typescript
- * class UserValidator extends BaseValidator<{
- *   name: string;
- *   email: string;
- *   age: number;
- * }> {
- *   protected rules = {
- *     name: 'required|min:3',
- *     email: 'required|email',
- *     age: 'required|numeric|min:18'
- *   };
- * 
- *   protected messages = {
- *     'name.required': 'Name is required',
- *     'email.email': 'Please provide a valid email address',
- *     'age.min': 'Must be at least 18 years old'
- *   };
- * }
- * 
- * // Usage
- * const validator = new UserValidator();
- * const result = await validator.validate({
- *   name: 'John',
- *   email: 'john@example.com',
- *   age: 25
- * });
- * 
- * if (validator.passes()) {
- *   const validatedData = validator.validated();
- *   // Process validated data...
- * }
- * ```
- * 
  * @template Attributes - Interface describing the shape of validated data
  */
 abstract class BaseCustomValidator<Attributes extends IValidatorAttributes = IValidatorAttributes> implements IValidator {
