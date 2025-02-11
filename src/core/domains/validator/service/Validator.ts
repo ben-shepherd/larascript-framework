@@ -1,6 +1,7 @@
 import DotNotationDataExtrator from "@src/core/util/data/DotNotation/DataExtractor/DotNotationDataExtrator";
 
 import ValidatorResult from "../data/ValidatorResult";
+import ValidatorException from "../exceptions/ValidatorException";
 import { IRule, IRulesObject } from "../interfaces/IRule";
 import { IValidator, IValidatorAttributes, IValidatorMessages } from "../interfaces/IValidator";
 import { IValidatorResult } from "../interfaces/IValidatorResult";
@@ -11,7 +12,7 @@ class Validator  implements IValidator {
 
     private messages: IValidatorMessages;
 
-    protected _errors: Record<string, string[]> = {};
+    protected _errors: Record<string, string[]> | undefined = undefined;
 
     protected validatedData: Record<string, unknown> = {};
 
@@ -116,8 +117,8 @@ class Validator  implements IValidator {
             }
         }
 
-        if(Object.keys(this._errors).length > 0) {
-            return ValidatorResult.fails(this._errors);
+        if(Object.keys(this._errors as object).length > 0) {
+            return ValidatorResult.fails(this._errors as Record<string, string[]>);
         }
 
         return ValidatorResult.passes();
@@ -179,6 +180,9 @@ class Validator  implements IValidator {
      * @param errors - The errors to merge
      */
     protected mergeErrors(key: string, errors: Record<string, string[]>): void {
+        if(typeof this._errors !== 'object') {
+            this._errors = {}
+        }
         if(!this._errors[key]) {
             this._errors[key] = []
         }
@@ -191,6 +195,10 @@ class Validator  implements IValidator {
      * @returns The validated data
      */
     validated(): unknown {
+        if(typeof this._errors !== 'object') {
+            throw new ValidatorException('Validator has not been validated yet')
+        }
+
         return this.validatedData;
     }
 
@@ -199,7 +207,11 @@ class Validator  implements IValidator {
      * @returns True if the validation failed
      */
     fails(): boolean {
-        return false;
+        if(typeof this._errors !== 'object') {
+            throw new ValidatorException('Validator has not been validated yet')
+        }
+
+        return Object.keys(this._errors as object).length > 0;
     }
 
     /**
@@ -207,15 +219,23 @@ class Validator  implements IValidator {
      * @returns True if the validation passed
      */
     passes(): boolean {
-        return true;
+        if(typeof this._errors !== 'object') {
+            throw new ValidatorException('Validator has not been validated yet')
+        }
+        
+        return Object.keys(this._errors as object).length === 0;
     }
 
     /**
      * Returns the validation errors
      * @returns The validation errors
      */
-    errors(): Record<string, string> {
-        return {};
+    errors(): Record<string, string[]> {
+        if(typeof this._errors !== 'object') {
+            throw new ValidatorException('Validator has not been validated yet')
+        }
+
+        return this._errors as Record<string, string[]>;
     }
 
 }

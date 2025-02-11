@@ -48,7 +48,7 @@ abstract class BaseValidator<Attributes extends IValidatorAttributes = IValidato
 
     protected abstract rules: IRulesObject
 
-    protected abstract messages: Record<string, string>
+    protected messages: Record<string, string> = {}
     
     protected result: IValidatorResult<Attributes> | undefined
 
