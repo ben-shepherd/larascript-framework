@@ -2,7 +2,7 @@ import Service from '@src/core/base/Service';
 import Middleware from '@src/core/domains/http/base/Middleware';
 import { default as IExpressConfig, default as IHttpConfig } from '@src/core/domains/http/interfaces/IHttpConfig';
 import IHttpService from '@src/core/domains/http/interfaces/IHttpService';
-import { MiddlewareConstructor, TExpressMiddlewareFn } from '@src/core/domains/http/interfaces/IMiddleware';
+import { MiddlewareConstructor, TExpressMiddlewareFn, TExpressMiddlewareFnOrClass } from '@src/core/domains/http/interfaces/IMiddleware';
 import { IRoute, IRouter, TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
 import BasicLoggerMiddleware from '@src/core/domains/http/middleware/BasicLoggerMiddleware';
 import EndRequestContextMiddleware from '@src/core/domains/http/middleware/EndRequestContextMiddleware';
@@ -94,7 +94,7 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
 
         // Apply global middlewares
         for (const middleware of this.config?.globalMiddlewares ?? []) {
-            this.app.use(middleware);
+            this.useMiddleware(middleware as TExpressMiddlewareFnOrClass)
         }
 
     }

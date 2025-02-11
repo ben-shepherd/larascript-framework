@@ -107,10 +107,10 @@ class RouterBindService {
         ]
 
         // Get action
-        const action = this.getAction(routeItem)
+        const actionHandler = this.getActionHandler(routeItem)
 
         // Combine middlewares and action
-        const handlers: TExpressMiddlewareFn[] = [...middlewares, action]
+        const handlers: TExpressMiddlewareFn[] = [...middlewares, actionHandler]
 
         // Use the handlers for the given method and path
         this.useHandlers(routeItem.method, routeItem.path, handlers);
@@ -136,7 +136,7 @@ class RouterBindService {
      * @param routeItem The route item containing the action
      * @returns The action as an Express middleware function
      */
-    protected getAction(routeItem: TRouteItem): TExpressMiddlewareFn {
+    protected getActionHandler(routeItem: TRouteItem): TExpressMiddlewareFn {
 
         // Only provided a string action (method name)
         if(typeof routeItem.action === 'string') {
@@ -151,7 +151,6 @@ class RouterBindService {
             return this.getActionFromController({ ...routeItem, controller: routeItem.action?.[0], action: routeItem.action?.[1] ?? 'invoke' })
         }
 
-
         // Only provided a controller constructor, use the invoke method
         if(routeItem.action.prototype instanceof Controller) {
             return this.getActionFromController({ ...routeItem, action: 'invoke', controller: routeItem.action as ControllerConstructor })
@@ -163,7 +162,7 @@ class RouterBindService {
         }
 
         // Create the middleware function
-        return this.createExpressMiddlewareFn(executeFn, routeItem)
+        return this.wrapWithHttpContext(executeFn, routeItem)
     }
 
     /**
@@ -180,11 +179,9 @@ class RouterBindService {
         const controllerConstructor = routeItem.controller  
         const action = routeItem.action as string
 
-        const executeFn: ExecuteFn = async (context: HttpContext) => {
+        return this.wrapWithHttpContext(async (context: HttpContext) => {
             await controllerConstructor.executeAction(action, context)
-        }
-
-        return this.createExpressMiddlewareFn(executeFn, routeItem)
+        }, routeItem)
     }
 
     /**
@@ -214,12 +211,12 @@ class RouterBindService {
 
     /**
      * Creates an Express middleware function that wraps the given executeFn
-     * and passes the HttpContext to it.
+     * with HttpContext handling.
      * 
-     * @param executeFn The function to execute when the middleware is called
+     * @param executeFn The function to execute with HttpContext
      * @returns An Express middleware function
      */
-    protected createExpressMiddlewareFn(executeFn: ExecuteFn, routeItem: TRouteItem): TExpressMiddlewareFn {
+    protected wrapWithHttpContext(executeFn: ExecuteFn, routeItem: TRouteItem): TExpressMiddlewareFn {
         return async (req: expressClient.Request, res: expressClient.Response, next: expressClient.NextFunction | undefined) => {
             await executeFn(new HttpContext(req as TBaseRequest, res, next, routeItem))
         }
