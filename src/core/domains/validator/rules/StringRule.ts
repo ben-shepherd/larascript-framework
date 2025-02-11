@@ -7,8 +7,12 @@ class StringRule extends AbstractRule implements IRule {
     protected name: string = 'string'
 
     protected errorTemplate: string = 'The :attribute field must be a string.';
- 
+
     public async test(): Promise<boolean> {
+
+        if(typeof this.getData() === 'undefined') {
+            return false
+        }
 
         if(Array.isArray(this.getData())) {
             return (this.getData() as unknown[]).every(item => typeof item === 'string')
