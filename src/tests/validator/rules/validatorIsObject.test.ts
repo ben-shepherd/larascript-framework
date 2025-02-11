@@ -51,7 +51,7 @@ describe('test validation', () => {
         })
         expect(result.passes()).toBe(false)
         expect(result.errors()).toEqual({
-            data: 'The data field must contain the following properties: name, age, id.'
+            data: ['The data field must contain the following properties: name, age, id.']
         })
 
     })

@@ -21,9 +21,11 @@ class Equals extends AbstractRule implements IRule {
 
     getError(): IRuleError {
         return {
-            [this.getPath()]: this.formatErrorMessage({
-                matches: this.matches
-            })
+            [this.getDotNotationPath()]: [
+                this.formatErrorMessage({
+                    matches: this.matches
+                })
+            ]
         }
     }
 

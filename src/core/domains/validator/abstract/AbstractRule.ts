@@ -32,7 +32,7 @@ abstract class AbstractRule<TOptions extends object = object> {
     protected attributes: unknown = undefined
 
     /** Dot notation path to the field being validated (e.g. "users.*.name") */
-    protected path!: string;
+    protected dotNotationPath!: string;
 
     /** Overridable error message for the rule, undefined by default */
     protected errorMessage?: string = undefined
@@ -139,8 +139,8 @@ abstract class AbstractRule<TOptions extends object = object> {
      * @param path - The field path (e.g. "users.*.name")
      * @returns this - For method chaining
      */
-    public setPath(path: string): this {
-        this.path = path
+    public setDotNotationPath(path: string): this {
+        this.dotNotationPath = path
         return this
     }
 
@@ -148,8 +148,8 @@ abstract class AbstractRule<TOptions extends object = object> {
      * Gets the dot notation path to the field being validated
      * @returns The field path
      */
-    public getPath(): string {
-        return this.path
+    public getDotNotationPath(): string {
+        return this.dotNotationPath
     }
 
     /**
@@ -157,11 +157,11 @@ abstract class AbstractRule<TOptions extends object = object> {
      * @returns The custom message
      */
     public getCustomError(): IRuleError | undefined {
-        const key = `${this.getPath()}.${this.getName()}`
+        const key = `${this.getDotNotationPath()}.${this.getName()}`
         
         if(this.messages[key]) {
             return {
-                [this.getPath()]: [this.messages[key]]
+                [this.getDotNotationPath()]: [this.messages[key]]
             }
         }
 
@@ -174,7 +174,7 @@ abstract class AbstractRule<TOptions extends object = object> {
      */
     public getError(): IRuleError {
         return {
-            [this.getPath()]: [this.errorMessage ?? this.formatErrorMessage()]
+            [this.getDotNotationPath()]: [this.errorMessage ?? this.formatErrorMessage()]
         }
     }
 
@@ -188,7 +188,7 @@ abstract class AbstractRule<TOptions extends object = object> {
     protected formatErrorMessage(replacer: Record<string, unknown> = {}, error: string = this.errorTemplate): string {
         // Add attributes to replacer if it doesn't exist
         if(!replacer['attribute']) {
-            replacer.attribute = this.getPath()
+            replacer.attribute = this.getDotNotationPath()
         }
 
         // Replace placeholders in the error template

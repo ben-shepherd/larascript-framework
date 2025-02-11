@@ -14,8 +14,8 @@ export interface IRuleError {
 
 
 export interface IRule {
-    setPath(field: string): this
-    getPath(): string
+    setDotNotationPath(field: string): this
+    getDotNotationPath(): string
     setData(data: unknown): this
     setAttributes(attributes: unknown): this
     setMessages(messages: Record<string, string>): this

@@ -37,7 +37,7 @@ describe('test validation', () => {
 
         expect(bad.passes()).toBe(false);
         expect(bad.errors()).toEqual({
-            'accepted_if': 'The accepted_if field must be accepted when otherField is true.'
+            'accepted_if': ['The accepted_if field must be accepted when otherField is true.']
         });
 
     })

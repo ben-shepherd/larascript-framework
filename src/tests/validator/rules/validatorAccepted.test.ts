@@ -37,7 +37,7 @@ describe('test validation', () => {
             expect(bad.passes()).toBe(false);
             expect(Object.keys(bad.errors() || {}).length).toBe(1);
             expect(bad.errors()).toEqual({
-                'accepted': 'The accepted field must be accepted.'
+                'accepted': ['The accepted field must be accepted.']
             });
         }
 

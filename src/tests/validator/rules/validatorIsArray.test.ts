@@ -24,7 +24,7 @@ describe('test validation', () => {
         const result = await validator.validate({ numbers: 'not an array' })
         expect(result.passes()).toBe(false)
         expect(result.errors()).toEqual({
-            numbers: 'The numbers field must be an array.'
+            numbers: ['The numbers field must be an array.']
         })
     })  
 
@@ -54,7 +54,7 @@ describe('test validation', () => {
         const result = await validator.validate({ data: { key: "value" } })
         expect(result.passes()).toBe(false)
         expect(result.errors()).toEqual({
-            data: 'The data field must be an array.'
+            data: ['The data field must be an array.']
         })
     })
 
@@ -66,7 +66,7 @@ describe('test validation', () => {
         const result = await validator.validate({ data: null })
         expect(result.passes()).toBe(false)
         expect(result.errors()).toEqual({
-            data: 'The data field must be an array.'
+            data: ['The data field must be an array.']
         })
     })
 
@@ -78,7 +78,7 @@ describe('test validation', () => {
         const result = await validator.validate({ data: undefined })
         expect(result.passes()).toBe(false)
         expect(result.errors()).toEqual({
-            data: 'The data field must be an array.'
+            data: ['The data field must be an array.']
         })
     })
 

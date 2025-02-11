@@ -40,10 +40,12 @@ class AcceptedIf extends AbstractRule<AcceptedIfOptions> implements IRule {
 
     getError(): IRuleError {
         return {
-            [this.getPath()]: this.formatErrorMessage({
-                another: this.options.anotherField,
-                value: this.options.value
-            })
+            [this.getDotNotationPath()]: [
+                this.formatErrorMessage({
+                    another: this.options.anotherField,
+                    value: this.options.value
+                })
+            ]
         }
     }
 

@@ -42,7 +42,7 @@ describe('test validation', () => {
         expect(bad.passes()).toBe(false);
         expect(Object.keys(bad.errors() || {}).length).toBe(1);
         expect(bad.errors()).toEqual({
-            'equalsField': 'The equalsField field must be equal to non matching value.'
+            'equalsField': ['The equalsField field must be equal to non matching value.']
         });
 
 

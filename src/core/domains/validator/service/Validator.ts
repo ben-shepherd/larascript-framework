@@ -108,7 +108,7 @@ class Validator  implements IValidator {
      */
     protected async validateRule(key: string, rule: IRule, data: unknown, attributes: unknown): Promise<IValidatorResult> {
 
-        rule.setPath(key)
+        rule.setDotNotationPath(key)
         rule.setData(data)
         rule.setAttributes(attributes)
         rule.setMessages(this.messages)
