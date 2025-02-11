@@ -71,4 +71,51 @@ describe('test validation', () => {
             email: ['The email has already been taken.']
         })
     })
+
+    test('email is unique when using where clause', async () => {
+        await resetEmailTable()
+
+        // Insert a soft-deleted record
+        await queryBuilder(TestEmailModel).insert({
+            email,
+            deletedAt: new Date()
+        })
+
+        const validator = Validator.make({
+            email: [
+                new RequiredRule(), 
+                new EmailRule(), 
+                new UniqueRule(TestEmailModel, 'email').where('deletedAt', '=', null)
+            ]
+        })
+        const result = await validator.validate({
+            email
+        })
+
+        expect(result.passes()).toBe(true)
+    })
+
+
+    test('validates multiple unique fields', async () => {
+        await resetEmailTable()
+
+        await queryBuilder(TestEmailModel).insert({
+            email,
+            username: 'testuser'
+        })
+
+        const validator = Validator.make({
+            email: [new RequiredRule(), new EmailRule(), new UniqueRule(TestEmailModel, 'email')],
+            username: [new RequiredRule(), new UniqueRule(TestEmailModel, 'username')]
+        })
+        const result = await validator.validate({
+            email: 'different@test.com',
+            username: 'testuser'
+        })
+
+        expect(result.fails()).toBe(true)
+        expect(result.errors()).toEqual({
+            username: ['The username field must be unique.']
+        })
+    })
 });
