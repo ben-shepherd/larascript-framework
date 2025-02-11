@@ -1,12 +1,12 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import Uuid from '@src/core/domains/validator/rules/Uuid';
+import UuidRule from '@src/core/domains/validator/rules/UuidRule';
 import Validator from '@src/core/domains/validator/service/Validator';
 
 describe('test uuid validation rule', () => {
     it('passes for valid UUID v4', async () => {
         const validator = new Validator({
-            uuid: [new Uuid()]
+            uuid: [new UuidRule()]
         });
         const result = await validator.validate({
             uuid: '123e4567-e89b-42d3-a456-556642440000'
@@ -17,7 +17,7 @@ describe('test uuid validation rule', () => {
 
     it('fails for invalid UUID format', async () => {
         const validator = new Validator({
-            uuid: [new Uuid()]
+            uuid: [new UuidRule()]
         });
         const result = await validator.validate({
             uuid: 'invalid-uuid'
@@ -31,7 +31,7 @@ describe('test uuid validation rule', () => {
 
     it('fails for UUID with invalid version', async () => {
         const validator = new Validator({
-            uuid: [new Uuid()]
+            uuid: [new UuidRule()]
         });
         const result = await validator.validate({
             uuid: '123e4567-e89b-12d3-a456-556642440000'
@@ -42,7 +42,7 @@ describe('test uuid validation rule', () => {
 
     it('fails when value is null', async () => {
         const validator = new Validator({
-            uuid: [new Uuid()]
+            uuid: [new UuidRule()]
         });
         const result = await validator.validate({
             uuid: null
@@ -53,7 +53,7 @@ describe('test uuid validation rule', () => {
 
     it('fails when value is undefined', async () => {
         const validator = new Validator({
-            uuid: [new Uuid()]
+            uuid: [new UuidRule()]
         });
         const result = await validator.validate({
             uuid: undefined
@@ -64,7 +64,7 @@ describe('test uuid validation rule', () => {
 
     it('fails when value is not a string', async () => {
         const validator = new Validator({
-            uuid: [new Uuid()]
+            uuid: [new UuidRule()]
         });
         const result = await validator.validate({
             uuid: 123
@@ -75,7 +75,7 @@ describe('test uuid validation rule', () => {
 
     it('returns custom error message when validation fails', async () => {
         const validator = new Validator({
-            uuid: [new Uuid()]
+            uuid: [new UuidRule()]
         }, {
             'uuid.uuid': 'Please provide a valid UUID'
         });

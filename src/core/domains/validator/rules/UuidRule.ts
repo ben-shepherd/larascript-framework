@@ -1,7 +1,7 @@
 import AbstractRule from "../abstract/AbstractRule";
 import { IRule, IRuleError } from "../interfaces/IRule";
 
-class Uuid extends AbstractRule<{}> implements IRule {
+class UuidRule extends AbstractRule<{}> implements IRule {
 
     protected name: string = 'uuid';
 
@@ -37,4 +37,4 @@ class Uuid extends AbstractRule<{}> implements IRule {
 
 }
 
-export default Uuid; 
+export default UuidRule; 
