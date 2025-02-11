@@ -27,7 +27,7 @@ class SizeRule extends AbstractRule<TSizeOptions> implements IRule {
     public async test(): Promise<boolean> {
         this.errorTemplate = this.defaultError
         
-        if(this.testFailsWhenUndefinedOrNullable()) return false
+        if(this.dataUndefinedOrNull()) return false
 
         if(!this.testNumber()) return false
         if(!this.testString()) return false
@@ -36,12 +36,6 @@ class SizeRule extends AbstractRule<TSizeOptions> implements IRule {
         return true
     }
 
-    protected testFailsWhenUndefinedOrNullable(): boolean {
-        if(this.getData() === undefined || this.getData() === null) {
-            return true
-        }
-        return false
-    }
 
     protected testNumber(): boolean {
         if(typeof this.getData() === 'number') {

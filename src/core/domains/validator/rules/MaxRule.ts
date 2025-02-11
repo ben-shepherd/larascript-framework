@@ -26,21 +26,13 @@ class MaxRule extends AbstractRule<TMaxOptions> implements IRule {
 
     public async test(): Promise<boolean> {
         this.errorTemplate = this.defaultError
-        
-        if(this.testFailsWhenUndefinedOrNullable()) return false
 
+        if(this.dataUndefinedOrNull()) return false
         if(!this.testNumber()) return false
         if(!this.testString()) return false
         if(!this.testArray()) return false
 
         return true
-    }
-
-    protected testFailsWhenUndefinedOrNullable(): boolean {
-        if(this.getData() === undefined || this.getData() === null) {
-            return true
-        }
-        return false
     }
 
     protected testNumber(): boolean {

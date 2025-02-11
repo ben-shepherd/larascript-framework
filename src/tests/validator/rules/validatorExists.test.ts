@@ -53,10 +53,6 @@ describe('test validation', () => {
     test('email does not exist, with custom message', async () => {
         await resetEmailTable()
 
-        await queryBuilder(TestEmailModel).insert({
-            email
-        })  
-
         const validator = Validator.make({
             email: [new RequiredRule(), new EmailRule(), new ExistsRule(TestEmailModel, 'email')]
         }, {
@@ -66,9 +62,9 @@ describe('test validation', () => {
             email
         })
 
-        expect(result.fails()).toBe(false)
+        expect(result.passes()).toBe(false)
         expect(result.errors()).toEqual({
-            'email.exists': ['The email does not exist.']
+            'email': ['The email does not exist.']
         })
     })
 });

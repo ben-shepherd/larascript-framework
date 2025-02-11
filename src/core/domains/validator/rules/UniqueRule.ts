@@ -24,6 +24,12 @@ class UniqueRule extends AbstractDatabaseRule<UniqueRuleOptions> implements IRul
     }
 
     public async test(): Promise<boolean> {
+        
+        if(this.dataUndefinedOrNull()) {
+            this.errorMessage = 'The :attribute field is required.'
+            return false;
+        }
+        
         return await this.query()
             .where(this.options.column, this.getData() as TWhereClauseValue)
             .count() === 0;

@@ -16,9 +16,6 @@ class EmailRule extends AbstractRule<{}> implements IRule {
     }
 
     public async test(): Promise<boolean> {
-        if (this.getData() === undefined || this.getData() === null) {
-            return false;
-        }
 
         if (typeof this.getData() !== 'string') {
             return false;

@@ -13,9 +13,7 @@ class NumericRule extends AbstractRule<{}> implements IRule {
     }
 
     public async test(): Promise<boolean> {
-        if (this.getData() === undefined || this.getData() === null) {
-            return false;
-        }
+        if(this.dataUndefinedOrNull()) return false
 
         // Allow both numbers and numeric strings
         if (typeof this.getData() === 'number') {

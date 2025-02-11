@@ -10,10 +10,6 @@ class StringRule extends AbstractRule implements IRule {
 
     public async test(): Promise<boolean> {
 
-        if(typeof this.getData() === 'undefined') {
-            return false
-        }
-
         if(Array.isArray(this.getData())) {
             return (this.getData() as unknown[]).every(item => typeof item === 'string')
         }

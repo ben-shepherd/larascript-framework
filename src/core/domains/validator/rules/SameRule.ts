@@ -19,9 +19,7 @@ class SameRule extends AbstractRule<TSameOptions> implements IRule {
     }
 
     public async test(): Promise<boolean> {
-        if (this.getData() === undefined || this.getData() === null) {
-            return false;
-        }
+        if(this.dataUndefinedOrNull()) return false
 
         const otherValue = this.getAttributes()?.[this.options.otherField];
         return this.getData() === otherValue;

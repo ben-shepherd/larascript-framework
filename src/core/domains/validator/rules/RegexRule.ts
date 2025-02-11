@@ -19,9 +19,7 @@ class RegexRule extends AbstractRule<TRegexOptions> implements IRule {
     }
 
     public async test(): Promise<boolean> {
-        if (this.getData() === undefined || this.getData() === null) {
-            return false;
-        }
+        if(this.dataUndefinedOrNull()) return false
 
         const value = String(this.getData());
         return this.options.pattern.test(value);

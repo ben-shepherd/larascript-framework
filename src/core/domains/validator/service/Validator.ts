@@ -108,8 +108,10 @@ class Validator  implements IValidator {
      * @returns A promise resolving to the validation result
      */
     protected async validateRulesArray(path: string, rules: IRule[], data: unknown, attributes: unknown): Promise<IValidatorResult> {
-        for (const rule of rules) {
-            const result = await this.validateRule(path, rule, data, attributes);
+        for(const key of Object.keys(rules)) {
+            const rule = rules[key] as IRule
+            const otherRules = rules.filter(r => r.getName() !== rule.getName())
+            const result = await this.validateRule(path, rule, data, attributes, otherRules);
 
             if (result.fails()) {
                 this.mergeErrors(path, result.errors() ?? {})
@@ -131,12 +133,13 @@ class Validator  implements IValidator {
      * @param data - The attributes to validate against
      * @returns A promise resolving to the validation result
      */
-    protected async validateRule(key: string, rule: IRule, data: unknown, attributes: unknown): Promise<IValidatorResult> {
+    protected async validateRule(key: string, rule: IRule, data: unknown, attributes: unknown, otherRules: IRule[]): Promise<IValidatorResult> {
 
         rule.setDotNotationPath(key)
         rule.setData(data)
         rule.setAttributes(attributes)
         rule.setMessages(this.messages)
+        rule.setOtherRuleNames(otherRules.map(r => r.getName()))
         const passes = await rule.validate();
 
         // If the rule fails, remove the validated data

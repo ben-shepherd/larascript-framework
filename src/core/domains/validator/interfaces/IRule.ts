@@ -19,6 +19,7 @@ export interface IRule {
     setData(data: unknown): this
     setAttributes(attributes: unknown): this
     setMessages(messages: Record<string, string>): this
+    setOtherRuleNames(names: string[]): this
     validate(): Promise<boolean>
     getError(): IRuleError
     getCustomError(): IRuleError | undefined

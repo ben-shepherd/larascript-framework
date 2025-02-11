@@ -37,6 +37,9 @@ abstract class AbstractRule<TOptions extends object = object> {
     /** Overridable error message for the rule, undefined by default */
     protected errorMessage?: string = undefined
 
+    /** Names of other rules that are being validated */
+    protected otherRuleNames: string[] = []
+
     /**
      * Tests if the current data value passes the validation rule
      * @returns True if validation passes, false if it fails
@@ -50,6 +53,10 @@ abstract class AbstractRule<TOptions extends object = object> {
      */
     public async validate(): Promise<boolean> {
         try {
+            if(this.nullable()) {
+                return true
+            }
+            
             return await this.test()
         }
         catch (error) {
@@ -203,6 +210,42 @@ abstract class AbstractRule<TOptions extends object = object> {
         }
 
         return error
+    }
+
+    /**
+     * Checks if the rule includes another rule
+     * @param name - The name of the rule to check
+     * @returns True if the rule includes another rule, false otherwise
+     */
+    protected includesOtherRule(name: string): boolean {
+        return this.otherRuleNames.includes(name)
+    }
+
+    /**
+     * Checks if the data is undefined or null
+     * @returns True if the data is undefined or null, false otherwise
+     */
+    protected dataUndefinedOrNull(): boolean {
+        return typeof this.getData() === 'undefined' || this.getData() === null
+    }
+
+    /**
+     * Checks if the rule allows null values
+     * @returns True if the rule allows null values, false otherwise
+     */
+    protected nullable(): boolean {
+        const allowNullable = this.otherRuleNames.includes('nullable')
+        return allowNullable && this.dataUndefinedOrNull()
+    }
+
+    /**
+     * Sets the names of other rules that are being validated
+     * @param names - The names of the other rules
+     * @returns this - For method chaining
+     */
+    public setOtherRuleNames(names: string[]): this {
+        this.otherRuleNames = names
+        return this
     }
 
 }
