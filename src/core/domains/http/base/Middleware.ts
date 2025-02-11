@@ -4,8 +4,7 @@ import { IExpressable } from "@src/core/domains/http/interfaces/IExpressable";
 import { IMiddleware, MiddlewareConstructor, TExpressMiddlewareFn } from "@src/core/domains/http/interfaces/IMiddleware";
 import { TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
 import { NextFunction, Request, Response } from "express";
-
-import { TBaseRequest } from "../interfaces/BaseRequest";
+import { TBaseRequest } from "@src/core/domains/http/interfaces/BaseRequest";
 
 /**
  * Abstract base class that transforms Express middleware into a class-based format.

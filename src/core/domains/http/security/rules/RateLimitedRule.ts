@@ -5,8 +5,7 @@ import { SecurityEnum } from "@src/core/domains/http/enums/SecurityEnum";
 import { IPDatesArrayTTL } from "@src/core/domains/http/interfaces/IRequestContext";
 import AbstractSecurityRule from "@src/core/domains/http/security/abstract/AbstractSecurityRule";
 import { Request } from "express";
-
-import { TBaseRequest } from "../../interfaces/BaseRequest";
+import { TBaseRequest } from "@src/core/domains/http/interfaces/BaseRequest";
 
 type TRateLimitedRuleOptions = {
     limit: number;

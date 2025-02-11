@@ -3,9 +3,8 @@ import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedErr
 import { auth } from "@src/core/domains/auth/services/AuthService";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import ApiResponse from "@src/core/domains/http/response/ApiResponse";
-
-import ValidatorResult from "../../validator/data/ValidatorResult";
-import { IValidatorResult } from "../../validator/interfaces/IValidatorResult";
+import ValidatorResult from "@src/core/domains/validator/data/ValidatorResult";
+import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
 
 /**
  * UpdateUseCase handles user profile updates

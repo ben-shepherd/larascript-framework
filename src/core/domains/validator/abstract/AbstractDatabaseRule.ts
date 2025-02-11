@@ -1,9 +1,8 @@
 import { ModelConstructor } from "@src/core/interfaces/IModel";
-
-import { IEloquent, TOperator, TWhereClause, TWhereClauseValue } from "../../eloquent/interfaces/IEloquent";
-import { queryBuilder } from "../../eloquent/services/EloquentQueryBuilderService";
-import AbstractRule from "../abstract/AbstractRule";
-import { IRule } from "../interfaces/IRule";
+import { IEloquent, TOperator, TWhereClause, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
+import AbstractRule from "@src/core/domains/validator/abstract/AbstractRule";
+import { IRule } from "@src/core/domains/validator/interfaces/IRule";
 
 /**
  * Options for configuring an AbstractDatabaseRule

@@ -1,6 +1,5 @@
 import forceString from "@src/core/util/str/forceString";
-
-import { IRuleError } from "../interfaces/IRule";
+import { IRuleError } from "@src/core/domains/validator/interfaces/IRule";
 
 /**
  * Abstract base class for validation rules.

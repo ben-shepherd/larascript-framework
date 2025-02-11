@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { IRule, IRulesObject } from "./IRule"
-import { IValidatorResult } from "./IValidatorResult"
+import { IRule, IRulesObject } from "@src/core/domains/validator/interfaces/IRule"
+import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult"
 
 export type CustomValidatorConstructor = {
     new (...args: any[]): IValidator

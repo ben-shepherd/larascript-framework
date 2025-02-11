@@ -10,8 +10,7 @@ import Controller from "@src/core/domains/http/base/Controller";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import responseError from "@src/core/domains/http/handlers/responseError";
 import ApiResponse from "@src/core/domains/http/response/ApiResponse";
-
-import ValidatorException from "../../validator/exceptions/ValidatorException";
+import ValidatorException from "@src/core/domains/validator/exceptions/ValidatorException";
 
 /**
  * Controller handling authentication-related HTTP endpoints.

@@ -1,7 +1,7 @@
 
-import AbstractRule from "../abstract/AbstractRule";
-import { IRule } from "../interfaces/IRule";
-import isTruthy from "../utils/isTruthy";
+import AbstractRule from "@src/core/domains/validator/abstract/AbstractRule";
+import { IRule } from "@src/core/domains/validator/interfaces/IRule";
+import isTruthy from "@src/core/domains/validator/utils/isTruthy";
 
 class AcceptedRule extends AbstractRule implements IRule {
 

@@ -1,5 +1,5 @@
-import { IValidatorAttributes } from "../interfaces/IValidator";
-import { IValidatorResult } from "../interfaces/IValidatorResult";
+import { IValidatorAttributes } from "@src/core/domains/validator/interfaces/IValidator";
+import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
 
 /**
  * ValidatorResult class represents the outcome of a validation operation.

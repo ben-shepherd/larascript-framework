@@ -1,8 +1,7 @@
 import { ModelConstructor } from "@src/core/interfaces/IModel";
-
-import { TWhereClauseValue } from "../../eloquent/interfaces/IEloquent";
-import AbstractDatabaseRule from "../abstract/AbstractDatabaseRule";
-import { IRule } from "../interfaces/IRule";
+import { TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import AbstractDatabaseRule from "@src/core/domains/validator/abstract/AbstractDatabaseRule";
+import { IRule } from "@src/core/domains/validator/interfaces/IRule";
 
 type UniqueRuleOptions = {
     modelConstructor: ModelConstructor;

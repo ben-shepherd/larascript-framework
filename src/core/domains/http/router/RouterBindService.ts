@@ -9,8 +9,7 @@ import { IRouter, TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
 import MiddlewareUtil from '@src/core/domains/http/utils/middlewareUtil';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
 import expressClient from 'express';
-
-import { TBaseRequest } from '../interfaces/BaseRequest';
+import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
 
 // eslint-disable-next-line no-unused-vars
 type ExecuteFn = (context: HttpContext) => Promise<void>;

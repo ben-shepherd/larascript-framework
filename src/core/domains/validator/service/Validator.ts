@@ -1,10 +1,9 @@
 import DotNotationDataExtrator from "@src/core/util/data/DotNotation/DataExtractor/DotNotationDataExtrator";
-
-import ValidatorResult from "../data/ValidatorResult";
-import ValidatorException from "../exceptions/ValidatorException";
-import { IRule, IRulesObject } from "../interfaces/IRule";
-import { IValidator, IValidatorAttributes, IValidatorMake, IValidatorMessages } from "../interfaces/IValidator";
-import { IValidatorResult } from "../interfaces/IValidatorResult";
+import ValidatorResult from "@src/core/domains/validator/data/ValidatorResult";
+import ValidatorException from "@src/core/domains/validator/exceptions/ValidatorException";
+import { IRule, IRulesObject } from "@src/core/domains/validator/interfaces/IRule";
+import { IValidator, IValidatorAttributes, IValidatorMake, IValidatorMessages } from "@src/core/domains/validator/interfaces/IValidator";
+import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
 
 /**
  * Short hand for creating a new validator on the fly

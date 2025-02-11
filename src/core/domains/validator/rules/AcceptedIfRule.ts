@@ -1,7 +1,7 @@
 
-import AbstractRule from "../abstract/AbstractRule";
-import { IRule, IRuleError } from "../interfaces/IRule";
-import isTruthy from "../utils/isTruthy";
+import AbstractRule from "@src/core/domains/validator/abstract/AbstractRule";
+import { IRule, IRuleError } from "@src/core/domains/validator/interfaces/IRule";
+import isTruthy from "@src/core/domains/validator/utils/isTruthy";
 
 type AcceptedIfOptions = {
     anotherField: string,

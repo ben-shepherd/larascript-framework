@@ -1,8 +1,8 @@
-import ValidatorException from "../exceptions/ValidatorException";
-import { IRulesObject } from "../interfaces/IRule";
-import { IValidator, IValidatorAttributes, IValidatorMessages } from "../interfaces/IValidator";
-import { IValidatorResult } from "../interfaces/IValidatorResult";
-import Validator from "../service/Validator";
+import ValidatorException from "@src/core/domains/validator/exceptions/ValidatorException";
+import { IRulesObject } from "@src/core/domains/validator/interfaces/IRule";
+import { IValidator, IValidatorAttributes, IValidatorMessages } from "@src/core/domains/validator/interfaces/IValidator";
+import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
+import Validator from "@src/core/domains/validator/service/Validator";
 
 /**
  * Abstract base class for creating custom validators with type-safe validation rules and error messages.

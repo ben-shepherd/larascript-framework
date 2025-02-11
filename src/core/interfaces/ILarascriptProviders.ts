@@ -9,8 +9,7 @@ import IHttpService from '@src/core/domains/http/interfaces/IHttpService';
 import { IRequestContext } from '@src/core/domains/http/interfaces/IRequestContext';
 import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerService';
 import readline from 'node:readline';
-
-import { IValidatorMake } from '../domains/validator/interfaces/IValidator';
+import { IValidatorMake } from '@src/core/domains/validator/interfaces/IValidator';
 
 export interface ILarascriptProviders {
 

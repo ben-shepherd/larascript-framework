@@ -1,4 +1,4 @@
-import DotNotationParser from "../Parser/DotNotationParser";
+import DotNotationParser from "@src/core/util/data/DotNotation/Parser/DotNotationParser";
 
 type TStateName = 'REDUCABLE' | 'SKIP';
 

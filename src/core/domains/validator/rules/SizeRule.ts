@@ -1,5 +1,5 @@
-import AbstractRule from "../abstract/AbstractRule";
-import { IRule, IRuleError } from "../interfaces/IRule";
+import AbstractRule from "@src/core/domains/validator/abstract/AbstractRule";
+import { IRule, IRuleError } from "@src/core/domains/validator/interfaces/IRule";
 
 type TSizeOptions = {
     size: number

@@ -1,8 +1,7 @@
 import BaseProvider from "@src/core/base/Provider";
-
-import { IRulesObject } from "../interfaces/IRule";
-import { IValidatorMessages } from "../interfaces/IValidator";
-import Validator from "../service/Validator";
+import { IRulesObject } from "@src/core/domains/validator/interfaces/IRule";
+import { IValidatorMessages } from "@src/core/domains/validator/interfaces/IValidator";
+import Validator from "@src/core/domains/validator/service/Validator";
 
 class ValidatorProvider extends BaseProvider {
 

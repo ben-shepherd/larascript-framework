@@ -1,4 +1,4 @@
-import { IValidatorAttributes } from "./IValidator";
+import { IValidatorAttributes } from "@src/core/domains/validator/interfaces/IValidator";
 
 export interface IValidatorResult<T extends IValidatorAttributes = IValidatorAttributes> {
     passes(): boolean;

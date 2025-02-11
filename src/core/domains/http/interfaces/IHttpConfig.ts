@@ -1,6 +1,5 @@
 import express from "express";
-
-import { TExpressMiddlewareFnOrClass } from "./IMiddleware";
+import { TExpressMiddlewareFnOrClass } from "@src/core/domains/http/interfaces/IMiddleware";
 
 export default interface IHttpConfig {
     enabled: boolean;
