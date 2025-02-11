@@ -3,8 +3,13 @@ import DotNotationDataExtrator from "@src/core/util/data/DotNotation/DataExtract
 import ValidatorResult from "../data/ValidatorResult";
 import ValidatorException from "../exceptions/ValidatorException";
 import { IRule, IRulesObject } from "../interfaces/IRule";
-import { IValidator, IValidatorAttributes, IValidatorMessages } from "../interfaces/IValidator";
+import { IValidator, IValidatorAttributes, IValidatorMake, IValidatorMessages } from "../interfaces/IValidator";
 import { IValidatorResult } from "../interfaces/IValidatorResult";
+
+/**
+ * Short hand for creating a new validator on the fly
+ */
+export const validator: IValidatorMake = (rules: IRulesObject, messages: IValidatorMessages = {}) => Validator.make(rules, messages);
 
 class Validator  implements IValidator {
 

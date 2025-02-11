@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { IRule } from "./IRule"
+import { IRule, IRulesObject } from "./IRule"
 import { IValidatorResult } from "./IValidatorResult"
 
 export type CustomValidatorConstructor = {
@@ -14,6 +14,8 @@ export type ValidatorConstructor = {
 export type IValidatorMessages = Record<string, string>
 
 export type IValidatorAttributes = Record<string, unknown>
+
+export type IValidatorMake = (rules: IRulesObject, messages?: IValidatorMessages) => IValidator
 
 export interface IValidator<Attributes extends IValidatorAttributes = IValidatorAttributes> {
     validate(data: Attributes): Promise<IValidatorResult<Attributes>>

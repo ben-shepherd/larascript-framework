@@ -4,7 +4,7 @@ import MinRule from "@src/core/domains/validator/rules/MinRule";
 import NullableRule from "@src/core/domains/validator/rules/NullableRule";
 import StringRule from "@src/core/domains/validator/rules/StringRule";
 
-class UpdateUserValidator extends BaseCustomValidator {
+class TestUpdateUserValidator extends BaseCustomValidator {
 
     protected rules: IRulesObject = {
         password: [new NullableRule(), new MinRule(6)],
@@ -14,4 +14,4 @@ class UpdateUserValidator extends BaseCustomValidator {
 
 }
 
-export default UpdateUserValidator
+export default TestUpdateUserValidator
