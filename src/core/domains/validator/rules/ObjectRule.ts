@@ -4,7 +4,7 @@ import { IRule } from "../interfaces/IRule";
 
 class ObjectRule extends AbstractRule implements IRule {
 
-    protected name: string = 'is_object'
+    protected name: string = 'object'
 
     protected errorTemplate: string = 'The :attribute field must be an object.';
 

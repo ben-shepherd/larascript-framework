@@ -4,7 +4,7 @@ import { IRule } from "../interfaces/IRule";
 
 class StringRule extends AbstractRule implements IRule {
 
-    protected name: string = 'is_string'
+    protected name: string = 'string'
 
     protected errorTemplate: string = 'The :attribute field must be a string.';
  

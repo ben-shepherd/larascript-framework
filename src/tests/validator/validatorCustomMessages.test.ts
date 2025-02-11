@@ -13,14 +13,14 @@ describe('test validation', () => {
             name: [new RequiredRule(), new StringRule()]
         }, {
             'name.required': 'This is a custom validation message (required)',
-            'name.is_string': 'This is a custom validation message (is_string)'
+            'name.string': 'This is a custom validation message (string)'
         }).validate({
             name: null
         });
 
         expect(result.passes()).toBe(false);
         expect(result.errors()).toEqual({
-            name: ['This is a custom validation message (required)', 'This is a custom validation message (is_string)']
+            name: ['This is a custom validation message (required)', 'This is a custom validation message (string)']
         });
 
     });
@@ -30,7 +30,7 @@ describe('test validation', () => {
             name: [new RequiredRule(), new StringRule()]
         }, {
             'name.required': 'Name field is required',
-            'name.is_string': 'Name must be a string'
+            'name.string': 'Name must be a string'
         }).validate({
             name: 'John Doe'
         });
@@ -45,9 +45,9 @@ describe('test validation', () => {
             age: [new RequiredRule(), new IsNumber()]
         }, {
             'name.required': 'Name is required',
-            'name.is_string': 'Name must be a string',
+            'name.string': 'Name must be a string',
             'age.required': 'Age is required',
-            'age.is_number': 'Age must be a number'
+            'age.number': 'Age must be a number'
         }).validate({
             name: null,
             age: 'not a number'
