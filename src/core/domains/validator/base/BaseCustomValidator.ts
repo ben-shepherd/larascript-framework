@@ -76,6 +76,22 @@ abstract class BaseCustomValidator<Attributes extends IValidatorAttributes = IVa
         return this.result.validated()
     }
 
+    /**
+     * Returns the validation rules
+     * @returns The validation rules
+     */
+    public getRules(): IRulesObject {
+        return this.rules
+    }
+
+    /**
+     * Returns the validation messages
+     * @returns The validation messages
+     */
+    public getMessages(): IValidatorMessages {
+        return this.messages
+    }
+
 }
 
 export default BaseCustomValidator

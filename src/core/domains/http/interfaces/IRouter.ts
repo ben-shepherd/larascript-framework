@@ -4,8 +4,9 @@ import { TExpressMiddlewareFnOrClass } from "@src/core/domains/http/interfaces/I
 import { ISecurityRule } from "@src/core/domains/http/interfaces/ISecurity";
 import SecurityRules from "@src/core/domains/http/security/services/SecurityRules";
 import { TSortDirection } from "@src/core/domains/http/utils/SortOptions";
-import { ValidatorConstructor } from "@src/core/domains/validator-legacy/interfaces/IValidator";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
+
+import { CustomValidatorConstructor } from "../../validator/interfaces/IValidator";
 
 export type RouteConstructor = {
     new (...args: any[]): IRouter;
@@ -69,7 +70,7 @@ export type TRouteItem = {
     security?: ISecurityRule[];
     scopes?: string[];
     config?: Record<string, unknown>;
-    validator?: ValidatorConstructor;
+    validator?: CustomValidatorConstructor;
     validatorExecuteManually?: boolean;
     resource?: {
         type: TResourceType
@@ -94,8 +95,8 @@ export type TRouteItem = {
             defaultDirection?: TSortDirection;
         },
         validation?: {
-            create?: ValidatorConstructor;
-            update?: ValidatorConstructor;
+            create?: CustomValidatorConstructor;
+            update?: CustomValidatorConstructor;
         }
     }
 }
@@ -108,7 +109,7 @@ export type TRouteResourceOptions = {
     middlewares?: TExpressMiddlewareFnOrClass | TExpressMiddlewareFnOrClass[];
     scopes?: string[];
     filters?: object;
-    validator?: ValidatorConstructor;
+    validator?: CustomValidatorConstructor;
     validateBeforeAction?: boolean;
     searching?: {
         fields?: string[];
@@ -124,8 +125,8 @@ export type TRouteResourceOptions = {
         defaultDirection?: TSortDirection;
     },
     validation?: {
-        create?: ValidatorConstructor;
-        update?: ValidatorConstructor;
+        create?: CustomValidatorConstructor;
+        update?: CustomValidatorConstructor;
     }
 }
 

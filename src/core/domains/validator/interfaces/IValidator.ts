@@ -21,7 +21,9 @@ export interface IValidator<Attributes extends IValidatorAttributes = IValidator
     validate(data: Attributes): Promise<IValidatorResult<Attributes>>
     passes(): boolean
     errors(): Record<string, string[]>
-    validated(): Attributes
+    validated(): Attributes;
+    getRules(): IRulesObject;
+    getMessages(): IValidatorMessages;
 }
 
 

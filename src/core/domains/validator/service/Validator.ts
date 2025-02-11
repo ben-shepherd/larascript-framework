@@ -280,6 +280,22 @@ class Validator implements IValidator {
         return this._errors as Record<string, string[]>;
     }
 
+    /**
+     * Returns the validation rules
+     * @returns The validation rules
+     */
+    getRules(): IRulesObject {
+        return this.rules;
+    }
+
+    /**
+     * Returns the validation messages
+     * @returns The validation messages
+     */
+    getMessages(): IValidatorMessages {
+        return this.messages;
+    }
+
 }
 
 export default Validator;

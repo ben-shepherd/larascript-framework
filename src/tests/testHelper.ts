@@ -1,7 +1,7 @@
 import { EnvironmentTesting } from "@src/core/consts/Environment";
 import EloquentQueryProvider from "@src/core/domains/eloquent/providers/EloquentQueryProvider";
 import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
-import ValidatorProvider from "@src/core/domains/validator-legacy/providers/ValidatorProvider";
+import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 import Kernel, { KernelConfig } from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
 import TestApiTokenModel from "@src/tests/models/models/TestApiTokenModel";

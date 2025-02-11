@@ -1,4 +1,3 @@
-import responseError from '@src/core/domains/http/handlers/responseError';
 import { ValidatorMiddlewareProps } from '@src/core/domains/validator-legacy/interfaces/IValidatorService';
 
 import Middleware from '../../http/base/Middleware';
@@ -14,49 +13,7 @@ import HttpContext from '../../http/context/HttpContext';
 class ValidateMiddleware extends Middleware<ValidatorMiddlewareProps> {
 
     public async execute(context: HttpContext): Promise<void> {
-        try {
-            // Get the route item and validator constructor
-            const routeItem = context.getRouteItem();
-            const validatorConstructor = routeItem?.validator;
-            
-            // If the validator is not set, or the validatorExecuteManually is true,
-            // then we will not execute the validator
-            const validatorExecuteManually = routeItem?.validatorExecuteManually;
-            const skipValidation = !validatorConstructor || (validatorExecuteManually === true);
-        
-            if(skipValidation) {
-                this.next();
-                return;
-            }
-
-            const validator = new validatorConstructor();
-            const body = context.getRequest().body;
-    
-            const result = await validator.validate(
-                body,
-                { 
-                    stripUnknown: true,
-                    ...validator.getJoiOptions() 
-                }
-            );
-
-            if(!result.success) {
-                context.getResponse().status(422).send({
-                    success: false,
-                    errors: (result.joi.error?.details ?? []).map((detail) => detail)
-                })
-                return;
-            }
-            
-            this.next();
-        }
-        catch (error) {
-            if(error instanceof Error) {
-                responseError(context.getRequest(), context.getResponse(), error)
-                return;
-            }
-
-        }
+        this.next();
     }
 
 }
