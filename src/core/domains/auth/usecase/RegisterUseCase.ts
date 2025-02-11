@@ -4,7 +4,9 @@ import { authJwt } from "@src/core/domains/auth/services/JwtAuthService";
 import hashPassword from "@src/core/domains/auth/utils/hashPassword";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import ApiResponse from "@src/core/domains/http/response/ApiResponse";
-import IValidatorResult from "@src/core/domains/validator-legacy/interfaces/IValidatorResult";
+
+import ValidatorResult from "../../validator/data/ValidatorResult";
+import { IValidatorResult } from "../../validator/interfaces/IValidatorResult";
 
 /**
  * RegisterUseCase handles new user registration
@@ -27,9 +29,9 @@ class RegisterUseCase {
         const apiResponse = new ApiResponse();
         const validationResult = await this.validate(context);
 
-        if(!validationResult.success) {
+        if(validationResult.fails()) {
             return apiResponse.setCode(422).setData({
-                errors: validationResult.joi.error?.details ?? []
+                errors: validationResult.errors()
             });
         }
 
@@ -98,7 +100,12 @@ class RegisterUseCase {
      */
 
     async validate(context: HttpContext): Promise<IValidatorResult<any>> {
-        const validatorConstructor = auth().getJwtAdapter().config.validators.createUser
+        const validatorConstructor = auth().getJwtAdapter().config?.validators?.createUser
+
+        if(!validatorConstructor) {
+            return ValidatorResult.passes();
+        }
+
         const validator = new validatorConstructor();
         return await validator.validate(context.getBody());
     }

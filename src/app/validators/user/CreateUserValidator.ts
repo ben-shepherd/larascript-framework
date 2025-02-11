@@ -1,35 +1,23 @@
 import User from "@src/app/models/auth/User";
-import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
-import BaseValidator from "@src/core/domains/validator-legacy/base/BaseValidator";
-import { ValidatorPayload } from "@src/core/domains/validator-legacy/interfaces/IValidator";
-import Joi, { ObjectSchema } from "joi";
+import BaseCustomValidator from "@src/core/domains/validator/base/BaseCustomValidator";
+import { IRulesObject } from "@src/core/domains/validator/interfaces/IRule";
+import EmailRule from "@src/core/domains/validator/rules/EmailRule";
+import MinRule from "@src/core/domains/validator/rules/MinRule";
+import RequiredRule from "@src/core/domains/validator/rules/RequiredRule";
+import StringRule from "@src/core/domains/validator/rules/StringRule";
+import UniqueRule from "@src/core/domains/validator/rules/UniqueRule";
 
-class CreateUserValidator extends BaseValidator {
+class CreateUserValidator extends BaseCustomValidator {
 
-    protected additionalMethodsToValidate: string[] = [
-        'validateEmailAvailability'
-    ]
-
-    /**
-     * Validate if the email is available
-     * @param payload 
-     */
-    async validateEmailAvailability(payload: ValidatorPayload) {
-        
-        const user = await queryBuilder(User).where('email', payload.email as string).first();
-
-        if(user) {
-            this.setErrorMessage({ email: 'User already exists' });
-        }
+    protected rules: IRulesObject = {
+        email: [new RequiredRule(), new EmailRule(), new UniqueRule(User, 'email')],
+        password: [new RequiredRule(), new MinRule(6)],
+        firstName: [new RequiredRule(), new StringRule()],
+        lastName: [new RequiredRule(), new StringRule()]
     }
 
-    rules(): ObjectSchema {
-        return Joi.object({
-            email: Joi.string().email().required(),
-            password: Joi.string().required().min(6),
-            firstName: Joi.string(),
-            lastName: Joi.string(),
-        })
+    protected messages: Record<string, string> = {
+        'email.unique': 'The email has already been taken.'
     }
 
 }

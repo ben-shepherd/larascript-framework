@@ -1,6 +1,6 @@
 import ValidatorException from "../exceptions/ValidatorException";
 import { IRulesObject } from "../interfaces/IRule";
-import { IValidator, IValidatorAttributes } from "../interfaces/IValidator";
+import { IValidator, IValidatorAttributes, IValidatorMessages } from "../interfaces/IValidator";
 import { IValidatorResult } from "../interfaces/IValidatorResult";
 import Validator from "../service/Validator";
 
@@ -44,11 +44,11 @@ import Validator from "../service/Validator";
  * 
  * @template Attributes - Interface describing the shape of validated data
  */
-abstract class BaseValidator<Attributes extends IValidatorAttributes = IValidatorAttributes> {
+abstract class BaseCustomValidator<Attributes extends IValidatorAttributes = IValidatorAttributes> implements IValidator {
 
     protected abstract rules: IRulesObject
 
-    protected messages: Record<string, string> = {}
+    protected messages: IValidatorMessages = {}
     
     protected result: IValidatorResult<Attributes> | undefined
 
@@ -61,7 +61,7 @@ abstract class BaseValidator<Attributes extends IValidatorAttributes = IValidato
      * @returns Promise resolving to validation result
      * @throws Error if validation fails unexpectedly
      */
-    public async validate(data: Record<string, unknown>): Promise<IValidatorResult<Attributes>> {
+    public async validate(data: Attributes): Promise<IValidatorResult<Attributes>> {
         this.validator = Validator.make(this.rules, this.messages)
         this.result = await this.validator.validate(data) as IValidatorResult<Attributes>
         return this.result
@@ -112,4 +112,4 @@ abstract class BaseValidator<Attributes extends IValidatorAttributes = IValidato
 
 }
 
-export default BaseValidator
+export default BaseCustomValidator

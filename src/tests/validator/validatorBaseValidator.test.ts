@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import BaseValidator from '@src/core/domains/validator/base/BaseValidator';
+import BaseCustomValidator from '@src/core/domains/validator/base/BaseCustomValidator';
 import { IRulesObject } from '@src/core/domains/validator/interfaces/IRule';
 import ArrayRule from '@src/core/domains/validator/rules/ArrayRule';
 import MinRule from '@src/core/domains/validator/rules/MinRule';
@@ -9,7 +9,7 @@ import RequiredRule from '@src/core/domains/validator/rules/RequiredRule';
 import StringRule from '@src/core/domains/validator/rules/StringRule';
 
 
-class CustomValidator extends BaseValidator {
+class CustomValidator extends BaseCustomValidator {
 
     protected rules: IRulesObject = {
         name: [new RequiredRule(), new StringRule(), new MinRule(3)]
@@ -23,7 +23,7 @@ class CustomValidator extends BaseValidator {
 
 }
 
-class AdvancedValidator extends BaseValidator {
+class AdvancedValidator extends BaseCustomValidator {
 
     protected rules: IRulesObject = {
         name: [new RequiredRule(), new StringRule(), new MinRule(3)],

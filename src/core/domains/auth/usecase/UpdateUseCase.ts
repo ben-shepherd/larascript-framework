@@ -3,7 +3,9 @@ import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedErr
 import { auth } from "@src/core/domains/auth/services/AuthService";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import ApiResponse from "@src/core/domains/http/response/ApiResponse";
-import IValidatorResult from "@src/core/domains/validator-legacy/interfaces/IValidatorResult";
+
+import ValidatorResult from "../../validator/data/ValidatorResult";
+import { IValidatorResult } from "../../validator/interfaces/IValidatorResult";
 
 /**
  * UpdateUseCase handles user profile updates
@@ -33,9 +35,9 @@ class UpdateUseCase {
 
         const validationResult = await this.validate(context);
 
-        if(!validationResult.success) {
+        if(validationResult.fails()) {
             return new ApiResponse().setCode(422).setData({
-                errors: validationResult.joi.error?.details
+                errors: validationResult.errors()
             })
         }
 
@@ -60,7 +62,12 @@ class UpdateUseCase {
      * @returns The validation result
      */
     async validate(context: HttpContext): Promise<IValidatorResult<any>> {
-        const validatorConstructor = auth().getJwtAdapter().config.validators.updateUser
+        const validatorConstructor = auth().getJwtAdapter().config?.validators?.updateUser
+
+        if(!validatorConstructor) {
+            return ValidatorResult.passes();
+        }
+
         const validator = new validatorConstructor();
         return await validator.validate(context.getBody());
     }

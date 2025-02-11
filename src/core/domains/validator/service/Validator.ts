@@ -25,7 +25,7 @@ class Validator  implements IValidator {
     }
 
     public static make(rules: IRulesObject, messages: IValidatorMessages = {} as IValidatorMessages): IValidator {
-        return new Validator(rules, messages);
+        return new Validator(rules, messages) as IValidator;
     }
 
     /**
@@ -197,7 +197,7 @@ class Validator  implements IValidator {
      * Returns the validated data
      * @returns The validated data
      */
-    validated(): unknown {
+    validated(): IValidatorAttributes {
         if(typeof this._errors !== 'object') {
             throw new ValidatorException('Validator has not been validated yet')
         }
