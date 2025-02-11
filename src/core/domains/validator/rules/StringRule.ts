@@ -2,7 +2,7 @@
 import AbstractRule from "../abstract/AbstractRule";
 import { IRule } from "../interfaces/IRule";
 
-class IsString extends AbstractRule implements IRule {
+class StringRule extends AbstractRule implements IRule {
 
     protected name: string = 'is_string'
 
@@ -21,4 +21,4 @@ class IsString extends AbstractRule implements IRule {
 }
 
 
-export default IsString;
+export default StringRule;

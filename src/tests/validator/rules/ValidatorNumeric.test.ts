@@ -1,12 +1,12 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import Numeric from '@src/core/domains/validator/rules/Numeric';
+import NumericRule from '@src/core/domains/validator/rules/NumericRule';
 import Validator from '@src/core/domains/validator/service/Validator';
 
 describe('test numeric validation rule', () => {
     it('passes for integer numbers', async () => {
         const validator = new Validator({
-            value: [new Numeric()]
+            value: [new NumericRule()]
         });
         const result = await validator.validate({
             value: 123
@@ -17,7 +17,7 @@ describe('test numeric validation rule', () => {
 
     it('passes for decimal numbers', async () => {
         const validator = new Validator({
-            value: [new Numeric()]
+            value: [new NumericRule()]
         });
         const result = await validator.validate({
             value: 123.45
@@ -28,7 +28,7 @@ describe('test numeric validation rule', () => {
 
     it('passes for negative numbers', async () => {
         const validator = new Validator({
-            value: [new Numeric()]
+            value: [new NumericRule()]
         });
         const result = await validator.validate({
             value: -123
@@ -39,7 +39,7 @@ describe('test numeric validation rule', () => {
 
     it('passes for numeric strings', async () => {
         const validator = new Validator({
-            value: [new Numeric()]
+            value: [new NumericRule()]
         });
         const result = await validator.validate({
             value: "123"
@@ -50,7 +50,7 @@ describe('test numeric validation rule', () => {
 
     it('passes for decimal strings', async () => {
         const validator = new Validator({
-            value: [new Numeric()]
+            value: [new NumericRule()]
         });
         const result = await validator.validate({
             value: "123.45"
@@ -61,7 +61,7 @@ describe('test numeric validation rule', () => {
 
     it('fails for non-numeric strings', async () => {
         const validator = new Validator({
-            value: [new Numeric()]
+            value: [new NumericRule()]
         });
         const result = await validator.validate({
             value: "abc"
@@ -75,7 +75,7 @@ describe('test numeric validation rule', () => {
 
     it('fails for strings with spaces', async () => {
         const validator = new Validator({
-            value: [new Numeric()]
+            value: [new NumericRule()]
         });
         const result = await validator.validate({
             value: "123 456"
@@ -86,7 +86,7 @@ describe('test numeric validation rule', () => {
 
     it('fails when value is null', async () => {
         const validator = new Validator({
-            value: [new Numeric()]
+            value: [new NumericRule()]
         });
         const result = await validator.validate({
             value: null
@@ -97,7 +97,7 @@ describe('test numeric validation rule', () => {
 
     it('fails when value is undefined', async () => {
         const validator = new Validator({
-            value: [new Numeric()]
+            value: [new NumericRule()]
         });
         const result = await validator.validate({
             value: undefined
@@ -108,7 +108,7 @@ describe('test numeric validation rule', () => {
 
     it('fails for boolean values', async () => {
         const validator = new Validator({
-            value: [new Numeric()]
+            value: [new NumericRule()]
         });
         const result = await validator.validate({
             value: true
@@ -119,7 +119,7 @@ describe('test numeric validation rule', () => {
 
     it('returns custom error message when validation fails', async () => {
         const validator = new Validator({
-            value: [new Numeric()]
+            value: [new NumericRule()]
         }, {
             'value.numeric': 'Please provide a numeric value'
         });

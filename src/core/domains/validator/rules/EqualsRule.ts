@@ -2,7 +2,7 @@
 import AbstractRule from "../abstract/AbstractRule";
 import { IRule, IRuleError } from "../interfaces/IRule";
 
-class Equals extends AbstractRule implements IRule {
+class EqualsRule extends AbstractRule implements IRule {
 
     protected name: string = 'equals'
 
@@ -32,4 +32,4 @@ class Equals extends AbstractRule implements IRule {
 }
 
 
-export default Equals;
+export default EqualsRule;

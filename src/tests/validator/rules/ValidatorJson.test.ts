@@ -1,12 +1,12 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import IsJson from '@src/core/domains/validator/rules/IsJson';
+import JsonRule from '@src/core/domains/validator/rules/JsonRule';
 import Validator from '@src/core/domains/validator/service/Validator';
 
 describe('test json validation rule', () => {
     it('passes for valid JSON object string', async () => {
         const validator = new Validator({
-            data: [new IsJson()]
+            data: [new JsonRule()]
         });
         const result = await validator.validate({
             data: '{"name": "John", "age": 30}'
@@ -17,7 +17,7 @@ describe('test json validation rule', () => {
 
     it('passes for valid JSON array string', async () => {
         const validator = new Validator({
-            data: [new IsJson()]
+            data: [new JsonRule()]
         });
         const result = await validator.validate({
             data: '[1, 2, 3]'
@@ -28,7 +28,7 @@ describe('test json validation rule', () => {
 
     it('passes for valid JSON primitive values', async () => {
         const validator = new Validator({
-            data: [new IsJson()]
+            data: [new JsonRule()]
         });
         
         const primitives = [
@@ -47,7 +47,7 @@ describe('test json validation rule', () => {
 
     it('fails for invalid JSON string', async () => {
         const validator = new Validator({
-            data: [new IsJson()]
+            data: [new JsonRule()]
         });
         const result = await validator.validate({
             data: '{"name": "John", age: 30}'  // Missing quotes around age
@@ -61,7 +61,7 @@ describe('test json validation rule', () => {
 
     it('fails when value is not a string', async () => {
         const validator = new Validator({
-            data: [new IsJson()]
+            data: [new JsonRule()]
         });
         const result = await validator.validate({
             data: { name: "John" }  // Object instead of string
@@ -75,7 +75,7 @@ describe('test json validation rule', () => {
 
     it('fails when value is null', async () => {
         const validator = new Validator({
-            data: [new IsJson()]
+            data: [new JsonRule()]
         });
         const result = await validator.validate({
             data: null
@@ -86,7 +86,7 @@ describe('test json validation rule', () => {
 
     it('fails when value is undefined', async () => {
         const validator = new Validator({
-            data: [new IsJson()]
+            data: [new JsonRule()]
         });
         const result = await validator.validate({
             data: undefined
@@ -97,7 +97,7 @@ describe('test json validation rule', () => {
 
     it('returns custom error message when validation fails', async () => {
         const validator = new Validator({
-            data: [new IsJson()]
+            data: [new JsonRule()]
         }, {
             'data.json': 'Please provide a valid JSON string'
         });

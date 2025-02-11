@@ -1,13 +1,13 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import Max from '@src/core/domains/validator/rules/Max';
+import MaxRule from '@src/core/domains/validator/rules/MaxRule';
 import Validator from '@src/core/domains/validator/service/Validator';
 
 describe('test max validation rule', () => {
     // Test max validation with numbers
     it('passes when number is less than max value', async () => {
         const validator = new Validator({
-            age: [new Max(18)]
+            age: [new MaxRule(18)]
         });
         const result = await validator.validate({
             age: 16
@@ -18,7 +18,7 @@ describe('test max validation rule', () => {
 
     it('passes when number equals max value', async () => {
         const validator = new Validator({
-            age: [new Max(18)]
+            age: [new MaxRule(18)]
         });
         const result = await validator.validate({
             age: 18
@@ -29,7 +29,7 @@ describe('test max validation rule', () => {
 
     it('fails when number is greater than max value', async () => {
         const validator = new Validator({
-            age: [new Max(18)]
+            age: [new MaxRule(18)]
         });
         const result = await validator.validate({
             age: 25
@@ -44,7 +44,7 @@ describe('test max validation rule', () => {
     // Test max validation with strings
     it('passes when string length is less than max value', async () => {
         const validator = new Validator({
-            name: [new Max(10)]
+            name: [new MaxRule(10)]
         });
         const result = await validator.validate({
             name: 'John'
@@ -55,7 +55,7 @@ describe('test max validation rule', () => {
 
     it('fails when string length is greater than max value', async () => {
         const validator = new Validator({
-            name: [new Max(5)]
+            name: [new MaxRule(5)]
         });
         const result = await validator.validate({
             name: 'John Doe'
@@ -70,7 +70,7 @@ describe('test max validation rule', () => {
     // Test max validation with arrays
     it('passes when array length is less than max value', async () => {
         const validator = new Validator({
-            items: [new Max(5)]
+            items: [new MaxRule(5)]
         });
         const result = await validator.validate({
             items: [1, 2, 3]
@@ -81,7 +81,7 @@ describe('test max validation rule', () => {
 
     it('fails when array length is greater than max value', async () => {
         const validator = new Validator({
-            items: [new Max(3)]
+            items: [new MaxRule(3)]
         });
         const result = await validator.validate({
             items: [1, 2, 3, 4, 5]
@@ -96,7 +96,7 @@ describe('test max validation rule', () => {
     // Test invalid input types
     it('fails when value is null', async () => {
         const validator = new Validator({
-            age: [new Max(18)]
+            age: [new MaxRule(18)]
         });
         const result = await validator.validate({
             age: null
@@ -107,7 +107,7 @@ describe('test max validation rule', () => {
 
     it('fails when value is undefined', async () => {
         const validator = new Validator({
-            age: [new Max(18)]
+            age: [new MaxRule(18)]
         });
         const result = await validator.validate({
             age: undefined
@@ -119,7 +119,7 @@ describe('test max validation rule', () => {
     // Test with custom error message
     it('returns custom error message when validation fails', async () => {
         const validator = new Validator({
-            age: [new Max(18)]
+            age: [new MaxRule(18)]
         }, {
             'age.max': 'Age cannot be more than 18 years'
         });

@@ -3,7 +3,7 @@ import AbstractRule from "../abstract/AbstractRule";
 import { IRule } from "../interfaces/IRule";
 import isTruthy from "../utils/isTruthy";
 
-class Accepted extends AbstractRule implements IRule {
+class AcceptedRule extends AbstractRule implements IRule {
 
     protected name: string = 'accepted'
 
@@ -16,4 +16,4 @@ class Accepted extends AbstractRule implements IRule {
 }
 
 
-export default Accepted;
+export default AcceptedRule;

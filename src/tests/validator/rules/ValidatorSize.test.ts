@@ -1,13 +1,13 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import Size from '@src/core/domains/validator/rules/Size';
+import SizeRule from '@src/core/domains/validator/rules/SizeRule';
 import Validator from '@src/core/domains/validator/service/Validator';
 
 describe('test size validation rule', () => {
     // Test size validation with numbers
     it('passes when number equals size value', async () => {
         const validator = new Validator({
-            age: [new Size(18)]
+            age: [new SizeRule(18)]
         });
         const result = await validator.validate({
             age: 18
@@ -18,7 +18,7 @@ describe('test size validation rule', () => {
 
     it('fails when number is less than size value', async () => {
         const validator = new Validator({
-            age: [new Size(18)]
+            age: [new SizeRule(18)]
         });
         const result = await validator.validate({
             age: 16
@@ -32,7 +32,7 @@ describe('test size validation rule', () => {
 
     it('fails when number is greater than size value', async () => {
         const validator = new Validator({
-            age: [new Size(18)]
+            age: [new SizeRule(18)]
         });
         const result = await validator.validate({
             age: 25
@@ -47,7 +47,7 @@ describe('test size validation rule', () => {
     // Test size validation with strings
     it('passes when string length equals size value', async () => {
         const validator = new Validator({
-            code: [new Size(4)]
+            code: [new SizeRule(4)]
         });
         const result = await validator.validate({
             code: 'ABC1'
@@ -58,7 +58,7 @@ describe('test size validation rule', () => {
 
     it('fails when string length is not equal to size value', async () => {
         const validator = new Validator({
-            code: [new Size(4)]
+            code: [new SizeRule(4)]
         });
         const result = await validator.validate({
             code: 'ABC12'
@@ -73,7 +73,7 @@ describe('test size validation rule', () => {
     // Test size validation with arrays
     it('passes when array length equals size value', async () => {
         const validator = new Validator({
-            items: [new Size(3)]
+            items: [new SizeRule(3)]
         });
         const result = await validator.validate({
             items: [1, 2, 3]
@@ -84,7 +84,7 @@ describe('test size validation rule', () => {
 
     it('fails when array length is not equal to size value', async () => {
         const validator = new Validator({
-            items: [new Size(3)]
+            items: [new SizeRule(3)]
         });
         const result = await validator.validate({
             items: [1, 2, 3, 4]
@@ -99,7 +99,7 @@ describe('test size validation rule', () => {
     // Test invalid input types
     it('fails when value is null', async () => {
         const validator = new Validator({
-            age: [new Size(18)]
+            age: [new SizeRule(18)]
         });
         const result = await validator.validate({
             age: null
@@ -110,7 +110,7 @@ describe('test size validation rule', () => {
 
     it('fails when value is undefined', async () => {
         const validator = new Validator({
-            age: [new Size(18)]
+            age: [new SizeRule(18)]
         });
         const result = await validator.validate({
             age: undefined
@@ -122,7 +122,7 @@ describe('test size validation rule', () => {
     // Test with custom error message
     it('returns custom error message when validation fails', async () => {
         const validator = new Validator({
-            age: [new Size(18)]
+            age: [new SizeRule(18)]
         }, {
             'age.size': 'Age must be exactly 18 years'
         });

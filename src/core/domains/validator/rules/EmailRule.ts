@@ -1,7 +1,7 @@
 import AbstractRule from "../abstract/AbstractRule";
 import { IRule, IRuleError } from "../interfaces/IRule";
 
-class Email extends AbstractRule<{}> implements IRule {
+class EmailRule extends AbstractRule<{}> implements IRule {
 
     protected name: string = 'email';
 
@@ -37,4 +37,4 @@ class Email extends AbstractRule<{}> implements IRule {
 
 }
 
-export default Email; 
+export default EmailRule; 

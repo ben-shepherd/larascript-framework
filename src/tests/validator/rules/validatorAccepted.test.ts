@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import Accepted from '@src/core/domains/validator/rules/Accepted';
+import AcceptedRule from '@src/core/domains/validator/rules/AcceptedRule';
 import Validator from '@src/core/domains/validator/service/Validator';
 
 
@@ -20,7 +20,7 @@ describe('test validation', () => {
         for (const data of validAcceptedValues) {
 
             const goodValidator = Validator.make({
-                accepted: new Accepted()
+                accepted: new AcceptedRule()
             })
             const good = await goodValidator.validate(data)
             
@@ -28,7 +28,7 @@ describe('test validation', () => {
             expect(Object.keys(good.errors() || {}).length).toBe(0);
     
             const badValidator = Validator.make({
-                accepted: new Accepted()
+                accepted: new AcceptedRule()
             })
             const bad = await badValidator.validate({
                 accepted: false

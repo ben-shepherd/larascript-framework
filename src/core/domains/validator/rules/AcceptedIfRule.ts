@@ -9,7 +9,7 @@ type AcceptedIfOptions = {
 }
 
 
-class AcceptedIf extends AbstractRule<AcceptedIfOptions> implements IRule {
+class AcceptedIfRule extends AbstractRule<AcceptedIfOptions> implements IRule {
 
     protected name: string = 'accepted_if'
 
@@ -51,4 +51,4 @@ class AcceptedIf extends AbstractRule<AcceptedIfOptions> implements IRule {
 
 }
 
-export default AcceptedIf;
+export default AcceptedIfRule;

@@ -6,7 +6,7 @@ type TMinOptions = {
     min: number
 }
 
-class Min extends AbstractRule<TMinOptions> implements IRule {
+class MinRule extends AbstractRule<TMinOptions> implements IRule {
 
     protected name: string = 'min'
 
@@ -87,4 +87,4 @@ class Min extends AbstractRule<TMinOptions> implements IRule {
 }
 
 
-export default Min;
+export default MinRule;

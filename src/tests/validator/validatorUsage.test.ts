@@ -1,9 +1,9 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import IsArray from '@src/core/domains/validator/rules/IsArray';
-import IsObject from '@src/core/domains/validator/rules/IsObject';
-import IsString from '@src/core/domains/validator/rules/IsString';
-import Required from '@src/core/domains/validator/rules/Required';
+import ArrayRule from '@src/core/domains/validator/rules/ArrayRule';
+import IsObject from '@src/core/domains/validator/rules/ObjectRule';
+import RequiredRule from '@src/core/domains/validator/rules/RequiredRule';
+import StringRule from '@src/core/domains/validator/rules/StringRule';
 import Validator from '@src/core/domains/validator/service/Validator';
 
 
@@ -16,7 +16,7 @@ describe('test validation', () => {
         }
 
         const result = await Validator.make({
-            name: [new Required(), new IsString()]
+            name: [new RequiredRule(), new StringRule()]
         }).validate(data);
 
         expect(result.passes()).toBe(true);
@@ -32,9 +32,9 @@ describe('test validation', () => {
         };
 
         const result = await Validator.make({
-            'user': [new Required(), new IsObject()],
-            'user.name': [new Required(), new IsString()],
-            'user.email': [new Required(), new IsString()]
+            'user': [new RequiredRule(), new IsObject()],
+            'user.name': [new RequiredRule(), new StringRule()],
+            'user.email': [new RequiredRule(), new StringRule()]
         }).validate(data);
 
         expect(result.passes()).toBe(true);
@@ -49,10 +49,10 @@ describe('test validation', () => {
         };
 
         const result = await Validator.make({
-            'people': [new Required(), new IsArray()],
-            'people.*.name': [new Required(), new IsString()],
-            'people.0': [new Required(), new IsObject()],
-            'people.1.name': [new Required(), new IsString()],
+            'people': [new RequiredRule(), new ArrayRule()],
+            'people.*.name': [new RequiredRule(), new StringRule()],
+            'people.0': [new RequiredRule(), new IsObject()],
+            'people.1.name': [new RequiredRule(), new StringRule()],
         }).validate(data);
 
         expect(result.passes()).toBe(true);
@@ -67,8 +67,8 @@ describe('test validation', () => {
         };
 
         const result = await Validator.make({
-            'people': [new Required(), new IsArray()],
-            'people.*.name': [new Required(), new IsString()]
+            'people': [new RequiredRule(), new ArrayRule()],
+            'people.*.name': [new RequiredRule(), new StringRule()]
         }).validate(data);
 
         expect(result.passes()).toBe(false);
@@ -92,13 +92,13 @@ describe('test validation', () => {
         };
 
         const result = await Validator.make({
-            'company': [new Required(), new IsObject()],
-            'company.name': [new Required(), new IsString()],
-            'company.departments': [new Required(), new IsArray()],
-            'company.departments.*.name': [new Required(), new IsString()],
-            'company.departments.*.employees': [new Required(), new IsArray()],
-            'company.departments.*.employees.*.name': [new Required(), new IsString()],
-            'company.departments.*.employees.*.role': [new Required(), new IsString()]
+            'company': [new RequiredRule(), new IsObject()],
+            'company.name': [new RequiredRule(), new StringRule()],
+            'company.departments': [new RequiredRule(), new ArrayRule()],
+            'company.departments.*.name': [new RequiredRule(), new StringRule()],
+            'company.departments.*.employees': [new RequiredRule(), new ArrayRule()],
+            'company.departments.*.employees.*.name': [new RequiredRule(), new StringRule()],
+            'company.departments.*.employees.*.role': [new RequiredRule(), new StringRule()]
         }).validate(data);
 
         expect(result.passes()).toBe(true);

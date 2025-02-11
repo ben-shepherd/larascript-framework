@@ -1,7 +1,7 @@
 import AbstractRule from "../abstract/AbstractRule";
 import { IRule, IRuleError } from "../interfaces/IRule";
 
-class Numeric extends AbstractRule<{}> implements IRule {
+class NumericRule extends AbstractRule<{}> implements IRule {
 
     protected name: string = 'numeric';
 
@@ -40,4 +40,4 @@ class Numeric extends AbstractRule<{}> implements IRule {
 
 }
 
-export default Numeric; 
+export default NumericRule; 

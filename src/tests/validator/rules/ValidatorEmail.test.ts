@@ -1,12 +1,12 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import Email from '@src/core/domains/validator/rules/Email';
+import EmailRule from '@src/core/domains/validator/rules/EmailRule';
 import Validator from '@src/core/domains/validator/service/Validator';
 
 describe('test email validation rule', () => {
     it('passes for valid email addresses', async () => {
         const validator = new Validator({
-            email: [new Email()]
+            email: [new EmailRule()]
         });
         const result = await validator.validate({
             email: 'test@example.com'
@@ -17,7 +17,7 @@ describe('test email validation rule', () => {
 
     it('fails for invalid email addresses', async () => {
         const validator = new Validator({
-            email: [new Email()]
+            email: [new EmailRule()]
         });
         const result = await validator.validate({
             email: 'invalid-email'
@@ -31,7 +31,7 @@ describe('test email validation rule', () => {
 
     it('fails when value contains spaces', async () => {
         const validator = new Validator({
-            email: [new Email()]
+            email: [new EmailRule()]
         });
         const result = await validator.validate({
             email: 'test @ example.com'
@@ -42,7 +42,7 @@ describe('test email validation rule', () => {
 
     it('fails when value is null', async () => {
         const validator = new Validator({
-            email: [new Email()]
+            email: [new EmailRule()]
         });
         const result = await validator.validate({
             email: null
@@ -53,7 +53,7 @@ describe('test email validation rule', () => {
 
     it('fails when value is undefined', async () => {
         const validator = new Validator({
-            email: [new Email()]
+            email: [new EmailRule()]
         });
         const result = await validator.validate({
             email: undefined
@@ -64,7 +64,7 @@ describe('test email validation rule', () => {
 
     it('fails when value is not a string', async () => {
         const validator = new Validator({
-            email: [new Email()]
+            email: [new EmailRule()]
         });
         const result = await validator.validate({
             email: 123
@@ -75,7 +75,7 @@ describe('test email validation rule', () => {
 
     it('passes for email with subdomains', async () => {
         const validator = new Validator({
-            email: [new Email()]
+            email: [new EmailRule()]
         });
         const result = await validator.validate({
             email: 'test@sub.example.com'
@@ -86,7 +86,7 @@ describe('test email validation rule', () => {
 
     it('returns custom error message when validation fails', async () => {
         const validator = new Validator({
-            email: [new Email()]
+            email: [new EmailRule()]
         }, {
             'email.email': 'Please provide a valid email address'
         });

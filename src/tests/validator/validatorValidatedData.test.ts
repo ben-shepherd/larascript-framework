@@ -1,15 +1,15 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import IsArray from '@src/core/domains/validator/rules/IsArray';
-import IsObject from '@src/core/domains/validator/rules/IsObject';
-import IsString from '@src/core/domains/validator/rules/IsString';
-import Required from '@src/core/domains/validator/rules/Required';
+import ArrayRule from '@src/core/domains/validator/rules/ArrayRule';
+import IsObject from '@src/core/domains/validator/rules/ObjectRule';
+import RequiredRule from '@src/core/domains/validator/rules/RequiredRule';
+import StringRule from '@src/core/domains/validator/rules/StringRule';
 import Validator from '@src/core/domains/validator/service/Validator';
 
 describe('test validation', () => {
     test('validator returns validated data for simple validation', async () => {
         const validator = new Validator({
-            name: [new Required(), new IsString()]
+            name: [new RequiredRule(), new StringRule()]
         });
 
         const result = await validator.validate({
@@ -24,9 +24,9 @@ describe('test validation', () => {
 
     test('validator returns validated data for nested objects', async () => {
         const validator = new Validator({
-            user: [new Required(), new IsObject()],
-            'user.name': [new Required(), new IsString()],
-            'user.hobbies': [new Required(), new IsArray()]
+            user: [new RequiredRule(), new IsObject()],
+            'user.name': [new RequiredRule(), new StringRule()],
+            'user.hobbies': [new RequiredRule(), new ArrayRule()]
         });
 
         const data = {
@@ -44,8 +44,8 @@ describe('test validation', () => {
 
     test('validator returns partial validated data when some fields fail', async () => {
         const validator = new Validator({
-            name: [new Required(), new IsString()],
-            age: [new Required(), new IsString()],
+            name: [new RequiredRule(), new StringRule()],
+            age: [new RequiredRule(), new StringRule()],
         });
 
         const result = await validator.validate({
@@ -61,7 +61,7 @@ describe('test validation', () => {
 
     test('validator returns empty object when all validations fail', async () => {
         const validator = new Validator({
-            data: [new Required(), new IsArray()]
+            data: [new RequiredRule(), new ArrayRule()]
         });
 
         const result = await validator.validate({
@@ -74,8 +74,8 @@ describe('test validation', () => {
 
     test('validator returns validated data with optional fields', async () => {
         const validator = new Validator({
-            name: [new IsString()],
-            age: [new IsString()]
+            name: [new StringRule()],
+            age: [new StringRule()]
         });
 
         const result = await validator.validate({

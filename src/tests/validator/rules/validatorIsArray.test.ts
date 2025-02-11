@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import IsArray from '@src/core/domains/validator/rules/IsArray';
+import ArrayRule from '@src/core/domains/validator/rules/ArrayRule';
 import Validator from '@src/core/domains/validator/service/Validator';
 
 
@@ -9,7 +9,7 @@ describe('test validation', () => {
     test('simple isArray, passes', async () => {
 
         const validator = Validator.make({
-            numbers: [new IsArray()]
+            numbers: [new ArrayRule()]
         })
 
         const result = await validator.validate({ numbers: [1, 2, 3] })
@@ -18,7 +18,7 @@ describe('test validation', () => {
 
     test('simple isArray, fails', async () => {
         const validator = Validator.make({
-            numbers: [new IsArray()]
+            numbers: [new ArrayRule()]
         })
 
         const result = await validator.validate({ numbers: 'not an array' })
@@ -30,7 +30,7 @@ describe('test validation', () => {
 
     test('empty array should pass', async () => {
         const validator = Validator.make({
-            numbers: [new IsArray()]
+            numbers: [new ArrayRule()]
         })
 
         const result = await validator.validate({ numbers: [] })
@@ -39,7 +39,7 @@ describe('test validation', () => {
 
     test('array with mixed types should pass', async () => {
         const validator = Validator.make({
-            mixed: [new IsArray()]
+            mixed: [new ArrayRule()]
         })
 
         const result = await validator.validate({ mixed: [1, "string", true, { key: "value" }] })
@@ -48,7 +48,7 @@ describe('test validation', () => {
 
     test('object should fail', async () => {
         const validator = Validator.make({
-            data: [new IsArray()]
+            data: [new ArrayRule()]
         })
 
         const result = await validator.validate({ data: { key: "value" } })
@@ -60,7 +60,7 @@ describe('test validation', () => {
 
     test('null should fail', async () => {
         const validator = Validator.make({
-            data: [new IsArray()]
+            data: [new ArrayRule()]
         })
 
         const result = await validator.validate({ data: null })
@@ -72,7 +72,7 @@ describe('test validation', () => {
 
     test('undefined should fail', async () => {
         const validator = Validator.make({
-            data: [new IsArray()]
+            data: [new ArrayRule()]
         })
 
         const result = await validator.validate({ data: undefined })

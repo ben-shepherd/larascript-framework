@@ -5,7 +5,7 @@ type TMaxOptions = {
     max: number
 }
 
-class Max extends AbstractRule<TMaxOptions> implements IRule {
+class MaxRule extends AbstractRule<TMaxOptions> implements IRule {
 
     protected name: string = 'max'
 
@@ -86,4 +86,4 @@ class Max extends AbstractRule<TMaxOptions> implements IRule {
 }
 
 
-export default Max;
+export default MaxRule;

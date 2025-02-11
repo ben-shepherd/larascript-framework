@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import IsNumber from '@src/core/domains/validator/rules/isNumber';
-import IsString from '@src/core/domains/validator/rules/IsString';
-import Required from '@src/core/domains/validator/rules/Required';
+import IsNumber from '@src/core/domains/validator/rules/NumberRule';
+import RequiredRule from '@src/core/domains/validator/rules/RequiredRule';
+import StringRule from '@src/core/domains/validator/rules/StringRule';
 import Validator from '@src/core/domains/validator/service/Validator';
 
 describe('test validation', () => {
@@ -10,7 +10,7 @@ describe('test validation', () => {
     test('validation fails with custom messages', async () => {
 
         const result = await Validator.make({
-            name: [new Required(), new IsString()]
+            name: [new RequiredRule(), new StringRule()]
         }, {
             'name.required': 'This is a custom validation message (required)',
             'name.is_string': 'This is a custom validation message (is_string)'
@@ -27,7 +27,7 @@ describe('test validation', () => {
 
     test('validation passes with valid data', async () => {
         const result = await Validator.make({
-            name: [new Required(), new IsString()]
+            name: [new RequiredRule(), new StringRule()]
         }, {
             'name.required': 'Name field is required',
             'name.is_string': 'Name must be a string'
@@ -41,8 +41,8 @@ describe('test validation', () => {
 
     test('validation with multiple fields and custom messages', async () => {
         const result = await Validator.make({
-            name: [new Required(), new IsString()],
-            age: [new Required(), new IsNumber()]
+            name: [new RequiredRule(), new StringRule()],
+            age: [new RequiredRule(), new IsNumber()]
         }, {
             'name.required': 'Name is required',
             'name.is_string': 'Name must be a string',
@@ -62,7 +62,7 @@ describe('test validation', () => {
 
     test('validation with missing custom message falls back to default', async () => {
         const result = await Validator.make({
-            name: [new Required(), new IsString()]
+            name: [new RequiredRule(), new StringRule()]
         }, {
             'name.required': 'Name is required'
             // No custom message for is_string
@@ -78,8 +78,8 @@ describe('test validation', () => {
 
     test('validation with partial data and custom messages', async () => {
         const result = await Validator.make({
-            name: [new Required(), new IsString()],
-            email: [new Required(), new IsString()]
+            name: [new RequiredRule(), new StringRule()],
+            email: [new RequiredRule(), new StringRule()]
         }, {
             'name.required': 'Name field is mandatory',
             'email.required': 'Email field is mandatory'

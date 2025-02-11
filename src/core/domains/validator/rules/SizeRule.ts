@@ -5,7 +5,7 @@ type TSizeOptions = {
     size: number
 }
 
-class Size extends AbstractRule<TSizeOptions> implements IRule {
+class SizeRule extends AbstractRule<TSizeOptions> implements IRule {
 
     protected name: string = 'size'
 
@@ -85,4 +85,4 @@ class Size extends AbstractRule<TSizeOptions> implements IRule {
 
 }
 
-export default Size; 
+export default SizeRule; 

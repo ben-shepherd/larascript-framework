@@ -2,7 +2,7 @@
 import AbstractRule from "../abstract/AbstractRule";
 import { IRule } from "../interfaces/IRule";
 
-class IsBoolean extends AbstractRule implements IRule {
+class BooleanRule extends AbstractRule implements IRule {
 
     protected name: string = 'is_boolean'
 
@@ -15,4 +15,4 @@ class IsBoolean extends AbstractRule implements IRule {
 }
 
 
-export default IsBoolean;
+export default BooleanRule;

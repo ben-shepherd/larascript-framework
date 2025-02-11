@@ -2,7 +2,7 @@
 import AbstractRule from "../abstract/AbstractRule";
 import { IRule } from "../interfaces/IRule";
 
-class IsArray extends AbstractRule implements IRule {
+class ArrayRule extends AbstractRule implements IRule {
 
     protected name: string = 'is_array'
 
@@ -15,4 +15,4 @@ class IsArray extends AbstractRule implements IRule {
 }
 
 
-export default IsArray;
+export default ArrayRule;

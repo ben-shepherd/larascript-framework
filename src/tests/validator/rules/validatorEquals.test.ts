@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import Equals from '@src/core/domains/validator/rules/Equals';
+import EqualsRule from '@src/core/domains/validator/rules/EqualsRule';
 import Validator from '@src/core/domains/validator/service/Validator';
 
 
@@ -20,7 +20,7 @@ describe('test validation', () => {
         for (const data of validAcceptedValues) {
 
             const goodValidator = Validator.make({
-                equalsField: new Equals(data.equalsField)
+                equalsField: new EqualsRule(data.equalsField)
             })
             const good = await goodValidator.validate(data)
             
@@ -33,7 +33,7 @@ describe('test validation', () => {
     test('equals, fails', async () => {
 
         const badValidator = Validator.make({
-            equalsField: new Equals('non matching value')
+            equalsField: new EqualsRule('non matching value')
         })
         const bad = await badValidator.validate({
             equalsField: 'hello world'

@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import Required from '@src/core/domains/validator/rules/Required';
+import RequiredRule from '@src/core/domains/validator/rules/RequiredRule';
 import Validator from '@src/core/domains/validator/service/Validator';
 
 
@@ -18,7 +18,7 @@ describe('test validation', () => {
         for (const data of validAcceptedValues) {
 
             const good = await Validator.make({
-                requiredField: new Required()
+                requiredField: new RequiredRule()
             }).validate(data)
             expect(good.passes()).toBe(true);
             expect(Object.keys(good.errors() || {}).length).toBe(0);
@@ -30,7 +30,7 @@ describe('test validation', () => {
     test('required, fails', async () => {
 
         const bad = await Validator.make({
-            requiredField: new Required()
+            requiredField: new RequiredRule()
         }).validate({
             requiredField: ''
         })
@@ -38,7 +38,7 @@ describe('test validation', () => {
         expect(Object.keys(bad.errors() || {}).length).toBe(1);
 
         const bad2 = await Validator.make({
-            requiredField: new Required()
+            requiredField: new RequiredRule()
         }).validate({
             requiredField: null
         })
@@ -46,7 +46,7 @@ describe('test validation', () => {
         expect(Object.keys(bad2.errors() || {}).length).toBe(1);
         
         const bad3 = await Validator.make({
-            requiredField: new Required()
+            requiredField: new RequiredRule()
         }).validate({})
 
         expect(bad3.passes()).toBe(false);

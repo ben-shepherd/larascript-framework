@@ -1,7 +1,7 @@
 import AbstractRule from "../abstract/AbstractRule";
 import { IRule, IRuleError } from "../interfaces/IRule";
 
-class IsJson extends AbstractRule implements IRule {
+class JsonRule extends AbstractRule implements IRule {
 
     protected name: string = 'json';
 
@@ -37,4 +37,4 @@ class IsJson extends AbstractRule implements IRule {
 
 }
 
-export default IsJson; 
+export default JsonRule; 

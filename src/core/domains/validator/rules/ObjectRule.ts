@@ -2,7 +2,7 @@
 import AbstractRule from "../abstract/AbstractRule";
 import { IRule } from "../interfaces/IRule";
 
-class isObject extends AbstractRule implements IRule {
+class ObjectRule extends AbstractRule implements IRule {
 
     protected name: string = 'is_object'
 
@@ -51,4 +51,4 @@ class isObject extends AbstractRule implements IRule {
 }
 
 
-export default isObject;
+export default ObjectRule;

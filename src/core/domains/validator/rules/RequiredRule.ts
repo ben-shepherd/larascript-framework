@@ -2,7 +2,7 @@
 import AbstractRule from "../abstract/AbstractRule";
 import { IRule } from "../interfaces/IRule";
 
-class Required extends AbstractRule implements IRule {
+class RequiredRule extends AbstractRule implements IRule {
 
     protected name: string = 'required'
 
@@ -16,4 +16,4 @@ class Required extends AbstractRule implements IRule {
 }
 
 
-export default Required;
+export default RequiredRule;

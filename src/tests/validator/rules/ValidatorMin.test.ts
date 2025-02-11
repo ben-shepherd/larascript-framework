@@ -1,13 +1,13 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import Min from '@src/core/domains/validator/rules/Min';
+import MinRule from '@src/core/domains/validator/rules/MinRule';
 import Validator from '@src/core/domains/validator/service/Validator';
 
 describe('test min validation rule', () => {
     // Test min validation with numbers
     it('passes when number is greater than min value', async () => {
         const validator = new Validator({
-            age: [new Min(18)]
+            age: [new MinRule(18)]
         });
         const result = await validator.validate({
             age: 25
@@ -18,7 +18,7 @@ describe('test min validation rule', () => {
 
     it('passes when number equals min value', async () => {
         const validator = new Validator({
-            age: [new Min(18)]
+            age: [new MinRule(18)]
         });
         const result = await validator.validate({
             age: 18
@@ -29,7 +29,7 @@ describe('test min validation rule', () => {
 
     it('fails when number is less than min value', async () => {
         const validator = new Validator({
-            age: [new Min(18)]
+            age: [new MinRule(18)]
         });
         const result = await validator.validate({
             age: 16
@@ -44,7 +44,7 @@ describe('test min validation rule', () => {
     // Test min validation with strings
     it('passes when string length is greater than min value', async () => {
         const validator = new Validator({
-            name: [new Min(5)]
+            name: [new MinRule(5)]
         });
         const result = await validator.validate({
             name: 'John Doe'
@@ -55,7 +55,7 @@ describe('test min validation rule', () => {
 
     it('fails when string length is less than min value', async () => {
         const validator = new Validator({
-            name: [new Min(5)]
+            name: [new MinRule(5)]
         });
         const result = await validator.validate({
             name: 'John'
@@ -70,7 +70,7 @@ describe('test min validation rule', () => {
     // Test min validation with arrays
     it('passes when array length is greater than min value', async () => {
         const validator = new Validator({
-            items: [new Min(3)]
+            items: [new MinRule(3)]
         });
         const result = await validator.validate({
             items: [1, 2, 3, 4, 5]
@@ -81,7 +81,7 @@ describe('test min validation rule', () => {
 
     it('fails when array length is less than min value', async () => {
         const validator = new Validator({
-            items: [new Min(3)]
+            items: [new MinRule(3)]
         });
         const result = await validator.validate({
             items: [1, 2]
@@ -96,7 +96,7 @@ describe('test min validation rule', () => {
     // Test invalid input types
     it('fails when value is null', async () => {
         const validator = new Validator({
-            age: [new Min(18)]
+            age: [new MinRule(18)]
         });
         const result = await validator.validate({
             age: null
@@ -107,7 +107,7 @@ describe('test min validation rule', () => {
 
     it('fails when value is undefined', async () => {
         const validator = new Validator({
-            age: [new Min(18)]
+            age: [new MinRule(18)]
         });
         const result = await validator.validate({
             age: undefined
@@ -119,7 +119,7 @@ describe('test min validation rule', () => {
     // Test with custom error message
     it('returns custom error message when validation fails', async () => {
         const validator = new Validator({
-            age: [new Min(18)]
+            age: [new MinRule(18)]
         }, {
             'age.min': 'You must be at least 18 years old'
         });

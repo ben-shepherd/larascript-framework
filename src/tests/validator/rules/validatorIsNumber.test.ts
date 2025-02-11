@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import IsNumber from '@src/core/domains/validator/rules/isNumber';
+import IsNumber from '@src/core/domains/validator/rules/NumberRule';
 import Validator from '@src/core/domains/validator/service/Validator';
 
 describe('test validation', () => {

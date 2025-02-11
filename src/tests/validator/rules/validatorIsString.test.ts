@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import IsString from '@src/core/domains/validator/rules/IsString';
+import StringRule from '@src/core/domains/validator/rules/StringRule';
 import Validator from '@src/core/domains/validator/service/Validator';
 
 
@@ -11,7 +11,7 @@ describe('test validation', () => {
 
         const good = await Validator.make({
 
-            stringField: new IsString()
+            stringField: new StringRule()
         }).validate({
             stringField: 'hello world'
         })
@@ -24,7 +24,7 @@ describe('test validation', () => {
     test('string, fails', async () => {
 
         const bad = await Validator.make({
-            stringField: new IsString()
+            stringField: new StringRule()
 
         }).validate({
             stringField: 123
@@ -34,7 +34,7 @@ describe('test validation', () => {
         expect(Object.keys(bad.errors() || {}).length).toBe(1);
 
         const bad2 = await Validator.make({
-            stringField: new IsString()
+            stringField: new StringRule()
         }).validate({
             stringField: null
         })
@@ -43,7 +43,7 @@ describe('test validation', () => {
         expect(Object.keys(bad2.errors() || {}).length).toBe(1);
         
         const bad3 = await Validator.make({
-            stringField: new IsString()
+            stringField: new StringRule()
         }).validate({})
 
         expect(bad3.passes()).toBe(false);
