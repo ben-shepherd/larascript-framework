@@ -72,16 +72,16 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
         // Adds an identifier to the request object
         // This id is used in the requestContext service to store information over a request life cycle
         // this.app.use(requestIdMiddleware())
-        this.app.use(RequestIdMiddleware.toExpressMiddleware())
+        this.app.use(RequestIdMiddleware.createExpressMiddleware())
 
         // End the request context
         // This will be called when the request is finished
         // Deletes the request context and associated values
-        this.app.use(EndRequestContextMiddleware.toExpressMiddleware())
+        this.app.use(EndRequestContextMiddleware.createExpressMiddleware())
 
         // Log requests
         if(this.config?.logging?.requests) {
-            this.app.use(BasicLoggerMiddleware.toExpressMiddleware())
+            this.app.use(BasicLoggerMiddleware.createExpressMiddleware())
         }
 
         // Apply global middlewares
@@ -98,7 +98,7 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
     public useMiddleware(middleware: TExpressMiddlewareFn | MiddlewareConstructor) {
         
         if(middleware.prototype instanceof Middleware) {
-            this.app.use((middleware as MiddlewareConstructor).toExpressMiddleware())
+            this.app.use((middleware as MiddlewareConstructor).createExpressMiddleware())
         }
         else {
             this.app.use(middleware as TExpressMiddlewareFn)

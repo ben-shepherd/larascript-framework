@@ -18,7 +18,7 @@ import { TBaseRequest } from "../interfaces/BaseRequest";
  * 2. Adding type-safe configuration management through generics and config methods
  * 
  * 3. Providing static and instance methods to convert back to Express middleware format
- *    when needed (toExpressMiddleware() and toExpressable())
+ *    when needed (createExpressMiddleware() and toExpressable())
  * 
  * Example usage:
  * ```
@@ -30,7 +30,7 @@ import { TBaseRequest } from "../interfaces/BaseRequest";
  * }
  * 
  * // Use with Express
- * app.use(LoggerMiddleware.toExpressMiddleware())
+ * app.use(LoggerMiddleware.createExpressMiddleware())
  * ```
  * 
  * This abstraction helps organize middleware code into maintainable, testable classes
@@ -54,7 +54,7 @@ abstract class Middleware<Config extends unknown = unknown> implements IMiddlewa
      * Creates a new instance of this class and returns its Express middleware function,
      * allowing it to be used directly with Express's app.use() or route handlers.
      */
-    public static toExpressMiddleware<Middleware extends IMiddleware = IMiddleware>(config?: Middleware['config'], routeItem?: TRouteItem): TExpressMiddlewareFn {
+    public static createExpressMiddleware<Middleware extends IMiddleware = IMiddleware>(config?: Middleware['config'], routeItem?: TRouteItem): TExpressMiddlewareFn {
         const middleware = new (this as unknown as MiddlewareConstructor)()
 
         if(typeof config !== 'undefined') {
@@ -63,8 +63,6 @@ abstract class Middleware<Config extends unknown = unknown> implements IMiddlewa
 
         return middleware.toExpressable(routeItem)
     }
-
-
 
     /**
      * @param {Config} config

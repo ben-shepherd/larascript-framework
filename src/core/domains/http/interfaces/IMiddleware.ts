@@ -19,7 +19,7 @@ import { TRouteItem } from "./IRouter";
  */
 export type MiddlewareConstructor = {
     new (...args: any[]): IMiddleware;
-    toExpressMiddleware(config?: unknown, routeItem?: TRouteItem): TExpressMiddlewareFn;
+    createExpressMiddleware(config?: unknown, routeItem?: TRouteItem): TExpressMiddlewareFn;
 }
 
 /**
@@ -28,11 +28,11 @@ export type MiddlewareConstructor = {
  * 
  * 1. Can be instantiated with any number of arguments (...args: any[])
  * 2. Returns a new instance of IMiddleware
- * 3. Has a static method toExpressMiddleware that converts the middleware class 
+ * 3. Has a static method createExpressMiddleware that converts the middleware class 
  *    into an Express-compatible middleware function
  *
  * This allows middleware to be defined as classes while still being compatible
- * with Express's middleware system through the toExpressMiddleware conversion.
+ * with Express's middleware system through the createExpressMiddleware conversion.
  */
 export interface IMiddleware<Config extends unknown = unknown> extends IExpressable<TExpressMiddlewareFn> {
     config: Config;
