@@ -1,6 +1,5 @@
 import Middleware from "../../http/base/Middleware";
 import HttpContext from "../../http/context/HttpContext";
-import { ValidatorMiddlewareProps } from "../../validator-legacy/interfaces/IValidatorService";
 import { CustomValidatorConstructor } from "../interfaces/IValidator";
 
 /**
@@ -9,7 +8,7 @@ import { CustomValidatorConstructor } from "../interfaces/IValidator";
  * This middleware validates the request body against the validator constructor
  * and sets the validated body on the request.
  */
-class ValidatorMiddleware extends Middleware<ValidatorMiddlewareProps> {
+class ValidatorMiddleware extends Middleware {
 
     public async execute(context: HttpContext): Promise<void> {
         const validatorConstructor = this.getValidatorConstructor(context);
