@@ -17,12 +17,11 @@ class Validator  implements IValidator {
 
     constructor(
         rules: IRulesObject,
-        messages: IValidatorMessages = {},
+        messages: IValidatorMessages = {}
     ) {
         this.rules = rules;
         this.messages = messages;
     }
-
 
     public static make(rules: IRulesObject, messages: IValidatorMessages = {} as IValidatorMessages): IValidator {
         return new Validator(rules, messages);
@@ -37,14 +36,11 @@ class Validator  implements IValidator {
         // Reset errors before each validation run
         this._errors = {};
 
+        // Copy the attributes to the validatedData object
+        // These will be removed if the rule fails
+        this.validatedData = {...attributes}
+
         // Extract only the data fields that have validation rules defined
-        // This ensures we only validate fields that have rules and maintains
-        // the nested structure (e.g. users.0.name) for proper validation
-        // Example Structure:
-        // {
-        //     "users.*": [...],
-        //     "users.*.name": ["John", "Jane"  ]
-        // }
         const extractedData = this.extractData(attributes);
 
         // Validate each field with its corresponding rule
@@ -53,18 +49,46 @@ class Validator  implements IValidator {
             const rulesArray = Array.isArray(rules) ? rules : [rules];
             const ruleData = extractedData[path];
 
+            // Validate the rules array
+            // Merge the errors, if any
             await this.validateRulesArray(path, rulesArray, ruleData, attributes);
         }
 
         // If there are any validation errors, return a fails result
         if(Object.keys(this._errors).length > 0) {
-            return ValidatorResult.fails<T>(this._errors);
+            return ValidatorResult.fails<T>(this._errors, this.validatedData as T);
         }
-        
-        // Passed
-        return ValidatorResult.passes<T>();
+
+        return ValidatorResult.passes<T>(this.validatedData as T);
     }
 
+    /**
+     * Extracts data from attributes object based on defined validation rules paths
+     * 
+     * This method takes the full attributes object and extracts only the data that needs
+     * to be validated based on the rule paths defined. It maintains the nested structure
+     * using dot notation (e.g. users.*.name) and returns an object where:
+     * 
+     * - Keys are the dot notation paths matching the validation rules
+     * - Values are the corresponding data at those paths
+     * 
+     * For example, given attributes:
+     * {
+     *   users: [{name: "John"}, {name: "Jane"}]
+     * }
+     * 
+     * And rules for "users.*" and "users.*.name", it would extract:
+     * {
+     *   "users.*": [{name: "John"}, {name: "Jane"}],
+     *   "users.*.name": ["John", "Jane"]
+     * }
+     * 
+     * This ensures we only validate data that has corresponding rules while preserving
+     * the nested structure needed for proper validation.
+     * 
+     * @param attributes - The full data object to extract from
+     * @returns Record mapping rule paths to their corresponding data values
+     */
     protected extractData(attributes: IValidatorAttributes): Record<string, unknown> {
         const result = DotNotationDataExtrator.reduceMany(attributes, Object.keys(this.rules));
 
@@ -73,7 +97,6 @@ class Validator  implements IValidator {
             return acc;
         }, {} as Record<string, unknown>);
     }
-
 
     /**
      * Validates an array of rules for a given path and attributes
@@ -89,6 +112,7 @@ class Validator  implements IValidator {
 
             if (result.fails()) {
                 this.mergeErrors(path, result.errors() ?? {})
+                continue;
             }
         }
 
@@ -114,14 +138,47 @@ class Validator  implements IValidator {
         rule.setMessages(this.messages)
         const passes = await rule.validate();
 
+        // If the rule fails, remove the validated data
         if (!passes) {
+            this.removeValidatedData(key)
             return ValidatorResult.fails(rule.getCustomError() ?? rule.getError());
         }        
+
+        // Merge the validated data
+        this.mergeValidatedData(key, attributes?.[key])
 
         return ValidatorResult.passes();
     }
 
-    mergeErrors(key: string, errors: Record<string, string[]>): void {
+    /**
+     * Removes validated data from the internal validatedData object
+     * @param key - The dot notation path of the field with validated data
+     */
+    protected removeValidatedData(key: string): void {
+        if(this.validatedData[key]) {
+            delete this.validatedData[key]
+        }
+    }
+
+    /**
+     * Merges validated data into the internal validatedData object
+     * @param key - The dot notation path of the field with validated data
+     * @param data - The validated data to merge
+     */
+    protected mergeValidatedData(key: string, data: unknown): void {
+        if(!this.validatedData) {
+            this.validatedData = {}
+        }
+
+        this.validatedData[key] = data
+    }
+
+    /**
+     * Merges validation errors into the internal errors object
+     * @param key - The dot notation path of the field with errors
+     * @param errors - The errors to merge
+     */
+    protected mergeErrors(key: string, errors: Record<string, string[]>): void {
         if(!this._errors[key]) {
             this._errors[key] = []
         }
@@ -129,18 +186,34 @@ class Validator  implements IValidator {
         this._errors[key] = [...this._errors[key], ...errors[key]]
     }
 
+    /**
+     * Returns the validated data
+     * @returns The validated data
+     */
     validated(): unknown {
         return this.validatedData;
     }
 
+    /**
+     * Returns true if the validation failed
+     * @returns True if the validation failed
+     */
     fails(): boolean {
         return false;
     }
 
+    /**
+     * Returns true if the validation passed
+     * @returns True if the validation passed
+     */
     passes(): boolean {
         return true;
     }
 
+    /**
+     * Returns the validation errors
+     * @returns The validation errors
+     */
     errors(): Record<string, string> {
         return {};
     }

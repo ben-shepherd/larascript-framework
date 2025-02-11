@@ -4,6 +4,7 @@ export interface IValidatorResult<T extends IValidatorAttributes = IValidatorAtt
     passes(): boolean;
     fails(): boolean;
     errors(): Record<string, string[]>;
+    validated(): T;
 }
 
 

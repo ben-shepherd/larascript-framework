@@ -3,7 +3,7 @@ import { IRule } from "./IRule"
 import { IValidatorResult } from "./IValidatorResult"
 
 export type ValidatorConstructor = {
-    new (): IValidator
+    new (rules: IRule[], messages: IValidatorMessages): IValidator
     make(rules: IRule[], messages: IValidatorMessages): IValidator
 }
 
