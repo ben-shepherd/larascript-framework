@@ -25,6 +25,7 @@ import Route from "@src/core/domains/http/router/Route";
 import Router from "@src/core/domains/http/router/Router";
 import { app } from "@src/core/services/App";
 import { JsonWebTokenError } from "jsonwebtoken";
+import { DataTypes } from "sequelize";
 
 /**
  * Short hand for app('auth.jwt')
@@ -272,6 +273,32 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
      */
     public getUserRepository(): IUserRepository {
         return new UserRepository(this.config.models?.user);
+    }
+
+    /**
+     * Get the create user table schema
+     * @returns 
+     */
+    public getCreateUserTableSchema() {
+        return {        
+            email: DataTypes.STRING,
+            hashedPassword: DataTypes.STRING,
+            groups: DataTypes.ARRAY(DataTypes.STRING),
+            roles: DataTypes.ARRAY(DataTypes.STRING),                
+        }
+    }
+
+    /**
+     * Get the create api token table schema
+     * @returns 
+     */
+    public getCreateApiTokenTableSchema() {
+        return {
+            userId: DataTypes.STRING,
+            token: DataTypes.STRING,
+            scopes: DataTypes.JSON,
+            revokedAt: DataTypes.DATE
+        }
     }
 
 }
