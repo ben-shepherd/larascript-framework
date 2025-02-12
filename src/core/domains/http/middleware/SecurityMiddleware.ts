@@ -7,6 +7,45 @@ import { SecurityEnum } from "@src/core/domains/http/enums/SecurityEnum";
 import responseError from "@src/core/domains/http/handlers/responseError";
 import SecurityReader from "@src/core/domains/http/security/services/SecurityReader";
 
+/**
+ * SecurityMiddleware handles security rule validation for HTTP routes.
+ * 
+ * This middleware evaluates security rules defined on routes to enforce access control.
+ * It supports multiple types of security checks including:
+ * - Rate limiting
+ * - Role-based access control
+ * - Scope-based permissions
+ * - Resource ownership validation
+ * 
+ * Example usage in route definition:
+ * ```typescript
+ * router.post('/posts', [PostController, 'create'], {
+ *   // Require admin role and limit to 100 requests per minute
+ *   security: [
+ *     router.security().hasRole('admin'),
+ *     router.security().rateLimited(100, 1)
+ *   ]
+ * });
+ * 
+ * // Resource routes with owner check
+ * router.resource({
+ *   prefix: '/posts',
+ *   resource: PostModel,
+ *   security: [
+ *     router.security().resourceOwner('userId'),
+ *     router.security().scopes(['posts.write'])
+ *   ]
+ * });
+ * ```
+ * 
+ * The middleware:
+ * 1. Binds security rules to the request
+ * 2. Checks rate limiting rules
+ * 3. Validates role-based access
+ * 4. Validates scope-based permissions
+ * 
+ * If any security check fails, the request is rejected with an appropriate error response.
+ */
 class SecurityMiddleware extends Middleware {
 
     public async execute(context: HttpContext): Promise<void> {
