@@ -4,8 +4,8 @@ import { TExpressMiddlewareFnOrClass } from "@src/core/domains/http/interfaces/I
 import { ISecurityRule } from "@src/core/domains/http/interfaces/ISecurity";
 import SecurityRules from "@src/core/domains/http/security/services/SecurityRules";
 import { TSortDirection } from "@src/core/domains/http/utils/SortOptions";
-import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { CustomValidatorConstructor } from "@src/core/domains/validator/interfaces/IValidator";
+import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
 export type RouteConstructor = {
     new (...args: any[]): IRouter;
@@ -126,7 +126,8 @@ export type TRouteResourceOptions = {
     validation?: {
         create?: CustomValidatorConstructor;
         update?: CustomValidatorConstructor;
-    }
+    },
+    only?: TResourceType[]
 }
 
 

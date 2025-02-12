@@ -1,5 +1,5 @@
 
-import { TPartialRouteItemOptions, TRouteResourceOptions } from "@src/core/domains/http/interfaces/IRouter";
+import { TPartialRouteItemOptions, TResourceType, TRouteResourceOptions } from "@src/core/domains/http/interfaces/IRouter";
 import ResourceController from "@src/core/domains/http/resources/controller/ResourceController";
 import Router from "@src/core/domains/http/router/Router";
 
@@ -63,76 +63,102 @@ class ResourceRouter {
             ...rest,
         }
 
+        const registerIndex = this.shouldRegisterType(RouteResourceTypes.INDEX, rest.only)
+        const registerShow = this.shouldRegisterType(RouteResourceTypes.SHOW, rest.only)
+        const registerCreate = this.shouldRegisterType(RouteResourceTypes.CREATE, rest.only)
+        const registerUpdate = this.shouldRegisterType(RouteResourceTypes.UPDATE, rest.only)
+        const registerDelete = this.shouldRegisterType(RouteResourceTypes.DELETE, rest.only)
+
         router.group({
             prefix,
             controller: ResourceController,
             ...rest
         }, (router) => {
             
-            router.get('/', 'index', {
-                ...routeItemOptions,
-                resource: {
-                    type: RouteResourceTypes.INDEX,
-                    modelConstructor: resource,
-                    scopes: resource.getScopes(['read'], additionalScopes),
-                    filters: filters ?? {},
-                    searching: searching ?? {},
-                    paginate: paginate ?? {},
-                    sorting: sorting
-                }
-            });
+            if(registerIndex) {
+                router.get('/', 'index', {
+                    ...routeItemOptions,
+                    resource: {
+                        type: RouteResourceTypes.INDEX,
+                        modelConstructor: resource,
+                        scopes: resource.getScopes(['read'], additionalScopes),
+                        filters: filters ?? {},
+                        searching: searching ?? {},
+                        paginate: paginate ?? {},
+                        sorting: sorting
+                    }
+                });
+            }
 
-            router.get('/:id', 'show', {
-                ...routeItemOptions,
-                resource: {
+            if(registerShow) {
+                router.get('/:id', 'show', {
+                    ...routeItemOptions,
+                    resource: {
 
-                    type: RouteResourceTypes.SHOW,
-                    modelConstructor: resource,
-                    scopes: resource.getScopes(['read'], additionalScopes),
-                    filters: filters ?? {},
-                    searching: searching ?? {},
-                }
-            });
+                        type: RouteResourceTypes.SHOW,
+                        modelConstructor: resource,
+                        scopes: resource.getScopes(['read'], additionalScopes),
+                        filters: filters ?? {},
+                        searching: searching ?? {},
+                    }
+                });
+            }
 
+            if(registerCreate) {
+                router.post('/', 'create', {
+                    ...routeItemOptions,
+                    resource: {
+                        type: RouteResourceTypes.CREATE,
+                        modelConstructor: resource,
+                        scopes: resource.getScopes(['create'], additionalScopes),
+                        searching: searching ?? {},
+                        validation: validation ?? {}
+                    }
+                });
+            }
 
-            router.post('/', 'create', {
-                ...routeItemOptions,
-                resource: {
-                    type: RouteResourceTypes.CREATE,
-                    modelConstructor: resource,
-                    scopes: resource.getScopes(['create'], additionalScopes),
-                    searching: searching ?? {},
-                    validation: validation ?? {}
-                }
-            });
+            if(registerUpdate) {
+                router.put('/:id', 'update', {
+                    ...routeItemOptions,
+                    resource: {
+                        type: RouteResourceTypes.UPDATE,
+                        modelConstructor: resource,
+                        scopes: resource.getScopes(['write'], additionalScopes),
+                        searching: searching ?? {},
+                        validation: validation ?? {}
+                    }
+                });
+            }
 
-
-
-            router.put('/:id', 'update', {
-                ...routeItemOptions,
-                resource: {
-                    type: RouteResourceTypes.UPDATE,
-                    modelConstructor: resource,
-                    scopes: resource.getScopes(['write'], additionalScopes),
-                    searching: searching ?? {},
-                    validation: validation ?? {}
-                }
-            });
-
-
-            router.delete('/:id', 'delete', {
-                ...routeItemOptions,
-                resource: {
-                    type: RouteResourceTypes.DELETE,
-                    modelConstructor: resource,
-                    scopes: resource.getScopes(['delete'], additionalScopes),
-                    searching: searching ?? {}
-                }
-            });
+            if(registerDelete) {
+                router.delete('/:id', 'delete', {
+                    ...routeItemOptions,
+                    resource: {
+                        type: RouteResourceTypes.DELETE,
+                        modelConstructor: resource,
+                        scopes: resource.getScopes(['delete'], additionalScopes),
+                        searching: searching ?? {}
+                    }
+                });
+            }
         })
 
 
         return router;
+    }
+
+    /**
+     * Determines if a resource type should be registered based on the provided options.
+     * 
+     * @param type - The resource type to check
+     * @param only - An optional array of resource types to check against
+     * @returns true if the type should be registered, false otherwise
+     */
+    protected static shouldRegisterType (type: TResourceType, only?: TResourceType[]) {
+        if(!only) {
+            return true
+        }
+        return only.includes(type)
     }
 
 }
