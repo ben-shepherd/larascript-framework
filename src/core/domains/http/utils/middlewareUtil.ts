@@ -2,6 +2,7 @@
 import Middleware from '@src/core/domains/http/base/Middleware';
 import { MiddlewareConstructor, TExpressMiddlewareFn, TExpressMiddlewareFnOrClass } from '@src/core/domains/http/interfaces/IMiddleware';
 import { TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
+import express from "express";
 
 /**
  * Utility class for handling middleware conversions and transformations.
@@ -25,14 +26,14 @@ class MiddlewareUtil {
      * @param routeItem The route item containing the middlewares
      * @returns An array of Express middleware functions
      */
-    static convertToExpressMiddlewares(fnAndClassMiddlewares: TExpressMiddlewareFnOrClass[], routeItem?: TRouteItem): TExpressMiddlewareFn[] {
+    static convertToExpressMiddlewares(fnAndClassMiddlewares: (express.RequestHandler | TExpressMiddlewareFnOrClass)[], routeItem?: TRouteItem): TExpressMiddlewareFn[] {
 
         // A mix of middleware classes and middleware functions
         const middlewaresArray = (
             Array.isArray(fnAndClassMiddlewares) 
                 ? fnAndClassMiddlewares 
                 : [fnAndClassMiddlewares]
-        ) as TExpressMiddlewareFnOrClass[]
+        ) as (express.RequestHandler | TExpressMiddlewareFnOrClass)[]
 
         // Convert middleware classes to middleware functions
         return middlewaresArray.map(middleware => {

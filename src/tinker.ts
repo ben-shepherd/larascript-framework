@@ -4,10 +4,11 @@ import 'dotenv/config';
 import 'tsconfig-paths/register';
 
 import appConfig from '@src/config/app';
+import providers from '@src/config/providers';
 import Kernel from '@src/core/Kernel';
 import { app } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
-import providers from '@src/config/providers';
+
 
 const USE_TEST_DB = false;
 
@@ -24,12 +25,14 @@ const USE_TEST_DB = false;
         }, {});
     }
 
-    const db      = app('db');
-    const events  = app('events')     
-    const query   = app('query');
-
+    const db        = app('db');
+    const events    = app('events')     
+    const query     = app('query');
+    const validator = app('validator');
+    
     /**
     * ADD YOUR CODE HERE
     */
-    
+
+
 })(); 

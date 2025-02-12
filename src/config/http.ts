@@ -1,4 +1,6 @@
 import IExpressConfig from '@src/core/domains/http/interfaces/IHttpConfig';
+import SecurityMiddleware from '@src/core/domains/http/middleware/SecurityMiddleware';
+import ValidatorMiddleware from '@src/core/domains/validator/middleware/ValidatorMiddleware';
 import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
 import express from 'express';
 
@@ -19,6 +21,8 @@ const config: IExpressConfig = {
      */
     globalMiddlewares: [
         express.json(),
+        SecurityMiddleware,
+        ValidatorMiddleware
     ],
 
     /**

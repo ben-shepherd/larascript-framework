@@ -10,7 +10,7 @@ import Controller from "@src/core/domains/http/base/Controller";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import responseError from "@src/core/domains/http/handlers/responseError";
 import ApiResponse from "@src/core/domains/http/response/ApiResponse";
-import ValidationError from "@src/core/domains/validator/exceptions/ValidationError";
+import ValidatorException from "@src/core/domains/validator/exceptions/ValidatorException";
 
 /**
  * Controller handling authentication-related HTTP endpoints.
@@ -130,7 +130,7 @@ class AuthController extends Controller {
                 return;
             }
 
-            if(error instanceof ValidationError) {
+            if(error instanceof ValidatorException) {
                 responseError(context.getRequest(), context.getResponse(), error as Error, 422)
                 return;
             }

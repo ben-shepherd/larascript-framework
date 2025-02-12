@@ -9,7 +9,7 @@ import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 import ResourceOwnerRule from "@src/core/domains/http/security/rules/ResourceOwnerRule";
 import SecurityReader from "@src/core/domains/http/security/services/SecurityReader";
 import Paginate from "@src/core/domains/http/utils/Paginate";
-import { ValidatorConstructor } from "@src/core/domains/validator/interfaces/IValidator";
+import { CustomValidatorConstructor, IValidatorErrors } from "@src/core/domains/validator/interfaces/IValidator";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
 type TResponseOptions = {
@@ -185,7 +185,7 @@ abstract class AbastractBaseResourceService {
          * @param {HttpContext} context - The HTTP context
          * @returns {ValidatorConstructor | undefined} - The validator or undefined if not found
          */
-        getValidator(context: HttpContext): ValidatorConstructor | undefined {
+        getValidator(context: HttpContext): CustomValidatorConstructor | undefined {
             const routeOptions = context.getRouteItem()
 
 
@@ -193,7 +193,7 @@ abstract class AbastractBaseResourceService {
                 throw new ResourceException('Route options are required')
             }
 
-            const validator = routeOptions.resource?.validation?.[this.routeResourceType] as ValidatorConstructor | undefined
+            const validator = routeOptions.resource?.validation?.[this.routeResourceType] as CustomValidatorConstructor | undefined
 
             if(!validator) {
                 return undefined;
@@ -208,10 +208,9 @@ abstract class AbastractBaseResourceService {
          * @returns {Promise<void>} A promise that resolves when validation is complete
          * @throws {ValidationError} If validation fails
          */
-        async getValidationErrors(context: HttpContext): Promise<string[] | undefined> {
+        async getValidationErrors(context: HttpContext): Promise<IValidatorErrors | undefined> {
             const validatorConstructor = this.getValidator(context)
             
-
             if(!validatorConstructor) {
                 return undefined;
             }
@@ -220,9 +219,8 @@ abstract class AbastractBaseResourceService {
             const body = context.getRequest().body
             const result = await validator.validate(body)
 
-
-            if(!result.success) {
-                return result.joi.error?.details?.map(detail => detail.message)
+            if(result.fails()) {
+                return result.errors()
             }
 
             return undefined;

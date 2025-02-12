@@ -2,8 +2,7 @@ import { GROUPS, ROLES } from "@src/config/acl";
 import Factory from "@src/core/base/Factory";
 import hashPassword from "@src/core/domains/auth/utils/hashPassword";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
-
-import User from "../models/auth/User";
+import User from "@src/app/models/auth/User";
 
 class UserFactory extends Factory {
 

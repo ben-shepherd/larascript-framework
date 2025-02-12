@@ -8,8 +8,8 @@ import { logger } from '@src/core/domains/logger/services/LoggerService';
 import TestApiTokenModel from '@src/tests/models/models/TestApiTokenModel';
 import TestUser from '@src/tests/models/models/TestUser';
 import testHelper from '@src/tests/testHelper';
-import TestCreateUserValidator from '@src/tests/validator/TestCreateUserValidator';
-import TestUpdateUserValidator from '@src/tests/validator/TestUpdateUserValidator';
+import TestCreateUserValidator from '@src/tests/validator/validators/TestCreateUserValidator';
+import TestUpdateUserValidator from '@src/tests/validator/validators/TestUpdateUserValidator';
 
 
 describe('attempt to run app with normal appConfig', () => {
@@ -65,7 +65,7 @@ describe('attempt to run app with normal appConfig', () => {
             lastName: 'Stark'
         });
 
-        expect(result.success).toBeFalsy();
+        expect(result.passes()).toBeFalsy();
     })
 
     test('test create user validator', async () => {
@@ -77,12 +77,7 @@ describe('attempt to run app with normal appConfig', () => {
             lastName: 'Stark'
 
         });
-
-        if(!result.success) {
-            logger().error(result.joi.error);
-        }
-
-        expect(result.success).toBeTruthy();
+        expect(result.passes()).toBeTruthy();
     })
 
 
@@ -95,11 +90,7 @@ describe('attempt to run app with normal appConfig', () => {
             lastName: 'Stark'
         });
 
-        if(!result.success) {
-            logger().error(result.joi.error);
-        }
-
-        expect(result.success).toBeTruthy();
+        expect(result.passes()).toBeTruthy();
     })
 
     test('attempt credentials', async () => {

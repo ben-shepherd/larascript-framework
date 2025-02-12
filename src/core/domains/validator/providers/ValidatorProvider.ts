@@ -1,13 +1,14 @@
 import BaseProvider from "@src/core/base/Provider";
-import ValidatorService from "@src/core/domains/validator/services/ValidatorService";
-import { App } from "@src/core/services/App";
+import { IRulesObject } from "@src/core/domains/validator/interfaces/IRule";
+import { IValidatorMessages } from "@src/core/domains/validator/interfaces/IValidator";
+import Validator from "@src/core/domains/validator/service/Validator";
 
-class ValidationProvider extends BaseProvider {
+class ValidatorProvider extends BaseProvider {
 
     async register(): Promise<void> {
-        App.setContainer('validate', new ValidatorService());
+        this.bind('validator', (rules: IRulesObject, messages: IValidatorMessages = {}) => Validator.make(rules, messages));
     }
 
 }
 
-export default ValidationProvider
+export default ValidatorProvider

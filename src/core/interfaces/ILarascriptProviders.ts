@@ -1,3 +1,6 @@
+import { IACLService } from '@src/core/domains/auth/interfaces/acl/IACLService';
+import { IJwtAuthService } from '@src/core/domains/auth/interfaces/jwt/IJwtAuthService';
+import { IAuthService } from '@src/core/domains/auth/interfaces/service/IAuthService';
 import ICommandService from '@src/core/domains/console/interfaces/ICommandService';
 import { IDatabaseService } from '@src/core/domains/database/interfaces/IDatabaseService';
 import { IEloquentQueryBuilderService } from '@src/core/domains/eloquent/interfaces/IEloquentQueryBuilderService';
@@ -5,11 +8,8 @@ import { IEventService } from '@src/core/domains/events/interfaces/IEventService
 import IHttpService from '@src/core/domains/http/interfaces/IHttpService';
 import { IRequestContext } from '@src/core/domains/http/interfaces/IRequestContext';
 import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerService';
-import IValidatorService from '@src/core/domains/validator/interfaces/IValidatorService';
 import readline from 'node:readline';
-import { IACLService } from '@src/core/domains/auth/interfaces/acl/IACLService';
-import { IJwtAuthService } from '@src/core/domains/auth/interfaces/jwt/IJwtAuthService';
-import { IAuthService } from '@src/core/domains/auth/interfaces/service/IAuthService';
+import { IValidatorMake } from '@src/core/domains/validator/interfaces/IValidator';
 
 export interface ILarascriptProviders {
 
@@ -83,7 +83,7 @@ export interface ILarascriptProviders {
      * Validator service
      * Provided by '@src/core/domains/validator/providers/ValidatorProvider'
      */
-    validate: IValidatorService;
+    validator: IValidatorMake;
 
     /**
      * Logger service
