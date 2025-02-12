@@ -19,6 +19,7 @@ class MigrationProvider extends BaseProvider {
     async register(): Promise<void> {
         this.log('Registering MigrationProvider');   
 
+        // Register the migration commands
         app('console').register()
             .registerAll([
                 MigrateUpCommand,

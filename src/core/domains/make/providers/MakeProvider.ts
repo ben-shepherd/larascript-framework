@@ -14,14 +14,15 @@ import MakeServiceCommand from "@src/core/domains/make/commands/MakeServiceComma
 import MakeSingletonCommand from "@src/core/domains/make/commands/MakeSingletonCommand";
 import MakeSubscriberCommand from "@src/core/domains/make/commands/MakeSubscriberCommand";
 import MakeValidatorCommand from "@src/core/domains/make/commands/MakeValidatorCommand";
-import { App } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 
 export default class MakeProvider extends BaseProvider {
 
     async register(): Promise<void> {
         this.log('Registering MakeProvider')    
 
-        App.container('console').register().registerAll([
+        // Register the make commands
+        app('console').register().registerAll([
             MakeCmdCommand,
             MakeListenerCommand,
             MakeModelCommand,
@@ -39,7 +40,5 @@ export default class MakeProvider extends BaseProvider {
             MakeSeederCommand
         ])
     }
-
-    async boot(): Promise<void> {}
 
 }

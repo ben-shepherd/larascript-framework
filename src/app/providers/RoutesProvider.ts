@@ -1,5 +1,6 @@
 import apiRoutes from "@src/app/routes/api";
 import BaseProvider from "@src/core/base/Provider";
+import { authJwt } from "@src/core/domains/auth/services/JwtAuthService";
 import healthRoutes from "@src/core/domains/http/routes/healthRoutes";
 import { app } from "@src/core/services/App";
 
@@ -15,7 +16,7 @@ class RoutesProvider extends BaseProvider {
         const httpService = app('http');
         
         // Bind routes
-        httpService.bindRoutes(app('auth.jwt').getRouter())
+        httpService.bindRoutes(authJwt().getRouter())
         httpService.bindRoutes(healthRoutes);
         httpService.bindRoutes(apiRoutes);
 

@@ -4,7 +4,7 @@ import RequestContext from '@src/core/domains/http/context/RequestContext';
 import RequestContextCleaner from '@src/core/domains/http/context/RequestContextCleaner';
 import IHttpConfig from '@src/core/domains/http/interfaces/IHttpConfig';
 import HttpService from '@src/core/domains/http/services/HttpService';
-import { App } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 
 export default class HttpProvider extends BaseProvider {
 
@@ -28,14 +28,14 @@ export default class HttpProvider extends BaseProvider {
 
         // Register the Express service in the container
         // This will be available in any provider or service as App.container('express')
-        App.setContainer('http', new HttpService(this.config));
+        this.bind('http', new HttpService(this.config));
 
 
         // Register the RequestContext service in the container
         // This will be available in any provider or service as App.container('requestContext')
         // The RequestContext class can be used to store data over a request's life cycle
         // Additionally, data can be stored which can be linked to the requests IP Address with a TTL
-        App.setContainer('requestContext', new RequestContext());
+        this.bind('requestContext', new RequestContext());
     }
 
     /**
@@ -58,7 +58,7 @@ export default class HttpProvider extends BaseProvider {
          * Get the Express instance from the container
          * Initialize Express
          */
-        const http = App.container('http');
+        const http = app('http');
         http.init();
 
 

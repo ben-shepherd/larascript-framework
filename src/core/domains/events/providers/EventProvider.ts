@@ -4,7 +4,7 @@ import WorkerCommand from "@src/core/domains/events/commands/WorkerCommand";
 import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventConfig";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
 import EventService from "@src/core/domains/events/services/EventService";
-import { App } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 
 class EventProvider extends BaseProvider {
 
@@ -12,15 +12,17 @@ class EventProvider extends BaseProvider {
 
     async register(): Promise<void> {
         
+        // Create the event Service and register the drivers, events and listeners
         const eventService = new EventService(this.config);
-        
         this.registerDrivers(eventService);
         this.registerEvents(eventService);
         this.registerListeners(eventService);
 
-        App.setContainer('events', eventService);
+        // Bind the event service to the container
+        this.bind('events', eventService);
 
-        App.container('console').register().registerAll([
+        // Register the worker command
+        app('console').register().registerAll([
             WorkerCommand
         ])
     }
