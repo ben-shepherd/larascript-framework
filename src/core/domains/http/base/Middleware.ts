@@ -111,7 +111,6 @@ abstract class Middleware<Config extends unknown = unknown> implements IMiddlewa
     public toExpressable(routeItem?: TRouteItem): TExpressMiddlewareFn {
         return async (req: Request, res: Response, next: NextFunction | undefined) => {
             try {
-                console.log('[Middleware] stack', new Error().stack)
                 const context = new HttpContext(req as TBaseRequest, res, next, routeItem)
                 this.setContext(context)
                 await this.execute(context)
