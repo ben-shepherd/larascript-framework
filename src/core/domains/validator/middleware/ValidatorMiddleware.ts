@@ -10,9 +10,14 @@ import { CustomValidatorConstructor } from "@src/core/domains/validator/interfac
  */
 class ValidatorMiddleware extends Middleware {
 
+    /**
+     * Executes the validator middleware
+     * @param context - The HTTP context
+     */
     public async execute(context: HttpContext): Promise<void> {
         const validatorConstructor = this.getValidatorConstructor(context);
-        
+       
+        // No validator constructor, skip validation
         if(!validatorConstructor) {
             this.next();
             return;
@@ -21,6 +26,7 @@ class ValidatorMiddleware extends Middleware {
         const validator = new validatorConstructor();
         const result = await validator.validate(context.getRequest().body);
 
+        // Validation failed, return the errors
         if(result.fails()) {
             context.getResponse().status(422).json({
                 errors: result.errors()
