@@ -1,7 +1,7 @@
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
+import UserObserver from "@src/core/domains/auth/observers/UserObserver";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
 import Model from "@src/core/models/base/Model";
-import UserObserver from "@src/core/domains/auth/observers/UserObserver";
 
 /**
  * User structure
@@ -19,7 +19,7 @@ export interface AuthUserAttributes extends IModelAttributes {
  *
  * Represents a user in the database.
  */
-export default class AuthUser extends Model<AuthUserAttributes> implements IUserModel {
+export default class AuthUser<Attributes extends AuthUserAttributes> extends Model<Attributes> implements IUserModel {
 
     /**
      * Table name
@@ -29,7 +29,7 @@ export default class AuthUser extends Model<AuthUserAttributes> implements IUser
     /**
      * @param data User data
      */
-    constructor(data: AuthUserAttributes | null = null) {
+    constructor(data: Attributes | null = null) {
         super(data);
         this.setObserverConstructor(UserObserver);
     }
@@ -80,7 +80,7 @@ export default class AuthUser extends Model<AuthUserAttributes> implements IUser
      */
     hasRole(roles: string | string[]): boolean {
         roles = typeof roles === 'string' ? [roles] : roles;
-        const userRoles = this.getAttributeSync('roles') ?? [];
+        const userRoles = this.getAttributeSync('roles') ?? [] as string[];
 
         for(const role of roles) {
             if(!userRoles.includes(role)) return false;
@@ -97,7 +97,7 @@ export default class AuthUser extends Model<AuthUserAttributes> implements IUser
      */
     hasGroup(groups: string | string[]): boolean {
         groups = typeof groups === 'string' ? [groups] : groups;
-        const userGroups = this.getAttributeSync('groups') ?? [];
+        const userGroups = this.getAttributeSync('groups') ?? [] as string[];
 
         for(const group of groups) {
             if(!userGroups.includes(group)) return false;

@@ -1,12 +1,11 @@
 import UserFactory from "@src/app/factory/UserFactory";
-import AuthUser from "@src/core/domains/auth/models/AuthUser";
+import AuthUser, { AuthUserAttributes } from "@src/core/domains/auth/models/AuthUser";
 import UserObserver from "@src/core/domains/auth/observers/UserObserver";
-import { IModelAttributes } from "@src/core/interfaces/IModel";
 
 /**
  * User structure
  */
-export interface UserAttributes extends IModelAttributes {
+export interface UserAttributes extends AuthUserAttributes {
     email: string;
     password?: string;
     hashedPassword: string;
@@ -23,7 +22,7 @@ export interface UserAttributes extends IModelAttributes {
  *
  * Represents a user in the database.
  */
-export default class User extends AuthUser {
+export default class User extends AuthUser<UserAttributes> {
 
     /**
      * Table name
