@@ -1,5 +1,5 @@
 
-import { ListenerConstructor, SubscriberConstructor } from "../IEventConstructors";
+import { ListenerConstructor, SubscriberConstructor } from "@src/core/domains/events/interfaces/IEventConstructors";
 
 export type TListenersConfigOption = {
     listener: ListenerConstructor;

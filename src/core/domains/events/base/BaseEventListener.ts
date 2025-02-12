@@ -3,8 +3,7 @@ import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventListener } from "@src/core/domains/events/interfaces/IEventListener";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
-
-import { IBaseListener } from "../interfaces/IBaseEvent";
+import { IBaseListener } from "@src/core/domains/events/interfaces/IBaseEvent";
 
 class BaseEventListener<TPayload = unknown> extends BaseEvent<TPayload> implements IEventListener<TPayload>, IBaseListener<TPayload> {
 

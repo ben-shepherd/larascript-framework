@@ -9,8 +9,7 @@ import { IMockableConcern } from "@src/core/domains/events/interfaces/IMockableC
 import { IDispatchable } from "@src/core/interfaces/concerns/IDispatchable";
 import { ISimpleRegister } from "@src/core/interfaces/concerns/ISimpleRegister";
 import { ICtor } from "@src/core/interfaces/ICtor";
-
-import { SubscriberConstructor } from "./IEventConstructors";
+import { SubscriberConstructor } from "@src/core/domains/events/interfaces/IEventConstructors";
 
 export interface IEventService extends ISimpleRegister, IDispatchable, IEventWorkerConcern, IMockableConcern
 {

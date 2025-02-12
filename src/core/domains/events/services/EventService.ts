@@ -10,8 +10,7 @@ import { IEventDriversConfigOption } from "@src/core/domains/events/interfaces/c
 import { IEventListenersConfig, TListenersConfigOption } from "@src/core/domains/events/interfaces/config/IEventListenersConfig";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { app } from "@src/core/services/App";
-
-import { SubscriberConstructor } from "../interfaces/IEventConstructors";
+import { SubscriberConstructor } from "@src/core/domains/events/interfaces/IEventConstructors";
 
 /**
  * Short hand for `app('events')`
