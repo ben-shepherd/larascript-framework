@@ -2,20 +2,20 @@ import RouteException from '@src/core/domains/express/exceptions/RouteException'
 import Controller from '@src/core/domains/http/base/Controller';
 import Middleware from '@src/core/domains/http/base/Middleware';
 import HttpContext from '@src/core/domains/http/context/HttpContext';
+import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
 import { ControllerConstructor } from '@src/core/domains/http/interfaces/IController';
 import IExpressConfig from '@src/core/domains/http/interfaces/IHttpConfig';
 import { MiddlewareConstructor, TExpressMiddlewareFn, TExpressMiddlewareFnOrClass } from '@src/core/domains/http/interfaces/IMiddleware';
 import { IRouter, TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
 import MiddlewareUtil from '@src/core/domains/http/utils/middlewareUtil';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
-import expressClient from 'express';
-import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
+import { default as express, default as expressClient } from 'express';
 
 // eslint-disable-next-line no-unused-vars
 type ExecuteFn = (context: HttpContext) => Promise<void>;
 
 type IRouteServiceOptions = {
-    additionalMiddlewares?: TExpressMiddlewareFnOrClass[]
+    additionalMiddlewares?: (express.RequestHandler | TExpressMiddlewareFnOrClass)[]
 }
 
 /**
