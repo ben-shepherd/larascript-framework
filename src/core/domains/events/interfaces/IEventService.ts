@@ -10,6 +10,8 @@ import { IDispatchable } from "@src/core/interfaces/concerns/IDispatchable";
 import { ISimpleRegister } from "@src/core/interfaces/concerns/ISimpleRegister";
 import { ICtor } from "@src/core/interfaces/ICtor";
 
+import { SubscriberConstructor } from "./IEventConstructors";
+
 export interface IEventService extends ISimpleRegister, IDispatchable, IEventWorkerConcern, IMockableConcern
 {
     getConfig(): IEventConfig;
@@ -28,5 +30,5 @@ export interface IEventService extends ISimpleRegister, IDispatchable, IEventWor
 
     getEventCtorByName(eventName: string): ICtor<IBaseEvent> | undefined;
 
-    getSubscribers(eventName: string): ICtor<IBaseEvent>[];
+    getSubscribers(eventName: string): SubscriberConstructor[];
 }

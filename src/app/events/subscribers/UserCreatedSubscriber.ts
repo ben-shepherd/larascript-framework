@@ -1,7 +1,7 @@
-import BaseEvent from "@src/core/domains/events/base/BaseEvent";
+import BaseEventSubscriber from "@src/core/domains/events/base/BaseEventSubciber";
 import SyncDriver from "@src/core/domains/events/drivers/SyncDriver";
 
-export default class UserCreatedSubscriber extends BaseEvent {
+export default class UserCreatedSubscriber extends BaseEventSubscriber {
 
     static readonly eventName = 'UserCreatedSubscriber';
     

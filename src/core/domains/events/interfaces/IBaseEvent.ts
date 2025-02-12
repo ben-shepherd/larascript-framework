@@ -7,6 +7,13 @@ import { IHasCastableConcern } from "@src/core/interfaces/concerns/IHasCastableC
 import { INameable } from "@src/core/interfaces/concerns/INameable";
 import { ICtor } from "@src/core/interfaces/ICtor";
 
+export interface IBaseSubscriber<TPayload = unknown> extends IBaseEvent<TPayload> {
+    type: 'subscriber';
+}
+
+export interface IBaseListener<TPayload = unknown> extends IBaseEvent<TPayload> {
+    type: 'listener';
+}
 
 export interface IBaseEvent<TPayload = unknown> extends INameable, IExecutable, IHasCastableConcern
 {

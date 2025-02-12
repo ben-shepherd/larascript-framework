@@ -1,10 +1,9 @@
-import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
-import { IEventListener } from "@src/core/domains/events/interfaces/IEventListener";
-import { ICtor } from "@src/core/interfaces/ICtor";
+
+import { ListenerConstructor, SubscriberConstructor } from "../IEventConstructors";
 
 export type TListenersConfigOption = {
-    listener: ICtor<IEventListener>;
-    subscribers: ICtor<IBaseEvent>[]
+    listener: ListenerConstructor;
+    subscribers: SubscriberConstructor[]
 }
 
 export type TListenersMap = Map<string, TListenersConfigOption[]>

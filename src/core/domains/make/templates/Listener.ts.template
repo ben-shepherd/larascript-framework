@@ -1,6 +1,10 @@
 import BaseEventListener from "@src/core/domains/events/base/BaseEventListener";
+
+type #name#Payload = {
+    // ...
+}
  
-class #name# extends BaseEventListener {
+class #name# extends BaseEventListener<#name#Payload> {
 
     /**
      * Optional method to execute before the subscribers are dispatched.
@@ -8,7 +12,7 @@ class #name# extends BaseEventListener {
     async execute(): Promise<void> {
 
         // eslint-disable-next-line no-unused-vars
-        const payload = this.getPayload<unknown>();
+        const payload = this.getPayload();
 
         // Handle logic
     }

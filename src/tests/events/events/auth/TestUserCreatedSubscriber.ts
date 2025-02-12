@@ -1,8 +1,8 @@
 import { UserAttributes } from "@src/app/models/auth/User";
-import BaseEvent from "@src/core/domains/events/base/BaseEvent";
+import BaseEventSubscriber from "@src/core/domains/events/base/BaseEventSubciber";
 import SyncDriver from "@src/core/domains/events/drivers/SyncDriver";
 
-export default class TestUserCreatedSubscriber extends BaseEvent {
+export default class TestUserCreatedSubscriber extends BaseEventSubscriber {
 
     static readonly eventName = 'TestUserCreatedSubscriber';
     

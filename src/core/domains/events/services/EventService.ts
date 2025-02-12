@@ -11,6 +11,8 @@ import { IEventListenersConfig, TListenersConfigOption } from "@src/core/domains
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { app } from "@src/core/services/App";
 
+import { SubscriberConstructor } from "../interfaces/IEventConstructors";
+
 /**
  * Short hand for `app('events')`
  */
@@ -228,7 +230,7 @@ class EventService extends BaseEventService implements IEventService {
      * Returns an array of event subscriber constructors that are listening to this event.
      * @returns An array of event subscriber constructors.
      */
-    getSubscribers(eventName: string): ICtor<IBaseEvent>[] {
+    getSubscribers(eventName: string): SubscriberConstructor[] {
         const listenerConfig = this.srGetValue(eventName, EventService.REGISTERED_LISTENERS) as TListenersConfigOption | undefined;
 
         return listenerConfig?.subscribers ?? [];

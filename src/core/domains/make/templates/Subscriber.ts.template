@@ -1,9 +1,13 @@
-import BaseEvent from "@src/core/domains/events/base/BaseEvent";
+import BaseEventSubscriber from "@src/core/domains/events/base/BaseEventSubciber";
 import SyncDriver from "@src/core/domains/events/drivers/SyncDriver";
 
-class #name# extends BaseEvent {
+type #name#Payload = {
+    // ...
+}
 
-    static readonly eventName = '#name';
+class #name# extends BaseEventSubscriber<#name#Payload> {
+
+    static readonly eventName = '#name#';
     
     protected namespace: string = 'default';
 
@@ -20,7 +24,7 @@ class #name# extends BaseEvent {
     }
 
     async execute(): Promise<void> {
-        const payload = this.getPayload<unknown>();
+        const payload = this.getPayload();
         
         // Handle logic
     }

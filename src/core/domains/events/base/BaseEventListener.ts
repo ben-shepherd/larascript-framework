@@ -4,7 +4,11 @@ import { IEventListener } from "@src/core/domains/events/interfaces/IEventListen
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
-class BaseEventListener<TPayload = unknown> extends BaseEvent<TPayload> implements IEventListener<TPayload> {
+import { IBaseListener } from "../interfaces/IBaseEvent";
+
+class BaseEventListener<TPayload = unknown> extends BaseEvent<TPayload> implements IEventListener<TPayload>, IBaseListener<TPayload> {
+
+    type: 'listener' = 'listener';
 
     /**
      * Constructor

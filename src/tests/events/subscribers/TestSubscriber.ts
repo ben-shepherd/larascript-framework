@@ -1,8 +1,8 @@
-import BaseEvent from "@src/core/domains/events/base/BaseEvent";
+import BaseEventSubscriber from "@src/core/domains/events/base/BaseEventSubciber";
 import TestEventSyncEvent from "@src/tests/events/events/TestEventSyncEvent";
 
 
-class TestSubscriber extends BaseEvent {
+class TestSubscriber extends BaseEventSubscriber {
 
     async execute(): Promise<void> {
         console.log('Executed TestSubscriber', this.getPayload(), this.getName())
