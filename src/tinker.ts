@@ -8,8 +8,6 @@ import { app } from '@src/core/services/App';
 (async () => {
 
     // Boot the application
-    // By default, it will boot the regular database
-    // If you want to boot the test database, you can pass `useTestDb: true`
     await TinkerService.boot({
         useTestDb: false
     });
