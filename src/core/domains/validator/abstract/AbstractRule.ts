@@ -1,5 +1,5 @@
-import forceString from "@src/core/util/str/forceString";
 import { IRuleError } from "@src/core/domains/validator/interfaces/IRule";
+import forceString from "@src/core/util/str/forceString";
 
 /**
  * Abstract base class for validation rules.
@@ -185,8 +185,13 @@ abstract class AbstractRule<TOptions extends object = object> {
      * @returns The error message
      */
     public getError(): IRuleError {
+        
+        // Get the error message
+        // If an error message is set, use it (overrides the error template)
+        const message = this.errorMessage ? this.formatErrorMessage({}, this.errorMessage) : this.formatErrorMessage()
+
         return {
-            [this.getDotNotationPath()]: [this.errorMessage ?? this.formatErrorMessage()]
+            [this.getDotNotationPath()]: [message]
         }
     }
 
