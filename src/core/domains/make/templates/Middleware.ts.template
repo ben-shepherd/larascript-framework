@@ -1,29 +1,22 @@
-import responseError from '@src/core/domains/express/requests/responseError';
-import { BaseRequest } from '@src/core/domains/express/types/BaseRequest.t';
-import { NextFunction, Response } from 'express';
+import Middleware from "@src/core/domains/http/base/Middleware";
+import HttpContext from "@src/core/domains/http/context/HttpContext";
 
-/**
- * <enter description>
- *
- * @param {BaseRequest} req - The request object
- * @param {Response} res - The response object
- * @param {NextFunction} next - The next function
- * @returns {Promise<void>}
- */
+class #name# extends Middleware {
 
-export const #name# = () => async (req: BaseRequest, res: Response, next: NextFunction): Promise<void> => {
-    try {
+    /**
+     * Executes the validator middleware
+     * @param context - The HTTP context
+     */
+    public async execute(context: HttpContext): Promise<void> {
 
-        /**
-         * Modify your middleware logic
-         */
+        const request = context.getRequest()
+        const response = context.getResponse()
 
-        next();
+        // Logic
+
+        this.next();
     }
-    catch (error) {
-        if(error instanceof Error) {
-            responseError(req, res, error)
-            return;
-        }
-    }
-};
+
+}
+
+export default #name#;
