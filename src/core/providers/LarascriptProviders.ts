@@ -8,10 +8,11 @@ import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
 import MakeProvider from "@src/core/domains/make/providers/MakeProvider";
 import MigrationProvider from "@src/core/domains/migrations/providers/MigrationProvider";
 import SetupProvider from "@src/core/domains/setup/providers/SetupProvider";
-import { IProvider } from "@src/core/interfaces/IProvider";
-// eslint-disable-next-line no-unused-vars
-import { ILarascriptProviders } from "@src/core/interfaces/ILarascriptProviders";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
+import { ILarascriptProviders } from "@src/core/interfaces/ILarascriptProviders";
+import { IProvider } from "@src/core/interfaces/IProvider";
+
+import HttpErrorHandlerProvider from "../domains/http/providers/HttpErrorHandlerProvider";
 
 /**
  * Core providers for the framework
@@ -64,6 +65,13 @@ const LarascriptProviders: IProvider[] = [
      * Provides Http environment using Express.js
      */
     new HttpProvider(),
+
+    /**
+     * Http error handler provider
+     *
+     * Provides error handling for the HTTP provider
+     */
+    new HttpErrorHandlerProvider(),
 
     /**
      * Auth provider

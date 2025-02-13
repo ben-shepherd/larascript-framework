@@ -6,6 +6,7 @@ import IHttpConfig from '@src/core/domains/http/interfaces/IHttpConfig';
 import HttpService from '@src/core/domains/http/services/HttpService';
 import { app } from "@src/core/services/App";
 
+
 export default class HttpProvider extends BaseProvider {
 
     /**
