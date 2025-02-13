@@ -24,7 +24,7 @@ class Controller implements IController {
      * @param context The context of the controller.
      * @returns The result of the action.
      */
-    static executeAction(action: string, context: HttpContext): Promise<void> {
+    static async executeAction(action: string, context: HttpContext): Promise<void> {
 
         // Inject URL params as action arguments
         // Add the context as the last argument
@@ -36,7 +36,7 @@ class Controller implements IController {
 
 
         const controller = new this(context)
-        return controller[action](...actionArgs)
+        return await controller[action](...actionArgs)
     }
 
     /**
