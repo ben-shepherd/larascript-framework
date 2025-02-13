@@ -1,7 +1,5 @@
+import { CustomValidatorConstructor } from "@src/core/domains/validator/interfaces/IValidator";
 
-import { ValidatorConstructor } from "@src/core/domains/validator-legacy/interfaces/IValidatorService";
-import { Request } from "express";
-
-export default interface IValidatorRequest extends Request {
-    validatorConstructor?: ValidatorConstructor;
+export interface IValidatorRequest {
+    validator?: CustomValidatorConstructor
 }

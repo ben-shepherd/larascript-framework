@@ -1,4 +1,4 @@
-import ApiTokenRepository from "@src/app/repositories/auth/ApiTokenRepository";
+import ApiTokenRepository from "@src/core/domains/auth/repository/ApiTokenRepitory";
 import TestApiTokenModel from "@src/tests/models/models/TestApiTokenModel";
 
 

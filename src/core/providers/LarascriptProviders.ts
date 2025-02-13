@@ -9,6 +9,7 @@ import MakeProvider from "@src/core/domains/make/providers/MakeProvider";
 import MigrationProvider from "@src/core/domains/migrations/providers/MigrationProvider";
 import SetupProvider from "@src/core/domains/setup/providers/SetupProvider";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
+// eslint-disable-next-line no-unused-vars
 import { ILarascriptProviders } from "@src/core/interfaces/ILarascriptProviders";
 import { IProvider } from "@src/core/interfaces/IProvider";
 
