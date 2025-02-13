@@ -1,6 +1,7 @@
 import { IAppService } from "@src/app/interfaces/IAppService";
 import AppServiceProvider from "@src/app/providers/AppServiceProvider";
 import RoutesProvider from "@src/app/providers/RoutesProvider";
+import HttpErrorHandlerProvider from "@src/core/domains/http/providers/HttpErrorHandlerProvider";
 import { ILarascriptProviders } from "@src/core/interfaces/ILarascriptProviders";
 import { IProvider } from "@src/core/interfaces/IProvider";
 import LarascriptProviders from "@src/core/providers/LarascriptProviders";
@@ -34,8 +35,11 @@ const providers: IProvider[] = [
     // Include the core providers
     ...LarascriptProviders,
 
-    // Add your providers here
+    // Routes and express error handlers
     new RoutesProvider(),
+    new HttpErrorHandlerProvider(),
+
+    // Add your providers here
     new AppServiceProvider(),
 
 ]

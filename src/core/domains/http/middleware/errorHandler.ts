@@ -6,6 +6,11 @@ import { NextFunction, Request, Response } from 'express';
  * Handle 404 errors - this middleware should be added after all routes
  */
 export const notFoundHandler = (req: Request, res: Response, next: NextFunction) => {
+
+    if(res.headersSent) {
+        return next();
+    }
+
     const error = new Error(`Invalid route`);
     res.status(404);
     next(error);
@@ -18,12 +23,18 @@ export const notFoundHandler = (req: Request, res: Response, next: NextFunction)
  * - Handles all errors passed to next()
  * - Returns appropriate error responses
  */
-// eslint-disable-next-line no-unused-vars
+ 
 export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
+
+    if(res.headersSent) {
+        return next();
+    }
+
     const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-    
+    res.status(statusCode)
+
     if(App.env() === EnvironmentProduction) {
-        res.status(statusCode).json({
+        res.json({
             message: 'Whoops... something went wrong.',
         });
         return;
@@ -34,7 +45,7 @@ export const errorHandler = (err: Error, req: Request, res: Response, next: Next
         .map(line => line.trim())
         .filter(Boolean);
 
-    res.status(statusCode).json({
+    res.json({
         message: err.message,
         stack: formattedStack
     });

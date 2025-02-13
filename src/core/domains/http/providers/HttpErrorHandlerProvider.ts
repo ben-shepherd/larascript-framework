@@ -1,7 +1,7 @@
 import httpConfig from '@src/config/http';
 import BaseProvider from "@src/core/base/Provider";
 import IHttpConfig from '@src/core/domains/http/interfaces/IHttpConfig';
-import { app } from "@src/core/services/App";
+import { App, app } from "@src/core/services/App";
 
 import errorHandler from '../middleware/errorHandler';
 
@@ -24,6 +24,11 @@ export default class HttpErrorHandlerProvider extends BaseProvider {
      */
     public async register(): Promise<void> {
         this.log('Registering HttpErrorHandlerProvider');
+
+        // Check if the routes provider has been registered
+        if(!App.safeContainer('routes.provided')) {
+            throw new Error('HttpErrorHandlerProvider must be registered after RoutesProvider');
+        }
     }
 
     /**

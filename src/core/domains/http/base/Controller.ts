@@ -36,7 +36,7 @@ class Controller implements IController {
 
 
         const controller = new this(context)
-        return await controller[action](...actionArgs)
+        await controller[action](...actionArgs)
     }
 
     /**

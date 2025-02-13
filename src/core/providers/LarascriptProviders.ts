@@ -12,7 +12,6 @@ import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorPr
 import { ILarascriptProviders } from "@src/core/interfaces/ILarascriptProviders";
 import { IProvider } from "@src/core/interfaces/IProvider";
 
-import HttpErrorHandlerProvider from "../domains/http/providers/HttpErrorHandlerProvider";
 
 /**
  * Core providers for the framework
@@ -65,13 +64,6 @@ const LarascriptProviders: IProvider[] = [
      * Provides Http environment using Express.js
      */
     new HttpProvider(),
-
-    /**
-     * Http error handler provider
-     *
-     * Provides error handling for the HTTP provider
-     */
-    new HttpErrorHandlerProvider(),
 
     /**
      * Auth provider

@@ -1,12 +1,10 @@
 import apiRoutes from "@src/app/routes/api";
-import BaseProvider from "@src/core/base/Provider";
 import { authJwt } from "@src/core/domains/auth/services/JwtAuthService";
+import BaseRoutesProvider from "@src/core/domains/http/providers/BaseRoutesProvider";
 import healthRoutes from "@src/core/domains/http/routes/healthRoutes";
 import { app } from "@src/core/services/App";
 
-
-
-class RoutesProvider extends BaseProvider {
+class RoutesProvider extends BaseRoutesProvider {
 
     /**
      * Registers the routes to the express service
