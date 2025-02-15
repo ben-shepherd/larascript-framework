@@ -32,7 +32,7 @@ const buildQuestionDTOs = (): QuestionDTO[] => {
         }),
         new QuestionDTO({
             id: QuestionIDs.selectDb,
-            question: `Please select your database adapter (options: all, mongodb, postgres). ${ENV_OVERWRITE_WARNING}`,
+            question: `Select database docker containers to setup (options: all, mongodb, postgres). ${ENV_OVERWRITE_WARNING}`,
             previewText: 'Select Database Adapters',
             defaultValue: 'all',
             acceptedAnswers: acceptedDatabaseAdaptersAnswers(),
