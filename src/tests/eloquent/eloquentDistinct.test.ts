@@ -74,12 +74,12 @@ describe('eloquent', () => {
             expect(resultMuslims[0].name).toBe('Bob');
             expect(resultMuslims[1].name).toBe('John');
 
-            const resultJews = await query.clone()
+            const resultJewish = await query.clone()
                 .where('religion', 'Jewish')
                 .distinct('name')
                 .get();
-            expect(resultJews.count()).toBe(1);
-            expect(resultJews[0].name).toBe('Alice');
+            expect(resultJewish.count()).toBe(1);
+            expect(resultJewish[0].name).toBe('Alice');
         })
     })
 });
