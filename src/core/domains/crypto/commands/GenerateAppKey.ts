@@ -21,7 +21,8 @@ class GenerateAppKey extends BaseCommand {
         }
 
         console.log('Generating app key...')
-        const appKey = cryptoService().generateBytesAsString()
+
+        const appKey = cryptoService().generateBytesAsString(32)
 
         await this.envService.updateValues({
             APP_KEY: appKey

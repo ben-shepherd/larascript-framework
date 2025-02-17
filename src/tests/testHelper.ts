@@ -1,4 +1,5 @@
 import { EnvironmentTesting } from "@src/core/consts/Environment";
+import CryptoProvider from "@src/core/domains/crypto/providers/CryptoProvider";
 import EloquentQueryProvider from "@src/core/domains/eloquent/providers/EloquentQueryProvider";
 import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
@@ -35,7 +36,8 @@ const testBootApp = async () => {
             new TestEventProvider(),
             new TestAuthProvider(),
             new TestMigrationProvider(),
-            new ValidatorProvider()
+            new ValidatorProvider(),
+            new CryptoProvider()
         ]
     }
 
