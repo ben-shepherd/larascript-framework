@@ -3,7 +3,7 @@ import { describe } from '@jest/globals';
 import { IApiTokenModel } from '@src/core/domains/auth/interfaces/models/IApiTokenModel';
 import { IUserModel } from '@src/core/domains/auth/interfaces/models/IUserModel';
 import { auth } from '@src/core/domains/auth/services/AuthService';
-import hashPassword from '@src/core/domains/auth/utils/hashPassword';
+import { cryptoService } from '@src/core/domains/crypto/service/CryptoService';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
 import TestApiTokenModel from '@src/tests/models/models/TestApiTokenModel';
 import TestUser from '@src/tests/models/models/TestUser';
@@ -17,7 +17,7 @@ describe('attempt to run app with normal appConfig', () => {
     let testUser: IUserModel;
     const email = 'testUser@test.com';
     const password = 'testPassword';
-    const hashedPassword = hashPassword(password);
+    const hashedPassword = cryptoService().hash(password);
     let jwtToken: string;
     let apiToken: IApiTokenModel | null; 
 

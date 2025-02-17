@@ -16,7 +16,6 @@ import ApiToken from "@src/core/domains/auth/models/ApiToken";
 import ApiTokenRepository from "@src/core/domains/auth/repository/ApiTokenRepitory";
 import UserRepository from "@src/core/domains/auth/repository/UserRepository";
 import ACLService from "@src/core/domains/auth/services/ACLService";
-import comparePassword from "@src/core/domains/auth/utils/comparePassword";
 import createJwt from "@src/core/domains/auth/utils/createJwt";
 import decodeJwt from "@src/core/domains/auth/utils/decodeJwt";
 import generateToken from "@src/core/domains/auth/utils/generateToken";
@@ -26,6 +25,8 @@ import Router from "@src/core/domains/http/router/Router";
 import { app } from "@src/core/services/App";
 import { JsonWebTokenError } from "jsonwebtoken";
 import { DataTypes } from "sequelize";
+
+import { cryptoService } from "../../crypto/service/CryptoService";
 
 /**
  * Short hand for app('auth.jwt')
@@ -108,7 +109,7 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
             throw new UnauthorizedError()
         }
     
-        if (!comparePassword(password, hashedPassword)) {
+        if (!cryptoService().verifyHash(password, hashedPassword)) {
             throw new UnauthorizedError()
         }
 

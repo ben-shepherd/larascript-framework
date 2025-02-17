@@ -1,11 +1,12 @@
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
 import { acl, auth } from "@src/core/domains/auth/services/AuthService";
 import { authJwt } from "@src/core/domains/auth/services/JwtAuthService";
-import hashPassword from "@src/core/domains/auth/utils/hashPassword";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 import ValidatorResult from "@src/core/domains/validator/data/ValidatorResult";
 import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
+
+import { cryptoService } from "../../crypto/service/CryptoService";
 
 /**
  * RegisterUseCase handles new user registration
@@ -52,12 +53,10 @@ class RegisterUseCase {
     async createUser(context: HttpContext): Promise<IUserModel> {
         const userAttributes = {
             email: context.getBody().email,
-
-            hashedPassword: hashPassword(context.getBody().password),
+            hashedPassword: cryptoService().hash(context.getBody().password),
             groups: [acl().getDefaultGroup().name],
             roles: [acl().getGroupRoles(acl().getDefaultGroup()).map(role => role.name)],
             ...context.getBody()
-
         }
 
         // Create and save the user
