@@ -10,6 +10,8 @@ import { IDatabaseService } from "@src/core/domains/database/interfaces/IDatabas
 import DatabaseAdapter from "@src/core/domains/database/services/DatabaseAdapter";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
+import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
+import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 
 /**
  * Short alias for app('db')
@@ -341,6 +343,22 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
      */
     async createMigrationSchema(tableName: string, connectionName: string = this.getDefaultConnectionName()): Promise<unknown> {
         return await this.getAdapter(connectionName).createMigrationSchema(tableName)
+    }
+
+    /**
+     * Get the postgres adapter
+     * @returns 
+     */
+    postgres(): PostgresAdapter {
+        return this.getAdapter<PostgresAdapter>('postgres')
+    }
+
+    /**
+     * Get the mongodb adapter
+     * @returns 
+     */
+    mongodb(): MongoDbAdapter {
+        return this.getAdapter<MongoDbAdapter>('mongodb')
     }
 
 }

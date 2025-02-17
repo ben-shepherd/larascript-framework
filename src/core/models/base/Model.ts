@@ -1,15 +1,17 @@
+import { cryptoService } from '@src/core/domains/crypto/service/CryptoService';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import { db } from '@src/core/domains/database/services/Database';
 import BaseRelationshipResolver from '@src/core/domains/eloquent/base/BaseRelationshipResolver';
 import { IBelongsToOptions, IEloquent, IHasManyOptions, IRelationship, IdGeneratorFn } from '@src/core/domains/eloquent/interfaces/IEloquent';
 import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
 import HasMany from '@src/core/domains/eloquent/relational/HasMany';
+import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
 import ModelScopes, { TModelScope } from '@src/core/domains/models/utils/ModelScope';
 import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
 import { IObserver, IObserverEvent } from '@src/core/domains/observer/interfaces/IObserver';
 import { ICtor } from '@src/core/interfaces/ICtor';
 import IFactory, { FactoryConstructor } from '@src/core/interfaces/IFactory';
-import { GetAttributesOptions, IModel, IModelAttributes, ModelConstructor } from "@src/core/interfaces/IModel";
+import { GetAttributesOptions, IModel, IModelAttributes, ModelConstructor, ModelWithAttributes } from "@src/core/interfaces/IModel";
 import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
 import { app } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
@@ -85,6 +87,11 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * List of relationships associated with the model.
      */
     public relationships: string[] = [];
+
+    /**
+     * List of fields that should be encrypted.
+     */
+    public encrypted: string[] = [];
 
     /**
      * The name of the database connection to use.
@@ -184,7 +191,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @param {Model['attributes'] | null} data - The initial data to populate the model.
      * @returns {Model} A new instance of the model wrapped in a Proxy.
      */
-    static create<Model extends IModel>(data: Model['attributes'] | null = null): Model {
+    static create<Model extends IModel>(data: Partial<Model['attributes']> | null = null): ModelWithAttributes<Model> {
         return new Proxy(
             new (this as unknown as ICtor<Model>)(data),
             new ProxyModelHandler()
@@ -253,6 +260,14 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      */
     static factory(): IFactory<IModel> {
         return this.create().getFactory()
+    }
+
+    /**
+     * Retrieves the query builder for the model.
+     * @returns The query builder for the model.
+     */
+    static query<Model extends IModel>(): IEloquent<Model> {
+        return queryBuilder<Model>(this as unknown as ModelConstructor<Model>) as IEloquent<Model>
     }
 
     /**
@@ -409,6 +424,10 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {Attributes[K] | null} The value of the attribute or null if not found.
      */
     getAttributeSync<K extends keyof Attributes = keyof Attributes>(key: K): Attributes[K] | null {
+        if(this.encrypted.includes(key as string)) {
+            return this.decryptAttributes({[key]: this.attributes?.[key]} as Attributes)?.[key] ?? null;
+        }
+        
         return this.attributes?.[key] ?? null;
     }
 
@@ -670,11 +689,63 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
 
         const result =  await this.queryBuilder().find(id)
         const attributes = result ? await result.toObject() : null;
+        const decryptedAttributes = await this.decryptAttributes(attributes as Attributes | null);
 
-        this.attributes = attributes ? { ...attributes } as Attributes : null
+        this.attributes = decryptedAttributes ? { ...decryptedAttributes } as Attributes : null
         this.original = { ...(this.attributes ?? {}) } as Attributes
 
         return this.attributes as Attributes;
+    }
+
+    /**
+     * Encrypts the attributes of the model.
+     * 
+     * @param {Attributes} attributes - The attributes to encrypt.
+     * @returns {Promise<Attributes>} The encrypted attributes.
+     */
+    encryptAttributes(attributes: Attributes | null): Attributes | null {
+        if(typeof attributes !== 'object') {
+            return attributes;
+        }
+
+        this.encrypted.forEach(key => {
+            if(typeof attributes?.[key] !== 'undefined' && attributes?.[key] !== null) {
+                try {
+                    (attributes as object)[key] = cryptoService().encrypt((attributes as object)[key]);
+                }
+                catch (e) {
+                    console.error(e)
+                }
+            }
+        });
+
+        return attributes;
+    }
+
+    /**
+     * Decrypts the attributes of the model.
+     * 
+     * @param {Attributes} attributes - The attributes to decrypt.
+     * @returns {Promise<Attributes>} The decrypted attributes.
+     */
+    decryptAttributes(attributes: Attributes | null): Attributes | null {
+        if(typeof this.attributes !== 'object') {
+            return attributes;
+        }
+
+        this.encrypted.forEach(key => {
+            if(typeof attributes?.[key] !== 'undefined' && attributes?.[key] !== null) {
+                try {
+                    (attributes as object)[key] = cryptoService().decrypt((attributes as object)[key]);
+                }
+                 
+                catch (e) { 
+                    console.error(e)
+                }
+            }
+        });
+
+        return attributes;
     }
 
     /**
@@ -687,7 +758,8 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
 
         const builder = this.queryBuilder()
         const normalizedIdProperty = builder.normalizeIdProperty(this.primaryKey)
-        await builder.where(normalizedIdProperty, this.getId()).update({...this.attributes});
+        const encryptedAttributes = await this.encryptAttributes(this.attributes)
+        await builder.where(normalizedIdProperty, this.getId()).update({...encryptedAttributes});
     }
 
 
@@ -703,7 +775,8 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
             await this.setTimestamp('createdAt');
             await this.setTimestamp('updatedAt');
 
-            this.attributes = await (await this.queryBuilder().insert(this.attributes as object)).first()?.toObject() as Attributes;
+            const encryptedAttributes = await this.encryptAttributes(this.attributes)
+            this.attributes = await (await this.queryBuilder().insert(encryptedAttributes as object)).first()?.toObject() as Attributes;
             this.attributes = await this.refresh();
             this.attributes = await this.observeAttributes('created', this.attributes);
             return;

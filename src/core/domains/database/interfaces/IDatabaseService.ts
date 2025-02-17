@@ -5,6 +5,8 @@ import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabase
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IHasConfigConcern } from "@src/core/interfaces/concerns/IHasConfigConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
+import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
+import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 
 
 export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>
@@ -30,4 +32,8 @@ export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>
     schema<TSchema extends IDatabaseSchema = IDatabaseSchema>(connectionName?: string): TSchema;
 
     createMigrationSchema(tableName: string, connectionName?: string): Promise<unknown>;
+
+    postgres(): PostgresAdapter;
+
+    mongodb(): MongoDbAdapter;
 }

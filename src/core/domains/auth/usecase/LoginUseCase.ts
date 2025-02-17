@@ -1,9 +1,9 @@
 
-import HttpContext from "@src/core/domains/http/context/HttpContext";
-import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
 import { authJwt } from "@src/core/domains/auth/services/JwtAuthService";
-import comparePassword from "@src/core/domains/auth/utils/comparePassword";
+import HttpContext from "@src/core/domains/http/context/HttpContext";
+import ApiResponse from "@src/core/domains/http/response/ApiResponse";
+
 
 /**
  * LoginUseCase handles user authentication by validating credentials and generating JWT tokens
@@ -37,12 +37,6 @@ class LoginUseCase {
         const user = await authJwt().getUserRepository().findByEmail(email);
 
         if(!user) {
-            return this.unauthorized('Email or password is incorrect');
-        }
-
-        const hashedPassword = user.getHashedPassword();
-
-        if(!hashedPassword || !comparePassword(password, hashedPassword)) {
             return this.unauthorized('Email or password is incorrect');
         }
 

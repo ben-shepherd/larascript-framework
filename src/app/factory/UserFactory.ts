@@ -1,8 +1,8 @@
+import User from "@src/app/models/auth/User";
 import { GROUPS, ROLES } from "@src/config/acl";
 import Factory from "@src/core/base/Factory";
-import hashPassword from "@src/core/domains/auth/utils/hashPassword";
+import { cryptoService } from "@src/core/domains/crypto/service/CryptoService";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
-import User from "@src/app/models/auth/User";
 
 class UserFactory extends Factory {
 
@@ -11,7 +11,7 @@ class UserFactory extends Factory {
     getDefinition(): IModelAttributes | null {
         return {
             email: this.faker.internet.email(),
-            hashedPassword: hashPassword(this.faker.internet.password()),
+            hashedPassword: cryptoService().hash(this.faker.internet.password()),
             roles: [ROLES.USER],
             groups: [GROUPS.User],
             firstName: this.faker.person.firstName(),

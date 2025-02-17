@@ -8,8 +8,9 @@ import { IEventService } from '@src/core/domains/events/interfaces/IEventService
 import IHttpService from '@src/core/domains/http/interfaces/IHttpService';
 import { IRequestContext } from '@src/core/domains/http/interfaces/IRequestContext';
 import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerService';
-import readline from 'node:readline';
 import { IValidatorMake } from '@src/core/domains/validator/interfaces/IValidator';
+import readline from 'node:readline';
+import { ICryptoService } from '@src/core/domains/crypto/interfaces/ICryptoService';
 
 export interface ILarascriptProviders {
 
@@ -90,4 +91,10 @@ export interface ILarascriptProviders {
      * Provided by '@src/core/domains/logger/providers/LoggerProvider'
      */
     logger: ILoggerService;
+
+    /**
+     * Crypto service
+     * Provided by '@src/core/domains/crypto/providers/CryptoProvider'
+     */
+    crypto: ICryptoService;
 }

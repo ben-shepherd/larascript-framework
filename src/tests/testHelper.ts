@@ -12,6 +12,7 @@ import TestDatabaseProvider, { testDbName } from "@src/tests/providers/TestDatab
 import TestEventProvider from "@src/tests/providers/TestEventProvider";
 import TestMigrationProvider from "@src/tests/providers/TestMigrationProvider";
 import { DataTypes } from "sequelize";
+import TestCryptoProvider from "@src/tests/providers/TestCryptoProvider";
 
 export const getTestDbName = () => testDbName
 
@@ -35,7 +36,8 @@ const testBootApp = async () => {
             new TestEventProvider(),
             new TestAuthProvider(),
             new TestMigrationProvider(),
-            new ValidatorProvider()
+            new ValidatorProvider(),
+            new TestCryptoProvider()
         ]
     }
 

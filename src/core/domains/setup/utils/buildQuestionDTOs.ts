@@ -6,6 +6,7 @@ import SetupDefaultDatabase from "@src/core/domains/setup/actions/SetupDefaultDa
 import SetupDockerDatabaseScripts from "@src/core/domains/setup/actions/SetupDockerDatabaseScripts";
 import { QuestionIDs } from "@src/core/domains/setup/consts/QuestionConsts";
 import QuestionDTO from "@src/core/domains/setup/DTOs/QuestionDTO";
+import GenerateAppKeyAction from "@src/core/domains/setup/actions/GenerateAppKeyAction";
 
 const ENV_OVERWRITE_WARNING = 'This step will overwrite your .env file.';
 const acceptedAnswersBoolean = ['yes', 'no', 'y', 'n', ''];
@@ -21,6 +22,14 @@ const buildQuestionDTOs = (): QuestionDTO[] => {
             statement: `The .env.example file will be copied to .env if no .env file exists.`,
             previewText: 'Setup Environment File',
             actionCtor: CopyEnvExampleAction
+        }),
+        new QuestionDTO({
+            id: QuestionIDs.appKey,
+            question: `Would you like to generate a new app key? ${ENV_OVERWRITE_WARNING}`,
+            previewText: 'Generate New App Key',
+            defaultValue: 'yes',
+            acceptedAnswers: acceptedAnswersBoolean,
+            actionCtor: GenerateAppKeyAction,
         }),
         new QuestionDTO({
             id: QuestionIDs.jwtSecret,
