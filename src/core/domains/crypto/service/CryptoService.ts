@@ -86,6 +86,13 @@ class CryptoService implements ICryptoService {
     }
 
     /**
+     * Generate a new app key
+     */
+    generateAppKey(): string {
+        return crypto.randomBytes(32).toString('hex');
+    }
+
+    /**
      * Validate the app key
      */
     private validateAppKey() {

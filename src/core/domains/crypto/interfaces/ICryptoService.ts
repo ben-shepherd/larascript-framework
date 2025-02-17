@@ -7,4 +7,5 @@ export interface ICryptoService {
     decrypt(string: string): string
     hash(string: string): string
     verifyHash(string: string, hashWithSalt: string): boolean
+    generateAppKey(): string
 }
