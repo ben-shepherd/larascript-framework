@@ -17,12 +17,15 @@ describe('attempt to run app with normal appConfig', () => {
     let testUser: IUserModel;
     const email = 'testUser@test.com';
     const password = 'testPassword';
-    const hashedPassword = cryptoService().hash(password);
+    let hashedPassword: string;
     let jwtToken: string;
     let apiToken: IApiTokenModel | null; 
 
     beforeAll(async () => {
         await testHelper.testBootApp();
+
+        // Hash the password (cryptoService is only available after app boot)
+        hashedPassword = await cryptoService().hash(password);
 
         try {
             await testHelper.dropAuthTables();
