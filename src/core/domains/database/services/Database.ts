@@ -11,8 +11,8 @@ import DatabaseAdapter from "@src/core/domains/database/services/DatabaseAdapter
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
-import MongoDbAdapter from "../../mongodb/adapters/MongoDbAdapter";
-import PostgresAdapter from "../../postgres/adapters/PostgresAdapter";
+import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
+import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 
 /**
  * Short alias for app('db')

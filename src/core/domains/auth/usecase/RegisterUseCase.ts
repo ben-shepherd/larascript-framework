@@ -6,7 +6,7 @@ import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 import ValidatorResult from "@src/core/domains/validator/data/ValidatorResult";
 import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
 
-import { cryptoService } from "../../crypto/service/CryptoService";
+import { cryptoService } from "@src/core/domains/crypto/service/CryptoService";
 
 /**
  * RegisterUseCase handles new user registration

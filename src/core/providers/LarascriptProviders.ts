@@ -13,7 +13,7 @@ import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorPr
 import { ILarascriptProviders } from "@src/core/interfaces/ILarascriptProviders";
 import { IProvider } from "@src/core/interfaces/IProvider";
 
-import CryptoProvider from "../domains/crypto/providers/CryptoProvider";
+import CryptoProvider from "@src/core/domains/crypto/providers/CryptoProvider";
 
 
 /**

@@ -3,7 +3,7 @@ import { describe, expect, test } from '@jest/globals';
 import Model from '@src/core/models/base/Model';
 import testHelper from '@src/tests/testHelper';
 
-import TestEncryptionModel, { TestEncryptionModelAttributes, resetEncryptionTable } from './models/TestEncryptionModel';
+import TestEncryptionModel, { TestEncryptionModelAttributes, resetEncryptionTable } from '@src/tests/models/models/TestEncryptionModel';
 
 describe('test model encryption', () => {
     beforeAll(async () => {

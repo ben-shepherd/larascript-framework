@@ -5,7 +5,7 @@ import Observer from "@src/core/domains/observer/services/Observer";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
-import { cryptoService } from "../../crypto/service/CryptoService";
+import { cryptoService } from "@src/core/domains/crypto/service/CryptoService";
 
 /**
  * Observer for the User model.

@@ -26,7 +26,7 @@ import { app } from "@src/core/services/App";
 import { JsonWebTokenError } from "jsonwebtoken";
 import { DataTypes } from "sequelize";
 
-import { cryptoService } from "../../crypto/service/CryptoService";
+import { cryptoService } from "@src/core/domains/crypto/service/CryptoService";
 
 /**
  * Short hand for app('auth.jwt')

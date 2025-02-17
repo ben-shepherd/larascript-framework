@@ -1,7 +1,7 @@
 import EnvService from "@src/core/services/EnvService";
 
-import BaseCommand from "../../console/base/BaseCommand";
-import { cryptoService } from "../service/CryptoService";
+import BaseCommand from "@src/core/domains/console/base/BaseCommand";
+import { cryptoService } from "@src/core/domains/crypto/service/CryptoService";
 
 class GenerateAppKey extends BaseCommand {
 

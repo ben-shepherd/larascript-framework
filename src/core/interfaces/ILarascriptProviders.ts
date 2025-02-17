@@ -11,7 +11,7 @@ import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerServi
 import { IValidatorMake } from '@src/core/domains/validator/interfaces/IValidator';
 import readline from 'node:readline';
 
-import { ICryptoService } from '../domains/crypto/interfaces/ICryptoService';
+import { ICryptoService } from '@src/core/domains/crypto/interfaces/ICryptoService';
 
 export interface ILarascriptProviders {
 

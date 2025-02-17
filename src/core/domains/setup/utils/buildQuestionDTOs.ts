@@ -7,7 +7,7 @@ import SetupDockerDatabaseScripts from "@src/core/domains/setup/actions/SetupDoc
 import { QuestionIDs } from "@src/core/domains/setup/consts/QuestionConsts";
 import QuestionDTO from "@src/core/domains/setup/DTOs/QuestionDTO";
 
-import GenerateAppKeyAction from "../actions/GenerateAppKeyAction";
+import GenerateAppKeyAction from "@src/core/domains/setup/actions/GenerateAppKeyAction";
 
 const ENV_OVERWRITE_WARNING = 'This step will overwrite your .env file.';
 const acceptedAnswersBoolean = ['yes', 'no', 'y', 'n', ''];

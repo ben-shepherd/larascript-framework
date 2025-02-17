@@ -2,8 +2,8 @@ import appConfig, { IAppConfig } from "@src/config/app";
 import BaseProvider from "@src/core/base/Provider";
 import { app } from "@src/core/services/App";
 
-import GenerateAppKey from "../commands/GenerateAppKey";
-import CryptoService from "../service/CryptoService";
+import GenerateAppKey from "@src/core/domains/crypto/commands/GenerateAppKey";
+import CryptoService from "@src/core/domains/crypto/service/CryptoService";
 
 class CryptoProvider extends BaseProvider {
 

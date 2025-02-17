@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { BufferEncoding } from "./BufferingEncoding.t"
+import { BufferEncoding } from "@src/core/domains/crypto/interfaces/BufferingEncoding.t"
 
 export interface ICryptoService {
     generateBytesAsString(length?: number, encoding?: BufferEncoding): string
