@@ -4,6 +4,8 @@ import { IValidator, IValidatorAttributes, IValidatorMessages } from "@src/core/
 import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
 import Validator from "@src/core/domains/validator/service/Validator";
 
+import ValidatorResult from "../data/ValidatorResult";
+
 /**
  * Abstract base class for creating custom validators with type-safe validation rules and error messages.
  * Extend this class to create specific validators for different data structures.
@@ -16,9 +18,7 @@ abstract class BaseCustomValidator<Attributes extends IValidatorAttributes = IVa
 
     protected messages: IValidatorMessages = {}
     
-    protected result: IValidatorResult<Attributes> | undefined
-
-    private validator: IValidator | undefined;
+    protected result!: IValidatorResult<Attributes>
 
     /**
      * Validates the provided data against the defined rules.
@@ -28,9 +28,48 @@ abstract class BaseCustomValidator<Attributes extends IValidatorAttributes = IVa
      * @throws Error if validation fails unexpectedly
      */
     public async validate(data: Attributes): Promise<IValidatorResult<Attributes>> {
-        this.validator = Validator.make(this.rules, this.messages)
-        this.result = await this.validator.validate(data) as IValidatorResult<Attributes>
-        return this.result
+        // Reset the result
+        this.result = ValidatorResult.fails({})
+
+        // Validate the data
+        const validator = Validator.make(this.rules, this.messages) as Validator
+        const validatorResult = await validator.validate(data) as IValidatorResult<Attributes>
+
+        // Run the custom validation
+        const customPassed = (await this.customValidation(data))
+
+        // If the custom validation failed, add the errors to the result
+        if(!customPassed) {
+            validatorResult.mergeErrors({ ...this.result.errors() })
+            validatorResult.updatePasses()
+        }
+
+        // If the validation passed, return the result
+        if(Object.keys(validatorResult.errors()).length === 0) {
+            return ValidatorResult.passes(data)
+        }
+
+        // Did not pass 
+        return validatorResult
+    }
+
+    /**
+     * Custom validation method to be implemented by subclasses.
+     * 
+     * @param data - Object containing the data to validate
+     * @returns Promise resolving to boolean indicating validation result
+     */
+    // eslint-disable-next-line no-unused-vars
+    public async customValidation(data: Attributes): Promise<boolean> {
+        return true
+    }
+
+    /**
+     * Sets the errors for the validator
+     * @param errors - The errors to set
+     */
+    public addErrors(errors: Record<string, string[]>): void {
+        this.result.mergeErrors(errors)
     }
 
     /**

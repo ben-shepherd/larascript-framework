@@ -27,7 +27,7 @@ class MinRule extends AbstractRule<TMinOptions> implements IRule {
     }
 
     public async test(): Promise<boolean> {
-        this.errorTemplate = this.defaultError
+        this.errorTemplate = this.errorTemplateNumber
 
         if(this.dataUndefinedOrNull()) return false
         if(!this.testNumber()) return false

@@ -79,6 +79,29 @@ class ValidatorResult<T extends IValidatorAttributes> implements IValidatorResul
         return this._validated ?? {} as T;
     }
 
+    /**
+     * Sets the errors for the validator
+     * @param errors - The errors to set
+     */
+    public mergeErrors(errors: Record<string, string[]>): void {
+        Object.keys(errors).forEach((key) => {
+            if(!this._errors) {
+                this._errors = {}
+            }
+            if(!this._errors[key]) {
+                this._errors[key] = []
+            }
+            this._errors[key] = [...(this._errors[key] ?? []), ...errors[key]]
+        })
+    }
+
+    /**
+     * Updates the passes property based on the errors
+     */
+    public updatePasses(): void {
+        this._passes = Object.keys(this._errors ?? {}).length === 0
+    }
+
 }
 
 export default ValidatorResult; 

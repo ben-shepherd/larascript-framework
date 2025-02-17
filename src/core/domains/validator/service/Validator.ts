@@ -1,9 +1,9 @@
-import DotNotationDataExtrator from "@src/core/util/data/DotNotation/DataExtractor/DotNotationDataExtrator";
 import ValidatorResult from "@src/core/domains/validator/data/ValidatorResult";
 import ValidatorException from "@src/core/domains/validator/exceptions/ValidatorException";
 import { IRule, IRulesObject } from "@src/core/domains/validator/interfaces/IRule";
 import { IValidator, IValidatorAttributes, IValidatorMake, IValidatorMessages } from "@src/core/domains/validator/interfaces/IValidator";
 import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
+import DotNotationDataExtrator from "@src/core/util/data/DotNotation/DataExtractor/DotNotationDataExtrator";
 
 /**
  * Short hand for creating a new validator on the fly
@@ -220,7 +220,7 @@ class Validator implements IValidator {
      * @param key - The dot notation path of the field with errors
      * @param errors - The errors to merge
      */
-    protected mergeErrors(key: string, errors: Record<string, string[]>): void {
+    mergeErrors(key: string, errors: Record<string, string[]>): void {
         if(typeof this._errors !== 'object') {
             this._errors = {}
         }
@@ -229,6 +229,14 @@ class Validator implements IValidator {
         }
 
         this._errors[key] = [...this._errors[key], ...errors[key]]
+    }
+
+    /**
+     * Sets the errors for the validator
+     * @param errors - The errors to set
+     */
+    setErrors(errors: Record<string, string[]>): void {
+        this._errors = errors
     }
 
     /**
