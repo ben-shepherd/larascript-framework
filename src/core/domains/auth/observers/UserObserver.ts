@@ -4,7 +4,6 @@ import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import Observer from "@src/core/domains/observer/services/Observer";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
-
 import { cryptoService } from "@src/core/domains/crypto/service/CryptoService";
 
 /**

@@ -7,7 +7,6 @@ import LoggerProvider from '@src/core/domains/logger/providers/LoggerProvider';
 import SetupProvider from '@src/core/domains/setup/providers/SetupProvider';
 import Kernel from "@src/core/Kernel";
 import { App } from '@src/core/services/App';
-
 import CryptoProvider from '@src/core/domains/crypto/providers/CryptoProvider';
 
 (async() => {

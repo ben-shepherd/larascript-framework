@@ -10,7 +10,6 @@ import { IDatabaseService } from "@src/core/domains/database/interfaces/IDatabas
 import DatabaseAdapter from "@src/core/domains/database/services/DatabaseAdapter";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
-
 import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 

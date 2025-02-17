@@ -6,7 +6,6 @@ import SetupDefaultDatabase from "@src/core/domains/setup/actions/SetupDefaultDa
 import SetupDockerDatabaseScripts from "@src/core/domains/setup/actions/SetupDockerDatabaseScripts";
 import { QuestionIDs } from "@src/core/domains/setup/consts/QuestionConsts";
 import QuestionDTO from "@src/core/domains/setup/DTOs/QuestionDTO";
-
 import GenerateAppKeyAction from "@src/core/domains/setup/actions/GenerateAppKeyAction";
 
 const ENV_OVERWRITE_WARNING = 'This step will overwrite your .env file.';

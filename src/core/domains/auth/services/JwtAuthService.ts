@@ -25,7 +25,6 @@ import Router from "@src/core/domains/http/router/Router";
 import { app } from "@src/core/services/App";
 import { JsonWebTokenError } from "jsonwebtoken";
 import { DataTypes } from "sequelize";
-
 import { cryptoService } from "@src/core/domains/crypto/service/CryptoService";
 
 /**

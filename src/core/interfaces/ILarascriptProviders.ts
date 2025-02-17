@@ -10,7 +10,6 @@ import { IRequestContext } from '@src/core/domains/http/interfaces/IRequestConte
 import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerService';
 import { IValidatorMake } from '@src/core/domains/validator/interfaces/IValidator';
 import readline from 'node:readline';
-
 import { ICryptoService } from '@src/core/domains/crypto/interfaces/ICryptoService';
 
 export interface ILarascriptProviders {

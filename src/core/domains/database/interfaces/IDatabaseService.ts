@@ -5,7 +5,6 @@ import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabase
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IHasConfigConcern } from "@src/core/interfaces/concerns/IHasConfigConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
-
 import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 
