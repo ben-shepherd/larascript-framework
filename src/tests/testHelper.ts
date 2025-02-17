@@ -1,5 +1,4 @@
 import { EnvironmentTesting } from "@src/core/consts/Environment";
-import CryptoProvider from "@src/core/domains/crypto/providers/CryptoProvider";
 import EloquentQueryProvider from "@src/core/domains/eloquent/providers/EloquentQueryProvider";
 import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
@@ -13,6 +12,8 @@ import TestDatabaseProvider, { testDbName } from "@src/tests/providers/TestDatab
 import TestEventProvider from "@src/tests/providers/TestEventProvider";
 import TestMigrationProvider from "@src/tests/providers/TestMigrationProvider";
 import { DataTypes } from "sequelize";
+
+import TestCryptoProvider from "./providers/TestCryptoProvider";
 
 export const getTestDbName = () => testDbName
 
@@ -37,7 +38,7 @@ const testBootApp = async () => {
             new TestAuthProvider(),
             new TestMigrationProvider(),
             new ValidatorProvider(),
-            new CryptoProvider()
+            new TestCryptoProvider()
         ]
     }
 
