@@ -13,6 +13,8 @@ import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorPr
 import { ILarascriptProviders } from "@src/core/interfaces/ILarascriptProviders";
 import { IProvider } from "@src/core/interfaces/IProvider";
 
+import CryptoProvider from "../domains/crypto/providers/CryptoProvider";
+
 
 /**
  * Core providers for the framework
@@ -93,6 +95,13 @@ const LarascriptProviders: IProvider[] = [
      * Provides validation services
      */
     new ValidatorProvider(),
+
+    /**
+     * Crypto provider
+     *
+     * Provides crypto services
+     */
+    new CryptoProvider(),
 
     /**
      * Setup provider
