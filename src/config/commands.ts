@@ -2,7 +2,9 @@ import ExampleCommand from '@src/app/commands/ExampleCommand';
 import { ICommandConstructor } from '@src/core/domains/console/interfaces/ICommand';
 
 /**
- * Add your comments to be registered in the ConsoleProvider
+ * Register your custom commands here.
+ * Commands will be available through the CLI using:
+ * yarn dev <command-name> --args
  */
 const commandsConfig: ICommandConstructor[] = [
     ExampleCommand,
