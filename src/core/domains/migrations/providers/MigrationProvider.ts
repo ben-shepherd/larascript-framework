@@ -20,7 +20,7 @@ class MigrationProvider extends BaseProvider {
         this.log('Registering MigrationProvider');   
 
         // Register the migration commands
-        app('console').register()
+        app('console').registerService()
             .registerAll([
                 MigrateUpCommand,
                 MigrateDownCommand,

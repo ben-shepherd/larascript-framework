@@ -52,7 +52,7 @@ describe('mock queable event', () => {
         
         expect(events().assertDispatched<TPayload>(TestEventQueueEvent, validatePayload)).toBeTruthy()
 
-        await App.container('console').reader(['worker', '--queue=testQueue']).handle();
+        await App.container('console').readerService(['worker', '--queue=testQueue']).handle();
 
         expect(events().assertDispatched<TPayload>(TestEventQueueCalledFromWorkerEvent, validatePayload)).toBeTruthy()
 

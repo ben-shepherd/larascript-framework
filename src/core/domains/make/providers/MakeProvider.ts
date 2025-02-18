@@ -22,7 +22,7 @@ export default class MakeProvider extends BaseProvider {
         this.log('Registering MakeProvider')    
 
         // Register the make commands
-        app('console').register().registerAll([
+        app('console').registerService().registerAll([
             MakeCmdCommand,
             MakeListenerCommand,
             MakeModelCommand,

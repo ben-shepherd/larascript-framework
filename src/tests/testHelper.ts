@@ -8,11 +8,11 @@ import TestApiTokenModel from "@src/tests/models/models/TestApiTokenModel";
 import TestUser from "@src/tests/models/models/TestUser";
 import TestAuthProvider from "@src/tests/providers/TestAuthProvider";
 import TestConsoleProvider from "@src/tests/providers/TestConsoleProvider";
+import TestCryptoProvider from "@src/tests/providers/TestCryptoProvider";
 import TestDatabaseProvider, { testDbName } from "@src/tests/providers/TestDatabaseProvider";
 import TestEventProvider from "@src/tests/providers/TestEventProvider";
 import TestMigrationProvider from "@src/tests/providers/TestMigrationProvider";
 import { DataTypes } from "sequelize";
-import TestCryptoProvider from "@src/tests/providers/TestCryptoProvider";
 
 export const getTestDbName = () => testDbName
 
@@ -106,7 +106,7 @@ export const dropAuthTables = async(connectionName?: string) => {
      * await runFreshMigrations()
      */
 const runFreshMigrations = async () => {
-    await App.container('console').reader(['migrate:fresh', '--group=testing', '--seed']).handle();
+    await App.container('console').readerService(['migrate:fresh', '--group=testing', '--seed']).handle();
 }
 
 /**
@@ -118,7 +118,7 @@ const runFreshMigrations = async () => {
  * await clearMigrations()
  */
 const clearMigrations = async () => {
-    await App.container('console').reader(['migrate:down', '--group=testing']).handle();
+    await App.container('console').readerService(['migrate:down', '--group=testing']).handle();
 }
 
 /**

@@ -10,7 +10,7 @@ class CommandBootService implements ICommandBootService {
      * @throws CommandNotFoundException
      */
     async boot(args: string[]): Promise<void> {
-        await App.container('console').reader(args).handle()
+        await App.container('console').readerService(args).handle()
     }
 
     /**

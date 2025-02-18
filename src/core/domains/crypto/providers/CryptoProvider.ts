@@ -1,8 +1,8 @@
 import appConfig, { IAppConfig } from "@src/config/app";
 import BaseProvider from "@src/core/base/Provider";
-import { app } from "@src/core/services/App";
 import GenerateAppKey from "@src/core/domains/crypto/commands/GenerateAppKey";
 import CryptoService from "@src/core/domains/crypto/service/CryptoService";
+import { app } from "@src/core/services/App";
 
 class CryptoProvider extends BaseProvider {
 
@@ -19,7 +19,7 @@ class CryptoProvider extends BaseProvider {
         this.bind('crypto', cryptoService)
 
         // Register commands
-        app('console').register().registerAll([
+        app('console').registerService().registerAll([
             GenerateAppKey
         ])
     }

@@ -23,7 +23,7 @@ class AuthProvider extends BaseProvider{
         this.bind('auth.acl', (() => authService.acl())())
 
         // Register commands
-        app('console').register().register(GenerateJwtSecret)
+        app('console').register(GenerateJwtSecret)
     }
 
 

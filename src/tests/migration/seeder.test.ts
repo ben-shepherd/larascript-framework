@@ -65,7 +65,7 @@ describe('test seeders', () => {
         for(const connectionName of testHelper.getTestConnectionNames()) {
             const schema = db().schema(connectionName)
 
-            await app('console').reader(['db:seed', '--group=testing', '--file=test-seeder-model']).handle();
+            await app('console').readerService(['db:seed', '--group=testing', '--file=test-seeder-model']).handle();
 
             const tableExists = await schema.tableExists(SeederTestModel.getTable());
             expect(tableExists).toBe(true);

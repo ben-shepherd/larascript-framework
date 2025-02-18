@@ -57,7 +57,7 @@ describe('test migrations', () => {
 
     test('test up migration', async () => {
 
-        await App.container('console').reader(['migrate:up', '--group=testing']).handle();
+        await App.container('console').readerService(['migrate:up', '--group=testing']).handle();
 
         for(const table of tables) {
             const tableExists = await schema.tableExists(table);
@@ -68,7 +68,7 @@ describe('test migrations', () => {
 
     test('test down migration', async () => {
 
-        await App.container('console').reader(['migrate:down', '--group=testing']).handle();
+        await App.container('console').readerService(['migrate:down', '--group=testing']).handle();
 
         for(const table of tables) {
             const tableExists = await schema.tableExists(table);

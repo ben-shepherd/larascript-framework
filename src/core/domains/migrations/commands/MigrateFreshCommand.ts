@@ -34,10 +34,10 @@ class MigrateFreshCommand extends BaseMigrationCommand {
 
         // Handle migrate:up
         const console = App.container('console');
-        await console.reader(['migrate:up','--keep-alivey']).handle();
+        await console.readerService(['migrate:up','--keep-alivey']).handle();
 
         if(seed) {
-            await console.reader(['db:seed']).handle();
+            await console.readerService(['db:seed']).handle();
         }
     }
 

@@ -14,7 +14,7 @@ export default class HelpCommand extends BaseCommand {
      */
     async execute() {
         const console = App.container('console');
-        const register = console.register();
+        const register = console.registerService();
 
         this.input.clearScreen();
         this.input.writeLine('--- Available commands ---');

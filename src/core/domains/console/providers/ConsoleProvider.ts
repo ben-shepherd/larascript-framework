@@ -35,7 +35,7 @@ export default class ConsoleProvider extends BaseProvider {
         /**
          * Register internal commands
          */
-        app('console').register().registerAll([
+        app('console').registerService().registerAll([
             HelpCommand,
             RouteListCommand
         ]);
@@ -43,7 +43,7 @@ export default class ConsoleProvider extends BaseProvider {
         /**
          * Register commands from @src/config/app
          */
-        app('console').register().registerAll(commandsConfig)
+        app('console').registerService().registerAll(commandsConfig)
     }
 
 }

@@ -8,7 +8,7 @@ class SetupProvider extends BaseProvider {
         this.log('Registering SetupProvider');
 
         // Register the setup commands
-        app('console').register().registerAll([
+        app('console').registerService().registerAll([
             AppSetupCommand
         ])
     }

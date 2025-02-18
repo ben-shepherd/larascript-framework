@@ -44,7 +44,7 @@ describe('mock queable event failed', () => {
         for(let i = 0; i < attempts; i++) {
             events().mockEvent(TestEventQueueAlwaysFailsEvent);
 
-            await console().reader(['worker', '--queue=testQueue']).handle();
+            await console().readerService(['worker', '--queue=testQueue']).handle();
 
             expect(events().assertDispatched(TestEventQueueAlwaysFailsEvent)).toBeTruthy()
         }

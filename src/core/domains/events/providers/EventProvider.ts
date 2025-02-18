@@ -22,7 +22,7 @@ class EventProvider extends BaseProvider {
         this.bind('events', eventService);
 
         // Register the worker command
-        app('console').register().registerAll([
+        app('console').registerService().registerAll([
             WorkerCommand
         ])
     }

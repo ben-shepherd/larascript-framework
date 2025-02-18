@@ -67,7 +67,7 @@ class TinkerService extends Singleton<TinkerServiceConfig> {
      */
     protected async bootTestDb(): Promise<void> {
         await testHelper.testBootApp();
-        await app('console').reader(['migrate:fresh', '--seed']).handle();
+        await app('console').readerService(['migrate:fresh', '--seed']).handle();
     }
 
 }

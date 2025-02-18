@@ -43,13 +43,13 @@ export default class CommandReader implements ICommandReader {
             throw new CommandNotFoundException();
         }
 
-        const commandCtor = App.container('console').register().getBySignature(signature);
+        const commandCtor = App.container('console').registerService().getBySignature(signature);
 
         if(!commandCtor) {
             throw new CommandSignatureInvalid()
         }
 
-        const cmdConfig = App.container('console').register().getCommandConfig(signature);
+        const cmdConfig = App.container('console').registerService().getCommandConfig(signature);
 
         const cmd = new commandCtor()
         cmd.setConfig(cmdConfig);
