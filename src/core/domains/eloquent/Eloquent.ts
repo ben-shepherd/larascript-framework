@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-import { ConnectionTypeHelpers } from "@src/config/database";
 import Collection from "@src/core/domains/collections/Collection";
 import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 import { db } from "@src/core/domains/database/services/Database";
@@ -17,6 +16,8 @@ import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { deepClone } from "@src/core/util/deepClone";
+
+import { IConnectionTypeHelpers } from "../database/interfaces/IConnectionTypeHelpers";
 
 
 /**
@@ -96,7 +97,7 @@ abstract class Eloquent<
      * @returns {IDatabaseAdapter} The database adapter.
      */
     protected getDatabaseAdapter<T extends IDatabaseAdapter = Adapter>(): T {
-        return db().getAdapter(this.getConnectionName() as keyof ConnectionTypeHelpers) as unknown as T
+        return db().getAdapter(this.getConnectionName() as keyof IConnectionTypeHelpers) as unknown as T
     }
 
     /**

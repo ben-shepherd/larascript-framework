@@ -9,14 +9,8 @@ import { appEnv } from "@src/core/services/App";
 const DEFAULT_CONNECTION = (process.env.DATABASE_DEFAULT_CONNECTION as string) ?? 'default';
 
 /**
- * Type helper for the connection adapters
+ * Database configuration
  */
-export type ConnectionTypeHelpers = {
-    ['default']: PostgresAdapter;
-    ['postgres']: PostgresAdapter;
-    ['mongodb']: MongoDbAdapter;
-}
-
 const config: IDatabaseConfig = {
 
     /**

@@ -1,6 +1,3 @@
-
-
-import { ConnectionTypeHelpers } from "@src/config/database";
 import BaseSimpleRegister from "@src/core/base/BaseSimpleRegister";
 import DatabaseConnectionException from "@src/core/domains/database/exceptions/DatabaseConnectionException";
 import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
@@ -8,10 +5,12 @@ import { IDatabaseConfig, IDatabaseGenericConnectionConfig } from "@src/core/dom
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IDatabaseService } from "@src/core/domains/database/interfaces/IDatabaseService";
 import DatabaseAdapter from "@src/core/domains/database/services/DatabaseAdapter";
-import { ICtor } from "@src/core/interfaces/ICtor";
-import { App } from "@src/core/services/App";
 import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
+import { ICtor } from "@src/core/interfaces/ICtor";
+import { App } from "@src/core/services/App";
+
+import { IConnectionTypeHelpers } from "../interfaces/IConnectionTypeHelpers";
 
 /**
  * Short alias for app('db')
@@ -30,7 +29,7 @@ export const schema = (connectionName: string = db().getDefaultConnectionName())
  * Short alias for db().getAdapter<AdapterType>(connectionName)
  * @param connectionName 
  */
-export const databaseAdapter = <K extends keyof ConnectionTypeHelpers = 'default'>(connectionName?: K) => db().getAdapter(connectionName as keyof ConnectionTypeHelpers)  as ConnectionTypeHelpers[K]
+export const databaseAdapter = <K extends keyof IConnectionTypeHelpers = 'default'>(connectionName?: K) => db().getAdapter(connectionName as keyof IConnectionTypeHelpers)  as IConnectionTypeHelpers[K]
 
 /**
  * Database Service
