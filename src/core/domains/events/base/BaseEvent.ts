@@ -91,8 +91,8 @@ abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBa
      * @template T The type of the payload to return.
      * @returns The payload of the event.
      */
-    getPayload<T extends TPayload>(): T {
-        return this.getCastFromObject<T>(this.payload as Record<string, unknown>, this.casts)
+    getPayload(): TPayload {
+        return this.getCastFromObject<TPayload>(this.payload as Record<string, unknown>, this.casts)
     }
 
     /**

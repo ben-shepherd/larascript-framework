@@ -86,7 +86,7 @@ const EventMockableConcern = (Base: ICtor) => {
                 return true;
             }
 
-            return callback(dispatchedEvent.getPayload())
+            return callback(dispatchedEvent.getPayload() as TPayload)
         }
     
     }

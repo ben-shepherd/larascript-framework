@@ -3,6 +3,7 @@ import BaseEventListener from "@src/core/domains/events/base/BaseEventListener";
 import BaseEventService from "@src/core/domains/events/base/BaseEventService";
 import EventDispatchException from "@src/core/domains/events/exceptions/EventDispatchException";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
+import { SubscriberConstructor } from "@src/core/domains/events/interfaces/IEventConstructors";
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
 import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventConfig";
@@ -10,12 +11,16 @@ import { IEventDriversConfigOption } from "@src/core/domains/events/interfaces/c
 import { IEventListenersConfig, TListenersConfigOption } from "@src/core/domains/events/interfaces/config/IEventListenersConfig";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { app } from "@src/core/services/App";
-import { SubscriberConstructor } from "@src/core/domains/events/interfaces/IEventConstructors";
 
 /**
  * Short hand for `app('events')`
  */
 export const events = () => app('events');
+
+/**
+ * Short hand for `events().dispatch(event)`
+ */
+export const dispatch = (event: IBaseEvent) => events().dispatch(event);
 
 /**
  * The event service is responsible for managing the event system.

@@ -20,6 +20,6 @@ export interface IBaseEvent<TPayload = unknown> extends INameable, IExecutable, 
     getQueueName(): string;
     getEventService(): IEventService;
     getDriverCtor(): ICtor<IEventDriver>;
-    getPayload<T extends TPayload>(): T;
+    getPayload(): TPayload;
     setPayload(payload: TPayload): void;
 }

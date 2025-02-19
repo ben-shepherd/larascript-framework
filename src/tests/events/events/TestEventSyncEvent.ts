@@ -2,7 +2,7 @@
 import BaseEvent from "@src/core/domains/events/base/BaseEvent";
 
 
-class TestEventSyncEvent extends BaseEvent {
+class TestEventSyncEvent extends BaseEvent<{hello: string}> {
 
     static readonly eventName = 'TestEventSyncEvent';
 
