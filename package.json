@@ -29,6 +29,7 @@
     "api:sh": "docker exec -it larascript-api /bin/bash"
   },
   "dependencies": {
+    "ajv-formats": "^3.0.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
     "cli-table3": "^0.6.5",
@@ -44,6 +45,7 @@
     "readline": "^1.3.0",
     "sequelize": "^6.37.3",
     "sqlite3": "^5.1.7",
+    "tyex": "^0.10.0",
     "uuid": "^10.0.0",
     "winston": "^3.15.0",
     "zod": "^3.23.8"

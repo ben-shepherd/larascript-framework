@@ -12,6 +12,7 @@ import RouterBindService from '@src/core/domains/http/router/RouterBindService';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
 import { app } from '@src/core/services/App';
 import expressClient from 'express';
+import tyex, { Tyex } from 'tyex';
 
 
 
@@ -32,6 +33,8 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
 
     protected config!: IExpressConfig | null;
 
+    private readonly tyex: Tyex;
+
     private readonly app: expressClient.Express
 
     private routerBindService!: RouterBindService;
@@ -46,6 +49,7 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
         super(config)
         this.routerBindService = new RouterBindService()
         this.app = expressClient()
+        this.tyex = tyex(this.app) 
     }
 
     /**
