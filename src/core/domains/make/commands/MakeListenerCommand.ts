@@ -8,7 +8,7 @@ export default class MakeListenerCommand extends BaseMakeFileCommand {
             description: 'Create a new listener event',
             makeType: 'Listener',
             args: ['name'],
-            endsWith: 'Listener'
+            endsWith: 'ListenerEvent'
         })
     }
 

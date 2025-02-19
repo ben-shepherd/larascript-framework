@@ -16,6 +16,8 @@ import MakeSubscriberCommand from "@src/core/domains/make/commands/MakeSubscribe
 import MakeValidatorCommand from "@src/core/domains/make/commands/MakeValidatorCommand";
 import { app } from "@src/core/services/App";
 
+import MakeEventCommand from "../commands/MakeEventCommand";
+
 export default class MakeProvider extends BaseProvider {
 
     async register(): Promise<void> {
@@ -25,6 +27,7 @@ export default class MakeProvider extends BaseProvider {
         app('console').registerService().registerAll([
             MakeCmdCommand,
             MakeListenerCommand,
+            MakeEventCommand,
             MakeModelCommand,
             MakeObserverCommand,
             MakeRepositoryCommand,
