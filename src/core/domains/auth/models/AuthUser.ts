@@ -107,6 +107,22 @@ export default class AuthUser<Attributes extends AuthUserAttributes> extends Mod
     }
 
     /**
+     * Checks if the user has the given scope
+     *
+     * @param scope The scope to check
+     * @returns True if the user has the scope, false otherwise
+     */
+    hasScope(scope: string): boolean {
+        const roles = this.getRoles();
+
+        for(const role of roles) {
+            if(role.includes(scope)) return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Get the email of the user
      * 
      * @returns The email of the user
