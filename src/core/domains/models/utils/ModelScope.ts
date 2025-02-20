@@ -50,7 +50,7 @@ class ModelScopes {
      * // Returns: ['Comment:read', 'comment:moderate']
      */
     public static getScopes(model: ModelConstructor, scopes: TModelScope[] = ['all'], additionalScopes: string[] = []): string[] {
-        if(scopes?.[0] === 'all') {
+        if(scopes?.includes('all')) {
             scopes = ['read', 'write', 'delete', 'create'];
         }
         return [...scopes.map((scope) => `${(model.name)}:${scope}`), ...additionalScopes];
