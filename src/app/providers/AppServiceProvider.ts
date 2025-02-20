@@ -6,14 +6,13 @@ class AppServiceProvider extends BaseProvider {
 
     public async register(): Promise<void> {
 
-        // Register the AppService in the App container
-        // Usage example: app('app').getConfig()
-        this.bind('app', new AppService(this.config));
+        const appService = new AppService(this.config);
+
+        this.bind('app', appService);
+        this.bind('app.config', () => appService.getConfig());
     }
 
     async boot(): Promise<void> {
-        
-        // Boot the app
         await app('app').boot();
     }
 

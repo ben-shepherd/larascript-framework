@@ -5,6 +5,8 @@ import HttpErrorHandlerProvider from "@src/core/domains/http/providers/HttpError
 import { ILarascriptProviders } from "@src/core/interfaces/ILarascriptProviders";
 import { IProvider } from "@src/core/interfaces/IProvider";
 import LarascriptProviders from "@src/core/providers/LarascriptProviders";
+
+import { IAppConfig } from "./app.config";
 ;
 
 /**
@@ -23,7 +25,8 @@ export interface Providers extends ILarascriptProviders {
 
     // App Providers
     app: IAppService;
-
+    'app.config': IAppConfig;
+    
     // Add your provider interfaces here
 }
 
