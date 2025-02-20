@@ -1,4 +1,4 @@
-import { Providers } from '@src/config/providers';
+import { Providers } from '@src/config/providers.config';
 import Singleton from '@src/core/base/Singleton';
 import UninitializedContainerError from '@src/core/exceptions/UninitializedContainerError';
 import Kernel from '@src/core/Kernel';

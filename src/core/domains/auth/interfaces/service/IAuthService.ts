@@ -1,5 +1,5 @@
  
-import { AuthAdapters } from "@src/config/auth";
+import { AuthAdapters } from "@src/config/auth.config";
 import { IACLService } from "@src/core/domains/auth/interfaces/acl/IACLService";
 
 export interface IAuthService {

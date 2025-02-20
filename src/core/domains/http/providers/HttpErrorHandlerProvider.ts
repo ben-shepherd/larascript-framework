@@ -1,8 +1,8 @@
-import httpConfig from '@src/config/http';
+import httpConfig from '@src/config/http.config';
 import BaseProvider from "@src/core/base/Provider";
 import IHttpConfig from '@src/core/domains/http/interfaces/IHttpConfig';
-import { App, app } from "@src/core/services/App";
 import errorHandler from '@src/core/domains/http/middleware/errorHandler';
+import { App, app } from "@src/core/services/App";
 
 
 export default class HttpErrorHandlerProvider extends BaseProvider {

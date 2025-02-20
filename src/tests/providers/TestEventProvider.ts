@@ -1,4 +1,4 @@
-import { EVENT_DRIVERS } from '@src/config/events';
+import { EVENT_DRIVERS } from '@src/config/events.config';
 import QueueableDriver, { TQueueDriverOptions } from '@src/core/domains/events/drivers/QueableDriver';
 import SyncDriver from '@src/core/domains/events/drivers/SyncDriver';
 import { IEventConfig } from '@src/core/domains/events/interfaces/config/IEventConfig';

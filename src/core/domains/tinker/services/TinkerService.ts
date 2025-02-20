@@ -1,5 +1,5 @@
-import appConfig from "@src/config/app";
-import providers from "@src/config/providers";
+import appConfig from "@src/config/app.config";
+import providers from "@src/config/providers.config";
 import Singleton from "@src/core/base/Singleton";
 import { EnvironmentProduction } from "@src/core/consts/Environment";
 import Kernel from "@src/core/Kernel";

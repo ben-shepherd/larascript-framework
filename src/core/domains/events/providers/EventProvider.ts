@@ -1,4 +1,4 @@
-import { eventConfig } from "@src/config/events";
+import { eventConfig } from "@src/config/events.config";
 import BaseProvider from "@src/core/base/Provider";
 import WorkerCommand from "@src/core/domains/events/commands/WorkerCommand";
 import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventConfig";

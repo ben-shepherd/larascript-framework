@@ -1,4 +1,4 @@
-import commandsConfig from "@src/config/commands";
+import commandsConfig from "@src/config/commands.config";
 import BaseProvider from "@src/core/base/Provider";
 import HelpCommand from "@src/core/domains/console/commands/HelpCommand";
 import RouteListCommand from "@src/core/domains/console/commands/RouteListCommand";

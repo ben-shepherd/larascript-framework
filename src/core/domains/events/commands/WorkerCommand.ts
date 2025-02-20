@@ -1,4 +1,4 @@
-import { EVENT_DRIVERS } from "@src/config/events";
+import { EVENT_DRIVERS } from "@src/config/events.config";
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
 import { IEventDriversConfigOption } from "@src/core/domains/events/interfaces/config/IEventDriversConfig";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";

@@ -1,4 +1,4 @@
-import { IAppConfig } from '@src/config/app';
+import { IAppConfig } from '@src/config/app.config';
 import { EnvironmentTesting } from '@src/core/consts/Environment';
 
 require('dotenv').config();

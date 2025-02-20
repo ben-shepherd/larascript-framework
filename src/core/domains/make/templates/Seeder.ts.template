@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import User, { IUserData } from "@src/app/models/auth/User";
-import { GROUPS } from "@src/config/auth";
+import { GROUPS } from "@src/config/auth.config";
 import ROLES from "@src/core/domains/auth/enums/RolesEnum";
 import hashPassword from "@src/core/domains/auth/utils/hashPassword";
 import BaseSeeder from "@src/core/domains/migrations/base/BaseSeeder";

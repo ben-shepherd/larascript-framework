@@ -1,11 +1,11 @@
-import { AuthAdapters } from "@src/config/auth";
+import { AuthAdapters } from "@src/config/auth.config";
 import BaseAdapter from "@src/core/base/BaseAdapter";
-import { app } from "@src/core/services/App";
 import { IACLService } from "@src/core/domains/auth/interfaces/acl/IACLService";
 import { IAclConfig } from "@src/core/domains/auth/interfaces/acl/IAclConfig";
 import { IBaseAuthConfig } from "@src/core/domains/auth/interfaces/config/IAuth";
 import { IAuthService } from "@src/core/domains/auth/interfaces/service/IAuthService";
 import ACLService from "@src/core/domains/auth/services/ACLService";
+import { app } from "@src/core/services/App";
 
 /**
  * Short hand for app('auth')

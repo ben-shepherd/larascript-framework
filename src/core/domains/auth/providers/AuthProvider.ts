@@ -1,7 +1,7 @@
 
 
-import { aclConfig } from "@src/config/acl";
-import { authConfig } from "@src/config/auth";
+import { aclConfig } from "@src/config/acl.config";
+import { authConfig } from "@src/config/auth.config";
 import BaseProvider from "@src/core/base/Provider";
 import GenerateJwtSecret from "@src/core/domains/auth/commands/GenerateJwtSecret";
 import Auth from "@src/core/domains/auth/services/AuthService";

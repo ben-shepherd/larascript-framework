@@ -1,4 +1,4 @@
-import httpConfig from '@src/config/http';
+import httpConfig from '@src/config/http.config';
 import BaseProvider from "@src/core/base/Provider";
 import RequestContext from '@src/core/domains/http/context/RequestContext';
 import RequestContextCleaner from '@src/core/domains/http/context/RequestContextCleaner';

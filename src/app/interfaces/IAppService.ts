@@ -1,4 +1,4 @@
-import { IAppConfig } from "@src/config/app";
+import { IAppConfig } from "@src/config/app.config";
 
 export interface IAppService {
     getConfig(): IAppConfig;

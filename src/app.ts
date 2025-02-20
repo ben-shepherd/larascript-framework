@@ -1,11 +1,11 @@
 import 'dotenv/config';
 
-import appConfig from '@src/config/app';
-import providers from '@src/config/providers';
+import appConfig from '@src/config/app.config';
+import providers from '@src/config/providers.config';
 import CommandNotFoundException from '@src/core/domains/console/exceptions/CommandNotFoundException';
 import CommandBootService from '@src/core/domains/console/service/CommandBootService';
-import Kernel, { KernelOptions } from '@src/core/Kernel';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
+import Kernel, { KernelOptions } from '@src/core/Kernel';
 
 (async () => {
     try {

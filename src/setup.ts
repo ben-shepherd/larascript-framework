@@ -1,6 +1,6 @@
 import 'tsconfig-paths/register';
 
-import appConfig from '@src/config/app';
+import appConfig from '@src/config/app.config';
 import ConsoleProvider from '@src/core/domains/console/providers/ConsoleProvider';
 import CryptoProvider from '@src/core/domains/crypto/providers/CryptoProvider';
 import DatabaseRegisterOnlyProvider from '@src/core/domains/database/providers/DatabaseRegisterOnlyProvider';

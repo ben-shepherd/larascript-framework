@@ -1,4 +1,4 @@
-import databaseConfig from "@src/config/database";
+import databaseConfig from "@src/config/database.config";
 import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import DatabaseProvider from "@src/core/domains/database/providers/DatabaseProvider";
 
