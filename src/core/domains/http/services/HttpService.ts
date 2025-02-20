@@ -1,3 +1,4 @@
+import { Type } from '@sinclair/typebox';
 import Service from '@src/core/base/Service';
 import Middleware from '@src/core/domains/http/base/Middleware';
 import { default as IExpressConfig, default as IHttpConfig } from '@src/core/domains/http/interfaces/IHttpConfig';
@@ -49,7 +50,7 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
         super(config)
         this.routerBindService = new RouterBindService()
         this.app = expressClient()
-        this.tyex = tyex(this.app) 
+        this.tyex = tyex(this.app)
     }
 
     /**
@@ -91,9 +92,39 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
         this.app.use(EndRequestContextMiddleware.createExpressMiddleware())
 
         // Log requests
-        if(this.config?.logging?.requests) {
+        if (this.config?.logging?.requests) {
             this.app.use(BasicLoggerMiddleware.createExpressMiddleware())
         }
+
+
+        // Serve OpenAPI documentation
+        this.app.use(
+            "/openapi.json",
+            this.tyex.openapi({
+                info: {
+                    title: "My API",
+                    version: "1.0.0",
+                },
+            }),
+        );
+
+        this.tyex.get('/', {
+            summary: "Say hello",
+            responses: {
+                200: {
+                    description: "Success",
+                    content: {
+                        "application/json": {
+                            schema: Type.Object({
+                                message: Type.String(),
+                            }),
+                        },
+                    },
+                },
+            },
+        }, (req, res) => {
+            res.send({ message: 'Hello World' })
+        })
 
     }
 
@@ -102,8 +133,8 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
      * @param middleware - The middleware to add
      */
     public useMiddleware(middleware: TExpressMiddlewareFn | MiddlewareConstructor) {
-        
-        if(middleware.prototype instanceof Middleware) {
+
+        if (middleware.prototype instanceof Middleware) {
             this.app.use((middleware as MiddlewareConstructor).createExpressMiddleware())
         }
         else {
@@ -130,7 +161,7 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
      * @param router - The router to bind
      */
     public bindRoutes(router: IRouter): void {
-        if(router.getRegisteredRoutes().length === 0) {
+        if (router.getRegisteredRoutes().length === 0) {
             return
 
         }

@@ -4,7 +4,8 @@ import { EnvironmentTesting } from '@src/core/consts/Environment';
 require('dotenv').config();
 
 const testAppConfig: IAppConfig = {
-    env: EnvironmentTesting
+    env: EnvironmentTesting,
+    appKey: 'test'
 };
 
 export default testAppConfig;
