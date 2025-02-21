@@ -1,8 +1,9 @@
 import Controller from "@src/core/domains/http/base/Controller";
+import HttpContext from "@src/core/domains/http/context/HttpContext";
 
 class #name# extends Controller {
 
-    async invoke() {
+    async invoke(context: HttpContext) {
         this.jsonResponse({}, 200)
     }
 
