@@ -77,10 +77,7 @@ export type TRouteItem = {
         type: TResourceType
         modelConstructor: ModelConstructor<IModel>;
 
-        filters?: {
-            show?: object;
-            index?: object;
-        },
+        filters?: object;
         scopes?: string[];
         searching?: {
             fields?: string[];
