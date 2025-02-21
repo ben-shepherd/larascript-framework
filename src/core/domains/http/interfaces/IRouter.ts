@@ -58,6 +58,8 @@ export interface IRoute {
 
 export type TResourceType = 'index' | 'show' | 'create' | 'update' | 'delete';
 
+export type TRouterMethodOptions = Omit<TRouteItem, 'path' | 'method' | 'action' | 'resource'>;
+
 export type TRouteItem = {
     path: string;
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';

@@ -1,5 +1,5 @@
 import { TExpressMiddlewareFnOrClass } from "@src/core/domains/http/interfaces/IMiddleware";
-import { IRouteGroupOptions, IRouter, TPartialRouteItemOptions, TRouteGroupFn, TRouteItem, TRouteResourceOptions } from "@src/core/domains/http/interfaces/IRouter";
+import { IRouteGroupOptions, IRouter, TPartialRouteItemOptions, TRouteGroupFn, TRouteItem, TRouteResourceOptions, TRouterMethodOptions } from "@src/core/domains/http/interfaces/IRouter";
 import ResourceRouter from "@src/core/domains/http/router/RouterResource";
 import SecurityRules from "@src/core/domains/http/security/services/SecurityRules";
 
@@ -71,35 +71,35 @@ class Router implements IRouter {
     /**
      * Register a GET route.
      */
-    public get(path: TRouteItem['path'], action: TRouteItem['action'], options: TPartialRouteItemOptions = {}): void {
+    public get(path: TRouteItem['path'], action: TRouteItem['action'], options: TRouterMethodOptions = {}): void {
         this.register({ path, method: 'GET', action, ...options });
     }
     
     /**
          * Register a POST route.
          */
-    public post(path: TRouteItem['path'], action: TRouteItem['action'], options: TPartialRouteItemOptions = {}): void {
+    public post(path: TRouteItem['path'], action: TRouteItem['action'], options: TRouterMethodOptions = {}): void {
         this.register({ path, method: 'POST', action, ...options });
     }
     
     /**
      * Register a PUT route.
      */
-    public put(path: TRouteItem['path'], action: TRouteItem['action'], options: TPartialRouteItemOptions = {}): void {
+    public put(path: TRouteItem['path'], action: TRouteItem['action'], options: TRouterMethodOptions = {}): void {
         this.register({ path, method: 'PUT', action, ...options });
     }
     
     /**
      * Register a PATCH route.
      */
-    public patch(path: TRouteItem['path'], action: TRouteItem['action'], options: TPartialRouteItemOptions = {}): void {
+    public patch(path: TRouteItem['path'], action: TRouteItem['action'], options: TRouterMethodOptions = {}): void {
         this.register({ path, method: 'PATCH', action, ...options });
     }
     
     /**
      * Register a DELETE route.
      */
-    public delete(path: TRouteItem['path'], action: TRouteItem['action'], options: TPartialRouteItemOptions = {}): void {
+    public delete(path: TRouteItem['path'], action: TRouteItem['action'], options: TRouterMethodOptions = {}): void {
         this.register({ path, method: 'DELETE', action, ...options });
     }
 
