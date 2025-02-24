@@ -1,6 +1,6 @@
 import WorkerModel from "@src/core/domains/events/models/WorkerModel";
 import BaseMigration from "@src/core/domains/migrations/base/BaseMigration";
-import { DataTypes } from "sequelize";
+import DataTypes from "@src/core/domains/migrations/schema/DataTypes";
 
 export class CreateWorkerTableMigration extends BaseMigration {
 

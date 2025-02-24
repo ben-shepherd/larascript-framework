@@ -1,7 +1,7 @@
 import User from "@src/app/models/auth/User";
 import { authJwt } from "@src/core/domains/auth/services/JwtAuthService";
 import BaseMigration from "@src/core/domains/migrations/base/BaseMigration";
-import { DataTypes } from "sequelize";
+import DataTypes from "@src/core/domains/migrations/schema/DataTypes";
 
 export class CreateUserModelMigration extends BaseMigration {
 
