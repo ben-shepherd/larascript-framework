@@ -34,7 +34,7 @@ export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>
 
     createMigrationSchema(tableName: string, connectionName?: string): Promise<unknown>;
 
-    postgres(): PostgresAdapter;
+    postgres(connectionName?: string): PostgresAdapter;
 
-    mongodb(): MongoDbAdapter;
+    mongodb(connectionName?: string): MongoDbAdapter;
 }

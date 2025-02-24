@@ -348,16 +348,36 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
      * Get the postgres adapter
      * @returns 
      */
-    postgres(): PostgresAdapter {
-        return this.getAdapter<PostgresAdapter>('postgres')
+    postgres(connectionName: string = this.getDefaultConnectionName()): PostgresAdapter {
+        const adapter = this.getAdapter<PostgresAdapter>(connectionName)
+
+        if(!adapter) {
+            throw new Error('Adapter not found: ' + connectionName)
+        }
+
+        if(!(adapter instanceof PostgresAdapter)) {
+            throw new Error('Adapter is not a PostgresAdapter: ' + connectionName)
+        }
+
+        return adapter
     }
 
     /**
      * Get the mongodb adapter
      * @returns 
      */
-    mongodb(): MongoDbAdapter {
-        return this.getAdapter<MongoDbAdapter>('mongodb')
+    mongodb(connectionName: string = this.getDefaultConnectionName()): MongoDbAdapter {
+        const adapter = this.getAdapter<MongoDbAdapter>(connectionName)
+
+        if(!adapter) {
+            throw new Error('Adapter not found: ' + connectionName)
+        }
+
+        if(!(adapter instanceof MongoDbAdapter)) {
+            throw new Error('Adapter is not a MongoDbAdapter: ' + connectionName)
+        }
+
+        return adapter
     }
 
 }
