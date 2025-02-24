@@ -1,30 +1,25 @@
 import { faker } from "@faker-js/faker";
-import User, { IUserData } from "@src/app/models/auth/User";
-import { GROUPS } from "@src/config/auth.config";
-import ROLES from "@src/core/domains/auth/enums/RolesEnum";
+import User from "@src/app/models/auth/User";
+import { GROUPS, ROLES } from "@src/config/acl.config";
 import hashPassword from "@src/core/domains/auth/utils/hashPassword";
 import BaseSeeder from "@src/core/domains/migrations/base/BaseSeeder";
 
 export class #name# extends BaseSeeder {
 
-    async up(): Promise<void> {
+    async up(): Promise < void> {
 
-        // Example:
-        // for (let i = 0; i < 10; i++) {
-
-        //     const data: IUserData = {
-        //         email: faker.internet.email(),
-        //         password: faker.internet.password(),
-        //         hashedPassword: hashPassword(faker.internet.password()),
-        //         groups: [GROUPS.User],
-        //         roles: [ROLES.USER],
-        //         firstName: faker.person.firstName(),
-        //         lastName: faker.person.lastName(),
-        //     }
-
-        //     const user = new User(data);
-        //     await user.save();
-        // }
+        // Change the example to suit your needs
+        await User.query().insert([
+            {
+                email: faker.internet.email(),
+                password: faker.internet.password(),
+                hashedPassword: hashPassword(faker.internet.password()),
+                groups: [GROUPS.User],
+                roles: [ROLES.USER],
+                firstName: faker.person.firstName(),
+                lastName: faker.person.lastName(),
+            }
+        ])
 
     }
 
