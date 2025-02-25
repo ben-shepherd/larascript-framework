@@ -8,8 +8,6 @@ class IsNumber extends AbstractRule implements IRule {
 
     protected errorTemplate: string = 'The :attribute field must be a number.';
 
-    protected testArrayItems: boolean = true
-
     public async test(): Promise<boolean> {
         return typeof this.getData() === 'number'
     }
