@@ -15,27 +15,29 @@ class ValidatorMiddleware extends Middleware {
      * @param context - The HTTP context
      */
     public async execute(context: HttpContext): Promise<void> {
-        const validatorConstructor = this.getValidatorConstructor(context);
-       
+        const validatorConstructors = this.getValidatorConstructors(context);
+
         // No validator constructor, skip validation
-        if(!validatorConstructor) {
+        if (validatorConstructors.length === 0) {
             this.next();
             return;
         }
 
-        const validator = new validatorConstructor();
-        const result = await validator.validate(context.getRequest().body);
+        for (const validatorConstructor of validatorConstructors) {
+            const validator = new validatorConstructor();
+            const result = await validator.validate(context.getRequest().body);
 
-        // Validation failed, return the errors
-        if(result.fails()) {
-            context.getResponse().status(422).json({
-                errors: result.errors()
-            });
-            return;
+            // Validation failed, return the errors
+            if (result.fails()) {
+                context.getResponse().status(422).json({
+                    errors: result.errors()
+                });
+                return;
+            }
+
+            // Set the validated body on the request
+            context.getRequest().body = { ...context.getRequest().body, ...result.validated() };
         }
-
-        // Set the validated body on the request
-        context.getRequest().body = result.validated();
 
         this.next();
     }
@@ -45,8 +47,9 @@ class ValidatorMiddleware extends Middleware {
      * @param context - The HTTP context
      * @returns The validator constructor
      */
-    protected getValidatorConstructor(context: HttpContext): CustomValidatorConstructor | undefined {
-        return context.getRouteItem()?.validator;
+    protected getValidatorConstructors(context: HttpContext): CustomValidatorConstructor[] {
+        const validatorConstructors = context.getRouteItem()?.validator ?? [];
+        return Array.isArray(validatorConstructors) ? validatorConstructors : [validatorConstructors];
     }
 
 }

@@ -71,8 +71,7 @@ export type TRouteItem = {
     security?: ISecurityRule[];
     scopes?: string[];
     config?: Record<string, unknown>;
-    validator?: CustomValidatorConstructor;
-    validatorExecuteManually?: boolean;
+    validator?: CustomValidatorConstructor | CustomValidatorConstructor[];
     resource?: {
         type: TResourceType
         modelConstructor: ModelConstructor<IModel>;
