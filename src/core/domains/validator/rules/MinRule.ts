@@ -20,10 +20,7 @@ class MinRule extends AbstractRule<TMinOptions> implements IRule {
     protected errorTemplateArray = 'The :attribute field must have at least :min items.';
 
     constructor(min: TMinOptions['min']) {
-        super()
-        this.options = {
-            min
-        }
+        super({ min })
     }
 
     public async test(): Promise<boolean> {

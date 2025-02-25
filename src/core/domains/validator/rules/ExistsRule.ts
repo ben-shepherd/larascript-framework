@@ -1,7 +1,7 @@
-import { ModelConstructor } from "@src/core/interfaces/IModel";
 import { TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import AbstractDatabaseRule from "@src/core/domains/validator/abstract/AbstractDatabaseRule";
 import { IRule } from "@src/core/domains/validator/interfaces/IRule";
+import { ModelConstructor } from "@src/core/interfaces/IModel";
 
 type ExistsRuleOptions = {
     modelConstructor: ModelConstructor;
@@ -15,11 +15,7 @@ class ExistsRule extends AbstractDatabaseRule<ExistsRuleOptions> implements IRul
     protected errorTemplate: string = 'The :attribute field must exist.';
 
     constructor(modelConstructor: ModelConstructor, column: string) {
-        super(modelConstructor);
-        this.options = {
-            ...(this.options ?? {}),
-            column
-        };
+        super(modelConstructor, { column });
     }
 
     public async test(): Promise<boolean> {

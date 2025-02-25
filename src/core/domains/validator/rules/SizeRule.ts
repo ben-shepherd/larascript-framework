@@ -18,10 +18,7 @@ class SizeRule extends AbstractRule<TSizeOptions> implements IRule {
     protected errorTemplateArray = 'The :attribute field must contain :size items.';
 
     constructor(size: TSizeOptions['size']) {
-        super()
-        this.options = {
-            size
-        }
+        super({ size })
     }
 
     public async test(): Promise<boolean> {

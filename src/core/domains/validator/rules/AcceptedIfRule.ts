@@ -16,9 +16,7 @@ class AcceptedIfRule extends AbstractRule<AcceptedIfOptions> implements IRule {
     protected errorTemplate: string = 'The :attribute field must be accepted when :another is :value.';
 
     constructor(anotherField: string, value: unknown) {
-        super()
-        this.options.anotherField = anotherField
-        this.options.value = value
+        super({ anotherField, value })
     }
 
     public async test(): Promise<boolean> {

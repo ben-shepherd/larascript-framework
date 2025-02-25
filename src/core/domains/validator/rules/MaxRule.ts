@@ -18,10 +18,7 @@ class MaxRule extends AbstractRule<TMaxOptions> implements IRule {
     protected errorTemplateArray = 'The :attribute field must not have more than :max items.';
 
     constructor(max: TMaxOptions['max']) {
-        super()
-        this.options = {
-            max
-        }
+        super({ max })
     }
 
     public async test(): Promise<boolean> {

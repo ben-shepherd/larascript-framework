@@ -1,8 +1,8 @@
-import { ModelConstructor } from "@src/core/interfaces/IModel";
 import { IEloquent, TOperator, TWhereClause, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import AbstractRule from "@src/core/domains/validator/abstract/AbstractRule";
 import { IRule } from "@src/core/domains/validator/interfaces/IRule";
+import { ModelConstructor } from "@src/core/interfaces/IModel";
 
 /**
  * Options for configuring an AbstractDatabaseRule
@@ -30,10 +30,11 @@ abstract class AbstractDatabaseRule<Options extends TAbstractDatabaseRuleOptions
      * 
      * @param modelConstructor - The model constructor to use for database operations
      */
-    constructor(modelConstructor: ModelConstructor) {
+    constructor(modelConstructor: ModelConstructor, additionalOptions?: object) {
         super();
         this.options = {
             ...(this.options ?? {}),
+            ...(additionalOptions ?? {}),
             modelConstructor: modelConstructor,
         };
         this.builder = queryBuilder(this.options.modelConstructor);

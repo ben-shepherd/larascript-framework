@@ -40,6 +40,18 @@ abstract class AbstractRule<TOptions extends object = object> {
     protected otherRuleNames: string[] = []
 
     /**
+     * Constructor for AbstractRule
+     * 
+     * @param additionalOptions - Additional options to be merged with the default options
+     */
+    constructor(additionalOptions?: object) {
+        this.options = {
+            ...(this.options ?? {}),
+            ...(additionalOptions ?? {})
+        }
+    }
+
+    /**
      * Tests if the current data value passes the validation rule
      * @returns True if validation passes, false if it fails
      */

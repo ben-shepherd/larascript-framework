@@ -1,7 +1,7 @@
-import { ModelConstructor } from "@src/core/interfaces/IModel";
 import { TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import AbstractDatabaseRule from "@src/core/domains/validator/abstract/AbstractDatabaseRule";
 import { IRule } from "@src/core/domains/validator/interfaces/IRule";
+import { ModelConstructor } from "@src/core/interfaces/IModel";
 
 type UniqueRuleOptions = {
     modelConstructor: ModelConstructor;
@@ -15,11 +15,7 @@ class UniqueRule extends AbstractDatabaseRule<UniqueRuleOptions> implements IRul
     protected errorTemplate: string = 'The :attribute field must be unique.';
 
     constructor(modelConstructor: ModelConstructor, column: string) {
-        super(modelConstructor);
-        this.options = {
-            ...(this.options ?? {}),
-            column
-        };
+        super(modelConstructor, { column });
     }
 
     public async test(): Promise<boolean> {

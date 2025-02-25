@@ -13,8 +13,7 @@ class ObjectRule extends AbstractRule implements IRule {
     protected requiredProperties: string[] = []
 
     constructor(requiredProperties: string[] = []) {
-        super()
-        this.requiredProperties = requiredProperties
+        super({ requiredProperties })
     }
 
 

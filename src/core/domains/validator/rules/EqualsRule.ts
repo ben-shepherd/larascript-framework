@@ -11,8 +11,7 @@ class EqualsRule extends AbstractRule implements IRule {
     protected matches: unknown;
 
     constructor(matches: unknown) {
-        super();
-        this.matches = matches;
+        super({ matches });
     }
 
     public async test(): Promise<boolean> {

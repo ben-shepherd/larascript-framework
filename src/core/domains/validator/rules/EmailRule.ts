@@ -10,11 +10,6 @@ class EmailRule extends AbstractRule<{}> implements IRule {
     // RFC 5322 compliant email regex
     private emailRegex: RegExp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
-    constructor() {
-        super();
-        this.options = {};
-    }
-
     public async test(): Promise<boolean> {
 
         if (typeof this.getData() !== 'string') {

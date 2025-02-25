@@ -6,12 +6,7 @@ class NumericRule extends AbstractRule<{}> implements IRule {
     protected name: string = 'numeric';
 
     protected errorTemplate: string = 'The :attribute field must be numeric.';
-
-    constructor() {
-        super();
-        this.options = {};
-    }
-
+    
     public async test(): Promise<boolean> {
         if(this.dataUndefinedOrNull()) return false
 

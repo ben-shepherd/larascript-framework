@@ -12,10 +12,7 @@ class RegexRule extends AbstractRule<TRegexOptions> implements IRule {
     protected errorTemplate: string = 'The :attribute field format is invalid.';
 
     constructor(pattern: string | RegExp) {
-        super();
-        this.options = {
-            pattern: pattern instanceof RegExp ? pattern : new RegExp(pattern)
-        };
+        super({ pattern: pattern instanceof RegExp ? pattern : new RegExp(pattern) });
     }
 
     public async test(): Promise<boolean> {

@@ -12,10 +12,7 @@ class SameRule extends AbstractRule<TSameOptions> implements IRule {
     protected errorTemplate: string = 'The :attribute field must match :otherField.';
 
     constructor(otherField: TSameOptions['otherField']) {
-        super()
-        this.options = {
-            otherField
-        }
+        super({ otherField })
     }
 
     public async test(): Promise<boolean> {
