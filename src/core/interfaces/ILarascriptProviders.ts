@@ -2,6 +2,7 @@ import { IACLService } from '@src/core/domains/auth/interfaces/acl/IACLService';
 import { IJwtAuthService } from '@src/core/domains/auth/interfaces/jwt/IJwtAuthService';
 import { IAuthService } from '@src/core/domains/auth/interfaces/service/IAuthService';
 import ICommandService from '@src/core/domains/console/interfaces/ICommandService';
+import { ICryptoService } from '@src/core/domains/crypto/interfaces/ICryptoService';
 import { IDatabaseService } from '@src/core/domains/database/interfaces/IDatabaseService';
 import { IEloquentQueryBuilderService } from '@src/core/domains/eloquent/interfaces/IEloquentQueryBuilderService';
 import { IEventService } from '@src/core/domains/events/interfaces/IEventService';
@@ -10,7 +11,8 @@ import { IRequestContext } from '@src/core/domains/http/interfaces/IRequestConte
 import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerService';
 import { IValidatorMake } from '@src/core/domains/validator/interfaces/IValidator';
 import readline from 'node:readline';
-import { ICryptoService } from '@src/core/domains/crypto/interfaces/ICryptoService';
+
+import { ISessionService } from '../domains/session/interfaces/ISessionService';
 
 export interface ILarascriptProviders {
 
@@ -97,4 +99,10 @@ export interface ILarascriptProviders {
      * Provided by '@src/core/domains/crypto/providers/CryptoProvider'
      */
     crypto: ICryptoService;
+
+    /**
+     * Session service
+     * Provided by '@src/core/domains/session/providers/SessionProvider'
+     */
+    session: ISessionService;
 }
