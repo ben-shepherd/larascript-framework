@@ -7,6 +7,7 @@ import { IRoute, IRouter, TRouteItem } from '@src/core/domains/http/interfaces/I
 import BasicLoggerMiddleware from '@src/core/domains/http/middleware/BasicLoggerMiddleware';
 import EndRequestContextMiddleware from '@src/core/domains/http/middleware/EndRequestContextMiddleware';
 import RequestIdMiddleware from '@src/core/domains/http/middleware/RequestIdMiddleware';
+import StartSessionMiddleware from '@src/core/domains/http/middleware/StartSessionMiddleware';
 import Route from '@src/core/domains/http/router/Route';
 import RouterBindService from '@src/core/domains/http/router/RouterBindService';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
@@ -76,21 +77,19 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
             throw new Error('Config not provided');
         }
 
-        // Adds an identifier to the request object
-        // This id is used in the requestContext service to store information over a request life cycle
-        // this.app.use(requestIdMiddleware())
+        // 1. First add request ID middleware
         this.app.use(RequestIdMiddleware.createExpressMiddleware())
 
-        // End the request context
-        // This will be called when the request is finished
-        // Deletes the request context and associated values
-        this.app.use(EndRequestContextMiddleware.createExpressMiddleware())
+        // 2. Then start session using that request ID
+        this.app.use(StartSessionMiddleware.createExpressMiddleware())
 
-        // Log requests
+        // 3. Add other middleware
         if(this.config?.logging?.requests) {
             this.app.use(BasicLoggerMiddleware.createExpressMiddleware())
         }
 
+        // 4. Finally add end request context middleware
+        this.app.use(EndRequestContextMiddleware.createExpressMiddleware())
     }
 
     /**

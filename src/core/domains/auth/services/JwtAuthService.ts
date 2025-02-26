@@ -19,13 +19,13 @@ import ACLService from "@src/core/domains/auth/services/ACLService";
 import createJwt from "@src/core/domains/auth/utils/createJwt";
 import decodeJwt from "@src/core/domains/auth/utils/decodeJwt";
 import generateToken from "@src/core/domains/auth/utils/generateToken";
+import { cryptoService } from "@src/core/domains/crypto/service/CryptoService";
 import { IRouter } from "@src/core/domains/http/interfaces/IRouter";
 import Route from "@src/core/domains/http/router/Route";
 import Router from "@src/core/domains/http/router/Router";
 import { app } from "@src/core/services/App";
 import { JsonWebTokenError } from "jsonwebtoken";
 import { DataTypes } from "sequelize";
-import { cryptoService } from "@src/core/domains/crypto/service/CryptoService";
 
 /**
  * Short hand for app('auth.jwt')
@@ -301,9 +301,21 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
         }
     }
 
+    /**
+     * Get the user
+     * @returns The user
+     */
+    async user(): Promise<IUserModel | null> {
+        if(!await this.check()) {
+            return null
+        }
+
+        return await this.userRepository.findById(
+            app('session').getSessionData().userId as string
+        )
+    }
+
 }
-
-
 
 
 export default JwtAuthService;

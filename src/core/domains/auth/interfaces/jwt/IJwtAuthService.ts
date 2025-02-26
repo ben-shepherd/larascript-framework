@@ -16,4 +16,7 @@ export interface IJwtAuthService {
     createJwtFromUser(user: IUserModel): Promise<string>
     getCreateUserTableSchema(): Record<string, unknown>
     getCreateApiTokenTableSchema(): Record<string, unknown>
+    authorizeUser(user: IUserModel): void
+    check(): Promise<boolean>
+    user(): Promise<IUserModel | null>
 }

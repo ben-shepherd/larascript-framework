@@ -4,13 +4,13 @@ import HttpContext from "@src/core/domains/http/context/HttpContext";
 import { IPageOptions } from "@src/core/domains/http/interfaces/IResourceService";
 import { TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
 import AbastractBaseResourceService from "@src/core/domains/http/resources/abstract/AbastractBaseResourceService";
+import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 import { RouteResourceTypes } from "@src/core/domains/http/router/RouterResource";
 import Paginate from "@src/core/domains/http/utils/Paginate";
 import QueryFilters from "@src/core/domains/http/utils/QueryFilters";
+import SortOptions from "@src/core/domains/http/utils/SortOptions";
 import stripGuardedResourceProperties from "@src/core/domains/http/utils/stripGuardedResourceProperties";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
-import ApiResponse from "@src/core/domains/http/response/ApiResponse";
-import SortOptions from "@src/core/domains/http/utils/SortOptions";
 
 /**
  * Service class that handles retrieving collections of resources through HTTP requests
@@ -88,7 +88,7 @@ class ResourceIndexService extends AbastractBaseResourceService {
 
         // Check if the resource owner security applies to this route and it is valid
         // If it is valid, we add the owner's id to the filters
-        if(this.validateResourceOwnerApplicable(context)) {
+        if(await this.validateResourceOwnerApplicable(context)) {
             const attribute = this.getResourceAttribute(routeOptions);
             const userId = context.getRequest().user?.getId() as string
             builder.where(attribute, '=', userId)

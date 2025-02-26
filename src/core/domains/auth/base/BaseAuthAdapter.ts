@@ -1,15 +1,18 @@
-import { IRouter } from "@src/core/domains/http/interfaces/IRouter";
-import Router from "@src/core/domains/http/router/Router";
 import { IAclConfig } from "@src/core/domains/auth/interfaces/acl/IAclConfig";
 import { IAuthAdapter } from "@src/core/domains/auth/interfaces/adapter/IAuthAdapter";
 import { IBaseAuthConfig } from "@src/core/domains/auth/interfaces/config/IAuth";
+import { IRouter } from "@src/core/domains/http/interfaces/IRouter";
+import Router from "@src/core/domains/http/router/Router";
+import { app } from "@src/core/services/App";
+
+import { IUserModel } from "../interfaces/models/IUserModel";
 
 /**
  * Base authentication adapter class that implements the IAuthAdapter interface.
  * Provides core functionality for authentication adapters.
  * @template Config - The configuration type that extends IBaseAuthConfig
  */
-class BaseAuthAdapter<Config extends IBaseAuthConfig> implements IAuthAdapter<Config> {
+abstract class BaseAuthAdapter<Config extends IBaseAuthConfig> implements IAuthAdapter<Config> {
 
     public config!: Config;
 
@@ -20,6 +23,16 @@ class BaseAuthAdapter<Config extends IBaseAuthConfig> implements IAuthAdapter<Co
         this.aclConfig = aclConfig;
     }
     
+    /**
+     * Get the user
+     * @returns The user
+     */
+    abstract user(): Promise<IUserModel | null>;
+
+    /**
+     * Check if the user is authenticated
+    abstract check(): Promise<boolean>;
+
     /**
      * Boots the adapter
      * @returns A promise that resolves when the adapter is booted
@@ -53,6 +66,24 @@ class BaseAuthAdapter<Config extends IBaseAuthConfig> implements IAuthAdapter<Co
     getRouter(): IRouter {
         return new Router();
     }
+
+
+    /**
+     * Authorize a user
+     * @param user 
+     */
+    authorizeUser(user: IUserModel) {
+        app('session').setSessionData({ userId: user.getId() })
+    }
+
+    /**
+     * Check if the user is authenticated
+     * @returns True if the user is authenticated, false otherwise
+     */
+    async check(): Promise<boolean> {
+        return !!app('session').getSessionData().userId
+    }
+
 
 }
 

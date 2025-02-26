@@ -3,12 +3,12 @@ import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedErr
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
+import { TResponseErrorMessages } from "@src/core/domains/http/interfaces/ErrorResponse.t";
 import AbastractBaseResourceService from "@src/core/domains/http/resources/abstract/AbastractBaseResourceService";
+import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 import { RouteResourceTypes } from "@src/core/domains/http/router/RouterResource";
 import stripGuardedResourceProperties from "@src/core/domains/http/utils/stripGuardedResourceProperties";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
-import { TResponseErrorMessages } from "@src/core/domains/http/interfaces/ErrorResponse.t";
-import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 
 /**
  * Service class that handles updating existing resources through HTTP requests
@@ -42,9 +42,8 @@ class ResourceUpdateService extends AbastractBaseResourceService {
     async handler(context: HttpContext): Promise<ApiResponse<IModelAttributes | TResponseErrorMessages>> {
 
         // Check if the authorization security applies to this route and it is valid
-        if(!this.validateAuthorized(context)) {
+        if(!await this.validateAuthorized()) {
             throw new UnauthorizedError()
-
         }
         
         const routeOptions = context.getRouteItem()
@@ -72,7 +71,7 @@ class ResourceUpdateService extends AbastractBaseResourceService {
         const result = await builder.firstOrFail()
 
         // Check if the resource owner security applies to this route and it is valid
-        if(!this.validateResourceAccess(context, result)) {
+        if(!await this.validateResourceAccess(context, result)) {
             throw new ForbiddenResourceError()
         }
 

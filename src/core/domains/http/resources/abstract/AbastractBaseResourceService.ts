@@ -1,7 +1,8 @@
 
+import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
+import { authJwt } from "@src/core/domains/auth/services/JwtAuthService";
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
-import { requestContext } from "@src/core/domains/http/context/RequestContext";
 import { SecurityEnum } from "@src/core/domains/http/enums/SecurityEnum";
 import { IApiResponse } from "@src/core/domains/http/interfaces/IApiResponse";
 import { TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
@@ -37,218 +38,226 @@ type TResponseOptions = {
 
 abstract class AbastractBaseResourceService {
 
-        /**
-         * The route resource type (RouteResourceTypes)
-         */
-        abstract routeResourceType: string;
+    /**
+     * The route resource type (RouteResourceTypes)
+     */
+    abstract routeResourceType: string;
 
-        // eslint-disable-next-line no-unused-vars
-        abstract handler(context: HttpContext): Promise<IApiResponse>;
+    // eslint-disable-next-line no-unused-vars
+    abstract handler(context: HttpContext): Promise<IApiResponse>;
 
 
-        /**
-         * Gets the model constructor from the route options
-         * @param {HttpContext} context - The HTTP context
-         * @returns {ModelConstructor} - The model constructor
-         * @throws {ResourceException} - If the route options are not found
-         */
-        getModelConstructor(context: HttpContext): ModelConstructor {
-            const routeOptions = context.getRouteItem()
+    /**
+     * Gets the model constructor from the route options
+     * @param {HttpContext} context - The HTTP context
+     * @returns {ModelConstructor} - The model constructor
+     * @throws {ResourceException} - If the route options are not found
+     */
+    getModelConstructor(context: HttpContext): ModelConstructor {
+        const routeOptions = context.getRouteItem()
 
-            if(!routeOptions) {
-                throw new ResourceException('Route options are required')
-            }
-
-            const modelConstructor = routeOptions?.resource?.modelConstructor
-
-            if(!modelConstructor) {
-                throw new ResourceException('Model constructor is not set')
-            }
-
-            return modelConstructor
+        if (!routeOptions) {
+            throw new ResourceException('Route options are required')
         }
 
-        /**
-         * Checks if the request is authorized to perform the action
-         * 
-         * @param {BaseRequest} req - The request object
-         * @param {IRouteResourceOptionsLegacy} options - The options object
+        const modelConstructor = routeOptions?.resource?.modelConstructor
 
-         * @returns {boolean} - Whether the request is authorized
-         */
-        validateAuthorized(context: HttpContext): boolean {
-            return requestContext().getByRequest<string>(context.getRequest(), 'userId') !== undefined;
+        if (!modelConstructor) {
+            throw new ResourceException('Model constructor is not set')
         }
 
-        /**
-         * Checks if the request is authorized to perform the action and if the resource owner security is set
-         * 
-         * @param {BaseRequest} req - The request object
-         * @param {IRouteResourceOptionsLegacy} options - The options object
-         * @returns {boolean} - Whether the request is authorized and resource owner security is set
-         */
-        validateResourceOwnerApplicable(context: HttpContext): boolean {
-            const routeOptions = context.getRouteItem()
+        return modelConstructor
+    }
 
-            if(!routeOptions) {
-                throw new ResourceException('Route options are required')
-            }
+    /**
+     * Checks if the request is authorized to perform the action
+     * 
+     * @param {BaseRequest} req - The request object
+     * @param {IRouteResourceOptionsLegacy} options - The options object
 
-            const resourceOwnerSecurity = this.getResourceOwnerRule(routeOptions);
-    
-            if(this.validateAuthorized(context) && resourceOwnerSecurity ) {
-                return true;
-            }
-    
+     * @returns {boolean} - Whether the request is authorized
+     */
+    async validateAuthorized(): Promise<boolean> {
+        return await authJwt().check()
+    }
+
+    /**
+     * Checks if the request is authorized to perform the action and if the resource owner security is set
+     * 
+     * @param {BaseRequest} req - The request object
+     * @param {IRouteResourceOptionsLegacy} options - The options object
+     * @returns {boolean} - Whether the request is authorized and resource owner security is set
+     */
+    async validateResourceOwnerApplicable(context: HttpContext): Promise<boolean> {
+        const routeOptions = context.getRouteItem()
+
+        if (!routeOptions) {
+            throw new ResourceException('Route options are required')
+        }
+
+        const resourceOwnerSecurity = this.getResourceOwnerRule(routeOptions);
+
+        if (await this.validateAuthorized() && resourceOwnerSecurity) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the request is authorized to perform the action and if the resource owner security is set
+     * 
+     * @param {BaseRequest} req - The request object
+     * @param {IRouteResourceOptionsLegacy} options - The options object
+     * @returns {boolean} - Whether the request is authorized and resource owner security is set
+     */
+    async validateResourceAccess(context: HttpContext, resource: IModel): Promise<boolean> {
+        const routeOptions = context.getRouteItem()
+
+        if (!routeOptions) {
+            throw new ResourceException('Route options are required')
+        }
+
+        const resourceOwnerSecurity = this.getResourceOwnerRule(routeOptions);
+
+        // If the resource owner security is not set, we allow access
+        if (!resourceOwnerSecurity) {
+            return true;
+        }
+
+        // Get the attribute from the resource owner security
+        const attribute = resourceOwnerSecurity.getRuleOptions()?.attribute as string
+
+        if (!attribute) {
+            throw new ResourceException('An attribute is required to check resource owner security')
+        }
+
+        if (!resource.getFields().includes(attribute)) {
+            throw new ResourceException('The attribute ' + attribute + ' is not a valid attribute for the resource ' + resource.constructor.name)
+        }
+
+        // Get the resource owner id
+        const resourceOwnerId = resource.getAttributeSync(attribute)
+
+        if (!resourceOwnerId) {
             return false;
         }
 
-        /**
-         * Checks if the request is authorized to perform the action and if the resource owner security is set
-         * 
-         * @param {BaseRequest} req - The request object
-         * @param {IRouteResourceOptionsLegacy} options - The options object
-         * @returns {boolean} - Whether the request is authorized and resource owner security is set
-         */
-        validateResourceAccess(context: HttpContext, resource: IModel): boolean {
-            const routeOptions = context.getRouteItem()
+        // Get the request user id
+        const user = await this.getUser()
 
-            if(!routeOptions) {
-                throw new ResourceException('Route options are required')
-            }
-
-            const resourceOwnerSecurity = this.getResourceOwnerRule(routeOptions);
-
-            // If the resource owner security is not set, we allow access
-            if(!resourceOwnerSecurity) {
-                return true;
-            }
-
-            // Get the attribute from the resource owner security
-            const attribute = resourceOwnerSecurity.getRuleOptions()?.attribute as string
-
-            if(!attribute) {
-                throw new ResourceException('An attribute is required to check resource owner security')
-            }
-
-            if(!resource.getFields().includes(attribute)) {
-                throw new ResourceException('The attribute ' + attribute + ' is not a valid attribute for the resource ' + resource.constructor.name)
-            }
-
-            // Get the resource owner id
-            const resourceOwnerId = resource.getAttributeSync(attribute)
-
-            if(!resourceOwnerId) {
-                return false;
-            }
-
-            // Get the request user id
-            const requestUserId = requestContext().getByRequest<string>(context.getRequest(), 'userId');
-
-            if(!requestUserId) {
-                return false;
-            }
-
-            return resourceOwnerId === requestUserId;
+        if (!user) {
+            return false;
         }
 
-        /**
-         * Finds the resource owner security from the given options
-         * @param {TRouteItem} routeOptions - The options object
-         * @returns {IIdentifiableSecurityCallback | undefined} - The found resource owner security or undefined if not found
-         */
-        getResourceOwnerRule(routeOptions: TRouteItem): ResourceOwnerRule | undefined {
-            const id = SecurityEnum.RESOURCE_OWNER;
-            const when = [this.routeResourceType];
-            return SecurityReader.find<ResourceOwnerRule>(routeOptions, id, when);
+        return resourceOwnerId === user.getId();
+    }
+
+    /**
+     * Finds the resource owner security from the given options
+     * @param {TRouteItem} routeOptions - The options object
+     * @returns {IIdentifiableSecurityCallback | undefined} - The found resource owner security or undefined if not found
+     */
+    getResourceOwnerRule(routeOptions: TRouteItem): ResourceOwnerRule | undefined {
+        const id = SecurityEnum.RESOURCE_OWNER;
+        const when = [this.routeResourceType];
+        return SecurityReader.find<ResourceOwnerRule>(routeOptions, id, when);
+    }
+
+    /**
+     * Gets the resource owner property key from the route options
+     * @param {TRouteItem} routeOptions - The route options
+     * @param {string} defaultKey - The default key to use if the resource owner security is not found
+     * @returns {string} - The resource owner property key
+     */
+    getResourceAttribute(routeOptions: TRouteItem, defaultKey: string = 'userId'): string {
+        const resourceOwnerSecurity = this.getResourceOwnerRule(routeOptions)
+        const attribute = resourceOwnerSecurity?.getRuleOptions()?.attribute as string ?? defaultKey;
+
+        if (typeof attribute !== 'string') {
+            throw new ResourceException('Malformed resourceOwner security. Expected parameter \'attribute\' to be a string but received ' + typeof attribute);
         }
 
-        /**
-         * Gets the resource owner property key from the route options
-         * @param {TRouteItem} routeOptions - The route options
-         * @param {string} defaultKey - The default key to use if the resource owner security is not found
-         * @returns {string} - The resource owner property key
-         */
-        getResourceAttribute(routeOptions: TRouteItem, defaultKey: string = 'userId'): string {
-            const resourceOwnerSecurity = this.getResourceOwnerRule(routeOptions)
-            const attribute = resourceOwnerSecurity?.getRuleOptions()?.attribute as string ?? defaultKey;
+        return attribute;
+    }
 
-            if(typeof attribute !== 'string') {
-                throw new ResourceException('Malformed resourceOwner security. Expected parameter \'attribute\' to be a string but received ' + typeof attribute);
-            }
+    /**
+     * Gets the validator by type
+     * @param {HttpContext} context - The HTTP context
+     * @returns {ValidatorConstructor | undefined} - The validator or undefined if not found
+     */
+    getValidator(context: HttpContext): CustomValidatorConstructor | undefined {
+        const routeOptions = context.getRouteItem()
 
-            return attribute;
+
+        if (!routeOptions) {
+            throw new ResourceException('Route options are required')
         }
 
-        /**
-         * Gets the validator by type
-         * @param {HttpContext} context - The HTTP context
-         * @returns {ValidatorConstructor | undefined} - The validator or undefined if not found
-         */
-        getValidator(context: HttpContext): CustomValidatorConstructor | undefined {
-            const routeOptions = context.getRouteItem()
+        const validator = routeOptions.resource?.validation?.[this.routeResourceType] as CustomValidatorConstructor | undefined
 
-
-            if(!routeOptions) {
-                throw new ResourceException('Route options are required')
-            }
-
-            const validator = routeOptions.resource?.validation?.[this.routeResourceType] as CustomValidatorConstructor | undefined
-
-            if(!validator) {
-                return undefined;
-            }
-
-            return validator;
-        }
-
-        /**
-         * Validates the request body using the configured validator for this resource type
-         * @param {HttpContext} context - The HTTP context containing the request to validate
-         * @returns {Promise<void>} A promise that resolves when validation is complete
-         * @throws {ValidationError} If validation fails
-         */
-        async getValidationErrors(context: HttpContext): Promise<IValidatorErrors | undefined> {
-            const validatorConstructor = this.getValidator(context)
-            
-            if(!validatorConstructor) {
-                return undefined;
-            }
-
-            const validator = new validatorConstructor()
-            const body = context.getRequest().body
-            const result = await validator.validate(body)
-
-            if(result.fails()) {
-                return result.errors()
-            }
-
+        if (!validator) {
             return undefined;
         }
 
-        /**
-         * Builds and returns the final response object with all added data and metadata
-         * @param {HttpContext} context - The HTTP context
-         * @param {unknown} data - The data to be included in the response
-         * @param {number} code - The HTTP status code  
-         */
-        apiResponse<Data = unknown>(context: HttpContext, data: Data, code: number = 200, options?: TResponseOptions): ApiResponse<Data> {
-            const apiResponse = new ApiResponse<Data>()
-            const paginate = new Paginate()
-            const pagination = paginate.parseRequest(context.getRequest())
+        return validator;
+    }
 
-            apiResponse.setCode(code)
-            apiResponse.setData(data)
-            apiResponse.addTotalCount()
+    /**
+     * Validates the request body using the configured validator for this resource type
+     * @param {HttpContext} context - The HTTP context containing the request to validate
+     * @returns {Promise<void>} A promise that resolves when validation is complete
+     * @throws {ValidationError} If validation fails
+     */
+    async getValidationErrors(context: HttpContext): Promise<IValidatorErrors | undefined> {
+        const validatorConstructor = this.getValidator(context)
 
-            if(options?.showPagination) {
-                const defaultPageSize = context.getRouteItem()?.resource?.paginate?.pageSize ?? undefined
-                
-                apiResponse.addPagination(pagination.getPage(), defaultPageSize)
-            }
-
-            return apiResponse
+        if (!validatorConstructor) {
+            return undefined;
         }
+
+        const validator = new validatorConstructor()
+        const body = context.getRequest().body
+        const result = await validator.validate(body)
+
+        if (result.fails()) {
+            return result.errors()
+        }
+
+        return undefined;
+    }
+
+    /**
+     * Builds and returns the final response object with all added data and metadata
+     * @param {HttpContext} context - The HTTP context
+     * @param {unknown} data - The data to be included in the response
+     * @param {number} code - The HTTP status code  
+     */
+    apiResponse<Data = unknown>(context: HttpContext, data: Data, code: number = 200, options?: TResponseOptions): ApiResponse<Data> {
+        const apiResponse = new ApiResponse<Data>()
+        const paginate = new Paginate()
+        const pagination = paginate.parseRequest(context.getRequest())
+
+        apiResponse.setCode(code)
+        apiResponse.setData(data)
+        apiResponse.addTotalCount()
+
+        if (options?.showPagination) {
+            const defaultPageSize = context.getRouteItem()?.resource?.paginate?.pageSize ?? undefined
+
+            apiResponse.addPagination(pagination.getPage(), defaultPageSize)
+        }
+
+        return apiResponse
+    }
+
+    /**
+     * Gets the user from the request
+     * @returns {Promise<IUserModel | null>} - The user or null if not found
+     */
+    getUser(): Promise<IUserModel | null> {
+        return authJwt().user()
+    }
 
 }
 

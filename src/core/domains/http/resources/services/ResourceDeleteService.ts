@@ -4,8 +4,8 @@ import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryB
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import AbastractBaseResourceService from "@src/core/domains/http/resources/abstract/AbastractBaseResourceService";
-import { RouteResourceTypes } from "@src/core/domains/http/router/RouterResource";
 import ApiResponse from "@src/core/domains/http/response/ApiResponse";
+import { RouteResourceTypes } from "@src/core/domains/http/router/RouterResource";
 
 /**
  * Service class that handles deleting resources through HTTP requests
@@ -46,7 +46,7 @@ class ResourceDeleteService extends AbastractBaseResourceService {
 
 
         // Check if the authorization security applies to this route and it is valid
-        if(!this.validateAuthorized(context)) {
+        if(!await this.validateAuthorized()) {
             throw new UnauthorizedError()
         }
         
@@ -65,7 +65,7 @@ class ResourceDeleteService extends AbastractBaseResourceService {
 
         
         // Check if the resource owner security applies to this route and it is valid
-        if(!this.validateResourceAccess(context, result)) {
+        if(!await this.validateResourceAccess(context, result)) {
             throw new ForbiddenResourceError()
         }
 

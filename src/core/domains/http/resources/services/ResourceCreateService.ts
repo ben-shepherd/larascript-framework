@@ -2,13 +2,12 @@ import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenR
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
+import { TResponseErrorMessages } from "@src/core/domains/http/interfaces/ErrorResponse.t";
 import AbastractBaseResourceService from "@src/core/domains/http/resources/abstract/AbastractBaseResourceService";
+import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 import { RouteResourceTypes } from "@src/core/domains/http/router/RouterResource";
 import stripGuardedResourceProperties from "@src/core/domains/http/utils/stripGuardedResourceProperties";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
-import { App } from "@src/core/services/App";
-import { TResponseErrorMessages } from "@src/core/domains/http/interfaces/ErrorResponse.t";
-import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 
 /**
  * Service class that handles creating new resources through HTTP requests
@@ -64,20 +63,20 @@ class ResourceCreateService extends AbastractBaseResourceService {
 
         // Check if the resource owner security applies to this route and it is valid
         // If it is valid, we add the owner's id to the filters
-        if(this.validateResourceOwnerApplicable(context)) {
+        if(await this.validateResourceOwnerApplicable(context)) {
 
-            if(!this.validateAuthorized(context)) {
+            if(!await this.validateAuthorized()) {
                 throw new UnauthorizedError()
             }
 
             const attribute = this.getResourceAttribute(routeOptions, 'userId');
-            const userId = App.container('requestContext').getByRequest<string>(req, 'userId');
-            
-            if(!userId) {
+            const user = await this.getUser()
+                
+            if(!user) {
                 throw new ForbiddenResourceError()
             }
 
-            model.setAttribute(attribute, userId)
+            model.setAttribute(attribute, user.getId())
         }
 
         // Validate the request body

@@ -3,10 +3,10 @@ import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryB
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import AbastractBaseResourceService from "@src/core/domains/http/resources/abstract/AbastractBaseResourceService";
+import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 import { RouteResourceTypes } from "@src/core/domains/http/router/RouterResource";
 import stripGuardedResourceProperties from "@src/core/domains/http/utils/stripGuardedResourceProperties";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
-import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 
 /**
  * Service class that handles retrieving individual resources through HTTP requests
@@ -59,7 +59,7 @@ class ResourceShowService extends AbastractBaseResourceService {
         const result = await builder.firstOrFail()
 
         // Check if the resource owner security applies to this route and it is valid
-        if(!this.validateResourceAccess(context, result)) {
+        if(!await this.validateResourceAccess(context, result)) {
             throw new ForbiddenResourceError()
         }
 

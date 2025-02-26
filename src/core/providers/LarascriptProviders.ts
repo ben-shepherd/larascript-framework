@@ -10,9 +10,11 @@ import MigrationProvider from "@src/core/domains/migrations/providers/MigrationP
 import SetupProvider from "@src/core/domains/setup/providers/SetupProvider";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 // eslint-disable-next-line no-unused-vars
+import CryptoProvider from "@src/core/domains/crypto/providers/CryptoProvider";
 import { ILarascriptProviders } from "@src/core/interfaces/ILarascriptProviders";
 import { IProvider } from "@src/core/interfaces/IProvider";
-import CryptoProvider from "@src/core/domains/crypto/providers/CryptoProvider";
+
+import SessionProvider from "../domains/session/providers/SessionProvider";
 
 
 /**
@@ -109,6 +111,12 @@ const LarascriptProviders: IProvider[] = [
      */
     new SetupProvider(),
 
+    /**
+     * Session provider
+     *
+     * Provides session services
+     */
+    new SessionProvider(),
 
 ];
 

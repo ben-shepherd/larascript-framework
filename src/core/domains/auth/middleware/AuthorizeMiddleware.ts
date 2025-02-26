@@ -1,11 +1,12 @@
-import Middleware from '@src/core/domains/http/base/Middleware';
-import HttpContext from '@src/core/domains/http/context/HttpContext';
-import responseError from '@src/core/domains/http/handlers/responseError';
-import { requestContext } from '@src/core/domains/http/context/RequestContext';
-import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
 import ForbiddenResourceError from '@src/core/domains/auth/exceptions/ForbiddenResourceError';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
 import { auth } from '@src/core/domains/auth/services/AuthService';
+import Middleware from '@src/core/domains/http/base/Middleware';
+import HttpContext from '@src/core/domains/http/context/HttpContext';
+import responseError from '@src/core/domains/http/handlers/responseError';
+import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
+
+import { authJwt } from '../services/JwtAuthService';
 
 /**
  * AuthorizeMiddleware handles authentication and authorization for HTTP requests
@@ -82,10 +83,11 @@ class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
         req.apiToken = apiToken
         
         // Set the user id in the request context
-        requestContext().setByRequest(req, 'userId', user?.getId())
+        authJwt().authorizeUser(user)
     
         return req;
     }
+
 
     /**
      * Validates that the scopes in the api token match the required scopes for the request.
