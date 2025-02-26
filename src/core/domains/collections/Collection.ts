@@ -1,6 +1,9 @@
+import { collect as collectHelper } from "@src/core/domains/collections/helper/collect";
 import { ICollection, TCollectionOperator, TFilterCallback, TFindCallback, TForeachCallback, TMapCallback } from "@src/core/domains/collections/interfaces/ICollection";
 import ProxyCollectionHandler from "@src/core/domains/collections/ProxyCollectionHandler";
 import { Collection as CollectJsCollection } from "collect.js";
+
+export const collect = collectHelper;
 
 /**
  * Abstract class representing a collection of items

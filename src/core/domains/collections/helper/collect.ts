@@ -9,7 +9,7 @@ import Collection from "@src/core/domains/collections/Collection";
  * @param {T[]} [items=[]] The items to create a collection from.
  * @returns {Collection<T>} A new proxy collection with the given items.
  */
-const collect = <T = unknown>(items: T[] = []): Collection<T> => {
+export const collect = <T = unknown>(items: T[] = []): Collection<T> => {
     return Collection.collect<T>(items)
 }
 
