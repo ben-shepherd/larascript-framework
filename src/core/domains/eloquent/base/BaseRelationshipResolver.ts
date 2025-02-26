@@ -1,12 +1,12 @@
 import Collection from "@src/core/domains/collections/Collection";
 import EloquentRelationshipException from "@src/core/domains/eloquent/exceptions/EloquentRelationshipException";
 import { IEloquent, IRelationship, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { IRelationshipResolver } from "@src/core/domains/eloquent/interfaces/IEqloeuntRelationship";
 import BelongsTo from "@src/core/domains/eloquent/relational/BelongsTo";
 import HasMany from "@src/core/domains/eloquent/relational/HasMany";
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { IModel, IModelAttributes, ModelConstructor } from "@src/core/interfaces/IModel";
-import { IRelationshipResolver } from "@src/core/domains/eloquent/interfaces/IEqloeuntRelationship";
 
 class BaseRelationshipResolver implements IRelationshipResolver {
 
@@ -174,7 +174,7 @@ class BaseRelationshipResolver implements IRelationshipResolver {
             eloquent.join(foreignModelCtor, localKey, foreignKey, relationshipName)
         }
 
-        // todo: implement has many relationship
+        // Note/Todo: Has many relationship is not implemented yet (is it needed?)
     
         return eloquent
     }
