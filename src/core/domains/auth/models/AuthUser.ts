@@ -123,6 +123,20 @@ export default class AuthUser<Attributes extends AuthUserAttributes> extends Mod
     }
 
     /**
+     * Checks if the user has any of the given scopes
+     * 
+     * @param scopes The scopes to check
+     * @returns True if the user has any of the scopes, false otherwise
+     */
+    hasScopes(scopes: string[]): boolean {  
+        for(const scope of scopes) {
+            if(!this.hasScope(scope)) return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Get the email of the user
      * 
      * @returns The email of the user
