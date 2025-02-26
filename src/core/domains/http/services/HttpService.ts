@@ -99,7 +99,7 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
     public useMiddleware(middleware: TExpressMiddlewareFn | MiddlewareConstructor) {
         
         if(middleware.prototype instanceof Middleware) {
-            this.app.use((middleware as MiddlewareConstructor).createExpressMiddleware())
+            this.app.use((middleware as MiddlewareConstructor).create())
         }
         else {
             this.app.use(middleware as TExpressMiddlewareFn)

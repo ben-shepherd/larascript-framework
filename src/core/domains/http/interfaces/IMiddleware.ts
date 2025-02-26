@@ -18,7 +18,7 @@ import { NextFunction, Request, Response } from "express";
  */
 export type MiddlewareConstructor = {
     new (...args: any[]): IMiddleware;
-    createExpressMiddleware(config?: unknown, routeItem?: TRouteItem): TExpressMiddlewareFn;
+    create(config?: unknown, routeItem?: TRouteItem): TExpressMiddlewareFn;
 }
 
 /**

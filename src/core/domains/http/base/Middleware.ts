@@ -49,6 +49,16 @@ abstract class Middleware<Config extends unknown = unknown> implements IMiddlewa
     protected context!: HttpContext;
 
     /**
+     * Alias for createExpressMiddleware
+     * @param config The configuration for the middleware
+     * @param routeItem The route item for the middleware
+     * @returns The middleware instance
+     */
+    public static create<Middleware extends IMiddleware = IMiddleware>(config?: Middleware['config'], routeItem?: TRouteItem): TExpressMiddlewareFn {
+        return this.createExpressMiddleware(config, routeItem)
+    }
+
+    /**
      * Converts this middleware class into an Express-compatible middleware function.
      * Creates a new instance of this class and returns its Express middleware function,
      * allowing it to be used directly with Express's app.use() or route handlers.

@@ -38,7 +38,7 @@ class MiddlewareUtil {
         // Convert middleware classes to middleware functions
         return middlewaresArray.map(middleware => {
             if(middleware.prototype instanceof Middleware) {
-                return (middleware as MiddlewareConstructor).createExpressMiddleware(undefined, routeItem)
+                return (middleware as MiddlewareConstructor).create(undefined, routeItem)
             }
 
             return middleware as TExpressMiddlewareFn
