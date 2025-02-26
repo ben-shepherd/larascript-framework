@@ -16,6 +16,7 @@ export interface IAuthAdapter<TConfig extends IBaseAuthConfig = IBaseAuthConfig>
     setConfig(config: TConfig): void;
     getRouter(): IRouter;
 
+    authorizeUser(user: IUserModel): void;
     user(): Promise<IUserModel | null>;
     check(): Promise<boolean>;
 }
