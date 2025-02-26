@@ -28,7 +28,7 @@ export default async (req: Request, res: Response) => {
         
         // Check if the provider is Postgres
         else if (adapter as unknown instanceof PostgresAdapter) {
-            const pool = (adapter as PostgresAdapter).getClient();
+            const pool = (adapter as PostgresAdapter).getSequelize();
             await (pool as Sequelize).query('SELECT 1 as connected');
         }
     }
