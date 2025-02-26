@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel"
 import { IAclConfig, IAclGroup, IAclRole } from "@src/core/domains/auth/interfaces/acl/IAclConfig"
+import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel"
 
 export interface IACLService {
     getConfig(): IAclConfig
@@ -11,8 +11,6 @@ export interface IACLService {
     getRoleScopesFromUser(user: IUserModel): string[]
     getRoleScopes(role: string | string[]): string[]
     getRole(role: string): IAclRole
-
-
 }
 
 

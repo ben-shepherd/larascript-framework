@@ -1,6 +1,10 @@
 import { IACLService } from "@src/core/domains/auth/interfaces/acl/IACLService";
 import { IAclConfig, IAclGroup, IAclRole } from "@src/core/domains/auth/interfaces/acl/IAclConfig";
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
+import { app } from "@src/core/services/App";
+
+// Short hand for app('auth.acl')
+export const acl = () => app('auth.acl');
 
 /**
  * Access Control List (ACL) Service

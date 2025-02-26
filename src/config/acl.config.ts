@@ -2,8 +2,8 @@ import { IAclConfig } from "@src/core/domains/auth/interfaces/acl/IAclConfig";
 
 // Define available groups
 export const GROUPS = {
-    User: 'group_user',
-    Admin: 'group_admin',
+    USER: 'group_user',
+    ADMIN: 'group_admin',
 } as const
 
 // Define available roles
@@ -18,16 +18,16 @@ export const ROLES = {
 export const aclConfig: IAclConfig = {
 
     // Default user group
-    defaultGroup: GROUPS.User,
+    defaultGroup: GROUPS.USER,
 
     // List of groups
     groups: [
         {
-            name: GROUPS.User,
+            name: GROUPS.USER,
             roles: [ROLES.USER]
         },
         {
-            name: GROUPS.Admin,
+            name: GROUPS.ADMIN,
             roles: [ROLES.USER, ROLES.ADMIN]
         }
     ],

@@ -13,7 +13,7 @@ class UserFactory extends Factory {
             email: this.faker.internet.email(),
             hashedPassword: cryptoService().hash(this.faker.internet.password()),
             roles: [ROLES.USER],
-            groups: [GROUPS.User],
+            groups: [GROUPS.USER],
             firstName: this.faker.person.firstName(),
             lastName: this.faker.person.lastName(),
             createdAt: new Date(),
