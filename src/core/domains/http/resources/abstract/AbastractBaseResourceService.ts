@@ -1,5 +1,6 @@
 
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
+import { auth } from "@src/core/domains/auth/services/AuthService";
 import { authJwt } from "@src/core/domains/auth/services/JwtAuthService";
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
@@ -78,7 +79,7 @@ abstract class AbastractBaseResourceService {
      * @returns {boolean} - Whether the request is authorized
      */
     async validateAuthorized(): Promise<boolean> {
-        return await authJwt().check()
+        return await auth().check()
     }
 
     /**

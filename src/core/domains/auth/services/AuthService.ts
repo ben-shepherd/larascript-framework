@@ -7,6 +7,8 @@ import { IAuthService } from "@src/core/domains/auth/interfaces/service/IAuthSer
 import ACLService from "@src/core/domains/auth/services/ACLService";
 import { app } from "@src/core/services/App";
 
+import { IUserModel } from "../interfaces/models/IUserModel";
+
 /**
  * Short hand for app('auth')
  */
@@ -106,6 +108,22 @@ class Auth extends BaseAdapter<AuthAdapters> implements IAuthService {
         return this.aclService;
     }
     
+    /**
+     * Check if the user is authenticated
+     * @returns True if the user is authenticated, false otherwise
+     */
+    public async check(): Promise<boolean> {
+        return await this.getDefaultAdapter().check();
+    }
+
+    /**
+     * Get the user
+     * @returns The user
+     */
+    public async user(): Promise<IUserModel | null> {
+        return await this.getDefaultAdapter().user();
+    }
+
 }
 
 export default Auth;

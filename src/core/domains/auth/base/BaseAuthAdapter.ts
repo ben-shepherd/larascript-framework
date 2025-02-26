@@ -67,7 +67,6 @@ abstract class BaseAuthAdapter<Config extends IBaseAuthConfig> implements IAuthA
         return new Router();
     }
 
-
     /**
      * Authorize a user
      * @param user 
