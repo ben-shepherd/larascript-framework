@@ -22,15 +22,15 @@ const config: IExpressConfig = {
     globalMiddlewares: [
         express.json(),
         SecurityMiddleware,
-        ValidatorMiddleware
+        ValidatorMiddleware,
     ],
 
     /**
      * Logging
      */
     logging: {
-        requests: false,
-        boundRouteDetails: false
+        requests: parseBooleanFromString(process.env.ENABLE_REQUEST_LOGGING, 'true'),
+        boundRouteDetails: parseBooleanFromString(process.env.ENABLE_BOUND_ROUTE_DETAILS, 'true')
     }
 
 };
