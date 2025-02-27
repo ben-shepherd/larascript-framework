@@ -2,6 +2,8 @@ import HttpContext from "@src/core/domains/http/context/HttpContext";
 import { IController } from "@src/core/domains/http/interfaces/IController";
 import { TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
 
+import responseError from "../handlers/responseError";
+
 class Controller implements IController {
 
     /** 
@@ -34,8 +36,13 @@ class Controller implements IController {
             context
         ]
 
-
         const controller = new this(context)
+
+        if(!controller[action]) {
+            responseError(context.getRequest(), context.getResponse(), new Error(`Invalid action "${action}"`))
+            return
+        }
+
         await controller[action](...actionArgs)
     }
 
