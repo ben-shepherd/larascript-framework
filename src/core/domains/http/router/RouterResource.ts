@@ -3,6 +3,9 @@ import { TPartialRouteItemOptions, TResourceType, TRouteResourceOptions } from "
 import ResourceController from "@src/core/domains/http/resources/controller/ResourceController";
 import Router from "@src/core/domains/http/router/Router";
 
+import { ISecurityRule } from "../interfaces/ISecurity";
+import Route from "./Route";
+
 /**
  * Resource types that can be utilized when adding Security to a route
  */
@@ -56,7 +59,7 @@ class ResourceRouter {
     /**
      * Add resource routes to the router.
      */
-    public static resource({ prefix, resource, scopes: additionalScopes = [], filters, searching, paginate, sorting, validation, security, ...rest }: TRouteResourceOptions, router: Router = new Router()): Router {
+    public static resource({ prefix, resource, scopes, filters, searching, paginate, sorting, validation, security, ...rest }: TRouteResourceOptions, router: Router = new Router()): Router {
 
         const routeItemOptions: TPartialRouteItemOptions = {
             prefix,
@@ -81,13 +84,12 @@ class ResourceRouter {
                     resource: {
                         type: RouteResourceTypes.INDEX,
                         modelConstructor: resource,
-                        scopes: resource.getScopes(['read'], additionalScopes),
                         filters: filters ?? {},
                         searching: searching ?? {},
                         paginate: paginate ?? {},
                         sorting: sorting
                     },
-                    security: security ?? []
+                    security: this.mergeScopesSecurityRules(RouteResourceTypes.INDEX, scopes, security ?? [])
                 });
             }
 
@@ -98,11 +100,10 @@ class ResourceRouter {
 
                         type: RouteResourceTypes.SHOW,
                         modelConstructor: resource,
-                        scopes: resource.getScopes(['read'], additionalScopes),
                         filters: filters ?? {},
                         searching: searching ?? {},
                     },
-                    security: security ?? []
+                    security: this.mergeScopesSecurityRules(RouteResourceTypes.SHOW, scopes, security ?? [])
                 });
             }
 
@@ -112,11 +113,10 @@ class ResourceRouter {
                     resource: {
                         type: RouteResourceTypes.CREATE,
                         modelConstructor: resource,
-                        scopes: resource.getScopes(['create'], additionalScopes),
                         searching: searching ?? {},
                         validation: validation ?? {}
                     },
-                    security: security ?? []
+                    security: this.mergeScopesSecurityRules(RouteResourceTypes.CREATE, scopes, security ?? [])
                 });
             }
 
@@ -126,11 +126,10 @@ class ResourceRouter {
                     resource: {
                         type: RouteResourceTypes.UPDATE,
                         modelConstructor: resource,
-                        scopes: resource.getScopes(['write'], additionalScopes),
                         searching: searching ?? {},
                         validation: validation ?? {}
                     },
-                    security: security ?? []
+                    security: this.mergeScopesSecurityRules(RouteResourceTypes.UPDATE, scopes, security ?? [])
                 });
             }
 
@@ -140,16 +139,25 @@ class ResourceRouter {
                     resource: {
                         type: RouteResourceTypes.DELETE,
                         modelConstructor: resource,
-                        scopes: resource.getScopes(['delete'], additionalScopes),
                         searching: searching ?? {}
                     },
-                    security: security ?? []
+                    security: this.mergeScopesSecurityRules(RouteResourceTypes.DELETE, scopes, security ?? [])
                 });
             }
         })
 
 
         return router;
+    }
+
+    /**
+     * Merge the scopes security rules for a resource type.
+     */
+    private static mergeScopesSecurityRules(type: TResourceType, scopes: TRouteResourceOptions['scopes'], securityRules: ISecurityRule[] = []) {
+        if(scopes?.[type]) {
+            return [...securityRules, Route.security().scopes(scopes[type])]
+        }
+        return securityRules
     }
 
     /**

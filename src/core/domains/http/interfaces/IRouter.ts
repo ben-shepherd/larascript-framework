@@ -103,7 +103,13 @@ export type TRouteResourceOptions = {
     resource: ModelConstructor<IModel>;
     security?: ISecurityRule[];
     middlewares?: TExpressMiddlewareFnOrClass | TExpressMiddlewareFnOrClass[];
-    scopes?: string[];
+    scopes?: {
+        index?: string[];
+        show?: string[];
+        create?: string[];
+        update?: string[];
+        delete?: string[];
+    }
     filters?: object;
     validator?: CustomValidatorConstructor;
     validateBeforeAction?: boolean;
