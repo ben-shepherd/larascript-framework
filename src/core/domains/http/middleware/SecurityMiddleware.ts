@@ -48,6 +48,11 @@ import SecurityReader from "@src/core/domains/http/security/services/SecurityRea
  */
 class SecurityMiddleware extends Middleware {
 
+    /**
+     * Executes the security middleware
+     * 
+     * @param context - The HTTP context containing request and response objects
+     */
     public async execute(context: HttpContext): Promise<void> {
 
         /**

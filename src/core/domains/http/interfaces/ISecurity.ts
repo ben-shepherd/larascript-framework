@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { Request } from 'express';
 import HttpContext from '@src/core/domains/http/context/HttpContext';
+import { Request } from 'express';
 
 export type TSecurityRuleOptions<RuleOptions extends object = object> = {
     id: string;
@@ -22,9 +22,6 @@ export interface ISecurityRule<RuleOptions extends object = object> {
     execute(context: HttpContext, ...args: any[]): Promise<boolean>
 }
 
-/**
- * Security request to be included in BaseRequest
- */
 export interface ISecurityRequest extends Request {
     security?: ISecurityRule[]
 }

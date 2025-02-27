@@ -4,15 +4,15 @@ import { default as IExpressConfig, default as IHttpConfig } from '@src/core/dom
 import IHttpService from '@src/core/domains/http/interfaces/IHttpService';
 import { MiddlewareConstructor, TExpressMiddlewareFn } from '@src/core/domains/http/interfaces/IMiddleware';
 import { IRoute, IRouter, TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
-import BasicLoggerMiddleware from '@src/core/domains/http/middleware/BasicLoggerMiddleware';
-import EndRequestContextMiddleware from '@src/core/domains/http/middleware/EndRequestContextMiddleware';
-import RequestIdMiddleware from '@src/core/domains/http/middleware/RequestIdMiddleware';
-import StartSessionMiddleware from '@src/core/domains/http/middleware/StartSessionMiddleware';
 import Route from '@src/core/domains/http/router/Route';
 import RouterBindService from '@src/core/domains/http/router/RouterBindService';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
 import { app } from '@src/core/services/App';
 import expressClient from 'express';
+
+import EndRequestContextMiddleware from '../middleware/EndRequestContextMiddleware';
+import RequestIdMiddleware from '../middleware/RequestIdMiddleware';
+import StartSessionMiddleware from '../middleware/StartSessionMiddleware';
 
 
 
@@ -49,6 +49,21 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
         this.app = expressClient()
     }
 
+    public init() {
+        if (!this.config) {
+            throw new Error('Config not provided');
+        }
+
+        // 1. First add request ID middleware
+        this.app.use(RequestIdMiddleware.create())
+
+        // 2. Then start session using that request ID
+        this.app.use(StartSessionMiddleware.create())
+
+        // 3. Then end request context
+        this.app.use(EndRequestContextMiddleware.create())
+    }
+
     /**
      * Returns the route instance.
      */
@@ -63,42 +78,14 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
         return this.registeredRoutes
     }
 
-    /**
-     * Initializes ExpressService by applying global middleware defined in config.
-     * Global middleware is applied in the order it is defined in the config.
-     * 
-     * Global Middleware Note:
-     *   When middlewares are added globally via app.use(), they don't have access
-     *   to this route context. By adding them here through the RouterBindService,
-     *   each middleware receives the routeItem as part of its context.
-     */
-    public init() {
-        if (!this.config) {
-            throw new Error('Config not provided');
-        }
-
-        // 1. First add request ID middleware
-        this.app.use(RequestIdMiddleware.createExpressMiddleware())
-
-        // 2. Then start session using that request ID
-        this.app.use(StartSessionMiddleware.createExpressMiddleware())
-
-        // 3. Add other middleware
-        if(this.config?.logging?.requests) {
-            this.app.use(BasicLoggerMiddleware.createExpressMiddleware())
-        }
-
-        // 4. Finally add end request context middleware
-        this.app.use(EndRequestContextMiddleware.createExpressMiddleware())
-    }
 
     /**
      * Adds a middleware to the Express instance.
      * @param middleware - The middleware to add
      */
     public useMiddleware(middleware: TExpressMiddlewareFn | MiddlewareConstructor) {
-        
-        if(middleware.prototype instanceof Middleware) {
+
+        if (middleware.prototype instanceof Middleware) {
             this.app.use((middleware as MiddlewareConstructor).create())
         }
         else {
@@ -125,21 +112,13 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
      * @param router - The router to bind
      */
     public bindRoutes(router: IRouter): void {
-        if(router.getRegisteredRoutes().length === 0) {
+        if (router.getRegisteredRoutes().length === 0) {
             return
 
         }
 
-        // These middlewares are added here instead of as global middlewares because
-        // they need access to the routeItem from the router. The routeItem contains
-        // important metadata like:
-        // - security requirements (used by SecurityMiddleware)
-        // - validator configuration (used by ValidateMiddleware)
-        // - other route-specific settings
-        const additionalMiddlewares = this.config?.globalMiddlewares ?? []
-
         this.routerBindService.setExpress(this.app, this.config)
-        this.routerBindService.setOptions({ additionalMiddlewares })
+        this.routerBindService.setOptions({ additionalMiddlewares: this.config?.globalMiddlewares ?? [] })
         this.routerBindService.bindRoutes(router)
         this.registeredRoutes.push(...router.getRegisteredRoutes())
     }

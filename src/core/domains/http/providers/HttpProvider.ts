@@ -62,7 +62,6 @@ export default class HttpProvider extends BaseProvider {
         const http = app('http');
         http.init();
 
-
         /**
          * Start listening for connections
          */

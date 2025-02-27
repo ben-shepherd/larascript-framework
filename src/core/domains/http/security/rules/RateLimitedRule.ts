@@ -2,10 +2,10 @@ import RateLimitedExceededError from "@src/core/domains/auth/exceptions/RateLimi
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import { requestContext } from "@src/core/domains/http/context/RequestContext";
 import { SecurityEnum } from "@src/core/domains/http/enums/SecurityEnum";
+import { TBaseRequest } from "@src/core/domains/http/interfaces/BaseRequest";
 import { IPDatesArrayTTL } from "@src/core/domains/http/interfaces/IRequestContext";
 import AbstractSecurityRule from "@src/core/domains/http/security/abstract/AbstractSecurityRule";
 import { Request } from "express";
-import { TBaseRequest } from "@src/core/domains/http/interfaces/BaseRequest";
 
 type TRateLimitedRuleOptions = {
     limit: number;
@@ -17,8 +17,7 @@ class RateLimitedRule extends AbstractSecurityRule<TRateLimitedRuleOptions> {
     protected id = SecurityEnum.RATE_LIMITED;
 
     /**
-     * Checks if the request is authorized, i.e. if the user is logged in.
-     * Throws an exception on unauthorized requests.
+     * Throws an exception on rate limited requests.
      * @param context The HTTP context
      */
     async execute(context: HttpContext): Promise<boolean> {

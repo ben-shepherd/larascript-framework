@@ -36,7 +36,7 @@ class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
             await this.attemptAuthorizeRequest(context.getRequest());
 
             // Validate the scopes of the request
-            if(!await this.validateScopes(context, this.config.scopes)) {
+            if(!await this.validateScopes(context)) {
                 throw new ForbiddenResourceError();
             }
 
@@ -96,7 +96,8 @@ class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
      * @param scopes - The scopes to validate
      * @returns True if the scopes are valid, false otherwise
      */
-    async validateScopes(context: HttpContext, scopes: string[]): Promise<boolean> {
+    async validateScopes(context: HttpContext): Promise<boolean> {
+        const scopes = this.config?.scopes ?? [];
         const apiToken = context.getRequest().apiToken;
 
         if(!apiToken) {

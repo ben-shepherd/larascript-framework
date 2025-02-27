@@ -33,6 +33,11 @@ const defaultOptions: Options = {
 
 class RequestIdMiddleware extends Middleware<Options> {
 
+    /**
+     * Constructor for the RequestIdMiddleware
+     * 
+     * @param options - The options for the middleware
+     */
     constructor({ generator, setHeader, headerName }: Options = defaultOptions) {
         super()
         this.setConfig({
@@ -42,6 +47,14 @@ class RequestIdMiddleware extends Middleware<Options> {
         })
     }
 
+    /**
+     * Executes the request ID middleware
+     * 
+     * Generates a unique request ID and adds it to the request object.
+     * Optionally sets the ID in the response headers.
+     * 
+     * @param context - The HTTP context containing request and response objects
+     */
     async execute(context: HttpContext): Promise<void> {
         const { generator, setHeader, headerName } = this.getConfig()
         
