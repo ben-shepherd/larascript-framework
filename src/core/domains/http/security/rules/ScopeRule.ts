@@ -1,3 +1,5 @@
+import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
+import { auth } from "@src/core/domains/auth/services/AuthService";
 import SecurityException from "@src/core/domains/express/exceptions/SecurityException";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import { SecurityEnum } from "@src/core/domains/http/enums/SecurityEnum";
@@ -13,6 +15,11 @@ class ScopeRule extends AbstractSecurityRule<TEnableScopeRuleOptions> {
     protected readonly id = SecurityEnum.ENABLE_SCOPES;
 
     public async execute(context: HttpContext): Promise<boolean> {
+
+        if(!await auth().check()) {
+            throw new UnauthorizedError();
+        }
+
         const apiToken = context.getApiToken();
 
         if(!apiToken) {

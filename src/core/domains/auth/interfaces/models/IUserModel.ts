@@ -13,4 +13,6 @@ export interface IUserModel extends IModel {
     hasRole(role: string | string[]): boolean;
     getGroups(): string[];
     setGroups(groups: string[]): Promise<void>;
+    hasScope(scope: string): boolean;
+    hasScopes(scopes: string[]): boolean;
 }
