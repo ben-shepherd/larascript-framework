@@ -40,6 +40,11 @@ abstract class AbstractSecurityRule<
      * The ID of the security rule.
      */
     protected abstract readonly id: string;
+    
+    /**
+     * Whether the conditions are not supported.
+     */
+    protected readonly conditionsNotSupported: boolean = false;
 
     /**
      * The conditions under which the security rule should be applied.
@@ -108,6 +113,10 @@ abstract class AbstractSecurityRule<
      * @returns The security rule
      */
     public when(when: WhenConditions[] | null): this {
+        if(this.conditionsNotSupported) {
+            throw new ResourceException('Conditions are not supported for this rule');
+        }
+
         this.whenConditions = when;
         return this;
     }
@@ -133,6 +142,10 @@ abstract class AbstractSecurityRule<
      * @returns The security rule
      */
     public never(never: NeverConditions[] | null): this {
+        if(this.conditionsNotSupported) {
+            throw new ResourceException('Conditions are not supported for this rule');
+        }
+
         this.neverConditions = never;
         return this;
     }

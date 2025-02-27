@@ -13,6 +13,8 @@ type TEnableScopeRuleOptions = {
 class ScopeRule extends AbstractSecurityRule<TEnableScopeRuleOptions> {
 
     protected readonly id = SecurityEnum.ENABLE_SCOPES;
+    
+    protected conditionsNotSupported: boolean = true;
 
     public async execute(context: HttpContext): Promise<boolean> {
 
