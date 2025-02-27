@@ -103,11 +103,13 @@ class SecurityMiddleware extends Middleware {
         }
 
         // Check if the hasRole security has been defined and validate
-        const securityHasRole = SecurityReader.find(routeOptions, SecurityEnum.HAS_ROLE);
+        const securityHasRoles = SecurityReader.findMany(routeOptions, SecurityEnum.HAS_ROLE);
  
-        if (securityHasRole && !(await securityHasRole.execute(context))) {
-            responseError(context.getRequest(), context.getResponse(), new ForbiddenResourceError(), 403)
-            return null;
+        for(const securityHasRole of securityHasRoles) {
+            if (!(await securityHasRole.execute(context))) {
+                responseError(context.getRequest(), context.getResponse(), new ForbiddenResourceError(), 403)
+                return null;
+            }
         }
     
     }
@@ -149,11 +151,13 @@ class SecurityMiddleware extends Middleware {
         }
     
         // Find the rate limited security
-        const securityRateLimit = SecurityReader.find(routeOptions, SecurityEnum.RATE_LIMITED);
+        const securityRateLimits = SecurityReader.findMany(routeOptions, SecurityEnum.RATE_LIMITED);
     
-        if (securityRateLimit && !(await securityRateLimit.execute(context))) {
-            responseError(context.getRequest(), context.getResponse(), new RateLimitedExceededError(), 429)
-            return null;
+        for(const securityRateLimit of securityRateLimits) {
+            if (!(await securityRateLimit.execute(context))) {
+                responseError(context.getRequest(), context.getResponse(), new RateLimitedExceededError(), 429)
+                return null;
+            }
         }
     }
 
