@@ -1,9 +1,8 @@
-import { EnvironmentProduction } from "@src/core/consts/Environment";
 import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import DatabaseConfig from "@src/core/domains/database/services/DatabaseConfig";
 import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
-import { appEnv } from "@src/core/services/App";
+import parseBooleanFromString from "@src/core/util/parseBooleanFromString";
 
 // Default connection name
 const DEFAULT_CONNECTION = (process.env.DATABASE_DEFAULT_CONNECTION as string) ?? 'default';
@@ -27,7 +26,7 @@ const config: IDatabaseConfig = {
     /**
      * Enable logging for the database operations
      */
-    enableLogging: appEnv() !== EnvironmentProduction,
+    enableLogging: parseBooleanFromString(process.env.DATABASE_ENABLE_LOGGING, 'true'),
 
     /**
      * Database connections configuration.
