@@ -69,7 +69,6 @@ export type TRouteItem = {
     middlewares?: TExpressMiddlewareFnOrClass | TExpressMiddlewareFnOrClass[];
     controller?: ControllerConstructor;
     security?: ISecurityRule[];
-    scopes?: string[];
     config?: Record<string, unknown>;
     validator?: CustomValidatorConstructor | CustomValidatorConstructor[];
     resource?: {

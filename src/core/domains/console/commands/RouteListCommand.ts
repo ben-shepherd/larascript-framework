@@ -28,7 +28,6 @@ export default class RouteListCommand extends BaseCommand {
                 this.input.writeLine(`  Method: ${route.method}`);
                 this.input.writeLine(`  Action: ${route.action}`);
 
-                this.input.writeLine(`  Scopes: [${route.scopes?.join(', ') ?? ''}]`);
                 this.input.writeLine(`  Security: [${route.security?.map(s => s.getId()).join(', ')}]`);
                 this.input.writeLine();
                 return;

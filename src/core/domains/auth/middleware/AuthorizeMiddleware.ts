@@ -35,9 +35,6 @@ class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
             // Attempt to authorize the request
             await this.attemptAuthorizeRequest(context.getRequest());
 
-            // Validate the scopes if the authorization was successful
-            this.validateScopes(context)
-
             // Continue to the next middleware
             this.next();
         }
@@ -87,35 +84,7 @@ class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
     
         return req;
     }
-
-
-    /**
-     * Validates that the scopes in the api token match the required scopes for the request.
-     * If the scopes do not match, it will throw a ForbiddenResourceError.
-     * If no api token is found, it will throw a UnauthorizedError.
-     * @param scopes The scopes required for the request
-     * @param req The request object
-     * @param res The response object
-     */
-     
-    validateScopes(context: HttpContext): void | null {
-        const scopes = context.getRouteItem()?.scopes ?? []
-
-        if(scopes.length === 0) {
-            return;
-        }
-
-        const apiToken = context.getRequest().apiToken;
-
-        if(!apiToken) {
-            throw new UnauthorizedError();
-        }
     
-        if(!apiToken.hasScope(scopes)) {
-            throw new ForbiddenResourceError();
-        }
-    }
-
 }
 
 export default AuthorizeMiddleware;
