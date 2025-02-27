@@ -1,7 +1,11 @@
 import Middleware from "@src/core/domains/http/base/Middleware";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 
-class #name# extends Middleware {
+export type T#name#Config = {
+    // ...
+}
+
+class #name# extends Middleware<T#name#Config> {
 
     /**
      * Executes the validator middleware
@@ -11,6 +15,7 @@ class #name# extends Middleware {
 
         const request = context.getRequest()
         const response = context.getResponse()
+        const config = this.getConfig()
 
         // Logic
 
