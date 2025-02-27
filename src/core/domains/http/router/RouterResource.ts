@@ -56,7 +56,7 @@ class ResourceRouter {
     /**
      * Add resource routes to the router.
      */
-    public static resource({ prefix, resource, scopes: additionalScopes = [], filters, searching, paginate, sorting, validation, ...rest }: TRouteResourceOptions, router: Router = new Router()): Router {
+    public static resource({ prefix, resource, scopes: additionalScopes = [], filters, searching, paginate, sorting, validation, security, ...rest }: TRouteResourceOptions, router: Router = new Router()): Router {
 
         const routeItemOptions: TPartialRouteItemOptions = {
             prefix,
@@ -86,7 +86,8 @@ class ResourceRouter {
                         searching: searching ?? {},
                         paginate: paginate ?? {},
                         sorting: sorting
-                    }
+                    },
+                    security: security ?? []
                 });
             }
 
@@ -100,7 +101,8 @@ class ResourceRouter {
                         scopes: resource.getScopes(['read'], additionalScopes),
                         filters: filters ?? {},
                         searching: searching ?? {},
-                    }
+                    },
+                    security: security ?? []
                 });
             }
 
@@ -113,7 +115,8 @@ class ResourceRouter {
                         scopes: resource.getScopes(['create'], additionalScopes),
                         searching: searching ?? {},
                         validation: validation ?? {}
-                    }
+                    },
+                    security: security ?? []
                 });
             }
 
@@ -126,7 +129,8 @@ class ResourceRouter {
                         scopes: resource.getScopes(['write'], additionalScopes),
                         searching: searching ?? {},
                         validation: validation ?? {}
-                    }
+                    },
+                    security: security ?? []
                 });
             }
 
@@ -138,7 +142,8 @@ class ResourceRouter {
                         modelConstructor: resource,
                         scopes: resource.getScopes(['delete'], additionalScopes),
                         searching: searching ?? {}
-                    }
+                    },
+                    security: security ?? []
                 });
             }
         })

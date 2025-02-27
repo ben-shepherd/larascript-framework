@@ -175,8 +175,11 @@ class Router implements IRouter {
      */
     public applyOptions(route: IRouter, options: IRouteGroupOptions): void {
         const newOptions = {...this.baseOptions, ...options};
+        const newSecurity = [...(this.baseOptions?.security ?? []), ...(options?.security ?? [])];
+
         newOptions.name = this.concat(this.baseOptions?.name, options?.name);
         newOptions.prefix = this.concat(this.baseOptions?.prefix, options?.prefix);
+        newOptions.security = newSecurity;
         this.applyOptionsMiddleware(route, newOptions);
         this.baseOptions = {...newOptions};
 
@@ -219,7 +222,9 @@ class Router implements IRouter {
             path: this.getPath(path ?? ''),
             method: method ?? 'GET',
             action: action ?? '',
-            ...options
+            ...options,
+            // Combine security rules from parent and child groups
+            security: [...(this.baseOptions?.security ?? []), ...(options?.security ?? [])],
         }
 
         this.registered.push(routeItem);

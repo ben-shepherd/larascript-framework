@@ -2,6 +2,8 @@ import { IRoute, IRouteGroupOptions, IRouter, TRouteGroupFn, TRouteResourceOptio
 import Router from "@src/core/domains/http/router/Router";
 import ResourceRouter from "@src/core/domains/http/router/RouterResource";
 
+import SecurityRules from "../security/services/SecurityRules";
+
 /**
  * Route class provides static and instance methods for creating route groups and resource routes.
  * 
@@ -52,6 +54,13 @@ class Route implements IRoute {
      */
     public resource(options: TRouteResourceOptions, router: Router = new Router()): IRouter {
         return ResourceRouter.resource(options, router);
+    }
+
+    /**
+     * Get the security rules for the router.
+     */
+    public static security(router: IRouter = new Router()): typeof SecurityRules {
+        return router.security();
     }
 
 }
