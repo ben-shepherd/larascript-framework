@@ -125,11 +125,13 @@ class SecurityMiddleware extends Middleware {
         }   
 
         // Check if the hasScope security has been defined and validate
-        const securityScopes = SecurityReader.find(routeOptions, SecurityEnum.ENABLE_SCOPES);
+        const securityScopes = SecurityReader.findMany(routeOptions, SecurityEnum.ENABLE_SCOPES);
  
-        if (securityScopes && !(await securityScopes.execute(context))) {
-            responseError(context.getRequest(), context.getResponse(), new ForbiddenResourceError(), 403)
-            return null;
+        for(const securityScope of securityScopes) {
+            if (!(await securityScope.execute(context))) {
+                responseError(context.getRequest(), context.getResponse(), new ForbiddenResourceError(), 403)
+                return null;
+            }
         }
     }
 

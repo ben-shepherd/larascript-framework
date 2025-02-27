@@ -37,10 +37,22 @@ class SecurityReader {
      * @returns The security callback if found, or undefined if not found.
      */
     public static find<Rule extends ISecurityRule = ISecurityRule>(routeOptions: TRouteItem, id: string, when?: string[] | null): Rule | undefined {
+        const results = this.findMany(routeOptions, id, when);
+        return results.length > 0 ? results[0] as Rule : undefined;
+    }
 
+    /**
+     * Finds all security callbacks in the given array of security callbacks.
+     * 
+     * @param routeOptions - The route resource options containing the security callbacks.
+     * @param id - The id of the security callback to find.
+     * @param when - The when condition to match. If not provided, the method will return all matches.
+     * @returns The security callbacks if found, or an empty array if not found.
+     */
+    public static findMany(routeOptions: TRouteItem, id: string, when?: string[] | null): ISecurityRule[] {
         const securityRules = this.getSecurityRulesArray(routeOptions);
 
-        let result: ISecurityRule | undefined = undefined;
+        let result: ISecurityRule[] = [];
 
         when = when ?? null;
         when = when && typeof when === 'string' ? [when] : when;
@@ -78,7 +90,7 @@ class SecurityReader {
         /**
          * Find by 'id'
          */
-        result = securityRules.find(security => {
+        result = securityRules.filter(security => {
             const matchesIdentifier = security.getId() === id
 
             return matchesIdentifier && 
@@ -87,7 +99,7 @@ class SecurityReader {
         });
 
 
-        return result as Rule;
+        return result;
     }
 
 }

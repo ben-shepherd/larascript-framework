@@ -30,6 +30,8 @@ class ScopeRule extends AbstractSecurityRule<TEnableScopeRuleOptions> {
 
         const scopes = this.getRuleOptions().scopes;
 
+        console.log('[ScopeRule] scopes', scopes);
+
         if(!scopes) {
             throw new SecurityException('Scopes are required');
         }
@@ -41,6 +43,8 @@ class ScopeRule extends AbstractSecurityRule<TEnableScopeRuleOptions> {
         }
         
         const exactMatch = this.getRuleOptions().exactMatch;
+
+        console.log('[ScopeRule] check', apiToken.hasScope(scopesArr, exactMatch));
 
         return apiToken.hasScope(scopesArr, exactMatch);
     }
