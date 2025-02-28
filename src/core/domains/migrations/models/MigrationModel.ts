@@ -1,5 +1,5 @@
+import Model from "@src/core/domains/models/base/Model";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
-import Model from "@src/core/models/base/Model";
 
 /**
  * Represents a migration stored in the database.

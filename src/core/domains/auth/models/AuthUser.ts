@@ -1,7 +1,7 @@
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
 import UserObserver from "@src/core/domains/auth/observers/UserObserver";
+import Model from "@src/core/domains/models/base/Model";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
-import Model from "@src/core/models/base/Model";
 
 /**
  * User structure

@@ -1,5 +1,5 @@
 import { IWorkerModel, WorkerModelAttributes } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
-import Model from "@src/core/models/base/Model";
+import Model from "@src/core/domains/models/base/Model";
 
 export interface WorkerModelData extends WorkerModelAttributes {}
 

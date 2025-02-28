@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 import { describe, expect, test } from '@jest/globals';
-import Model from '@src/core/models/base/Model';
-import testHelper from '@src/tests/testHelper';
+import Model from '@src/core/domains/models/base/Model';
 import TestEncryptionModel, { TestEncryptionModelAttributes, resetEncryptionTable } from '@src/tests/models/models/TestEncryptionModel';
+import testHelper from '@src/tests/testHelper';
 
 describe('test model encryption', () => {
     beforeAll(async () => {

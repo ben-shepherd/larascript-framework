@@ -2,8 +2,8 @@
 import { describe } from '@jest/globals';
 import { db } from '@src/core/domains/database/services/Database';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
+import Model from '@src/core/domains/models/base/Model';
 import { IModelAttributes } from "@src/core/interfaces/IModel";
-import Model from '@src/core/models/base/Model';
 import { app } from '@src/core/services/App';
 import TestMigrationModel from '@src/tests/migration/models/TestMigrationModel';
 import testHelper from '@src/tests/testHelper';

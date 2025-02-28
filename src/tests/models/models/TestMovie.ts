@@ -1,5 +1,5 @@
+import Model from "@src/core/domains/models/base/Model";
 import { IModelAttributes } from "@src/core/interfaces/IModel";
-import Model from "@src/core/models/base/Model";
 import TestMovieFactory from "@src/tests/factory/TestMovieFakerFactory";
 
 export interface TestMovieModelData extends IModelAttributes {

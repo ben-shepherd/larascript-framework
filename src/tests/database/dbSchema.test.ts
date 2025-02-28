@@ -2,9 +2,9 @@
 import { beforeAll, describe, expect, test } from '@jest/globals';
 import { db } from '@src/core/domains/database/services/Database';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
+import Model from '@src/core/domains/models/base/Model';
 import PostgresSchema from '@src/core/domains/postgres/PostgresSchema';
 import { IModelAttributes } from "@src/core/interfaces/IModel";
-import Model from '@src/core/models/base/Model';
 import { App } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
 import { DataTypes } from 'sequelize';
