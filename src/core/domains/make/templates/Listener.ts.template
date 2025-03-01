@@ -1,4 +1,5 @@
 import BaseEventListener from "@src/core/domains/events/base/BaseEventListener";
+import EventRegistry from "@src/core/domains/events/registry/EventRegistry";
 
 type #name#Payload = {
     // ...
@@ -19,4 +20,4 @@ class #name# extends BaseEventListener<#name#Payload> {
     
 }
 
-export default #name#
+export default EventRegistry.register(#name#)

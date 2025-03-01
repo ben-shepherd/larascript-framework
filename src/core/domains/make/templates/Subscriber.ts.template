@@ -1,5 +1,6 @@
 import BaseEventSubscriber from "@src/core/domains/events/base/BaseEventSubciber";
 import SyncDriver from "@src/core/domains/events/drivers/SyncDriver";
+import EventRegistry from "@src/core/domains/events/registry/EventRegistry";
 
 type #name#Payload = {
     // ...
@@ -15,10 +16,6 @@ class #name# extends BaseEventSubscriber<#name#Payload> {
         super(payload, SyncDriver);
     }
 
-    getName(): string {
-        return #name#.eventName;
-    }
-
     getQueueName(): string {
         return 'default';
     }
@@ -31,4 +28,4 @@ class #name# extends BaseEventSubscriber<#name#Payload> {
 
 }
 
-export default #name#
+export default EventRegistry.register(#name#)
