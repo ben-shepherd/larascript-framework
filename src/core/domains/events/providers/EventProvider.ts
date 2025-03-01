@@ -6,6 +6,8 @@ import { IEventService } from "@src/core/domains/events/interfaces/IEventService
 import EventService from "@src/core/domains/events/services/EventService";
 import { app } from "@src/core/services/App";
 
+import EventRegistry from "../registry/EventRegistry";
+
 class EventProvider extends BaseProvider {
 
     protected config: IEventConfig = eventConfig;
@@ -14,9 +16,19 @@ class EventProvider extends BaseProvider {
         
         // Create the event Service and register the drivers, events and listeners
         const eventService = new EventService(this.config);
+
+        // Register the drivers
         this.registerDrivers(eventService);
-        this.registerEvents(eventService);
-        this.registerListeners(eventService);
+        
+        // Register all events from the registry
+        const registeredEvents = EventRegistry.getEvents();
+
+        for (const event of registeredEvents) {
+            eventService.registerEvent(event);
+        }
+        
+        // Mark the registry as initialized since event service is now available
+        EventRegistry.setInitialized();
 
         // Bind the event service to the container
         this.bind('events', eventService);
@@ -34,26 +46,6 @@ class EventProvider extends BaseProvider {
     private registerDrivers(eventService: IEventService) {
         for(const driverKey of Object.keys(this.config.drivers)) {
             eventService.registerDriver(this.config.drivers[driverKey]);
-        }
-    }
-
-    /**
-     * Registers all event constructors defined in the configuration with the provided event service.
-     * @param eventService The event service to register events with.
-     */
-    private registerEvents(eventService: IEventService) {
-        for(const event of this.config.events) {
-            eventService.registerEvent(event);
-        }
-    }
-
-    /**
-     * Registers all event listeners defined in the configuration with the provided event service.
-     * @param eventService The event service to register listeners with.
-     */
-    private registerListeners(eventService: IEventService) {
-        for(const listenerConfig of this.config.listeners) {
-            eventService.registerListener(listenerConfig)
         }
     }
 

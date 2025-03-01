@@ -2,7 +2,7 @@
 import { describe } from '@jest/globals';
 import { UserAttributes } from '@src/app/models/auth/User';
 import { events } from '@src/core/domains/events/services/EventService';
-import { TestUserCreatedListener } from '@src/tests/events/events/auth/TestUserCreatedListener';
+import TestUserCreatedListener from '@src/tests/events/events/auth/TestUserCreatedListener';
 import TestUserCreatedSubscriber from '@src/tests/events/events/auth/TestUserCreatedSubscriber';
 import resetWorkerTables from '@src/tests/events/helpers/createWorketTables';
 import TestUserFactory from '@src/tests/factory/TestUserFactory';

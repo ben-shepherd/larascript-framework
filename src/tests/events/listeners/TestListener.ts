@@ -1,5 +1,6 @@
 import BaseEventListener from "@src/core/domains/events/base/BaseEventListener";
 import SyncDriver from "@src/core/domains/events/drivers/SyncDriver";
+import EventRegistry from "@src/core/domains/events/registry/EventRegistry";
 
 class TestListener extends BaseEventListener {
 
@@ -14,4 +15,4 @@ class TestListener extends BaseEventListener {
 
 }
 
-export default TestListener
+export default EventRegistry.register(TestListener)

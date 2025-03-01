@@ -1,10 +1,10 @@
-import { UserCreatedListener } from "@src/app/events/listeners/UserCreatedListener";
+import UserCreatedListener from "@src/app/events/listeners/UserCreatedListener";
 import { UserAttributes } from "@src/app/models/auth/User";
+import { cryptoService } from "@src/core/domains/crypto/service/CryptoService";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import Observer from "@src/core/domains/observer/services/Observer";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
-import { cryptoService } from "@src/core/domains/crypto/service/CryptoService";
 
 /**
  * Observer for the User model.

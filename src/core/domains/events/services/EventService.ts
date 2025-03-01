@@ -89,7 +89,7 @@ class EventService extends BaseEventService implements IEventService {
     async dispatch(event: IBaseEvent): Promise<void> {     
 
         if(!this.isRegisteredEvent(event)) {
-            throw new EventDispatchException(`Event '${event.getName()}' not registered. The event must be added to the \`events\` array in the config. See @src/config/events.ts`)
+            throw new EventDispatchException(`Event '${event.getName()}' not registered. The event must be exported and registered with EventRegistry.register(event).`)
         }
 
         // Mock the dispatch before dispatching the event, as any errors thrown during the dispatch will not be caught

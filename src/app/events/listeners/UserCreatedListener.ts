@@ -1,6 +1,7 @@
 import BaseEventListener from "@src/core/domains/events/base/BaseEventListener";
+import EventRegistry from "@src/core/domains/events/registry/EventRegistry";
  
-export class UserCreatedListener extends BaseEventListener {
+class UserCreatedListener extends BaseEventListener {
 
     /**
      * Optional method to execute before the subscribers are dispatched.
@@ -13,3 +14,5 @@ export class UserCreatedListener extends BaseEventListener {
     }
 
 }
+
+export default EventRegistry.register(UserCreatedListener);

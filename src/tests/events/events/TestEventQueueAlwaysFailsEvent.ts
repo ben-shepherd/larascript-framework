@@ -1,5 +1,6 @@
 
 import BaseEvent from "@src/core/domains/events/base/BaseEvent";
+import EventRegistry from "@src/core/domains/events/registry/EventRegistry";
 
 
 class TestEventQueueAlwaysFailsEvent extends BaseEvent {
@@ -23,4 +24,4 @@ class TestEventQueueAlwaysFailsEvent extends BaseEvent {
 
 }
 
-export default TestEventQueueAlwaysFailsEvent
+export default EventRegistry.register(TestEventQueueAlwaysFailsEvent)

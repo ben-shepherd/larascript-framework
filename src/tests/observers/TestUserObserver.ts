@@ -1,5 +1,5 @@
 import UserObserver from "@src/core/domains/auth/observers/UserObserver";
-import { TestUserCreatedListener } from "@src/tests/events/events/auth/TestUserCreatedListener";
+import TestUserCreatedListener from "@src/tests/events/events/auth/TestUserCreatedListener";
 
 /**
  * Observer for the User model.

@@ -4,16 +4,6 @@ import SyncDriver from '@src/core/domains/events/drivers/SyncDriver';
 import { IEventConfig } from '@src/core/domains/events/interfaces/config/IEventConfig';
 import EventProvider from '@src/core/domains/events/providers/EventProvider';
 import EventService from '@src/core/domains/events/services/EventService';
-import { TestUserCreatedListener } from '@src/tests/events/events/auth/TestUserCreatedListener';
-import TestUserCreatedSubscriber from '@src/tests/events/events/auth/TestUserCreatedSubscriber';
-import TestEventQueueAddAlwaysFailsEventToQueue from '@src/tests/events/events/TestEventQueueAddAlwaysFailsEventToQueue';
-import TestEventQueueAlwaysFailsEvent from '@src/tests/events/events/TestEventQueueAlwaysFailsEvent';
-import TestEventQueueCalledFromWorkerEvent from '@src/tests/events/events/TestEventQueueCalledFromWorkerEvent';
-import TestEventQueueEvent from '@src/tests/events/events/TestEventQueueEvent';
-import TestEventSyncBadPayloadEvent from '@src/tests/events/events/TestEventSyncBadPayloadEvent';
-import TestEventSyncEvent from '@src/tests/events/events/TestEventSyncEvent';
-import TestListener from '@src/tests/events/listeners/TestListener';
-import TestSubscriber from '@src/tests/events/subscribers/TestSubscriber';
 import TestFailedWorkerModel from '@src/tests/models/models/TestFailedWorkerModel';
 import TestWorkerModel from "@src/tests/models/models/TestWorkerModel";
 
@@ -33,35 +23,8 @@ class TestEventProvider extends EventProvider {
                 workerModelCtor: TestWorkerModel,
                 runOnce: true
             })
-        },
-
-        events: [
-            // Sync events
-            TestEventSyncEvent,
-            TestEventSyncBadPayloadEvent,
-
-            // Queable (worker events)
-            TestEventQueueEvent,
-            TestEventQueueCalledFromWorkerEvent,
-            TestEventQueueAddAlwaysFailsEventToQueue,
-            TestEventQueueAlwaysFailsEvent,
-
-        ],
-
-        listeners: EventService.createConfigListeners([
-            {
-                listener: TestListener,
-                subscribers: [
-                    TestSubscriber
-                ]
-            },
-            {
-                listener: TestUserCreatedListener,
-                subscribers: [
-                    TestUserCreatedSubscriber
-                ]
-            }
-        ])
+        }
+        
     }
 
 }

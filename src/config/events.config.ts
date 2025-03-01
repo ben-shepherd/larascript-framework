@@ -1,5 +1,3 @@
-import { UserCreatedListener } from "@src/app/events/listeners/UserCreatedListener";
-import UserCreatedSubscriber from "@src/app/events/subscribers/UserCreatedSubscriber";
 import QueueableDriver, { TQueueDriverOptions } from "@src/core/domains/events/drivers/QueableDriver";
 import SyncDriver from "@src/core/domains/events/drivers/SyncDriver";
 import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventConfig";
@@ -42,28 +40,5 @@ export const eventConfig: IEventConfig = {
             failedWorkerModelCtor: FailedWorkerModel,
         })
         
-    },
-
-    /**
-     * Register Events
-     */
-    events: EventService.createConfigEvents([
-        
-    ]),
-
-    /**
-     * Event Listeners Configuration
-     * 
-     * These are automatically registered with the event service
-     *  and do not need to be added to 'events' array.
-     */
-    listeners: EventService.createConfigListeners([
-        {
-            listener: UserCreatedListener,
-            subscribers: [
-                UserCreatedSubscriber
-            ]
-        }
-    ]),
-
+    }
 }

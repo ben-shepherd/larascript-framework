@@ -1,6 +1,7 @@
 import BaseEventListener from "@src/core/domains/events/base/BaseEventListener";
- 
-export class TestUserCreatedListener extends BaseEventListener {
+import EventRegistry from "@src/core/domains/events/registry/EventRegistry";
+
+class TestUserCreatedListener extends BaseEventListener {
 
     static readonly eventName = 'TestUserCreatedListener';
 
@@ -15,3 +16,5 @@ export class TestUserCreatedListener extends BaseEventListener {
     }
 
 }
+
+export default EventRegistry.register(TestUserCreatedListener)

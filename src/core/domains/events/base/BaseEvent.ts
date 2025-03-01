@@ -7,6 +7,8 @@ import { IEventService } from "@src/core/domains/events/interfaces/IEventService
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { App } from "@src/core/services/App";
 
+import EventRegistry from "../registry/EventRegistry";
+
 abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBaseEvent<TPayload> {
 
     protected payload: TPayload | null = null;
@@ -26,6 +28,12 @@ abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBa
      */
     constructor(payload: TPayload | null = null, driver?: ICtor<IEventDriver>) {
         super()
+        
+        // Auto-register this event type if not already initialized
+        if (!EventRegistry.isInitialized()) {
+            EventRegistry.register(this.constructor as ICtor<IBaseEvent>);
+        }
+
         this.payload = payload;
 
         // Use safeContainer here to avoid errors during registering which runs during boot up.

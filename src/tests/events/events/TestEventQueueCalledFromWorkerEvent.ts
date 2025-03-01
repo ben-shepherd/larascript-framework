@@ -2,6 +2,7 @@
 import { TCasts } from "@src/core/domains/cast/interfaces/IHasCastableConcern";
 import BaseEvent from "@src/core/domains/events/base/BaseEvent";
 import SyncDriver from "@src/core/domains/events/drivers/SyncDriver";
+import EventRegistry from "@src/core/domains/events/registry/EventRegistry";
 
 class TestEventQueueCalledFromWorkerEvent extends BaseEvent {
 
@@ -23,4 +24,4 @@ class TestEventQueueCalledFromWorkerEvent extends BaseEvent {
 
 }
  
-export default TestEventQueueCalledFromWorkerEvent
+export default EventRegistry.register(TestEventQueueCalledFromWorkerEvent)

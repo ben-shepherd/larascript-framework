@@ -1,4 +1,5 @@
 import BaseEventSubscriber from "@src/core/domains/events/base/BaseEventSubciber";
+import EventRegistry from "@src/core/domains/events/registry/EventRegistry";
 import TestEventSyncEvent from "@src/tests/events/events/TestEventSyncEvent";
 
 
@@ -12,4 +13,4 @@ class TestSubscriber extends BaseEventSubscriber {
 
 }
 
-export default TestSubscriber
+export default EventRegistry.register(TestSubscriber)

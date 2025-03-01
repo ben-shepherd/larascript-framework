@@ -8,6 +8,7 @@ import SyncDriver from '@src/core/domains/events/drivers/SyncDriver';
 import EventNotDispatchedException from '@src/core/domains/events/exceptions/EventNotDispatchedException';
 import { IEventConfig } from '@src/core/domains/events/interfaces/config/IEventConfig';
 import EventProvider from '@src/core/domains/events/providers/EventProvider';
+import EventRegistry from '@src/core/domains/events/registry/EventRegistry';
 import EventService from '@src/core/domains/events/services/EventService';
 import LoggerProvider from '@src/core/domains/logger/providers/LoggerProvider';
 import Model from '@src/core/domains/models/base/Model';
@@ -145,24 +146,25 @@ class TestEventLifeCycleProvider extends EventProvider {
         defaultDriver: SyncDriver,
         drivers: {
             [EVENT_DRIVERS.SYNC]: EventService.createConfigDriver(SyncDriver, {}),
-        },
-        events: [
-            TestModelCreatingEvent,
-            TestModelCreatedEvent,
-            TestModelUpdatingEvent,
-            TestModelUpdatedEvent,
-            TestModelDeletingEvent,
-            TestModelDeletedEvent,
-            TestModelModifyCreatingEvent,
-            TestModelModifyUpdatingEvent
-        ],
-        listeners: []
+        }
     }
 
 }
 
+EventRegistry.registerMany([
+    TestModelCreatingEvent,
+    TestModelCreatedEvent,
+    TestModelUpdatingEvent,
+    TestModelUpdatedEvent,
+    TestModelDeletingEvent,
+    TestModelDeletedEvent,
+    TestModelModifyCreatingEvent,
+    TestModelModifyUpdatingEvent
+])
+
 describe('model lifecycle events', () => {
     beforeAll(async () => {
+
         const config: KernelConfig = {
             environment: EnvironmentTesting,
             providers: [

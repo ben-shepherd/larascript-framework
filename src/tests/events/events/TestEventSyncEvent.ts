@@ -1,5 +1,6 @@
 
 import BaseEvent from "@src/core/domains/events/base/BaseEvent";
+import EventRegistry from "@src/core/domains/events/registry/EventRegistry";
 
 
 class TestEventSyncEvent extends BaseEvent<{hello: string}> {
@@ -14,4 +15,4 @@ class TestEventSyncEvent extends BaseEvent<{hello: string}> {
 
 }
 
-export default TestEventSyncEvent
+export default EventRegistry.register(TestEventSyncEvent)
