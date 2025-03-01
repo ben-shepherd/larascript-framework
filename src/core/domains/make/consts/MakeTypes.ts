@@ -23,6 +23,7 @@ export const targetDirectories: Record<string, string> = {
     Validator: `${APP_PATH}/validators`,
     Migration: `${APP_PATH}/migrations`,
     Seeder: `${APP_PATH}/seeders`,
+    Factory: `${APP_PATH}/factory`,
 
 } as const;
 
@@ -47,7 +48,7 @@ export const templates: Record<string, string> = {
     Validator: `${TEMPLATE_PATH}/Validator.ts.template`,
     Migration: `${TEMPLATE_PATH}/Migration.ts.template`,
     Seeder: `${TEMPLATE_PATH}/Seeder.ts.template`,
-
+    Factory: `${TEMPLATE_PATH}/Factory.ts.template`,
 } as const;
 
 export default Object.freeze({

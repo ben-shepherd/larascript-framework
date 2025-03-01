@@ -3,6 +3,7 @@ import { KeyPair, ParsedArgumentsArray } from '@src/core/domains/console/parsers
 import BaseMakeFileCommand from '@src/core/domains/make/base/BaseMakeFileCommand';
 import MakeCmdCommand from '@src/core/domains/make/commands/MakeCmdCommand';
 import MakeController from '@src/core/domains/make/commands/MakeControllerCommand';
+import MakeFactoryCommand from '@src/core/domains/make/commands/MakeFactoryCommand';
 import MakeListenerCommand from '@src/core/domains/make/commands/MakeListenerCommand';
 import MakeMiddlewareCommand from '@src/core/domains/make/commands/MakeMiddlewareCommand';
 import MakeMigrationCommand from '@src/core/domains/make/commands/MakeMigrationCommand';
@@ -91,6 +92,8 @@ const getCommandCtorByType = (type: typeof targetDirectories[string]): CommandCt
         return MakeMigrationCommand;
     case 'Seeder':
         return MakeSeederCommand;
+    case 'Factory':
+        return MakeFactoryCommand;
     default:
         throw new Error(`Unknown command type '${type}'`)
     }

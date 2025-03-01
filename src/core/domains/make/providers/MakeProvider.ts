@@ -17,6 +17,7 @@ import MakeValidatorCommand from "@src/core/domains/make/commands/MakeValidatorC
 import { app } from "@src/core/services/App";
 
 import MakeEventCommand from "../commands/MakeEventCommand";
+import MakeFactoryCommand from "../commands/MakeFactoryCommand";
 
 export default class MakeProvider extends BaseProvider {
 
@@ -40,7 +41,8 @@ export default class MakeProvider extends BaseProvider {
             MakeController,
             MakeValidatorCommand,
             MakeMigrationCommand,
-            MakeSeederCommand
+            MakeSeederCommand,
+            MakeFactoryCommand
         ])
     }
 
