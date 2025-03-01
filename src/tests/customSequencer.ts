@@ -1,8 +1,8 @@
 const Sequencer = require('@jest/test-sequencer').default;
 
-const firstTest = 'runApp.test.ts';
-const secondTest = 'migration.test.ts';
-const thirdTest = 'seeder.test.ts';
+const firstTest = 'larascript/runApp.test.ts';
+const secondTest = 'larascript/migration.test.ts';
+const thirdTest = 'larascript/seeder.test.ts';
 
 /**
  * Custom sequencer to ensure tests run in a specific order:

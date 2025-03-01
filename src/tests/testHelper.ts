@@ -4,14 +4,14 @@ import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 import Kernel, { KernelConfig } from "@src/core/Kernel";
 import { App } from "@src/core/services/App";
-import TestApiTokenModel from "@src/tests/models/models/TestApiTokenModel";
-import TestUser from "@src/tests/models/models/TestUser";
-import TestAuthProvider from "@src/tests/providers/TestAuthProvider";
-import TestConsoleProvider from "@src/tests/providers/TestConsoleProvider";
-import TestCryptoProvider from "@src/tests/providers/TestCryptoProvider";
-import TestDatabaseProvider, { testDbName } from "@src/tests/providers/TestDatabaseProvider";
-import TestEventProvider from "@src/tests/providers/TestEventProvider";
-import TestMigrationProvider from "@src/tests/providers/TestMigrationProvider";
+import TestApiTokenModel from "@src/tests/larascript/models/models/TestApiTokenModel";
+import TestUser from "@src/tests/larascript/models/models/TestUser";
+import TestAuthProvider from "@src/tests/larascript/providers/TestAuthProvider";
+import TestConsoleProvider from "@src/tests/larascript/providers/TestConsoleProvider";
+import TestCryptoProvider from "@src/tests/larascript/providers/TestCryptoProvider";
+import TestDatabaseProvider, { testDbName } from "@src/tests/larascript/providers/TestDatabaseProvider";
+import TestEventProvider from "@src/tests/larascript/providers/TestEventProvider";
+import TestMigrationProvider from "@src/tests/larascript/providers/TestMigrationProvider";
 import { DataTypes } from "sequelize";
 
 export const getTestDbName = () => testDbName
