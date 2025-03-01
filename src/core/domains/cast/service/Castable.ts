@@ -1,10 +1,24 @@
 import CastException from "@src/core/domains/cast/interfaces/CastException";
 import { IHasCastableConcern, TCastableType, TCasts } from "@src/core/domains/cast/interfaces/IHasCastableConcern";
 
+type TCastableOptions = {
+    returnNullOnException: boolean;
+}
+
+const defaultCastsOptions: TCastableOptions = {
+    returnNullOnException: false
+}
+
 class Castable implements IHasCastableConcern {
 
     casts: TCasts = {};
 
+    castsOptions: TCastableOptions = defaultCastsOptions;
+
+    constructor(castsOptions?: TCastableOptions) {
+        this.castsOptions = { ...this.castsOptions, ...(castsOptions ?? {}) };
+    }
+    
     /**
      * Casts each property of the given data object according to the types specified in the casts record.
      * @template ReturnType The return type of the casted object
@@ -31,13 +45,13 @@ class Castable implements IHasCastableConcern {
      */
     getCast<T = unknown>(data: unknown, type: TCastableType): T {
         if (!this.isValidType(type)) {
-            throw new CastException(`Invalid cast type: ${type}`);
+            return this.handleException(new CastException(`Invalid cast type: ${type}`)) as T;
         }
 
         if (data === null || data === undefined) {
             if (type === 'null') return null as T;
             if (type === 'undefined') return undefined as T;
-            throw new CastException(`Cannot cast null/undefined to ${type}`);
+            return this.handleException(new CastException(`Cannot cast null/undefined to ${type}`)) as T;
         }
 
         try {
@@ -55,11 +69,11 @@ class Castable implements IHasCastableConcern {
             case 'set': return this.castSet(data);
             case 'symbol': return Symbol(String(data)) as unknown as T;
             default:
-                throw new CastException(`Unsupported cast type: ${type}`);
+                return this.handleException(new CastException(`Unsupported cast type: ${type}`)) as T;
             }
         }
         catch (error) {
-            throw new CastException(`Cast failed: ${(error as Error).message}`);
+            return this.handleException(new CastException(`Cast failed: ${(error as Error).message}`)) as T;
         }
     }
 
@@ -139,7 +153,7 @@ class Castable implements IHasCastableConcern {
             const lowercased = data.toLowerCase();
             if (['true', '1', 'yes'].includes(lowercased)) return true as unknown as T;
             if (['false', '0', 'no'].includes(lowercased)) return false as unknown as T;
-            throw new CastException('Invalid boolean string');
+            return this.handleException(new CastException('Invalid boolean string')) as T;
         }
         return Boolean(data) as unknown as T;
     }
@@ -158,7 +172,7 @@ class Castable implements IHasCastableConcern {
                 return JSON.parse(data) as unknown as T;
             }
             catch {
-                return [data] as unknown as T;
+                return this.handleException(new CastException('Invalid JSON string for array conversion')) as T;
             }
         }
         if (data instanceof Set || data instanceof Map) {
@@ -183,7 +197,7 @@ class Castable implements IHasCastableConcern {
             }
             // eslint-disable-next-line no-unused-vars
             catch (error) {
-                throw new CastException('Invalid JSON string for object conversion');
+                return this.handleException(new CastException('Invalid JSON string for object conversion')) as T;
             }
         }
         if (Array.isArray(data) || data instanceof Set || data instanceof Map) {
@@ -210,7 +224,7 @@ class Castable implements IHasCastableConcern {
         if (typeof data === 'string' && this.isValidDate(data)) {
             return new Date(data) as unknown as T;
         }
-        throw new CastException('Invalid date format');
+        return this.handleException(new CastException('Invalid date format')) as T;
     }
 
     /**
@@ -223,7 +237,7 @@ class Castable implements IHasCastableConcern {
      */
     private castInteger<T = unknown>(data: unknown): T {
         const int = parseInt(String(data), 10);
-        if (isNaN(int)) throw new CastException('Invalid integer');
+        if (isNaN(int)) return this.handleException(new CastException('Invalid integer')) as T;
         return int as unknown as T;
     }
 
@@ -237,7 +251,7 @@ class Castable implements IHasCastableConcern {
      */
     private castFloat<T = unknown>(data: unknown): T {
         const float = parseFloat(String(data));
-        if (isNaN(float)) throw new CastException('Invalid float');
+        if (isNaN(float)) return this.handleException(new CastException('Invalid float')) as T;
         return float as unknown as T;
     }
 
@@ -255,10 +269,10 @@ class Castable implements IHasCastableConcern {
                 return BigInt(data) as unknown as T;
             }
             catch {
-                throw new CastException('Cannot convert to BigInt');
+                return this.handleException(new CastException('Cannot convert to BigInt')) as T;
             }
         }
-        throw new CastException('Cannot convert to BigInt');
+        return this.handleException(new CastException('Cannot convert to BigInt')) as T;
     }
 
     /**
@@ -271,7 +285,7 @@ class Castable implements IHasCastableConcern {
      */
     private castMap<T = unknown>(data: unknown): T {
         if (data instanceof Map) return data as T;
-        throw new CastException('Cannot convert to Map');
+        return this.handleException(new CastException('Cannot convert to Map')) as T;
     }
 
     /**
@@ -288,6 +302,19 @@ class Castable implements IHasCastableConcern {
             return new Set(data) as unknown as T;
         }
         return new Set([data]) as unknown as T;
+    }
+
+    /**
+     * Handles an exception and returns null if the returnNullOnException flag is true.
+     * @param {Error} error - The error to handle
+     * @returns {unknown} The result of the operation
+     * @private
+     */
+    private handleException(error: Error): unknown {
+        if (this.castsOptions.returnNullOnException) {
+            return null;
+        }
+        throw error;
     }
 
 }

@@ -16,6 +16,9 @@ import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
 import { app } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
 
+import { TCastableType } from '../../cast/interfaces/IHasCastableConcern';
+import Castable from '../../cast/service/Castable';
+
  
 
 /**
@@ -34,7 +37,15 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      */
     protected idGeneratorFn: IdGeneratorFn | undefined;
 
-    // protected castable: typeof BaseCastable = new BaseCastable()
+    /**
+     * The castable instance for the model.
+     */
+    protected castable = new Castable({ returnNullOnException: true })
+
+    /**
+     * The casts for the model.
+     */
+    protected casts: Record<string, TCastableType> = {};
 
     /**
      * The primary key field name for the model.
@@ -431,7 +442,11 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
             return this.decryptAttributes({[key]: this.attributes?.[key]} as Attributes)?.[key] ?? null;
         }
         
-        return this.attributes?.[key] ?? null;
+        if(this.casts[key as string]) {
+            return this.castable.getCast(this.attributes?.[key], this.casts[key] as TCastableType) as Attributes[K] | null;
+        }
+
+        return this.attributes?.[key] as Attributes[K] | null;
     }
 
     /**
@@ -487,7 +502,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {IModelAttributes | null} The model's data as an object, or null if no data is set.
      */
     getAttributes(): Attributes | null {
-        return this.attributes;
+        return this.castAttributes(this.attributes);
     }
     
     /**
@@ -599,7 +614,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      *
      * @returns {string} The primary key associated with the model.
      */
-    public static   getPrimaryKey(): string {
+    public static getPrimaryKey(): string {
         return new (this as unknown as ICtor<IModel>)(null).primaryKey;
     }
 
@@ -610,6 +625,20 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      */
     private queryBuilder(): IEloquent<IModel> {
         return app('query').builder(this.constructor as ICtor<IModel>, this.connection);
+    }
+
+    /**
+     * Casts the attributes of the model.
+     * 
+     * @param {Attributes | null} attributes - The attributes to cast.
+     * @returns {Attributes | null} The casted attributes.
+     */
+    private castAttributes(attributes: Attributes | null): Attributes | null {
+        if(!attributes) {
+            return null;
+        }
+
+        return this.castable.getCastFromObject(attributes as Record<string, unknown>, this.casts) as Attributes;
     }
 
     /**
@@ -832,5 +861,6 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     hasMany<ForiegnModel extends IModel = IModel>(foreignModel: ModelConstructor<ForiegnModel>, options: Omit<IHasManyOptions, 'foreignTable'>): HasMany {
         return new HasMany(this.constructor as ModelConstructor<IModel>, foreignModel, options);
     }
+
 
 }
