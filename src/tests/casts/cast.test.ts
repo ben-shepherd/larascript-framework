@@ -3,6 +3,7 @@ import { describe } from '@jest/globals';
 import BaseCastable from '@src/core/domains/cast/base/BaseCastable';
 import CastException from '@src/core/domains/cast/interfaces/CastException';
 import { IHasCastableConcern, TCastableType } from '@src/core/domains/cast/interfaces/IHasCastableConcern';
+import Castable from '@src/core/domains/cast/service/Castable';
 import testHelper from '@src/tests/testHelper';
 
 describe('HasCastableConcern Tests', () => {
@@ -11,7 +12,7 @@ describe('HasCastableConcern Tests', () => {
     beforeAll(async () => {
         await testHelper.testBootApp()
         
-        castable = new BaseCastable();
+        castable = new Castable({ returnNullOnException: false });
     });
 
     describe('getCastFromObject', () => {
@@ -86,7 +87,7 @@ describe('HasCastableConcern Tests', () => {
             expect(castable.getCast('["a","b"]', 'array')).toEqual(['a', 'b']);
             expect(castable.getCast(new Set([1, 2]), 'array')).toEqual([1, 2]);
             expect(castable.getCast(123, 'array')).toEqual([123]);
-            expect(castable.getCast('invalid json', 'array')).toEqual(['invalid json']);
+            expect(() => castable.getCast('invalid json', 'array')).toThrow(CastException);
         });
     });
 
