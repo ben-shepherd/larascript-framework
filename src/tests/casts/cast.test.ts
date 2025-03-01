@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import BaseCastable from '@src/core/base/BaseCastable';
-import CastException from '@src/core/exceptions/CastException';
-import { IHasCastableConcern, TCastableType } from '@src/core/interfaces/concerns/IHasCastableConcern';
+import BaseCastable from '@src/core/domains/cast/base/BaseCastable';
+import CastException from '@src/core/domains/cast/interfaces/CastException';
+import { IHasCastableConcern, TCastableType } from '@src/core/domains/cast/interfaces/IHasCastableConcern';
 import testHelper from '@src/tests/testHelper';
 
 describe('HasCastableConcern Tests', () => {
