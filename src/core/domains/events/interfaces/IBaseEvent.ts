@@ -22,4 +22,5 @@ export interface IBaseEvent<TPayload = unknown> extends INameable, IExecutable, 
     getDriverCtor(): ICtor<IEventDriver>;
     getPayload(): TPayload;
     setPayload(payload: TPayload): void;
+    getName(): string;
 }

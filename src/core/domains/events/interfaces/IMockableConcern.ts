@@ -10,5 +10,7 @@ export interface IMockableConcern {
 
     mockEventDispatched(event: IBaseEvent): void;
 
+    resetMockEvents(): void;
+
     assertDispatched<TPayload = unknown>(eventCtor: ICtor<IBaseEvent>, callback?: TMockableEventCallback<TPayload>): boolean;
 }

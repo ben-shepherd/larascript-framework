@@ -6,7 +6,7 @@ import { IBelongsToOptions, IEloquent, IHasManyOptions, IRelationship, IdGenerat
 import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
 import HasMany from '@src/core/domains/eloquent/relational/HasMany';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
-import { GetAttributesOptions, IModel, IModelAttributes, ModelConstructor, ModelWithAttributes } from "@src/core/domains/models/interfaces/IModel";
+import { GetAttributesOptions, IModel, IModelAttributes, IModelEvents, IModelLifeCycleEvent, ModelConstructor, ModelWithAttributes } from "@src/core/domains/models/interfaces/IModel";
 import ModelScopes, { TModelScope } from '@src/core/domains/models/utils/ModelScope';
 import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
 import { IObserver, IObserverEvent } from '@src/core/domains/observer/interfaces/IObserver';
@@ -18,6 +18,7 @@ import Str from '@src/core/util/str/Str';
 
 import { TCastableType } from '../../cast/interfaces/IHasCastableConcern';
 import Castable from '../../cast/service/Castable';
+import { EventConstructor } from '../../events/interfaces/IEventConstructors';
 
  
 
@@ -36,16 +37,6 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * The ID generator function for the model.
      */
     protected idGeneratorFn: IdGeneratorFn | undefined;
-
-    /**
-     * The castable instance for the model.
-     */
-    protected castable = new Castable({ returnNullOnException: true })
-
-    /**
-     * The casts for the model.
-     */
-    protected casts: Record<string, TCastableType> = {};
 
     /**
      * The primary key field name for the model.
@@ -130,6 +121,21 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * Key is the property name, value is the name of the custom observation method.
      */
     public observeProperties: Record<string, string> = {};
+
+    /**
+     * The castable instance for the model.
+     */
+    protected castable = new Castable({ returnNullOnException: true })
+
+    /**
+         * The casts for the model.
+         */
+    protected casts?: Record<string, TCastableType> = {};
+
+    /**
+     * The events for the model.
+     */
+    protected events?: IModelEvents = {};
 
     /**
      * The factory instance for the model.
@@ -442,8 +448,8 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
             return this.decryptAttributes({[key]: this.attributes?.[key]} as Attributes)?.[key] ?? null;
         }
         
-        if(this.casts[key as string]) {
-            return this.castable.getCast(this.attributes?.[key], this.casts[key] as TCastableType) as Attributes[K] | null;
+        if(this.casts?.[key as string]) {
+            return this.castable.getCast(this.attributes?.[key], this.casts[key as string] as TCastableType) as Attributes[K] | null;
         }
 
         return this.attributes?.[key] as Attributes[K] | null;
@@ -803,22 +809,45 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      */
     async save(): Promise<void> {
         if (this.attributes && !this.getId()) {
+
+            // Observe the attributes
             this.attributes = await this.observeAttributes('creating', this.attributes);
+
+            // Set the timestamps
             await this.setTimestamp('createdAt');
             await this.setTimestamp('updatedAt');
 
+            // Emit the creating event
+            this.emit('creating', this.attributes);
+
+            // Insert the model
             const encryptedAttributes = await this.encryptAttributes(this.attributes)
             this.attributes = await (await this.queryBuilder().insert(encryptedAttributes as object)).first()?.toObject() as Attributes;
             this.attributes = await this.refresh();
             this.attributes = await this.observeAttributes('created', this.attributes);
+
+            // Emit the created event
+            this.emit('created', this.attributes);
+
             return;
         }
 
+        // Emit the saving event
+        this.emit('updating', this.attributes);
+
+        // Update the model
         this.attributes = await this.observeAttributes('updating', this.attributes)
         this.setTimestamp('updatedAt');
         await this.update();
+
+        // Refresh the model
         this.attributes = await this.refresh();
         this.attributes = await this.observeAttributes('updated', this.attributes)
+
+        // Emit the updated event
+        this.emit('updated', this.attributes);
+
+        // Set the original attributes
         this.original = { ...this.attributes } as Attributes
     }
 
@@ -829,13 +858,25 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      */
     async delete(): Promise<void> {
         if (!this.attributes) return;
+
+        // Emit the deleting event
+        this.emit('deleting', this.attributes);
+
+        // Observe the attributes
         this.attributes = await this.observeAttributes('deleting', this.attributes);
+
+        // Delete the model
         const builder = this.queryBuilder()
         const normalizedIdProperty = builder.normalizeIdProperty(this.primaryKey)
         await builder.where(normalizedIdProperty, this.getId()).delete();
         this.attributes = null;
         this.original = null;
+
+        // Observe the attributes
         await this.observeAttributes('deleted', this.attributes);
+
+        // Emit the deleted event
+        this.emit('deleted', this.attributes);
     }
 
     /**
@@ -862,5 +903,41 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         return new HasMany(this.constructor as ModelConstructor<IModel>, foreignModel, options);
     }
 
+    /**
+     * Adds an event listener to the model.
+     * 
+     * @param {IModelLifeCycleEvent} event - The event to listen to.
+     * @param {EventConstructor} eventConstructor - The event constructor to add.
+     */
+    on(event: IModelLifeCycleEvent, eventConstructor: EventConstructor): void {
+        if(!this.events) {
+            this.events = {};
+        }
+
+        this.events[event] = eventConstructor;
+    }
+
+    /**
+     * Removes an event listener from the model.
+     * 
+     * @param {IModelLifeCycleEvent} event - The event to remove the listener from.
+     */
+    off(event: IModelLifeCycleEvent): void {
+        if(this.events?.[event]) {
+            this.events[event] = undefined;
+        }
+    }
+    
+    /**
+     * Emits an event for the model.
+     * 
+     * @param {IModelLifeCycleEvent} event - The event to emit.
+     * @param {...any[]} args - The arguments to pass to the event.
+     */
+    emit(event: IModelLifeCycleEvent, ...args: any[]): void {
+        if(typeof this.events?.[event] === 'function') {
+            app('events').dispatch(new this.events[event](...args));
+        }
+    }
 
 }

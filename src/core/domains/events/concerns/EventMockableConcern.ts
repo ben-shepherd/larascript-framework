@@ -1,7 +1,8 @@
-import EventMockException from "@src/core/domains/events/exceptions/EventMockException";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import { IMockableConcern, TMockableEventCallback } from "@src/core/domains/events/interfaces/IMockableConcern";
 import { ICtor } from "@src/core/interfaces/ICtor";
+
+import EventNotDispatchedException from "../exceptions/EventNotDispatchedException";
 
 
 const EventMockableConcern = (Base: ICtor) => {
@@ -79,7 +80,7 @@ const EventMockableConcern = (Base: ICtor) => {
             const dispatchedEvent = this.mockEventsDispatched.find(e => e.getName() === eventCtorName)
 
             if(!dispatchedEvent) {
-                throw new EventMockException(`Event ${eventCtorName} was not dispatched`)
+                throw new EventNotDispatchedException(`Event ${eventCtorName} was not dispatched`)
             }
 
             if(typeof callback !== 'function') {
@@ -87,6 +88,14 @@ const EventMockableConcern = (Base: ICtor) => {
             }
 
             return callback(dispatchedEvent.getPayload() as TPayload)
+        }
+
+        /**
+         * Resets the {@link mockEvents} and {@link mockEventsDispatched} arrays.
+         */
+        resetMockEvents(): void {
+            this.mockEvents = [];
+            this.mockEventsDispatched = [];
         }
     
     }

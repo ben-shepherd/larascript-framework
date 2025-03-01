@@ -1,14 +1,14 @@
 /* eslint-disable no-unused-vars */
 import HasSimpleRegisterConcern from "@src/core/concerns/HasSimpleRegisterConcern";
-import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventConfig";
-import { ICommandOptionArguement, IOptionTypes } from "@src/core/interfaces/concerns/ISimpleRegister";
-import { ICtor } from "@src/core/interfaces/ICtor";
-import compose from "@src/core/util/compose";
 import EventMockableConcern from "@src/core/domains/events/concerns/EventMockableConcern";
 import EventWorkerConcern from "@src/core/domains/events/concerns/EventWorkerConcern";
+import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventConfig";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import { TEventWorkerOptions } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
 import { TMockableEventCallback } from "@src/core/domains/events/interfaces/IMockableConcern";
+import { ICommandOptionArguement, IOptionTypes } from "@src/core/interfaces/concerns/ISimpleRegister";
+import { ICtor } from "@src/core/interfaces/ICtor";
+import compose from "@src/core/util/compose";
 
 
 class BaseEventService extends compose(class {}, HasSimpleRegisterConcern, EventWorkerConcern, EventMockableConcern) {
@@ -54,6 +54,8 @@ class BaseEventService extends compose(class {}, HasSimpleRegisterConcern, Event
     declare mockEvent: (event: ICtor<IBaseEvent>) => void;
 
     declare mockEventDispatched: (event: IBaseEvent) => void;
+
+    declare resetMockEvents: () => void;
 
     declare assertDispatched: <TPayload = unknown>(eventCtor: ICtor<IBaseEvent>, callback?: TMockableEventCallback<TPayload>) => boolean
 

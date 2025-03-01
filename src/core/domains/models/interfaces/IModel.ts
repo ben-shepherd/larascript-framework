@@ -4,6 +4,8 @@ import { TModelScope } from "@src/core/domains/models/utils/ModelScope";
 import IHasObserver from "@src/core/domains/observer/interfaces/IHasObserver";
 import IFactory from "@src/core/interfaces/IFactory";
 
+import { EventConstructor } from "../../events/interfaces/IEventConstructors";
+
 export type GetAttributesOptions = {excludeGuarded: boolean}
 
 export type ModelConstructor<M extends IModel = IModel> = {
@@ -73,4 +75,15 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes> 
     update(): Promise<void>;
     save(): Promise<void>;
     delete(): Promise<void>;
+
+    // Events
+    on(event: IModelLifeCycleEvent, eventConstructor: EventConstructor): void;
+    off(event: IModelLifeCycleEvent): void;
+    emit(event: IModelLifeCycleEvent, ...args: any[]): void;
+}
+
+export type IModelLifeCycleEvent = "updating" | "updated" | "deleting" | "deleted" | "creating" | "created"
+
+export type IModelEvents = {
+    [key in IModelLifeCycleEvent]?: EventConstructor
 }
