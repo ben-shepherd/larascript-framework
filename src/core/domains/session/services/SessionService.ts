@@ -28,10 +28,13 @@ class SessionService implements ISessionService {
             session.id = sessionId;
         }
         
-        return this.asyncLocalStorage.run(session, async () => {
+        await this.asyncLocalStorage.run(session, async () => {
             // Initialize any session data here if needed
             return Promise.resolve();
         });
+
+        // Store the session after initialization
+        this.asyncLocalStorage.enterWith(session);
     }
 
     /**
