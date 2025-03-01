@@ -2,9 +2,13 @@
 import { describe, expect, test } from '@jest/globals';
 import { TCastableType } from '@src/core/domains/cast/interfaces/IHasCastableConcern';
 import Model from '@src/core/domains/models/base/Model';
+import { IModelAttributes } from '@src/core/domains/models/interfaces/IModel';
+import { app } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
+import { DataTypes } from 'sequelize';
 
-type AttributesType = {
+interface AttributesType extends IModelAttributes {
+    id?: string;
     age?: string | number | null;
     isActive?: string | boolean | null;
     joinDate?: string | Date | null;
@@ -17,6 +21,22 @@ type AttributesType = {
     name?: string | null;
     title?: string | null;
     metadata?: string | Record<string, any> | null;
+    createdAt?: Date;
+    updatedAt?: Date;
+}
+
+const resetTestsCaststTable = async () => {
+    const schema = app('db').schema();
+    await schema.dropTable('test_casts');
+
+    await schema.createTable('test_casts', {
+        age: DataTypes.INTEGER,
+        isActive: DataTypes.BOOLEAN,
+        metadata: DataTypes.JSON,
+        items: DataTypes.JSON,
+        createdAt: DataTypes.DATE,
+        updatedAt: DataTypes.DATE
+    });
 }
 
 describe('test model casts', () => {
@@ -283,10 +303,8 @@ describe('test model casts', () => {
 
         const attributes = await model.getAttributes();
         
-        expect(attributes).toEqual({
-            metadata: complexMetadata,
-            items: ['item1', 'item2']
-        });
+        expect(attributes?.metadata).toEqual(complexMetadata);
+        expect(attributes?.items).toEqual(['item1', 'item2']);
 
         // Verify nested structure is preserved
         expect((attributes?.metadata as Record<string, any>).user?.preferences?.theme).toBe('dark');
@@ -316,4 +334,50 @@ describe('test model casts', () => {
         expect(attributes?.metadata).toBeNull();
         expect(attributes?.items).toBeNull();
     });
+
+    test('should maintain casts after save and retrieve', async () => {
+        await resetTestsCaststTable();
+
+        class PersistentCastModel extends Model<AttributesType> {
+
+            protected casts: Record<string, TCastableType> = {
+                age: 'number',
+                isActive: 'boolean',
+                metadata: 'object',
+                items: 'array'
+            }
+
+            public fields: string[] = ['age', 'isActive', 'metadata', 'items'];
+
+            public table: string = 'test_casts';
+        
+        }
+
+        // Create and save a model with various types
+        const originalModel = new PersistentCastModel({
+            age: '25',
+            isActive: '1',
+            metadata: JSON.stringify({ key: 'value' }),
+            items: JSON.stringify(['item1', 'item2'])
+        });
+
+        await originalModel.save();
+        const savedId = originalModel.getId() as string;
+
+        // Retrieve the model from database
+        const retrievedModel = await PersistentCastModel.query().find(savedId) as PersistentCastModel;
+        const attributes = await retrievedModel.getAttributes();
+
+        // Verify all attributes are properly cast
+        expect(attributes?.age).toBe(25);
+        expect(typeof attributes?.age).toBe('number');
+        
+        expect(attributes?.isActive).toBe(true);
+        expect(typeof attributes?.isActive).toBe('boolean');
+        
+        expect(attributes?.metadata).toEqual({ key: 'value' });
+        expect(Array.isArray(attributes?.items)).toBe(true);
+        expect(attributes?.items).toEqual(['item1', 'item2']);
+    });
+
 });
