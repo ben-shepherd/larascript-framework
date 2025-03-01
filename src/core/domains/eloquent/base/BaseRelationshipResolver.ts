@@ -5,8 +5,8 @@ import { IRelationshipResolver } from "@src/core/domains/eloquent/interfaces/IEq
 import BelongsTo from "@src/core/domains/eloquent/relational/BelongsTo";
 import HasMany from "@src/core/domains/eloquent/relational/HasMany";
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
+import { IModel, IModelAttributes, ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel, IModelAttributes, ModelConstructor } from "@src/core/interfaces/IModel";
 
 class BaseRelationshipResolver implements IRelationshipResolver {
 

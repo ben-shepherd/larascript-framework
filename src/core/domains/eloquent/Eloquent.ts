@@ -12,8 +12,8 @@ import { IEloquent, IdGeneratorFn, LogicalOperators, OperatorArray, SetModelColu
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import { TDirection } from "@src/core/domains/eloquent/interfaces/TEnums";
 import With from "@src/core/domains/eloquent/relational/With";
+import { IModel, ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { deepClone } from "@src/core/util/deepClone";
 

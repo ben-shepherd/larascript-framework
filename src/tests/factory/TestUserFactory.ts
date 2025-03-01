@@ -1,5 +1,5 @@
 import Factory from '@src/core/base/Factory';
-import { IModel, IModelAttributes, ModelConstructor } from '@src/core/interfaces/IModel';
+import { IModel, IModelAttributes, ModelConstructor } from '@src/core/domains/models/interfaces/IModel';
 import TestUser from '@src/tests/models/models/TestUser';
 
 /**

@@ -2,8 +2,8 @@ import BaseDriver from "@src/core/domains/events/base/BaseDriver";
 import EventDriverException from "@src/core/domains/events/exceptions/EventDriverException";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import { FailedWorkerModelAttributes, IWorkerModel } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
+import { IModel } from "@src/core/domains/models/interfaces/IModel";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel } from "@src/core/interfaces/IModel";
 import { z } from "zod";
 
 

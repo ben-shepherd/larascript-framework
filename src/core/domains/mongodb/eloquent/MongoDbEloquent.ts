@@ -1,8 +1,3 @@
-import ModelNotFound from "@src/core/exceptions/ModelNotFound";
-import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
-import captureError from "@src/core/util/captureError";
-import MoveObjectToProperty from "@src/core/util/MoveObjectToProperty";
-import { Document, Collection as MongoCollection, ObjectId } from "mongodb";
 import Collection from "@src/core/domains/collections/Collection";
 import collect from "@src/core/domains/collections/helper/collect";
 import { db } from "@src/core/domains/database/services/Database";
@@ -11,8 +6,13 @@ import EloquentException from "@src/core/domains/eloquent/exceptions/EloquentExp
 import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import { logger } from "@src/core/domains/logger/services/LoggerService";
+import { IModel, ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import AggregateExpression from "@src/core/domains/mongodb/builder/AggregateExpression";
+import ModelNotFound from "@src/core/exceptions/ModelNotFound";
+import captureError from "@src/core/util/captureError";
+import MoveObjectToProperty from "@src/core/util/MoveObjectToProperty";
+import { Document, Collection as MongoCollection, ObjectId } from "mongodb";
 
 /**
  * Represents a MongoDB document with an ObjectId _id field and model attributes.

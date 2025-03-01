@@ -6,12 +6,12 @@ import { IBelongsToOptions, IEloquent, IHasManyOptions, IRelationship, IdGenerat
 import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
 import HasMany from '@src/core/domains/eloquent/relational/HasMany';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
+import { GetAttributesOptions, IModel, IModelAttributes, ModelConstructor, ModelWithAttributes } from "@src/core/domains/models/interfaces/IModel";
 import ModelScopes, { TModelScope } from '@src/core/domains/models/utils/ModelScope';
 import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
 import { IObserver, IObserverEvent } from '@src/core/domains/observer/interfaces/IObserver';
 import { ICtor } from '@src/core/interfaces/ICtor';
 import IFactory, { FactoryConstructor } from '@src/core/interfaces/IFactory';
-import { GetAttributesOptions, IModel, IModelAttributes, ModelConstructor, ModelWithAttributes } from "@src/core/interfaces/IModel";
 import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
 import { app } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
@@ -33,6 +33,8 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * The ID generator function for the model.
      */
     protected idGeneratorFn: IdGeneratorFn | undefined;
+
+    // protected castable: typeof BaseCastable = new BaseCastable()
 
     /**
      * The primary key field name for the model.
@@ -104,6 +106,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * Must be set by child classes or will be automatically generated.
      */
     public table!: string;
+
 
     /**
          * The observer instance attached to this model.

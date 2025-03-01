@@ -1,7 +1,7 @@
 import Collection from "@src/core/domains/collections/Collection";
 import HasMany from "@src/core/domains/eloquent/relational/HasMany";
 import Model from "@src/core/domains/models/base/Model";
-import { IModelAttributes } from "@src/core/interfaces/IModel";
+import { IModelAttributes } from "@src/core/domains/models/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import TestEmployeeModel from "@src/tests/eloquent/models/TestEmployeeModel";
 import testHelper from "@src/tests/testHelper";

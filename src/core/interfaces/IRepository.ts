@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
+import { IModel, ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 
 /**
  * Constructor type for repositories.

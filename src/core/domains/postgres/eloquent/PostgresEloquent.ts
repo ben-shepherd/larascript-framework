@@ -6,12 +6,12 @@ import EloquentException from "@src/core/domains/eloquent/exceptions/EloquentExp
 import UpdateException from "@src/core/domains/eloquent/exceptions/UpdateException";
 import { IEloquent, IdGeneratorFn, SetModelColumnsOptions, TransactionFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
+import { IModel, ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import SqlExpression, { SqlRaw } from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 import PostgresJsonNormalizer from "@src/core/domains/postgres/normalizers/PostgresJsonNormalizer";
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import captureError from "@src/core/util/captureError";
 import PrefixedPropertyGrouper from "@src/core/util/PrefixedPropertyGrouper";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";

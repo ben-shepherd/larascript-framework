@@ -1,5 +1,5 @@
 import Model from "@src/core/domains/models/base/Model";
-import { IModelAttributes } from "@src/core/interfaces/IModel";
+import { IModelAttributes } from "@src/core/domains/models/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { forEveryConnection } from "@src/tests/testHelper";
 import { DataTypes } from "sequelize";

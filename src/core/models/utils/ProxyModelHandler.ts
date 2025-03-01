@@ -1,4 +1,4 @@
-import { IModel } from "@src/core/interfaces/IModel";
+import { IModel } from "@src/core/domains/models/interfaces/IModel";
 
 /**
  * A proxy handler for model objects that intercepts property access and method calls.

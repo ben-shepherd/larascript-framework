@@ -4,6 +4,7 @@ import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabase
 import { db } from "@src/core/domains/database/services/Database";
 import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { logger } from "@src/core/domains/logger/services/LoggerService";
+import { IModel } from "@src/core/domains/models/interfaces/IModel";
 import PostgresEloquent from "@src/core/domains/postgres/eloquent/PostgresEloquent";
 import ParsePostgresConnectionUrl from "@src/core/domains/postgres/helper/ParsePostgresConnectionUrl";
 import { IPostgresConfig } from "@src/core/domains/postgres/interfaces/IPostgresConfig";
@@ -11,7 +12,6 @@ import PostgresSchema from "@src/core/domains/postgres/PostgresSchema";
 import createMigrationSchemaPostgres from "@src/core/domains/postgres/schema/createMigrationSchemaPostgres";
 import { extractDefaultPostgresCredentials } from "@src/core/domains/postgres/utils/extractDefaultPostgresCredentials";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel } from "@src/core/interfaces/IModel";
 import pg from 'pg';
 import { QueryInterface, Sequelize } from "sequelize";
 

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
-import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
+import { IModel, ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 
 export interface ApiTokenConstructor<TApiToken extends IApiTokenModel = IApiTokenModel> extends ModelConstructor<TApiToken> {}
 

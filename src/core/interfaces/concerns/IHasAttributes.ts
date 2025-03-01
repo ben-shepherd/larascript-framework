@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { IModelAttributes } from "@src/core/interfaces/IModel";
+import { IModelAttributes } from "@src/core/domains/models/interfaces/IModel";
 
 
 export interface IHasAttributesSetAttributeOptions {

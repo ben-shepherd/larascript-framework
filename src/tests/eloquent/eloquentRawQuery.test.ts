@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
-import { ModelWithAttributes } from '@src/core/interfaces/IModel';
+import { ModelWithAttributes } from '@src/core/domains/models/interfaces/IModel';
 import TestPeopleModel, { resetPeopleTable } from '@src/tests/eloquent/models/TestPeopleModel';
 import testHelper, { forEveryConnection } from '@src/tests/testHelper';
 import pg from 'pg';

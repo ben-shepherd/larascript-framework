@@ -6,7 +6,7 @@ import AbastractBaseResourceService from "@src/core/domains/http/resources/abstr
 import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 import { RouteResourceTypes } from "@src/core/domains/http/router/RouterResource";
 import stripGuardedResourceProperties from "@src/core/domains/http/utils/stripGuardedResourceProperties";
-import { IModelAttributes } from "@src/core/interfaces/IModel";
+import { IModelAttributes } from "@src/core/domains/models/interfaces/IModel";
 
 /**
  * Service class that handles retrieving individual resources through HTTP requests

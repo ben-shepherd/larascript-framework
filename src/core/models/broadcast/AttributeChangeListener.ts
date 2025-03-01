@@ -1,5 +1,5 @@
 import BroadcastListener from "@src/core/domains/broadcast/abstract/BroadcastEvent";
-import { IModelAttributes } from "@src/core/interfaces/IModel";
+import { IModelAttributes } from "@src/core/domains/models/interfaces/IModel";
 
 export type AttributeChangePayload = {
     key: string;

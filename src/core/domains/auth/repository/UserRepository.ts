@@ -3,7 +3,7 @@ import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel"
 import { IUserRepository } from "@src/core/domains/auth/interfaces/repository/IUserRepository";
 import AuthUser from "@src/core/domains/auth/models/AuthUser";
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
-import { ModelConstructor } from "@src/core/interfaces/IModel";
+import { ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 
 /**
  * Repository class for managing user data operations

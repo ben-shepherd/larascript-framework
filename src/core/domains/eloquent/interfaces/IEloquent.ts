@@ -3,8 +3,8 @@
 
 import Collection from "@src/core/domains/collections/Collection";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
+import { IModel, IModelAttributes, ModelConstructor, ModelWithAttributes } from "@src/core/domains/models/interfaces/IModel";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel, IModelAttributes, ModelConstructor, ModelWithAttributes } from "@src/core/interfaces/IModel";
 
 export type TColumnOption = {
     column: string | null;

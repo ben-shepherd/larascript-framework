@@ -1,9 +1,9 @@
 
-import GenericRelationship from "@src/core/domains/eloquent/relational/GenericRelationship";
-import { IModel, IModelAttributes } from "@src/core/interfaces/IModel";
-import { Collection } from "collect.js";
 import { IRelationship, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import GenericRelationship from "@src/core/domains/eloquent/relational/GenericRelationship";
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
+import { IModel, IModelAttributes } from "@src/core/domains/models/interfaces/IModel";
+import { Collection } from "collect.js";
 
 class HasMany extends GenericRelationship {
 

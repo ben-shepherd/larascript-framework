@@ -1,6 +1,6 @@
 import { db } from "@src/core/domains/database/services/Database";
 import Model from "@src/core/domains/models/base/Model";
-import { IModelAttributes } from "@src/core/interfaces/IModel";
+import { IModelAttributes } from "@src/core/domains/models/interfaces/IModel";
 import TestObserver from "@src/tests/models/observers/TestObserver";
 import { forEveryConnection } from "@src/tests/testHelper";
 import { DataTypes } from "sequelize";

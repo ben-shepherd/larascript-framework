@@ -1,6 +1,6 @@
 import BelongsTo from "@src/core/domains/eloquent/relational/BelongsTo";
 import Model from "@src/core/domains/models/base/Model";
-import { IModelAttributes } from "@src/core/interfaces/IModel";
+import { IModelAttributes } from "@src/core/domains/models/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import TestDepartmentModel from "@src/tests/eloquent/models/TestDepartmentModel";
 import testHelper from "@src/tests/testHelper";

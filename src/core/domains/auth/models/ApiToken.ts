@@ -6,7 +6,7 @@ import UserRepository from '@src/core/domains/auth/repository/UserRepository';
 import ScopeMatcher from '@src/core/domains/auth/utils/ScopeMatcher';
 import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
 import Model from '@src/core/domains/models/base/Model';
-import { IModelAttributes, ModelConstructor } from '@src/core/interfaces/IModel';
+import { IModelAttributes, ModelConstructor } from '@src/core/domains/models/interfaces/IModel';
 
 
 

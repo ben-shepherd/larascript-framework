@@ -1,4 +1,4 @@
-import { ModelConstructor } from "@src/core/interfaces/IModel";
+import { ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 
 export interface IMigrationConfig
 {

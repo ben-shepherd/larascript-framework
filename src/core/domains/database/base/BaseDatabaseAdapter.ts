@@ -4,11 +4,11 @@ import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabas
 import { IDatabaseGenericConnectionConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
-import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
-import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel } from "@src/core/interfaces/IModel";
 import BaseRelationshipResolver from "@src/core/domains/eloquent/base/BaseRelationshipResolver";
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { IRelationshipResolver } from "@src/core/domains/eloquent/interfaces/IEqloeuntRelationship";
+import { IModel } from "@src/core/domains/models/interfaces/IModel";
+import { ICtor } from "@src/core/interfaces/ICtor";
 
 abstract class BaseDatabaseAdapter<TConfig extends object = object> extends BaseConfig implements IDatabaseAdapter {
 

@@ -11,8 +11,8 @@ import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 import ResourceOwnerRule from "@src/core/domains/http/security/rules/ResourceOwnerRule";
 import SecurityReader from "@src/core/domains/http/security/services/SecurityReader";
 import Paginate from "@src/core/domains/http/utils/Paginate";
+import { IModel, ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import { CustomValidatorConstructor, IValidatorErrors } from "@src/core/domains/validator/interfaces/IValidator";
-import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 
 type TResponseOptions = {
     showPagination: boolean;

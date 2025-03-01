@@ -1,7 +1,7 @@
 
+import { TCasts } from "@src/core/domains/cast/interfaces/IHasCastableConcern";
 import BaseEvent from "@src/core/domains/events/base/BaseEvent";
 import SyncDriver from "@src/core/domains/events/drivers/SyncDriver";
-import { TCasts } from "@src/core/interfaces/concerns/IHasCastableConcern";
 
 class TestEventQueueCalledFromWorkerEvent extends BaseEvent {
 

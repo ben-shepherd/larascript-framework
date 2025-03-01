@@ -1,4 +1,4 @@
-import { IModel, IModelAttributes } from "@src/core/interfaces/IModel";
+import { IModel, IModelAttributes } from "@src/core/domains/models/interfaces/IModel";
 
 /**
  * Strips guarded properties from model instances before sending them in HTTP responses

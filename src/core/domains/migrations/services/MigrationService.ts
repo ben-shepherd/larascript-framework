@@ -7,8 +7,8 @@ import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigra
 import { IMigrationService, IMigrationServiceOptions } from "@src/core/domains/migrations/interfaces/IMigrationService";
 import MigrationModel from "@src/core/domains/migrations/models/MigrationModel";
 import MigrationFileService from "@src/core/domains/migrations/services/MigrationFilesService";
+import { ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import FileNotFoundError from "@src/core/exceptions/FileNotFoundError";
-import { ModelConstructor } from "@src/core/interfaces/IModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
 import { app } from "@src/core/services/App";
 

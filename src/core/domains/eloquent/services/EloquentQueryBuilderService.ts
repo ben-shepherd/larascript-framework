@@ -1,6 +1,6 @@
 import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { IEloquentQueryBuilderService } from "@src/core/domains/eloquent/interfaces/IEloquentQueryBuilderService";
-import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
+import { IModel, ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import { app } from "@src/core/services/App";
 
 /**

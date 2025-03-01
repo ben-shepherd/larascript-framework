@@ -10,7 +10,7 @@ import Paginate from "@src/core/domains/http/utils/Paginate";
 import QueryFilters from "@src/core/domains/http/utils/QueryFilters";
 import SortOptions from "@src/core/domains/http/utils/SortOptions";
 import stripGuardedResourceProperties from "@src/core/domains/http/utils/stripGuardedResourceProperties";
-import { IModelAttributes } from "@src/core/interfaces/IModel";
+import { IModelAttributes } from "@src/core/domains/models/interfaces/IModel";
 
 /**
  * Service class that handles retrieving collections of resources through HTTP requests

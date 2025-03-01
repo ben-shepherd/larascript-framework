@@ -3,18 +3,18 @@ import CreateDatabaseException from "@src/core/domains/database/exceptions/Creat
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { db } from "@src/core/domains/database/services/Database";
 import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { IRelationshipResolver } from "@src/core/domains/eloquent/interfaces/IEqloeuntRelationship";
+import { IModel } from "@src/core/domains/models/interfaces/IModel";
+import MongoDbEloquent from "@src/core/domains/mongodb/eloquent/MongoDbEloquent";
 import ParseMongoDBConnectionString from "@src/core/domains/mongodb/helper/ParseMongoDBConnectionUrl";
 import { IMongoConfig } from "@src/core/domains/mongodb/interfaces/IMongoConfig";
 import MongoDbSchema from "@src/core/domains/mongodb/MongoDbSchema";
+import MongoRelationshipResolver from "@src/core/domains/mongodb/relationship/MongoRelationshipResolver";
 import createMigrationSchemaMongo from "@src/core/domains/mongodb/schema/createMigrationSchemaMongo";
 import { extractDefaultMongoCredentials } from "@src/core/domains/mongodb/utils/extractDefaultMongoCredentials";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel } from "@src/core/interfaces/IModel";
 import { App } from "@src/core/services/App";
 import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
-import { IRelationshipResolver } from "@src/core/domains/eloquent/interfaces/IEqloeuntRelationship";
-import MongoDbEloquent from "@src/core/domains/mongodb/eloquent/MongoDbEloquent";
-import MongoRelationshipResolver from "@src/core/domains/mongodb/relationship/MongoRelationshipResolver";
 
 class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
 

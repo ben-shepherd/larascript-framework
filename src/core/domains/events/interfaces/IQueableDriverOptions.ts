@@ -1,5 +1,5 @@
+import { IModel } from "@src/core/domains/models/interfaces/IModel";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import { IModel } from "@src/core/interfaces/IModel";
 
 export interface IQueableDriverOptions {
     queueName: string;
