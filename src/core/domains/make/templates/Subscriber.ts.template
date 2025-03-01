@@ -28,4 +28,4 @@ class #name# extends BaseEventSubscriber<#name#Payload> {
 
 }
 
-export default EventRegistry.register(#name#)
+export default EventRegistry.registerSubscriber(#name#)

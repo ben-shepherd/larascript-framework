@@ -20,4 +20,4 @@ class #name# extends BaseEventListener<#name#Payload> {
     
 }
 
-export default EventRegistry.register(#name#)
+export default EventRegistry.registerListener(#name#)

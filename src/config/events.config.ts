@@ -44,10 +44,15 @@ export const eventConfig: IEventConfig = {
         
     },
 
+    /**
+     * Event Listeners Configuration
+     * 
+     * This array defines the listeners and their corresponding subscribers.
+     * Each listener can have multiple subscribers that will be notified when the listener is triggered.
+     */
     listeners: [
         {
             listener: UserCreatedListener,
-            
             subscribers: [
                 UserCreatedSubscriber
             ]
