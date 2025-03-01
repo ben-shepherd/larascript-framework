@@ -26,6 +26,9 @@ class EventProvider extends BaseProvider {
         for (const event of registeredEvents) {
             eventService.registerEvent(event);
         }
+
+        // Register all listeners
+        eventService.registerListeners(this.config.listeners);
         
         // Mark the registry as initialized since event service is now available
         EventRegistry.setInitialized();

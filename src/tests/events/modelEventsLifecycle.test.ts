@@ -146,7 +146,8 @@ class TestEventLifeCycleProvider extends EventProvider {
         defaultDriver: SyncDriver,
         drivers: {
             [EVENT_DRIVERS.SYNC]: EventService.createConfigDriver(SyncDriver, {}),
-        }
+        },
+        listeners: []
     }
 
 }

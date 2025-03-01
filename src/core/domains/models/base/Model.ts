@@ -818,7 +818,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
             await this.setTimestamp('updatedAt');
 
             // Emit the creating event
-            this.emit('creating', this.attributes);
+            await this.emit('creating', this.attributes);
 
             // Insert the model
             const encryptedAttributes = await this.encryptAttributes(this.attributes)
@@ -827,13 +827,13 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
             this.attributes = await this.observeAttributes('created', this.attributes);
 
             // Emit the created event
-            this.emit('created', this.attributes);
+            await this.emit('created', this.attributes);
 
             return;
         }
 
         // Emit the saving event
-        this.emit('updating', this.attributes);
+        await this.emit('updating', this.attributes);
 
         // Update the model
         this.attributes = await this.observeAttributes('updating', this.attributes)
@@ -845,7 +845,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         this.attributes = await this.observeAttributes('updated', this.attributes)
 
         // Emit the updated event
-        this.emit('updated', this.attributes);
+        await this.emit('updated', this.attributes);
 
         // Set the original attributes
         this.original = { ...this.attributes } as Attributes
@@ -860,7 +860,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         if (!this.attributes) return;
 
         // Emit the deleting event
-        this.emit('deleting', this.attributes);
+        await this.emit('deleting', this.attributes);
 
         // Observe the attributes
         this.attributes = await this.observeAttributes('deleting', this.attributes);
@@ -876,7 +876,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         await this.observeAttributes('deleted', this.attributes);
 
         // Emit the deleted event
-        this.emit('deleted', this.attributes);
+        await this.emit('deleted', this.attributes);
     }
 
     /**
@@ -934,9 +934,9 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @param {IModelLifeCycleEvent} event - The event to emit.
      * @param {...any[]} args - The arguments to pass to the event.
      */
-    emit(event: IModelLifeCycleEvent, ...args: any[]): void {
+    async emit(event: IModelLifeCycleEvent, ...args: any[]): Promise<void> {
         if(typeof this.events?.[event] === 'function') {
-            app('events').dispatch(new this.events[event](...args));
+            await app('events').dispatch(new this.events[event](...args));
         }
     }
 

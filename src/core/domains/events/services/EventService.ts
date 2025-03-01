@@ -8,7 +8,7 @@ import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
 import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventConfig";
 import { IEventDriversConfigOption } from "@src/core/domains/events/interfaces/config/IEventDriversConfig";
-import { IEventListenersConfig, TListenersConfigOption } from "@src/core/domains/events/interfaces/config/IEventListenersConfig";
+import { TListenersConfigOption } from "@src/core/domains/events/interfaces/config/IEventListenersConfig";
 import { ICtor } from "@src/core/interfaces/ICtor";
 import { app } from "@src/core/services/App";
 
@@ -57,22 +57,6 @@ class EventService extends BaseEventService implements IEventService {
             driverCtor,
             options
         }
-    }
-
-    /**
-     * @param events An array of event constructors to be registered.
-     * @returns The same array of event constructors.
-     */
-    public static createConfigEvents(events: ICtor<IBaseEvent>[]): ICtor<IBaseEvent>[] {
-        return events
-    }
-
-    /**
-     * @param config The event listeners config.
-     * @returns The event listeners config.
-     */
-    public static createConfigListeners(config: IEventListenersConfig): IEventListenersConfig {
-        return config
     }
 
     /**
@@ -141,40 +125,21 @@ class EventService extends BaseEventService implements IEventService {
         this.srSetValue(driverIdentifier, driverConfig, EventService.REGISTERED_DRIVERS)
     }
 
-    /**
-     * Register a listener with the event service
-     * @param listenerIdentifierConstant a constant string to identify the listener
-     * @param listenerConfig the listener configuration
-     */
-    registerListener(listenerConfig: TListenersConfigOption): void {
-        const listenerIdentifier = new listenerConfig.listener().getName()
-
-        if(!this.srListExists(EventService.REGISTERED_LISTENERS)) {
-            this.srCreateList(EventService.REGISTERED_LISTENERS)
-        }
- 
-        // Update registered listeners
-        this.srSetValue(listenerIdentifier, listenerConfig, EventService.REGISTERED_LISTENERS)
-
-        // Update the registered events from the listener and subscribers
-        this.registerEventsFromListenerConfig(listenerConfig)
-    }
 
     /**
-     * Registers the events associated with the listener configuration with the event service.
-     * Iterates over the subscribers and registers each subscriber event with the event service.
-     * @param listenerConfig The listener configuration.
+     * Register listeners with the event service
+     * @param options The listeners configuration options.
      */
-    private registerEventsFromListenerConfig(listenerConfig: TListenersConfigOption): void {
-        
-        // Update registered events with the listener
-        this.registerEvent(listenerConfig.listener)
+    registerListeners(options: TListenersConfigOption[]): void {
+        for(const option of options) {
+            if(!this.srListExists(EventService.REGISTERED_LISTENERS)) {
+                this.srCreateList(EventService.REGISTERED_LISTENERS)
+            }
 
-        // Update the registered events from the subscribers
-        for(const subscriber of listenerConfig.subscribers) {
-            this.registerEvent(subscriber)
+            this.srSetValue(new option.listener().getName(), option, EventService.REGISTERED_LISTENERS)
         }
     }
+
 
     /**
      * Get the default event driver constructor.

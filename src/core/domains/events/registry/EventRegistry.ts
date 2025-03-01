@@ -1,6 +1,7 @@
 import { ICtor } from "@src/core/interfaces/ICtor";
 
 import { IBaseEvent } from "../interfaces/IBaseEvent";
+import { ListenerConstructor, SubscriberConstructor } from "../interfaces/IEventConstructors";
 
 /**
  * A static registry for events that can work before the event service is available
@@ -19,6 +20,20 @@ class EventRegistry {
         return eventCtor;
     }
 
+    /**
+     * Register a listener constructor
+     */
+    static registerListener(listener: ListenerConstructor): ListenerConstructor {
+        return this.register(listener) as ListenerConstructor;
+    }
+
+    /**
+     * Register a subscriber constructor
+     */
+    static registerSubscriber(subscriber: SubscriberConstructor): SubscriberConstructor {
+        return this.register(subscriber) as SubscriberConstructor;
+    }
+    
     /**
      * Register many event constructors
      */

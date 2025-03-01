@@ -1,5 +1,6 @@
 import User, { UserAttributes } from "@src/app/models/auth/User";
-import TestUserObserver from "@src/tests/observers/TestUserObserver";
+import { IModelEvents } from "@src/core/domains/models/interfaces/IModel";
+import TestUserCreatedListener from "@src/tests/events/events/auth/TestUserCreatedListener";
 
 
 /**
@@ -13,7 +14,10 @@ export default class TestUser extends User {
 
     constructor(data: UserAttributes | null = null) {
         super(data);
-        this.setObserverConstructor(TestUserObserver)
+    }
+
+    protected events?: IModelEvents | undefined = {
+        created: TestUserCreatedListener
     }
 
 }

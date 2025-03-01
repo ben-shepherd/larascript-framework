@@ -1,15 +1,16 @@
 /* eslint-disable no-unused-vars */
 import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventConfig";
 import { IEventDriversConfigOption } from "@src/core/domains/events/interfaces/config/IEventDriversConfig";
-import { TListenersConfigOption } from "@src/core/domains/events/interfaces/config/IEventListenersConfig";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
+import { SubscriberConstructor } from "@src/core/domains/events/interfaces/IEventConstructors";
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventWorkerConcern } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
 import { IMockableConcern } from "@src/core/domains/events/interfaces/IMockableConcern";
 import { IDispatchable } from "@src/core/interfaces/concerns/IDispatchable";
 import { ISimpleRegister } from "@src/core/interfaces/concerns/ISimpleRegister";
 import { ICtor } from "@src/core/interfaces/ICtor";
-import { SubscriberConstructor } from "@src/core/domains/events/interfaces/IEventConstructors";
+
+import { TListenersConfigOption } from "./config/IEventListenersConfig";
 
 export interface IEventService extends ISimpleRegister, IDispatchable, IEventWorkerConcern, IMockableConcern
 {
@@ -19,8 +20,8 @@ export interface IEventService extends ISimpleRegister, IDispatchable, IEventWor
 
     registerDriver(driverConfig: IEventDriversConfigOption): void;
 
-    registerListener(listenerConfig: TListenersConfigOption): void;
-
+    registerListeners(options: TListenersConfigOption[]): void;
+    
     getDefaultDriverCtor(): ICtor<IEventDriver>;
 
     getDriverOptions(driver: IEventDriver): IEventDriversConfigOption | undefined;
@@ -30,4 +31,5 @@ export interface IEventService extends ISimpleRegister, IDispatchable, IEventWor
     getEventCtorByName(eventName: string): ICtor<IBaseEvent> | undefined;
 
     getSubscribers(eventName: string): SubscriberConstructor[];
+
 }

@@ -16,15 +16,6 @@ export default class UserObserver extends Observer<UserAttributes> {
     protected userCreatedListener: ICtor<IBaseEvent> = UserCreatedListener;
 
     /**
-     * Sets the listener to use after a User has been created.
-     * @param listener The listener to use after a User has been created.
-     * @returns The UserObserver instance.
-     */
-    setUserCreatedListener(listener: ICtor<IBaseEvent>) {
-        this.userCreatedListener = listener
-    }
-
-    /**
      * Called when the User model is being created.
      * Automatically hashes the password if it is provided.
      * @param data The User data being created.
@@ -42,7 +33,6 @@ export default class UserObserver extends Observer<UserAttributes> {
      * @returns The processed User data.
      */
     async created(data: UserAttributes): Promise<UserAttributes> {
-        await App.container('events').dispatch(new this.userCreatedListener(data))
         return data
     }
 

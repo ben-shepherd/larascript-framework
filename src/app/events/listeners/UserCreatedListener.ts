@@ -15,4 +15,4 @@ class UserCreatedListener extends BaseEventListener {
 
 }
 
-export default EventRegistry.register(UserCreatedListener);
+export default EventRegistry.registerListener(UserCreatedListener);

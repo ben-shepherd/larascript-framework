@@ -7,6 +7,9 @@ import EventService from '@src/core/domains/events/services/EventService';
 import TestFailedWorkerModel from '@src/tests/models/models/TestFailedWorkerModel';
 import TestWorkerModel from "@src/tests/models/models/TestWorkerModel";
 
+import TestUserCreatedListener from '../events/events/auth/TestUserCreatedListener';
+import TestUserCreatedSubscriber from '../events/events/auth/TestUserCreatedSubscriber';
+
 class TestEventProvider extends EventProvider {
 
     protected config: IEventConfig = {
@@ -23,8 +26,14 @@ class TestEventProvider extends EventProvider {
                 workerModelCtor: TestWorkerModel,
                 runOnce: true
             })
-        }
-        
+        },
+
+        listeners: [
+            {
+                listener: TestUserCreatedListener,
+                subscribers: [TestUserCreatedSubscriber]
+            }
+        ]
     }
 
 }

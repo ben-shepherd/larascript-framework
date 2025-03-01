@@ -28,4 +28,4 @@ class UserCreatedSubscriber extends BaseEventSubscriber {
 
 }
 
-export default EventRegistry.register(UserCreatedSubscriber);
+export default EventRegistry.registerSubscriber(UserCreatedSubscriber);

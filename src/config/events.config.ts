@@ -1,3 +1,5 @@
+import UserCreatedListener from "@src/app/events/listeners/UserCreatedListener";
+import UserCreatedSubscriber from "@src/app/events/subscribers/UserCreatedSubscriber";
 import QueueableDriver, { TQueueDriverOptions } from "@src/core/domains/events/drivers/QueableDriver";
 import SyncDriver from "@src/core/domains/events/drivers/SyncDriver";
 import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventConfig";
@@ -40,5 +42,15 @@ export const eventConfig: IEventConfig = {
             failedWorkerModelCtor: FailedWorkerModel,
         })
         
-    }
+    },
+
+    listeners: [
+        {
+            listener: UserCreatedListener,
+            
+            subscribers: [
+                UserCreatedSubscriber
+            ]
+        }
+    ]
 }
