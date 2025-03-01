@@ -79,7 +79,6 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes> 
     // Events
     on(event: IModelLifeCycleEvent, eventConstructor: EventConstructor): void;
     off(event: IModelLifeCycleEvent): void;
-    emit(event: IModelLifeCycleEvent, ...args: any[]): void;
 }
 
 export type IModelLifeCycleEvent = "updating" | "updated" | "deleting" | "deleted" | "creating" | "created"

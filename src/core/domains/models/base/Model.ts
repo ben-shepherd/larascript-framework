@@ -51,9 +51,9 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     public attributes: Attributes | null = null;
 
     /**
-         * The original data of the model.
-         * Can be null if the model hasn't been populated.
-         */
+     * The original data of the model.
+     * Can be null if the model hasn't been populated.
+     */
     public original: Attributes | null = null;
     
     /**
@@ -109,11 +109,10 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      */
     public table!: string;
 
-
     /**
-         * The observer instance attached to this model.
-         * If not set, observeWith must be called to define it.
-         */
+     * The observer instance attached to this model.
+     * If not set, observeWith must be called to define it.
+     */
     public observer?: IObserver;
 
     /**
@@ -128,8 +127,8 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     protected castable = new Castable({ returnNullOnException: true })
 
     /**
-         * The casts for the model.
-         */
+     * The casts for the model.
+     */
     protected casts?: Record<string, TCastableType> = {};
 
     /**
@@ -468,7 +467,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         const relationsip = BaseRelationshipResolver.tryGetRelationshipInterface(this, key as string);
 
         if(relationsip) {
-            return this.getAttributeRelationship(key, relationsip);
+            return await this.getAttributeRelationship(key, relationsip);
         }
 
         return this.getAttributeSync(key);
@@ -934,7 +933,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @param {IModelLifeCycleEvent} event - The event to emit.
      * @param {...any[]} args - The arguments to pass to the event.
      */
-    async emit(event: IModelLifeCycleEvent, ...args: any[]): Promise<void> {
+    protected async emit(event: IModelLifeCycleEvent, ...args: any[]): Promise<void> {
         if(typeof this.events?.[event] === 'function') {
             await app('events').dispatch(new this.events[event](...args));
         }
