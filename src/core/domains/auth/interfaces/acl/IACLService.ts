@@ -11,6 +11,10 @@ export interface IACLService {
     getRoleScopesFromUser(user: IUserModel): string[]
     getRoleScopes(role: string | string[]): string[]
     getRole(role: string): IAclRole
+    assignRoleToUser(user: IUserModel, role: string | string[]): Promise<void>
+    assignGroupToUser(user: IUserModel, group: string | string[]): Promise<void>
+    removeRoleFromUser(user: IUserModel, role: string | string[]): Promise<void>
+    removeGroupFromUser(user: IUserModel, group: string | string[]): Promise<void>
 }
 
 

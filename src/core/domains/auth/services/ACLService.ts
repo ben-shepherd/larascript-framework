@@ -135,6 +135,54 @@ class ACLService implements IACLService {
 
     }
 
+    /**
+     * Assigns a role to a user
+     * @param user 
+     * @param role 
+     */
+    async assignRoleToUser(user: IUserModel, role: string | string[]): Promise<void> {
+        const rolesArray = typeof role === 'string' ? [role] : role;
+
+        user.setAttribute('roles', rolesArray);
+    }
+
+    /**
+     * Assigns a group to a user
+     * @param user 
+     * @param group 
+     */
+    async assignGroupToUser(user: IUserModel, group: string | string[]): Promise<void> {
+        const groupsArray = typeof group === 'string' ? [group] : group;
+
+        user.setAttribute('groups', groupsArray);
+    }
+
+    /**
+     * Removes a role from a user
+     * @param user 
+     * @param role 
+     */
+    async removeRoleFromUser(user: IUserModel, role: string | string[]): Promise<void> {
+        const currentRoles = user.getAttributeSync('roles') as string[] | null ?? [];
+        const rolesArray = typeof role === 'string' ? [role] : role;
+        const newRoles = currentRoles.filter(r => !rolesArray.includes(r));
+
+        user.setAttribute('roles', newRoles);
+    }
+
+    /**
+     * Removes a group from a user
+     * @param user 
+     * @param group 
+     */
+    async removeGroupFromUser(user: IUserModel, group: string | string[]): Promise<void> {
+        const currentGroups = user.getAttributeSync('groups') as string[] | null ?? [];
+        const groupsArray = typeof group === 'string' ? [group] : group;
+        const newGroups = currentGroups.filter(g => !groupsArray.includes(g));
+
+        user.setAttribute('groups', newGroups);
+    }
+
 }
 
 export default ACLService;
