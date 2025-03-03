@@ -16,7 +16,7 @@ class GenericRelationship implements IRelationship {
 
     /**
      * Retrieves the constructor of the local model in the "belongs to" relationship.
-     * @returns {ICtor<IModel>} The constructor of the local model.
+     * @returns {TClassConstructor<IModel>} The constructor of the local model.
      */
     getLocalModelCtor(): ModelConstructor<IModel> {
         return this.localModel
@@ -24,7 +24,7 @@ class GenericRelationship implements IRelationship {
 
     /**
      * Retrieves the constructor of the related model in the "belongs to" relationship.
-     * @returns {ICtor<IModel>} The constructor of the related model.
+     * @returns {TClassConstructor<IModel>} The constructor of the related model.
      */
     getForeignModelCtor(): ModelConstructor<IModel> {
         return this.foreignModel

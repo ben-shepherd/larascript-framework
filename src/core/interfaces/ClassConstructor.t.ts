@@ -2,7 +2,7 @@
  * Represents a constructor type for classes that can be instantiated.
  * 
  * @description
- * ICtor is a generic type that describes the shape of a class constructor.
+ * TClassConstructor is a generic type that describes the shape of a class constructor.
  * It can be used to pass references to classes that can be initialized with the 'new' keyword.
  * 
  * @typeparam T - The type of the instance that will be created by the constructor.
@@ -11,7 +11,7 @@
  * @example
  * class MyClass {}
  * 
- * function createInstance<T>(ctor: ICtor<T>): T {
+ * function createInstance<T>(ctor: TClassConstructor<T>): T {
  *   return new ctor();
  * }
  * 
