@@ -1,5 +1,5 @@
-import { ICtor } from "@src/core/interfaces/ICtor";
 import { IBroadcastListener } from "@src/core/domains/broadcast/interfaces/IBroadcaster";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 
 /**
  * Abstract base class for events that can be broadcasted.
@@ -28,7 +28,7 @@ abstract class BroadcastListener<Payload extends object> implements IBroadcastLi
      * @returns The name of the event as a string.
      */
     static getName(): string {
-        return new (this as unknown as ICtor<IBroadcastListener>)({}).getListenerName()
+        return new (this as unknown as TClassConstructor<IBroadcastListener>)({}).getListenerName()
     }
 
     /**

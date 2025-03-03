@@ -1,5 +1,5 @@
 import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 
 /**
  * The type of migration
@@ -11,7 +11,7 @@ export interface IMigration {
     /**
      * This should be set only if this migration should run on a specific database provider
      */
-    databaseAdapter?:  ICtor<IDatabaseAdapter>;
+    databaseAdapter?:  TClassConstructor<IDatabaseAdapter>;
 
     /**
      * Specify the group this migration belongs to

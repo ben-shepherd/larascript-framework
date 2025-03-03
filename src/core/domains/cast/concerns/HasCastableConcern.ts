@@ -1,9 +1,9 @@
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 
 import { TCastableType } from "../interfaces/IHasCastableConcern";
 import Castable from "../service/Castable";
 
-const HasCastableConcernMixin = (Base: ICtor) => {
+const HasCastableConcernMixin = (Base: TClassConstructor) => {
     return class extends Base {
 
         private castable = new Castable();

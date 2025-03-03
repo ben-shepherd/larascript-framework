@@ -6,7 +6,7 @@ import BelongsTo from "@src/core/domains/eloquent/relational/BelongsTo";
 import HasMany from "@src/core/domains/eloquent/relational/HasMany";
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import { IModel, IModelAttributes, ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 
 class BaseRelationshipResolver implements IRelationshipResolver {
 
@@ -123,7 +123,7 @@ class BaseRelationshipResolver implements IRelationshipResolver {
      */
     public static tryGetRelationshipInterface(model: IModel, relationshipName: string): IRelationship | null {
         try {
-            return this.resolveRelationshipInterfaceByModelRelationshipName(model.constructor as ICtor<IModel>, relationshipName)
+            return this.resolveRelationshipInterfaceByModelRelationshipName(model.constructor as TClassConstructor<IModel>, relationshipName)
         }
         catch (error) {
             if(!(error instanceof EloquentRelationshipException)) {
@@ -141,7 +141,7 @@ class BaseRelationshipResolver implements IRelationshipResolver {
      * @returns The relationship interface.
      * @throws {EloquentRelationshipException} If the relationship is invalid.
      */
-    public static resolveRelationshipInterfaceByModelRelationshipName(modelCtor: ICtor<IModel>, relationshipName: string): IRelationship {
+    public static resolveRelationshipInterfaceByModelRelationshipName(modelCtor: TClassConstructor<IModel>, relationshipName: string): IRelationship {
         const model = new modelCtor(null);
 
         // Check if the relationship exists

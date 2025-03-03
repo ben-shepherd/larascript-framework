@@ -7,7 +7,7 @@ import { IDatabaseService } from "@src/core/domains/database/interfaces/IDatabas
 import DatabaseAdapter from "@src/core/domains/database/services/DatabaseAdapter";
 import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { App } from "@src/core/services/App";
 
 import { IConnectionTypeHelpers } from "../interfaces/IConnectionTypeHelpers";
@@ -222,7 +222,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
      * @param connectionName 
      * @returns 
      */
-    isConnectionAdapter(adapter: ICtor<IDatabaseAdapter>, connectionName: string = this.getDefaultConnectionName()): boolean {
+    isConnectionAdapter(adapter: TClassConstructor<IDatabaseAdapter>, connectionName: string = this.getDefaultConnectionName()): boolean {
         const connectionConfig = this.config.connections.find(connectionConfig => connectionConfig.connectionName === connectionName)
 
         if(!connectionConfig) {
@@ -274,7 +274,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
      * @returns The constructor for the adapter.
      * @throws {Error} If the connection or adapter is not registered.
      */
-    getAdapterConstructor<T extends ICtor<IDatabaseAdapter> = ICtor<IDatabaseAdapter>>(connectionName: string = this.getDefaultConnectionName()): T {
+    getAdapterConstructor<T extends TClassConstructor<IDatabaseAdapter> = TClassConstructor<IDatabaseAdapter>>(connectionName: string = this.getDefaultConnectionName()): T {
         const connectionConfig = this.config.connections.find(connectionConfig => connectionConfig.connectionName === connectionName)
 
         if(!connectionConfig) {
@@ -306,7 +306,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
      *
      * @returns {IDatabaseAdapter[]} An array of all registered database adapter instances.
      */
-    getAllAdapterConstructors(): ICtor<IDatabaseAdapter>[] {
+    getAllAdapterConstructors(): TClassConstructor<IDatabaseAdapter>[] {
         return this.config.connections.map((connectionConfig) => connectionConfig.adapter)
     }
 

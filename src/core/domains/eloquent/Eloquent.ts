@@ -13,7 +13,7 @@ import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquent
 import { TDirection } from "@src/core/domains/eloquent/interfaces/TEnums";
 import With from "@src/core/domains/eloquent/relational/With";
 import { IModel, ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { App } from "@src/core/services/App";
 import { deepClone } from "@src/core/util/deepClone";
 
@@ -61,7 +61,7 @@ abstract class Eloquent<
     /**
      * The constructor of the expression builder
      */
-    protected expressionCtor!: ICtor<IEloquentExpression>;
+    protected expressionCtor!: TClassConstructor<IEloquentExpression>;
 
     /**
      * The expression builder
@@ -241,10 +241,10 @@ abstract class Eloquent<
     /**
      * Sets the expression builder to use for the query builder.
      * 
-     * @param {ICtor<IEloquentExpression>} builderCtor The constructor of the expression builder to use.
+     * @param {TClassConstructor<IEloquentExpression>} builderCtor The constructor of the expression builder to use.
      * @returns {this} The query builder instance for chaining.
      */
-    setExpressionCtor(builderCtor: ICtor<IEloquentExpression>): IEloquent<Model> {
+    setExpressionCtor(builderCtor: TClassConstructor<IEloquentExpression>): IEloquent<Model> {
         this.expressionCtor = builderCtor;
         this.expression = new builderCtor();
         return this as unknown as IEloquent<Model>
@@ -283,7 +283,7 @@ abstract class Eloquent<
      * If no model constructor is provided, the query builder will not be associated
      * with any model.
      * 
-     * @param {ICtor<IModel>} [modelCtor] The constructor of the model to associate with the query builder.
+     * @param {TClassConstructor<IModel>} [modelCtor] The constructor of the model to associate with the query builder.
      * @returns {this} The query builder instance for chaining.
      */
     setModelCtor(modelCtor?: ModelConstructor<IModel>): IEloquent<Model> {
@@ -299,7 +299,7 @@ abstract class Eloquent<
      * 
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    setModelColumns(modelCtor?: ICtor<IModel>, options: SetModelColumnsOptions = {}): IEloquent<Model> {
+    setModelColumns(modelCtor?: TClassConstructor<IModel>, options: SetModelColumnsOptions = {}): IEloquent<Model> {
         modelCtor = typeof modelCtor === 'undefined' ? this.modelCtor : modelCtor
         
         if(!modelCtor) {

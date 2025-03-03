@@ -1,8 +1,8 @@
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 
 export interface IEventDriversConfigOption {
-    driverCtor: ICtor<IEventDriver>,
+    driverCtor: TClassConstructor<IEventDriver>,
     options?: Record<string, unknown>;
 }
 

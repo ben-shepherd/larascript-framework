@@ -1,5 +1,5 @@
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import IService from "@src/core/interfaces/IService";
-import { ICtor } from "@src/core/interfaces/ICtor";
 
 /**
  * Singleton pattern implementation for services.
@@ -36,7 +36,7 @@ export default abstract class Singleton<Config extends Record<any,any> | null = 
      * @returns The singleton instance of the service.
      */
      
-    public static getInstance<Service extends Singleton<any>,Config extends Record<any,any> | null> (this: ICtor<Service>, config: Config | null = null): Service {
+    public static getInstance<Service extends Singleton<any>,Config extends Record<any,any> | null> (this: TClassConstructor<Service>, config: Config | null = null): Service {
         const className = this.name
 
         if(!Singleton.instances.has(className)) {

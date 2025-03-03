@@ -10,7 +10,7 @@ import { GetAttributesOptions, IModel, IModelAttributes, IModelEvents, IModelLif
 import ModelScopes, { TModelScope } from '@src/core/domains/models/utils/ModelScope';
 import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
 import { IObserver, IObserverEvent } from '@src/core/domains/observer/interfaces/IObserver';
-import { ICtor } from '@src/core/interfaces/ICtor';
+import { TClassConstructor } from '@src/core/interfaces/ClassConstructor.t';
 import IFactory, { FactoryConstructor } from '@src/core/interfaces/IFactory';
 import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
 import { app } from '@src/core/services/App';
@@ -212,7 +212,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      */
     static create<Model extends IModel>(data: Partial<Model['attributes']> | null = null): ModelWithAttributes<Model> {
         return new Proxy(
-            new (this as unknown as ICtor<Model>)(data),
+            new (this as unknown as TClassConstructor<Model>)(data),
             new ProxyModelHandler()
         )
     }
@@ -489,7 +489,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
 
         // Get the relationship interface
         if(!relationship) {
-            relationship = BaseRelationshipResolver.resolveRelationshipInterfaceByModelRelationshipName(this.constructor as ICtor<IModel>, key as string);
+            relationship = BaseRelationshipResolver.resolveRelationshipInterfaceByModelRelationshipName(this.constructor as TClassConstructor<IModel>, key as string);
         }
 
         // Get the relationship resolver
@@ -610,7 +610,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {string} The connection name of the model.
      */
     public static getConnectionName(): string {
-        return new (this as unknown as ICtor<IModel>)(null).connection;
+        return new (this as unknown as TClassConstructor<IModel>)(null).connection;
     }
 
     /**
@@ -620,7 +620,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {string} The primary key associated with the model.
      */
     public static getPrimaryKey(): string {
-        return new (this as unknown as ICtor<IModel>)(null).primaryKey;
+        return new (this as unknown as TClassConstructor<IModel>)(null).primaryKey;
     }
 
     /**
@@ -629,7 +629,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {IEloquent<IModel>} The query builder instance.
      */
     private queryBuilder(): IEloquent<IModel> {
-        return app('query').builder(this.constructor as ICtor<IModel>, this.connection);
+        return app('query').builder(this.constructor as TClassConstructor<IModel>, this.connection);
     }
 
     /**
@@ -882,7 +882,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * Retrieves a related model based on a "belongs to" relationship.
      * 
      * @template ForiegnModel The type of the related model.
-     * @param {ICtor<ForiegnModel>} foreignModel - The constructor of the related model.
+     * @param {TClassConstructor<ForiegnModel>} foreignModel - The constructor of the related model.
      * @param {Omit<IBelongsToOptionsLegacy, 'foreignTable'>} options - Options for the relationship.
      * @returns {BelongsTo} An instance of the BelongsTo class for chaining.
      */
@@ -894,7 +894,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * Retrieves a related model based on a "has many" relationship.
      * 
      * @template ForiegnModel The type of the related model.
-     * @param {ICtor<ForiegnModel>} foreignModel - The constructor of the related model.
+     * @param {TClassConstructor<ForiegnModel>} foreignModel - The constructor of the related model.
      * @param {Omit<IHasManyOptions, 'foreignTable'>} options - Options for the relationship.
      * @returns {HasMany} An instance of the HasMany class for chaining.
      */

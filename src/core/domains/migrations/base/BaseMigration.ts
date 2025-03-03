@@ -1,7 +1,7 @@
 import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 import { db } from "@src/core/domains/database/services/Database";
 import { IMigration, MigrationType } from "@src/core/domains/migrations/interfaces/IMigration";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { App } from "@src/core/services/App";
 
 /**
@@ -27,7 +27,7 @@ abstract class BaseMigration implements IMigration {
      * If undefined, the migration will run on the default provider.
      * Can be set to 'mongodb', 'postgres', or other supported database systems.
      */
-    databaseAdapter?: ICtor<IDatabaseAdapter>;
+    databaseAdapter?: TClassConstructor<IDatabaseAdapter>;
 
     /**
      * Define the name of the migration group.

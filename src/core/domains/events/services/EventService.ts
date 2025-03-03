@@ -9,7 +9,7 @@ import { IEventService } from "@src/core/domains/events/interfaces/IEventService
 import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventConfig";
 import { IEventDriversConfigOption } from "@src/core/domains/events/interfaces/config/IEventDriversConfig";
 import { TListenersConfigOption } from "@src/core/domains/events/interfaces/config/IEventListenersConfig";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { app } from "@src/core/services/App";
 
 /**
@@ -43,7 +43,7 @@ class EventService extends BaseEventService implements IEventService {
      * @param driver The constructor of the event driver.
      * @returns The name of the event driver as a string.
      */
-    public static getDriverName(driver: ICtor<IEventDriver>): string {
+    public static getDriverName(driver: TClassConstructor<IEventDriver>): string {
         return driver.name
     }
 
@@ -52,7 +52,7 @@ class EventService extends BaseEventService implements IEventService {
      * @param options The event driver options.
      * @returns The event driver config.
      */
-    public static createConfigDriver<T extends IEventDriversConfigOption['options'] = {}>(driverCtor: ICtor<IEventDriver>, options?: T): IEventDriversConfigOption {
+    public static createConfigDriver<T extends IEventDriversConfigOption['options'] = {}>(driverCtor: TClassConstructor<IEventDriver>, options?: T): IEventDriversConfigOption {
         return {
             driverCtor,
             options
@@ -102,7 +102,7 @@ class EventService extends BaseEventService implements IEventService {
      * Register an event with the event service
      * @param event The event class to be registered
      */
-    registerEvent(event: ICtor<IBaseEvent>): void {
+    registerEvent(event: TClassConstructor<IBaseEvent>): void {
         if(!this.srListExists(EventService.REGISTERED_EVENTS)) {
             this.srCreateList(EventService.REGISTERED_EVENTS)
         }
@@ -145,7 +145,7 @@ class EventService extends BaseEventService implements IEventService {
      * Get the default event driver constructor.
      * @returns The default event driver constructor.
      */
-    getDefaultDriverCtor(): ICtor<IEventDriver> {
+    getDefaultDriverCtor(): TClassConstructor<IEventDriver> {
         return this.config.defaultDriver
     }
 
@@ -172,8 +172,8 @@ class EventService extends BaseEventService implements IEventService {
      * @param eventName The name of the event.
      * @returns The event constructor for the specified event, or undefined if not found.
      */
-    getEventCtorByName(eventName: string): ICtor<IBaseEvent> | undefined {
-        return this.srGetValue(eventName, EventService.REGISTERED_EVENTS) as ICtor<IBaseEvent> | undefined
+    getEventCtorByName(eventName: string): TClassConstructor<IBaseEvent> | undefined {
+        return this.srGetValue(eventName, EventService.REGISTERED_EVENTS) as TClassConstructor<IBaseEvent> | undefined
     }
 
     /**

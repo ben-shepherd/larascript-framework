@@ -11,7 +11,7 @@ import { IPostgresConfig } from "@src/core/domains/postgres/interfaces/IPostgres
 import PostgresSchema from "@src/core/domains/postgres/PostgresSchema";
 import createMigrationSchemaPostgres from "@src/core/domains/postgres/schema/createMigrationSchemaPostgres";
 import { extractDefaultPostgresCredentials } from "@src/core/domains/postgres/utils/extractDefaultPostgresCredentials";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import pg from 'pg';
 import { QueryInterface, Sequelize } from "sequelize";
 
@@ -165,10 +165,10 @@ class PostgresAdapter extends BaseDatabaseAdapter<IPostgresConfig>  {
      * Retrieves the constructor for a Postgres query builder.
      *
      * @template Data The type of data to be queried, defaults to object.
-     * @returns {ICtor<IEloquent<Data>>} The constructor of the query builder.
+     * @returns {TClassConstructor<IEloquent<Data>>} The constructor of the query builder.
      */
-    getEloquentConstructor<Model extends IModel>(): ICtor<IEloquent<Model>> {
-        return PostgresEloquent as unknown as ICtor<IEloquent<Model>>
+    getEloquentConstructor<Model extends IModel>(): TClassConstructor<IEloquent<Model>> {
+        return PostgresEloquent as unknown as TClassConstructor<IEloquent<Model>>
     }
 
     /**

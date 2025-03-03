@@ -1,15 +1,15 @@
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import { IMockableConcern, TMockableEventCallback } from "@src/core/domains/events/interfaces/IMockableConcern";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 
 import EventNotDispatchedException from "../exceptions/EventNotDispatchedException";
 
 
-const EventMockableConcern = (Base: ICtor) => {
+const EventMockableConcern = (Base: TClassConstructor) => {
     return class EventMockable extends Base implements IMockableConcern {
 
         /** Array of events to mock */
-        mockEvents: ICtor<IBaseEvent>[] = [];
+        mockEvents: TClassConstructor<IBaseEvent>[] = [];
 
         /** Array of events that have been dispatched */
         mockEventsDispatched: IBaseEvent[] = [];
@@ -23,7 +23,7 @@ const EventMockableConcern = (Base: ICtor) => {
          * 
          * @param event The event to mock.
          */
-        mockEvent(event: ICtor<IBaseEvent>): void {
+        mockEvent(event: TClassConstructor<IBaseEvent>): void {
             this.mockEvents.push(event)
             this.removeMockEventDispatched(event)
         }
@@ -33,7 +33,7 @@ const EventMockableConcern = (Base: ICtor) => {
          * 
          * @param event - The event to remove from the {@link mockEvents} array.
          */
-        removeMockEvent(event: ICtor<IBaseEvent>): void {
+        removeMockEvent(event: TClassConstructor<IBaseEvent>): void {
             this.mockEvents = this.mockEvents.filter(e => (new e).getName() !== (new event).getName())
         }
 
@@ -60,7 +60,7 @@ const EventMockableConcern = (Base: ICtor) => {
          * 
          * @param event - The event to remove from the {@link mockEventsDispatched} array.
          */
-        removeMockEventDispatched(event: ICtor<IBaseEvent>): void {
+        removeMockEventDispatched(event: TClassConstructor<IBaseEvent>): void {
             this.mockEventsDispatched = this.mockEventsDispatched.filter(e => e.getName() !== (new event).getName())
         }
 
@@ -75,7 +75,7 @@ const EventMockableConcern = (Base: ICtor) => {
          * @throws Will throw an error if the event was not dispatched or if the dispatched event's 
          *         payload does not satisfy the given condition.
          */
-        assertDispatched<TPayload = unknown>(eventCtor: ICtor<IBaseEvent>, callback?: TMockableEventCallback<TPayload>): boolean {
+        assertDispatched<TPayload = unknown>(eventCtor: TClassConstructor<IBaseEvent>, callback?: TMockableEventCallback<TPayload>): boolean {
             const eventCtorName = (new eventCtor(null)).getName()
             const dispatchedEvent = this.mockEventsDispatched.find(e => e.getName() === eventCtorName)
 

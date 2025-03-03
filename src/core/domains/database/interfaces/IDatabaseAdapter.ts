@@ -4,7 +4,7 @@ import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareO
 import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { IRelationshipResolver } from "@src/core/domains/eloquent/interfaces/IEqloeuntRelationship";
 import { IModel } from "@src/core/domains/models/interfaces/IModel";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 
 export type TAdapterComposerFileName = {
 
@@ -27,7 +27,7 @@ export interface  IDatabaseAdapter {
 
     getSchema(): IDatabaseSchema;
 
-    getEloquentConstructor<Model extends IModel = IModel>(): ICtor<IEloquent<Model>>;
+    getEloquentConstructor<Model extends IModel = IModel>(): TClassConstructor<IEloquent<Model>>;
 
     getRelationshipResolver(connection: string): IRelationshipResolver;
 

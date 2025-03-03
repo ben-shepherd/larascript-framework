@@ -1,11 +1,11 @@
+import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import EventWorkerException from "@src/core/domains/events/exceptions/EventWorkerException";
 import { TISerializablePayload } from "@src/core/domains/events/interfaces/IEventPayload";
 import { IEventWorkerConcern, IWorkerModel, TEventWorkerOptions } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { App } from "@src/core/services/App";
-import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 
-const EventWorkerConcern = (Base: ICtor) => {
+const EventWorkerConcern = (Base: TClassConstructor) => {
     return class EventWorkerConcern extends Base implements IEventWorkerConcern {
 
         /**

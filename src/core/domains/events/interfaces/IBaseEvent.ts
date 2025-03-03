@@ -3,9 +3,9 @@
 import { IHasCastableConcern } from "@src/core/domains/cast/interfaces/IHasCastableConcern";
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { IExecutable } from "@src/core/interfaces/concerns/IExecutable";
 import { INameable } from "@src/core/interfaces/concerns/INameable";
-import { ICtor } from "@src/core/interfaces/ICtor";
 
 export interface IBaseSubscriber<TPayload = unknown> extends IBaseEvent<TPayload> {
     type: 'subscriber';
@@ -19,7 +19,7 @@ export interface IBaseEvent<TPayload = unknown> extends INameable, IExecutable, 
 {
     getQueueName(): string;
     getEventService(): IEventService;
-    getDriverCtor(): ICtor<IEventDriver>;
+    getDriverCtor(): TClassConstructor<IEventDriver>;
     getPayload(): TPayload;
     setPayload(payload: TPayload): void;
     getName(): string;

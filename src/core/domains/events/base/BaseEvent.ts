@@ -4,7 +4,7 @@ import EventInvalidPayloadException from "@src/core/domains/events/exceptions/Ev
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { App } from "@src/core/services/App";
 
 import EventRegistry from "../registry/EventRegistry";
@@ -13,9 +13,9 @@ abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBa
 
     protected payload: TPayload | null = null;
 
-    protected driver!: ICtor<IEventDriver>;
+    protected driver!: TClassConstructor<IEventDriver>;
 
-    protected defaultDriver!: ICtor<IEventDriver>;
+    protected defaultDriver!: TClassConstructor<IEventDriver>;
 
     protected namespace: string = '';
 
@@ -26,18 +26,18 @@ abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBa
      * @param payload The payload of the event
      * @param driver The class of the event driver
      */
-    constructor(payload: TPayload | null = null, driver?: ICtor<IEventDriver>) {
+    constructor(payload: TPayload | null = null, driver?: TClassConstructor<IEventDriver>) {
         super()
         
         // Auto-register this event type if not already initialized
         if (!EventRegistry.isInitialized()) {
-            EventRegistry.register(this.constructor as ICtor<IBaseEvent>);
+            EventRegistry.register(this.constructor as TClassConstructor<IBaseEvent>);
         }
 
         this.payload = payload;
 
         // Use safeContainer here to avoid errors during registering which runs during boot up.
-        this.defaultDriver = App.safeContainer('events')?.getDefaultDriverCtor() as ICtor<IEventDriver>; 
+        this.defaultDriver = App.safeContainer('events')?.getDefaultDriverCtor() as TClassConstructor<IEventDriver>; 
         this.driver = driver ?? this.defaultDriver;
 
         // Ensure the payload is valid
@@ -122,7 +122,7 @@ abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBa
     /**
      * @returns The event driver constructor.
      */
-    getDriverCtor(): ICtor<IEventDriver> {        
+    getDriverCtor(): TClassConstructor<IEventDriver> {        
         return this.driver ?? this.defaultDriver;
     }
 

@@ -1,7 +1,7 @@
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { IHasConfigConcern } from "@src/core/interfaces/concerns/IHasConfigConcern";
-import { ICtor } from "@src/core/interfaces/ICtor";
 
-const HasConfigConcern = (Base: ICtor) => {
+const HasConfigConcern = (Base: TClassConstructor) => {
     return class extends Base implements IHasConfigConcern {
 
         config: unknown;

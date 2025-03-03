@@ -1,9 +1,9 @@
 import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 
 export interface IDatabaseGenericConnectionConfig<Options extends object = object> {
     connectionName: string;
-    adapter: ICtor<IDatabaseAdapter>;
+    adapter: TClassConstructor<IDatabaseAdapter>;
     uri: string,
     options: Options;
 }

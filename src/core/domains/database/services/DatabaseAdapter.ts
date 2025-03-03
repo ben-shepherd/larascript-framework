@@ -1,5 +1,5 @@
 import { IDatabaseAdapter, TAdapterComposerFileName } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { App } from "@src/core/services/App";
 
 class DatabaseAdapter {
@@ -10,7 +10,7 @@ class DatabaseAdapter {
      * @param adapter The adapter to get the name of.
      * @returns The name of the adapter.
      */
-    public static getName(adapter: ICtor<DatabaseAdapter>) {
+    public static getName(adapter: TClassConstructor<DatabaseAdapter>) {
         return adapter.name
     }
 
@@ -25,7 +25,7 @@ class DatabaseAdapter {
     public static getComposerFileNames(): TAdapterComposerFileName[] {
         const db = App.container('db');
         const adapterCtors = db.getAllAdapterConstructors();
-        const adapters = adapterCtors.map((adapterCtor: ICtor<IDatabaseAdapter>) => new adapterCtor('', {}));
+        const adapters = adapterCtors.map((adapterCtor: TClassConstructor<IDatabaseAdapter>) => new adapterCtor('', {}));
         const composerFileNames = adapters.map((adapter: IDatabaseAdapter) => adapter.getDockerComposeFileName());
 
         const lastPartRegex = RegExp(/docker-compose.(\w+).yml$/);

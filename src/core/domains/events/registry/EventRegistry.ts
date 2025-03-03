@@ -1,4 +1,4 @@
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 
 import { IBaseEvent } from "../interfaces/IBaseEvent";
 import { ListenerConstructor, SubscriberConstructor } from "../interfaces/IEventConstructors";
@@ -8,14 +8,14 @@ import { ListenerConstructor, SubscriberConstructor } from "../interfaces/IEvent
  */
 class EventRegistry {
 
-    private static events: Set<ICtor<IBaseEvent>> = new Set();
+    private static events: Set<TClassConstructor<IBaseEvent>> = new Set();
 
     private static initialized = false;
 
     /**
      * Register an event constructor
      */
-    static register(eventCtor: ICtor<IBaseEvent>): ICtor<IBaseEvent> {
+    static register(eventCtor: TClassConstructor<IBaseEvent>): TClassConstructor<IBaseEvent> {
         this.events.add(eventCtor);
         return eventCtor;
     }
@@ -37,14 +37,14 @@ class EventRegistry {
     /**
      * Register many event constructors
      */
-    static registerMany(eventCtors: ICtor<IBaseEvent>[]): void {
+    static registerMany(eventCtors: TClassConstructor<IBaseEvent>[]): void {
         eventCtors.forEach(eventCtor => this.register(eventCtor));
     }
 
     /**
      * Get all registered events
      */
-    static getEvents(): ICtor<IBaseEvent>[] {
+    static getEvents(): TClassConstructor<IBaseEvent>[] {
         return Array.from(this.events);
     }
 

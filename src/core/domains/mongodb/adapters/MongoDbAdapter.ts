@@ -12,7 +12,7 @@ import MongoDbSchema from "@src/core/domains/mongodb/MongoDbSchema";
 import MongoRelationshipResolver from "@src/core/domains/mongodb/relationship/MongoRelationshipResolver";
 import createMigrationSchemaMongo from "@src/core/domains/mongodb/schema/createMigrationSchemaMongo";
 import { extractDefaultMongoCredentials } from "@src/core/domains/mongodb/utils/extractDefaultMongoCredentials";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { App } from "@src/core/services/App";
 import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
 
@@ -178,8 +178,8 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
         return new MongoDbSchema(this.connectionName)
     }
 
-    getEloquentConstructor<Model extends IModel>(): ICtor<IEloquent<Model>> {
-        return MongoDbEloquent as unknown as ICtor<IEloquent<Model>>
+    getEloquentConstructor<Model extends IModel>(): TClassConstructor<IEloquent<Model>> {
+        return MongoDbEloquent as unknown as TClassConstructor<IEloquent<Model>>
     }
 
     createMigrationSchema(tableName: string): Promise<unknown> {

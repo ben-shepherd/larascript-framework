@@ -4,8 +4,8 @@ import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabase
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { IHasConfigConcern } from "@src/core/interfaces/concerns/IHasConfigConcern";
-import { ICtor } from "@src/core/interfaces/ICtor";
 
 import { IConnectionTypeHelpers } from "./IConnectionTypeHelpers";
 
@@ -22,11 +22,11 @@ export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>
 
     getAdapter<K extends keyof IConnectionTypeHelpers = 'default'>(connectionName?: K | string): IConnectionTypeHelpers[K];
 
-    getAdapterConstructor<T extends ICtor<IDatabaseAdapter> = ICtor<IDatabaseAdapter>>(connectionName?: string): T;
+    getAdapterConstructor<T extends TClassConstructor<IDatabaseAdapter> = TClassConstructor<IDatabaseAdapter>>(connectionName?: string): T;
 
-    getAllAdapterConstructors(): ICtor<IDatabaseAdapter>[]
+    getAllAdapterConstructors(): TClassConstructor<IDatabaseAdapter>[]
 
-    isConnectionAdapter(adapter: ICtor<IDatabaseAdapter>, connectionName?: string): boolean
+    isConnectionAdapter(adapter: TClassConstructor<IDatabaseAdapter>, connectionName?: string): boolean
 
     getDefaultCredentials(adapterName: string): string | null;
 

@@ -3,7 +3,7 @@ import { UserAttributes } from "@src/app/models/auth/User";
 import { cryptoService } from "@src/core/domains/crypto/service/CryptoService";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import Observer from "@src/core/domains/observer/services/Observer";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { App } from "@src/core/services/App";
 
 /**
@@ -13,7 +13,7 @@ import { App } from "@src/core/services/App";
  */
 export default class UserObserver extends Observer<UserAttributes> {
 
-    protected userCreatedListener: ICtor<IBaseEvent> = UserCreatedListener;
+    protected userCreatedListener: TClassConstructor<IBaseEvent> = UserCreatedListener;
 
     /**
      * Called when the User model is being created.

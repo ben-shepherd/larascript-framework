@@ -4,7 +4,7 @@
 import Collection from "@src/core/domains/collections/Collection";
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import { IModel, IModelAttributes, ModelConstructor, ModelWithAttributes } from "@src/core/domains/models/interfaces/IModel";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 
 export type TColumnOption = {
     column: string | null;
@@ -57,7 +57,7 @@ export const JoinTypes = {
 } as const;
 
 export type TWith = {
-    modelCtor: ICtor<IModel>,
+    modelCtor: TClassConstructor<IModel>,
     relationship: string
 }
 
@@ -129,13 +129,13 @@ export interface IEloquent<Model extends IModel = IModel, Expression extends IEl
     // eloquent methods
     setConnectionName(connectionName: string): IEloquent<Model>;
     getExpression(): IEloquentExpression;
-    setExpressionCtor(builderCtor: ICtor<IEloquentExpression>): IEloquent<Model>;
+    setExpressionCtor(builderCtor: TClassConstructor<IEloquentExpression>): IEloquent<Model>;
     setExpression(expression: IEloquentExpression): IEloquent<Model>;
     cloneExpression(): IEloquentExpression;
     resetExpression(): IEloquent<Model>;
-    setModelCtor(modelCtor?: ICtor<IModel>): IEloquent<Model>;
+    setModelCtor(modelCtor?: TClassConstructor<IModel>): IEloquent<Model>;
     getModelCtor(): ModelConstructor<IModel> | undefined;
-    setModelColumns(modelCtor?: ICtor<IModel>, options?: SetModelColumnsOptions): IEloquent<Model>;
+    setModelColumns(modelCtor?: TClassConstructor<IModel>, options?: SetModelColumnsOptions): IEloquent<Model>;
 
     // id generator
     setIdGenerator(idGeneratorFn?: IdGeneratorFn): IEloquent<Model>;

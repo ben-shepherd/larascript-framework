@@ -11,7 +11,7 @@ import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter
 import SqlExpression, { SqlRaw } from "@src/core/domains/postgres/builder/ExpressionBuilder/SqlExpression";
 import PostgresJsonNormalizer from "@src/core/domains/postgres/normalizers/PostgresJsonNormalizer";
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import captureError from "@src/core/util/captureError";
 import PrefixedPropertyGrouper from "@src/core/util/PrefixedPropertyGrouper";
 import { generateUuidV4 } from "@src/core/util/uuid/generateUuidV4";
@@ -206,12 +206,12 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      * If a prefix is provided, the columns will be prefixed with the given string.
      * If `options.targetProperty` is provided, the columns will be formatted to
      * access the property of the model under the given key.
-     * @param {ICtor<IModel>} [modelCtor] - The model constructor to use for retrieving the columns.
+     * @param {TClassConstructor<IModel>} [modelCtor] - The model constructor to use for retrieving the columns.
      * @param {string} [prefix] - The prefix to add to the columns.
      * @param {SetModelColumnOptions} [options] - Options object containing the targetProperty to format the columns with.
      * @returns {this} The PostgresEloquent instance for chaining.
      */
-    setModelColumns(modelCtor?: ICtor<IModel>, options?: SetModelColumnsOptions): IEloquent<Model, SqlExpression> {
+    setModelColumns(modelCtor?: TClassConstructor<IModel>, options?: SetModelColumnsOptions): IEloquent<Model, SqlExpression> {
         super.setModelColumns(modelCtor, options)
         return this as unknown as IEloquent<Model>
     }

@@ -6,8 +6,8 @@ import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventC
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import { TEventWorkerOptions } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
 import { TMockableEventCallback } from "@src/core/domains/events/interfaces/IMockableConcern";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { ICommandOptionArguement, IOptionTypes } from "@src/core/interfaces/concerns/ISimpleRegister";
-import { ICtor } from "@src/core/interfaces/ICtor";
 import compose from "@src/core/util/compose";
 
 
@@ -51,13 +51,13 @@ class BaseEventService extends compose(class {}, HasSimpleRegisterConcern, Event
     /**
      * Declare EventMockableConcern methods.
      */
-    declare mockEvent: (event: ICtor<IBaseEvent>) => void;
+    declare mockEvent: (event: TClassConstructor<IBaseEvent>) => void;
 
     declare mockEventDispatched: (event: IBaseEvent) => void;
 
     declare resetMockEvents: () => void;
 
-    declare assertDispatched: <TPayload = unknown>(eventCtor: ICtor<IBaseEvent>, callback?: TMockableEventCallback<TPayload>) => boolean
+    declare assertDispatched: <TPayload = unknown>(eventCtor: TClassConstructor<IBaseEvent>, callback?: TMockableEventCallback<TPayload>) => boolean
 
     /**
      * Delcare EventWorkerConcern methods.

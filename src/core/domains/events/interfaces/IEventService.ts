@@ -6,9 +6,9 @@ import { SubscriberConstructor } from "@src/core/domains/events/interfaces/IEven
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventWorkerConcern } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
 import { IMockableConcern } from "@src/core/domains/events/interfaces/IMockableConcern";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { IDispatchable } from "@src/core/interfaces/concerns/IDispatchable";
 import { ISimpleRegister } from "@src/core/interfaces/concerns/ISimpleRegister";
-import { ICtor } from "@src/core/interfaces/ICtor";
 
 import { TListenersConfigOption } from "./config/IEventListenersConfig";
 
@@ -16,19 +16,19 @@ export interface IEventService extends ISimpleRegister, IDispatchable, IEventWor
 {
     getConfig(): IEventConfig;
 
-    registerEvent(event: ICtor<IBaseEvent>): void;
+    registerEvent(event: TClassConstructor<IBaseEvent>): void;
 
     registerDriver(driverConfig: IEventDriversConfigOption): void;
 
     registerListeners(options: TListenersConfigOption[]): void;
     
-    getDefaultDriverCtor(): ICtor<IEventDriver>;
+    getDefaultDriverCtor(): TClassConstructor<IEventDriver>;
 
     getDriverOptions(driver: IEventDriver): IEventDriversConfigOption | undefined;
 
     getDriverOptionsByName(driverName: string): IEventDriversConfigOption | undefined;
 
-    getEventCtorByName(eventName: string): ICtor<IBaseEvent> | undefined;
+    getEventCtorByName(eventName: string): TClassConstructor<IBaseEvent> | undefined;
 
     getSubscribers(eventName: string): SubscriberConstructor[];
 

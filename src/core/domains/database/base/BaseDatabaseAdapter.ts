@@ -8,7 +8,7 @@ import BaseRelationshipResolver from "@src/core/domains/eloquent/base/BaseRelati
 import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { IRelationshipResolver } from "@src/core/domains/eloquent/interfaces/IEqloeuntRelationship";
 import { IModel } from "@src/core/domains/models/interfaces/IModel";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 
 abstract class BaseDatabaseAdapter<TConfig extends object = object> extends BaseConfig implements IDatabaseAdapter {
 
@@ -80,7 +80,7 @@ abstract class BaseDatabaseAdapter<TConfig extends object = object> extends Base
     /**
      * Get the Eloquent constructor
      */
-    abstract getEloquentConstructor<Model extends IModel = IModel>(): ICtor<IEloquent<Model>>;
+    abstract getEloquentConstructor<Model extends IModel = IModel>(): TClassConstructor<IEloquent<Model>>;
 
     /**
      * Get the default credentials

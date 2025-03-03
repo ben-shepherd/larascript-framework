@@ -2,7 +2,7 @@ import { db } from "@src/core/domains/database/services/Database";
 import BaseRelationshipResolver from "@src/core/domains/eloquent/base/BaseRelationshipResolver";
 import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { IModel } from "@src/core/domains/models/interfaces/IModel";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 
 class With {
 
@@ -27,7 +27,7 @@ class With {
 
         const resolver = db().getAdapter().getRelationshipResolver()
 
-        const relationshipInterface = BaseRelationshipResolver.resolveRelationshipInterfaceByModelRelationshipName(eloquent.getModelCtor() as ICtor<IModel>, this.relationshipName)
+        const relationshipInterface = BaseRelationshipResolver.resolveRelationshipInterfaceByModelRelationshipName(eloquent.getModelCtor() as TClassConstructor<IModel>, this.relationshipName)
 
         return resolver.attachEloquentRelationship(eloquent, relationshipInterface, this.relationshipName)
     }

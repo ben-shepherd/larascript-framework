@@ -1,10 +1,10 @@
 import { IModel } from "@src/core/domains/models/interfaces/IModel";
-import { ICtor } from "@src/core/interfaces/ICtor";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 
 export interface IQueableDriverOptions {
     queueName: string;
     retries: number;
     failedCollection: string;
     runAfterSeconds: number;
-    workerModelCtor: ICtor<IModel>;
+    workerModelCtor: TClassConstructor<IModel>;
 }
