@@ -39,6 +39,8 @@ class MigrateFreshCommand extends BaseMigrationCommand {
         if(seed) {
             await console.readerService(['db:seed']).handle();
         }
+
+        this.input.writeLine('Migrations fresh successfully');
     }
 
     private async confirm(): Promise<boolean> {

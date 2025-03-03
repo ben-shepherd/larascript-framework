@@ -23,6 +23,8 @@ class SeedUpCommand extends BaseMigrationCommand {
         const schemaMigrationService = this.getSeederMigrationService();
         await schemaMigrationService.boot();
         await schemaMigrationService.up({ filterByFileName: file, group: group });
+
+        this.input.writeLine('Seeds up successfully');
     }
 
 }

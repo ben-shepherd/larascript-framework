@@ -24,6 +24,8 @@ class SeedCommand extends BaseMigrationCommand {
         const schemaMigrationService = this.getSeederMigrationService();
         await schemaMigrationService.boot();
         await schemaMigrationService.down({ filterByFileName: file, group: group, batch: batch ? parseInt(batch) : undefined });
+
+        this.input.writeLine('Seeds down successfully');
     }
 
 }

@@ -33,6 +33,8 @@ class MigrateUpCommand extends BaseMigrationCommand {
         const schemaMigrationService = this.getSchemaMigrationService();
         await schemaMigrationService.boot();
         await schemaMigrationService.up({ filterByFileName: file, group: group });
+
+        this.input.writeLine('Migrations up successfully');
     }
 
 }

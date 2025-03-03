@@ -21,6 +21,8 @@ class MigrateDownCommand extends BaseMigrationCommand {
         const schemaMigrationService = this.getSchemaMigrationService();
         await schemaMigrationService.boot();
         await schemaMigrationService.down({ batch: batch ? parseInt(batch) : undefined });
+
+        this.input.writeLine('Migrations down successfully');
     }
 
 }
