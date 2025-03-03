@@ -5,7 +5,7 @@ import parseBooleanFromString from "@src/core/util/parseBooleanFromString";
 import TestApiTokenModel from "@src/tests/larascript/models/models/TestApiTokenModel";
 import TestUser from "@src/tests/larascript/models/models/TestUser";
 
-import TestCreateUserValidator from "../validator/validators/TestCustomValidator";
+import TestCreateUserValidator from "../validator/validators/TestCreateUserCustomValidator";
 import TestUpdateUserValidator from "../validator/validators/TestUpdateUserValidator";
 
 

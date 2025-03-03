@@ -9,7 +9,7 @@ import testHelper from '@src/tests/testHelper';
 
 import TestApiTokenModel from '../models/models/TestApiTokenModel';
 import TestUser from '../models/models/TestUser';
-import TestCreateUserValidator from '../validator/validators/TestCustomValidator';
+import TestCreateUserValidator from '../validator/validators/TestCreateUserValidator';
 import TestUpdateUserValidator from '../validator/validators/TestUpdateUserValidator';
 
 

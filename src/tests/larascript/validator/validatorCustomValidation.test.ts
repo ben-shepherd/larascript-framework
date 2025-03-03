@@ -1,7 +1,7 @@
 import { beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
 
 import testHelper from '../../testHelper';
-import TestCustomValidator from './validators/TestCustomValidator';
+import TestCustomValidator from './validators/TestCreateUserCustomValidator';
 
 describe('Custom Validator Tests', () => {
     let validator: TestCustomValidator;
