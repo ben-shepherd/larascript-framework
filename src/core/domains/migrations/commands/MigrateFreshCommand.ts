@@ -34,7 +34,7 @@ class MigrateFreshCommand extends BaseMigrationCommand {
 
         // Handle migrate:up
         const console = App.container('console');
-        await console.readerService(['migrate:up','--keep-alivey']).handle();
+        await console.readerService(['migrate:up','--keep-alive']).handle();
 
         if(seed) {
             await console.readerService(['db:seed']).handle();
@@ -44,6 +44,11 @@ class MigrateFreshCommand extends BaseMigrationCommand {
     }
 
     private async confirm(): Promise<boolean> {
+
+        if(this.getArguementByKey('confirm')) {
+            return true;
+        }
+
         this.input.writeLine('--- Confirm Action ---');
         const answer = await this.input.askQuestion('Are you sure you want to drop all tables and run fresh migrations? (y/n)\n');
         return answer === 'y';
