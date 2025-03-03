@@ -5,6 +5,7 @@ import 'tsconfig-paths/register';
 
 import TinkerService from '@src/core/domains/tinker/services/TinkerService';
 import { app } from '@src/core/services/App';
+
 (async () => {
 
     // Boot the application
@@ -20,5 +21,6 @@ import { app } from '@src/core/services/App';
     const validator = app('validator');
     
     // Add your code here
+
 
 })(); 
