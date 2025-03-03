@@ -1,4 +1,6 @@
 import { beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
+import { db } from '@src/core/domains/database/services/Database';
+import { DataTypes } from 'sequelize';
 
 import testHelper from '../../testHelper';
 import TestCustomValidator from './validators/TestCreateUserCustomValidator';
@@ -8,6 +10,19 @@ describe('Custom Validator Tests', () => {
 
     beforeAll(async () => {
         await testHelper.testBootApp()
+
+        const schema = db().schema()
+        await schema.dropTable('users')
+        await schema.createTable('users', {
+            id: DataTypes.INTEGER,
+            name: DataTypes.STRING,
+            email: DataTypes.STRING,
+            firstName: DataTypes.STRING,
+            lastName: DataTypes.STRING,
+            password: DataTypes.STRING,
+            createdAt: DataTypes.DATE,
+            updatedAt: DataTypes.DATE
+        })
     })
 
     beforeEach(() => {
