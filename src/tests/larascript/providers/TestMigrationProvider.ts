@@ -6,8 +6,8 @@ class TestMigrationProvider extends MigrationProvider {
 
     protected config: IMigrationConfig = {
         keepProcessAlive: true,
-        schemaMigrationDir: '@src/../src/tests/migration/migrations',
-        seederMigrationDir: '@src/../src/tests/migration/seeders',
+        schemaMigrationDir: '@src/../src/tests/larascript/migration/migrations',
+        seederMigrationDir: '@src/../src/tests/larascript/migration/seeders',
         modelCtor: TestMigrationModel
     }
     
