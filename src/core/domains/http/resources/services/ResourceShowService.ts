@@ -46,6 +46,14 @@ class ResourceShowService extends AbastractBaseResourceService {
             throw new ResourceException('Route options are required')
         }
 
+        const id = context.getRequest().params?.id
+
+        if(!this.validateId(id)) {
+            return this.apiResponse<IModelAttributes>(context, {
+                message: 'Resource not found'
+            }, 404)
+        }
+
         const modelConstructor = this.getModelConstructor(context)
         
         // Query builder
@@ -67,6 +75,15 @@ class ResourceShowService extends AbastractBaseResourceService {
         return this.apiResponse<IModelAttributes>(context, (await stripGuardedResourceProperties(result))[0], 200)
     }
       
+    /**
+     * Validates the id
+     * @param id The id to validate
+     * @returns True if the id is valid, false otherwise
+     */
+    protected validateId(id: string): boolean {
+        return typeof id === 'string' && id !== 'null';
+    }
+
 }
 
 export default ResourceShowService;
