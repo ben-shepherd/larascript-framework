@@ -147,6 +147,18 @@ class ACLService implements IACLService {
     }
 
     /**
+     * Appends a role to a user
+     * @param user 
+     * @param role 
+     */
+    async appendRoleToUser(user: IUserModel, role: string): Promise<void> {
+        const currentRoles = user.getAttributeSync('roles') as string[] | null ?? [];
+        const newRoles = [...currentRoles, role];
+
+        user.setAttribute('roles', newRoles);
+    }
+
+    /**
      * Assigns a group to a user
      * @param user 
      * @param group 
@@ -155,6 +167,18 @@ class ACLService implements IACLService {
         const groupsArray = typeof group === 'string' ? [group] : group;
 
         user.setAttribute('groups', groupsArray);
+    }
+
+    /** 
+     * Appends a group to a user
+     * @param user 
+     * @param group 
+     */
+    async appendGroupToUser(user: IUserModel, group: string): Promise<void> {
+        const currentGroups = user.getAttributeSync('groups') as string[] | null ?? [];
+        const newGroups = [...currentGroups, group];
+
+        user.setAttribute('groups', newGroups);
     }
 
     /**
