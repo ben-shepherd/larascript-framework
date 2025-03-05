@@ -1,5 +1,6 @@
 import AuthProvider from "@src/core/domains/auth/providers/AuthProvider";
 import ConsoleProvider from "@src/core/domains/console/providers/ConsoleProvider";
+import CryptoProvider from "@src/core/domains/crypto/providers/CryptoProvider";
 import DatabaseProvider from "@src/core/domains/database/providers/DatabaseProvider";
 import EloquentQueryProvider from "@src/core/domains/eloquent/providers/EloquentQueryProvider";
 import EventProvider from "@src/core/domains/events/providers/EventProvider";
@@ -10,7 +11,6 @@ import MigrationProvider from "@src/core/domains/migrations/providers/MigrationP
 import SetupProvider from "@src/core/domains/setup/providers/SetupProvider";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 // eslint-disable-next-line no-unused-vars
-import CryptoProvider from "@src/core/domains/crypto/providers/CryptoProvider";
 import { ILarascriptProviders } from "@src/core/interfaces/ILarascriptProviders";
 import { IProvider } from "@src/core/interfaces/IProvider";
 

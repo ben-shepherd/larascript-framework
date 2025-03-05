@@ -5,6 +5,8 @@ import IsObject from '@src/core/domains/validator/rules/ObjectRule';
 import RequiredRule from '@src/core/domains/validator/rules/RequiredRule';
 import StringRule from '@src/core/domains/validator/rules/StringRule';
 import Validator from '@src/core/domains/validator/service/Validator';
+import { app } from '@src/core/services/App';
+import testHelper from '@src/tests/testHelper';
 
 
 describe('test validation', () => {
@@ -100,6 +102,21 @@ describe('test validation', () => {
             'company.departments.*.employees.*.name': [new RequiredRule(), new StringRule()],
             'company.departments.*.employees.*.role': [new RequiredRule(), new StringRule()]
         }).validate(data);
+
+        expect(result.passes()).toBe(true);
+    });
+
+    test('test validatorFn accessed through app helper', async () => {
+
+        await testHelper.testBootApp();
+        
+        const validatorFn = app('validatorFn')
+
+        const validator = validatorFn({
+            name: [new RequiredRule(), new StringRule()]
+        });
+
+        const result = await validator.validate({ name: 'John Doe' });
 
         expect(result.passes()).toBe(true);
     });

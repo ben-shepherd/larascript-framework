@@ -17,7 +17,7 @@ export type IValidatorAttributes = Record<string, unknown>
 
 export type IValidatorErrors = Record<string, string[]>
 
-export type IValidatorMake = (rules: IRulesObject, messages?: IValidatorMessages) => IValidator
+export type IValidatorFn = (rules: IRulesObject, messages?: IValidatorMessages) => IValidator
 
 export interface IValidator<Attributes extends IValidatorAttributes = IValidatorAttributes> {
     validate(data: Attributes): Promise<IValidatorResult<Attributes>>

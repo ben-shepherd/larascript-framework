@@ -9,7 +9,7 @@ import { IEventService } from '@src/core/domains/events/interfaces/IEventService
 import IHttpService from '@src/core/domains/http/interfaces/IHttpService';
 import { IRequestContext } from '@src/core/domains/http/interfaces/IRequestContext';
 import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerService';
-import { IValidatorMake } from '@src/core/domains/validator/interfaces/IValidator';
+import { IValidatorFn } from '@src/core/domains/validator/interfaces/IValidator';
 import readline from 'node:readline';
 
 import { ISessionService } from '../domains/session/interfaces/ISessionService';
@@ -86,7 +86,7 @@ export interface ILarascriptProviders {
      * Validator service
      * Provided by '@src/core/domains/validator/providers/ValidatorProvider'
      */
-    validator: IValidatorMake;
+    validatorFn: IValidatorFn;
 
     /**
      * Logger service
