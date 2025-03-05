@@ -1,7 +1,7 @@
 {
   "name": "larascript-framework",
   "version": "2.0.0",
-  "description": "A Node.js framework inspired by Laravel made with TypeScript",
+  "description": "A powerful Node.js framework with built-in ORM, type safety, and developer-friendly APIs",
   "main": "index.js",
   "scripts": {
     "build": "webpack --color",
