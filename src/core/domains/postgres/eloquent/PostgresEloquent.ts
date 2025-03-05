@@ -288,11 +288,6 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
         const results = await this.execute(expression)
         results.rows = this.formatResultsAsModels(results.rows as object[])
         return results as T
-        // // Map the result to move prefixed columns to the target property
-        // res.rows = PrefixedPropertyGrouper.handleArray<object>(res.rows, this.formatResultTargetPropertyToObjectOptions)
-        // // Apply formatter
-        // res.rows = this.formatterFn ? res.rows.map(this.formatterFn) : res.rows
-        // return res as T 
     }
 
     /**

@@ -86,7 +86,6 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      */
     public json: string[] = [];
 
-
     /**
      * List of relationships associated with the model.
      */
@@ -153,7 +152,6 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
             this.table = this.getDefaultTable()
         }
     }
-
 
     /**
      * Gets the document manager for database operations.
