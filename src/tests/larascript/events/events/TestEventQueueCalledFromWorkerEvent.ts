@@ -8,18 +8,12 @@ class TestEventQueueCalledFromWorkerEvent extends BaseEvent {
 
     protected namespace: string = 'testing';
 
-    static readonly eventName = 'TestEventQueueCalledFromWorkerEvent';
-
     casts: TCasts = {
         createdAt: "date"
     }
 
     constructor(payload) {
         super(payload, SyncDriver)
-    }
-
-    getName(): string {
-        return TestEventQueueCalledFromWorkerEvent.eventName;
     }
 
 }

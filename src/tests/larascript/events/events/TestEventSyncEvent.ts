@@ -5,8 +5,6 @@ import EventRegistry from "@src/core/domains/events/registry/EventRegistry";
 
 class TestEventSyncEvent extends BaseEvent<{hello: string}> {
 
-    static readonly eventName = 'TestEventSyncEvent';
-
     protected namespace: string = 'testing'; 
     
     async execute(): Promise<void> {

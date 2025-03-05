@@ -7,14 +7,8 @@ class TestEventQueueAlwaysFailsEvent extends BaseEvent {
 
     protected namespace: string = 'testing';
 
-    static readonly eventName = 'TestEventQueueAlwaysFailsEvent';
-
     getQueueName(): string {
         return 'testQueue';
-    }
-
-    getName(): string {
-        return TestEventQueueAlwaysFailsEvent.eventName;
     }
 
     async execute(): Promise<void> {

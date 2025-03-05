@@ -9,18 +9,12 @@ class TestEventQueueEvent extends BaseEvent {
 
     protected namespace: string = 'testing';
 
-    static readonly eventName = 'TestEventQueueEvent';
-
     constructor(payload) {
         super(payload, QueueableDriver)
     }
 
     getQueueName(): string {
         return 'testQueue';
-    }
-
-    getName(): string {
-        return TestEventQueueEvent.eventName;
     }
 
     async execute(): Promise<void> {

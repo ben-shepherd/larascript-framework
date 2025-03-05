@@ -41,8 +41,6 @@ class TestModel extends Model<TestModelAttributes> {
 // Create event classes for each lifecycle event
 class TestModelCreatingEvent extends BaseEvent<TestModelAttributes> {
 
-    static readonly eventName = 'TestModelCreatingEvent';
-
     protected namespace: string = 'testing';
 
     async execute() {
@@ -52,8 +50,6 @@ class TestModelCreatingEvent extends BaseEvent<TestModelAttributes> {
 }
 
 class TestModelCreatedEvent extends BaseEvent<TestModelAttributes> {
-
-    static readonly eventName = 'TestModelCreatedEvent';
 
     protected namespace: string = 'testing';
 
@@ -66,8 +62,6 @@ class TestModelCreatedEvent extends BaseEvent<TestModelAttributes> {
 
 class TestModelUpdatingEvent extends BaseEvent<TestModelAttributes> {
 
-    static readonly eventName = 'TestModelUpdatingEvent';
-
     protected namespace: string = 'testing';
 
     async execute() {
@@ -77,8 +71,6 @@ class TestModelUpdatingEvent extends BaseEvent<TestModelAttributes> {
 }
 
 class TestModelUpdatedEvent extends BaseEvent<TestModelAttributes> {
-
-    static readonly eventName = 'TestModelUpdatedEvent';
 
     protected namespace: string = 'testing';
 
@@ -90,8 +82,6 @@ class TestModelUpdatedEvent extends BaseEvent<TestModelAttributes> {
 
 class TestModelDeletingEvent extends BaseEvent<TestModelAttributes> {
 
-    static readonly eventName = 'TestModelDeletingEvent';
-
     protected namespace: string = 'testing';
 
     async execute() {
@@ -102,8 +92,6 @@ class TestModelDeletingEvent extends BaseEvent<TestModelAttributes> {
 
 class TestModelDeletedEvent extends BaseEvent<TestModelAttributes> {
 
-    static readonly eventName = 'TestModelDeletedEvent';
-
     protected namespace: string = 'testing';
 
     async execute() {
@@ -113,8 +101,6 @@ class TestModelDeletedEvent extends BaseEvent<TestModelAttributes> {
 }
 
 class TestModelModifyCreatingEvent extends BaseEvent<TestModelAttributes> {
-
-    static readonly eventName = 'TestModelModifyCreatingEvent';
 
     protected namespace: string = 'testing';
 
@@ -127,8 +113,6 @@ class TestModelModifyCreatingEvent extends BaseEvent<TestModelAttributes> {
 }
 
 class TestModelModifyUpdatingEvent extends BaseEvent<TestModelAttributes> {
-
-    static readonly eventName = 'TestModelModifyUpdatingEvent';
 
     protected namespace: string = 'testing';
 

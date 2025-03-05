@@ -10,18 +10,12 @@ class TestEventQueueAddAlwaysFailsEventToQueue extends BaseEvent {
 
     protected namespace: string = 'testing';
 
-    static readonly eventName = 'TestEventQueueAddAlwaysFailsEventToQueue';
-
     constructor() {
         super(null, QueueableDriver)
     }
 
     getQueueName(): string {
         return 'testQueue';
-    }
-
-    getName(): string {
-        return TestEventQueueAddAlwaysFailsEventToQueue.eventName;
     }
 
     async execute(): Promise<void> {

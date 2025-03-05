@@ -4,16 +4,10 @@ import EventRegistry from "@src/core/domains/events/registry/EventRegistry";
 
 class UserCreatedSubscriber extends BaseEventSubscriber {
 
-    static readonly eventName = 'UserCreatedSubscriber';
-    
     protected namespace: string = 'auth';
 
     constructor(payload) {
         super(payload, SyncDriver);
-    }
-
-    getName(): string {
-        return UserCreatedSubscriber.eventName;
     }
 
     getQueueName(): string {
