@@ -280,11 +280,27 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     }
 
     /**
+     * Retrieves the relationships for the model.
+     * @returns The relationships for the model.
+     */
+    static getRelationships(): string[] {
+        return this.create().getRelationships()
+    }
+
+    /**
      * Retrieves the query builder for the model.
      * @returns The query builder for the model.
      */
     static query<Model extends IModel>(): IEloquent<Model> {
         return queryBuilder<Model>(this as unknown as ModelConstructor<Model>) as IEloquent<Model>
+    }
+
+    /**
+     * Retrieves the relationships for the model.
+     * @returns The relationships for the model.
+     */
+    getRelationships(): string[] {
+        return this.relationships
     }
 
     /**
@@ -681,18 +697,6 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
             await this.setAttribute(key, value);
         }
     }
-
-    /**
-     * Retrieves the data from the model.
-     * 
-     * @param {GetAttributesOptions} [options={ excludeGuarded: true }] - Options for data retrieval.
-     * @returns {Attributes | null} The model's data, potentially excluding guarded fields.
-     * @deprecated use `toObject` instead
-     */
-    async getData(options: GetAttributesOptions = { excludeGuarded: true }): Promise<Attributes | null> {
-        return this.toObject(options);
-    }
-
     
     /**
      * Retrieves the entire model's data as an object.
@@ -935,6 +939,21 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         if(typeof this.events?.[event] === 'function') {
             await app('events').dispatch(new this.events[event](...args));
         }
+    }
+
+    /**
+     * Loads the relationships for the model.
+     * 
+     * @returns {Promise<void>}
+     */
+    async loadRelationships(): Promise<void> {
+        if(!this.attributes) {
+            return;
+        }
+
+        this.relationships.forEach(async relationship => {
+            await this.setAttribute(relationship as keyof Attributes, await this.getAttributeRelationship(relationship as keyof Attributes))
+        });
     }
 
 }

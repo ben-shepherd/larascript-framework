@@ -17,6 +17,7 @@ export type ModelConstructor<M extends IModel = IModel> = {
     getScopes(scopes: TModelScope[], additionalScopes?: string[]): string[];
     getFields(): string[];
     factory(): IFactory<IModel>;
+    getRelationships(): string[];
 }
 
 export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>
@@ -65,16 +66,13 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes> 
     getId(): string | undefined;
     setTimestamp(dateTimeField: string, value: Date): Promise<void>;
     fill(data: Partial<Attributes>): Promise<void>;
-
-    /**
-     * @deprecated
-     */
-    getData(options: GetAttributesOptions): Promise<Attributes | null>;
     toObject(options?: GetAttributesOptions): Promise<Attributes | null>;
     refresh(): Promise<Attributes | null>;
     update(): Promise<void>;
     save(): Promise<void>;
     delete(): Promise<void>;
+    getRelationships(): string[];
+    loadRelationships(): Promise<void>;
 
     // Events
     on(event: IModelLifeCycleEvent, eventConstructor: EventConstructor): void;
