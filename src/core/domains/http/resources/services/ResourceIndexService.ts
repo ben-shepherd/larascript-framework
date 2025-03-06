@@ -1,3 +1,4 @@
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
@@ -62,15 +63,11 @@ class ResourceIndexService extends AbastractBaseResourceService {
         const pageOptions = this.buildPageOptions(context);
         const filters = this.getQueryFilters(context);
 
-
         // Create a query builder
         const builder = queryBuilder(this.getModelConstructor(context));
-                
 
         // Apply the filters
-        if(Object.keys(filters).length > 0) {
-            builder.where(filters, 'like')
-        }
+        this.applyFilters(builder, filters);
         
         // Apply the page options
         if(typeof pageOptions.pageSize === 'number' && typeof pageOptions.skip === 'number') {
@@ -104,8 +101,24 @@ class ResourceIndexService extends AbastractBaseResourceService {
         })
     }
 
+    /**
+     * Applies the filters to the builder
+     * @param builder The builder
+     * @param filters The filters
+     */
+    applyFilters(builder: IEloquent<any, any>, filters: object) {
+        if(Object.keys(filters).length > 0) {
 
-
+            for(const [key, value] of Object.entries(filters)) {
+                if(value === 'true' || value === 'false') {
+                    builder.where(key, '=', value === 'true')
+                }
+                else {
+                    builder.where(key, 'like', '%' + value + '%')
+                }
+            }
+        }
+    }
 
     /**
      * Builds the filters object by combining base filters defined in route options with
@@ -171,7 +184,14 @@ class ResourceIndexService extends AbastractBaseResourceService {
             ...filters,
             ...Object.keys(filters).reduce((acc, curr) => {
                 const value = filters[curr];
-                acc[curr] = `%${value}%`;
+
+                if(value === true || value === false) {
+                    acc[curr] = value.toString();
+                }
+                else {
+                    acc[curr] = `%${value}%`;
+                }
+                
                 return acc;
             }, {})
         }
