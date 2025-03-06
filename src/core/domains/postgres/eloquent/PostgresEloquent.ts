@@ -313,13 +313,13 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
     async raw<T = QueryResult>(expression: string, bindings?: unknown[]): Promise<T> {
 
         if(db().showLogs()) {
-            console.log('[PostgresEloquent] raw', { expression, bindings })
+            console.log('[Postgres] raw', { expression, bindings })
         }
 
         const results = await this.getPool().query(expression, bindings)
 
         if(db().showLogs()) {
-            console.log('[PostgresEloquent] raw results count', results?.rows?.length)
+            console.log('[Postgres] count', results?.rows?.length)
         }
 
         this.expression.bindingsUtility.reset()
