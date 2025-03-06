@@ -4,12 +4,8 @@ import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import parseBooleanFromString from "@src/core/util/parseBooleanFromString";
 
-// Default connection name
 const DEFAULT_CONNECTION = (process.env.DATABASE_DEFAULT_CONNECTION as string) ?? 'default';
 
-/**
- * Database configuration
- */
 const config: IDatabaseConfig = {
 
     /**

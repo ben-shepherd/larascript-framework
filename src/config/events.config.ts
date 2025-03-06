@@ -7,9 +7,6 @@ import FailedWorkerModel from "@src/core/domains/events/models/FailedWorkerModel
 import WorkerModel from "@src/core/domains/events/models/WorkerModel";
 import EventService from "@src/core/domains/events/services/EventService";
 
-/**
- * Event Drivers Constants
- */
 export const EVENT_DRIVERS = {
     SYNC: EventService.getDriverName(SyncDriver),
     QUEABLE: EventService.getDriverName(QueueableDriver)
