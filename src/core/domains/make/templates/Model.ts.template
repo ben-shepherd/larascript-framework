@@ -24,7 +24,10 @@ class #name# extends Model<#name#Attributes> {
     json: string[] = [];
 
     // Add your date fields here, e.g: ['postedAt']
-    dates: string[] = [];
+    dates: string[] = [
+        'createdAt',
+        'updatedAt'
+    ];
 
     // Enable or disable automatic generation of createdAt, updatedAt fields
     timestamps: boolean = true;
