@@ -141,12 +141,13 @@ class ResourceIndexService extends AbastractBaseResourceService {
 
         const baseFilters = options?.resource?.filters ?? {};
         const allowedFields = options?.resource?.searching?.fields ?? []
+        const requestFilters = (new QueryFilters).parseRequest(req, { allowedFields: allowedFields }).getFilters();
 
         // Build the filters with percent signs
         // Example: { title: 'foo' } becomes { title: '%foo%' }
         const filters = this.filtersWithPercentSigns({
             ...baseFilters,
-            ...(new QueryFilters).parseRequest(req, { allowedFields: allowedFields }).getFilters()
+            ...requestFilters
         })
 
         // Strip the non-resource fields from the filters
@@ -187,6 +188,9 @@ class ResourceIndexService extends AbastractBaseResourceService {
 
                 if(value === true || value === false) {
                     acc[curr] = value.toString();
+                }
+                else if(value === 'true' || value === 'false') {
+                    acc[curr] = value;
                 }
                 else {
                     acc[curr] = `%${value}%`;
