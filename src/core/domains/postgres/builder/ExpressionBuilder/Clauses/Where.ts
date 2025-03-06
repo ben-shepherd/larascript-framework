@@ -9,6 +9,7 @@ type SqlWhereClause = {
     value?: TWhereClauseValue;
     logicalOperator?: TLogicalOperator
     appendValue?: boolean;
+    cast?: string;
 }
 
 type WhereBetweenValue = [TWhereClauseValue, TWhereClauseValue]
@@ -28,7 +29,7 @@ class Where {
         protected bindings: BindingsHelper = new BindingsHelper(),
         // eslint-disable-next-line no-unused-vars
         protected disableAddingNewBindings: boolean = false
-    ) {}
+    ) { }
 
     /**
      * Converts an array of where clauses and a raw where clause into a SQL string
@@ -57,11 +58,11 @@ class Where {
      */
     build(prefix: string = ''): string {
 
-        if(this.rawWhere) {
+        if (this.rawWhere) {
             return `${prefix}${this.whereRaw(this.rawWhere)}`
         }
 
-        if(!this.filters || this.filters.length === 0) {
+        if (!this.filters || this.filters.length === 0) {
             return ''
         }
 
@@ -84,19 +85,25 @@ class Where {
      */
     where(wheres: TWhereClause[]): string {
         let sql = `WHERE `;
-        
-        for(let i = 0; i < wheres.length; i++) {
+
+        for (let i = 0; i < wheres.length; i++) {
             const currentWhereSql = this.convertToSqlWhereClause(wheres[i])
             const isNotLastWhere = i !== wheres.length - 1
 
             // Example: "table."
-            if(currentWhereSql.tableName) {
+            if (currentWhereSql.tableName) {
                 const tableName = SqlExpression.formatTableNameWithQuotes(currentWhereSql.tableName)
                 sql += tableName + '.'
             }
 
             // Example: "column"
-            sql += SqlExpression.prepareColumnOptions({ column: currentWhereSql.column }).column + ' ';
+            sql += SqlExpression.prepareColumnOptions({ column: currentWhereSql.column }).column;
+            
+            // Example: "::text"
+            if(currentWhereSql.cast) {
+                sql += `::${currentWhereSql.cast}`
+            }
+            sql += ' '
 
             // Example: LIKE
             // Example: =
@@ -105,13 +112,20 @@ class Where {
 
             // Example: value
             // So far: column LIKE value
-            if(currentWhereSql.value) {
-                sql += currentWhereSql.value + ' ';
+            if (currentWhereSql.value) {
+                sql += currentWhereSql.value;
+
+                // Example: "::text"
+                if (currentWhereSql.cast) {
+                    sql += `::${currentWhereSql.cast} `
+                }
+
+                sql += ' '
             }
 
             // Example: AND
             // So far: column LIKE value AND
-            if(isNotLastWhere) {
+            if (isNotLastWhere) {
                 sql += this.logicalOperatorForJoiningWheres(wheres, i)
             }
         }
@@ -135,7 +149,7 @@ class Where {
 
         const currentWhere = wheres[currentIndex]
 
-        if(!currentWhere.logicalOperator) {
+        if (!currentWhere.logicalOperator) {
             return '';
         }
 
@@ -146,7 +160,7 @@ class Where {
         this.disableAddingNewBindings = false
 
         // If there is a next parsed, append the logical operator (AND, OR)
-        if(nextWhereSql) {
+        if (nextWhereSql) {
             const logicalOperator = nextWhereSql.logicalOperator ?? LogicalOperators.AND
             return logicalOperator.toUpperCase() + ' '
         }
@@ -161,14 +175,14 @@ class Where {
      * @param {RawWhere} rawWhere - The raw where clause containing the SQL string and bindings to use.
      * @returns {string} The SQL string for the WHERE clause.
      */
-    whereRaw({sql, bindings }: SqlRaw): string {
-        if(Array.isArray(bindings)) {
+    whereRaw({ sql, bindings }: SqlRaw): string {
+        if (Array.isArray(bindings)) {
             bindings.forEach(binding => this.bindings.addBinding(null, binding));
         }
         else {
             this.bindings.addBinding(null, bindings);
         }
-        
+
         return `WHERE ${sql}`;
     }
 
@@ -184,8 +198,8 @@ class Where {
      * @param {TWhereClause} filter - The parsed where clause to convert.
      * @returns {SqlWhereClause} The parsed where clause in its SQL representation.
      */
-    convertToSqlWhereClause({ column, ...filter}: TWhereClause): SqlWhereClause {
-        const convertedWhere = { column, ...filter} as SqlWhereClause
+    convertToSqlWhereClause({ column, ...filter }: TWhereClause): SqlWhereClause {
+        const convertedWhere = { column, ...filter } as SqlWhereClause
 
         if (filter.operator === 'in') {
             convertedWhere.operator = 'IN';
@@ -255,7 +269,7 @@ class Where {
     getValueWhereInStringAndAddBindings({ column, value }: SqlWhereClause): string {
         const valueArray: Iterable<unknown> = Array.isArray(value) ? value : [value];
         const placeholders: string[] = []
-        for(const value of valueArray) {
+        for (const value of valueArray) {
             placeholders.push(
                 this.addBinding(column, value).getLastBinding()?.sql as string
             );
@@ -280,12 +294,12 @@ class Where {
         const [from, to] = value
         const placeholders: string[] = []
 
-        for(const value of [from, to]) {
+        for (const value of [from, to]) {
             placeholders.push(
                 this.addBinding(column, value).getLastBinding()?.sql as string
             );
         }
-        
+
         const [placeholderFrom, placeholderTo] = placeholders
 
         return `${placeholderFrom} AND ${placeholderTo}`
@@ -301,10 +315,10 @@ class Where {
      * @returns {BindingsHelper} The current bindings instance.
      */
     addBinding(column: string | null, binding: unknown): BindingsHelper {
-        if(this.disableAddingNewBindings) {
+        if (this.disableAddingNewBindings) {
             return this.bindings
         }
-        
+
         this.bindings.addBinding(column, binding);
         return this.bindings
     }

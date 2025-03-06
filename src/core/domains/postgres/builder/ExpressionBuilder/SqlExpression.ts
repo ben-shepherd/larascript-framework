@@ -1,6 +1,6 @@
 import BaseExpression, { buildTypes } from "@src/core/domains/eloquent/base/BaseExpression";
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
-import { TColumnOption } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { TColumnOption, TLogicalOperator, TOperator, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
 import DeleteFrom from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/DeleteFrom";
 import FromTable from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/FromTable";
@@ -12,6 +12,7 @@ import OrderBy from "@src/core/domains/postgres/builder/ExpressionBuilder/Clause
 import SelectColumns from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/SelectColumns";
 import Update from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/Update";
 import Where from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/Where";
+import { isUuid } from "@src/core/utility/uuid";
 import { z } from "zod";
 
 export type SqlRaw = { sql: string, bindings?: unknown }
@@ -224,6 +225,28 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
         if(!schema.safeParse(objects).success) {
             throw new ExpressionException(message);
         }
+    }
+
+    /**
+     * Adds a WHERE clause to the SQL expression.
+     * 
+     * This method extends the base where method to handle UUID values.
+     * If the value is a string and is a valid UUID, it will be cast to 'uuid'.
+     * 
+     * @param {string} column - The column to apply the WHERE clause to.
+     * @param {TOperator} operator - The operator to use in the WHERE clause.
+     * @param {TWhereClauseValue | TWhereClauseValue[]} value - The value to compare against.
+     * @param {TLogicalOperator} [logicalOperator] - The logical operator to use in the WHERE clause.
+     * @param {string} [cast] - The type to cast the value to.
+     * @returns {this} The current SqlExpression instance.
+     */
+    where(column: string, operator: TOperator, value?: TWhereClauseValue | TWhereClauseValue[], logicalOperator?: TLogicalOperator, cast?: string): this {
+        if(typeof value === 'string' && isUuid(value)) {
+            cast = 'uuid'
+        }
+
+        super.where(column, operator, value, logicalOperator, cast)
+        return this
     }
 
 }
