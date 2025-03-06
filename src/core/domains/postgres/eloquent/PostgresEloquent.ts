@@ -40,6 +40,11 @@ class PostgresEloquent<Model extends IModel> extends Eloquent<Model, SqlExpressi
      */
     protected formatter: PrefixedPropertyGrouper = new PrefixedPropertyGrouper()
 
+    constructor() {
+        super()
+        this.expression.setUuidCast(this.defaultIdGeneratorFn === generateUuidV4)
+    }
+
     /**
      * Sets the query builder client to the given value.
      * This is useful if you have an existing client you want to reuse

@@ -723,7 +723,7 @@ abstract class Eloquent<
      */
     join(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, ...args: any[]): IEloquent<Model> {
         const localTable = this.useTable()
-        this.expression.setJoins({ localTable, localColumn, relatedTable: related.getTable(), relatedColumn, type: 'inner' });
+        this.expression.setJoins({ localTable, localColumn, relatedTable: related.getTable(), relatedColumn, type: 'inner', ...args });
         return this as unknown as IEloquent<Model>
     }
 
@@ -737,7 +737,7 @@ abstract class Eloquent<
      */
     leftJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, ...args: any[]): IEloquent<Model> {
         const localTable = this.useTable()
-        this.expression.setJoins({ localTable, localColumn, relatedTable: related.getTable(), relatedColumn, type: 'left' });
+        this.expression.setJoins({ localTable, localColumn, relatedTable: related.getTable(), relatedColumn, type: 'left', ...args });
         return this as unknown as IEloquent<Model>
     }
 

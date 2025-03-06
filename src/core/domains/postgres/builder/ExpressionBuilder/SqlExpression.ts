@@ -1,6 +1,6 @@
 import BaseExpression, { buildTypes } from "@src/core/domains/eloquent/base/BaseExpression";
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
-import { TColumnOption, TLogicalOperator, TOperator, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { TColumnOption, TJoin, TLogicalOperator, TOperator, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import BindingsHelper from "@src/core/domains/postgres/builder/BindingsHelper";
 import DeleteFrom from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/DeleteFrom";
 import FromTable from "@src/core/domains/postgres/builder/ExpressionBuilder/Clauses/FromTable";
@@ -24,6 +24,19 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
     protected rawSelect: SqlRaw | null = null;
     
     protected rawWhere: SqlRaw | null = null;
+
+    protected uuidCast: boolean = false;
+
+    /**
+     * Sets the UUID cast for the SQL expression.
+     * 
+     * @param {boolean} uuidCast - The boolean value to set the UUID cast to.
+     * @returns {this} The current SqlExpression instance.
+     */
+    setUuidCast(uuidCast: boolean): this {
+        this.uuidCast = uuidCast;
+        return this;
+    }
 
     /**
      * Sets the default values for the expression properties. 
@@ -76,6 +89,8 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
             }
 
             option.column = this.formatColumnWithQuotes(option.column as string);
+            option.column = option.cast ? `${option.column}::${option.cast}` : option.column;
+
             return option
         }
 
@@ -247,6 +262,45 @@ class SqlExpression extends BaseExpression<BindingsHelper> {
 
         super.where(column, operator, value, logicalOperator, cast)
         return this
+    }
+
+    /**
+     * Sets the joins for the SQL expression.
+     * 
+     * This method extends the base setJoins method to handle UUID values.
+     * If the localColumn or relatedColumn is 'id', the cast is set to 'uuid'.
+     * 
+     * @param {TJoin[] | TJoin} joins - The joins to set for the SQL expression.
+     * @returns {this} The current SqlExpression instance.
+     */
+    setJoins(joins: TJoin[] | TJoin): this {
+        let joinOptions = Array.isArray(joins) ? joins : [joins];
+        joinOptions = this.joinsWithUuidCast(joinOptions);
+        super.setJoins(joinOptions)
+        return this
+    }
+
+    /**
+     * Adds UUID cast to joins where the localColumn or relatedColumn is 'id'.
+     * 
+     * This method iterates through the provided joins and checks if the localColumn
+     * or relatedColumn is 'id'. If so, it sets the cast to 'uuid' for those joins.
+     * 
+     * @param {TJoin[]} joins - The joins to add UUID cast to.
+     * @returns {TJoin[]} The joins with UUID cast added.
+     */
+    joinsWithUuidCast(joins: TJoin[]): TJoin[] {
+
+        if(!this.uuidCast) {
+            return joins
+        }
+
+        return joins.map(join => {
+            if(join.localColumn === 'id' || join.relatedColumn === 'id') { 
+                join.cast = 'uuid'
+            }
+            return join
+        })
     }
 
 }

@@ -11,6 +11,7 @@ export type TColumnOption = {
     tableName?: string;
     preFormattedColumn?: boolean
     as?: string;
+    cast?: string;
 }
 
 export type TOperator = "=" | "!=" | "<>" | ">" | "<" | ">=" | "<=" | "like" | "not like" | "in" | "not in" | "is null" | "is not null" | "between" | "not between"; 
@@ -46,7 +47,8 @@ export type TJoin = {
     relatedTable?: string,
     relatedTableAbbreviation?: string,
     localColumn?: string,
-    relatedColumn?: string
+    relatedColumn?: string,
+    cast?: string
 }
 
 export const JoinTypes = {
