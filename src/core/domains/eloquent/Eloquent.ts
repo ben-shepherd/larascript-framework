@@ -509,7 +509,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      * @throws {QueryBuilderException} If an invalid or missing operator is provided.
      */
-    where(column: string | object, operator?: TOperator, value?: TWhereClauseValue, logicalOperator: TLogicalOperator = LogicalOperators.AND): IEloquent<Model> {
+    where(column: string | object, operator?: TOperator, value?: TWhereClauseValue, logicalOperator: TLogicalOperator = LogicalOperators.AND, cast?: string): IEloquent<Model> {
 
         // Handle object case
         if(typeof column === 'object') {
@@ -539,7 +539,8 @@ abstract class Eloquent<
             operator,
             value,
             logicalOperator,
-            tableName: this.useTable()
+            tableName: this.useTable(),
+            cast
         })
         return this as unknown as IEloquent<Model>
     }

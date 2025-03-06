@@ -251,9 +251,9 @@ abstract class BaseExpression<BindingsUtility = unknown> implements IEloquentExp
         return this
     }
 
-    where(column: string, operator: TOperator, value: TWhereClauseValue | TWhereClauseValue[] = null, logicalOperator: TLogicalOperator = 'and'): this {
+    where(column: string, operator: TOperator, value: TWhereClauseValue | TWhereClauseValue[] = null, logicalOperator: TLogicalOperator = 'and', cast?: string): this {
         if (!this.whereClauses) this.whereClauses = [];
-        this.whereClauses.push({ column, operator, value, logicalOperator, tableName: this.table });
+        this.whereClauses.push({ column, operator, value, logicalOperator, tableName: this.table, cast });
         return this;
     }
 

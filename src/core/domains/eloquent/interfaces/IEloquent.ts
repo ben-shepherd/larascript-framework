@@ -33,6 +33,7 @@ export type TWhereClause = {
     value: TWhereClauseValue | TWhereClauseValue[];
     logicalOperator?: TLogicalOperator;
     raw?: unknown;
+    cast?: string;
 }
 export type TWhereClauseRaw = {
     raw: unknown;
