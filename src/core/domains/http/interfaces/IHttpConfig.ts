@@ -7,6 +7,9 @@ export default interface IHttpConfig {
     globalMiddlewares?: (express.RequestHandler | TExpressMiddlewareFnOrClass)[];
     currentRequestCleanupDelay?: number;
     csrf?: {
+        methods?: string[];
+        headerName?: string;
+        ttl?: number;
         exclude?: string[];
     }
     logging?: {

@@ -25,6 +25,9 @@ interface CsrfConfig {
 
     /** How long the token is valid for (in seconds) */
     ttl?: number;
+
+    /** Exclude routes from CSRF protection */
+    exclude?: string[];
 }
 
 /**
@@ -62,20 +65,16 @@ interface CsrfConfig {
  */
 class CsrfMiddleware extends Middleware<CsrfConfig> {
 
-    private static readonly DEFAULT_CONFIG: CsrfConfig = {
-        methods: ['POST', 'PUT', 'PATCH', 'DELETE'],
-        cookieName: 'x-xsrf-token',
-        headerName: 'x-xsrf-token',
-        ttl: 24 * 60 * 60 // 24 hours
-    };
-
     /**
      * Creates a new instance of CsrfMiddleware
      * @param config - Optional configuration to override defaults
      */
-    constructor(config?: CsrfConfig) {
+    constructor() {
         super();
-        this.setConfig(config ?? CsrfMiddleware.DEFAULT_CONFIG);
+
+        this.setConfig(
+            app('http').getConfig()?.csrf as CsrfConfig
+        );
     }
 
     /**
@@ -131,10 +130,8 @@ class CsrfMiddleware extends Middleware<CsrfConfig> {
      * @param context - The HTTP context for the current request
      */
     async execute(context: HttpContext): Promise<void> {
-        const config: CsrfConfig = { ...CsrfMiddleware.DEFAULT_CONFIG, ...this.getConfig() } as CsrfConfig;
-        const httpConfig = app('http').getConfig();
         const path = context.getRequest().path;
-        const exclude = httpConfig?.csrf?.exclude ?? [];
+        const exclude = this.getConfig()?.exclude ?? [];
 
         if (this.isUrlExcluded(path, exclude)) {
             return this.next();
@@ -147,11 +144,11 @@ class CsrfMiddleware extends Middleware<CsrfConfig> {
         const token = CsrfMiddleware.getCsrfToken(req);
 
         // Set header
-        res.setHeader(config.headerName ?? 'x-xsrf-token', token);
+        res.setHeader(this.getConfig()?.headerName ?? 'x-xsrf-token', token);
 
         // Validate token for specified HTTP methods
-        if (config.methods?.includes(req.method)) {
-            const headerToken = req.headers[config.headerName?.toLowerCase() ?? 'x-xsrf-token'];
+        if (this.getConfig()?.methods?.includes(req.method)) {
+            const headerToken = req.headers[this.getConfig()?.headerName?.toLowerCase() ?? 'x-xsrf-token'];
         
             if (!headerToken || headerToken !== token) {
                 return this.forbidden('Invalid CSRF token');

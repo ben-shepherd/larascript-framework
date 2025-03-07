@@ -35,9 +35,21 @@ const config: IHttpConfig = {
          */
     ],
 
+    /**
+     * CSRF protection
+     */
     csrf: {
+        methods: ['POST', 'PUT', 'PATCH', 'DELETE'],
+
+        headerName: 'x-xsrf-token',
+
+        ttl: 24 * 60 * 60,
+
         exclude: [
-            '/auth/*',
+            '/auth/login',
+            '/auth/register',
+            '/auth/logout',
+            '/auth/refresh'
         ]
     },
 
