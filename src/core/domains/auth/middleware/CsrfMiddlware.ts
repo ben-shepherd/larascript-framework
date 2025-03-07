@@ -64,8 +64,8 @@ class CsrfMiddleware extends Middleware<CsrfConfig> {
 
     private static readonly DEFAULT_CONFIG: CsrfConfig = {
         methods: ['POST', 'PUT', 'PATCH', 'DELETE'],
-        cookieName: 'XSRF-TOKEN',
-        headerName: 'X-XSRF-TOKEN',
+        cookieName: 'x-xsrf-token',
+        headerName: 'x-xsrf-token',
         ttl: 24 * 60 * 60 // 24 hours
     };
 
@@ -146,14 +146,8 @@ class CsrfMiddleware extends Middleware<CsrfConfig> {
         // Generate token if it doesn't exist
         const token = CsrfMiddleware.getCsrfToken(req);
 
-        if (!token) {
-            // Set cookie
-            res.cookie(config.cookieName ?? 'XSRF-TOKEN', token, {
-                httpOnly: false, // Allow JavaScript access
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict'
-            });
-        }
+        // Set header
+        res.setHeader(config.headerName ?? 'x-xsrf-token', token);
 
         // Validate token for specified HTTP methods
         if (config.methods?.includes(req.method)) {

@@ -62,7 +62,7 @@ export type TRouterMethodOptions = Omit<TRouteItem, 'path' | 'method' | 'action'
 
 export type TRouteItem = {
     path: string;
-    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS';
     action: string | TExpressMiddlewareFnOrClass | ControllerConstructor | [ControllerConstructor, string];
     name?: string;
     prefix?: string;

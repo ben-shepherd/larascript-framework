@@ -83,9 +83,32 @@ class RouterBindService {
      */
     public bindRoutes(router: IRouter): void {
         router.getRegisteredRoutes().forEach(routeItem => {
+
+            // Add the route
             this.bindRoute(routeItem)
+
+            // Add the OPTIONS route
+            this.bindRoute(this.getOptionsRouteItem(routeItem))
+
+            // Log the route details
             this.logBoundRouteDetails(routeItem)
         })
+    }
+
+    /**
+     * Binds the OPTIONS route for the given route item.
+     * 
+     * @param routeItem The route item to bind the OPTIONS route for
+     */
+    protected getOptionsRouteItem(routeItem: TRouteItem): TRouteItem {
+        return {
+            ...routeItem,
+            method: 'OPTIONS',
+            action: async (req, res) => {
+                res.setHeader('Allow', routeItem.method)
+                res.status(204).send()
+            }
+        }
     }
 
     /**
@@ -122,7 +145,7 @@ class RouterBindService {
      * @param path The path to use
      * @param handlers The handlers to use
      */
-    protected useHandlers(method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE', path: string, handlers: TExpressMiddlewareFn[]): void {
+    protected useHandlers(method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS', path: string, handlers: TExpressMiddlewareFn[]): void {
         const methodType = method.toLowerCase() as keyof typeof this.app
         const str = `[Express] binding route ${method.toUpperCase()}: '${path}'`;
         logger().info(str)
