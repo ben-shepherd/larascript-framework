@@ -78,8 +78,10 @@ class CsrfMiddleware extends Middleware<CsrfConfig> {
     async execute(context: HttpContext): Promise<void> {
         const config: CsrfConfig = { ...CsrfMiddleware.DEFAULT_CONFIG, ...this.getConfig() } as CsrfConfig;
         const httpConfig = app('http').getConfig();
+        const path = context.getRequest().path;
+        const exclude = httpConfig?.csrf?.exclude ?? [];
 
-        if (httpConfig?.csrf?.exclude?.includes(context.getRequest().path)) {
+        if (this.isUrlExcluded(path, exclude)) {
             return this.next();
         }
 
@@ -119,6 +121,18 @@ class CsrfMiddleware extends Middleware<CsrfConfig> {
         this.context.getResponse()
             .status(403)
             .json({ error: message });
+    }
+
+    protected isUrlExcluded(path: string, exclude: string[]): boolean {
+        return exclude.some(pattern => {
+            const regex = this.convertToRegex(pattern);
+            return regex.test(path);
+        });
+    }
+    
+    protected convertToRegex(match: string): RegExp {
+        match = '^' + match.replace('*', '.+') + '$';
+        return new RegExp(match);
     }
 
 }

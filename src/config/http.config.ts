@@ -35,6 +35,12 @@ const config: IExpressConfig = {
          */
     ],
 
+    csrf: {
+        exclude: [
+            '/auth/*',
+        ]
+    },
+
     /**
      * Logging
      */
