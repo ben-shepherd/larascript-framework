@@ -1,6 +1,13 @@
 import Middleware from '@src/core/domains/http/base/Middleware';
 import HttpContext from '@src/core/domains/http/context/HttpContext';
+import { app } from '@src/core/services/App';
 import crypto from 'crypto';
+import { Request } from 'express';
+
+import { requestContext } from '../../http/context/RequestContext';
+import { TBaseRequest } from '../../http/interfaces/BaseRequest';
+import { IRouter } from '../../http/interfaces/IRouter';
+import Route from '../../http/router/Route';
 
 
 interface CsrfConfig {
@@ -28,19 +35,61 @@ class CsrfMiddleware extends Middleware<CsrfConfig> {
         this.setConfig(config ?? CsrfMiddleware.DEFAULT_CONFIG);
     }
 
+    /**
+     * Get the CSRF router
+     * 
+     * @returns 
+     */
+    public static getRouter(url: string = '/csrf'): IRouter {
+        return Route.group({
+            prefix: url,
+        }, router => {
+            router.get('/', (req, res) => {
+                res.json({
+                    token: CsrfMiddleware.getCsrfToken(req)
+                })
+            })
+        })
+    }
+
+    /**
+     * Get the CSRF token
+     * 
+     * @param req 
+     * @returns 
+     */
+    public static getCsrfToken(req: Request) {
+        let token = requestContext().getByIpAddress<{ value: string }>(req as TBaseRequest, 'csrf-token')?.value;
+
+        if (!token) {
+            token = crypto.randomBytes(32).toString('hex');
+            requestContext().setByIpAddress(req as TBaseRequest, 'csrf-token', token, 24 * 60 * 60);
+        }
+
+        return token;
+    }
+
+
+    /**
+     * Execute the middleware
+     * 
+     * @param context 
+     */
     async execute(context: HttpContext): Promise<void> {
         const config: CsrfConfig = { ...CsrfMiddleware.DEFAULT_CONFIG, ...this.getConfig() } as CsrfConfig;
+        const httpConfig = app('http').getConfig();
+
+        if (httpConfig?.csrf?.exclude?.includes(context.getRequest().path)) {
+            return this.next();
+        }
 
         const req = context.getRequest();
         const res = context.getResponse();
         
         // Generate token if it doesn't exist
-        let token = context.getIpContext<{ value: string }>('csrf-token')?.value;
+        const token = CsrfMiddleware.getCsrfToken(req);
 
         if (!token) {
-            token = this.generateToken();
-            context.setIpContext('csrf-token', token, config.ttl);
-            
             // Set cookie
             res.cookie(config.cookieName ?? 'XSRF-TOKEN', token, {
                 httpOnly: false, // Allow JavaScript access
@@ -58,13 +107,14 @@ class CsrfMiddleware extends Middleware<CsrfConfig> {
             }
         }
 
-        this.next();
+        this.next();    
     }
 
-    private generateToken(): string {
-        return crypto.randomBytes(32).toString('hex');
-    }
-
+    /**
+     * Forbidden
+     * 
+     * @param message 
+     */
     private forbidden(message: string): void {
         this.context.getResponse()
             .status(403)

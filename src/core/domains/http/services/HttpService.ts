@@ -114,7 +114,6 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
     public bindRoutes(router: IRouter): void {
         if (router.getRegisteredRoutes().length === 0) {
             return
-
         }
 
         this.routerBindService.setExpress(this.app, this.config)
