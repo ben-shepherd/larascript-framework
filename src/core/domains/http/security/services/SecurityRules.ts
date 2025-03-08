@@ -1,10 +1,9 @@
 
 import { TSecurityRuleConstructor } from "@src/core/domains/http/interfaces/ISecurity";
 import AbstractSecurityRule from "@src/core/domains/http/security/abstract/AbstractSecurityRule";
-import ResourceOwnerRule from "@src/core/domains/http/security/rules/ResourceOwnerRule";
 import HasRoleRule from "@src/core/domains/http/security/rules/HasRoleRule";
 import RateLimitedRule from "@src/core/domains/http/security/rules/RateLimitedRule";
-import ResourceScopeRule from "@src/core/domains/http/security/rules/ResourceScopeRule";
+import ResourceOwnerRule from "@src/core/domains/http/security/rules/ResourceOwnerRule";
 import ScopeRule from "@src/core/domains/http/security/rules/ScopeRule";
 
 class SecurityRules {
@@ -54,15 +53,6 @@ class SecurityRules {
             scopes: scopes,
             exactMatch: exactMatch
         });
-    }
-
-    /**
-     * Creates a new resource scopes security rule.
-     * 
-     * @returns The resource scopes security rule
-     */
-    public static resourceScopes(): ResourceScopeRule {
-        return this.create(ResourceScopeRule);
     }
 
     /**
