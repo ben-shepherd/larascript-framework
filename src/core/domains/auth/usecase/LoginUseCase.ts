@@ -58,7 +58,7 @@ class LoginUseCase {
         return apiResponse.setData({
             token: jwtToken,
             user: userAttributes
-        }).setCode(201);
+        }).setCode(200);
 
     }
 
