@@ -1,13 +1,12 @@
 import Controller from "@src/core/domains/http/base/Controller";
+import HttpContext from "@src/core/domains/http/context/HttpContext";
 
 class ExampleController extends Controller {
 
-    async example() {
-        const context = this.context;
-        
+    async example(context: HttpContext) {
         this.jsonResponse({ 
             id: context.getId(),
-            message: 'OK!',
+            message: 'Hello World!',
         }, 200)
     }
 
