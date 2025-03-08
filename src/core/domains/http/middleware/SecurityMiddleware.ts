@@ -7,6 +7,10 @@ import { SecurityEnum } from "@src/core/domains/http/enums/SecurityEnum";
 import responseError from "@src/core/domains/http/handlers/responseError";
 import SecurityReader from "@src/core/domains/http/security/services/SecurityReader";
 
+import HasRoleRule from "../security/rules/HasRoleRule";
+import RateLimitedRule from "../security/rules/RateLimitedRule";
+import ScopeRule from "../security/rules/ScopeRule";
+
 /**
  * SecurityMiddleware handles security rule validation for HTTP routes.
  * 
@@ -108,7 +112,7 @@ class SecurityMiddleware extends Middleware {
         }
 
         // Check if the hasRole security has been defined and validate
-        const securityHasRoles = SecurityReader.findMany(routeOptions, SecurityEnum.HAS_ROLE);
+        const securityHasRoles = SecurityReader.findMany(routeOptions, SecurityEnum.HAS_ROLE) as HasRoleRule[];
  
         for(const securityHasRole of securityHasRoles) {
             if (!(await securityHasRole.execute(context))) {
@@ -132,7 +136,7 @@ class SecurityMiddleware extends Middleware {
         }   
 
         // Check if the hasScope security has been defined and validate
-        const securityScopes = SecurityReader.findMany(routeOptions, SecurityEnum.ENABLE_SCOPES);
+        const securityScopes = SecurityReader.findMany(routeOptions, SecurityEnum.ENABLE_SCOPES) as ScopeRule[];
  
         for(const securityScope of securityScopes) {
             if (!(await securityScope.execute(context))) {
@@ -156,7 +160,7 @@ class SecurityMiddleware extends Middleware {
         }
     
         // Find the rate limited security
-        const securityRateLimits = SecurityReader.findMany(routeOptions, SecurityEnum.RATE_LIMITED);
+        const securityRateLimits = SecurityReader.findMany(routeOptions, SecurityEnum.RATE_LIMITED) as RateLimitedRule[];
     
         for(const securityRateLimit of securityRateLimits) {
             if (!(await securityRateLimit.execute(context))) {
