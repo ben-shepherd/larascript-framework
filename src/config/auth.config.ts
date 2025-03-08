@@ -48,7 +48,6 @@ export const authConfig = AuthConfig.define([
             createUser: CreateUserValidator,
             updateUser: UpdateUserValidator
         },
-
         routes: {
             enableAuthRoutes: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES, 'true'),
             enableAuthRoutesAllowCreate: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES_ALLOW_CREATE, 'true'),

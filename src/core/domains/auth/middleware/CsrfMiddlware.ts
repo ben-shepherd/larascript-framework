@@ -82,15 +82,6 @@ class CsrfMiddleware extends Middleware<CsrfConfig> {
      * 
      * @param url - The URL path to mount the CSRF endpoint (defaults to '/csrf')
      * @returns A router instance with the CSRF endpoint configured
-     * 
-     * @example
-     * ```typescript
-     * // Mount at default /csrf path
-     * app.use(CsrfMiddleware.getRouter());
-     * 
-     * // Mount at custom path
-     * app.use(CsrfMiddleware.getRouter('/security/csrf'));
-     * ```
      */
     public static getRouter(url: string = '/csrf'): IRouter {
         return Route.group({

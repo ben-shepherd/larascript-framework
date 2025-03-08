@@ -1,3 +1,4 @@
+import CsrfMiddleware from '@src/core/domains/auth/middleware/CsrfMiddlware';
 import IHttpConfig from '@src/core/domains/http/interfaces/IHttpConfig';
 import BasicLoggerMiddleware from '@src/core/domains/http/middleware/BasicLoggerMiddleware';
 import SecurityMiddleware from '@src/core/domains/http/middleware/SecurityMiddleware';
@@ -29,6 +30,7 @@ const config: IHttpConfig = {
         BasicLoggerMiddleware,
         SecurityMiddleware,
         ValidatorMiddleware,
+        CsrfMiddleware,
 
         /**
          * Add your custom middlewares below
@@ -40,16 +42,22 @@ const config: IHttpConfig = {
      */
     csrf: {
         methods: ['POST', 'PUT', 'PATCH', 'DELETE'],
-
         headerName: 'x-xsrf-token',
-
         ttl: 24 * 60 * 60,
 
+        /**
+         * Exclude routes from CSRF protection
+         * You may use '*' to exclude all routes e.g. '/auth/*'
+         */
         exclude: [
+            // Exclude all routes
+            // '/*',
+
+            // Exclude specific routes
             '/auth/login',
             '/auth/register',
             '/auth/logout',
-            '/auth/refresh'
+            '/auth/refresh',
         ]
     },
 
