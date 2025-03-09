@@ -15,10 +15,9 @@ import IFactory, { FactoryConstructor } from '@src/core/interfaces/IFactory';
 import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
 import { app } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
-
-import { TCastableType } from '../../cast/interfaces/IHasCastableConcern';
-import Castable from '../../cast/service/Castable';
-import { EventConstructor } from '../../events/interfaces/IEventConstructors';
+import { TCastableType } from '@src/core/domains/cast/interfaces/IHasCastableConcern';
+import Castable from '@src/core/domains/cast/service/Castable';
+import { EventConstructor } from '@src/core/domains/events/interfaces/IEventConstructors';
 
  
 

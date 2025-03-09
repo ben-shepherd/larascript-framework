@@ -3,8 +3,7 @@ import { IdGeneratorFn } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { TModelScope } from "@src/core/domains/models/utils/ModelScope";
 import IHasObserver from "@src/core/domains/observer/interfaces/IHasObserver";
 import IFactory from "@src/core/interfaces/IFactory";
-
-import { EventConstructor } from "../../events/interfaces/IEventConstructors";
+import { EventConstructor } from "@src/core/domains/events/interfaces/IEventConstructors";
 
 export type GetAttributesOptions = {excludeGuarded: boolean}
 

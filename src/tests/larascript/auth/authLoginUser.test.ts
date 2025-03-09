@@ -6,11 +6,10 @@ import { auth } from '@src/core/domains/auth/services/AuthService';
 import { cryptoService } from '@src/core/domains/crypto/service/CryptoService';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
 import testHelper from '@src/tests/testHelper';
-
-import TestApiTokenModel from '../models/models/TestApiTokenModel';
-import TestUser from '../models/models/TestUser';
-import TestCreateUserValidator from '../validator/validators/TestCreateUserValidator';
-import TestUpdateUserValidator from '../validator/validators/TestUpdateUserValidator';
+import TestApiTokenModel from '@src/tests/larascript/models/models/TestApiTokenModel';
+import TestUser from '@src/tests/larascript/models/models/TestUser';
+import TestCreateUserValidator from '@src/tests/larascript/validator/validators/TestCreateUserValidator';
+import TestUpdateUserValidator from '@src/tests/larascript/validator/validators/TestUpdateUserValidator';
 
 
 describe('attempt to run app with normal appConfig', () => {

@@ -1,8 +1,7 @@
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import { IController } from "@src/core/domains/http/interfaces/IController";
 import { TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
-
-import responseError from "../handlers/responseError";
+import responseError from "@src/core/domains/http/handlers/responseError";
 
 class Controller implements IController {
 

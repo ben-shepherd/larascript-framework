@@ -5,8 +5,7 @@ import Middleware from '@src/core/domains/http/base/Middleware';
 import HttpContext from '@src/core/domains/http/context/HttpContext';
 import responseError from '@src/core/domains/http/handlers/responseError';
 import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
-
-import { authJwt } from '../services/JwtAuthService';
+import { authJwt } from '@src/core/domains/auth/services/JwtAuthService';
 
 /**
  * AuthorizeMiddleware handles authentication and authorization for HTTP requests

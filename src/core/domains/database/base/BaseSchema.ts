@@ -2,8 +2,7 @@
 import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
 import { db } from "@src/core/domains/database/services/Database";
-
-import { IConnectionTypeHelpers } from "../interfaces/IConnectionTypeHelpers";
+import { IConnectionTypeHelpers } from "@src/core/domains/database/interfaces/IConnectionTypeHelpers";
 
 abstract class BaseSchema<Adapter extends IDatabaseAdapter = IDatabaseAdapter> implements IDatabaseSchema {
 

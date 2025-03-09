@@ -1,6 +1,5 @@
 import BaseProvider from "@src/core/base/Provider";
-
-import SessionService from "../services/SessionService";
+import SessionService from "@src/core/domains/session/services/SessionService";
 
 class SessionProvider extends BaseProvider{
 

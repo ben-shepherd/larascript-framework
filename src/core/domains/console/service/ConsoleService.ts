@@ -2,8 +2,7 @@ import ICommandService from "@src/core/domains/console/interfaces/ICommandServic
 import CommandReader from "@src/core/domains/console/service/CommandReader";
 import CommandRegister from "@src/core/domains/console/service/CommandRegister";
 import { app } from "@src/core/services/App";
-
-import { ICommandConstructor } from "../interfaces/ICommand";
+import { ICommandConstructor } from "@src/core/domains/console/interfaces/ICommand";
 
 /**
  * Short hand for `app('console')`

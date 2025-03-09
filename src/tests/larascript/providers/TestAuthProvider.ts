@@ -4,9 +4,8 @@ import JwtAuthService from "@src/core/domains/auth/services/JwtAuthService";
 import parseBooleanFromString from "@src/core/util/parseBooleanFromString";
 import TestApiTokenModel from "@src/tests/larascript/models/models/TestApiTokenModel";
 import TestUser from "@src/tests/larascript/models/models/TestUser";
-
-import TestCreateUserValidator from "../validator/validators/TestCreateUserCustomValidator";
-import TestUpdateUserValidator from "../validator/validators/TestUpdateUserValidator";
+import TestCreateUserValidator from "@src/tests/larascript/validator/validators/TestCreateUserCustomValidator";
+import TestUpdateUserValidator from "@src/tests/larascript/validator/validators/TestUpdateUserValidator";
 
 
 export default class TestAuthProvider extends AuthProvider {

@@ -17,12 +17,11 @@ import ValidatorProvider from '@src/core/domains/validator/providers/ValidatorPr
 import Kernel, { KernelConfig } from '@src/core/Kernel';
 import { App } from '@src/core/services/App';
 import { DataTypes } from 'sequelize';
-
-import TestAuthProvider from '../providers/TestAuthProvider';
-import TestConsoleProvider from '../providers/TestConsoleProvider';
-import TestCryptoProvider from '../providers/TestCryptoProvider';
-import TestDatabaseProvider from '../providers/TestDatabaseProvider';
-import TestMigrationProvider from '../providers/TestMigrationProvider';
+import TestAuthProvider from '@src/tests/larascript/providers/TestAuthProvider';
+import TestConsoleProvider from '@src/tests/larascript/providers/TestConsoleProvider';
+import TestCryptoProvider from '@src/tests/larascript/providers/TestCryptoProvider';
+import TestDatabaseProvider from '@src/tests/larascript/providers/TestDatabaseProvider';
+import TestMigrationProvider from '@src/tests/larascript/providers/TestMigrationProvider';
 
 // Create test model attributes interface
 interface TestModelAttributes extends IModelAttributes {

@@ -11,8 +11,7 @@ import { IRequestContext } from '@src/core/domains/http/interfaces/IRequestConte
 import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerService';
 import { IValidatorFn } from '@src/core/domains/validator/interfaces/IValidator';
 import readline from 'node:readline';
-
-import { ISessionService } from '../domains/session/interfaces/ISessionService';
+import { ISessionService } from '@src/core/domains/session/interfaces/ISessionService';
 
 export interface ILarascriptProviders {
 

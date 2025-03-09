@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { ICommandReader } from "@src/core/domains/console/interfaces/ICommandReader";
 import { ICommandRegister } from "@src/core/domains/console/interfaces/ICommandRegister";
-
-import { ICommandConstructor } from "./ICommand";
+import { ICommandConstructor } from "@src/core/domains/console/interfaces/ICommand";
 
 /**
  * Service that provides methods for registering and executing console commands

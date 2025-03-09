@@ -6,8 +6,7 @@ import { IBaseAuthConfig } from "@src/core/domains/auth/interfaces/config/IAuth"
 import { IAuthService } from "@src/core/domains/auth/interfaces/service/IAuthService";
 import ACLService from "@src/core/domains/auth/services/ACLService";
 import { app } from "@src/core/services/App";
-
-import { IUserModel } from "../interfaces/models/IUserModel";
+import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
 
 /**
  * Short hand for app('auth')

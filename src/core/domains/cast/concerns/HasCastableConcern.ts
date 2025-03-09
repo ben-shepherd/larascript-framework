@@ -1,7 +1,6 @@
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
-
-import { TCastableType } from "../interfaces/IHasCastableConcern";
-import Castable from "../service/Castable";
+import { TCastableType } from "@src/core/domains/cast/interfaces/IHasCastableConcern";
+import Castable from "@src/core/domains/cast/service/Castable";
 
 const HasCastableConcernMixin = (Base: TClassConstructor) => {
     return class extends Base {

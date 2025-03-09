@@ -13,8 +13,7 @@ import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorPr
 // eslint-disable-next-line no-unused-vars
 import { ILarascriptProviders } from "@src/core/interfaces/ILarascriptProviders";
 import { IProvider } from "@src/core/interfaces/IProvider";
-
-import SessionProvider from "../domains/session/providers/SessionProvider";
+import SessionProvider from "@src/core/domains/session/providers/SessionProvider";
 
 
 /**

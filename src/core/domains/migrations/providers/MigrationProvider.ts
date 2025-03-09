@@ -5,8 +5,7 @@ import MigrateUpCommand from "@src/core/domains/migrations/commands/MigrateUpCom
 import SeedUpCommand from "@src/core/domains/migrations/commands/SeedUpCommand";
 import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
 import { app } from "@src/core/services/App";
-
-import SeedDownCommand from "../commands/SeedDownCommand";
+import SeedDownCommand from "@src/core/domains/migrations/commands/SeedDownCommand";
 
 /**
  * MigrationProvider class handles all migration related tasks

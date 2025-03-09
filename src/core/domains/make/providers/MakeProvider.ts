@@ -15,9 +15,8 @@ import MakeSingletonCommand from "@src/core/domains/make/commands/MakeSingletonC
 import MakeSubscriberCommand from "@src/core/domains/make/commands/MakeSubscriberCommand";
 import MakeValidatorCommand from "@src/core/domains/make/commands/MakeValidatorCommand";
 import { app } from "@src/core/services/App";
-
-import MakeEventCommand from "../commands/MakeEventCommand";
-import MakeFactoryCommand from "../commands/MakeFactoryCommand";
+import MakeEventCommand from "@src/core/domains/make/commands/MakeEventCommand";
+import MakeFactoryCommand from "@src/core/domains/make/commands/MakeFactoryCommand";
 
 export default class MakeProvider extends BaseProvider {
 

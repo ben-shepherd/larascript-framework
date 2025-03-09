@@ -9,8 +9,7 @@ import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { App } from "@src/core/services/App";
-
-import { IConnectionTypeHelpers } from "../interfaces/IConnectionTypeHelpers";
+import { IConnectionTypeHelpers } from "@src/core/domains/database/interfaces/IConnectionTypeHelpers";
 
 /**
  * Short alias for app('db')

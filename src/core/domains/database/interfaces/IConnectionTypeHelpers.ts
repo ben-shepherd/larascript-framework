@@ -1,5 +1,5 @@
-import MongoDbAdapter from "../../mongodb/adapters/MongoDbAdapter";
-import PostgresAdapter from "../../postgres/adapters/PostgresAdapter";
+import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
+import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 
 /**
  * Type helper for the connection adapters

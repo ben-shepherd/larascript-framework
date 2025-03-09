@@ -6,10 +6,9 @@ import HttpContext from "@src/core/domains/http/context/HttpContext";
 import { SecurityEnum } from "@src/core/domains/http/enums/SecurityEnum";
 import responseError from "@src/core/domains/http/handlers/responseError";
 import SecurityReader from "@src/core/domains/http/security/services/SecurityReader";
-
-import HasRoleRule from "../security/rules/HasRoleRule";
-import RateLimitedRule from "../security/rules/RateLimitedRule";
-import ScopeRule from "../security/rules/ScopeRule";
+import HasRoleRule from "@src/core/domains/http/security/rules/HasRoleRule";
+import RateLimitedRule from "@src/core/domains/http/security/rules/RateLimitedRule";
+import ScopeRule from "@src/core/domains/http/security/rules/ScopeRule";
 
 /**
  * SecurityMiddleware handles security rule validation for HTTP routes.

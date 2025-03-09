@@ -1,7 +1,6 @@
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
-
-import { IBaseEvent } from "../interfaces/IBaseEvent";
-import { ListenerConstructor, SubscriberConstructor } from "../interfaces/IEventConstructors";
+import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
+import { ListenerConstructor, SubscriberConstructor } from "@src/core/domains/events/interfaces/IEventConstructors";
 
 /**
  * A static registry for events that can work before the event service is available

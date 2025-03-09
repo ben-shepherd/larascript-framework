@@ -4,8 +4,7 @@ import { IBaseAuthConfig } from "@src/core/domains/auth/interfaces/config/IAuth"
 import { IRouter } from "@src/core/domains/http/interfaces/IRouter";
 import Router from "@src/core/domains/http/router/Router";
 import { app } from "@src/core/services/App";
-
-import { IUserModel } from "../interfaces/models/IUserModel";
+import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
 
 /**
  * Base authentication adapter class that implements the IAuthAdapter interface.

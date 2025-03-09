@@ -3,11 +3,10 @@ import HttpContext from '@src/core/domains/http/context/HttpContext';
 import { app } from '@src/core/services/App';
 import crypto from 'crypto';
 import { Request } from 'express';
-
-import { requestContext } from '../../http/context/RequestContext';
-import { TBaseRequest } from '../../http/interfaces/BaseRequest';
-import { IRouter } from '../../http/interfaces/IRouter';
-import Route from '../../http/router/Route';
+import { requestContext } from '@src/core/domains/http/context/RequestContext';
+import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
+import { IRouter } from '@src/core/domains/http/interfaces/IRouter';
+import Route from '@src/core/domains/http/router/Route';
 
 /**
  * Configuration options for CSRF protection

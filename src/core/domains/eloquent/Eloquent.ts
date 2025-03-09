@@ -16,8 +16,7 @@ import { IModel, ModelConstructor } from "@src/core/domains/models/interfaces/IM
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { App } from "@src/core/services/App";
 import { deepClone } from "@src/core/util/deepClone";
-
-import { IConnectionTypeHelpers } from "../database/interfaces/IConnectionTypeHelpers";
+import { IConnectionTypeHelpers } from "@src/core/domains/database/interfaces/IConnectionTypeHelpers";
 
 
 /**

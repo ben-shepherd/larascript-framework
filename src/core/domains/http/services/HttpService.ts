@@ -9,10 +9,9 @@ import RouterBindService from '@src/core/domains/http/router/RouterBindService';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
 import { app } from '@src/core/services/App';
 import expressClient from 'express';
-
-import EndRequestContextMiddleware from '../middleware/EndRequestContextMiddleware';
-import RequestIdMiddleware from '../middleware/RequestIdMiddleware';
-import StartSessionMiddleware from '../middleware/StartSessionMiddleware';
+import EndRequestContextMiddleware from '@src/core/domains/http/middleware/EndRequestContextMiddleware';
+import RequestIdMiddleware from '@src/core/domains/http/middleware/RequestIdMiddleware';
+import StartSessionMiddleware from '@src/core/domains/http/middleware/StartSessionMiddleware';
 
 
 

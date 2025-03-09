@@ -6,9 +6,8 @@ import EventProvider from '@src/core/domains/events/providers/EventProvider';
 import EventService from '@src/core/domains/events/services/EventService';
 import TestFailedWorkerModel from '@src/tests/larascript/models/models/TestFailedWorkerModel';
 import TestWorkerModel from "@src/tests/larascript/models/models/TestWorkerModel";
-
-import TestUserCreatedListener from '../events/events/auth/TestUserCreatedListener';
-import TestUserCreatedSubscriber from '../events/events/auth/TestUserCreatedSubscriber';
+import TestUserCreatedListener from '@src/tests/larascript/events/events/auth/TestUserCreatedListener';
+import TestUserCreatedSubscriber from '@src/tests/larascript/events/events/auth/TestUserCreatedSubscriber';
 
 class TestEventProvider extends EventProvider {
 

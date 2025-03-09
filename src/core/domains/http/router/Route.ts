@@ -1,8 +1,7 @@
 import { IRoute, IRouteGroupOptions, IRouter, TRouteGroupFn, TRouteResourceOptions } from "@src/core/domains/http/interfaces/IRouter";
 import Router from "@src/core/domains/http/router/Router";
 import ResourceRouter from "@src/core/domains/http/router/RouterResource";
-
-import SecurityRules from "../security/services/SecurityRules";
+import SecurityRules from "@src/core/domains/http/security/services/SecurityRules";
 
 /**
  * Route class provides static and instance methods for creating route groups and resource routes.

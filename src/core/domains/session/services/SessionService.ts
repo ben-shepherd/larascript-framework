@@ -1,8 +1,7 @@
 import { app } from '@src/core/services/App';
 import { generateUuidV4 } from '@src/core/util/uuid/generateUuidV4';
 import { AsyncLocalStorage } from 'async_hooks';
-
-import { ISessionService, TSessionData, TSessionObject } from '../interfaces/ISessionService';
+import { ISessionService, TSessionData, TSessionObject } from '@src/core/domains/session/interfaces/ISessionService';
 
 // Short hand for app('session')
 export const session = () => app('session');

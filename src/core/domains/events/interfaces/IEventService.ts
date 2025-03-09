@@ -9,8 +9,7 @@ import { IMockableConcern } from "@src/core/domains/events/interfaces/IMockableC
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { IDispatchable } from "@src/core/interfaces/concerns/IDispatchable";
 import { ISimpleRegister } from "@src/core/interfaces/concerns/ISimpleRegister";
-
-import { TListenersConfigOption } from "./config/IEventListenersConfig";
+import { TListenersConfigOption } from "@src/core/domains/events/interfaces/config/IEventListenersConfig";
 
 export interface IEventService extends ISimpleRegister, IDispatchable, IEventWorkerConcern, IMockableConcern
 {

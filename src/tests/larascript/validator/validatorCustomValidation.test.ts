@@ -1,9 +1,8 @@
 import { beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
 import { db } from '@src/core/domains/database/services/Database';
 import { DataTypes } from 'sequelize';
-
-import testHelper from '../../testHelper';
-import TestCustomValidator from './validators/TestCreateUserCustomValidator';
+import testHelper from '@src/tests/testHelper';
+import TestCustomValidator from '@src/tests/larascript/validator/validators/TestCreateUserCustomValidator';
 
 describe('Custom Validator Tests', () => {
     let validator: TestCustomValidator;

@@ -6,8 +6,7 @@ import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { App } from "@src/core/services/App";
-
-import EventRegistry from "../registry/EventRegistry";
+import EventRegistry from "@src/core/domains/events/registry/EventRegistry";
 
 abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBaseEvent<TPayload> {
 

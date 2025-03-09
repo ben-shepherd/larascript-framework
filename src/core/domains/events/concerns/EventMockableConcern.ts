@@ -1,8 +1,7 @@
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import { IMockableConcern, TMockableEventCallback } from "@src/core/domains/events/interfaces/IMockableConcern";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
-
-import EventNotDispatchedException from "../exceptions/EventNotDispatchedException";
+import EventNotDispatchedException from "@src/core/domains/events/exceptions/EventNotDispatchedException";
 
 
 const EventMockableConcern = (Base: TClassConstructor) => {

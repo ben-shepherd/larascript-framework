@@ -3,8 +3,7 @@ import { IRulesObject } from "@src/core/domains/validator/interfaces/IRule";
 import { IValidator, IValidatorAttributes, IValidatorMessages } from "@src/core/domains/validator/interfaces/IValidator";
 import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
 import Validator from "@src/core/domains/validator/service/Validator";
-
-import ValidatorResult from "../data/ValidatorResult";
+import ValidatorResult from "@src/core/domains/validator/data/ValidatorResult";
 
 /**
  * Abstract base class for creating custom validators with type-safe validation rules and error messages.

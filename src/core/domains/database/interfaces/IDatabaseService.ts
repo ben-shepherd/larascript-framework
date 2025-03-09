@@ -6,8 +6,7 @@ import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { IHasConfigConcern } from "@src/core/interfaces/concerns/IHasConfigConcern";
-
-import { IConnectionTypeHelpers } from "./IConnectionTypeHelpers";
+import { IConnectionTypeHelpers } from "@src/core/domains/database/interfaces/IConnectionTypeHelpers";
 
 
 export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>

@@ -5,8 +5,7 @@ import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventC
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
 import EventService from "@src/core/domains/events/services/EventService";
 import { app } from "@src/core/services/App";
-
-import EventRegistry from "../registry/EventRegistry";
+import EventRegistry from "@src/core/domains/events/registry/EventRegistry";
 
 class EventProvider extends BaseProvider {
 
