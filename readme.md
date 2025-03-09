@@ -1,4 +1,4 @@
-![Larascript Framework Banner](https://www.larascriptnode.com/images/framework-banner-v2.png)
+![Larascript Framework Banner](https://www.larascriptnode.com/images/framework-banner-v2.jpg)
 
 ## 🚀 BETA STATUS 🚀
 
