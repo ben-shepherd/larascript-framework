@@ -9,6 +9,7 @@ export const QuestionIDs = {
     selectDefaultDb: 'SELECT_DEFAULT_DB',
     copyEnvExample: 'COPY_ENV_EXAMPLE',
     appPort: 'APP_PORT',
+    appKey: 'APP_KEY',
     enableExpress: 'ENABLE_EXPRESS',
     enableAuthRoutes: 'ENABLE_AUTH_ROUTES',
     enableAuthRoutesAllowCreate: 'ENABLE_AUTH_ROUTES_ALLOW_CREATE',

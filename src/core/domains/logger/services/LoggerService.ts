@@ -1,7 +1,17 @@
 import { ILoggerService } from "@src/core/domains/logger/interfaces/ILoggerService";
+import { app } from "@src/core/services/App";
 import path from "path";
 import winston, { format } from "winston";
 
+/**
+ * Shorthand to get the logger instance
+ * @returns 
+ */
+export const logger = () => app('logger');
+
+/**
+ * Winston logger service
+ */
 class LoggerService implements ILoggerService {
 
     /**
@@ -43,6 +53,14 @@ class LoggerService implements ILoggerService {
      */
     getLogger() {
         return this.logger
+    }
+
+    /**
+     * Logs an exception to the console with the 'error' log level.
+     * @param {Error} err The exception to log.
+     */
+    exception(err: Error) {
+        this.error(err.message, err.stack)
     }
 
     /**
@@ -106,15 +124,7 @@ class LoggerService implements ILoggerService {
      * @param {...any[]} args The arguments to output to the console.
      */
     console(...args: any[]) {
-        const logger = winston.createLogger({
-            level:'info',
-            format: winston.format.json(),
-            transports: [
-                new winston.transports.Console({ format: winston.format.simple() })
-            ]
-        })
-
-        logger.info([...args])
+        console.log([...args])
     }
 
 }

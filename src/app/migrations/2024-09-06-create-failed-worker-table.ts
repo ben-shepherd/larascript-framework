@@ -1,6 +1,6 @@
-import FailedWorkerModel, { FailedWorkerModelData } from "@src/core/domains/events/models/FailedWorkerModel";
+import FailedWorkerModel from "@src/core/domains/events/models/FailedWorkerModel";
 import BaseMigration from "@src/core/domains/migrations/base/BaseMigration";
-import { DataTypes } from "sequelize";
+import DataTypes from "@src/core/domains/migrations/schema/DataTypes";
 
 export class CreateFailedWorkerTableMigration extends BaseMigration {
 
@@ -11,7 +11,7 @@ export class CreateFailedWorkerTableMigration extends BaseMigration {
 
     group?: string = 'app:setup';
 
-    table = (new FailedWorkerModel({} as FailedWorkerModelData)).table
+    table = FailedWorkerModel.getTable();
 
     async up(): Promise<void> {
         await this.schema.createTable(this.table, {

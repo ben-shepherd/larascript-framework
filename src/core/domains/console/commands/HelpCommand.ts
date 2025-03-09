@@ -1,5 +1,5 @@
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
-import { App } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 
 export default class HelpCommand extends BaseCommand {
 
@@ -13,22 +13,21 @@ export default class HelpCommand extends BaseCommand {
      * Execute the command
      */
     async execute() {
-        const console = App.container('console');
-        const register = console.register();
+        const registerService = app('console').registerService();
 
         this.input.clearScreen();
         this.input.writeLine('--- Available commands ---');
         this.input.writeLine();
 
         // Order commands by A-Z
-        const commadnConstructors = Array.from(register.getRegistered()).sort(([, a], [, b]) => {
+        const commandConstructors = Array.from(registerService.getRegistered()).sort(([, a], [, b]) => {
             const aSignature = (new a).signature;
             const bSignature = (new b).signature;
             return aSignature.localeCompare(bSignature)
         });
 
         // List commands
-        commadnConstructors.forEach(([, command]) => {
+        commandConstructors.forEach(([, command]) => {
             const signature = (new command).signature
             const description = (new command).description
 

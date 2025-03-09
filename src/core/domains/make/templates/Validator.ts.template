@@ -1,22 +1,15 @@
-import BaseValidator from "@src/core/domains/validator/base/BaseValidator";
-import Joi, { ObjectSchema } from "joi";
+import BaseCustomValidator from "@src/core/domains/validator/base/BaseCustomValidator";
+import { IRulesObject } from "@src/core/domains/validator/interfaces/IRule";
+import RequiredRule from "@src/core/domains/validator/rules/RequiredRule";
 
-class #name# extends BaseValidator {
+class #name# extends BaseCustomValidator {
 
-    public customValidatorMethods = [
-        'validateCustomMethod'
-    ]
-
-    async validateCustomMethod(payload: any) {
-        if(!payload) {
-            this.setErrorMessage({ name: 'Example error message' });
-        }
+    protected rules: IRulesObject = {
+        id: [new RequiredRule()],
     }
 
-    rules(): ObjectSchema {
-        return Joi.object({
-            //fieldName: Joi.string()
-        })
+    protected messages: Record<string, string> = {
+        'id.required': 'The id is required.',
     }
 
 }

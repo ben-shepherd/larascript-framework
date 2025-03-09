@@ -20,6 +20,7 @@ module.exports = {
       '@aws-sdk/credential-providers': false,
       'gcp-metadata': false,
       'pg-hstore': false,
+      'pg-native': false,
       snappy: false,
       socks: false,
       aws4: false,

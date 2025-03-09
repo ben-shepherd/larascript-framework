@@ -1,15 +1,16 @@
 import BaseProvider from "@src/core/base/Provider";
-import { App } from "@src/core/services/App";
-import ValidatorService from "@src/core/domains/validator/services/ValidatorService";
+import { validatorFn } from "@src/core/domains/validator/service/Validator";
 
-class ValidationProvider extends BaseProvider {
+class ValidatorProvider extends BaseProvider {
 
     async register(): Promise<void> {
-        App.setContainer('validate', new ValidatorService());
-    }
+        this.log('Registering ValidatorProvider');
 
-    async boot(): Promise<void> {}
+        // Bind a helper function for on the fly validation
+        this.bind('validatorFn', validatorFn);
+
+    }
 
 }
 
-export default ValidationProvider
+export default ValidatorProvider

@@ -1,5 +1,5 @@
-import Model from "@src/core/base/Model";
-import IModelAttributes from "@src/core/interfaces/IModelData";
+import Model from "@src/core/domains/models/base/Model";
+import { IModelAttributes } from "@src/core/domains/models/interfaces/IModel";
 
 /**
  * Represents a migration stored in the database.
@@ -22,6 +22,12 @@ export interface MigrationModelData extends IModelAttributes {
     checksum: string;
 
     /**
+     * The type of the migration. 
+     * eg. 'seeder' | 'schema'
+     */
+    type: string;
+
+    /**
      * The time when the migration was applied.
      */
     appliedAt: Date;
@@ -32,9 +38,10 @@ export interface MigrationModelData extends IModelAttributes {
  */
 class MigrationModel extends Model<MigrationModelData> {
 
-    constructor(data: MigrationModelData | null, tableName = 'migrations') {
+    public table: string = 'migrations';
+
+    constructor(data: MigrationModelData | null) {
         super(data);
-        this.table = tableName
     }
 
     /**
@@ -51,6 +58,7 @@ class MigrationModel extends Model<MigrationModelData> {
         'name',
         'batch',
         'checksum',
+        'type',
         'appliedAt'
     ]
 

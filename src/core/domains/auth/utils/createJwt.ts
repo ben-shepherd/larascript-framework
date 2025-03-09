@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken'
+import jwt, { SignOptions } from 'jsonwebtoken'
 
 /**
  * Creates a JWT token
@@ -8,5 +8,5 @@ import jwt from 'jsonwebtoken'
  * @returns The created JWT token as a string
  */
 export default (secret: string, data: object, expiresIn: string = '1h'): string => {
-    return jwt.sign(data, secret, { expiresIn })
+    return jwt.sign(data, secret, { expiresIn } as SignOptions)
 }

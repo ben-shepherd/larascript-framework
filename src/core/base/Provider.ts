@@ -23,12 +23,26 @@ export default abstract class BaseProvider implements IProvider {
     protected config: any = {};
 
     /**
+     * Bind a value to the container
+     *
+     * @protected
+     * @param {string} key - The key to bind the value to
+     * @param {any} value - The value to bind to the key
+     */
+    protected bind(key: string, value: any): void {
+        App.setContainer(key, value);
+    }
+
+    /**
      * Registers the provider
      *
      * @abstract
      * @returns {Promise<void>}
+
      */
-    abstract register(): Promise<void>;
+    register(): Promise<void> {
+        return Promise.resolve();
+    }
 
     /**
      * Boots the provider
@@ -36,7 +50,9 @@ export default abstract class BaseProvider implements IProvider {
      * @abstract
      * @returns {Promise<void>}
      */
-    abstract boot(): Promise<void>;
+    boot(): Promise<void> {
+        return Promise.resolve();
+    }
 
     /**
      * Logs a message to the console
@@ -47,15 +63,6 @@ export default abstract class BaseProvider implements IProvider {
      */
     protected log(message: string, ...args: any[]): void {
         App.container('logger').info(message, ...args);
-    }
-
-    /**
-     * Gets the name of the provider
-     *
-     * @returns {string|null} - The name of the provider, or null if not set
-     */
-    public getProviderName(): string | null {
-        return this.providerName;
     }
 
 }

@@ -1,22 +1,27 @@
+/* eslint-disable no-unused-vars */
+ 
 import 'dotenv/config';
 import 'tsconfig-paths/register';
 
-import appConfig from '@src/config/app';
-import Kernel from "@src/core/Kernel";
-import { App } from '@src/core/services/App';
+import TinkerService from '@src/core/domains/tinker/services/TinkerService';
+import { app } from '@src/core/services/App';
+
 
 
 (async () => {
 
-    await Kernel.boot(appConfig, {})
+    // Boot the application
+    await TinkerService.boot({
+        useTestDb: false
+    });
 
-    // const auth = App.container('auth');
-    // const db = App.container('db');
-    // const events = App.container('events')
-    // const express = App.container('express')                         
-    // const cnsl = App.container('console');
+    // Useful services for debugging
+    const db        = app('db');
+    const events    = app('events');
+    const logger    = app('logger');
+    const query     = app('query');
+    const validator = app('validatorFn');
+    
+    // Add your code here
 
-    // Add your tinkers below
-
-    App.container('logger').info('Tinkers are ready!')
 })(); 

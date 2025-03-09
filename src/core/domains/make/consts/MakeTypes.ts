@@ -19,9 +19,12 @@ export const targetDirectories: Record<string, string> = {
     Provider: `${APP_PATH}/providers`,
     Routes: `${APP_PATH}/routes`,
     Middleware: `${APP_PATH}/middleware`,
-    Action: `${APP_PATH}/actions`,
+    Controller: `${APP_PATH}/controllers`,
     Validator: `${APP_PATH}/validators`,
     Migration: `${APP_PATH}/migrations`,
+    Seeder: `${APP_PATH}/seeders`,
+    Factory: `${APP_PATH}/factory`,
+
 } as const;
 
 /**
@@ -41,9 +44,11 @@ export const templates: Record<string, string> = {
     Provider: `${TEMPLATE_PATH}/Provider.ts.template`,
     Routes: `${TEMPLATE_PATH}/Routes.ts.template`,
     Middleware: `${TEMPLATE_PATH}/Middleware.ts.template`,
-    Action: `${TEMPLATE_PATH}/Action.ts.template`,
+    Controller: `${TEMPLATE_PATH}/Controller.ts.template`,
     Validator: `${TEMPLATE_PATH}/Validator.ts.template`,
     Migration: `${TEMPLATE_PATH}/Migration.ts.template`,
+    Seeder: `${TEMPLATE_PATH}/Seeder.ts.template`,
+    Factory: `${TEMPLATE_PATH}/Factory.ts.template`,
 } as const;
 
 export default Object.freeze({

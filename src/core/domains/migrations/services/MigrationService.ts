@@ -1,20 +1,26 @@
 import Repository from "@src/core/base/Repository";
+import { logger } from "@src/core/domains/logger/services/LoggerService";
+import MigrationTypeEnum from "@src/core/domains/migrations/enums/MigrationTypeEnum";
 import MigrationFactory from "@src/core/domains/migrations/factory/MigrationFactory";
-import { IMigration } from "@src/core/domains/migrations/interfaces/IMigration";
+import { IMigration, MigrationType } from "@src/core/domains/migrations/interfaces/IMigration";
 import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
 import { IMigrationService, IMigrationServiceOptions } from "@src/core/domains/migrations/interfaces/IMigrationService";
 import MigrationModel from "@src/core/domains/migrations/models/MigrationModel";
-import createMongoDBSchema from "@src/core/domains/migrations/schema/createMongoDBSchema";
-import createPostgresSchema from "@src/core/domains/migrations/schema/createPostgresSchema";
 import MigrationFileService from "@src/core/domains/migrations/services/MigrationFilesService";
+import { ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import FileNotFoundError from "@src/core/exceptions/FileNotFoundError";
-import { ModelConstructor } from "@src/core/interfaces/IModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
-import { App } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
+
 
 interface MigrationDetail {
     fileName: string,
     migration: IMigration
+}
+type ConstructorProps = {
+    directory: string;
+    modelCtor?: ModelConstructor;
+    migrationType: MigrationType;
 }
 
 /**
@@ -32,16 +38,30 @@ class MigrationService implements IMigrationService {
 
     protected modelCtor!: ModelConstructor;
 
-    constructor(config: IMigrationConfig = {}) {
+    protected migrationType!: MigrationType;
+
+    protected emptyMigrationsMessage!: string;
+
+    constructor(config: ConstructorProps = {} as ConstructorProps) {
         this.config = config;
-        this.fileService = new MigrationFileService(config.appMigrationsDir);
+        this.fileService = new MigrationFileService(config.directory);
         this.modelCtor = config.modelCtor ?? MigrationModel;
         this.repository = new Repository(this.modelCtor);
+        this.migrationType = config.migrationType;
+        this.emptyMigrationsMessage = `[Migration] No ${this.migrationType === MigrationTypeEnum.schema ? 'migrations' : 'seeders'} to run`;
     }
 
     async boot() {
         // Create the migrations schema
         await this.createSchema();
+    }
+
+    /**
+     * Get the migration type of this service
+     * @returns The migration type
+     */
+    getMigrationType(): MigrationType {
+        return this.migrationType
     }
 
     /**
@@ -57,6 +77,10 @@ class MigrationService implements IMigrationService {
             try {
                 const migration = await this.fileService.getImportMigrationClass(fileName);
 
+                if(migration.migrationType !== this.migrationType) {
+                    continue;
+                }
+
                 if (filterByFileName && fileName !== filterByFileName) {
                     continue;
                 }
@@ -68,8 +92,8 @@ class MigrationService implements IMigrationService {
                 result.push({ fileName, migration });
             }
             catch (err) {
-                if (err instanceof FileNotFoundError) {
-                    continue;
+                if (err instanceof FileNotFoundError === false) {
+                    throw err;
                 }
             }
         }
@@ -102,12 +126,12 @@ class MigrationService implements IMigrationService {
         const newBatchCount = (await this.getCurrentBatchCount()) + 1;
 
         if (!migrationsDetails.length) {
-            App.container('logger').info('[Migration] No migrations to run');
+            logger().info(this.emptyMigrationsMessage);
         }
 
         // Run the migrations for every file
         for (const migrationDetail of migrationsDetails) {
-            App.container('logger').info('[Migration] up -> ' + migrationDetail.fileName);
+            logger().info('[Migration] up -> ' + migrationDetail.fileName);
 
             await this.handleFileUp(migrationDetail, newBatchCount);
         }
@@ -123,13 +147,14 @@ class MigrationService implements IMigrationService {
 
         // Get the migration results
         const results = await this.getMigrationResults({
+            type: this.migrationType,
             batch: batchCount
         });
 
         // Sort by oldest to newest
         results.sort((a, b) => {
-            const aDate = a.getAttribute('appliedAt') as Date;
-            const bDate = b.getAttribute('appliedAt') as Date;
+            const aDate = a.getAttributeSync('appliedAt') as Date;
+            const bDate = b.getAttributeSync('appliedAt') as Date;
 
             if (!aDate || !bDate) {
                 return 0;
@@ -139,17 +164,17 @@ class MigrationService implements IMigrationService {
         });
 
         if (!results.length) {
-            App.container('logger').info('[Migration] No migrations to run');
+            logger().info(this.emptyMigrationsMessage);
         }
 
         // Run the migrations
         for (const result of results) {
             try {
-                const fileName = result.getAttribute('name') as string;
+                const fileName = result.getAttributeSync('name') as string;
                 const migration = await this.fileService.getImportMigrationClass(fileName);
 
                 // Run the down method
-                App.container('logger').info(`[Migration] down -> ${fileName}`);
+                logger().info(`[Migration] down -> ${fileName}`);
                 await migration.down();
 
                 // Delete the migration document
@@ -180,22 +205,23 @@ class MigrationService implements IMigrationService {
         });
 
         if (migrationDocument) {
-            App.container('logger').info(`[Migration] ${fileName} already applied`);
+            logger().info(`[Migration] ${fileName} already applied`);
             return;
         }
 
         if (!migration.shouldUp()) {
-            App.container('logger').info(`[Migration] Skipping (Provider mismatch) -> ${fileName}`);
+            logger().info(`[Migration] Skipping (Provider mismatch) -> ${fileName}`);
             return;
         }
 
-        App.container('logger').info(`[Migration] up -> ${fileName}`);
+        logger().info(`[Migration] up -> ${fileName}`);
         await migration.up();
 
         const model = (new MigrationFactory).create({
             name: fileName,
             batch: newBatchCount,
             checksum: fileChecksum,
+            type: this.migrationType,
             appliedAt: new Date(),
         }, this.modelCtor)
         await model.save();
@@ -211,8 +237,8 @@ class MigrationService implements IMigrationService {
         let current = 0;
 
         results.forEach(result => {
-            if (result.getAttribute('batch') as number > current) {
-                current = result.getAttribute('batch') as number
+            if (result.getAttributeSync('batch') as number > current) {
+                current = result.getAttributeSync('batch') as number
             }
         });
 
@@ -235,27 +261,15 @@ class MigrationService implements IMigrationService {
      */
     protected async createSchema(): Promise<void> {
         try {
-            const tableName = (new this.modelCtor).table
+            const tableName = this.modelCtor.getTable()
 
-            /**
-             * Handle MongoDB driver
-             */
-            if (App.container('db').isProvider('mongodb')) {
-                await createMongoDBSchema(tableName);
-            }
-
-            /**
-             * Handle Postgres driver
-             */
-            if (App.container('db').isProvider('postgres')) {
-                await createPostgresSchema(tableName);
-            }
+            await app('db').createMigrationSchema(tableName)
         }
         catch (err) {
-            App.container('logger').info('[Migration] createSchema', err)
+            logger().info('[Migration] createSchema', err)
 
             if (err instanceof Error) {
-                App.container('logger').error(err)
+                logger().exception(err)
             }
         }
     }

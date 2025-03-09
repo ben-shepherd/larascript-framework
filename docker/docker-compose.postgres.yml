@@ -1,5 +1,7 @@
 version: '3'
 
+name: larascript
+
 services:
   postgres:
     container_name: larascript-postgres
@@ -18,3 +20,8 @@ services:
 
 volumes:
   postgres_data:
+
+networks:
+  app-network:
+    external: true
+    name: larascript

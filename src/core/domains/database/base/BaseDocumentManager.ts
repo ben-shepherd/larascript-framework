@@ -1,26 +1,21 @@
 /* eslint-disable no-unused-vars */
-// Import necessary interfaces and classes
 import MissingTable from "@src/core/domains/database/exceptions/InvalidTable";
-import { IDatabaseProvider } from "@src/core/domains/database/interfaces/IDatabaseProvider";
+import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 import { IDatabaseDocument, IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
 import { IDocumentValidator } from "@src/core/domains/database/interfaces/IDocumentValidator";
 import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
-import { IBelongsToOptions } from "@src/core/domains/database/interfaces/relationships/IBelongsTo";
-import { IHasManyOptions } from "@src/core/domains/database/interfaces/relationships/IHasMany";
-import BelongsTo from "@src/core/domains/database/relationships/BelongsTo";
-import HasMany from "@src/core/domains/database/relationships/HasMany";
 import DocumentValidator from "@src/core/domains/database/validator/DocumentValidator";
 import { App } from "@src/core/services/App";
 
 /**
  * Abstract base class for document management operations
- * @template Query - Type extending IDocumentManager
- * @template Provider - Type extending IDatabaseProvider
+ * @template TDocMan - Type extending IDocumentManager
+ * @template TAdapter - Type extending IDatabaseProvider
  */
-abstract class BaseDocumentManager<Query extends IDocumentManager = IDocumentManager, Provider extends IDatabaseProvider = IDatabaseProvider> implements IDocumentManager {
+abstract class BaseDocumentManager<TDocMan extends IDocumentManager = IDocumentManager, TAdapter extends IDatabaseAdapter = IDatabaseAdapter> implements IDocumentManager {
 
     // Protected properties
-    protected driver!: Provider;
+    protected adapter!: TAdapter;
 
     protected tableName!: string;
     
@@ -29,10 +24,10 @@ abstract class BaseDocumentManager<Query extends IDocumentManager = IDocumentMan
     
     /**
      * Constructor for BaseDocumentManager
-     * @param driver - Database provider instance
+     * @param adapter - Database provider instance
      */
-    constructor(driver: Provider) {
-        this.driver = driver;
+    constructor(adapter: TAdapter) {
+        this.adapter = adapter;
     }
 
     /**
@@ -61,7 +56,7 @@ abstract class BaseDocumentManager<Query extends IDocumentManager = IDocumentMan
      * @param table - Name of the table
      * @returns Current instance cast as Query type
      */
-    table(table: string): Query {
+    table(table: string): TDocMan {
         this.tableName = table;
         return this as any;
     } 
@@ -101,26 +96,6 @@ abstract class BaseDocumentManager<Query extends IDocumentManager = IDocumentMan
     abstract truncate(): Promise<void>;
 
     /**
-     * Handle "belongs to" relationship
-     * @param document - Source document
-     * @param options - Relationship options
-     * @returns Promise resolving to related document or null
-     */
-    async belongsTo<T>(document: IDatabaseDocument, options: IBelongsToOptions): Promise<T | null> {
-        return new BelongsTo().handle(this.driver.connectionName, document, options);
-    }
-
-    /**
-     * Handle "has many" relationship
-     * @param document - Source document
-     * @param options - Relationship options
-     * @returns Promise resolving to array of related documents
-     */
-    async hasMany<T>(document: IDatabaseDocument, options: IHasManyOptions): Promise<T> {
-        return new HasMany().handle(this.driver.connectionName, document, options) as T;
-    }
-
-    /**
      * Catches and logs any errors that occur in the callback,
      * then re-throws the error
      * @param callback - The callback function to wrap
@@ -132,7 +107,7 @@ abstract class BaseDocumentManager<Query extends IDocumentManager = IDocumentMan
         }
         catch (err) {
             if(err instanceof Error && err?.message) {
-                App.container('logger').error(`Database error(${this.driver.connectionName}): `, err.message, err.stack)
+                App.container('logger').error(`Database error(${this.adapter.getConnectionName()}): `, err.message, err.stack)
             }
             throw err
         }

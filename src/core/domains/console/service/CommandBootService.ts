@@ -10,7 +10,7 @@ class CommandBootService implements ICommandBootService {
      * @throws CommandNotFoundException
      */
     async boot(args: string[]): Promise<void> {
-        await App.container('console').reader(args).handle()
+        await App.container('console').readerService(args).handle()
     }
 
     /**
@@ -24,10 +24,11 @@ class CommandBootService implements ICommandBootService {
         options.withoutProvider = [...(options.withoutProvider ?? [])];
 
         if(args.includes('--no-express')) {
-            options.withoutProvider = ['ExpressProvider']
+            options.withoutProvider.push('ExpressProvider')
+            options.withoutProvider.push('RoutesProvider')
         }
         if(args.includes('--no-auth')) {
-            options.withoutProvider?.push('AuthProvider');
+            options.withoutProvider.push('AuthProvider');
         }
         if(args.includes('--no-db')) {
             options.withoutProvider?.push('MongoDBProvider');

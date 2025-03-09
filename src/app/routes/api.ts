@@ -1,17 +1,8 @@
-import Route from "@src/core/domains/express/routing/Route"
-import RouteGroup from "@src/core/domains/express/routing/RouteGroup"
-import { Request, Response } from "express"
+import ExampleController from "@src/app/controllers/ExampleController"
+import Route from "@src/core/domains/http/router/Route"
 
-const apiRoutes = RouteGroup([
-    Route({
-        name: 'index',
-        method: 'get',
-        path: '/',
-        action: (req: Request, res: Response) => {
-            res.send('OK!')
-        }
-    }),
+export default Route.group(router => {
 
-])
-
-export default apiRoutes
+    router.get('/example', [ExampleController, 'example'])
+    
+})

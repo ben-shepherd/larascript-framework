@@ -1,4 +1,4 @@
-import DatabaseConfig from '@src/core/domains/database/config/DatabaseConfig';
+import DatabaseAdapter from '@src/core/domains/database/services/DatabaseAdapter';
 import QuestionDTO from '@src/core/domains/setup/DTOs/QuestionDTO';
 import { IAction } from '@src/core/domains/setup/interfaces/IAction';
 import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand';
@@ -7,11 +7,7 @@ import PackageJsonService from '@src/core/services/PackageJsonService';
 
 class SetupDockerDatabaseScripts implements IAction {
 
-    packageJson: IPackageJsonService;
-
-    constructor() {
-        this.packageJson = new PackageJsonService();
-    }
+    packageJson: IPackageJsonService = new PackageJsonService();
 
     /**
      * Handle the action 
@@ -35,14 +31,14 @@ class SetupDockerDatabaseScripts implements IAction {
         let dockerComposeNames: string[] = [];
 
         if(dbType === 'all') {
-            dockerComposeNames = ['network', ...Object.keys(DatabaseConfig.providers)];
+            dockerComposeNames = this.getComposerShortFileNames()
         }
         else {
-            dockerComposeNames = ['network', dbType];
+            dockerComposeNames = [dbType]
         }
 
-        const dbUp = this.buildDockerComposeString(dockerComposeNames, 'up --build -d');
-        const dbDown = this.buildDockerComposeString(dockerComposeNames, 'down');
+        const dbUp = this.buildDatabaseDirectionScript(dockerComposeNames, 'up');
+        const dbDown = this.buildDatabaseDirectionScript(dockerComposeNames, 'down');
 
         packageJson.scripts['db:up'] = dbUp;
         packageJson.scripts['db:down'] = dbDown;
@@ -50,23 +46,34 @@ class SetupDockerDatabaseScripts implements IAction {
         await this.packageJson.writeFileContents(JSON.stringify(packageJson, null, 2));
     }
 
-
     /**
      * 
      * @param dockerComposeNames Example: ['network', 'mongodb', 'postgres']
      * @param dockerParameters Example: up --build -d
      * @returns 
      */
-    private buildDockerComposeString(dockerComposeNames: string[], dockerParameters: string) {
+    private buildDatabaseDirectionScript(dockerComposeNames: string[], direction: 'up' | 'down') {
+        let scriptValue = 'yarn ';
 
-        const baseCommand = 'cd ./docker && docker-compose {dockerComposeNames} {dockerParameters}'
-        let composeScriptsStr = '';
+        for(let i = 0; i < dockerComposeNames.length; i++) {
+            const composeName = dockerComposeNames[i];
+            scriptValue += `db:${composeName}:${direction} `;
 
-        dockerComposeNames.forEach((type: string) => {
-            composeScriptsStr += `-f docker-compose.${type}.yml `;
-        })
+            if(i < dockerComposeNames.length - 1) {
+                scriptValue += '&& ';
+            }
+        }
 
-        return baseCommand.replace('{dockerComposeNames}', composeScriptsStr).replace('{dockerParameters}', dockerParameters)
+        return scriptValue.trimEnd();
+    }
+    
+
+    /**
+     * Retrieves an array of short composer file names (e.g., ['mongodb', 'postgres'])
+     * @returns {string[]}
+     */
+    private getComposerShortFileNames(): string[] {
+        return DatabaseAdapter.getComposerShortFileNames();
     }
 
 }

@@ -1,51 +1,32 @@
 /* eslint-disable no-unused-vars */
-import IValidatorResult from "@src/core/domains/validator/interfaces/IValidatorResult";
-import Joi, { ValidationOptions } from "joi";
+import { IRule, IRulesObject } from "@src/core/domains/validator/interfaces/IRule"
+import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult"
 
-export type IInterfaceCtor = new (...args: any[]) => IValidator;
-
-export type IValidatorPayload = Record<string, unknown>;
-
-/**
- * Interface for a validator class.
- * @template T The type of the payload being validated.
- */
-interface IValidator<T = any>
-{
-
-    /**
-     * Validates the given payload.
-     * @param payload The payload to validate.
-     * @param options The Joi validation options.
-     * @returns A promise that resolves to an IValidatorResult.
-     */
-    validate(payload: Record<string, unknown>, options?: ValidationOptions): Promise<IValidatorResult<T>>;
-
-    /**
-     * Gets the validation rules.
-     * @returns The validation rules as a Joi ObjectSchema.
-     */
-    rules(): Joi.ObjectSchema<T>;
-
-    /**
-     * Sets the validation rules.
-     * @param rules The validation rules as a Joi ObjectSchema.
-     * @returns The validator instance.
-     */
-    setRules(rules: Joi.ObjectSchema): IValidator<T>;
-
-    /**
-     * Sets custom validation messages.
-     * @param customMessages The custom validation messages as a record of strings.
-     * @returns The validator instance.
-     */
-    setErrorMessage(customMessages: Record<string, string>): IValidator<T>;
-
-    /**
-     * Gets the Joi validation options
-     * @returns The Joi validation options
-     */
-    getJoiOptions(): ValidationOptions;
+export type CustomValidatorConstructor = {
+    new (...args: any[]): IValidator
 }
 
-export default IValidator
+export type ValidatorConstructor = {
+    new (rules: IRule[], messages: IValidatorMessages): IValidator
+    make(rules: IRule[], messages: IValidatorMessages): IValidator
+}
+
+export type IValidatorMessages = Record<string, string>
+
+export type IValidatorAttributes = Record<string, unknown>
+
+export type IValidatorErrors = Record<string, string[]>
+
+export type IValidatorFn = (rules: IRulesObject, messages?: IValidatorMessages) => IValidator
+
+export interface IValidator<Attributes extends IValidatorAttributes = IValidatorAttributes> {
+    validate(data: Attributes): Promise<IValidatorResult<Attributes>>
+    passes(): boolean
+    errors(): IValidatorErrors
+    validated(): Attributes;
+    getRules(): IRulesObject;
+    getMessages(): IValidatorMessages;
+}
+
+
+

@@ -1,6 +1,6 @@
-/* eslint-disable no-unused-vars */
-export type EventListenerConstructor<EventListener extends IEventListener = IEventListener> = new (...args: any[]) => EventListener;
+import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
+import { INameable } from "@src/core/interfaces/concerns/INameable";
 
-export interface IEventListener {
-    handle: (...args: any[]) => any;
+export interface IEventListener<TPayload = unknown> extends INameable, IBaseEvent<TPayload> {
+
 }

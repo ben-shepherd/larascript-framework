@@ -1,4 +1,7 @@
-import { IMigration } from "@src/core/domains/migrations/interfaces/IMigration";
+import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
+import { db } from "@src/core/domains/database/services/Database";
+import { IMigration, MigrationType } from "@src/core/domains/migrations/interfaces/IMigration";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { App } from "@src/core/services/App";
 
 /**
@@ -15,17 +18,16 @@ abstract class BaseMigration implements IMigration {
     protected readonly schema = App.container('db').schema();
 
     /**
-     * documentManager is used for CRUD operations on database documents or records.
-     * It handles inserting, updating, fetching, and deleting database documents.
+     * Define the type of migration.
      */
-    protected readonly documentManager = App.container('db').documentManager()
+    migrationType = 'schema' as MigrationType;
 
     /**
      * databaseProvider specifies which database system this migration is designed for.
      * If undefined, the migration will run on the default provider.
      * Can be set to 'mongodb', 'postgres', or other supported database systems.
      */
-    databaseProvider?: string;
+    databaseAdapter?: TClassConstructor<IDatabaseAdapter>;
 
     /**
      * Define the name of the migration group.
@@ -58,13 +60,13 @@ abstract class BaseMigration implements IMigration {
      * @returns true if the migration should run, false otherwise
      */
     shouldUp(): boolean {
-    // If no specific database provider is set, the migration runs on the default provider
-        if(!this.databaseProvider) { 
+        // If no specific database provider is set, the migration runs on the default provider
+        if(!this.databaseAdapter) { 
             return true;
         }
 
         // Check if the current database matches the specified provider for this migration
-        return App.container('db').isProvider(this.databaseProvider);
+        return db().isConnectionAdapter(this.databaseAdapter);
     }
 
 }

@@ -1,38 +1,35 @@
 import User from "@src/app/models/auth/User";
+import { authJwt } from "@src/core/domains/auth/services/JwtAuthService";
 import BaseMigration from "@src/core/domains/migrations/base/BaseMigration";
-import { DataTypes } from "sequelize";
+import DataTypes from "@src/core/domains/migrations/schema/DataTypes";
 
 export class CreateUserModelMigration extends BaseMigration {
 
-    // Specify the database provider if this migration should run on a particular database.
-    // Uncomment and set to 'mongodb', 'postgres', or another supported provider.
-    // If left commented out, the migration will run only on the default provider.
-    // databaseProvider: 'mongodb' | 'postgres' = 'postgres';
-
     group?: string = 'app:setup';
 
-    table = (new User).table;
-
     async up(): Promise<void> {
+
         const stringNullable = {
             type: DataTypes.STRING,
             allowNull: true
         }
 
-        await this.schema.createTable(this.table, {
-            email: DataTypes.STRING,
-            hashedPassword: DataTypes.STRING,
-            groups: DataTypes.JSON,
-            roles: DataTypes.JSON,
+        await this.schema.createTable(User.getTable(), {
+
+            // Include auth fields (email, hashedPassword, groups, roles)
+            ...authJwt().getCreateUserTableSchema(),
+
+            // User fields
             firstName: stringNullable,
             lastName: stringNullable,
             createdAt: DataTypes.DATE,
             updatedAt: DataTypes.DATE
+
         })
     }
 
     async down(): Promise<void> {
-        await this.schema.dropTable(this.table);
+        await this.schema.dropTable(User.getTable());
     }
 
 }

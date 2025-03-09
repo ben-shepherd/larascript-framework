@@ -1,38 +1,9 @@
-import Model from "@src/core/base/Model";
-import IModelAttributes from "@src/core/interfaces/IModelData";
+import { FailedWorkerModelAttributes } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
+import Model from "@src/core/domains/models/base/Model";
 
-/**
- * Represents a failed worker model.
- *
- * @interface FailedWorkerModelData
- * @extends IModelAttributes
- */
-export interface FailedWorkerModelData extends IModelAttributes {
 
-    /**
-     * The name of the event that failed.
-     */
-    eventName: string;
+export interface FailedWorkerModelData extends FailedWorkerModelAttributes {}
 
-    /**
-     * The payload of the event that failed.
-     */
-    payload: any;
-
-    /**
-     * The error that caused the event to fail.
-     */
-    error: any;
-
-    /**
-     * The date when the event failed.
-     */
-    failedAt: Date;
-}
-
-/**
- * Initial data for a failed worker model.
- */
 export const initialFailedWorkerModalData = {
     eventName: '',
     payload: null,
@@ -69,7 +40,7 @@ export default class FailedWorkerModel extends Model<FailedWorkerModelData> {
      * @param {FailedWorkerModelData} data - The data for the model.
      */
     constructor(data: FailedWorkerModelData) {
-        super(data);
+        super({ ...initialFailedWorkerModalData, ...data });
     }
 
 }

@@ -1,3 +1,5 @@
+name: larascript
+
 services:
   api:
     container_name: larascript-api
@@ -11,3 +13,8 @@ services:
     working_dir: /app
     networks:
       - app-network
+
+networks:
+  app-network:
+    external: true
+    name: larascript

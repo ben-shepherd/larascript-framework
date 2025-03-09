@@ -1,24 +1,23 @@
-import { IEventPayload } from "@src/core/domains/events/interfaces/IEventPayload";
-import EventListener from "@src/core/domains/events/services/EventListener";
+import BaseEventListener from "@src/core/domains/events/base/BaseEventListener";
+import EventRegistry from "@src/core/domains/events/registry/EventRegistry";
 
-export interface I#name#Data extends IEventPayload {
-
+type #name#Payload = {
+    // ...
 }
-
-/**
- * <enter description>
- */
-export class #name# extends EventListener<I#name#Data> {
+ 
+class #name# extends BaseEventListener<#name#Payload> {
 
     /**
-     * Handle the dispatched event
-     * @param payload The dispatched event payload
+     * Optional method to execute before the subscribers are dispatched.
      */
-    handle = async (payload: I#name#Data) => {
+    async execute(): Promise<void> {
 
-        // Handle the logic
+        // eslint-disable-next-line no-unused-vars
+        const payload = this.getPayload();
 
+        // Handle logic
     }
-
+    
 }
 
+export default EventRegistry.registerListener(#name#)

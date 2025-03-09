@@ -1,8 +1,8 @@
-import { IDocumentManager } from "@src/core/domains/database/interfaces/IDocumentManager";
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
+import { IModel, ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
-import { IModel, ModelConstructor } from "@src/core/interfaces/IModel";
 import { IRepository } from "@src/core/interfaces/IRepository";
-import { App } from "@src/core/services/App";
 
 /**
  * Base class for repositories
@@ -12,12 +12,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
     /**
      * The model constructor
      */
-    public modelCtor: ModelConstructor<Model>;
-
-    /**
-     * The name of the collection/table
-     */
-    public collectionName!: string;
+    public modelConstructor: ModelConstructor<Model>;
 
     /**
      * The connection to use for queries
@@ -29,18 +24,25 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @param collectionName The name of the collection/table
      * @param modelConstructor The model constructor
      */
-    constructor(modelConstructor: ModelConstructor<Model>, collectionName?: string) {
-        this.collectionName = collectionName ?? (new modelConstructor()).table;
-        this.connection = new modelConstructor().connection
-        this.modelCtor = modelConstructor;
+    constructor(modelConstructor: ModelConstructor<Model>, connectionName?: string) {
+        this.connection = connectionName ?? modelConstructor.getConnectionName()
+        this.modelConstructor = modelConstructor;
     }
 
     /**
-     * Get the query builder
-     * @returns The query builder
+     * Returns a new query builder instance that is a clone of the existing one.
+     * @returns A new query builder instance.
      */
-    documentManager(): IDocumentManager {
-        return App.container('db').documentManager(this.connection).table(this.collectionName)
+    protected query(): IEloquent<Model> {
+        return queryBuilder(this.modelConstructor, this.connection);
+    }
+
+    /**
+     * Set the model constructor
+     * @param modelCtor The model constructor
+     */
+    protected setModelCtor(modelCtor: ModelConstructor<Model>) {
+        this.modelConstructor = modelCtor;
     }
     
     /**
@@ -65,13 +67,7 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @returns The found model or null
      */
     async findById(id: string): Promise<Model | null> {
-        const data = await this.documentManager().findById(id)
-
-        if(!data) {
-            return null
-        }
-
-        return new this.modelCtor(data)
+        return await this.query().find(id)
     }
 
     /**
@@ -80,8 +76,13 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @returns The found model or null
      */
     async findOne(filter: object = {}): Promise<Model | null> {
-        const data = await this.documentManager().findOne({filter});
-        return data ? new this.modelCtor(data) : null;
+        const builder = await this.query();
+
+        Object.keys(filter).forEach(key => {
+            builder.where(key, filter[key]);
+        })
+
+        return await builder.first();
     }
 
     /**
@@ -90,9 +91,14 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      * @param options The options to use for the query
      * @returns The found models
      */
-    async findMany(filter: object = {}, options?: object): Promise<Model[]> {
-        const dataArray = await this.documentManager().findMany({...options, filter})
-        return (dataArray as unknown[]).map(data => new this.modelCtor(data));
+    async findMany(filter: object = {}): Promise<Model[]> {
+        const builder = this.query();
+
+        Object.keys(filter).forEach(key => {
+            builder.where(key, filter[key]);
+        })
+
+        return (await builder.get()).toArray()
     }
 
 }

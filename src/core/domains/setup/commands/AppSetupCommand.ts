@@ -25,27 +25,17 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
     /**
      * The environment service
      */
-    env: IEnvService;
+    env: IEnvService = new EnvService();
 
     /**
      * The console input service
      */
-    input: IConsoleInputService;
+    input: IConsoleInputService = new ConsoleInputService();
 
     /**
      * The questions to ask the user
      */
-    questions!: QuestionDTO[];
-
-    /**
-     * Constructor
-     */
-    constructor() {
-        super();
-        this.env = new EnvService();
-        this.input = new ConsoleInputService();
-        this.questions = buildQuestionDTOs();
-    }
+    protected questions!: QuestionDTO[];
 
     /**
      * Writes a line to the console
@@ -66,6 +56,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
         this.writeLine();
         this.writeLine('Setup Preview:');
 
+        this.questions = buildQuestionDTOs();
         this.questions.forEach(question => {
             this.writeLine(`- ${question.getPreviewText()}`);
         });
@@ -86,8 +77,17 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
  
         this.input.clearScreen();
 
-        this.writeLine('--- Setup Complete ---');
-        this.writeLine('Happy coding!');
+        this.writeLine('');
+        this.writeLine('  ╔═══════════════════════════════════════╗');
+        this.writeLine('  ║          SETUP COMPLETE! 🎉           ║');
+        this.writeLine('  ╚═══════════════════════════════════════╝');
+        this.writeLine('');
+        this.writeLine('         🚀 Ready for takeoff! 🚀');
+        this.writeLine('');
+        this.writeLine('  ⭐️ Happy coding! May your code be bug-free ⭐️');
+        this.writeLine('');
+        this.writeLine('      Why did the programmer quit his job?');
+        this.writeLine('       Because he didn\'t get arrays! 📊');
         this.writeLine('');
     }
 

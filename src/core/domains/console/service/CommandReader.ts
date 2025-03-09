@@ -6,15 +6,19 @@ import { App } from "@src/core/services/App";
 
 export default class CommandReader implements ICommandReader {
 
-    private argv: string[] = [];
+    /**
+     * Command signature
+     * 
+     *  Example:
+            ["--id=123", "--name=\"My Name\""]
+     */
+    private readonly argv: string[] = [];
 
     /**
      * Command signature
      * 
      *  Example:
-     *      my:command --id=123 --name="My Name"
-     * 
-     * @param argv 
+            ["my:command", "--id=123", "--name=\"My Name\""]
      */
     constructor(argv: string[]) {
         this.argv = argv;   
@@ -39,15 +43,16 @@ export default class CommandReader implements ICommandReader {
             throw new CommandNotFoundException();
         }
 
-        const commandCtor = App.container('console').register().getBySignature(signature);
+        const commandCtor = App.container('console').registerService().getBySignature(signature);
 
         if(!commandCtor) {
             throw new CommandSignatureInvalid()
         }
 
-        const cmdConfig = App.container('console').register().getCommandConfig(signature);
+        const cmdConfig = App.container('console').registerService().getCommandConfig(signature);
 
-        const cmd = new commandCtor(cmdConfig)
+        const cmd = new commandCtor()
+        cmd.setConfig(cmdConfig);
 
         cmd.setParsedArguments(this.runParser())
         await cmd.execute()

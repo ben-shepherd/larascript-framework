@@ -1,14 +1,7 @@
-import Model from "@src/core/base/Model";
-import IModelAttributes from "@src/core/interfaces/IModelData";
+import { IWorkerModel, WorkerModelAttributes } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
+import Model from "@src/core/domains/models/base/Model";
 
-export interface WorkerModelData extends IModelAttributes {
-    queueName: string;
-    eventName: string;
-    payload: any;
-    attempt: number;
-    retries: number;
-    createdAt: Date;
-}
+export interface WorkerModelData extends WorkerModelAttributes {}
 
 export const initialWorkerModalData = {
     queueName: '',
@@ -27,8 +20,9 @@ export const initialWorkerModalData = {
  * @class WorkerModel
  * @extends Model<WorkerModelData>
  */
-export default class WorkerModel extends Model<WorkerModelData> {
+export default class WorkerModel extends Model<WorkerModelData> implements IWorkerModel {
 
+    table: string = 'worker_queue';
 
     /**
      * The list of date fields.
@@ -61,13 +55,23 @@ export default class WorkerModel extends Model<WorkerModelData> {
     ]
 
     constructor(data: WorkerModelData) {
-        super(data); 
+        super({...initialWorkerModalData, ...data}); 
     }
 
-    public getPayload(): unknown {
+    getPayload<T = unknown>(): T | null {
         try {
-            const payload = this.getAttribute('payload');
-            return JSON.parse(payload)
+            const json = this.getAttributeSync('payload');
+
+            if(typeof json === 'string') {
+                const payload = this.getAttributeSync('payload');
+                return JSON.parse(payload) as T
+            }
+
+            if(typeof json === 'object') {
+                return json as T
+            }
+
+            throw new Error('Invalid payload')
         }
         // eslint-disable-next-line no-unused-vars
         catch (err) {

@@ -1,39 +1,34 @@
 import BaseProvider from "@src/core/base/Provider";
 import MigrateDownCommand from "@src/core/domains/migrations/commands/MigrateDownCommand";
+import MigrateFreshCommand from "@src/core/domains/migrations/commands/MigrateFreshCommand";
 import MigrateUpCommand from "@src/core/domains/migrations/commands/MigrateUpCommand";
+import SeedUpCommand from "@src/core/domains/migrations/commands/SeedUpCommand";
 import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
-import { App } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
+import SeedDownCommand from "@src/core/domains/migrations/commands/SeedDownCommand";
 
 /**
  * MigrationProvider class handles all migration related tasks
  */
 class MigrationProvider extends BaseProvider {
 
-    /**
-     * The default configuration for the migrations
-     */
     protected config: IMigrationConfig = {
-        appMigrationsDir: '@src/../src/app/migrations',
+        schemaMigrationDir: '@src/../src/app/migrations',
+        seederMigrationDir: '@src/../src/app/seeders',
     };
     
-    /**
-     * Registers the migration commands and adds them to the console service
-     * with the default configuration
-     */
     async register(): Promise<void> {
         this.log('Registering MigrationProvider');   
 
-        App.container('console').register().registerAll([
-            MigrateUpCommand,
-            MigrateDownCommand
-        ], this.config)
-    }
-
-    /**
-     * Currently does nothing
-     */
-    async boot(): Promise<void> {
-        this.log('Registering MigrationProvider');   
+        // Register the migration commands
+        app('console').registerService()
+            .registerAll([
+                MigrateUpCommand,
+                MigrateDownCommand,
+                MigrateFreshCommand,
+                SeedUpCommand,
+                SeedDownCommand,
+            ], this.config)
     }
 
 }

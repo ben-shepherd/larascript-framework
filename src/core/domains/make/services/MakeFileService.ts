@@ -108,8 +108,13 @@ export default class MakeFileService {
      * @returns Updated path
      */
     replaceSrcDir(targetDir: string) {
+        if(typeof targetDir !== 'string') {
+            throw new Error('Expected targetDir to be a string, received: ' + typeof targetDir)
+        }
+
         return targetDir.replace(/^@src\//, 'src/');
     }
+
 
     /**
      * Makes a future filename

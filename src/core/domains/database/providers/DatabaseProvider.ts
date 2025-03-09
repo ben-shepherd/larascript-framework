@@ -1,8 +1,9 @@
-import databaseConfig from "@src/config/database";
+import databaseConfig from "@src/config/database.config";
 import BaseProvider from "@src/core/base/Provider";
 import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
-import DatabaseService from "@src/core/domains/database/services/DatabaseService";
-import { App } from "@src/core/services/App";
+import Database from "@src/core/domains/database/services/Database";
+import { app } from "@src/core/services/App";
+
 
 /**
  * DatabaseProvider class
@@ -35,7 +36,7 @@ export default class DatabaseProvider extends BaseProvider {
         this.log('Registering DatabaseProvider');
 
         // Register the database service in the App container
-        App.setContainer('db', new DatabaseService(this.config))
+        this.bind('db', new Database(this.config))
     }
 
     /**
@@ -50,7 +51,7 @@ export default class DatabaseProvider extends BaseProvider {
         this.log('Booting DatabaseProvider');
 
         // Boot the database service
-        await App.container('db').boot();
+        await app('db').boot();
     }
 
 }

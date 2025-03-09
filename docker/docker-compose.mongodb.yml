@@ -1,5 +1,7 @@
 version: '3'
 
+name: larascript
+
 services:
   mongodb:
     container_name: larascript-mongodb
@@ -12,8 +14,21 @@ services:
       LARASCRIPT_DEFAULT_CREDENTIALS: mongodb://root:example@localhost:27017/app?authSource=admin
     volumes:
       - mongodb_data:/data/db
+      - mongodb_keyfile:/data
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "mongosh", "admin", "-u", "root", "-p", "example", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
 
 volumes:
   mongodb_data:
+  mongodb_keyfile:
+
+networks:
+  app-network:
+    external: true
+    name: larascript

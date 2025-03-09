@@ -1,6 +1,6 @@
-import MongoDB from "@src/core/domains/database/providers-db/MongoDB";
-import Postgres from "@src/core/domains/database/providers-db/Postgres";
-import responseError from "@src/core/domains/express/requests/responseError";
+import responseError from "@src/core/domains/http/handlers/responseError";
+import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
+import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import { App } from "@src/core/services/App";
 import { Request, Response } from "express";
 import { MongoClient } from "mongodb";
@@ -18,18 +18,18 @@ export default async (req: Request, res: Response) => {
 
     try {
         const db = App.container('db');
-        const provider = db.provider();
-        const client = provider.getClient() as any;
+        const adapter = db.getAdapter();
 
         // Check if the provider is MongoDB
-        if (provider as unknown instanceof MongoDB) {
-            // Check if the MongoDB connection is active
-            await (client as MongoClient).db().stats();
+        if (adapter as unknown instanceof MongoDbAdapter) {
+            const mongoClient = (adapter as unknown as MongoDbAdapter).getClient();
+            await (mongoClient as MongoClient).db().stats();
         }
+        
         // Check if the provider is Postgres
-        else if (provider as unknown instanceof Postgres) {
-            // Check if the Postgres connection is active
-            await (client as Sequelize).authenticate();
+        else if (adapter as unknown instanceof PostgresAdapter) {
+            const pool = (adapter as PostgresAdapter).getSequelize();
+            await (pool as Sequelize).query('SELECT 1 as connected');
         }
     }
     catch (error) {

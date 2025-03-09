@@ -9,7 +9,7 @@ export default class MakeMiddlewareCommand extends BaseMakeFileCommand {
             makeType: 'Middleware',
             args: ['name'],
             endsWith: 'Middleware',
-            startWithLowercase: true
+            startWithLowercase: false
         })
     }
 

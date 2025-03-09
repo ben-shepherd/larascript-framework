@@ -1,35 +1,56 @@
-
-import { defaultEventDriver, eventDrivers, eventSubscribers } from "@src/config/events";
+import { eventConfig } from "@src/config/events.config";
 import BaseProvider from "@src/core/base/Provider";
-import { EventServiceConfig } from "@src/core/domains/events/interfaces/IEventService";
+import WorkerCommand from "@src/core/domains/events/commands/WorkerCommand";
+import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventConfig";
+import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
 import EventService from "@src/core/domains/events/services/EventService";
-import { App } from "@src/core/services/App";
-import WorkerCommand from "@src/core/domains/console/commands/WorkerCommand";
+import { app } from "@src/core/services/App";
+import EventRegistry from "@src/core/domains/events/registry/EventRegistry";
 
-export default class EventProvider extends BaseProvider {
+class EventProvider extends BaseProvider {
 
-    protected config: EventServiceConfig = {
-        defaultDriver: defaultEventDriver,
-        drivers: eventDrivers,
-        subscribers: eventSubscribers
-    };
+    protected config: IEventConfig = eventConfig;
 
-    public async register(): Promise<void> {
-        this.log('Registering EventProvider');
+    async register(): Promise<void> {
+        
+        // Create the event Service and register the drivers, events and listeners
+        const eventService = new EventService(this.config);
 
-        /**
-         * Register event service
-         */
-        App.setContainer('events', new EventService(this.config));
+        // Register the drivers
+        this.registerDrivers(eventService);
+        
+        // Register all events from the registry
+        const registeredEvents = EventRegistry.getEvents();
 
-        /**
-         * Register system provided commands
-         */
-        App.container('console').register().registerAll([
+        for (const event of registeredEvents) {
+            eventService.registerEvent(event);
+        }
+
+        // Register all listeners
+        eventService.registerListeners(this.config.listeners);
+        
+        // Mark the registry as initialized since event service is now available
+        EventRegistry.setInitialized();
+
+        // Bind the event service to the container
+        this.bind('events', eventService);
+
+        // Register the worker command
+        app('console').registerService().registerAll([
             WorkerCommand
         ])
     }
 
-    public async boot(): Promise<void> {}
+    /**
+     * Registers all event drivers defined in the configuration with the provided event service.
+     * @param eventService The event service to register drivers with.
+     */
+    private registerDrivers(eventService: IEventService) {
+        for(const driverKey of Object.keys(this.config.drivers)) {
+            eventService.registerDriver(this.config.drivers[driverKey]);
+        }
+    }
 
 }
+
+export default EventProvider

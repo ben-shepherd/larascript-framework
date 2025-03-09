@@ -1,5 +1,9 @@
+ 
+import { faker } from "@faker-js/faker";
+import { IModel, IModelAttributes, ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import IFactory from "@src/core/interfaces/IFactory";
-import { ICtor } from "@src/core/interfaces/ICtor";
+
+
 
 /**
  * Abstract base class for factories that create instances of a specific model.
@@ -7,20 +11,25 @@ import { ICtor } from "@src/core/interfaces/ICtor";
  * @template Model The type of model to create.
  * @template Data The type of data to pass to the model constructor.
  */
-export default abstract class Factory<Model, Data> implements IFactory {
+export default abstract class Factory<Model extends IModel = IModel> implements IFactory<Model> {
+
+    /**
+     * The faker instance to use.
+     */
+    protected faker = faker;
 
     /**
      * The constructor of the model to create.
      */
-    protected modelCtor: ICtor<Model>;
+    protected abstract model: ModelConstructor<IModel>;
 
     /**
-     * Creates a new instance of the factory.
-     *
-     * @param modelCtor The constructor of the model to create.
+     * Get the definition of the model.
+     * 
+     * @returns The definition of the model.
      */
-    constructor(modelCtor: ICtor<Model>) {
-        this.modelCtor = modelCtor;
+    getDefinition(): Model['attributes'] {
+        return {} as Model['attributes']
     }
 
     /**
@@ -28,9 +37,20 @@ export default abstract class Factory<Model, Data> implements IFactory {
      *
      * @param data The data to pass to the model constructor.
      * @returns A new instance of the model.
+
      */
-    create(data: Data): Model {
-        return new this.modelCtor(data)
+    create<Data extends IModelAttributes = IModelAttributes>(data: Data | null = null): Model {
+        return this.model.create(data);
+    }
+
+    /**
+     * Make a new instance of the model.
+     * 
+     * @param data The data to pass to the model constructor.
+     * @returns A new instance of the model.
+     */
+    make(data?: Model['attributes']): Model {
+        return this.create({...this.getDefinition(), ...data});
     }
 
 }

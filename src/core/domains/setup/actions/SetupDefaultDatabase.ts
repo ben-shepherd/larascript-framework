@@ -1,8 +1,8 @@
 import QuestionDTO from '@src/core/domains/setup/DTOs/QuestionDTO';
+import InvalidDefaultCredentialsError from '@src/core/domains/setup/exceptions/InvalidDefaultCredentialsError';
 import { IAction } from '@src/core/domains/setup/interfaces/IAction';
 import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand';
-import defaultCredentials from '@src/core/domains/setup/utils/defaultCredentials';
-import InvalidDefaultCredentialsError from '@src/core/domains/setup/exceptions/InvalidDefaultCredentialsError';
+import { App } from '@src/core/services/App';
 
 class SetupDefaultDatabase implements IAction {
 
@@ -13,46 +13,36 @@ class SetupDefaultDatabase implements IAction {
      * @param question 
      */
     async handle(ref: ISetupCommand, question: QuestionDTO): Promise<any> {
-        const dbType = question.getAnswer() as string;
+        const adapterName = question.getAnswer() as string;
 
-        if(dbType === 'all') {
+        if(adapterName === 'all') {
             return;
         }
 
         ref.writeLine('Updating .env');
-        await this.updateEnv(dbType, ref);
+        await this.updateEnv(adapterName, ref);
     }
 
     /**
      * Update the .env
-     * @param dbType 
+     * @param adapterName 
      * @param ref 
      */
-    async updateEnv(dbType: string, ref: ISetupCommand) {
+    async updateEnv(adapterName: string, ref: ISetupCommand) {
         ref.env.copyFileFromEnvExample();
 
-        const extractors = {
-            mongodb: defaultCredentials.extractDefaultMongoDBCredentials,
-            postgres: defaultCredentials.extractDefaultPostgresCredentials
+        const credentials = App.container('db').getDefaultCredentials(adapterName);
+
+        if(!credentials) {
+            throw new InvalidDefaultCredentialsError(`The default credentials are invalid or could not be found for adapter '${adapterName}'`);
         }
 
-        let env: Record<string,string> = { DATABASE_DEFAULT_PROVIDER: dbType }
-        let databaseDefaultUri = undefined;
-
-        if(extractors[dbType]) {
-            databaseDefaultUri = extractors[dbType]();
-
-            if(!databaseDefaultUri) {
-                throw new InvalidDefaultCredentialsError(`The default credentials are invalid or could not be found for provider '${dbType}'`);
-            }
-
-            env = {
-                ...env,
-                DATABASE_DEFAULT_URI: databaseDefaultUri
-            }
-
-            await ref.env.updateValues(env);
+        const env: Record<string,string> = { 
+            DATABASE_DEFAULT_CONNECTION: adapterName,
+            DATABASE_DEFAULT_URI: credentials,
         }
+
+        await ref.env.updateValues(env);
     }
 
 }

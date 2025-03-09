@@ -1,11 +1,10 @@
-import BaseCommand from "@src/core/domains/console/base/BaseCommand";
-import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
-import MigrationService from "@src/core/domains/migrations/services/MigrationService";
+
+import BaseMigrationCommand from "@src/core/domains/migrations/base/BaseMigrationCommand";
 
 /**
  * MigrateUpCommand class handles running up migrations
  */
-class MigrateUpCommand extends BaseCommand {
+class MigrateUpCommand extends BaseMigrationCommand {
 
     /**
      * The signature of the command
@@ -14,15 +13,6 @@ class MigrateUpCommand extends BaseCommand {
 
     description = 'Run up migrations';
 
-    /**
-     * Constructor
-     * @param config
-     */
-    constructor(config: IMigrationConfig = {}) {
-        super(config);
-        // Allow for configurable keepProcessAlive for testing purposes
-        this.keepProcessAlive = config?.keepProcessAlive ?? this.keepProcessAlive;
-    }
 
     /**
      * Execute the command
@@ -31,11 +21,20 @@ class MigrateUpCommand extends BaseCommand {
         // Read the arguments
         const file = this.getArguementByKey('file')?.value;
         const group = this.getArguementByKey('group')?.value;
+        const keepAlive = typeof this.getArguementByKey('keep-alive')?.value === 'string';
+
+        // If this command is called with --keep-alive, then keep the process alive
+        // For example, migrate:fresh --seed will also to keep the process alive to run the seeds
+        if(keepAlive) {
+            this.config.keepProcessAlive = true;
+        }
 
         // Run the migrations
-        const service = new MigrationService(this.config);
-        await service.boot();
-        await service.up({ filterByFileName: file, group });
+        const schemaMigrationService = this.getSchemaMigrationService();
+        await schemaMigrationService.boot();
+        await schemaMigrationService.up({ filterByFileName: file, group: group });
+
+        this.input.writeLine('Migrations up successfully');
     }
 
 }
