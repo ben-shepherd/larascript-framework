@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import { IConnectionTypeHelpers } from "@src/core/domains/database/interfaces/IConnectionTypeHelpers";
 import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
@@ -6,11 +7,14 @@ import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { IHasConfigConcern } from "@src/core/interfaces/concerns/IHasConfigConcern";
-import { IConnectionTypeHelpers } from "@src/core/domains/database/interfaces/IConnectionTypeHelpers";
 
 
 export interface IDatabaseService extends IHasConfigConcern<IDatabaseConfig>
 {
+    registerAdapters(): void
+
+    registerConnections(): void
+    
     boot(): Promise<void>;
 
     showLogs(): boolean
