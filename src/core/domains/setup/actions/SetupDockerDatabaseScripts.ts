@@ -53,11 +53,11 @@ class SetupDockerDatabaseScripts implements IAction {
      * @returns 
      */
     private buildDatabaseDirectionScript(dockerComposeNames: string[], direction: 'up' | 'down') {
-        let scriptValue = 'yarn ';
+        let scriptValue = '';
 
         for(let i = 0; i < dockerComposeNames.length; i++) {
             const composeName = dockerComposeNames[i];
-            scriptValue += `db:${composeName}:${direction} `;
+            scriptValue += `yarn db:${composeName}:${direction} `;
 
             if(i < dockerComposeNames.length - 1) {
                 scriptValue += '&& ';

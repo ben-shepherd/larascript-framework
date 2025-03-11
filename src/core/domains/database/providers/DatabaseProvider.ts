@@ -37,6 +37,12 @@ export default class DatabaseProvider extends BaseProvider {
 
         // Register the database service in the App container
         this.bind('db', new Database(this.config))
+
+        // Register the adapters
+        app('db').registerAdapters()
+
+        // Register the connections
+        app('db').registerConnections()
     }
 
     /**

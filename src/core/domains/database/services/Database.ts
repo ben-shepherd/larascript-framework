@@ -1,5 +1,6 @@
 import BaseSimpleRegister from "@src/core/base/BaseSimpleRegister";
 import DatabaseConnectionException from "@src/core/domains/database/exceptions/DatabaseConnectionException";
+import { IConnectionTypeHelpers } from "@src/core/domains/database/interfaces/IConnectionTypeHelpers";
 import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 import { IDatabaseConfig, IDatabaseGenericConnectionConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import { IDatabaseSchema } from "@src/core/domains/database/interfaces/IDatabaseSchema";
@@ -9,7 +10,6 @@ import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { App } from "@src/core/services/App";
-import { IConnectionTypeHelpers } from "@src/core/domains/database/interfaces/IConnectionTypeHelpers";
 
 /**
  * Short alias for app('db')
@@ -60,7 +60,6 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
         this.config = config
     }
 
-
     /**
      * @template T - The type of the configuration object to return. Defaults to IDatabaseConfig.
      * @returns {T} The database configuration object.
@@ -101,7 +100,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
 
         return true
     }
-    
+
     /**
      * Boot method
      * Called after all providers have been registered
@@ -110,9 +109,6 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
      * @returns {Promise<void>}
      */
     async boot(): Promise<void> {
-        this.registerAdapters()
-        this.registerConnections()
-        
         if(!this.shouldConnectOnBoot()) {
             this.log('Database is not configured to connect on boot');
             return;
@@ -193,7 +189,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
     /**
      * Register adapters
      */
-    private registerAdapters(): void {
+    public registerAdapters(): void {
         this.srCreateList(Database.REGISTERED_ADAPTERS_CONFIG)
         
         for(const connectionConfig of this.config.connections) {
@@ -206,7 +202,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
     /**
      * Register connections
      */
-    private registerConnections(): void {
+    public registerConnections(): void {
         this.srCreateList(Database.REGISTERED_CONNECTIONS_CONFIG)
 
         for(const connectionConfig of this.config.connections) {
