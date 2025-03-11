@@ -4,6 +4,7 @@ import BasicLoggerMiddleware from '@src/core/domains/http/middleware/BasicLogger
 import SecurityMiddleware from '@src/core/domains/http/middleware/SecurityMiddleware';
 import ValidatorMiddleware from '@src/core/domains/validator/middleware/ValidatorMiddleware';
 import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
+import cors from 'cors';
 import express from 'express';
 
 const config: IHttpConfig = {
@@ -27,6 +28,7 @@ const config: IHttpConfig = {
          * Larascript required middlewares
          */
         express.json(),
+        cors(),
         BasicLoggerMiddleware,
         SecurityMiddleware,
         ValidatorMiddleware,
