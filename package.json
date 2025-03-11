@@ -1,6 +1,6 @@
 {
   "name": "larascript-framework",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A powerful Node.js framework with built-in ORM, type safety, and developer-friendly APIs",
   "main": "index.js",
   "scripts": {
