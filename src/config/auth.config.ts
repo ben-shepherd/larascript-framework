@@ -18,7 +18,6 @@ import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
  * ```ts
  * // Get auth service
  * const authService = app('auth')
- * const aclService = app('auth.acl')
  * const jwtAdapter = app('auth.jwt')
  * 
  * 

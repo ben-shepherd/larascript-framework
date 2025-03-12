@@ -4,7 +4,7 @@ import { cryptoService } from "@src/core/domains/crypto/service/CryptoService";
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import Observer from "@src/core/domains/observer/services/Observer";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
-import { App } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 
 /**
  * Observer for the User model.
@@ -45,8 +45,10 @@ export default class UserObserver extends Observer<UserAttributes> {
     async updateRoles(data: UserAttributes): Promise<UserAttributes> {
         let updatedRoles: string[] = [];
 
+        const basicAclService = app('acl.basic')
+        
         for(const group of data.groups) {
-            const relatedRoles = App.container('auth.acl').getGroupRoles(group)
+            const relatedRoles = basicAclService.getGroupRoles(group)
             const relatedRolesNames = relatedRoles.map(role => role.name)
 
             updatedRoles = [
