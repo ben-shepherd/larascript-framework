@@ -14,11 +14,6 @@ import { app } from "@src/core/services/App";
 export const auth = () => app('auth');
 
 /**
- * Short hand for app('auth').acl()
- */
-export const acl = () => app('auth.acl');
-
-/**
  * Auth Service
  * 
  * This is the main authentication service that manages different authentication adapters

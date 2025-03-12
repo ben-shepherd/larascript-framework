@@ -1,11 +1,12 @@
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
-import { acl, auth } from "@src/core/domains/auth/services/AuthService";
+import { auth } from "@src/core/domains/auth/services/AuthService";
 import { authJwt } from "@src/core/domains/auth/services/JwtAuthService";
+import { cryptoService } from "@src/core/domains/crypto/service/CryptoService";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 import ValidatorResult from "@src/core/domains/validator/data/ValidatorResult";
 import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
-import { cryptoService } from "@src/core/domains/crypto/service/CryptoService";
+import { app } from "@src/core/services/App";
 
 /**
  * RegisterUseCase handles new user registration
@@ -50,11 +51,16 @@ class RegisterUseCase {
      * @returns The user
      */
     async createUser(context: HttpContext): Promise<IUserModel> {
+
+        const basicAclService = app('acl.basic')
+        const groups = [basicAclService.getDefaultGroup().name]
+        const roles = basicAclService.getGroupRoles(basicAclService.getDefaultGroup()).map(role => role.name)
+
         const userAttributes = {
             email: context.getBody().email,
             hashedPassword: cryptoService().hash(context.getBody().password),
-            groups: [acl().getDefaultGroup().name],
-            roles: [acl().getGroupRoles(acl().getDefaultGroup()).map(role => role.name)],
+            groups,
+            roles,
             ...context.getBody()
         }
 
