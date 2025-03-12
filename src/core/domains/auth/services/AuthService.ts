@@ -1,12 +1,12 @@
 import { AuthAdapters } from "@src/config/auth.config";
 import BaseAdapter from "@src/core/base/BaseAdapter";
-import { IACLService } from "@src/core/domains/auth/interfaces/acl/IACLService";
+import { IBasicACLService } from "@src/core/domains/accessControl/interfaces/IACLService";
+import BasicACLService from "@src/core/domains/accessControl/services/BasicACLService";
 import { IAclConfig } from "@src/core/domains/auth/interfaces/acl/IAclConfig";
 import { IBaseAuthConfig } from "@src/core/domains/auth/interfaces/config/IAuth";
-import { IAuthService } from "@src/core/domains/auth/interfaces/service/IAuthService";
-import ACLService from "@src/core/domains/auth/services/ACLService";
-import { app } from "@src/core/services/App";
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
+import { IAuthService } from "@src/core/domains/auth/interfaces/service/IAuthService";
+import { app } from "@src/core/services/App";
 
 /**
  * Short hand for app('auth')
@@ -44,12 +44,12 @@ class Auth extends BaseAdapter<AuthAdapters> implements IAuthService {
 
     private config!: IBaseAuthConfig[];
 
-    private aclService!: IACLService;
+    private aclService!: IBasicACLService;
 
     constructor(config: IBaseAuthConfig[], aclConfig: IAclConfig) {
         super();
         this.config = config;
-        this.aclService = new ACLService(aclConfig);
+        this.aclService = new BasicACLService(aclConfig);
     }
 
     /**
@@ -103,7 +103,7 @@ class Auth extends BaseAdapter<AuthAdapters> implements IAuthService {
      * Get the ACL service
      * @returns The ACL service
      */
-    public acl(): IACLService {
+    public acl(): IBasicACLService {
         return this.aclService;
     }
     

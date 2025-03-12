@@ -1,10 +1,10 @@
  
 import { AuthAdapters } from "@src/config/auth.config";
-import { IACLService } from "@src/core/domains/auth/interfaces/acl/IACLService";
+import { IBasicACLService } from "@src/core/domains/accessControl/interfaces/IACLService";
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
 
 export interface IAuthService {
-    acl(): IACLService;
+    acl(): IBasicACLService;
     boot(): Promise<void>
     getDefaultAdapter(): AuthAdapters['default']
     getJwtAdapter(): AuthAdapters['jwt']

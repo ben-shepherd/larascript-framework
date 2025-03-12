@@ -1,10 +1,10 @@
-import { IACLService } from "@src/core/domains/auth/interfaces/acl/IACLService";
+import { IBasicACLService } from "@src/core/domains/accessControl/interfaces/IACLService";
 import { IAclConfig, IAclGroup, IAclRole } from "@src/core/domains/auth/interfaces/acl/IAclConfig";
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
 import { app } from "@src/core/services/App";
 
-// Short hand for app('auth.acl')
-export const acl = () => app('auth.acl');
+// Short hand for app('auth.basic')
+export const acl = () => app('acl.basic');
 
 /**
  * Access Control List (ACL) Service
@@ -19,7 +19,7 @@ export const acl = () => app('auth.acl');
  * - Roles (e.g. 'role_admin', 'role_user')
  * - Scopes/permissions for each role
  */
-class ACLService implements IACLService {
+class BasicACLService implements IBasicACLService {
 
     private aclConfig: IAclConfig;
 
@@ -209,4 +209,4 @@ class ACLService implements IACLService {
 
 }
 
-export default ACLService;
+export default BasicACLService;
