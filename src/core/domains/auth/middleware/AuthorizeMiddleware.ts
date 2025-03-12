@@ -1,11 +1,11 @@
 import ForbiddenResourceError from '@src/core/domains/auth/exceptions/ForbiddenResourceError';
 import UnauthorizedError from '@src/core/domains/auth/exceptions/UnauthorizedError';
 import { auth } from '@src/core/domains/auth/services/AuthService';
+import { authJwt } from '@src/core/domains/auth/services/JwtAuthService';
 import Middleware from '@src/core/domains/http/base/Middleware';
 import HttpContext from '@src/core/domains/http/context/HttpContext';
 import responseError from '@src/core/domains/http/handlers/responseError';
 import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
-import { authJwt } from '@src/core/domains/auth/services/JwtAuthService';
 
 /**
  * AuthorizeMiddleware handles authentication and authorization for HTTP requests
@@ -30,6 +30,12 @@ class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
 
     async execute(context: HttpContext): Promise<void> {
         try {
+
+            // Skip authorization check for OPTIONS requests
+            if(context.getRequest().method === 'OPTIONS') {
+                this.next();
+                return;
+            }
 
             // Attempt to authorize the request
             await this.attemptAuthorizeRequest(context.getRequest());
