@@ -217,6 +217,12 @@ class Router implements IRouter {
      */
     public register({ path, method, action, ...options }: Partial<TRouteItem> & TPartialRouteItemOptions): void {
 
+        const optionsMiddleware = options?.middlewares ?? [] as TExpressMiddlewareFnOrClass[];
+        const optionsMiddlewareArray = Array.isArray(optionsMiddleware) ? optionsMiddleware : [optionsMiddleware];
+
+        const currentMiddleware = (Array.isArray(this.baseOptions?.middlewares) ? this.baseOptions?.middlewares : [this.baseOptions?.middlewares]) as TExpressMiddlewareFnOrClass[];
+        const currentMiddlewareArray = Array.isArray(currentMiddleware) ? currentMiddleware : [currentMiddleware];
+
         const routeItem = {
             ...this.baseOptions,
             path: this.getPath(path ?? ''),
@@ -225,6 +231,7 @@ class Router implements IRouter {
             ...options,
             // Combine security rules from parent and child groups
             security: [...(this.baseOptions?.security ?? []), ...(options?.security ?? [])],
+            middlewares: [...currentMiddlewareArray, ...optionsMiddlewareArray],
         }
 
         this.registered.push(routeItem);
