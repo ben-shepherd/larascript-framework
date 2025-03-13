@@ -1,3 +1,5 @@
+import { TCastableType } from '@src/core/domains/cast/interfaces/IHasCastableConcern';
+import Castable from '@src/core/domains/cast/service/Castable';
 import { cryptoService } from '@src/core/domains/crypto/service/CryptoService';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
 import { db } from '@src/core/domains/database/services/Database';
@@ -6,6 +8,7 @@ import { IBelongsToOptions, IEloquent, IHasManyOptions, IRelationship, IdGenerat
 import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
 import HasMany from '@src/core/domains/eloquent/relational/HasMany';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
+import { EventConstructor } from '@src/core/domains/events/interfaces/IEventConstructors';
 import { GetAttributesOptions, IModel, IModelAttributes, IModelEvents, IModelLifeCycleEvent, ModelConstructor, ModelWithAttributes } from "@src/core/domains/models/interfaces/IModel";
 import ModelScopes, { TModelScope } from '@src/core/domains/models/utils/ModelScope';
 import { ObserveConstructor } from '@src/core/domains/observer/interfaces/IHasObserver';
@@ -15,9 +18,6 @@ import IFactory, { FactoryConstructor } from '@src/core/interfaces/IFactory';
 import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
 import { app } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
-import { TCastableType } from '@src/core/domains/cast/interfaces/IHasCastableConcern';
-import Castable from '@src/core/domains/cast/service/Castable';
-import { EventConstructor } from '@src/core/domains/events/interfaces/IEventConstructors';
 
  
 
@@ -438,6 +438,9 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @throws {Error} If the attribute is not in the allowed fields or if a date field is set with a non-Date value.
      */
     async setAttribute<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Promise<void> {
+        if(!this.fields.includes(key as string)) {
+            return;
+        }
         if (this.attributes === null) {
             this.attributes = {} as Attributes;
         }
