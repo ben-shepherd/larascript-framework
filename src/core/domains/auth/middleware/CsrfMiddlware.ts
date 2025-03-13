@@ -1,12 +1,14 @@
 import Middleware from '@src/core/domains/http/base/Middleware';
 import HttpContext from '@src/core/domains/http/context/HttpContext';
-import { app } from '@src/core/services/App';
-import crypto from 'crypto';
-import { Request } from 'express';
 import { requestContext } from '@src/core/domains/http/context/RequestContext';
 import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
 import { IRouter } from '@src/core/domains/http/interfaces/IRouter';
 import Route from '@src/core/domains/http/router/Route';
+import { app } from '@src/core/services/App';
+import crypto from 'crypto';
+import { Request } from 'express';
+
+import ApiResponse from '../../http/response/ApiResponse';
 
 /**
  * Configuration options for CSRF protection
@@ -87,9 +89,13 @@ class CsrfMiddleware extends Middleware<CsrfConfig> {
             prefix: url,
         }, router => {
             router.get('/', (req, res) => {
-                res.json({
-                    token: CsrfMiddleware.getCsrfToken(req)
-                })
+                res.json(
+                    new ApiResponse()
+                        .setData({
+                            token: CsrfMiddleware.getCsrfToken(req)
+                        })
+                        .toObject()
+                )
             })
         })
     }
@@ -129,7 +135,7 @@ class CsrfMiddleware extends Middleware<CsrfConfig> {
 
         const req = context.getRequest();
         const res = context.getResponse();
-        
+
         // Generate token if it doesn't exist
         const token = CsrfMiddleware.getCsrfToken(req);
 
@@ -139,13 +145,13 @@ class CsrfMiddleware extends Middleware<CsrfConfig> {
         // Validate token for specified HTTP methods
         if (this.getConfig()?.methods?.includes(req.method)) {
             const headerToken = req.headers[this.getConfig()?.headerName?.toLowerCase() ?? 'x-xsrf-token'];
-        
+
             if (!headerToken || headerToken !== token) {
                 return this.forbidden('Invalid CSRF token');
             }
         }
 
-        this.next();    
+        this.next();
     }
 
     /**
@@ -174,7 +180,7 @@ class CsrfMiddleware extends Middleware<CsrfConfig> {
             return regex.test(path);
         });
     }
-    
+
     /**
      * Converts a URL pattern to a regular expression
      * Supports basic wildcard (*) matching
