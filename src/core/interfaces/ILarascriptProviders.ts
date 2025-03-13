@@ -1,4 +1,4 @@
-import { IACLService } from '@src/core/domains/auth/interfaces/acl/IACLService';
+import { IBasicACLService } from '@src/core/domains/accessControl/interfaces/IACLService';
 import { IJwtAuthService } from '@src/core/domains/auth/interfaces/jwt/IJwtAuthService';
 import { IAuthService } from '@src/core/domains/auth/interfaces/service/IAuthService';
 import ICommandService from '@src/core/domains/console/interfaces/ICommandService';
@@ -9,9 +9,9 @@ import { IEventService } from '@src/core/domains/events/interfaces/IEventService
 import IHttpService from '@src/core/domains/http/interfaces/IHttpService';
 import { IRequestContext } from '@src/core/domains/http/interfaces/IRequestContext';
 import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerService';
+import { ISessionService } from '@src/core/domains/session/interfaces/ISessionService';
 import { IValidatorFn } from '@src/core/domains/validator/interfaces/IValidator';
 import readline from 'node:readline';
-import { ISessionService } from '@src/core/domains/session/interfaces/ISessionService';
 
 export interface ILarascriptProviders {
 
@@ -37,9 +37,9 @@ export interface ILarascriptProviders {
 
     /**
      * ACL service
-     * Provided by '@src/core/domains/auth/providers/AuthProvider'
+     * Provided by '@src/core/domains/accessControl/providers/AccessControlProvider'
      */
-    'auth.acl': IACLService;
+    'acl.basic': IBasicACLService;
 
     /**
 

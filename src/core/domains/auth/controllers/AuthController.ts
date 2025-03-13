@@ -125,7 +125,7 @@ class AuthController extends Controller {
             )
         }
         catch (error) {
-            if(Error instanceof UnauthorizedError) {
+            if(error instanceof UnauthorizedError) {
                 responseError(context.getRequest(), context.getResponse(), error as Error, 401)
                 return;
             }

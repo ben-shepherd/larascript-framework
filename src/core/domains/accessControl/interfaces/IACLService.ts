@@ -2,7 +2,7 @@
 import { IAclConfig, IAclGroup, IAclRole } from "@src/core/domains/auth/interfaces/acl/IAclConfig"
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel"
 
-export interface IACLService {
+export interface IBasicACLService {
     getConfig(): IAclConfig
     getDefaultGroup(): IAclGroup
     getGroup(group: string | IAclGroup): IAclGroup

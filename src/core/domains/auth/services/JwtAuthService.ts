@@ -4,7 +4,6 @@ import InvalidSecretException from "@src/core/domains/auth/exceptions/InvalidJwt
 import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedError";
 import JwtFactory from "@src/core/domains/auth/factory/JwtFactory";
 import { IAclConfig } from "@src/core/domains/auth/interfaces/acl/IAclConfig";
-import { IACLService } from "@src/core/domains/auth/interfaces/acl/IACLService";
 import { IJwtAuthService } from "@src/core/domains/auth/interfaces/jwt/IJwtAuthService";
 import { IJwtConfig } from "@src/core/domains/auth/interfaces/jwt/IJwtConfig";
 import { IApiTokenModel } from "@src/core/domains/auth/interfaces/models/IApiTokenModel";
@@ -15,7 +14,6 @@ import AuthorizeMiddleware from "@src/core/domains/auth/middleware/AuthorizeMidd
 import ApiToken from "@src/core/domains/auth/models/ApiToken";
 import ApiTokenRepository from "@src/core/domains/auth/repository/ApiTokenRepitory";
 import UserRepository from "@src/core/domains/auth/repository/UserRepository";
-import ACLService from "@src/core/domains/auth/services/ACLService";
 import createJwt from "@src/core/domains/auth/utils/createJwt";
 import decodeJwt from "@src/core/domains/auth/utils/decodeJwt";
 import generateToken from "@src/core/domains/auth/utils/generateToken";
@@ -55,13 +53,10 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
     
     private userRepository!: IUserRepository
 
-    protected aclService!: IACLService
-
     constructor(config: IJwtConfig, aclConfig: IAclConfig) {
         super(config, aclConfig);
         this.apiTokenRepository = new ApiTokenRepository(config.models?.apiToken)
         this.userRepository = new UserRepository(config.models?.user)
-        this.aclService = new ACLService(aclConfig)
     }
 
     /**
@@ -129,7 +124,7 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
         const apiToken = ApiToken.create<IApiTokenModel>()
         apiToken.setUserId(user.id as string)
         apiToken.setToken(generateToken())
-        apiToken.setScopes([...this.aclService.getRoleScopesFromUser(user), ...scopes])
+        apiToken.setScopes([...app('acl.basic').getRoleScopesFromUser(user), ...scopes])
         apiToken.setRevokedAt(null)
         return apiToken
     }

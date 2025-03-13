@@ -14,7 +14,7 @@ export class #name# extends BaseSeeder {
                 email: faker.internet.email(),
                 password: faker.internet.password(),
                 hashedPassword: hashPassword(faker.internet.password()),
-                groups: [GROUPS.User],
+                groups: [GROUPS.USER],
                 roles: [ROLES.USER],
                 firstName: faker.person.firstName(),
                 lastName: faker.person.lastName(),
