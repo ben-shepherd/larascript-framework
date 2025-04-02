@@ -3,6 +3,7 @@ import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedErr
 import { authJwt } from "@src/core/domains/auth/services/JwtAuthService";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import ApiResponse from "@src/core/domains/http/response/ApiResponse";
+import minExecTime from "@src/core/util/minExecTime";
 
 
 /**
@@ -30,36 +31,37 @@ class LoginUseCase {
      * @returns The API response
      */
     async handle(context: HttpContext): Promise<ApiResponse> {
-        const apiResponse = new ApiResponse();
+        return minExecTime<ApiResponse>(500, async () => {
+            const apiResponse = new ApiResponse();
 
-        const { email = '', password = '' } = context.getBody();
+            const { email = '', password = '' } = context.getBody();
 
-        const user = await authJwt().getUserRepository().findByEmail(email);
+            const user = await authJwt().getUserRepository().findByEmail(email);
 
-        if(!user) {
-            return this.unauthorized('Email or password is incorrect');
-        }
-
-        let jwtToken!: string;
-
-        try {
-            jwtToken = await authJwt().attemptCredentials(email, password);
-        }
-
-        catch (error) {
-            if(error instanceof UnauthorizedError) {
+            if (!user) {
                 return this.unauthorized('Email or password is incorrect');
             }
-            throw error;
-        }
 
-        const userAttributes = await user.toObject({ excludeGuarded: true });
+            let jwtToken!: string;
 
-        return apiResponse.setData({
-            token: jwtToken,
-            user: userAttributes
-        }).setCode(200);
+            try {
+                jwtToken = await authJwt().attemptCredentials(email, password);
+            }
 
+            catch (error) {
+                if (error instanceof UnauthorizedError) {
+                    return this.unauthorized('Email or password is incorrect');
+                }
+                throw error;
+            }
+
+            const userAttributes = await user.toObject({ excludeGuarded: true });
+
+            return apiResponse.setData({
+                token: jwtToken,
+                user: userAttributes
+            }).setCode(200);
+        })
     }
 
     /**
