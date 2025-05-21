@@ -39,7 +39,16 @@ class SetupDefaultDatabase implements IAction {
 
         const env: Record<string,string> = { 
             DATABASE_DEFAULT_CONNECTION: adapterName,
-            DATABASE_DEFAULT_URI: credentials,
+        }
+
+        if(adapterName === 'postgres') {
+            env.DATABASE_POSTGRES_CONNECTION = adapterName;
+            env.DATABASE_POSTGRES_URI = credentials;
+        }
+
+        if(adapterName === 'mongodb') {
+            env.DATABASE_MONGODB_CONNECTION = adapterName;
+            env.DATABASE_MONGODB_URI = credentials;
         }
 
         await ref.env.updateValues(env);
