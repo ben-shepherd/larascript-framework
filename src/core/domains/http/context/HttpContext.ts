@@ -5,6 +5,7 @@ import { requestContext } from '@src/core/domains/http/context/RequestContext';
 import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
 import { TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
 import { NextFunction, Response } from 'express';
+import fileUpload from 'express-fileupload';
 
 
 
@@ -169,6 +170,36 @@ class HttpContext {
      */
     public getNext(): NextFunction | undefined {
         return this.nextFn;
+    }
+
+    /**
+     * Gets the file from the request.
+     * @param {string} key - The key of the file to get.
+     * @returns {fileUpload.UploadedFile | fileUpload.UploadedFile[] | undefined} The file from the request.
+     */
+    public getFile(key: string): fileUpload.UploadedFile | undefined {
+        const files = this.req?.files?.[key];
+
+        if(Array.isArray(files)) {
+            return files[0]
+        }
+
+        return files as fileUpload.UploadedFile;
+    }
+
+    /**
+     * Gets the files from the request.
+     * @param {string} key - The key of the files to get.
+     * @returns {fileUpload.UploadedFile[] | undefined} The files from the request.
+     */
+    public getFiles(key: string): fileUpload.UploadedFile[] | undefined {
+        const files = this.req?.files?.[key];
+
+        if(Array.isArray(files)) {
+            return files;
+        }
+
+        return undefined
     }
 
 }
