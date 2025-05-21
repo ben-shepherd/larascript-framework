@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 type MinExecTimeFn<T> = (...args: any[]) => Promise<T>;
 
 const minExecTime = async <T>(minMs: number, fn: MinExecTimeFn<T>): Promise<T> => {
