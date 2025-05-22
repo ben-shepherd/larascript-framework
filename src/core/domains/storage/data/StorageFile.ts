@@ -1,3 +1,5 @@
+import { IStorageFile } from "../interfaces/IStorageFile";
+
 /**
  * Configuration options for creating a StorageFile instance
  */
@@ -13,7 +15,7 @@ type Options = {
 /**
  * Represents a file stored in the storage system with its URL and source information.
  */
-class StorageFile {
+class StorageFile implements IStorageFile {
 
     /** The URL where the file can be accessed */
     url: string;

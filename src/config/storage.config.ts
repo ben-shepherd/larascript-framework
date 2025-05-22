@@ -1,3 +1,4 @@
+import { StorageConfig } from "@src/core/domains/storage/interfaces/StorageConfig";
 
 /**
  * Storage configuration object
@@ -6,10 +7,9 @@
  *   - 'fs': File system storage driver
  *   - 's3': Amazon S3 storage driver
  */
-export const config = {
+export const config: StorageConfig = {
     driver: process.env.STORAGE_DRIVER ?? 'fs',
-
-    // todo
-    // tempDir: path.join(process.cwd(), '../storage/tmp')
-}
+    storageDir: 'storage',
+    uploadsDir: 'storage/uploads',
+} as  const
 

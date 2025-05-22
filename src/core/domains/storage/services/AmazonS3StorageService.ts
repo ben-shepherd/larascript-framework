@@ -11,8 +11,8 @@ class AmazonS3StorageService implements IGenericStorage {
         return undefined as unknown as StorageFile
     }
 
-    async delete(file: StorageFile): Promise<StorageFile> {
-        return undefined as unknown as StorageFile
+    async delete(file: StorageFile): Promise<void> {
+        
     }
     
 }

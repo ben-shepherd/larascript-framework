@@ -1,8 +1,8 @@
-import StorageFile from "../data/StorageFile";
+import { IStorageFile } from "./IStorageFile";
 
 /* eslint-disable no-unused-vars */
 export interface IGenericStorage {
-    put(file: StorageFile, destination: string): Promise<StorageFile>;
-    get(...args: unknown[]): Promise<unknown>;
-    delete(...args: unknown[]): Promise<unknown>;
+    put(file: IStorageFile, destination: string): Promise<IStorageFile>;
+    get(...args: unknown[]): Promise<IStorageFile>;
+    delete(...args: unknown[]): Promise<void>;
 }

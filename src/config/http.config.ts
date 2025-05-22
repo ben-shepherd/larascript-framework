@@ -32,7 +32,7 @@ const config: IHttpConfig = {
         cors(),
         fileUpload({
             useTempFiles: true,
-            tempFileDir: path.join(__dirname, '../../storage/uploads'),
+            tempFileDir: path.join(__dirname, '../../storage/tmp'),
         }),
         BasicLoggerMiddleware,
         SecurityMiddleware,
