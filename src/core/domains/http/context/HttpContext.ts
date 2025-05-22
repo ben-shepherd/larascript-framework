@@ -7,6 +7,9 @@ import { TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
 import { NextFunction, Response } from 'express';
 import fileUpload from 'express-fileupload';
 
+import { IStorageFile } from '../../storage/interfaces/IStorageFile';
+import { storage } from '../../storage/services/StorageService';
+
 
 
 class HttpContext {
@@ -202,6 +205,16 @@ class HttpContext {
         return undefined
     }
 
+    /**
+     * Moves an uploaded file from the request to the storage.
+     * @param {string} key - The key of the file to upload.
+     * @param {string} [destination] - Optional destination path in storage.
+     * @returns {Promise<import('../../storage/interfaces/IStorageFile').IStorageFile | undefined>} The stored file object or undefined if no file was found.
+     */
+    public async uploadFile(file: fileUpload.UploadedFile): Promise<IStorageFile> {
+        return await storage().moveUploadedFile(file)
+    }
+    
 }
 
 
