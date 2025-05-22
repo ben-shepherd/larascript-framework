@@ -1,7 +1,11 @@
 /* eslint-disable no-unused-vars */
-import fileUpload from "express-fileupload";
 import StorageFile from "@src/core/domains/storage/data/StorageFile";
+import fileUpload from "express-fileupload";
 
-export interface IStorageService {
+import { IGenericStorage } from "./IGenericStorage";
+
+export interface IStorageService extends IGenericStorage {
     moveUploadedFile(file: fileUpload.UploadedFile, destination?: string): Promise<StorageFile>;
+    getStorageDirectory(): string;
+    getUploadsDirectory(): string;
 }
