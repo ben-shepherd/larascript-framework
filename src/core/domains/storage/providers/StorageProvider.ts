@@ -9,7 +9,6 @@ import FileSystemStorageService from "../services/FileSystemStorageService";
 class StorageProvider extends BaseProvider {
 
     async register(): Promise<void> {
-        
         const storage = new StorageService(config);
         storage.addAdapterOnce(StorageTypes.fs, new FileSystemStorageService());
         storage.addAdapterOnce(StorageTypes.s3, new AmazonS3StorageService(config.s3));

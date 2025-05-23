@@ -7,7 +7,7 @@ import { StorageTypes } from '../enums/StorageTypes';
 import FileNotFoundException from "../Exceptions/FileNotFoundException";
 import InvalidStorageFileException from '../Exceptions/InvalidStorageFileException';
 import { IGenericStorage } from "../interfaces/IGenericStorage";
-import { S3UploadMeta } from '../interfaces/meta';
+import { FileSystemMeta, S3Meta } from '../interfaces/meta';
 
 /**
  * Configuration interface for Amazon S3 storage service
@@ -64,7 +64,7 @@ class AmazonS3StorageService implements IGenericStorage {
      * @param file - StorageFile object containing file information
      * @returns Promise resolving to the retrieved StorageFile with presigned URL
      */
-    async get(file: StorageFile): Promise<StorageFile> {
+    async get(file: StorageFile): Promise<StorageFile<S3Meta>> {
         return new Promise((resolve, reject) => {
             const Key = file.getKey()
             const s3 = this.getS3()
@@ -73,7 +73,6 @@ class AmazonS3StorageService implements IGenericStorage {
                 Key
             }
 
-            // Get presigned URL (expires in 1 hour by default)
             s3.getSignedUrl('getObject', params, (err, presignedUrl) => {
                 if(err) {
                     reject(err)
@@ -96,7 +95,7 @@ class AmazonS3StorageService implements IGenericStorage {
      * @returns Promise resolving to the uploaded StorageFile with S3 metadata
      * @throws {FileNotFoundException} When the source file does not exist
      */
-    async put(file: StorageFile, destination?: string): Promise<StorageFile> {
+    async put(file: StorageFile<FileSystemMeta>, destination?: string): Promise<StorageFile<S3Meta>> {
 
         if(!destination) {
             destination = `${(new Date().getTime().toString())}/${path.basename(file.getKey())}`
@@ -133,9 +132,14 @@ class AmazonS3StorageService implements IGenericStorage {
                     return;
                 }
                 if (data) {
-                    const meta = data as S3UploadMeta
+                    const meta = data as S3Meta
+
+                    if(!meta.Key) {
+                        throw new InvalidStorageFileException('Expected meta.Key to be set')
+                    }
+
                     resolve(
-                        this.createStorageFile(meta.Key, {
+                        this.createStorageFile(meta.Key as string, {
                             meta
                         })
                     )

@@ -53,7 +53,7 @@ class FileSystemStorageService implements IGenericStorage {
      * @returns Promise<StorageFile> - A promise that resolves to the retrieved StorageFile
      * @throws {FileNotFoundException} When the file does not exist in the storage system
      */
-    async get(file: StorageFile): Promise<StorageFile> {
+    async get(file: StorageFile): Promise<StorageFile<FileSystemMeta>> {
         const filePath = file.getMetaValue<string>('fullPath')
 
         if (!filePath) {
@@ -74,7 +74,7 @@ class FileSystemStorageService implements IGenericStorage {
      * @returns Promise<StorageFile> - A promise that resolves to the new StorageFile at the destination
      * @throws {FileNotFoundException} When the source file does not exist
      */
-    async put(file: StorageFile, destination: string): Promise<StorageFile> {
+    async put(file: StorageFile<FileSystemMeta>, destination: string): Promise<StorageFile<FileSystemMeta>> {
 
         // Get the full target path
         const targetPath = path.join(storage().getStorageDirectory(), destination)
