@@ -4,13 +4,13 @@ import { StorageTypes } from "@src/core/domains/storage/enums/StorageTypes";
 import { IStorageService } from "@src/core/domains/storage/interfaces/IStorageService";
 import { app } from "@src/core/services/App";
 import fileUpload from 'express-fileupload';
-import fs from 'fs';
 import path from "path";
 
 import { IGenericStorage } from "../interfaces/IGenericStorage";
 import { IStorageFile } from "../interfaces/IStorageFile";
 import { StorageAdapters } from "../interfaces/StorageAdapters";
 import { StorageConfig } from "../interfaces/StorageConfig";
+import FileSystemStorageService from "./FileSystemStorageService";
 
 /**
  * Helper function to get the storage service instance from the application container
@@ -42,6 +42,19 @@ class StorageService extends BaseAdapter<StorageAdapters> implements IStorageSer
      */
     public getDefaultAdapter(): IGenericStorage {
         return this.getAdapter(this.config.driver) as IGenericStorage
+    }
+
+    /**
+     * Gets the specified storage driver
+     * @param key 
+     * @returns 
+     */
+    public driver(key: string): IGenericStorage {
+        if(!this.adapters[key]) {
+            throw new Error('Invalid driver: '+key)
+        }
+
+        return this.adapters[key] as IGenericStorage
     }
 
     /**
@@ -80,31 +93,8 @@ class StorageService extends BaseAdapter<StorageAdapters> implements IStorageSer
      * @throws {Error} If there is an error moving the file
      */
     public async moveUploadedFile(file: fileUpload.UploadedFile, destination?: string) {
-
-        if(!destination) {
-            destination = file.name
-        }
-
-        const timestamp = (new Date()).getTime()
-        const targetDir = path.join(this.getUploadsDirectory(), timestamp.toString())
-        const targetPath = path.join(targetDir, file.name)
-
-        if(!fs.existsSync(targetDir)) {
-            fs.mkdirSync(targetDir)
-        }
-
-        file.mv(targetPath, (err) => {
-            if(err) {
-                throw new Error('File move error')
-            }
-        })
-
-        const relativeTargetPath = targetPath.replace(this.getStorageDirectory(), '')
-
-        return new StorageFile({
-            url: relativeTargetPath,
-            source: StorageTypes.fs,
-        })
+        const fileStorage =  this.driver(StorageTypes.fs) as FileSystemStorageService
+        return fileStorage.moveUploadedFile(file, destination)
     }
 
     /**

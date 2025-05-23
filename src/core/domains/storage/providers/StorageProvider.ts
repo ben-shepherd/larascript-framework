@@ -12,7 +12,7 @@ class StorageProvider extends BaseProvider {
         
         const storage = new StorageService(config);
         storage.addAdapterOnce(StorageTypes.fs, new FileSystemStorageService());
-        storage.addAdapterOnce(StorageTypes.s3, new AmazonS3StorageService());
+        storage.addAdapterOnce(StorageTypes.s3, new AmazonS3StorageService(config.s3));
         this.bind('storage', storage);       
     }
 

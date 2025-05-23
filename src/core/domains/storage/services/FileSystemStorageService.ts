@@ -1,16 +1,51 @@
+import fileUpload from 'express-fileupload';
 import fs from 'fs';
 import path from 'path';
 
 import StorageFile from "../data/StorageFile";
+import { StorageTypes } from '../enums/StorageTypes';
 import FileNotFoundException from "../Exceptions/FileNotFoundException";
+import InvalidStorageFileException from '../Exceptions/InvalidStorageFileException';
 import { IGenericStorage } from "../interfaces/IGenericStorage";
+import { FileSystemMeta } from '../interfaces/meta';
 import { storage } from './StorageService';
 
 /**
  * Service for handling file system storage operations.
  * Implements the IGenericStorage interface to provide file system-based storage functionality.
  */
-class FileSystemStorageService implements  IGenericStorage {
+class FileSystemStorageService implements IGenericStorage {
+
+    /**
+     * Moves an uploaded file to a specified destination
+     * @param {fileUpload.UploadedFile} file - The uploaded file to move
+     * @param {string} [destination] - Optional destination path. If not provided, uses the original filename
+     * @returns {Promise<StorageFile>} Information about the moved file
+     * @throws {Error} If there is an error moving the file
+     */
+    public async moveUploadedFile(file: fileUpload.UploadedFile, destination?: string) {
+
+        if (!destination) {
+            destination = file.name
+        }
+
+        const timestamp = (new Date()).getTime()
+        const targetDir = path.join(storage().getUploadsDirectory(), timestamp.toString())
+        const targetPath = path.join(targetDir, file.name)
+
+        if (!fs.existsSync(targetDir)) {
+            fs.mkdirSync(targetDir)
+        }
+
+        file.mv(targetPath, (err) => {
+            if (err) {
+                throw new Error('File move error')
+            }
+        })
+
+        return this.createStorageFile(targetPath)
+    }
+
 
     /**
      * Retrieves a file from the storage system.
@@ -19,15 +54,17 @@ class FileSystemStorageService implements  IGenericStorage {
      * @throws {FileNotFoundException} When the file does not exist in the storage system
      */
     async get(file: StorageFile): Promise<StorageFile> {
-        const filePath = this.toAbsolutePath(file.getUrl())
+        const filePath = file.getMetaValue<string>('fullPath')
 
-        if(!fs.existsSync(filePath)) {
+        if (!filePath) {
+            throw new InvalidStorageFileException('fullPath not configured')
+        }
+
+        if (!fs.existsSync(filePath)) {
             throw new FileNotFoundException()
         }
 
-        return new StorageFile({
-            url: filePath
-        })
+        return this.createStorageFile(filePath)
     }
 
     /**
@@ -43,18 +80,20 @@ class FileSystemStorageService implements  IGenericStorage {
         const targetPath = path.join(storage().getStorageDirectory(), destination)
 
         // Get the project root directory
-        const currentFile = this.toAbsolutePath(file.getUrl())
+        const currentFile = file.getMetaValue<string>('fullPath')
 
-        if(!fs.existsSync(currentFile)) {
+        if (!currentFile) {
+            throw new InvalidStorageFileException('fullPath not configured')
+        }
+
+        if (!fs.existsSync(currentFile)) {
             throw new FileNotFoundException()
         }
 
         fs.copyFileSync(currentFile, targetPath)
         fs.unlinkSync(currentFile)
 
-        return new StorageFile({
-            url: this.toRelativePath(targetPath)
-        })
+        return this.createStorageFile(targetPath)
     }
 
     /**
@@ -65,14 +104,18 @@ class FileSystemStorageService implements  IGenericStorage {
      */
     async delete(file: StorageFile): Promise<void> {
 
-        if(fs.existsSync(file.getUrl())) {
-            fs.unlinkSync(file.getUrl())
+        if (fs.existsSync(file.getKey())) {
+            fs.unlinkSync(file.getKey())
             return;
         }
 
-        const filePath = this.toAbsolutePath(file.getUrl())
+        const filePath = file.getMetaValue<string>('fullPath')
 
-        if(fs.existsSync(filePath)) {
+        if (!filePath) {
+            throw new InvalidStorageFileException('fullPath not configured')
+        }
+
+        if (fs.existsSync(filePath)) {
             throw new FileNotFoundException()
         }
 
@@ -97,6 +140,23 @@ class FileSystemStorageService implements  IGenericStorage {
      */
     protected toAbsolutePath(relativePath: string): string {
         return path.join(storage().getStorageDirectory(), relativePath)
+    }
+
+    /**
+     * Creates a storage file object
+     * @param options 
+     * @returns 
+     */
+    protected createStorageFile(fullPath: string): StorageFile<FileSystemMeta> {
+        const key = this.toRelativePath(fullPath)
+
+        return new StorageFile({
+            key,
+            meta: {
+                fullPath,
+            },
+            source: StorageTypes.fs
+        })
     }
 
 }

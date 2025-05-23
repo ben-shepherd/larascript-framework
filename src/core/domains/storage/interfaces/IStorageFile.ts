@@ -1,5 +1,8 @@
+/* eslint-disable no-unused-vars */
 export interface IStorageFile {
-    getUrl(): string;
+    getKey(): string;
     getSource(): string | undefined;
     toObject(): object;
+    getPresignedUrl(): string | undefined;
+    getMetaValue<T>(key: string): T | undefined; 
 }

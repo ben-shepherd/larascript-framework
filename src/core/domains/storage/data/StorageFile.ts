@@ -3,42 +3,49 @@ import { IStorageFile } from "../interfaces/IStorageFile";
 /**
  * Configuration options for creating a StorageFile instance
  */
-type Options = {
+export type StorageFileOptions<Meta extends object = object> = {
 
     /** The URL where the file can be accessed */
-    url: string;
+    key: string;
 
     /** Optional source identifier or path of the file */
     source?: string;
+
+    /** Meta description for this object */
+    meta?: Meta;
 }
 
 /**
  * Represents a file stored in the storage system with its URL and source information.
  */
-class StorageFile implements IStorageFile {
+class StorageFile<Meta extends object = object> implements IStorageFile {
 
     /** The URL where the file can be accessed */
-    url: string;
+    key: string;
 
     /** The source identifier or path of the file */
     source!: string | undefined;
+
+    /** The object meta information */
+    meta!: Meta | undefined;
 
     /**
      * Creates a new StorageFile instance
      * @param options - Configuration options for the storage file
      */
-    constructor(options: Options) {
-        this.url = options?.url
+    constructor(options: StorageFileOptions<Meta>) {
+        this.key = options?.key
         this.source = options?.source
+        this.meta = options?.meta
     }
 
     /**
      * Sets the URL for the storage file
-     * @param url - The URL where the file can be accessed
+     * @param key - The URL where the file can be accessed
      * @returns The current StorageFile instance for method chaining
      */
-    setUrl(url: string) {
-        this.url = url;
+    setKey(key: string) {
+        this.key = key;
         return this
     }
 
@@ -46,8 +53,8 @@ class StorageFile implements IStorageFile {
      * Gets the URL of the storage file
      * @returns The URL where the file can be accessed
      */
-    getUrl(): string {
-        return this.url
+    getKey(): string {
+        return this.key
     }
 
     /**
@@ -69,13 +76,62 @@ class StorageFile implements IStorageFile {
     }
 
     /**
+     * Sets the meta information for the storage file
+     * @param meta - The meta information object to be associated with the file
+     * @returns The current StorageFile instance for method chaining
+     */
+    setMeta(meta: Meta) {
+        this.meta = meta
+        return this
+    }
+
+    /**
+     * Gets the meta information associated with the storage file
+     * @returns The meta information object, or undefined if not set
+     */
+    getMeta(): Meta | undefined {
+        return this.meta
+    }
+
+    /**
+     * Get presigned URL for this file
+     * @returns 
+     */
+    getPresignedUrl(): string | undefined {
+        if(this.meta) {
+            const meta = this.meta as { presignedUrl?: string }
+
+            if(meta.presignedUrl) {
+                return meta.presignedUrl
+            }
+        }
+
+        return undefined
+    }
+
+    /**
+     * Get meta value
+     * @param key 
+     * @returns 
+     */
+    getMetaValue<T>(key: string): T | undefined {
+        if(this.meta && this.meta?.[key]) {
+            return this.meta[key] as T
+        }
+
+        return undefined
+    }
+
+
+    /**
      * Converts the StorageFile instance to a plain object representation.
      * @returns An object containing the url and source of the storage file.
      */
-    toObject(): Options {
+    toObject(): StorageFileOptions<Meta> {
         return {
-            url: this.url,
-            source: this.source
+            key: this.key,
+            source: this.source,
+            meta: this.meta
         }
     }
 

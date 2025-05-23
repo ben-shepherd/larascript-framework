@@ -5,6 +5,7 @@ import { IGenericStorage } from "./IGenericStorage";
 import { IStorageFile } from "./IStorageFile";
 
 export interface IStorageService extends IGenericStorage {
+    driver(key: string): IGenericStorage
     moveUploadedFile(file: fileUpload.UploadedFile, destination?: string): Promise<IStorageFile>;
     getStorageDirectory(): string;
     getUploadsDirectory(): string;

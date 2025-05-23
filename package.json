@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@types/express-fileupload": "^1.5.1",
+    "aws-sdk": "^2.1692.0",
     "bcryptjs": "^2.4.3",
     "collect.js": "^4.36.1",
     "cors": "^2.8.5",
