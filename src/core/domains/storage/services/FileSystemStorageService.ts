@@ -53,7 +53,10 @@ class FileSystemStorageService implements IGenericStorage {
      * @returns Promise<StorageFile> - A promise that resolves to the retrieved StorageFile
      * @throws {FileNotFoundException} When the file does not exist in the storage system
      */
-    async get(file: StorageFile): Promise<StorageFile<FileSystemMeta>> {
+    async get(file: StorageFile | string): Promise<StorageFile<FileSystemMeta>> {
+
+        file = this.parseStorageFile(file)
+
         const filePath = file.getMetaValue<string>('fullPath')
 
         if (!filePath) {
@@ -102,12 +105,9 @@ class FileSystemStorageService implements IGenericStorage {
      * @returns Promise<void>
      * @throws {FileNotFoundException} When the file does not exist in the storage system
      */
-    async delete(file: StorageFile): Promise<void> {
+    async delete(file: StorageFile | string): Promise<void> {
 
-        if (fs.existsSync(file.getKey())) {
-            fs.unlinkSync(file.getKey())
-            return;
-        }
+        file = this.parseStorageFile(file)
 
         const filePath = file.getMetaValue<string>('fullPath')
 
@@ -120,6 +120,48 @@ class FileSystemStorageService implements IGenericStorage {
         }
 
         fs.unlinkSync(filePath)
+    }
+
+    /**
+     * Parses the input and returns a StorageFile instance.
+     * If the input is already a StorageFile, it is returned as-is.
+     * If the input is a string, attempts to resolve it to a StorageFile.
+     * @param {StorageFile | string} file - The file to parse, either as a StorageFile instance or a string path/key.
+     * @returns {StorageFile} The resolved StorageFile instance.
+     * @throws {InvalidStorageFileException} If the input type is not supported.
+     */
+    protected parseStorageFile(file: StorageFile | string): StorageFile {
+        if(typeof file === 'object') {
+            return file as StorageFile
+        }
+
+        if(typeof file === 'string') {
+            return this.getStorageFileFromString(file) 
+        }
+
+        throw new InvalidStorageFileException('Unable to determine type of StorageFile from parameter. Expected string or object. Got: ' + typeof file)
+    }
+
+    /**
+     * Retrieves a StorageFile instance from a given file path string.
+     * Attempts to resolve the file path as-is, and if not found, tries to resolve it as a relative path within the storage directory.
+     * @param {string} file - The file path or key to resolve.
+     * @returns {StorageFile<FileSystemMeta>} The corresponding StorageFile instance.
+     * @throws {FileNotFoundException} If the file cannot be found at either path.
+     * @protected
+     */
+    protected getStorageFileFromString(file: string) {
+        if(fs.existsSync(file)) {
+            return this.createStorageFile(file)
+        }
+
+        const fullPath = this.toAbsolutePath(file)
+
+        if(fs.existsSync(fullPath)) {
+            return this.createStorageFile(fullPath)
+        }
+
+        throw new FileNotFoundException('Unable to determine the correct file path for: ' + file)
     }
 
     /**

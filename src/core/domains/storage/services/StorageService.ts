@@ -8,6 +8,7 @@ import path from "path";
 
 import { IGenericStorage } from "../interfaces/IGenericStorage";
 import { IStorageFile } from "../interfaces/IStorageFile";
+import { FileSystemMeta } from "../interfaces/meta";
 import { StorageAdapters } from "../interfaces/StorageAdapters";
 import { StorageConfig } from "../interfaces/StorageConfig";
 import FileSystemStorageService from "./FileSystemStorageService";
@@ -72,7 +73,7 @@ class StorageService extends BaseAdapter<StorageAdapters> implements IStorageSer
      * @param {StorageFile} file - The file to retrieve
      * @returns {Promise<StorageFile>} The retrieved file information
      */
-    public async get(file: StorageFile): Promise<IStorageFile> {
+    public async get(file: StorageFile | string): Promise<IStorageFile> {
         return await this.getDefaultAdapter().get(file)
     }
 
@@ -81,7 +82,7 @@ class StorageService extends BaseAdapter<StorageAdapters> implements IStorageSer
      * @param {StorageFile} file - The file to delete
      * @returns {Promise<void>}
      */
-    public async delete(file: StorageFile): Promise<void> {
+    public async delete(file: StorageFile | string): Promise<void> {
         await this.getDefaultAdapter().delete(file)
     }
 
@@ -111,6 +112,20 @@ class StorageService extends BaseAdapter<StorageAdapters> implements IStorageSer
      */
     public getUploadsDirectory(): string {
         return path.join(process.cwd(), this.config.uploadsDir)
+    }
+
+    /**
+     * Creates a StorageFile instance from a given full file path.
+     * @param {string} fullPath - The absolute path to the file.
+     * @returns {StorageFile} The created StorageFile instance.
+     */
+    public toStorageFile(fullPath: string): StorageFile<FileSystemMeta> {
+        return new StorageFile({
+            key: fullPath.replace(this.getStorageDirectory(), ''),
+            meta: {
+                fullPath
+            }
+        })
     }
 
 }
