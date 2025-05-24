@@ -3,11 +3,12 @@ import fs from 'fs';
 import path from 'path';
 
 import StorageFile from "../data/StorageFile";
-import { StorageTypes } from '../enums/StorageTypes';
 import FileNotFoundException from "../Exceptions/FileNotFoundException";
 import InvalidStorageFileException from '../Exceptions/InvalidStorageFileException';
 import { IGenericStorage } from "../interfaces/IGenericStorage";
 import { FileSystemMeta } from '../interfaces/meta';
+import FileSystemStorageFileParser from '../parser/FileSystemStorageFileParser';
+import { createFileSystemStorageFile } from '../utils/StorageUtils';
 import { storage } from './StorageService';
 
 /**
@@ -15,6 +16,11 @@ import { storage } from './StorageService';
  * Implements the IGenericStorage interface to provide file system-based storage functionality.
  */
 class FileSystemStorageService implements IGenericStorage {
+
+    /**
+     * Helper to determine the StorageFile from an object or string parameter
+     */
+    parser = new FileSystemStorageFileParser()
 
     /**
      * Moves an uploaded file to a specified destination
@@ -43,7 +49,7 @@ class FileSystemStorageService implements IGenericStorage {
             }
         })
 
-        return this.createStorageFile(targetPath)
+        return createFileSystemStorageFile(targetPath)
     }
 
 
@@ -55,7 +61,7 @@ class FileSystemStorageService implements IGenericStorage {
      */
     async get(file: StorageFile | string): Promise<StorageFile<FileSystemMeta>> {
 
-        file = this.parseStorageFile(file)
+        file = this.parser.parseStorageFileOrString(file)
 
         const filePath = file.getMetaValue<string>('fullPath')
 
@@ -67,7 +73,7 @@ class FileSystemStorageService implements IGenericStorage {
             throw new FileNotFoundException()
         }
 
-        return this.createStorageFile(filePath)
+        return createFileSystemStorageFile(filePath)
     }
 
     /**
@@ -77,7 +83,9 @@ class FileSystemStorageService implements IGenericStorage {
      * @returns Promise<StorageFile> - A promise that resolves to the new StorageFile at the destination
      * @throws {FileNotFoundException} When the source file does not exist
      */
-    async put(file: StorageFile<FileSystemMeta>, destination: string): Promise<StorageFile<FileSystemMeta>> {
+    async put(file: StorageFile<FileSystemMeta> | string, destination: string): Promise<StorageFile<FileSystemMeta>> {
+
+        file = this.parser.parseStorageFileOrString(file) as StorageFile<FileSystemMeta>
 
         // Get the full target path
         const targetPath = path.join(storage().getStorageDirectory(), destination)
@@ -96,7 +104,7 @@ class FileSystemStorageService implements IGenericStorage {
         fs.copyFileSync(currentFile, targetPath)
         fs.unlinkSync(currentFile)
 
-        return this.createStorageFile(targetPath)
+        return createFileSystemStorageFile(targetPath)
     }
 
     /**
@@ -107,7 +115,7 @@ class FileSystemStorageService implements IGenericStorage {
      */
     async delete(file: StorageFile | string): Promise<void> {
 
-        file = this.parseStorageFile(file)
+        file = this.parser.parseStorageFileOrString(file)
 
         const filePath = file.getMetaValue<string>('fullPath')
 
@@ -120,85 +128,6 @@ class FileSystemStorageService implements IGenericStorage {
         }
 
         fs.unlinkSync(filePath)
-    }
-
-    /**
-     * Parses the input and returns a StorageFile instance.
-     * If the input is already a StorageFile, it is returned as-is.
-     * If the input is a string, attempts to resolve it to a StorageFile.
-     * @param {StorageFile | string} file - The file to parse, either as a StorageFile instance or a string path/key.
-     * @returns {StorageFile} The resolved StorageFile instance.
-     * @throws {InvalidStorageFileException} If the input type is not supported.
-     */
-    protected parseStorageFile(file: StorageFile | string): StorageFile {
-        if(typeof file === 'object') {
-            return file as StorageFile
-        }
-
-        if(typeof file === 'string') {
-            return this.getStorageFileFromString(file) 
-        }
-
-        throw new InvalidStorageFileException('Unable to determine type of StorageFile from parameter. Expected string or object. Got: ' + typeof file)
-    }
-
-    /**
-     * Retrieves a StorageFile instance from a given file path string.
-     * Attempts to resolve the file path as-is, and if not found, tries to resolve it as a relative path within the storage directory.
-     * @param {string} file - The file path or key to resolve.
-     * @returns {StorageFile<FileSystemMeta>} The corresponding StorageFile instance.
-     * @throws {FileNotFoundException} If the file cannot be found at either path.
-     * @protected
-     */
-    protected getStorageFileFromString(file: string) {
-        if(fs.existsSync(file)) {
-            return this.createStorageFile(file)
-        }
-
-        const fullPath = this.toAbsolutePath(file)
-
-        if(fs.existsSync(fullPath)) {
-            return this.createStorageFile(fullPath)
-        }
-
-        throw new FileNotFoundException('Unable to determine the correct file path for: ' + file)
-    }
-
-    /**
-     * Converts an absolute path to a relative path within the storage directory.
-     * @param path - The absolute path to convert
-     * @returns string - The relative path
-     * @protected
-     */
-    protected toRelativePath(path: string): string {
-        return path.replace(storage().getStorageDirectory(), '')
-    }
-
-    /**
-     * Converts a relative path to an absolute path within the storage directory.
-     * @param relativePath - The relative path to convert
-     * @returns string - The absolute path
-     * @protected
-     */
-    protected toAbsolutePath(relativePath: string): string {
-        return path.join(storage().getStorageDirectory(), relativePath)
-    }
-
-    /**
-     * Creates a storage file object
-     * @param options 
-     * @returns 
-     */
-    protected createStorageFile(fullPath: string): StorageFile<FileSystemMeta> {
-        const key = this.toRelativePath(fullPath)
-
-        return new StorageFile({
-            key,
-            meta: {
-                fullPath,
-            },
-            source: StorageTypes.fs
-        })
     }
 
 }

@@ -8,6 +8,7 @@ import FileNotFoundException from "../Exceptions/FileNotFoundException";
 import InvalidStorageFileException from '../Exceptions/InvalidStorageFileException';
 import { IGenericStorage } from "../interfaces/IGenericStorage";
 import { FileSystemMeta, S3Meta } from '../interfaces/meta';
+import FileSystemStorageFileParser from '../parser/FileSystemStorageFileParser';
 
 /**
  * Configuration interface for Amazon S3 storage service
@@ -34,6 +35,8 @@ type Config = {
  * @ref https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/javascript_s3_code_examples.html
  */
 class AmazonS3StorageService implements IGenericStorage {
+
+    parser = new FileSystemStorageFileParser()
 
     /** Configuration object for AWS S3 */
     config!: Config;
@@ -66,10 +69,9 @@ class AmazonS3StorageService implements IGenericStorage {
      */
     async get(file: StorageFile | string): Promise<StorageFile<S3Meta>> {
 
-        file = this.parseStorageFile(file)
+        const Key = this.parseStorageFileOrS3Key(file)
 
         return new Promise((resolve, reject) => {
-            const Key = file.getKey()
             const s3 = this.getS3()
             const params = {
                 Bucket: this.config.bucket,
@@ -98,7 +100,9 @@ class AmazonS3StorageService implements IGenericStorage {
      * @returns Promise resolving to the uploaded StorageFile with S3 metadata
      * @throws {FileNotFoundException} When the source file does not exist
      */
-    async put(file: StorageFile<FileSystemMeta>, destination?: string): Promise<StorageFile<S3Meta>> {
+    async put(file: StorageFile<FileSystemMeta> | string, destination?: string): Promise<StorageFile<S3Meta>> {
+
+        file = this.parser.parseStorageFileOrString(file)
 
         if(!destination) {
             destination = `${(new Date().getTime().toString())}/${path.basename(file.getKey())}`
@@ -158,7 +162,7 @@ class AmazonS3StorageService implements IGenericStorage {
      */
     async delete(file: StorageFile): Promise<void> {
 
-        file = this.parseStorageFile(file)
+        file = this.parser.parseStorageFileOrString(file)
 
         return new Promise((resolve, reject) => {
             const Key = file.getKey()
@@ -180,23 +184,20 @@ class AmazonS3StorageService implements IGenericStorage {
     }
 
     /**
-     * Parses the input and returns a StorageFile instance.
-     * If the input is already a StorageFile, it is returned as-is.
-     * If the input is a string, creates a new StorageFile instance with the given key.
-     * @param {StorageFile | string} file - The file to parse, either as a StorageFile instance or a string key.
-     * @returns {StorageFile} The resolved StorageFile instance.
-     * @throws {InvalidStorageFileException} If the input type is not supported.
+     * Determines the s3 key from the given file parameter.
+     * @param file 
+     * @returns 
      */
-    protected parseStorageFile(file: StorageFile | string): StorageFile {
+    protected parseStorageFileOrS3Key(file: StorageFile | string): string {
         if(typeof file === 'object') {
-            return file as StorageFile
+            return file.getKey()
         }
 
         if(typeof file === 'string') {
-            return this.createStorageFile(file, {})
+            return file
         }
 
-        throw new InvalidStorageFileException('Unable to determine StorageFile from parameter. Expected object or string. Got: ' + typeof file)
+        throw new Error('Unable to determine s3 key from parameter. Expected string or object. Got: ' + typeof file);
     }
 
     /**
