@@ -1,3 +1,4 @@
+import { IHasHttpContext } from "../../http/interfaces/IHttpContext"
 
 /* eslint-disable no-unused-vars */
 export interface IRuleConstructor {
@@ -13,11 +14,13 @@ export interface IRuleError {
 }
 
 
-export interface IRule {
+export interface IRule extends IHasHttpContext {
     setDotNotationPath(field: string): this
     getDotNotationPath(): string
     setData(data: unknown): this
     setAttributes(attributes: unknown): this
+    setAttribute(attribute: string): this
+    getAttribute(): string;
     setMessages(messages: Record<string, string>): this
     setOtherRuleNames(names: string[]): this
     validate(): Promise<boolean>
