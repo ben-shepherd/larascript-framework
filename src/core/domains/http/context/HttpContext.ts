@@ -9,10 +9,11 @@ import fileUpload from 'express-fileupload';
 
 import { IStorageFile } from '../../storage/interfaces/IStorageFile';
 import { storage } from '../../storage/services/StorageService';
+import { IHttpContext } from '../interfaces/IHttpContext';
 
 
 
-class HttpContext {
+class HttpContext implements IHttpContext {
 
     constructor(
         // eslint-disable-next-line no-unused-vars
@@ -85,7 +86,7 @@ class HttpContext {
 
 
     public getQueryParam(key: string) {
-        return this.req.query[key]
+        return this.req.query[key] as string | undefined
     }
 
     /**
@@ -93,7 +94,7 @@ class HttpContext {
      * @returns {Record<string, string>} The query parameters.
      */
     public getQueryParams() {
-        return this.req.query
+        return this.req.query as Record<string, string>
     }
 
     /**
@@ -197,12 +198,13 @@ class HttpContext {
      */
     public getFiles(key: string): fileUpload.UploadedFile[] | undefined {
         const files = this.req?.files?.[key];
-
-        if(Array.isArray(files)) {
-            return files;
+        const filesArray = Array.isArray(files) ? files : [files]
+        
+        if(filesArray.length === 1 && typeof filesArray?.[0] === 'undefined') {
+            return undefined
         }
 
-        return undefined
+        return filesArray as fileUpload.UploadedFile[]
     }
 
     /**
