@@ -11,6 +11,7 @@ import { IStorageFile } from "../interfaces/IStorageFile";
 import { FileSystemMeta } from "../interfaces/meta";
 import { StorageAdapters } from "../interfaces/StorageAdapters";
 import { StorageConfig } from "../interfaces/StorageConfig";
+import AmazonS3StorageService from "./AmazonS3StorageService";
 import FileSystemStorageService from "./FileSystemStorageService";
 
 /**
@@ -126,6 +127,22 @@ class StorageService extends BaseAdapter<StorageAdapters> implements IStorageSer
                 fullPath
             }
         })
+    }
+
+    /**
+     * Gets the file system storage service instance
+     * @returns {FileSystemStorageService} The file system storage service instance
+     */
+    public fileSystem(): FileSystemStorageService {
+        return this.driver('fs') as FileSystemStorageService
+    }
+
+    /**
+     * Gets the Amazon S3 storage service instance
+     * @returns {AmazonS3StorageService} The Amazon S3 storage service instance
+     */
+    public s3(): AmazonS3StorageService {
+        return this.driver('fs') as AmazonS3StorageService
     }
 
 }
