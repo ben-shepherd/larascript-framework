@@ -67,15 +67,16 @@ class AmazonS3StorageService implements IGenericStorage {
      * @param file - StorageFile object containing file information
      * @returns Promise resolving to the retrieved StorageFile with presigned URL
      */
-    async get(file: StorageFile | string): Promise<StorageFile<S3Meta>> {
+    async get(file: StorageFile | string, additionalParams?: object): Promise<StorageFile<S3Meta>> {
 
         const Key = this.parseStorageFileOrS3Key(file)
 
         return new Promise((resolve, reject) => {
             const s3 = this.getS3()
             const params = {
+                ...(additionalParams ?? {}),
                 Bucket: this.config.bucket,
-                Key
+                Key,
             }
 
             s3.getSignedUrl('getObject', params, (err, presignedUrl) => {
