@@ -5,6 +5,8 @@ import ValidatorMiddleware from '@src/core/domains/validator/middleware/Validato
 import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
 import cors from 'cors';
 import express from 'express';
+import fileUpload from 'express-fileupload';
+import path from 'path';
 
 const config: IHttpConfig = {
 
@@ -28,6 +30,10 @@ const config: IHttpConfig = {
          */
         express.json(),
         cors(),
+        fileUpload({
+            useTempFiles: true,
+            tempFileDir: path.join(__dirname, '../../storage/tmp'),
+        }),
         BasicLoggerMiddleware,
         SecurityMiddleware,
         ValidatorMiddleware,

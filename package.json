@@ -29,11 +29,14 @@
     "api:sh": "docker exec -it larascript-api /bin/bash"
   },
   "dependencies": {
+    "@types/express-fileupload": "^1.5.1",
+    "aws-sdk": "^2.1692.0",
     "bcryptjs": "^2.4.3",
     "collect.js": "^4.36.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
+    "express-fileupload": "^1.5.1",
     "glob": "^11.0.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",

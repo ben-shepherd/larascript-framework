@@ -9,7 +9,7 @@ class ExampleController extends Controller {
             message: 'Hello World!',
         }, 200)
     }
-
+    
 }
 
 export default ExampleController;

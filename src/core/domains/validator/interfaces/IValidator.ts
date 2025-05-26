@@ -2,6 +2,9 @@
 import { IRule, IRulesObject } from "@src/core/domains/validator/interfaces/IRule"
 import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult"
 
+import { IHasHttpContext } from "../../http/interfaces/IHttpContext"
+
+
 export type CustomValidatorConstructor = {
     new (...args: any[]): IValidator
 }
@@ -19,7 +22,7 @@ export type IValidatorErrors = Record<string, string[]>
 
 export type IValidatorFn = (rules: IRulesObject, messages?: IValidatorMessages) => IValidator
 
-export interface IValidator<Attributes extends IValidatorAttributes = IValidatorAttributes> {
+export interface IValidator<Attributes extends IValidatorAttributes = IValidatorAttributes> extends IHasHttpContext {
     validate(data: Attributes): Promise<IValidatorResult<Attributes>>
     passes(): boolean
     errors(): IValidatorErrors

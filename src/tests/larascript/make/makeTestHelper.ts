@@ -11,6 +11,7 @@ import MakeModelCommand from '@src/core/domains/make/commands/MakeModelCommand';
 import MakeObserverCommand from '@src/core/domains/make/commands/MakeObserverCommand';
 import MakeProviderCommand from '@src/core/domains/make/commands/MakeProviderCommand';
 import MakeRepositoryCommand from '@src/core/domains/make/commands/MakeRepositoryCommand';
+import MakeRouteResourceCommand from '@src/core/domains/make/commands/MakeRouteResourceCommand';
 import MakeRoutesCommand from '@src/core/domains/make/commands/MakeRoutesCommand';
 import MakeSeederCommand from '@src/core/domains/make/commands/MakeSeederCommand';
 import MakeServiceCommand from '@src/core/domains/make/commands/MakeServiceCommand';
@@ -94,6 +95,8 @@ const getCommandCtorByType = (type: typeof targetDirectories[string]): CommandCt
         return MakeSeederCommand;
     case 'Factory':
         return MakeFactoryCommand;
+    case 'RouteResource':
+        return MakeRouteResourceCommand;
     default:
         throw new Error(`Unknown command type '${type}'`)
     }

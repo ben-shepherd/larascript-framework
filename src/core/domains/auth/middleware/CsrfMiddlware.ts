@@ -7,8 +7,7 @@ import Route from '@src/core/domains/http/router/Route';
 import { app } from '@src/core/services/App';
 import crypto from 'crypto';
 import { Request } from 'express';
-
-import ApiResponse from '../../http/response/ApiResponse';
+import ApiResponse from '@src/core/domains/http/response/ApiResponse';
 
 /**
  * Configuration options for CSRF protection

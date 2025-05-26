@@ -4,14 +4,14 @@ import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import parseBooleanFromString from "@src/core/util/parseBooleanFromString";
 
-const DEFAULT_CONNECTION = (process.env.DATABASE_DEFAULT_CONNECTION as string) ?? 'default';
+const DATABASE_DEFAULT_CONNECTION = (process.env.DATABASE_DEFAULT_CONNECTION as string) ?? 'default';
 
 const config: IDatabaseConfig = {
 
     /**
      * Default database connection name
      */
-    defaultConnectionName:  DEFAULT_CONNECTION,
+    defaultConnectionName:  DATABASE_DEFAULT_CONNECTION,
 
     /**
      * Additional database connections to be kept alive
@@ -34,9 +34,9 @@ const config: IDatabaseConfig = {
          * Default Postgres connection
          */
         DatabaseConfig.createConfig({
-            connectionName: process.env.DATABASE_DEFAULT_CONNECTION as string,
+            connectionName: process.env.DATABASE_POSTGRES_CONNECTION as string,
             adapter: PostgresAdapter,
-            uri: process.env.DATABASE_DEFAULT_URI as string,
+            uri: process.env.DATABASE_POSTGRES_URI as string,
             options: {}, // Additional connection options can be specified here
         }),
 

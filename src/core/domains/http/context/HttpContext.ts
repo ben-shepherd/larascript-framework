@@ -5,10 +5,15 @@ import { requestContext } from '@src/core/domains/http/context/RequestContext';
 import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
 import { TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
 import { NextFunction, Response } from 'express';
+import fileUpload from 'express-fileupload';
+
+import { IStorageFile } from '../../storage/interfaces/IStorageFile';
+import { storage } from '../../storage/services/StorageService';
+import { IHttpContext } from '../interfaces/IHttpContext';
 
 
 
-class HttpContext {
+class HttpContext implements IHttpContext {
 
     constructor(
         // eslint-disable-next-line no-unused-vars
@@ -81,7 +86,7 @@ class HttpContext {
 
 
     public getQueryParam(key: string) {
-        return this.req.query[key]
+        return this.req.query[key] as string | undefined
     }
 
     /**
@@ -89,7 +94,7 @@ class HttpContext {
      * @returns {Record<string, string>} The query parameters.
      */
     public getQueryParams() {
-        return this.req.query
+        return this.req.query as Record<string, string>
     }
 
     /**
@@ -171,6 +176,47 @@ class HttpContext {
         return this.nextFn;
     }
 
+    /**
+     * Gets the file from the request.
+     * @param {string} key - The key of the file to get.
+     * @returns {fileUpload.UploadedFile | fileUpload.UploadedFile[] | undefined} The file from the request.
+     */
+    public getFile(key: string): fileUpload.UploadedFile | undefined {
+        const files = this.req?.files?.[key];
+
+        if(Array.isArray(files)) {
+            return files[0]
+        }
+
+        return files as fileUpload.UploadedFile;
+    }
+
+    /**
+     * Gets the files from the request.
+     * @param {string} key - The key of the files to get.
+     * @returns {fileUpload.UploadedFile[] | undefined} The files from the request.
+     */
+    public getFiles(key: string): fileUpload.UploadedFile[] | undefined {
+        const files = this.req?.files?.[key];
+        const filesArray = Array.isArray(files) ? files : [files]
+        
+        if(filesArray.length === 1 && typeof filesArray?.[0] === 'undefined') {
+            return undefined
+        }
+
+        return filesArray as fileUpload.UploadedFile[]
+    }
+
+    /**
+     * Moves an uploaded file from the request to the storage.
+     * @param {string} key - The key of the file to upload.
+     * @param {string} [destination] - Optional destination path in storage.
+     * @returns {Promise<import('../../storage/interfaces/IStorageFile').IStorageFile | undefined>} The stored file object or undefined if no file was found.
+     */
+    public async uploadFile(file: fileUpload.UploadedFile): Promise<IStorageFile> {
+        return await storage().moveUploadedFile(file)
+    }
+    
 }
 
 
