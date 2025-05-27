@@ -30,7 +30,6 @@ class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
 
     async execute(context: HttpContext): Promise<void> {
         try {
-
             // Skip authorization check for OPTIONS requests
             if (context.getRequest().method === 'OPTIONS') {
                 this.next();
@@ -44,6 +43,8 @@ class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
             if (!await this.validateScopes(context)) {
                 throw new ForbiddenResourceError();
             }
+
+            this.next();
         }
         catch (error) {
             if (error instanceof UnauthorizedError) {
@@ -55,10 +56,6 @@ class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
             else if (error instanceof Error) {
                 responseError(context.getRequest(), context.getResponse(), error)
             }
-        }
-        finally {
-            // Continue to the next middleware
-            this.next();
         }
     }
 
