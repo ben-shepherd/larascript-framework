@@ -63,6 +63,8 @@ export default class User extends AuthUser<UserAttributes> {
         'roles',
         'firstName',
         'lastName',
+        'profilePictureUrl',
+        'profilePictureUrlExpiresAt',
         'createdAt',
         'updatedAt',
     ]
