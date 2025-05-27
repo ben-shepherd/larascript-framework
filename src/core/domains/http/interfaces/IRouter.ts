@@ -34,6 +34,8 @@ export interface IRouter {
 
     setRegisteredRoutes(routes: TRouteItem[]): void;
 
+    empty(): boolean;
+
     get(path: TRouteItem['path'], action: TRouteItem['action'], options?: TPartialRouteItemOptions): void;
 
     post(path: TRouteItem['path'], action: TRouteItem['action'], options?: TPartialRouteItemOptions): void;
