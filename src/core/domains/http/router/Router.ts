@@ -69,6 +69,14 @@ class Router implements IRouter {
     }
 
     /**
+     * Checks if any routes has been added to this router
+     * @returns 
+     */
+    public empty(): boolean {
+        return this.getRegisteredRoutes().length === 0
+    }
+
+    /**
      * Register a GET route.
      */
     public get(path: TRouteItem['path'], action: TRouteItem['action'], options: TRouterMethodOptions = {}): void {

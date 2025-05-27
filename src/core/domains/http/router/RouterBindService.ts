@@ -124,8 +124,8 @@ class RouterBindService {
 
         // Get middlewares
         const middlewares: TExpressMiddlewareFn[] = [
+            ...MiddlewareUtil.convertToExpressMiddlewares(additionalMiddlewares, routeItem),
             ...MiddlewareUtil.convertToExpressMiddlewares(routeItemMiddlewares, routeItem),
-            ...MiddlewareUtil.convertToExpressMiddlewares(additionalMiddlewares, routeItem)
         ]
 
         // Get action

@@ -4,14 +4,14 @@ import { default as IExpressConfig, default as IHttpConfig } from '@src/core/dom
 import IHttpService from '@src/core/domains/http/interfaces/IHttpService';
 import { MiddlewareConstructor, TExpressMiddlewareFn } from '@src/core/domains/http/interfaces/IMiddleware';
 import { IRoute, IRouter, TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
+import EndRequestContextMiddleware from '@src/core/domains/http/middleware/EndRequestContextMiddleware';
+import RequestIdMiddleware from '@src/core/domains/http/middleware/RequestIdMiddleware';
+import StartSessionMiddleware from '@src/core/domains/http/middleware/StartSessionMiddleware';
 import Route from '@src/core/domains/http/router/Route';
 import RouterBindService from '@src/core/domains/http/router/RouterBindService';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
 import { app } from '@src/core/services/App';
 import expressClient from 'express';
-import EndRequestContextMiddleware from '@src/core/domains/http/middleware/EndRequestContextMiddleware';
-import RequestIdMiddleware from '@src/core/domains/http/middleware/RequestIdMiddleware';
-import StartSessionMiddleware from '@src/core/domains/http/middleware/StartSessionMiddleware';
 
 
 
@@ -111,7 +111,7 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
      * @param router - The router to bind
      */
     public bindRoutes(router: IRouter): void {
-        if (router.getRegisteredRoutes().length === 0) {
+        if (router.empty()) {
             return
         }
 
