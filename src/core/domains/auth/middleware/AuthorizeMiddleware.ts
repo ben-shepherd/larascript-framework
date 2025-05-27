@@ -32,7 +32,7 @@ class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
         try {
 
             // Skip authorization check for OPTIONS requests
-            if(context.getRequest().method === 'OPTIONS') {
+            if (context.getRequest().method === 'OPTIONS') {
                 this.next();
                 return;
             }
@@ -41,27 +41,24 @@ class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
             await this.attemptAuthorizeRequest(context.getRequest());
 
             // Validate the scopes of the request
-            if(!await this.validateScopes(context)) {
+            if (!await this.validateScopes(context)) {
                 throw new ForbiddenResourceError();
             }
-
-            // Continue to the next middleware
-            this.next();
         }
         catch (error) {
-            if(error instanceof UnauthorizedError) {
+            if (error instanceof UnauthorizedError) {
                 responseError(context.getRequest(), context.getResponse(), error, 401)
-                return;
             }
-    
-            if(error instanceof ForbiddenResourceError) {
+            else if (error instanceof ForbiddenResourceError) {
                 responseError(context.getRequest(), context.getResponse(), error, 403)
             }
-    
-            if(error instanceof Error) {
+            else if (error instanceof Error) {
                 responseError(context.getRequest(), context.getResponse(), error)
-                return;
             }
+        }
+        finally {
+            // Continue to the next middleware
+            this.next();
         }
     }
 
@@ -76,25 +73,25 @@ class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
      */
     public async attemptAuthorizeRequest(req: TBaseRequest): Promise<TBaseRequest> {
         const authorization = (req.headers.authorization ?? '').replace('Bearer ', '');
-    
+
         const apiToken = await auth().getJwtAdapter().attemptAuthenticateToken(authorization)
-    
+
         const user = await apiToken?.getUser()
-    
-        if(!user || !apiToken) {
+
+        if (!user || !apiToken) {
             throw new UnauthorizedError();
         }
-    
+
         // Set the user and apiToken in the request
         req.user = user;
         req.apiToken = apiToken
-        
+
         // Set the user id in the request context
         authJwt().authorizeUser(user)
-    
+
         return req;
     }
-    
+
     /**
      * Validates the scopes of the request
      * @param context - The HTTP context
@@ -105,7 +102,7 @@ class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
         const scopes = this.config?.scopes ?? [];
         const apiToken = context.getRequest().apiToken;
 
-        if(!apiToken) {
+        if (!apiToken) {
             return false;
         }
 
