@@ -2,7 +2,7 @@ import Service from '@src/core/base/Service';
 import Middleware from '@src/core/domains/http/base/Middleware';
 import { default as IExpressConfig, default as IHttpConfig } from '@src/core/domains/http/interfaces/IHttpConfig';
 import IHttpService from '@src/core/domains/http/interfaces/IHttpService';
-import { MiddlewareConstructor, TExpressMiddlewareFn } from '@src/core/domains/http/interfaces/IMiddleware';
+import { MiddlewareConstructor, TExpressMiddlewareFn, TExpressMiddlewareFnOrClass } from '@src/core/domains/http/interfaces/IMiddleware';
 import { IRoute, IRouter, TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
 import EndRequestContextMiddleware from '@src/core/domains/http/middleware/EndRequestContextMiddleware';
 import RequestIdMiddleware from '@src/core/domains/http/middleware/RequestIdMiddleware';
@@ -52,15 +52,6 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
         if (!this.config) {
             throw new Error('Config not provided');
         }
-
-        // 1. First add request ID middleware
-        this.app.use(RequestIdMiddleware.create())
-
-        // 2. Then start session using that request ID
-        this.app.use(StartSessionMiddleware.create())
-
-        // 3. Then end request context
-        this.app.use(EndRequestContextMiddleware.create())
     }
 
     /**
@@ -115,8 +106,15 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
             return
         }
 
+        const additionalMiddlewares = [
+            RequestIdMiddleware.create(),
+            StartSessionMiddleware.create(),
+            EndRequestContextMiddleware.create(),
+            ...(this.config?.globalMiddlewares ?? []),
+        ] as (expressClient.RequestHandler | TExpressMiddlewareFnOrClass)[]
+
         this.routerBindService.setExpress(this.app, this.config)
-        this.routerBindService.setOptions({ additionalMiddlewares: this.config?.globalMiddlewares ?? [] })
+        this.routerBindService.setOptions({ additionalMiddlewares })
         this.routerBindService.bindRoutes(router)
         this.registeredRoutes.push(...router.getRegisteredRoutes())
     }
