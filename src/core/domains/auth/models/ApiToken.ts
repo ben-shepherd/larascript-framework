@@ -2,11 +2,12 @@ import User from '@src/app/models/auth/User';
 import { IApiTokenModel } from '@src/core/domains/auth/interfaces/models/IApiTokenModel';
 import { IUserModel } from '@src/core/domains/auth/interfaces/models/IUserModel';
 import ApiTokenObserver from '@src/core/domains/auth/observers/ApiTokenObserver';
-import UserRepository from '@src/core/domains/auth/repository/UserRepository';
 import ScopeMatcher from '@src/core/domains/auth/utils/ScopeMatcher';
 import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
 import Model from '@src/core/domains/models/base/Model';
 import { IModelAttributes, ModelConstructor } from '@src/core/domains/models/interfaces/IModel';
+
+import { auth } from '../services/AuthService';
 
 
 
@@ -90,7 +91,7 @@ class ApiToken extends Model<ApiTokenAttributes> implements IApiTokenModel {
      * @deprecated Use `auth().getUserRepository().findByIdOrFail(this.getUserId())` instead
      */
     async getUser(): Promise<IUserModel> {
-        return await new UserRepository().findByIdOrFail(this.getUserId())
+        return await auth().getUserRepository().findByIdOrFail(this.getUserId())
     }
 
     /**
