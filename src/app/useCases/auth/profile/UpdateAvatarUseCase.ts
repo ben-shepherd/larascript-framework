@@ -72,10 +72,12 @@ class UpdateAvatarUseCase implements IUseCase {
      */
     protected async handleUpdateUser(uploadedFile: StorageFile<S3Meta>, user: IUserModel): Promise<IUserModel> {
         
+        const key = uploadedFile.getKey()
         const presignedUrl = uploadedFile.getPresignedUrl()
         const expiresAt = new Date(Date.now() + 60 * 60 * 1000)
 
         await user.setAttribute(User.PROFILE_PICTURE_URL, presignedUrl);
+        await user.setAttribute(User.PROFILE_PICTURE_KEY, key)
         await user.setAttribute(User.PROFILE_PICTURE_EXPIRES_AT, expiresAt); 
         await user.save()
 

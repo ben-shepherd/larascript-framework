@@ -3,6 +3,7 @@ import AuthorizeMiddleware from "@src/core/domains/auth/middleware/AuthorizeMidd
 import Route from "@src/core/domains/http/router/Route"
 
 import LoginController from "../controllers/auth/LoginController"
+import ClearAvatarController from "../controllers/auth/profile/ClearAvatarController"
 import GetProfileController from "../controllers/auth/profile/GetProfileController"
 import UpdaterAvatarController from "../controllers/auth/profile/UpdaterAvatarController"
 import UpdateAvatarValidator from "../validators/UpdateAvatarValidator"
@@ -21,10 +22,11 @@ export default Route.group(router => {
     }, (router => {
 
         router.get('auth/profile', GetProfileController)
-        
+
         router.post('auth/profile/avatar', UpdaterAvatarController, {
             validator: UpdateAvatarValidator
         })
+        router.delete('auth/profile/clear-avatar', ClearAvatarController)
     }))
     
 })
