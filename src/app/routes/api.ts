@@ -5,6 +5,7 @@ import Route from "@src/core/domains/http/router/Route"
 import LoginController from "../controllers/auth/LoginController"
 import GetProfileController from "../controllers/auth/profile/GetProfileController"
 import UpdaterAvatarController from "../controllers/auth/profile/UpdaterAvatarController"
+import UpdateAvatarValidator from "../validators/UpdateAvatarValidator"
 
 
 export default Route.group(router => {
@@ -18,8 +19,12 @@ export default Route.group(router => {
     router.group({
         middlewares: [AuthorizeMiddleware]
     }, (router => {
+
         router.get('auth/profile', GetProfileController)
-        router.post('auth/profile/avatar', UpdaterAvatarController)
+        
+        router.post('auth/profile/avatar', UpdaterAvatarController, {
+            validator: UpdateAvatarValidator
+        })
     }))
     
 })

@@ -1,4 +1,4 @@
-import LoginUseCase from "@src/app/services/auth/LoginUseCase";
+import LoginUseCase from "@src/app/useCases/auth/LoginUseCase";
 import Controller from "@src/core/domains/http/base/Controller";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 
