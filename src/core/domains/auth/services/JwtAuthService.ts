@@ -50,7 +50,7 @@ export const authJwt = () => app('auth.jwt')
 class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthService {
 
     private apiTokenRepository!: IApiTokenRepository
-    
+
     private userRepository!: IUserRepository
 
     constructor(config: IJwtConfig, aclConfig: IAclConfig) {
@@ -65,7 +65,7 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
      * @returns 
      */
     private getJwtSecret(): string {
-        if(!this.config.settings.secret) {
+        if (!this.config.settings.secret) {
             throw new InvalidSecretException()
         }
         return this.config.settings.secret
@@ -78,7 +78,7 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
      */
 
     private getJwtExpiresInMinutes(): number {
-        if(!this.config.settings.expiresInMinutes) {
+        if (!this.config.settings.expiresInMinutes) {
             throw new InvalidSecretException()
         }
         return this.config.settings.expiresInMinutes
@@ -92,17 +92,17 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
      */
     async attemptCredentials(email: string, password: string, scopes: string[] = []): Promise<string> {
         const user = await this.userRepository.findByEmail(email);
-    
+
         if (!user) {
             throw new UnauthorizedError()
         }
-    
+
         const hashedPassword = user.getAttributeSync('hashedPassword') as string | null
 
-        if(!hashedPassword) {
+        if (!hashedPassword) {
             throw new UnauthorizedError()
         }
-    
+
         if (!cryptoService().verifyHash(password, hashedPassword)) {
             throw new UnauthorizedError()
         }
@@ -160,25 +160,25 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
             const { token: decodedToken, uid: decodedUserId } = decodeJwt(this.getJwtSecret(), token);
 
             const apiToken = await this.apiTokenRepository.findOneActiveToken(decodedToken)
-    
+
             if (!apiToken) {
                 throw new UnauthorizedError()
             }
-    
+
             const user = await this.userRepository.findById(decodedUserId)
-    
+
             if (!user) {
                 throw new UnauthorizedError()
             }
-    
+
             return apiToken
         }
         catch (err) {
-            if(err instanceof JsonWebTokenError) {
+            if (err instanceof JsonWebTokenError) {
                 throw new UnauthorizedError()
             }
         }
-    
+
         return null
     }
 
@@ -213,7 +213,7 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
         if (apiToken?.revokedAt) {
             return;
         }
-    
+
         await this.apiTokenRepository.revokeToken(apiToken)
     }
 
@@ -231,7 +231,7 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
      * @returns 
      */
     getRouter(): IRouter {
-        if(!this.config.routes.enableAuthRoutes) {
+        if (!this.config.routes.enabled) {
             return new Router();
         }
 
@@ -243,19 +243,34 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
             }
         }, (router) => {
 
-            router.post('/login', 'login');
 
-            if(this.config.routes.enableAuthRoutesAllowCreate) {
+            if (this.config.routes.endpoints.login) {
+                router.post('/login', 'login');
+            }
+
+            if (this.config.routes.endpoints.register) {
                 router.post('/register', 'register');
             }
 
             router.group({
                 middlewares: [AuthorizeMiddleware]
             }, (router) => {
-                router.get('/user', 'user');
-                router.patch('/update', 'update');
-                router.post('/refresh', 'refresh');
-                router.post('/logout', 'logout');
+
+                if (this.config.routes.endpoints.login) {
+                    router.get('/user', 'user');
+                }
+
+                if (this.config.routes.endpoints.update) {
+                    router.patch('/update', 'update');
+                }
+
+                if (this.config.routes.endpoints.refresh) {
+                    router.post('/refresh', 'refresh');
+                }
+
+                if (this.config.routes.endpoints.logout) {
+                    router.post('/logout', 'logout');
+                }
 
             })
 
@@ -275,11 +290,11 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
      * @returns 
      */
     public getCreateUserTableSchema() {
-        return {        
+        return {
             email: DataTypes.STRING,
             hashedPassword: DataTypes.STRING,
             groups: DataTypes.ARRAY(DataTypes.STRING),
-            roles: DataTypes.ARRAY(DataTypes.STRING),                
+            roles: DataTypes.ARRAY(DataTypes.STRING),
         }
     }
 
@@ -301,7 +316,7 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
      * @returns The user
      */
     async user(): Promise<IUserModel | null> {
-        if(!await this.check()) {
+        if (!await this.check()) {
             return null
         }
 
