@@ -8,6 +8,8 @@ import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel"
 import { IAuthService } from "@src/core/domains/auth/interfaces/service/IAuthService";
 import { app } from "@src/core/services/App";
 
+import { IUserRepository } from "../interfaces/repository/IUserRepository";
+
 /**
  * Short hand for app('auth')
  */
@@ -118,6 +120,15 @@ class Auth extends BaseAdapter<AuthAdapters> implements IAuthService {
         return await this.getDefaultAdapter().user();
     }
 
+    /**
+     * Get the user repository
+     * @returns The user repository
+     */
+    public getUserRepository(): IUserRepository {
+        return this.getDefaultAdapter().getUserRepository()
+    }
+
+        
 }
 
 export default Auth;
