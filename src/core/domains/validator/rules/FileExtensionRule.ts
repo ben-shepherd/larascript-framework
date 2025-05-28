@@ -1,8 +1,9 @@
 
 import AbstractRule from "@src/core/domains/validator/abstract/AbstractRule";
 import { IRule, IRuleError } from "@src/core/domains/validator/interfaces/IRule";
-import fileUpload from "express-fileupload";
 import path from "path";
+
+import { TUploadedFile } from "../../http/interfaces/UploadedFile";
 
 type Options = {
     ext: string | string[]
@@ -25,9 +26,9 @@ class FileExtensionRule extends AbstractRule<Options> implements IRule {
         return tests ?? false
     }
 
-    protected handleSingleFile(file: fileUpload.UploadedFile): boolean {
+    protected handleSingleFile(file: TUploadedFile): boolean {
         const allowedExtensions = this.getExtensions()
-        const fileExtension = path.extname(file.name.toLowerCase())
+        const fileExtension = path.extname(file.getFilename().toLowerCase())
 
         return allowedExtensions.includes(fileExtension)
     }

@@ -3,6 +3,7 @@ export type TUploadedFile<Data extends object = TUploadedFileData> = {
     getMimeType(): string;
     getFilepath(): string;
     getField(): string;
+    getSizeKb(): number;
     getData(): Data
 }
 

@@ -1,7 +1,8 @@
 
 import AbstractRule from "@src/core/domains/validator/abstract/AbstractRule";
 import { IRule, IRuleError } from "@src/core/domains/validator/interfaces/IRule";
-import fileUpload from 'express-fileupload';
+
+import { TUploadedFile } from "../../http/interfaces/UploadedFile";
 
 type Options = {
     maxKB: number;
@@ -27,7 +28,7 @@ class MaxFileSizeRule extends AbstractRule<Options> implements IRule {
         return tests ?? false
     }
 
-    protected handleSingleFile(file: fileUpload.UploadedFile): boolean {
+    protected handleSingleFile(file: TUploadedFile): boolean {
         const sizeMb = this.getMb() as number
 
         if (typeof sizeMb === 'undefined') {
@@ -39,9 +40,10 @@ class MaxFileSizeRule extends AbstractRule<Options> implements IRule {
             return true
         }
 
-        const currentSize = file.size / 1024 / 1024
 
-        if (sizeMb && currentSize < sizeMb) {
+        const currentSizeMb = file.getSizeKb() / 1024
+
+        if (sizeMb && currentSizeMb < sizeMb) {
             return true
         }
 
