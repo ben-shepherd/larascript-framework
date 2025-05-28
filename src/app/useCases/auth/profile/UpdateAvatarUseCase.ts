@@ -13,7 +13,7 @@ export type UpdateAvatarUseCaseResponse = ApiResponse<{ message: string } | GetU
 
 class UpdateAvatarUseCase implements IUseCase {
 
-    getUserProfile = new GetUserProfile()
+    protected getUserProfile = new GetUserProfile()
 
     async invoke(context: HttpContext): Promise<UpdateAvatarUseCaseResponse> {
         const response = new ApiResponse()
@@ -29,7 +29,8 @@ class UpdateAvatarUseCase implements IUseCase {
         }
         catch (err) {
             response.setData({
-                message: (err as Error).message
+                message: (err as Error).message,
+                stack: (err as Error).stack
             }).setCode(500)
 
             if(err instanceof BadResponseException) {

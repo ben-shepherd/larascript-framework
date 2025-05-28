@@ -125,7 +125,7 @@ class FileSystemStorageService implements IGenericStorage {
             throw new InvalidStorageFileException('fullPath not configured')
         }
 
-        if (fs.existsSync(filePath)) {
+        if (!fs.existsSync(filePath)) {
             throw new FileNotFoundException()
         }
 
