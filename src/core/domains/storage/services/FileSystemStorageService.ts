@@ -1,4 +1,3 @@
-import fileUpload from 'express-fileupload';
 import fs from 'fs';
 import path from 'path';
 
@@ -25,10 +24,6 @@ class FileSystemStorageService implements IGenericStorage {
 
     /**
      * Moves an uploaded file to a specified destination
-     * @param {fileUpload.UploadedFile} file - The uploaded file to move
-     * @param {string} [destination] - Optional destination path. If not provided, uses the original filename
-     * @returns {Promise<StorageFile>} Information about the moved file
-     * @throws {Error} If there is an error moving the file
      */
     public async moveUploadedFile(file: TUploadedFile, destination?: string) {
 
@@ -125,7 +120,7 @@ class FileSystemStorageService implements IGenericStorage {
             throw new InvalidStorageFileException('fullPath not configured')
         }
 
-        if (fs.existsSync(filePath)) {
+        if (!fs.existsSync(filePath)) {
             throw new FileNotFoundException()
         }
 
