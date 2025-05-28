@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 import { TUploadedFile, TUploadedFileData } from "../interfaces/UploadedFile";
 
 class UploadedFile implements TUploadedFile {
@@ -22,6 +24,12 @@ class UploadedFile implements TUploadedFile {
 
     getField(): string {
         return this.data.field
+    }
+
+    getSizeKb() {
+        const stats = fs.statSync(this.getFilepath())
+        const fileSizeInBytes = stats.size
+        return fileSizeInBytes / 1024
     }
 
     getData<T>(): T {

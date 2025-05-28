@@ -3,7 +3,6 @@ import StorageFile from "@src/core/domains/storage/data/StorageFile";
 import { StorageTypes } from "@src/core/domains/storage/enums/StorageTypes";
 import { IStorageService } from "@src/core/domains/storage/interfaces/IStorageService";
 import { app } from "@src/core/services/App";
-import fileUpload from 'express-fileupload';
 import path from "path";
 
 import { TUploadedFile } from "../../http/interfaces/UploadedFile";
@@ -90,10 +89,6 @@ class StorageService extends BaseAdapter<StorageAdapters> implements IStorageSer
 
     /**
      * Moves an uploaded file to a specified destination
-     * @param {fileUpload.UploadedFile} file - The uploaded file to move
-     * @param {string} [destination] - Optional destination path. If not provided, uses the original filename
-     * @returns {Promise<StorageFile>} Information about the moved file
-     * @throws {Error} If there is an error moving the file
      */
     public async moveUploadedFile(file: TUploadedFile, destination?: string) {
         const fileStorage =  this.driver(StorageTypes.fs) as FileSystemStorageService

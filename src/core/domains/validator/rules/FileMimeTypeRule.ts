@@ -1,7 +1,8 @@
 
 import AbstractRule from "@src/core/domains/validator/abstract/AbstractRule";
 import { IRule, IRuleError } from "@src/core/domains/validator/interfaces/IRule";
-import fileUpload from "express-fileupload";
+
+import { TUploadedFile } from "../../http/interfaces/UploadedFile";
 
 type Options = {
     startsWith?: string;
@@ -29,15 +30,15 @@ class FileMimeType extends AbstractRule<Options> implements IRule {
         return tests ?? false
     }
 
-    protected handleSingleFile(file: fileUpload.UploadedFile): boolean {
+    protected handleSingleFile(file: TUploadedFile): boolean {
         
         if(typeof this.options.startsWith === 'string') {
             this.errorTemplate = this.startsWithTemplate
-            return file.mimetype.startsWith(this.options.startsWith)
+            return file.getMimeType().startsWith(this.options.startsWith)
         }
 
         if(typeof this.options.mimeType === 'string') {
-            return this.getMimeTypes().includes(file.mimetype)
+            return this.getMimeTypes().includes(file.getMimeType())
         }
 
         this.errorTemplate = this.misconfiguredTemplate
