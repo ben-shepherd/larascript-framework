@@ -36,6 +36,11 @@ class ApiResponse<Data = unknown> implements IApiResponse<Data> {
 
     protected additionalMeta: Record<string, unknown> = {}
 
+    constructor(data: Data = {} as Data, code = 200) {
+        this.data = data
+        this.code = code
+    }
+
     /**
      * Builds and returns the final response object with all added data and metadata
 
