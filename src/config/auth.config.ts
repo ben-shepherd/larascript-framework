@@ -51,7 +51,7 @@ export const authConfig = AuthConfig.define([
             enabled: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES, 'true'),
             endpoints: {
                 register: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES_ALLOW_CREATE, 'true'),
-                login: true,
+                login: false,
                 refresh: true,
                 update: true,
                 logout: true

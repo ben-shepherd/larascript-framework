@@ -2,6 +2,7 @@ import ExampleController from "@src/app/controllers/ExampleController"
 import AuthorizeMiddleware from "@src/core/domains/auth/middleware/AuthorizeMiddleware"
 import Route from "@src/core/domains/http/router/Route"
 
+import LoginController from "../controllers/auth/LoginController"
 import GetProfileController from "../controllers/auth/profile/GetProfileController"
 import UpdaterAvatarController from "../controllers/auth/profile/UpdaterAvatarController"
 
@@ -9,6 +10,9 @@ import UpdaterAvatarController from "../controllers/auth/profile/UpdaterAvatarCo
 export default Route.group(router => {
 
     router.get('/example', [ExampleController, 'example'])
+
+    // Auth routes
+    router.post('auth/login', LoginController)
 
     // Profile Routes
     router.group({
