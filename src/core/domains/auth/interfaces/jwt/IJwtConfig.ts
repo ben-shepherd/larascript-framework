@@ -20,7 +20,13 @@ export interface IJwtConfig extends IBaseAuthConfig {
         expiresInMinutes: number;
     },
     routes: {
-        enableAuthRoutes: boolean;
-        enableAuthRoutesAllowCreate: boolean;
+        enabled: boolean;
+        endpoints: {
+            register: boolean;
+            login: boolean;
+            update: boolean;
+            refresh: boolean;
+            logout: boolean;
+        }
     }
 }
