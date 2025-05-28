@@ -5,7 +5,6 @@ import { requestContext } from '@src/core/domains/http/context/RequestContext';
 import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
 import { TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
 import { NextFunction, Response } from 'express';
-import fileUpload from 'express-fileupload';
 
 import { IStorageFile } from '../../storage/interfaces/IStorageFile';
 import { storage } from '../../storage/services/StorageService';
@@ -180,8 +179,6 @@ class HttpContext implements IHttpContext {
 
     /**
      * Gets the file from the request.
-     * @param {string} key - The key of the file to get.
-     * @returns {fileUpload.UploadedFile | fileUpload.UploadedFile[] | undefined} The file from the request.
      */
     public getFile(key: string): TUploadedFile | undefined {
         const files = this.req?.files?.[key];
@@ -201,8 +198,6 @@ class HttpContext implements IHttpContext {
 
     /**
      * Gets the files from the request.
-     * @param {string} key - The key of the files to get.
-     * @returns {fileUpload.UploadedFile[] | undefined} The files from the request.
      */
     public getFiles(key: string): TUploadedFile[] | undefined {
         const files = this.req?.files?.[key];
