@@ -4,18 +4,29 @@ import fs from 'fs';
 import StorageFile from "../data/StorageFile";
 import FileNotFoundException from "../Exceptions/FileNotFoundException";
 import InvalidStorageFileException from "../Exceptions/InvalidStorageFileException";
-import { FileSystemMeta } from '../interfaces/meta';
+import { FileSystemMeta, S3Meta } from '../interfaces/meta';
+import { storage } from '../services/StorageService';
 import { createFileSystemStorageFile, toAbsolutePath } from "../utils/StorageUtils";
 
 class FileSystemStorageFileParser {
+
+    public parseStorageFileOrStringS3(file: StorageFile | string): StorageFile<S3Meta> {
+        
+        if (typeof file === 'object') {
+            return file as StorageFile<S3Meta>
+        }
+
+        if (typeof file === 'string') {
+            return storage().s3().createStorageFile(file, {})
+        }
+
+        throw new InvalidStorageFileException('Unable to determine type of StorageFile from parameter. Expected string or object. Got: ' + typeof file)
+    }
 
     /**
      * Parses the input and returns a StorageFile instance.
      * If the input is already a StorageFile, it is returned as-is.
      * If the input is a string, attempts to resolve it to a StorageFile.
-     * @param {StorageFile | string} file - The file to parse, either as a StorageFile instance or a string path/key.
-     * @returns {StorageFile} The resolved StorageFile instance.
-     * @throws {InvalidStorageFileException} If the input type is not supported.
      */
     public parseStorageFileOrString(file: StorageFile | string): StorageFile<FileSystemMeta> {
         
@@ -39,6 +50,7 @@ class FileSystemStorageFileParser {
      * @protected
      */
     protected getStorageFileFromString(file: string) {
+        
         if (fs.existsSync(file)) {
             return createFileSystemStorageFile(file)
         }
