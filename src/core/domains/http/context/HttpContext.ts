@@ -9,7 +9,9 @@ import fileUpload from 'express-fileupload';
 
 import { IStorageFile } from '../../storage/interfaces/IStorageFile';
 import { storage } from '../../storage/services/StorageService';
+import UploadedFile from '../data/UploadedFile';
 import { IHttpContext } from '../interfaces/IHttpContext';
+import { TUploadedFile, TUploadedFileData } from '../interfaces/UploadedFile';
 
 
 
@@ -181,14 +183,20 @@ class HttpContext implements IHttpContext {
      * @param {string} key - The key of the file to get.
      * @returns {fileUpload.UploadedFile | fileUpload.UploadedFile[] | undefined} The file from the request.
      */
-    public getFile(key: string): fileUpload.UploadedFile | undefined {
+    public getFile(key: string): TUploadedFile | undefined {
         const files = this.req?.files?.[key];
+        let data: TUploadedFileData | undefined = undefined
 
-        if(Array.isArray(files)) {
-            return files[0]
+        if(!Array.isArray(files)) {
+            data = files as unknown as TUploadedFileData
+        }
+        if(Array.isArray(files) && typeof files?.[0] !== 'undefined') {
+            data = files?.[0] as unknown as TUploadedFileData  
         }
 
-        return files as fileUpload.UploadedFile;
+        return data 
+            ? this.createUploadedFile(data)
+            : undefined
     }
 
     /**
@@ -196,7 +204,7 @@ class HttpContext implements IHttpContext {
      * @param {string} key - The key of the files to get.
      * @returns {fileUpload.UploadedFile[] | undefined} The files from the request.
      */
-    public getFiles(key: string): fileUpload.UploadedFile[] | undefined {
+    public getFiles(key: string): TUploadedFile[] | undefined {
         const files = this.req?.files?.[key];
         const filesArray = Array.isArray(files) ? files : [files]
         
@@ -204,7 +212,18 @@ class HttpContext implements IHttpContext {
             return undefined
         }
 
-        return filesArray as fileUpload.UploadedFile[]
+        return (filesArray as unknown as TUploadedFileData[]).map((file) => {
+            return this.createUploadedFile(file)
+        })
+    }
+
+    /**
+     * Create an UploadedFile data instance
+     * @param file
+     * @returns 
+     */
+    protected createUploadedFile(file: TUploadedFileData): TUploadedFile {
+        return new UploadedFile(file)
     }
 
     /**
@@ -213,7 +232,7 @@ class HttpContext implements IHttpContext {
      * @param {string} [destination] - Optional destination path in storage.
      * @returns {Promise<import('../../storage/interfaces/IStorageFile').IStorageFile | undefined>} The stored file object or undefined if no file was found.
      */
-    public async uploadFile(file: fileUpload.UploadedFile): Promise<IStorageFile> {
+    public async uploadFile(file: TUploadedFile): Promise<IStorageFile> {
         return await storage().moveUploadedFile(file)
     }
     

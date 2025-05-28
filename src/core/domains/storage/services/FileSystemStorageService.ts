@@ -2,6 +2,7 @@ import fileUpload from 'express-fileupload';
 import fs from 'fs';
 import path from 'path';
 
+import { TUploadedFile } from '../../http/interfaces/UploadedFile';
 import StorageFile from "../data/StorageFile";
 import FileNotFoundException from "../Exceptions/FileNotFoundException";
 import InvalidStorageFileException from '../Exceptions/InvalidStorageFileException';
@@ -29,29 +30,30 @@ class FileSystemStorageService implements IGenericStorage {
      * @returns {Promise<StorageFile>} Information about the moved file
      * @throws {Error} If there is an error moving the file
      */
-    public async moveUploadedFile(file: fileUpload.UploadedFile, destination?: string) {
+    public async moveUploadedFile(file: TUploadedFile, destination?: string) {
 
         if (!destination) {
-            destination = file.name
+            destination = file.getFilename()
         }
 
         const timestamp = (new Date()).getTime()
-        const targetDir = path.join(storage().getUploadsDirectory(), timestamp.toString())
-        const targetPath = path.join(targetDir, file.name)
+        const uploadsDir = storage().getUploadsDirectory()
+        const targetDir = path.join(uploadsDir, timestamp.toString())
+        const targetPath = path.join(targetDir, file.getFilename())
+
+        if(!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir)
+        }
 
         if (!fs.existsSync(targetDir)) {
             fs.mkdirSync(targetDir)
         }
 
-        file.mv(targetPath, (err) => {
-            if (err) {
-                throw new Error('File move error')
-            }
-        })
+        fs.copyFileSync(file.getFilepath(), targetPath)
+        fs.unlinkSync(file.getFilepath())
 
         return createFileSystemStorageFile(targetPath)
     }
-
 
     /**
      * Retrieves a file from the storage system.

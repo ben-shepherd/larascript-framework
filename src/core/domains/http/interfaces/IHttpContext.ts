@@ -4,9 +4,9 @@ import { IUserModel } from '@src/core/domains/auth/interfaces/models/IUserModel'
 import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
 import { TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
 import { NextFunction, Response } from 'express';
-import fileUpload from 'express-fileupload';
 
 import { IStorageFile } from '../../storage/interfaces/IStorageFile';
+import { TUploadedFile } from './UploadedFile';
 
 export interface IHttpContext {
     getRouteItem(): TRouteItem | undefined;
@@ -26,9 +26,9 @@ export interface IHttpContext {
     getRequest(): TBaseRequest;
     getResponse(): Response;
     getNext(): NextFunction | undefined;
-    getFile(key: string): fileUpload.UploadedFile | undefined;
-    getFiles(key: string): fileUpload.UploadedFile[] | undefined;
-    uploadFile(file: fileUpload.UploadedFile): Promise<IStorageFile>;
+    getFile(key: string): TUploadedFile | undefined;
+    getFiles(key: string): TUploadedFile[] | undefined;
+    uploadFile(file: TUploadedFile): Promise<IStorageFile>;
 }
 
 export interface IHasHttpContext {

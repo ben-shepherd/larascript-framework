@@ -52,6 +52,17 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
         if (!this.config) {
             throw new Error('Config not provided');
         }
+
+        this.extendExpress()        
+    }
+
+    /**
+     * Execute the extendExpress config option
+     */
+    protected extendExpress() {
+        if(typeof this.config?.extendExpress === 'function') {
+            this.config.extendExpress(this.app)
+        }
     }
 
     /**
