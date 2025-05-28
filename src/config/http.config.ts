@@ -4,8 +4,7 @@ import SecurityMiddleware from '@src/core/domains/http/middleware/SecurityMiddle
 import ValidatorMiddleware from '@src/core/domains/validator/middleware/ValidatorMiddleware';
 import parseBooleanFromString from '@src/core/util/parseBooleanFromString';
 import cors from 'cors';
-import express from 'express';
-import fileUpload from 'express-fileupload';
+import expressBusboy from 'express-busboy';
 import path from 'path';
 
 const config: IHttpConfig = {
@@ -28,12 +27,7 @@ const config: IHttpConfig = {
         /**
          * Larascript required middlewares
          */
-        express.json(),
         cors(),
-        fileUpload({
-            useTempFiles: true,
-            tempFileDir: path.join(__dirname, '../../storage/tmp'),
-        }),
         BasicLoggerMiddleware,
         SecurityMiddleware,
         ValidatorMiddleware,
@@ -43,6 +37,17 @@ const config: IHttpConfig = {
          * Add your custom middlewares below
          */
     ],
+
+    /**
+     * Extend the express app
+     */
+    extendExpress: (app) => {
+        expressBusboy.extend(app, {
+            upload: true,
+            path: path.join(__dirname, '../../storage/tmp'),
+            allowedPath: /./
+        })
+    },
 
     /**
      * CSRF protection

@@ -6,6 +6,7 @@ import { app } from "@src/core/services/App";
 import fileUpload from 'express-fileupload';
 import path from "path";
 
+import { TUploadedFile } from "../../http/interfaces/UploadedFile";
 import { IGenericStorage } from "../interfaces/IGenericStorage";
 import { IStorageFile } from "../interfaces/IStorageFile";
 import { FileSystemMeta } from "../interfaces/meta";
@@ -94,7 +95,7 @@ class StorageService extends BaseAdapter<StorageAdapters> implements IStorageSer
      * @returns {Promise<StorageFile>} Information about the moved file
      * @throws {Error} If there is an error moving the file
      */
-    public async moveUploadedFile(file: fileUpload.UploadedFile, destination?: string) {
+    public async moveUploadedFile(file: TUploadedFile, destination?: string) {
         const fileStorage =  this.driver(StorageTypes.fs) as FileSystemStorageService
         return fileStorage.moveUploadedFile(file, destination)
     }
@@ -142,7 +143,7 @@ class StorageService extends BaseAdapter<StorageAdapters> implements IStorageSer
      * @returns {AmazonS3StorageService} The Amazon S3 storage service instance
      */
     public s3(): AmazonS3StorageService {
-        return this.driver('fs') as AmazonS3StorageService
+        return this.driver('s3') as AmazonS3StorageService
     }
 
 }
