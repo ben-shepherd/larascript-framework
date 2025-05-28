@@ -24,6 +24,18 @@ export interface UserAttributes extends AuthUserAttributes {
  */
 export default class User extends AuthUser<UserAttributes> {
 
+    public static EMAIL = 'email'
+
+    public static FIRST_NAME = 'firstName'
+
+    public static LAST_NAME = 'lastName'
+
+    public static PROFILE_PICTURE_KEY = 'profilePictureKey'
+
+    public static PROFILE_PICTURE_URL = 'profilePictureUrl'
+
+    public static PROFILE_PICTURE_EXPIRES_AT = 'profilePictureExpiresAt'
+
     /**
      * Table name
      */
@@ -57,14 +69,15 @@ export default class User extends AuthUser<UserAttributes> {
      * These fields can be set directly on the model.
      */
     fields: string[] = [
-        'email',
+        User.EMAIL,
         'password',
         'hashedPassword',
         'roles',
-        'firstName',
-        'lastName',
-        'profilePictureUrl',
-        'profilePictureUrlExpiresAt',
+        User.FIRST_NAME,
+        User.LAST_NAME,
+        User.PROFILE_PICTURE_URL,
+        User.PROFILE_PICTURE_KEY,
+        User.PROFILE_PICTURE_EXPIRES_AT,
         'createdAt',
         'updatedAt',
     ]

@@ -2,7 +2,8 @@ import ExampleController from "@src/app/controllers/ExampleController"
 import AuthorizeMiddleware from "@src/core/domains/auth/middleware/AuthorizeMiddleware"
 import Route from "@src/core/domains/http/router/Route"
 
-import ProfileAvatarController from "../controllers/ProfileAvatarController"
+import UpdaterAvatarController from "../controllers/auth/profile/UpdaterAvatarController"
+
 
 export default Route.group(router => {
 
@@ -12,7 +13,7 @@ export default Route.group(router => {
     router.group({
         middlewares: [AuthorizeMiddleware]
     }, (router => {
-        router.post('auth/profile/avatar', ProfileAvatarController)
+        router.post('auth/profile/avatar', UpdaterAvatarController)
     }))
     
 })
