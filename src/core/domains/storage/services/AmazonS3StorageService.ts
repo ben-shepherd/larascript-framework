@@ -161,7 +161,7 @@ class AmazonS3StorageService implements IGenericStorage {
      * @param file - StorageFile object containing the file to delete
      * @returns Promise that resolves when deletion is complete
      */
-    async delete(file: StorageFile): Promise<void> {
+    async delete(file: StorageFile | string): Promise<void> {
 
         file = this.parser.parseStorageFileOrString(file)
 
