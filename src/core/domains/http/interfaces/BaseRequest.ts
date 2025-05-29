@@ -1,8 +1,10 @@
 import IAuthorizedRequest from "@src/core/domains/http/interfaces/IAuthorizedRequest";
 import { IRequestIdentifiable } from "@src/core/domains/http/interfaces/IRequestIdentifable";
 import { ISecurityRequest } from "@src/core/domains/http/interfaces/ISecurity";
-import { Request } from "express";
 import { IValidatorRequest } from "@src/core/domains/http/interfaces/IValidatorRequest";
+import { Request } from "express";
+
+import { TUploadedFile } from "./UploadedFile";
 
 /**
  * TBaseRequest combines multiple request interfaces to create a comprehensive request type.
@@ -12,4 +14,4 @@ import { IValidatorRequest } from "@src/core/domains/http/interfaces/IValidatorR
  * - Security features (ISecurityRequest)
  * - Request identification (IRequestIdentifiable)
  */
-export type TBaseRequest = Request & IAuthorizedRequest & IValidatorRequest & ISecurityRequest & IRequestIdentifiable;
+export type TBaseRequest = Request & IAuthorizedRequest & IValidatorRequest & ISecurityRequest & IRequestIdentifiable & { files: TUploadedFile | TUploadedFile[] | undefined };
