@@ -26,12 +26,18 @@ class MinRule extends AbstractRule<TMinOptions> implements IRule {
     public async test(): Promise<boolean> {
         this.errorTemplate = this.errorTemplateNumber
 
+        if(this.nullableAndEmptyString()) return true
         if(this.dataUndefinedOrNull()) return false
         if(!this.testNumber()) return false
         if(!this.testString()) return false
         if(!this.testArray()) return false
-
+        
         return true
+    }
+
+    protected nullableAndEmptyString() {
+        const data = (typeof this.getData() === 'string' ? this.getData() : '') as string
+        return (this.otherRuleNames.includes('nullable') && data.length === 0)
     }
 
     protected testNumber(): boolean {
