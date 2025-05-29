@@ -16,7 +16,9 @@ class UpdatePasswordUseCase implements IUseCase {
     }
 
     async invoke(context: HttpContext) {
-        this.validate(context)
+        if(!this.validate(context)) {
+            return;
+        }
         await this.updateUser(context)
     }
 
@@ -29,12 +31,13 @@ class UpdatePasswordUseCase implements IUseCase {
         } = data
 
         await user.fill({
-            hashedPassword: cryptoService().hash(password)
+            [User.HASHED_PASSWORD]: cryptoService().hash(password),
+            [User.PASSWORD_CHANGED_AT]: new Date(),
         })
         await user.save()
     }
 
-    protected validate(context: HttpContext) {
+    protected validate(context: HttpContext): boolean {
         const data = context.getBody() as PasswordBody
         const {
             password,
@@ -43,7 +46,7 @@ class UpdatePasswordUseCase implements IUseCase {
 
 
         if(!password || (typeof password === 'string' && password?.length === 0)) {
-            return;
+            return false;
         }
 
         const pwdsAreStrings = typeof password === 'string' && typeof confirmPassword === 'string'
@@ -62,6 +65,8 @@ class UpdatePasswordUseCase implements IUseCase {
             const min = UpdatePasswordUseCase.minPasswordLength().toString()
             throw new ValidationError('Passwords must have a minimum of ' + min + ' characters')
         }
+
+        return true
     }
 
 }

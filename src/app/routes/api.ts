@@ -7,8 +7,8 @@ import ClearAvatarController from "../controllers/auth/profile/ClearAvatarContro
 import GetProfileController from "../controllers/auth/profile/GetProfileController"
 import UpdateProfileController from "../controllers/auth/profile/UpdateProfileController"
 import UpdaterAvatarController from "../controllers/auth/profile/UpdaterAvatarController"
+import RegisterController from "../controllers/auth/RegisterController"
 import UpdateAvatarValidator from "../validators/UpdateAvatarValidator"
-import UpdateProfileValidator from "../validators/UpdateProfileValidator"
 
 
 export default Route.group(router => {
@@ -17,6 +17,7 @@ export default Route.group(router => {
 
     // Auth routes
     router.post('auth/login', LoginController)
+    router.post('auth/register', RegisterController)
 
     // Profile Routes
     router.group({
@@ -26,7 +27,7 @@ export default Route.group(router => {
         router.get('auth/profile', GetProfileController)
 
         router.patch('auth/profile', UpdateProfileController, {
-            validator: UpdateProfileValidator
+            // validator: UpdateProfileValidator
         })
 
         router.post('auth/profile/avatar', UpdaterAvatarController, {

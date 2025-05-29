@@ -9,6 +9,7 @@ export interface UserAttributes extends AuthUserAttributes {
     email: string;
     password?: string;
     hashedPassword: string;
+    passwordChangedAt: Date
     roles: string[];
     groups: string[];
     firstName?: string;
@@ -36,6 +37,10 @@ export default class User extends AuthUser<UserAttributes> {
 
     public static PROFILE_PICTURE_EXPIRES_AT = 'profilePictureExpiresAt'
 
+    public static HASHED_PASSWORD = 'hashedPassword';
+
+    public static PASSWORD_CHANGED_AT = 'passwordChangedAt'
+
     /**
      * Table name
      */
@@ -57,7 +62,8 @@ export default class User extends AuthUser<UserAttributes> {
      * These fields cannot be set directly.
      */
     guarded: string[] = [
-        'hashedPassword',
+        User.HASHED_PASSWORD,
+        User.PASSWORD_CHANGED_AT,
         'password',
         'roles',
         'groups',
@@ -70,14 +76,15 @@ export default class User extends AuthUser<UserAttributes> {
      */
     fields: string[] = [
         User.EMAIL,
+        User.HASHED_PASSWORD,
         'password',
-        'hashedPassword',
         'roles',
         User.FIRST_NAME,
         User.LAST_NAME,
         User.PROFILE_PICTURE_URL,
         User.PROFILE_PICTURE_KEY,
         User.PROFILE_PICTURE_EXPIRES_AT,
+        User.PASSWORD_CHANGED_AT,
         'createdAt',
         'updatedAt',
     ]
