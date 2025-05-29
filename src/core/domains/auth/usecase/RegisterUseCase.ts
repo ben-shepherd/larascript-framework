@@ -9,6 +9,8 @@ import ValidatorResult from "@src/core/domains/validator/data/ValidatorResult";
 import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
 import { app } from "@src/core/services/App";
 
+import { IModelAttributes } from "../../models/interfaces/IModel";
+
 type RegisterUseCaseResponse = ApiResponse<UserAttributes | { errors: object }>
 
 /**
@@ -59,6 +61,7 @@ class RegisterUseCase {
         const basicAclService = app('acl.basic')
         const groups = [basicAclService.getDefaultGroup().name]
         const roles = basicAclService.getGroupRoles(basicAclService.getDefaultGroup()).map(role => role.name)
+        const allowedFields = auth().getUserRepository().create().getFields()
 
         const userAttributes = {
             email: context.getBody().email,
@@ -68,11 +71,29 @@ class RegisterUseCase {
             ...context.getBody()
         }
 
+        // Reduce attributes to only allowed fields
+        const userAttributesReduced = this.reduceAttributesOnlyAllowed(userAttributes, allowedFields)
+
         // Create and save the user
-        const user = authJwt().getUserRepository().create(userAttributes);
+        const user = authJwt().getUserRepository().create(userAttributesReduced as IUserModel);
         await user.save();
 
         return user;
+    }
+
+    /**
+     * Reduce attributes and keeps only allowed fields
+     */
+    protected reduceAttributesOnlyAllowed(data: IModelAttributes, allowedFields: string[]): IModelAttributes {
+        return Object.keys(data).reduce((acc, curr) => {
+            const attribute = curr as string
+
+            if(allowedFields.includes(attribute)) {
+                acc[attribute] = data[curr]
+            }
+            
+            return acc
+        }, {}) as IModelAttributes
     }
 
 
