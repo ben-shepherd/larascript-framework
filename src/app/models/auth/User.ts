@@ -24,6 +24,12 @@ export interface UserAttributes extends AuthUserAttributes {
  */
 export default class User extends AuthUser<UserAttributes> {
 
+    public static EMAIL = 'email'
+
+    public static FIRST_NAME = 'firstName'
+
+    public static LAST_NAME = 'lastName'
+
     /**
      * Table name
      */
@@ -45,10 +51,10 @@ export default class User extends AuthUser<UserAttributes> {
      * These fields cannot be set directly.
      */
     guarded: string[] = [
-        'hashedPassword',
-        'password',
-        'roles',
-        'groups',
+        User.HASHED_PASSWORD,
+        User.PASSWORD,
+        User.ROLES,
+        User.GROUPS,
     ];
 
     /**
@@ -57,14 +63,14 @@ export default class User extends AuthUser<UserAttributes> {
      * These fields can be set directly on the model.
      */
     fields: string[] = [
-        'email',
-        'password',
-        'hashedPassword',
-        'roles',
-        'firstName',
-        'lastName',
-        'createdAt',
-        'updatedAt',
+        User.EMAIL,
+        User.PASSWORD,
+        User.HASHED_PASSWORD,
+        User.ROLES,
+        User.FIRST_NAME,
+        User.LAST_NAME,
+        User.CREATED_AT,
+        User.UPDATED_AT
     ]
 
     /**

@@ -32,6 +32,11 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
 
     [key: string]: unknown;
     
+    public static CREATED_AT = 'createdAt';
+
+    public static UPDATED_AT = 'createdAt';
+    
+    
     /**
      * The ID generator function for the model.
      */
