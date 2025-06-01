@@ -736,7 +736,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         if (!id) return null;
 
         const result =  await this.queryBuilder().find(id)
-        const attributes = result ? await result.toObject() : null;
+        const attributes = result ? await result.toObject({ excludeGuarded: false }) : null;
         const decryptedAttributes = await this.decryptAttributes(attributes as Attributes | null);
 
         this.attributes = decryptedAttributes ? { ...decryptedAttributes } as Attributes : null
