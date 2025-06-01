@@ -261,6 +261,16 @@ abstract class AbstractRule<TOptions extends object = object> implements IHasHtt
         const allowNullable = this.otherRuleNames.includes('nullable')
         return allowNullable && this.dataUndefinedOrNull()
     }
+    
+    /**
+     * Checks if the rule allows null values for strings
+     * @returns True if the rule allows null values, false otherwise
+     */
+    protected nullableString(): boolean {
+        const allowNullable = this.otherRuleNames.includes('nullable')
+        const stringEmpty = typeof this.getData() === 'string' && (this.getData() as string).length === 0
+        return allowNullable && (this.dataUndefinedOrNull() || stringEmpty)
+    }
 
     /**
      * Sets the names of other rules that are being validated
