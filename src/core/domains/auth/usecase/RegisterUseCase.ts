@@ -11,7 +11,7 @@ import { app } from "@src/core/services/App";
 
 import { IModelAttributes } from "../../models/interfaces/IModel";
 
-type RegisterUseCaseResponse = ApiResponse<UserAttributes | { errors: object }>
+export type RegisterUseCaseResponse = ApiResponse<UserAttributes | { errors: object }>
 
 /**
  * RegisterUseCase handles new user registration

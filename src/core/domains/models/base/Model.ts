@@ -31,6 +31,8 @@ import Str from '@src/core/util/str/Str';
 export default abstract class Model<Attributes extends IModelAttributes> implements IModel<Attributes>  {
 
     [key: string]: unknown;
+
+    public static ID = 'id';
     
     public static CREATED_AT = 'createdAt';
 

@@ -7,7 +7,7 @@ import minExecTime from "@src/core/util/minExecTime";
 
 import { IUserModel } from "../interfaces/models/IUserModel";
 
-type LoginUseCaseResponse = ApiResponse<{
+export type LoginUseCaseResponse = ApiResponse<{
     token: string;
     user: IUserModel['attributes']
 } | {
