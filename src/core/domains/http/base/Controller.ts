@@ -141,7 +141,7 @@ class Controller implements IController {
             }, 500);
         }
 
-        return this.jsonResponse({ error: message }, 500);
+        return this.jsonResponse({ error: 'Internal Server Error' }, 500);
     }
 
     /**
