@@ -180,7 +180,7 @@ class ApiResponse<Data = unknown> implements IApiResponse<Data> {
      * Returns the response as an object
      * @returns {TApiResponse<Data>} The response as an object
      */
-    toObject(): TApiResponse<Data> {
+    toResponseObject(): TApiResponse<Data> {
         return this.build();
     }
 
