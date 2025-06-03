@@ -1,7 +1,6 @@
 import AuthProvider from "@src/core/domains/auth/providers/AuthProvider";
 import AuthConfig from "@src/core/domains/auth/services/AuthConfig";
 import JwtAuthService from "@src/core/domains/auth/services/JwtAuthService";
-import parseBooleanFromString from "@src/core/util/parseBooleanFromString";
 import TestApiTokenModel from "@src/tests/larascript/models/models/TestApiTokenModel";
 import TestUser from "@src/tests/larascript/models/models/TestUser";
 import TestCreateUserValidator from "@src/tests/larascript/validator/validators/TestCreateUserCustomValidator";
@@ -24,8 +23,16 @@ export default class TestAuthProvider extends AuthProvider {
 
 
             routes: {
-                enableAuthRoutes: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES, 'true'),
-                enableAuthRoutesAllowCreate: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES_ALLOW_CREATE, 'true'),
+                enabled: true,
+                endpoints: {
+                    login: true,
+                    register: true,
+                    update: true,
+                    logout: true,
+                    refresh: true
+                }
+                // enableAuthRoutes: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES, 'true'),
+                // enableAuthRoutesAllowCreate: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES_ALLOW_CREATE, 'true'),
             },
             settings: {
                 secret: process.env.JWT_SECRET as string ?? '',
