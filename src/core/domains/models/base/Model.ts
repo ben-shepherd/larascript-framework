@@ -19,7 +19,7 @@ import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
 import { app } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
 
- 
+
 
 /**
  * Abstract base class for database models.
@@ -28,17 +28,16 @@ import Str from '@src/core/util/str/Str';
  * 
  * @template Attributes Type extending IModelData, representing the structure of the model's data.
  */
-export default abstract class Model<Attributes extends IModelAttributes> implements IModel<Attributes>  {
+export default abstract class Model<Attributes extends IModelAttributes> implements IModel<Attributes> {
 
     [key: string]: unknown;
 
     public static ID = 'id';
-    
+
     public static CREATED_AT = 'createdAt';
 
     public static UPDATED_AT = 'createdAt';
-    
-    
+
     /**
      * The ID generator function for the model.
      */
@@ -61,7 +60,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * Can be null if the model hasn't been populated.
      */
     public original: Attributes | null = null;
-    
+
     /**
      * List of fields that are allowed to be set on the model.
      * Acts as a whitelist for mass assignment.
@@ -154,7 +153,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     constructor(data: Attributes | null) {
         this.attributes = { ...data } as Attributes;
         this.original = { ...data } as Attributes;
-        if(!this.table) {
+        if (!this.table) {
             this.table = this.getDefaultTable()
         }
     }
@@ -176,7 +175,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     getConnectionName(): string {
         return this.connection;
     }
-            
+
     /**
      * Gets the schema interface for the database.
      * 
@@ -194,7 +193,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     getIdGeneratorFn(): IdGeneratorFn | undefined {
         return this.idGeneratorFn;
     }
-    
+
     /**
      * Retrieves the list of properties that should be treated as JSON.
      * @returns {string[]} The list of JSON properties.
@@ -258,7 +257,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     static getConnection(): string {
         return this.create().getConnectionName()
     }
-    
+
     /**
      * Retrieves the scopes associated with the model.
      * @returns {string[]} The scopes associated with the model.
@@ -314,7 +313,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns The factory instance for the model.
      */
     getFactory(): IFactory<IModel> {
-        if(!this.factory) {
+        if (!this.factory) {
             throw new Error('Factory not set')
         }
 
@@ -330,7 +329,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {void}
      */
     setObserverConstructor(observerConstructor?: ObserveConstructor): void {
-        if(typeof observerConstructor === 'undefined') {
+        if (typeof observerConstructor === 'undefined') {
             this.observer = undefined;
         }
         this.observer = new (observerConstructor as ObserveConstructor)();
@@ -364,7 +363,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {Promise<Attributes>} The attributes returned by the observer, or the original attributes if no observer is defined.
      */
     protected async observeAttributes(event: IObserverEvent, attributes: Attributes | null): Promise<Attributes | null> {
-        if(!this.observer) {
+        if (!this.observer) {
             return attributes
         }
 
@@ -381,12 +380,12 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      */
 
     protected async observeProperty(key: string) {
-        if(!this.observer) {
+        if (!this.observer) {
             return this.attributes
         }
 
         // Check if this attribute key has been assigned a custom method
-        if(Object.keys(this.observeProperties).includes(key)) {
+        if (Object.keys(this.observeProperties).includes(key)) {
             const observerMethod = this.observeProperties[key];
             this.attributes = await this.observer.onCustom(observerMethod, this.attributes)
         }
@@ -413,7 +412,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         await this.setAttribute(key, value);
         return undefined;
     }
-    
+
     /**
      * Sets or retrieves the value of a specific attribute from the model's data.
      * If called with a single argument, returns the value of the attribute.
@@ -431,7 +430,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
             return this.getAttributeSync(key) as Attributes[K] ?? null;
         }
 
-        this.setAttribute(key, value).then(() => {});
+        this.setAttribute(key, value).then(() => { });
 
         return undefined;
     }
@@ -445,7 +444,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @throws {Error} If the attribute is not in the allowed fields or if a date field is set with a non-Date value.
      */
     async setAttribute<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Promise<void> {
-        if(!this.fields.includes(key as string)) {
+        if (!this.fields.includes(key as string)) {
             return;
         }
         if (this.attributes === null) {
@@ -457,7 +456,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
 
         this.attributes = await this.observeProperty(key as string)
     }
-    
+
     /**
      * Retrieves the value of a specific attribute from the model's data.
      * 
@@ -466,11 +465,11 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {Attributes[K] | null} The value of the attribute or null if not found.
      */
     getAttributeSync<K extends keyof Attributes = keyof Attributes>(key: K): Attributes[K] | null {
-        if(this.encrypted.includes(key as string)) {
-            return this.decryptAttributes({[key]: this.attributes?.[key]} as Attributes)?.[key] ?? null;
+        if (this.encrypted.includes(key as string)) {
+            return this.decryptAttributes({ [key]: this.attributes?.[key] } as Attributes)?.[key] ?? null;
         }
-        
-        if(this.casts?.[key as string]) {
+
+        if (this.casts?.[key as string]) {
             return this.castable.getCast(this.attributes?.[key], this.casts[key as string] as TCastableType) as Attributes[K] | null;
         }
 
@@ -489,7 +488,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
 
         const relationsip = BaseRelationshipResolver.tryGetRelationshipInterface(this, key as string);
 
-        if(relationsip) {
+        if (relationsip) {
             return await this.getAttributeRelationship(key, relationsip);
         }
 
@@ -506,12 +505,12 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      */
     protected async getAttributeRelationship<K extends keyof Attributes = keyof Attributes>(key: K, relationship?: IRelationship): Promise<Attributes[K] | null> {
 
-        if(this.attributes?.[key]) {
-            return this.attributes[key] 
+        if (this.attributes?.[key]) {
+            return this.attributes[key]
         }
 
         // Get the relationship interface
-        if(!relationship) {
+        if (!relationship) {
             relationship = BaseRelationshipResolver.resolveRelationshipInterfaceByModelRelationshipName(this.constructor as TClassConstructor<IModel>, key as string);
         }
 
@@ -532,7 +531,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     getAttributes(): Attributes | null {
         return this.castAttributes(this.attributes);
     }
-    
+
     /**
      * Retrieves the original value of a specific attribute from the model's original data.
      * 
@@ -543,7 +542,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     getOriginal<K extends keyof Attributes = keyof Attributes>(key: K): Attributes[K] | null {
         return this.original?.[key] ?? null;
     }
-    
+
     /**
      * Checks if the model is dirty.
      * 
@@ -552,7 +551,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {boolean} True if the model is dirty, false otherwise.
      */
     isDirty(): boolean {
-        if(!this.original) {
+        if (!this.original) {
             return false;
         }
         return Object.keys(this.getDirty() ?? {}).length > 0;
@@ -594,7 +593,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     getFields(): string[] {
         let fields = this.fields
 
-        if(!this.fields.includes(this.primaryKey)) {
+        if (!this.fields.includes(this.primaryKey)) {
             fields = [this.primaryKey, ...fields]
         }
 
@@ -609,12 +608,12 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @throws MissingTableException If the table name is not set.
      */
     useTableName(): string {
-        if(!this.table || this.table?.length === 0) {
+        if (!this.table || this.table?.length === 0) {
             return this.getDefaultTable()
         }
         return this.table
     }
-    
+
     /**
      * Retrieves the table name associated with the model.
      * The table name is pluralized and lowercased.
@@ -624,7 +623,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     public static formatTableName(tableName: string): string {
         return Str.plural(Str.snakeCase(tableName)).toLowerCase()
     }
-    
+
 
     /**
      * Retrieves the connection name associated with the model.
@@ -662,7 +661,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {Attributes | null} The casted attributes.
      */
     private castAttributes(attributes: Attributes | null): Attributes | null {
-        if(!attributes) {
+        if (!attributes) {
             return null;
         }
 
@@ -699,14 +698,14 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      */
     async fill(data: Partial<Attributes>): Promise<void> {
         for (const [key, value] of Object.entries(data)) {
-            if(value === undefined) {
+            if (value === undefined) {
                 continue;
             }
 
             await this.setAttribute(key, value);
         }
     }
-    
+
     /**
      * Retrieves the entire model's data as an object.
      * 
@@ -735,7 +734,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
 
         if (!id) return null;
 
-        const result =  await this.queryBuilder().find(id)
+        const result = await this.queryBuilder().find(id)
         const attributes = result ? await result.toObject({ excludeGuarded: false }) : null;
         const decryptedAttributes = await this.decryptAttributes(attributes as Attributes | null);
 
@@ -752,12 +751,12 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {Promise<Attributes>} The encrypted attributes.
      */
     encryptAttributes(attributes: Attributes | null): Attributes | null {
-        if(typeof attributes !== 'object') {
+        if (typeof attributes !== 'object') {
             return attributes;
         }
 
         this.encrypted.forEach(key => {
-            if(typeof attributes?.[key] !== 'undefined' && attributes?.[key] !== null) {
+            if (typeof attributes?.[key] !== 'undefined' && attributes?.[key] !== null) {
                 try {
                     (attributes as object)[key] = cryptoService().encrypt((attributes as object)[key]);
                 }
@@ -777,17 +776,17 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {Promise<Attributes>} The decrypted attributes.
      */
     decryptAttributes(attributes: Attributes | null): Attributes | null {
-        if(typeof this.attributes !== 'object') {
+        if (typeof this.attributes !== 'object') {
             return attributes;
         }
 
         this.encrypted.forEach(key => {
-            if(typeof attributes?.[key] !== 'undefined' && attributes?.[key] !== null) {
+            if (typeof attributes?.[key] !== 'undefined' && attributes?.[key] !== null) {
                 try {
                     (attributes as object)[key] = cryptoService().decrypt((attributes as object)[key]);
                 }
-                 
-                catch (e) { 
+
+                catch (e) {
                     console.error(e)
                 }
             }
@@ -804,12 +803,31 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     async update(): Promise<void> {
         if (!this.getId() || !this.attributes) return;
 
+        const dirtyAttributes = this.getDirtyAttributes() as Attributes
         const builder = this.queryBuilder()
         const normalizedIdProperty = builder.normalizeIdProperty(this.primaryKey)
-        const encryptedAttributes = await this.encryptAttributes(this.attributes)
-        await builder.where(normalizedIdProperty, this.getId()).update({...encryptedAttributes});
+        const encryptedAttributes = await this.encryptAttributes(dirtyAttributes)
+        await builder.where(normalizedIdProperty, this.getId()).update({ ...encryptedAttributes });
     }
 
+    /**
+     * Gets the attributes that have been modified since the model was last saved.
+     * 
+     * @returns {Partial<Attributes> | null} An object containing only the modified attributes, or null if no attributes exist
+     */
+    protected getDirtyAttributes(): Partial<Attributes> | null {
+        if (!this.attributes) {
+            return null
+        }
+
+        const dirty = Object.keys(this.getDirty() ?? {})
+        return Object.keys(this.attributes).reduce((acc, curr) => {
+            if (dirty.includes(curr)) {
+                acc[curr] = this.attributes?.[curr] ?? null
+            }
+            return acc
+        }, {}) as Partial<Attributes>
+    }
 
     /**
      * Saves the model to the database.
@@ -920,7 +938,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @param {EventConstructor} eventConstructor - The event constructor to add.
      */
     on(event: IModelLifeCycleEvent, eventConstructor: EventConstructor): void {
-        if(!this.events) {
+        if (!this.events) {
             this.events = {};
         }
 
@@ -933,11 +951,11 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @param {IModelLifeCycleEvent} event - The event to remove the listener from.
      */
     off(event: IModelLifeCycleEvent): void {
-        if(this.events?.[event]) {
+        if (this.events?.[event]) {
             this.events[event] = undefined;
         }
     }
-    
+
     /**
      * Emits an event for the model.
      * 
@@ -945,7 +963,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @param {...any[]} args - The arguments to pass to the event.
      */
     protected async emit(event: IModelLifeCycleEvent, ...args: any[]): Promise<void> {
-        if(typeof this.events?.[event] === 'function') {
+        if (typeof this.events?.[event] === 'function') {
             await app('events').dispatch(new this.events[event](...args));
         }
     }
@@ -956,7 +974,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {Promise<void>}
      */
     async loadRelationships(): Promise<void> {
-        if(!this.attributes) {
+        if (!this.attributes) {
             return;
         }
 
