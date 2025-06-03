@@ -31,8 +31,6 @@ export default class TestAuthProvider extends AuthProvider {
                     logout: true,
                     refresh: true
                 }
-                // enableAuthRoutes: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES, 'true'),
-                // enableAuthRoutesAllowCreate: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES_ALLOW_CREATE, 'true'),
             },
             settings: {
                 secret: process.env.JWT_SECRET as string ?? '',
