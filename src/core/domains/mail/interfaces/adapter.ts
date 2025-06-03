@@ -7,9 +7,9 @@ export type BaseMailAdapters = BaseAdapterTypes<MailAdapter> & {
     local: MailAdapter
 }
 
-export type MailAdapterConstructor = new (options: ReturnType<MailAdapter['getOptions']>) => MailAdapter
+export type MailAdapterConstructor = new (options: any) => MailAdapter
 
 export interface MailAdapter {
     send(mail: IMail): Promise<void>
-    getOptions<T extends Record<string, unknown>>(): T
+    getOptions<T>(): T
 }

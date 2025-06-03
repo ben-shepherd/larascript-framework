@@ -10,4 +10,5 @@ export interface IMailService {
     getDefaultDriver(): MailAdapter;
     getDriver<T extends MailAdapter = MailAdapter>(name: keyof MailAdapters): T;
     local(): MailAdapter;
+    nodeMailer(): MailAdapter;
 }

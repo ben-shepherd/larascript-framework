@@ -8,7 +8,7 @@ class LocalMailDriver implements MailAdapter {
     // eslint-disable-next-line no-unused-vars
     constructor(options: object = {}) { }
 
-    getOptions<T extends Record<string, unknown>>(): T {
+    getOptions<T>(): T {
         return {} as T
     }
 

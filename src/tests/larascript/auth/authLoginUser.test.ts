@@ -5,11 +5,11 @@ import { IUserModel } from '@src/core/domains/auth/interfaces/models/IUserModel'
 import { auth } from '@src/core/domains/auth/services/AuthService';
 import { cryptoService } from '@src/core/domains/crypto/service/CryptoService';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
-import testHelper from '@src/tests/testHelper';
 import TestApiTokenModel from '@src/tests/larascript/models/models/TestApiTokenModel';
 import TestUser from '@src/tests/larascript/models/models/TestUser';
 import TestCreateUserValidator from '@src/tests/larascript/validator/validators/TestCreateUserValidator';
 import TestUpdateUserValidator from '@src/tests/larascript/validator/validators/TestUpdateUserValidator';
+import testHelper from '@src/tests/testHelper';
 
 
 describe('attempt to run app with normal appConfig', () => {
@@ -19,7 +19,7 @@ describe('attempt to run app with normal appConfig', () => {
     const password = 'testPassword';
     let hashedPassword: string;
     let jwtToken: string;
-    let apiToken: IApiTokenModel | null; 
+    let apiToken: IApiTokenModel | null;
 
     beforeAll(async () => {
         await testHelper.testBootApp();
@@ -31,8 +31,8 @@ describe('attempt to run app with normal appConfig', () => {
             await testHelper.dropAuthTables();
         }
         // eslint-disable-next-line no-unused-vars
-        catch (err) {}
-        
+        catch (err) { }
+
         await testHelper.createAuthTables();
 
         /**
@@ -53,10 +53,10 @@ describe('attempt to run app with normal appConfig', () => {
 
     afterAll(async () => {
         await testUser?.delete();
-        expect(await testUser?.getAttributes({ excludeGuarded: false })).toBeNull();
+        expect(await testUser?.getAttributes()).toBeNull();
 
         await apiToken?.delete();
-        expect(await apiToken?.getAttributes({ excludeGuarded: false })).toBeNull();  
+        expect(await apiToken?.getAttributes()).toBeNull();
     })
 
     test('test create user validator (email already exists, validator should fail)', async () => {

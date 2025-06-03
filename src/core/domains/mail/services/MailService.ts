@@ -2,6 +2,7 @@ import { MailAdapters } from "@src/config/mail.config";
 import BaseAdapter from "@src/core/base/BaseAdapter";
 
 import LocalMailDriver from "../adapters/LocalMailDriver";
+import NodeMailDriver from "../adapters/NodeMailerDriver";
 import { MailAdapter } from "../interfaces/adapter";
 import { IMailConfig } from "../interfaces/config";
 import { IMail } from "../interfaces/data";
@@ -63,6 +64,10 @@ class MailService extends BaseAdapter<MailAdapters> implements IMailService {
      */
     local(): LocalMailDriver {
         return this.getAdapter('local') as LocalMailDriver
+    }
+
+    nodeMailer(): NodeMailDriver {
+        return this.getAdapter('nodemailer') as NodeMailDriver
     }
 
 }
