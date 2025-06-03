@@ -11,10 +11,12 @@ import MakeProvider from "@src/core/domains/make/providers/MakeProvider";
 import MigrationProvider from "@src/core/domains/migrations/providers/MigrationProvider";
 import SessionProvider from "@src/core/domains/session/providers/SessionProvider";
 import SetupProvider from "@src/core/domains/setup/providers/SetupProvider";
-import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 import StorageProvider from "@src/core/domains/storage/providers/StorageProvider";
+import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 import { ILarascriptProviders } from "@src/core/interfaces/ILarascriptProviders";
 import { IProvider } from "@src/core/interfaces/IProvider";
+
+import MailProvider from "../domains/mail/providers/MailProvider";
 
 
 /**
@@ -131,6 +133,13 @@ const LarascriptProviders: IProvider[] = [
      * Provides storage services
      */
     new StorageProvider(),
+
+    /**
+     * Email provider
+     * 
+     * Provides email services
+     */
+    new MailProvider(),
 
 ];
 

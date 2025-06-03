@@ -10,9 +10,11 @@ import IHttpService from '@src/core/domains/http/interfaces/IHttpService';
 import { IRequestContext } from '@src/core/domains/http/interfaces/IRequestContext';
 import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerService';
 import { ISessionService } from '@src/core/domains/session/interfaces/ISessionService';
+import { IStorageService } from '@src/core/domains/storage/interfaces/IStorageService';
 import { IValidatorFn } from '@src/core/domains/validator/interfaces/IValidator';
 import readline from 'node:readline';
-import { IStorageService } from '@src/core/domains/storage/interfaces/IStorageService';
+
+import { IMailService } from '../domains/mail/interfaces/services';
 
 export interface ILarascriptProviders {
 
@@ -111,4 +113,10 @@ export interface ILarascriptProviders {
      * Provided by '@src/core/domains/storage/providers/StorageProvider'
      */
     storage: IStorageService;
+
+    /**
+     * Email service
+     * Provided by '@src/core/domains/email/providers/EmailProvider'
+     */
+    mail: IMailService;
 }
