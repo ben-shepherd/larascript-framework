@@ -1,13 +1,15 @@
 import { IRuleError } from "@src/core/domains/validator/interfaces/IRule";
 import forceString from "@src/core/util/str/forceString";
 
+import { IHasHttpContext, IHttpContext } from "../../http/interfaces/IHttpContext";
+
 /**
  * Abstract base class for validation rules.
  * Provides common functionality for implementing validation rules with customizable error messages and options.
  * 
  * @template TOptions - Type of options object that can be passed to configure the rule
  */
-abstract class AbstractRule<TOptions extends object = object> {
+abstract class AbstractRule<TOptions extends object = object> implements IHasHttpContext {
 
     /** Name of the validation rule */
     protected abstract name: string;
@@ -30,6 +32,9 @@ abstract class AbstractRule<TOptions extends object = object> {
     /** All attributes/fields being validated */
     protected attributes: unknown = undefined
 
+    /** The current attribute */
+    protected attribute!: string;
+
     /** Dot notation path to the field being validated (e.g. "users.*.name") */
     protected dotNotationPath!: string;
 
@@ -38,6 +43,9 @@ abstract class AbstractRule<TOptions extends object = object> {
 
     /** Names of other rules that are being validated */
     protected otherRuleNames: string[] = []
+
+    /** The web http context */
+    protected httpContext!: IHttpContext;
 
     /**
      * Constructor for AbstractRule
@@ -253,6 +261,16 @@ abstract class AbstractRule<TOptions extends object = object> {
         const allowNullable = this.otherRuleNames.includes('nullable')
         return allowNullable && this.dataUndefinedOrNull()
     }
+    
+    /**
+     * Checks if the rule allows null values for strings
+     * @returns True if the rule allows null values, false otherwise
+     */
+    protected nullableString(): boolean {
+        const allowNullable = this.otherRuleNames.includes('nullable')
+        const stringEmpty = typeof this.getData() === 'string' && (this.getData() as string).length === 0
+        return allowNullable && (this.dataUndefinedOrNull() || stringEmpty)
+    }
 
     /**
      * Sets the names of other rules that are being validated
@@ -264,6 +282,24 @@ abstract class AbstractRule<TOptions extends object = object> {
         return this
     }
 
+    
+    setHttpContext(context: IHttpContext): void {
+        this.httpContext = context
+    }
+    
+    getHttpContext(): IHttpContext {
+        return this.httpContext
+    }
+
+    setAttribute(attribute: string): this {
+        this.attribute = attribute
+        return this
+    }
+
+    getAttribute(): string {
+        return this.attribute
+    }
+    
 }
 
 export default AbstractRule;

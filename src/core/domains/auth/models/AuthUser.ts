@@ -21,6 +21,14 @@ export interface AuthUserAttributes extends IModelAttributes {
  */
 export default class AuthUser<Attributes extends AuthUserAttributes> extends Model<Attributes> implements IUserModel {
 
+    public static PASSWORD = 'password';
+
+    public static HASHED_PASSWORD = 'hashedPassword';
+
+    public static GROUPS = 'groups';
+
+    public static ROLES = 'roles';
+
     /**
      * Table name
      */

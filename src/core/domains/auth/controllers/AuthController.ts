@@ -120,7 +120,7 @@ class AuthController extends Controller {
             const apiResponse = await callback();
 
             return this.jsonResponse(
-                apiResponse.toObject(),
+                apiResponse.toResponseObject(),
                 apiResponse.getCode()
             )
         }

@@ -29,12 +29,17 @@ class ApiResponse<Data = unknown> implements IApiResponse<Data> {
     protected data: Data = {} as Data;
 
     protected pagination?: TPagination;
-    
+
     protected totalCount?: number;
 
     protected meta: Record<string, unknown> = {}
 
     protected additionalMeta: Record<string, unknown> = {}
+
+    constructor(data: Data = {} as Data, code = 200) {
+        this.data = data
+        this.code = code
+    }
 
     /**
      * Builds and returns the final response object with all added data and metadata
@@ -56,11 +61,11 @@ class ApiResponse<Data = unknown> implements IApiResponse<Data> {
             ...this.additionalMeta
         }
 
-        if(this.pagination) {
+        if (this.pagination) {
             response.meta.pagination = this.pagination;
         }
 
-        if(this.totalCount) {
+        if (this.totalCount) {
             response.meta.totalCount = this.totalCount;
         }
 
@@ -109,7 +114,7 @@ class ApiResponse<Data = unknown> implements IApiResponse<Data> {
     addTotalCount(): this {
         this.totalCount = undefined;
 
-        if(Array.isArray(this.data)) {
+        if (Array.isArray(this.data)) {
             this.totalCount = this.data.length;
         }
 
@@ -175,7 +180,7 @@ class ApiResponse<Data = unknown> implements IApiResponse<Data> {
      * Returns the response as an object
      * @returns {TApiResponse<Data>} The response as an object
      */
-    toObject(): TApiResponse<Data> {
+    toResponseObject(): TApiResponse<Data> {
         return this.build();
     }
 

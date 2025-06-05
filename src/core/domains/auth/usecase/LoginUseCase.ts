@@ -5,6 +5,14 @@ import HttpContext from "@src/core/domains/http/context/HttpContext";
 import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 import minExecTime from "@src/core/util/minExecTime";
 
+import { IUserModel } from "../interfaces/models/IUserModel";
+
+export type LoginUseCaseResponse = ApiResponse<{
+    token: string;
+    user: IUserModel['attributes']
+} | {
+    message: string
+}>
 
 /**
  * LoginUseCase handles user authentication by validating credentials and generating JWT tokens
@@ -30,8 +38,8 @@ class LoginUseCase {
      * @param context The HTTP context
      * @returns The API response
      */
-    async handle(context: HttpContext): Promise<ApiResponse> {
-        return minExecTime<ApiResponse>(500, async () => {
+    async handle(context: HttpContext): Promise<LoginUseCaseResponse> {
+        return minExecTime<LoginUseCaseResponse>(500, async () => {
             const apiResponse = new ApiResponse();
 
             const { email = '', password = '' } = context.getBody();
@@ -39,7 +47,7 @@ class LoginUseCase {
             const user = await authJwt().getUserRepository().findByEmail(email);
 
             if (!user) {
-                return this.unauthorized('Email or password is incorrect');
+                return this.unauthorized('Email or password is incorrect') as LoginUseCaseResponse;
             }
 
             let jwtToken!: string;
@@ -50,7 +58,7 @@ class LoginUseCase {
 
             catch (error) {
                 if (error instanceof UnauthorizedError) {
-                    return this.unauthorized('Email or password is incorrect');
+                    return this.unauthorized('Email or password is incorrect') as LoginUseCaseResponse;
                 }
                 throw error;
             }
@@ -60,7 +68,7 @@ class LoginUseCase {
             return apiResponse.setData({
                 token: jwtToken,
                 user: userAttributes
-            }).setCode(200);
+            }).setCode(200) as LoginUseCaseResponse; 
         })
     }
 
@@ -80,5 +88,3 @@ class LoginUseCase {
 
 
 export default LoginUseCase;
-
-

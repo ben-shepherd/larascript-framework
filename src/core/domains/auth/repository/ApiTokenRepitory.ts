@@ -32,9 +32,8 @@ class ApiTokenRepository extends Repository<IApiTokenModel> implements IApiToken
      * @returns 
      */
     async revokeToken(apiToken: IApiTokenModel): Promise<void> {
-        await queryBuilder(this.modelConstructor)
-            .where('id', apiToken.id as string)
-            .update({ revokedAt: new Date() });
+        await apiToken.setAttribute(ApiToken.REVOKED_AT, new Date())
+        await apiToken.save()
     }
 
 
@@ -49,8 +48,8 @@ class ApiTokenRepository extends Repository<IApiTokenModel> implements IApiToken
             .update({ revokedAt: new Date() });
     }
 
-    
-    
+
+
 
 }
 
