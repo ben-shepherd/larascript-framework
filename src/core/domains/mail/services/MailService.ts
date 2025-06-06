@@ -1,5 +1,6 @@
 import { MailAdapters } from "@src/config/mail.config";
 import BaseAdapter from "@src/core/base/BaseAdapter";
+import { app } from "@src/core/services/App";
 
 import LocalMailDriver from "../adapters/LocalMailDriver";
 import NodeMailDriver from "../adapters/NodeMailerDriver";
@@ -7,6 +8,11 @@ import { MailAdapter } from "../interfaces/adapter";
 import { IMailConfig } from "../interfaces/config";
 import { IMail } from "../interfaces/data";
 import { IMailService } from "../interfaces/services";
+
+/**
+ * Short hand for app('mail')
+ */
+export const mail = () => app('mail')
 
 class MailService extends BaseAdapter<MailAdapters> implements IMailService {
 
