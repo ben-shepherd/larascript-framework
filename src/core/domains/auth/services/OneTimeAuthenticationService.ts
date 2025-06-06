@@ -1,7 +1,7 @@
 import { ApiTokenModelOptions, IApiTokenModel } from "@src/core/domains/auth/interfaces/models/IApiTokenModel";
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
 import { auth } from "@src/core/domains/auth/services/AuthService";
-import { IOneTimeAuthenticationService } from "../interfaces/service/oneTimeService";
+import { IOneTimeAuthenticationService } from "@src/core/domains/auth/interfaces/service/oneTimeService";
 
 type SingleUseTokenOptions = Required<Pick<ApiTokenModelOptions, 'expiresAfterMinutes'>>
 

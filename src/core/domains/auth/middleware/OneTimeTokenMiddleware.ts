@@ -4,7 +4,7 @@ import Middleware from '@src/core/domains/http/base/Middleware';
 import HttpContext from '@src/core/domains/http/context/HttpContext';
 import responseError from '@src/core/domains/http/handlers/responseError';
 
-import { authJwt } from '../services/JwtAuthService';
+import { authJwt } from '@src/core/domains/auth/services/JwtAuthService';
 
 type OneTimeTokenMiddlewareOptions = {
     validateContainsOneTimeScope?: boolean;

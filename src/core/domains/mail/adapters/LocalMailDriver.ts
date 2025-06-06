@@ -1,7 +1,7 @@
 import { app } from "@src/core/services/App";
 
-import Mail from "../data/Mail";
-import { MailAdapter } from "../interfaces/adapter";
+import Mail from "@src/core/domains/mail/data/Mail";
+import { MailAdapter } from "@src/core/domains/mail/interfaces/adapter";
 
 class LocalMailDriver implements MailAdapter {
 

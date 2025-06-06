@@ -5,7 +5,7 @@ import { IValidator, IValidatorAttributes, IValidatorMessages } from "@src/core/
 import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
 import Validator from "@src/core/domains/validator/service/Validator";
 
-import { IHttpContext } from "../../http/interfaces/IHttpContext";
+import { IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
 
 /**
  * Abstract base class for creating custom validators with type-safe validation rules and error messages.

@@ -7,8 +7,8 @@ import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
 import Model from '@src/core/domains/models/base/Model';
 import { IModelAttributes, ModelConstructor } from '@src/core/domains/models/interfaces/IModel';
 
-import { TCastableType } from '../../cast/interfaces/IHasCastableConcern';
-import { auth } from '../services/AuthService';
+import { TCastableType } from '@src/core/domains/cast/interfaces/IHasCastableConcern';
+import { auth } from '@src/core/domains/auth/services/AuthService';
 
 export interface ApiTokenAttributes extends IModelAttributes {
     userId: string;

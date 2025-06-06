@@ -1,7 +1,7 @@
 import Middleware from "@src/core/domains/http/base/Middleware";
 import { CustomValidatorConstructor } from "@src/core/domains/validator/interfaces/IValidator";
 
-import { IHttpContext } from "../../http/interfaces/IHttpContext";
+import { IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
 
 /**
  * Validator middleware for validating the request body

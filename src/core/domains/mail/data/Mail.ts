@@ -1,4 +1,4 @@
-import { IMail, IMailOptions } from "../interfaces/data";
+import { IMail, IMailOptions } from "@src/core/domains/mail/interfaces/data";
 
 /**
  * Represents a mail message.

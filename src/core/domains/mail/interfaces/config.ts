@@ -1,4 +1,4 @@
-import { MailAdapterConstructor } from "./adapter";
+import { MailAdapterConstructor } from "@src/core/domains/mail/interfaces/adapter";
 
 export type MailAdapterConfig = MailAdapterConfigItem[]
 

@@ -1,4 +1,4 @@
-import { IStorageFile } from "../interfaces/IStorageFile";
+import { IStorageFile } from "@src/core/domains/storage/interfaces/IStorageFile";
 
 /**
  * Configuration options for creating a StorageFile instance

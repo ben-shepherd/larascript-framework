@@ -1,9 +1,9 @@
 import path from 'path';
 
-import StorageFile from '../data/StorageFile';
-import { StorageTypes } from '../enums/StorageTypes';
-import { FileSystemMeta } from '../interfaces/meta';
-import { storage } from '../services/StorageService';
+import StorageFile from '@src/core/domains/storage/data/StorageFile';
+import { StorageTypes } from '@src/core/domains/storage/enums/StorageTypes';
+import { FileSystemMeta } from '@src/core/domains/storage/interfaces/meta';
+import { storage } from '@src/core/domains/storage/services/StorageService';
 
 /**
  * Converts an absolute path to a relative path within the storage directory.

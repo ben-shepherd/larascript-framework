@@ -16,7 +16,7 @@ import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorPr
 import { ILarascriptProviders } from "@src/core/interfaces/ILarascriptProviders";
 import { IProvider } from "@src/core/interfaces/IProvider";
 
-import MailProvider from "../domains/mail/providers/MailProvider";
+import MailProvider from "@src/core/domains/mail/providers/MailProvider";
 
 
 /**

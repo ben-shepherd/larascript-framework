@@ -24,8 +24,8 @@ import Router from "@src/core/domains/http/router/Router";
 import { app } from "@src/core/services/App";
 import { JsonWebTokenError } from "jsonwebtoken";
 import { DataTypes } from "sequelize";
-import { IOneTimeAuthenticationService } from "../interfaces/service/oneTimeService";
-import OneTimeAuthenticationService from "./OneTimeAuthenticationService";
+import { IOneTimeAuthenticationService } from "@src/core/domains/auth/interfaces/service/oneTimeService";
+import OneTimeAuthenticationService from "@src/core/domains/auth/services/OneTimeAuthenticationService";
 
 /**
  * Short hand for app('auth.jwt')

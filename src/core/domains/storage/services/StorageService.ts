@@ -5,14 +5,14 @@ import { IStorageService } from "@src/core/domains/storage/interfaces/IStorageSe
 import { app } from "@src/core/services/App";
 import path from "path";
 
-import { TUploadedFile } from "../../http/interfaces/UploadedFile";
-import { IGenericStorage } from "../interfaces/IGenericStorage";
-import { IStorageFile } from "../interfaces/IStorageFile";
-import { FileSystemMeta } from "../interfaces/meta";
-import { StorageAdapters } from "../interfaces/StorageAdapters";
-import { StorageConfig } from "../interfaces/StorageConfig";
-import AmazonS3StorageService from "./AmazonS3StorageService";
-import FileSystemStorageService from "./FileSystemStorageService";
+import { TUploadedFile } from "@src/core/domains/http/interfaces/UploadedFile";
+import { IGenericStorage } from "@src/core/domains/storage/interfaces/IGenericStorage";
+import { IStorageFile } from "@src/core/domains/storage/interfaces/IStorageFile";
+import { FileSystemMeta } from "@src/core/domains/storage/interfaces/meta";
+import { StorageAdapters } from "@src/core/domains/storage/interfaces/StorageAdapters";
+import { StorageConfig } from "@src/core/domains/storage/interfaces/StorageConfig";
+import AmazonS3StorageService from "@src/core/domains/storage/services/AmazonS3StorageService";
+import FileSystemStorageService from "@src/core/domains/storage/services/FileSystemStorageService";
 
 /**
  * Helper function to get the storage service instance from the application container

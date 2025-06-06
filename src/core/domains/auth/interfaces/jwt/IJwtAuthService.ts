@@ -3,7 +3,7 @@ import { ApiTokenModelOptions, IApiTokenModel } from "@src/core/domains/auth/int
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
 import { IUserRepository } from "@src/core/domains/auth/interfaces/repository/IUserRepository";
 import { IRouter } from "@src/core/domains/http/interfaces/IRouter";
-import { IOneTimeAuthenticationService } from "../service/oneTimeService";
+import { IOneTimeAuthenticationService } from "@src/core/domains/auth/interfaces/service/oneTimeService";
 
 
 export interface IJwtAuthService {

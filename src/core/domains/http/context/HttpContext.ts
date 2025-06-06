@@ -6,11 +6,11 @@ import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
 import { TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
 import { NextFunction, Response } from 'express';
 
-import { IStorageFile } from '../../storage/interfaces/IStorageFile';
-import { storage } from '../../storage/services/StorageService';
-import UploadedFile from '../data/UploadedFile';
-import { IHttpContext } from '../interfaces/IHttpContext';
-import { TUploadedFile, TUploadedFileData } from '../interfaces/UploadedFile';
+import { IStorageFile } from '@src/core/domains/storage/interfaces/IStorageFile';
+import { storage } from '@src/core/domains/storage/services/StorageService';
+import UploadedFile from '@src/core/domains/http/data/UploadedFile';
+import { IHttpContext } from '@src/core/domains/http/interfaces/IHttpContext';
+import { TUploadedFile, TUploadedFileData } from '@src/core/domains/http/interfaces/UploadedFile';
 
 
 

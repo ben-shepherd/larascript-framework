@@ -1,4 +1,4 @@
-import { IHasHttpContext } from "../../http/interfaces/IHttpContext"
+import { IHasHttpContext } from "@src/core/domains/http/interfaces/IHttpContext"
 
 /* eslint-disable no-unused-vars */
 export interface IRuleConstructor {

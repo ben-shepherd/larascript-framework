@@ -4,7 +4,7 @@ import { ISecurityRequest } from "@src/core/domains/http/interfaces/ISecurity";
 import { IValidatorRequest } from "@src/core/domains/http/interfaces/IValidatorRequest";
 import { Request } from "express";
 
-import { TUploadedFile } from "./UploadedFile";
+import { TUploadedFile } from "@src/core/domains/http/interfaces/UploadedFile";
 
 /**
  * TBaseRequest combines multiple request interfaces to create a comprehensive request type.

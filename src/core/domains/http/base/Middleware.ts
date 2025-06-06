@@ -6,7 +6,7 @@ import { IMiddleware, MiddlewareConstructor, TExpressMiddlewareFn } from "@src/c
 import { TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
 import { NextFunction, Request, Response } from "express";
 
-import { IHttpContext } from "../interfaces/IHttpContext";
+import { IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
 
 /**
  * Abstract base class that transforms Express middleware into a class-based format.

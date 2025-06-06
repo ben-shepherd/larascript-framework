@@ -1,12 +1,12 @@
 
 import fs from 'fs';
 
-import StorageFile from "../data/StorageFile";
-import FileNotFoundException from "../Exceptions/FileNotFoundException";
-import InvalidStorageFileException from "../Exceptions/InvalidStorageFileException";
-import { FileSystemMeta, S3Meta } from '../interfaces/meta';
-import { storage } from '../services/StorageService';
-import { createFileSystemStorageFile, toAbsolutePath } from "../utils/StorageUtils";
+import StorageFile from "@src/core/domains/storage/data/StorageFile";
+import FileNotFoundException from "@src/core/domains/storage/Exceptions/FileNotFoundException";
+import InvalidStorageFileException from "@src/core/domains/storage/Exceptions/InvalidStorageFileException";
+import { FileSystemMeta, S3Meta } from '@src/core/domains/storage/interfaces/meta';
+import { storage } from '@src/core/domains/storage/services/StorageService';
+import { createFileSystemStorageFile, toAbsolutePath } from "@src/core/domains/storage/utils/StorageUtils";
 
 class FileSystemStorageFileParser {
 

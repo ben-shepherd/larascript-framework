@@ -1,7 +1,7 @@
 import { IRuleError } from "@src/core/domains/validator/interfaces/IRule";
 import forceString from "@src/core/util/str/forceString";
 
-import { IHasHttpContext, IHttpContext } from "../../http/interfaces/IHttpContext";
+import { IHasHttpContext, IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
 
 /**
  * Abstract base class for validation rules.

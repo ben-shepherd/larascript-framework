@@ -1,4 +1,4 @@
-import { IMailConfig, MailAdapterConfigItem } from "../interfaces/config"
+import { IMailConfig, MailAdapterConfigItem } from "@src/core/domains/mail/interfaces/config"
 
 class MailConfig {
 

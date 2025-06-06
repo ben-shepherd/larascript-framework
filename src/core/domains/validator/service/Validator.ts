@@ -5,7 +5,7 @@ import { IValidator, IValidatorAttributes, IValidatorFn, IValidatorMessages } fr
 import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
 import DotNotationDataExtrator from "@src/core/util/data/DotNotation/DataExtractor/DotNotationDataExtrator";
 
-import { IHttpContext } from "../../http/interfaces/IHttpContext";
+import { IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
 
 /**
  * Short hand for creating a new validator on the fly

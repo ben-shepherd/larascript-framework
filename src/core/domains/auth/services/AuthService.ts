@@ -8,7 +8,7 @@ import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel"
 import { IAuthService } from "@src/core/domains/auth/interfaces/service/IAuthService";
 import { app } from "@src/core/services/App";
 
-import { IUserRepository } from "../interfaces/repository/IUserRepository";
+import { IUserRepository } from "@src/core/domains/auth/interfaces/repository/IUserRepository";
 
 /**
  * Short hand for app('auth')

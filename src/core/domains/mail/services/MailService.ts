@@ -2,12 +2,12 @@ import { MailAdapters } from "@src/config/mail.config";
 import BaseAdapter from "@src/core/base/BaseAdapter";
 import { app } from "@src/core/services/App";
 
-import LocalMailDriver from "../adapters/LocalMailDriver";
-import NodeMailDriver from "../adapters/NodeMailerDriver";
-import { MailAdapter } from "../interfaces/adapter";
-import { IMailConfig } from "../interfaces/config";
-import { IMail } from "../interfaces/data";
-import { IMailService } from "../interfaces/services";
+import LocalMailDriver from "@src/core/domains/mail/adapters/LocalMailDriver";
+import NodeMailDriver from "@src/core/domains/mail/adapters/NodeMailerDriver";
+import { MailAdapter } from "@src/core/domains/mail/interfaces/adapter";
+import { IMailConfig } from "@src/core/domains/mail/interfaces/config";
+import { IMail } from "@src/core/domains/mail/interfaces/data";
+import { IMailService } from "@src/core/domains/mail/interfaces/services";
 
 /**
  * Short hand for app('mail')

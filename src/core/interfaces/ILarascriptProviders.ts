@@ -14,7 +14,7 @@ import { IStorageService } from '@src/core/domains/storage/interfaces/IStorageSe
 import { IValidatorFn } from '@src/core/domains/validator/interfaces/IValidator';
 import readline from 'node:readline';
 
-import { IMailService } from '../domains/mail/interfaces/services';
+import { IMailService } from '@src/core/domains/mail/interfaces/services';
 
 export interface ILarascriptProviders {
 

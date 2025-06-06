@@ -1,15 +1,15 @@
 import fs from 'fs';
 import path from 'path';
 
-import { TUploadedFile } from '../../http/interfaces/UploadedFile';
-import StorageFile from "../data/StorageFile";
-import FileNotFoundException from "../Exceptions/FileNotFoundException";
-import InvalidStorageFileException from '../Exceptions/InvalidStorageFileException';
-import { IGenericStorage } from "../interfaces/IGenericStorage";
-import { FileSystemMeta } from '../interfaces/meta';
-import FileSystemStorageFileParser from '../parser/FileSystemStorageFileParser';
-import { createFileSystemStorageFile } from '../utils/StorageUtils';
-import { storage } from './StorageService';
+import { TUploadedFile } from '@src/core/domains/http/interfaces/UploadedFile';
+import StorageFile from "@src/core/domains/storage/data/StorageFile";
+import FileNotFoundException from "@src/core/domains/storage/Exceptions/FileNotFoundException";
+import InvalidStorageFileException from '@src/core/domains/storage/Exceptions/InvalidStorageFileException';
+import { IGenericStorage } from "@src/core/domains/storage/interfaces/IGenericStorage";
+import { FileSystemMeta } from '@src/core/domains/storage/interfaces/meta';
+import FileSystemStorageFileParser from '@src/core/domains/storage/parser/FileSystemStorageFileParser';
+import { createFileSystemStorageFile } from '@src/core/domains/storage/utils/StorageUtils';
+import { storage } from '@src/core/domains/storage/services/StorageService';
 
 /**
  * Service for handling file system storage operations.

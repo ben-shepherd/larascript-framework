@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import { MailAdapters } from "@src/config/mail.config";
 
-import { MailAdapter } from "./adapter";
-import { IMail } from "./data";
+import { MailAdapter } from "@src/core/domains/mail/interfaces/adapter";
+import { IMail } from "@src/core/domains/mail/interfaces/data";
 
 export interface IMailService {
     boot(): void;

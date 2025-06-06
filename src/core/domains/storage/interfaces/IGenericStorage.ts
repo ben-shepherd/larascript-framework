@@ -1,4 +1,4 @@
-import { IStorageFile } from "./IStorageFile";
+import { IStorageFile } from "@src/core/domains/storage/interfaces/IStorageFile";
 
 /* eslint-disable no-unused-vars */
 export interface IGenericStorage {

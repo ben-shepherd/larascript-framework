@@ -2,13 +2,13 @@ import AWS from 'aws-sdk';
 import fs from 'fs';
 import path from 'path';
 
-import StorageFile from "../data/StorageFile";
-import { StorageTypes } from '../enums/StorageTypes';
-import FileNotFoundException from "../Exceptions/FileNotFoundException";
-import InvalidStorageFileException from '../Exceptions/InvalidStorageFileException';
-import { IGenericStorage } from "../interfaces/IGenericStorage";
-import { FileSystemMeta, S3Meta } from '../interfaces/meta';
-import FileSystemStorageFileParser from '../parser/FileSystemStorageFileParser';
+import StorageFile from "@src/core/domains/storage/data/StorageFile";
+import { StorageTypes } from '@src/core/domains/storage/enums/StorageTypes';
+import FileNotFoundException from "@src/core/domains/storage/Exceptions/FileNotFoundException";
+import InvalidStorageFileException from '@src/core/domains/storage/Exceptions/InvalidStorageFileException';
+import { IGenericStorage } from "@src/core/domains/storage/interfaces/IGenericStorage";
+import { FileSystemMeta, S3Meta } from '@src/core/domains/storage/interfaces/meta';
+import FileSystemStorageFileParser from '@src/core/domains/storage/parser/FileSystemStorageFileParser';
 
 /**
  * Configuration interface for Amazon S3 storage service

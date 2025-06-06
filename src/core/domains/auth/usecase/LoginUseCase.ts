@@ -5,7 +5,7 @@ import HttpContext from "@src/core/domains/http/context/HttpContext";
 import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 import minExecTime from "@src/core/util/minExecTime";
 
-import { IUserModel } from "../interfaces/models/IUserModel";
+import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
 
 export type LoginUseCaseResponse = ApiResponse<{
     token: string;
