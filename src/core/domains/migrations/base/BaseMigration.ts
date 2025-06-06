@@ -2,7 +2,7 @@ import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabas
 import { db } from "@src/core/domains/database/services/Database";
 import { IMigration, MigrationType } from "@src/core/domains/migrations/interfaces/IMigration";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 
 /**
  * BaseMigration class serves as the foundation for all database migrations.
@@ -15,7 +15,7 @@ abstract class BaseMigration implements IMigration {
      * schema is used for database table operations like creating, altering, or dropping tables.
      * It's retrieved from the database connection in the App container.
      */
-    protected readonly schema = App.container('db').schema();
+    protected readonly schema = AppSingleton.container('db').schema();
 
     /**
      * Define the type of migration.
@@ -61,7 +61,7 @@ abstract class BaseMigration implements IMigration {
      */
     shouldUp(): boolean {
         // If no specific database provider is set, the migration runs on the default provider
-        if(!this.databaseAdapter) { 
+        if (!this.databaseAdapter) {
             return true;
         }
 

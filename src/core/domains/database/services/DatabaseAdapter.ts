@@ -1,6 +1,6 @@
 import { IDatabaseAdapter, TAdapterComposerFileName } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 
 class DatabaseAdapter {
 
@@ -14,7 +14,7 @@ class DatabaseAdapter {
         return adapter.name
     }
 
-    
+
     /**
      * Retrieves a list of composer file names from all registered database adapters.
      *
@@ -23,7 +23,7 @@ class DatabaseAdapter {
      *  - shortName: The shortened composer file name without the extension (e.g., 'mongodb').
      */
     public static getComposerFileNames(): TAdapterComposerFileName[] {
-        const db = App.container('db');
+        const db = AppSingleton.container('db');
         const adapterCtors = db.getAllAdapterConstructors();
         const adapters = adapterCtors.map((adapterCtor: TClassConstructor<IDatabaseAdapter>) => new adapterCtor('', {}));
         const composerFileNames = adapters.map((adapter: IDatabaseAdapter) => adapter.getDockerComposeFileName());
@@ -31,7 +31,7 @@ class DatabaseAdapter {
         const lastPartRegex = RegExp(/docker-compose.(\w+).yml$/);
 
         return composerFileNames.map((composerFileName: string) => ({
-            fullName: composerFileName, 
+            fullName: composerFileName,
             shortName: composerFileName.replace(lastPartRegex, '$1')
         }));
     }

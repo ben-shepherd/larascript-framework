@@ -4,9 +4,9 @@ import EventInvalidPayloadException from "@src/core/domains/events/exceptions/Ev
 import { IBaseEvent } from "@src/core/domains/events/interfaces/IBaseEvent";
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
-import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
-import { App } from "@src/core/services/App";
 import EventRegistry from "@src/core/domains/events/registry/EventRegistry";
+import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
+import { AppSingleton } from "@src/core/services/App";
 
 abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBaseEvent<TPayload> {
 
@@ -27,7 +27,7 @@ abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBa
      */
     constructor(payload: TPayload | null = null, driver?: TClassConstructor<IEventDriver>) {
         super()
-        
+
         // Auto-register this event type if not already initialized
         if (!EventRegistry.isInitialized()) {
             EventRegistry.register(this.constructor as TClassConstructor<IBaseEvent>);
@@ -36,11 +36,11 @@ abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBa
         this.payload = payload;
 
         // Use safeContainer here to avoid errors during registering which runs during boot up.
-        this.defaultDriver = App.safeContainer('events')?.getDefaultDriverCtor() as TClassConstructor<IEventDriver>; 
+        this.defaultDriver = AppSingleton.safeContainer('events')?.getDefaultDriverCtor() as TClassConstructor<IEventDriver>;
         this.driver = driver ?? this.defaultDriver;
 
         // Ensure the payload is valid
-        if(!this.validatePayload()) {
+        if (!this.validatePayload()) {
             throw new EventInvalidPayloadException('Invalid payload. Must be JSON serializable.');
         }
     }
@@ -60,7 +60,7 @@ abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBa
     /**
      * Executes the event.
      */
-    async execute(): Promise<void> {/* Nothing to execute */}
+    async execute(): Promise<void> {/* Nothing to execute */ }
 
     /**
      * Validates the payload of the event. Ensures that the payload is an object with types that match:
@@ -73,9 +73,9 @@ abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBa
         }
         // eslint-disable-next-line no-unused-vars
         catch (err) {
-            return false   
+            return false
         }
-        
+
         return true
     }
 
@@ -84,7 +84,7 @@ abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBa
      * @returns The event service.
      */
     getEventService(): IEventService {
-        return App.container('events');
+        return AppSingleton.container('events');
     }
 
     /**
@@ -121,7 +121,7 @@ abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBa
     /**
      * @returns The event driver constructor.
      */
-    getDriverCtor(): TClassConstructor<IEventDriver> {        
+    getDriverCtor(): TClassConstructor<IEventDriver> {
         return this.driver ?? this.defaultDriver;
     }
 

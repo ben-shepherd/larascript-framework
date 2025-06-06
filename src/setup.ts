@@ -7,9 +7,9 @@ import DatabaseSetupProvider from '@src/core/domains/database/providers/Database
 import LoggerProvider from '@src/core/domains/logger/providers/LoggerProvider';
 import SetupProvider from '@src/core/domains/setup/providers/SetupProvider';
 import Kernel from "@src/core/Kernel";
-import { App } from '@src/core/services/App';
+import { AppSingleton } from '@src/core/services/App';
 
-(async() => {
+(async () => {
     require('dotenv').config();
 
     await Kernel.boot({
@@ -24,5 +24,5 @@ import { App } from '@src/core/services/App';
         ]
     }, {})
 
-    await App.container('console').readerService(['app:setup']).handle();
+    await AppSingleton.container('console').readerService(['app:setup']).handle();
 })();

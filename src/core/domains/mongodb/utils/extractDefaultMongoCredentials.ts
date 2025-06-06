@@ -1,4 +1,4 @@
-import { App } from "@src/core/services/App"
+import { AppSingleton } from "@src/core/services/App"
 import fs from "fs"
 import path from "path"
 
@@ -18,7 +18,7 @@ export const extractDefaultMongoCredentials = () => {
         }
     }
     catch (err) {
-        App.container('logger').error(err)
+        AppSingleton.container('logger').error(err)
     }
 
     return null;

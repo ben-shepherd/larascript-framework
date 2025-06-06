@@ -1,7 +1,7 @@
 import Singleton from "@src/core/base/Singleton";
 import { IPContextData, IPDatesArrayTTL } from "@src/core/domains/http/interfaces/IRequestContext";
 import { IRequestContextCleanUpConfig } from "@src/core/domains/http/interfaces/IRequestContextCleanUpConfig";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 
 /**
  * A class that handles cleaning up expired items from the current IP context.
@@ -16,7 +16,7 @@ class RequestContextCleaner extends Singleton {
      */
     public static boot(config: IRequestContextCleanUpConfig) {
         const instance = this.getInstance();
-        
+
         const delayInSeconds = config.delayInSeconds ?? 60;
 
         setInterval(() => {
@@ -32,15 +32,15 @@ class RequestContextCleaner extends Singleton {
      */
     scan() {
         // Get the entire current IP context
-        let context = App.container('requestContext').getIpContext() as IPContextData<Date[]>;
+        let context = AppSingleton.container('requestContext').getIpContext() as IPContextData<Date[]>;
 
         // Loop through the context and handle each IP
-        for(const [ip, ipContext] of context.entries()) {
+        for (const [ip, ipContext] of context.entries()) {
             context = this.handleIpContext(ip, ipContext, context);
         }
 
         // Set the updated IP context
-        App.container('requestContext').setIpContext(context);
+        AppSingleton.container('requestContext').setIpContext(context);
     }
 
     /**
@@ -58,23 +58,23 @@ class RequestContextCleaner extends Singleton {
         const now = new Date();
 
         // Loop through the IP context and remove expired items
-        for(const [key, item] of ipContext.entries()) {
+        for (const [key, item] of ipContext.entries()) {
 
             // If the TTL is not a number, skip this item
-            if(typeof item.ttlSeconds !== 'number') continue;
+            if (typeof item.ttlSeconds !== 'number') continue;
 
             // Calculate the expiration date
             const expiresAt = new Date(item.createdAt.getTime() + item.ttlSeconds * 1000);
 
             // Remove expired items
-            if(now > expiresAt) {
+            if (now > expiresAt) {
                 ipContext.delete(key);
             }
 
             // Update size
             context.set(ip, ipContext)
             // If the context is empty, remove it from the store
-            if(context.size === 0) {
+            if (context.size === 0) {
                 context.delete(ip)
             }
         }

@@ -3,7 +3,7 @@ import EventWorkerException from "@src/core/domains/events/exceptions/EventWorke
 import { TISerializablePayload } from "@src/core/domains/events/interfaces/IEventPayload";
 import { IEventWorkerConcern, IWorkerModel, TEventWorkerOptions } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 
 const EventWorkerConcern = (Base: TClassConstructor) => {
     return class EventWorkerConcern extends Base implements IEventWorkerConcern {
@@ -23,14 +23,14 @@ const EventWorkerConcern = (Base: TClassConstructor) => {
 
             const workerModels = await this.fetchWorkerModelDocuments(options)
 
-            App.container('logger').console('Queued items: ', workerModels.length)
+            AppSingleton.container('logger').console('Queued items: ', workerModels.length)
 
-            if(workerModels.length === 0) {
-                App.container('logger').console("No queued items");
+            if (workerModels.length === 0) {
+                AppSingleton.container('logger').console("No queued items");
                 return;
             }
 
-            for(const workerModel of workerModels) {
+            for (const workerModel of workerModels) {
                 await this.handleWorkerModel(workerModel, options)
             }
         }
@@ -44,30 +44,30 @@ const EventWorkerConcern = (Base: TClassConstructor) => {
         private async handleWorkerModel(workerModel: IWorkerModel, options: TEventWorkerOptions): Promise<void> {
             try {
                 const eventName = workerModel.getAttributeSync('eventName');
-            
-                if(typeof eventName !== 'string') {
+
+                if (typeof eventName !== 'string') {
                     throw new EventWorkerException('Event name must be a string');
                 }
 
-                const eventCtor = App.container('events').getEventCtorByName(eventName)
+                const eventCtor = AppSingleton.container('events').getEventCtorByName(eventName)
 
-                if(!eventCtor) {
+                if (!eventCtor) {
                     throw new EventWorkerException(`Event '${eventName}' not found`);
                 }
 
                 const payload = workerModel.getPayload<TISerializablePayload | null>()
-                
+
                 const eventInstance = new eventCtor(payload);
                 await eventInstance.execute();
 
                 await workerModel.delete();
             }
             catch (err) {
-                App.container('logger').error(err)
+                AppSingleton.container('logger').error(err)
                 await this.handleUpdateWorkerModelAttempts(workerModel, options)
             }
         }
-         
+
         /**
          * Handles updating the worker model document with the number of attempts
          * it has made to process the event.
@@ -83,7 +83,7 @@ const EventWorkerConcern = (Base: TClassConstructor) => {
 
             await workerModel.attr('attempt', newAttempt)
 
-            if(newAttempt >= retries) {
+            if (newAttempt >= retries) {
                 await this.handleFailedWorkerModel(workerModel, options)
                 return;
             }
@@ -112,7 +112,7 @@ const EventWorkerConcern = (Base: TClassConstructor) => {
             await FailedWorkerModel.save();
             await workerModel.delete();
         }
-    
+
         /**
          * Fetches worker model documents
          */
@@ -124,7 +124,7 @@ const EventWorkerConcern = (Base: TClassConstructor) => {
                     .get()
             ).toArray()
         }
-    
+
     }
 }
 

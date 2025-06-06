@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import Collection from "@src/core/domains/collections/Collection";
+import { IConnectionTypeHelpers } from "@src/core/domains/database/interfaces/IConnectionTypeHelpers";
 import { IDatabaseAdapter } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 import { db } from "@src/core/domains/database/services/Database";
 import Direction from "@src/core/domains/eloquent/enums/Direction";
@@ -14,9 +15,8 @@ import { TDirection } from "@src/core/domains/eloquent/interfaces/TEnums";
 import With from "@src/core/domains/eloquent/relational/With";
 import { IModel, ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 import { deepClone } from "@src/core/util/deepClone";
-import { IConnectionTypeHelpers } from "@src/core/domains/database/interfaces/IConnectionTypeHelpers";
 
 
 /**
@@ -36,7 +36,7 @@ abstract class Eloquent<
      * The default ID generator function for the query builder.
      */
     protected defaultIdGeneratorFn: IdGeneratorFn | null = null;
-        
+
     /**
      * The connection name to use for the query builder
     */
@@ -88,7 +88,7 @@ abstract class Eloquent<
      * @param expression 
      * @param args 
      */
-     
+
     abstract fetchRows<T = unknown>(expression: Expression, ...args: any[]): Promise<T>;
 
     /**
@@ -105,10 +105,10 @@ abstract class Eloquent<
      * @returns The formatted results
      */
     protected formatResultsAsModels(results: object[]): Model[] {
-        if(!this.modelCtor) {
+        if (!this.modelCtor) {
             throw new EloquentException('Model constructor has not been set')
         }
-        
+
         return results.map(result => {
             const modelConstructor = this.modelCtor as ModelConstructor<IModel>;
             const model = modelConstructor.create(result as Model['attributes'])
@@ -123,7 +123,7 @@ abstract class Eloquent<
      * @param {string} message The message to log
      */
     protected log(message: string, ...args: any[]) {
-        App.container('logger').error(`[Eloquent] (Connection: ${this.connectionName}): ${message}`, ...args);
+        AppSingleton.container('logger').error(`[Eloquent] (Connection: ${this.connectionName}): ${message}`, ...args);
     }
 
     /**
@@ -152,7 +152,7 @@ abstract class Eloquent<
         return this.connectionName
     }
 
-    
+
     /**
      * Adds the id: uuid to the document
      * @param document The document to add an id to
@@ -162,7 +162,7 @@ abstract class Eloquent<
         return this.documentStripUndefinedProperties({
             ...document,
             id: this.generateId() ?? undefined
-        }) 
+        })
     }
 
     /**
@@ -300,8 +300,8 @@ abstract class Eloquent<
      */
     setModelColumns(modelCtor?: TClassConstructor<IModel>, options: SetModelColumnsOptions = {}): IEloquent<Model> {
         modelCtor = typeof modelCtor === 'undefined' ? this.modelCtor : modelCtor
-        
-        if(!modelCtor) {
+
+        if (!modelCtor) {
             throw new EloquentException('Model constructor has not been set');
         }
 
@@ -311,14 +311,14 @@ abstract class Eloquent<
 
         fields.forEach(field => {
 
-            if(options.columnPrefix) {
+            if (options.columnPrefix) {
                 this.column({ column: field, tableName, as: `${options.columnPrefix}${field}` })
                 return;
             }
 
             this.column({ column: field, tableName })
         });
-        
+
         return this as unknown as IEloquent<Model>
     }
 
@@ -378,7 +378,7 @@ abstract class Eloquent<
         this.expression.setTable(tableName);
         return this as unknown as IEloquent<Model>
     }
-    
+
     /**
      * Retrieves the table name associated with the query builder, or throws an
      * exception if it is not set.
@@ -388,12 +388,12 @@ abstract class Eloquent<
      */
     useTable(): string {
         const tableName = this.expression.getTable();
-        if(!tableName || tableName?.length === 0) {
+        if (!tableName || tableName?.length === 0) {
             throw new MissingTableException()
         }
         return tableName
     }
-    
+
     /**
      * Sets the connection name to use for the query builder
      * @param {string} connectionName The connection name to use
@@ -413,14 +413,14 @@ abstract class Eloquent<
         // Reset the columns
         this.setColumns([]);
 
-        if(columns === undefined) {
+        if (columns === undefined) {
             return this as unknown as IEloquent<Model>;
         }
 
         // Set the columns
         const columnsArray = Array.isArray(columns) ? columns : [columns]
 
-        if(columnsArray.length === 0) {
+        if (columnsArray.length === 0) {
             throw new EloquentException('Expected at least one column');
         }
 
@@ -438,15 +438,15 @@ abstract class Eloquent<
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
     column(column: TColumnOption | string): IEloquent<Model> {
-        if(typeof column === 'string') {
-            column = {column}
+        if (typeof column === 'string') {
+            column = { column }
         }
 
         // if no table name is set, use the current table
-        if(!column.tableName) {
+        if (!column.tableName) {
             column.tableName = this.useTable();
         }
-        
+
         this.expression.addColumn(column);
         return this as unknown as IEloquent<Model>
     }
@@ -472,13 +472,13 @@ abstract class Eloquent<
      */
     distinctColumns(columns: string | string[]): IEloquent<Model> {
         columns = Array.isArray(columns) ? columns : [columns];
-        const columnsTyped = columns.map(column => ({column})) as TColumnOption[]
-        
+        const columnsTyped = columns.map(column => ({ column })) as TColumnOption[]
+
         this.expression.setDistinctColumns(columnsTyped);
         return this as unknown as IEloquent<Model>;
     }
 
-    
+
     /**
      * Sets the group by columns for the query builder.
      *
@@ -487,14 +487,14 @@ abstract class Eloquent<
      */
     distinct(columns: string[] | string | null): IEloquent<Model> {
 
-        if(!columns) {
+        if (!columns) {
             this.expression.setGroupBy(null);
             return this as unknown as IEloquent<Model>
         }
 
         const columnsArray = Array.isArray(columns) ? columns : [columns]
-        const groupBy = columns ? columnsArray.map(column => ({column, tableName: this.useTable()})) as TGroupBy[] : null
-        
+        const groupBy = columns ? columnsArray.map(column => ({ column, tableName: this.useTable() })) as TGroupBy[] : null
+
         this.expression.setGroupBy(groupBy);
         return this as unknown as IEloquent<Model>
     }
@@ -511,25 +511,25 @@ abstract class Eloquent<
     where(column: string | object, operator?: TOperator, value?: TWhereClauseValue, logicalOperator: TLogicalOperator = LogicalOperators.AND, cast?: string): IEloquent<Model> {
 
         // Handle object case
-        if(typeof column === 'object') {
-            const filters = {...column}
+        if (typeof column === 'object') {
+            const filters = { ...column }
             const filtersOperator: TOperator = operator ?? '=';
 
             Object.keys(filters).forEach(key => {
                 const value = filters[key]
-                this.expression.addWhere({column: key, operator: filtersOperator, value, logicalOperator, tableName: this.useTable()})
+                this.expression.addWhere({ column: key, operator: filtersOperator, value, logicalOperator, tableName: this.useTable() })
             })
             return this as unknown as IEloquent<Model>
         }
 
         // Handle default equals case
-        if(value === undefined) {
+        if (value === undefined) {
             this.expression.where(column, '=', operator as TWhereClauseValue, logicalOperator);
             return this as unknown as IEloquent<Model>
         }
 
         // Check operator has been provided and matches expected value
-        if(operator === undefined || OperatorArray.includes(operator) === false) {
+        if (operator === undefined || OperatorArray.includes(operator) === false) {
             throw new QueryBuilderException('Operator is required')
         }
 
@@ -578,7 +578,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
     whereIn(column: string, values: TWhereClauseValue[]): IEloquent<Model> {
-        this.expression.addWhere({column, operator: 'in', value: values, tableName: this.useTable()});
+        this.expression.addWhere({ column, operator: 'in', value: values, tableName: this.useTable() });
         return this as unknown as IEloquent<Model>
     }
 
@@ -593,7 +593,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
     whereNotIn(column: string, values: any[]): IEloquent<Model> {
-        this.expression.addWhere({column, operator: 'not in', value: values, tableName: this.useTable()});
+        this.expression.addWhere({ column, operator: 'not in', value: values, tableName: this.useTable() });
         return this as unknown as IEloquent<Model>
     }
 
@@ -604,7 +604,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
     whereNull(column: string): IEloquent<Model> {
-        this.expression.addWhere({column, operator: 'is null', value: null, tableName: this.useTable()});
+        this.expression.addWhere({ column, operator: 'is null', value: null, tableName: this.useTable() });
         return this as unknown as IEloquent<Model>
     }
 
@@ -618,7 +618,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
     whereNotNull(column: string): IEloquent<Model> {
-        this.expression.addWhere({column, operator: 'is not null', value: null, tableName: this.useTable()});
+        this.expression.addWhere({ column, operator: 'is not null', value: null, tableName: this.useTable() });
         return this as unknown as IEloquent<Model>
     }
 
@@ -634,7 +634,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
     whereBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Model> {
-        this.expression.addWhere({column, operator: 'between', value: range, tableName: this.useTable()});
+        this.expression.addWhere({ column, operator: 'between', value: range, tableName: this.useTable() });
         return this as unknown as IEloquent<Model>
     }
 
@@ -650,7 +650,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
     whereNotBetween(column: string, range: [TWhereClauseValue, TWhereClauseValue]): IEloquent<Model> {
-        this.expression.addWhere({column, operator: 'not between', value: range, tableName: this.useTable()});
+        this.expression.addWhere({ column, operator: 'not between', value: range, tableName: this.useTable() });
         return this as unknown as IEloquent<Model>
     }
 
@@ -665,7 +665,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
     whereLike(column: string, value: TWhereClauseValue): IEloquent<Model> {
-        this.expression.addWhere({column, operator: 'like', value, tableName: this.useTable()});
+        this.expression.addWhere({ column, operator: 'like', value, tableName: this.useTable() });
         return this as unknown as IEloquent<Model>
     }
 
@@ -680,7 +680,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
     whereNotLike(column: string, value: TWhereClauseValue): IEloquent<Model> {
-        this.expression.addWhere({column, operator: 'not like', value, tableName: this.useTable()});
+        this.expression.addWhere({ column, operator: 'not like', value, tableName: this.useTable() });
         return this as unknown as IEloquent<Model>
     }
 
@@ -692,11 +692,11 @@ abstract class Eloquent<
      * @param {string} relationship - The name of the relationship to load.
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
-    with(relationship: string): IEloquent<Model> { 
-        if(!this.modelCtor) {
+    with(relationship: string): IEloquent<Model> {
+        if (!this.modelCtor) {
             throw new ExpressionException('Model constructor has not been set');
         }
-        
+
         return new With(this as unknown as IEloquent, relationship).updateEloquent() as unknown as IEloquent<Model>
     }
 
@@ -790,7 +790,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
     orderBy(column: string | null, direction: TDirection = 'asc'): IEloquent<Model> {
-        if(column === null) {
+        if (column === null) {
             this.expression.setOrderBy(null);
             return this as unknown as IEloquent<Model>
         }
@@ -807,7 +807,7 @@ abstract class Eloquent<
      * @returns {IEloquent<Model>} The query builder instance for chaining.
      */
     latest(column: string): IEloquent<Model> {
-        this.expression.orderBy({ column, direction: Direction.DESC});
+        this.expression.orderBy({ column, direction: Direction.DESC });
         return this as unknown as IEloquent<Model>
     }
 
@@ -846,7 +846,7 @@ abstract class Eloquent<
         this.expression.setOffset(offset);
         return this as unknown as IEloquent<Model>
     }
-    
+
     /**
      * Sets the offset for the query builder.
      * 
@@ -867,7 +867,7 @@ abstract class Eloquent<
      */
     limit(limit: number | null): IEloquent<Model> {
         this.expression.setLimit(limit);
-        return this as unknown as IEloquent<Model>      
+        return this as unknown as IEloquent<Model>
     }
 
     /**
@@ -885,38 +885,38 @@ abstract class Eloquent<
     async delete(): Promise<IEloquent<Model>> {
         throw new InvalidMethodException()
     }
-    
-         
+
+
     async createDatabase(name: string): Promise<void> {
         throw new InvalidMethodException()
     }
 
-     
+
     async databaseExists(name: string): Promise<boolean> {
         throw new InvalidMethodException()
     }
 
-     
+
     async dropDatabase(name: string): Promise<void> {
         throw new InvalidMethodException()
     }
 
-     
+
     async createTable(name: string, ...args: any[]): Promise<void> {
         throw new InvalidMethodException()
     }
 
-     
+
     async dropTable(name: string, ...args: any[]): Promise<void> {
         throw new InvalidMethodException()
     }
 
-     
+
     async tableExists(name: string): Promise<boolean> {
         throw new InvalidMethodException()
     }
 
-     
+
     async alterTable(name: string, ...args: any[]): Promise<void> {
         throw new InvalidMethodException()
     }
@@ -925,16 +925,16 @@ abstract class Eloquent<
         throw new InvalidMethodException()
     }
 
-     
+
     async execute<T>(builder: Expression): Promise<T> {
         throw new InvalidMethodException()
     }
-     
+
     async find(id: string | number): Promise<Model | null> {
         throw new InvalidMethodException()
     }
 
-     
+
     async findOrFail(id: string | number): Promise<Model> {
         throw new InvalidMethodException()
     }
@@ -966,11 +966,11 @@ abstract class Eloquent<
     async insert(documents: object | object[]): Promise<Collection<Model>> {
         throw new InvalidMethodException()
     }
-     
+
     async update(documents: object | object[]): Promise<Collection<Model>> {
         throw new InvalidMethodException()
     }
-     
+
     async updateAll(documents: object): Promise<Collection<Model>> {
         throw new InvalidMethodException()
     }

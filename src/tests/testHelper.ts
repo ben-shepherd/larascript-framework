@@ -4,7 +4,7 @@ import EloquentQueryProvider from "@src/core/domains/eloquent/providers/Eloquent
 import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 import Kernel, { KernelConfig } from "@src/core/Kernel";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 import TestApiTokenModel from "@src/tests/larascript/models/models/TestApiTokenModel";
 import TestUser from "@src/tests/larascript/models/models/TestUser";
 import TestAuthProvider from "@src/tests/larascript/providers/TestAuthProvider";
@@ -54,7 +54,7 @@ const testBootApp = async () => {
  * @param connectionName The name of the database connection to use
  */
 export const createAuthTables = async (connectionName?: string) => {
-    const schema = App.container('db').schema(connectionName)
+    const schema = AppSingleton.container('db').schema(connectionName)
 
     const userTable = (new TestUser).table;
     const apiTokenTable = (new TestApiTokenModel).table;
@@ -95,7 +95,7 @@ export const createAuthTables = async (connectionName?: string) => {
  * @param connectionName The name of the database connection to use
  */
 export const dropAuthTables = async (connectionName?: string) => {
-    const schema = App.container('db').schema(connectionName)
+    const schema = AppSingleton.container('db').schema(connectionName)
 
     const userTable = (new TestUser).table;
     const apiTokenTable = (new TestApiTokenModel).table;
@@ -112,7 +112,7 @@ export const dropAuthTables = async (connectionName?: string) => {
      * await runFreshMigrations()
      */
 const runFreshMigrations = async () => {
-    await App.container('console').readerService(['migrate:fresh', '--group=testing', '--seed']).handle();
+    await AppSingleton.container('console').readerService(['migrate:fresh', '--group=testing', '--seed']).handle();
 }
 
 /**
@@ -124,7 +124,7 @@ const runFreshMigrations = async () => {
  * await clearMigrations()
  */
 const clearMigrations = async () => {
-    await App.container('console').readerService(['migrate:down', '--group=testing']).handle();
+    await AppSingleton.container('console').readerService(['migrate:down', '--group=testing']).handle();
 }
 
 /**

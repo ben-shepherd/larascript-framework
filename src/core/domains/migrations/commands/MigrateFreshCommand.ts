@@ -1,6 +1,6 @@
 
 import BaseMigrationCommand from "@src/core/domains/migrations/base/BaseMigrationCommand";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 
 /**
  * MigrateFresh class handles running fresh migrations
@@ -19,7 +19,7 @@ class MigrateFreshCommand extends BaseMigrationCommand {
      * Execute the command
      */
     async execute() {
-        if(!await this.confirm()) {
+        if (!await this.confirm()) {
             return;
         }
 
@@ -27,16 +27,16 @@ class MigrateFreshCommand extends BaseMigrationCommand {
         const seed: boolean = typeof this.getArguementByKey('seed')?.value === 'string';
 
         // Get the db schema helper
-        const schema = App.container('db').schema();
+        const schema = AppSingleton.container('db').schema();
 
         // Drop all tables
         await schema.dropAllTables();
 
         // Handle migrate:up
-        const console = App.container('console');
-        await console.readerService(['migrate:up','--keep-alive']).handle();
+        const console = AppSingleton.container('console');
+        await console.readerService(['migrate:up', '--keep-alive']).handle();
 
-        if(seed) {
+        if (seed) {
             await console.readerService(['db:seed']).handle();
         }
 
@@ -45,7 +45,7 @@ class MigrateFreshCommand extends BaseMigrationCommand {
 
     private async confirm(): Promise<boolean> {
 
-        if(this.getArguementByKey('confirm')) {
+        if (this.getArguementByKey('confirm')) {
             return true;
         }
 

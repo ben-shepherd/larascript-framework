@@ -2,7 +2,7 @@ import HttpContext from "@src/core/domains/http/context/HttpContext";
 import responseError from "@src/core/domains/http/handlers/responseError";
 import { IController } from "@src/core/domains/http/interfaces/IController";
 import { TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 
 class Controller implements IController {
 
@@ -38,7 +38,7 @@ class Controller implements IController {
 
         const controller = new this(context)
 
-        if(!controller[action]) {
+        if (!controller[action]) {
             responseError(context.getRequest(), context.getResponse(), new Error(`Invalid action "${action}"`))
             return
         }
@@ -51,7 +51,7 @@ class Controller implements IController {
 
      * @param context The context to set.
      */
-    public setContext(context: HttpContext) {   
+    public setContext(context: HttpContext) {
         this.context = context
     }
 
@@ -134,8 +134,8 @@ class Controller implements IController {
     protected serverError(message: string | Error | undefined = 'Internal Server Error') {
         const errorMessage = message instanceof Error ? message.message : message
 
-        if(App.env() === 'development') {
-            return this.jsonResponse({ 
+        if (AppSingleton.env() === 'development') {
+            return this.jsonResponse({
                 error: errorMessage,
                 stack: message instanceof Error ? message.stack?.split('\n').map(line => line.trim()) : undefined
             }, 500);

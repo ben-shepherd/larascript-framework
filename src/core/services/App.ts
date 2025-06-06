@@ -9,13 +9,13 @@ import Kernel from '@src/core/Kernel';
  * @description The App service allows you to access kernel containers and configure the app environment
  */
 export const app = <K extends keyof Providers = keyof Providers>(name: K): Providers[K] => {
-    return App.container(name);
+    return AppSingleton.container(name);
 }
 
 /**
  * Short hand for App.env()
  */
-export const appEnv = (): string | undefined => App.env();
+export const appEnv = (): string | undefined => AppSingleton.env();
 
 /**
  * App service
@@ -23,7 +23,7 @@ export const appEnv = (): string | undefined => App.env();
  * and configure the app environment
  */
 
-export class App extends Singleton {
+export class AppSingleton extends Singleton {
 
     /**
      * Environment
@@ -82,7 +82,7 @@ export class App extends Singleton {
     public static container<K extends keyof Providers = keyof Providers>(name: K): Providers[K] {
         const kernel = Kernel.getInstance();
 
-        if(!kernel.containers.has(name)) {
+        if (!kernel.containers.has(name)) {
             throw new UninitializedContainerError(name as string)
         }
 
@@ -105,7 +105,7 @@ export class App extends Singleton {
             return this.container(name);
         }
         catch (err) {
-            if(err instanceof UninitializedContainerError) {
+            if (err instanceof UninitializedContainerError) {
                 return undefined;
             }
 

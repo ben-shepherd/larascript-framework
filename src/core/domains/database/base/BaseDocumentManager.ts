@@ -5,7 +5,7 @@ import { IDatabaseDocument, IDocumentManager } from "@src/core/domains/database/
 import { IDocumentValidator } from "@src/core/domains/database/interfaces/IDocumentValidator";
 import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
 import DocumentValidator from "@src/core/domains/database/validator/DocumentValidator";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 
 /**
  * Abstract base class for document management operations
@@ -18,10 +18,10 @@ abstract class BaseDocumentManager<TDocMan extends IDocumentManager = IDocumentM
     protected adapter!: TAdapter;
 
     protected tableName!: string;
-    
+
     // Public property for document validation
     public readonly validator: IDocumentValidator = new DocumentValidator();
-    
+
     /**
      * Constructor for BaseDocumentManager
      * @param adapter - Database provider instance
@@ -37,17 +37,17 @@ abstract class BaseDocumentManager<TDocMan extends IDocumentManager = IDocumentM
      * @returns Prepared document
      */
     prepareDocument(document: IDatabaseDocument, options?: IPrepareOptions): IDatabaseDocument {
-        const preparedDocument = {...document}
+        const preparedDocument = { ...document }
 
-        for(const key in preparedDocument) {
-            if(options?.jsonStringify?.includes(key)) {
+        for (const key in preparedDocument) {
+            if (options?.jsonStringify?.includes(key)) {
                 preparedDocument[key] = JSON.stringify(preparedDocument[key])
             }
-            if(options?.jsonParse?.includes(key)) {
+            if (options?.jsonParse?.includes(key)) {
                 preparedDocument[key] = JSON.parse(preparedDocument[key])
             }
         }
-        
+
         return preparedDocument
     }
 
@@ -59,7 +59,7 @@ abstract class BaseDocumentManager<TDocMan extends IDocumentManager = IDocumentM
     table(table: string): TDocMan {
         this.tableName = table;
         return this as any;
-    } 
+    }
 
     /**
      * Get the current table name
@@ -67,7 +67,7 @@ abstract class BaseDocumentManager<TDocMan extends IDocumentManager = IDocumentM
      * @throws MissingTable if table name is not set
      */
     getTable(): string {
-        if(!this.tableName) {
+        if (!this.tableName) {
             throw new MissingTable()
         }
 
@@ -101,13 +101,13 @@ abstract class BaseDocumentManager<TDocMan extends IDocumentManager = IDocumentM
      * @param callback - The callback function to wrap
      * @returns The result of the callback, or throws an error if it fails
      */
-    protected async captureError<T>(callback:  () => Promise<T>): Promise<T> {
+    protected async captureError<T>(callback: () => Promise<T>): Promise<T> {
         try {
             return await callback()
         }
         catch (err) {
-            if(err instanceof Error && err?.message) {
-                App.container('logger').error(`Database error(${this.adapter.getConnectionName()}): `, err.message, err.stack)
+            if (err instanceof Error && err?.message) {
+                AppSingleton.container('logger').error(`Database error(${this.adapter.getConnectionName()}): `, err.message, err.stack)
             }
             throw err
         }

@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
 import { IDatabaseSchema } from '@src/core/domains/database/interfaces/IDatabaseSchema';
-import { App } from '@src/core/services/App';
+import { AppSingleton } from '@src/core/services/App';
 import TestMigrationModel from '@src/tests/larascript/migration/models/TestMigrationModel';
 import TestApiTokenModel from '@src/tests/larascript/models/models/TestApiTokenModel';
 import TestModel from '@src/tests/larascript/models/models/TestModel';
@@ -11,16 +11,16 @@ import testHelper from '@src/tests/testHelper';
 const dropAndCreateMigrationSchema = async () => {
     const migrationTable = new TestMigrationModel(null).table
 
-    if(await App.container('db').schema().tableExists(migrationTable)) {
-        await App.container('db').schema().dropTable(migrationTable);
+    if (await AppSingleton.container('db').schema().tableExists(migrationTable)) {
+        await AppSingleton.container('db').schema().dropTable(migrationTable);
     }
 
-    await App.container('db').createMigrationSchema(migrationTable)
+    await AppSingleton.container('db').createMigrationSchema(migrationTable)
 }
 
 const dropTestSchema = async () => {
-    if(await App.container('db').schema().tableExists('tests')) {
-        await App.container('db').schema().dropTable('tests');
+    if (await AppSingleton.container('db').schema().tableExists('tests')) {
+        await AppSingleton.container('db').schema().dropTable('tests');
     }
 
 }
@@ -41,25 +41,25 @@ describe('test migrations', () => {
             (new TestModel(null)).table
         ]
 
-        console.log('Connection', App.container('db').getDefaultConnectionName())
+        console.log('Connection', AppSingleton.container('db').getDefaultConnectionName())
 
         await dropAndCreateMigrationSchema()
 
         await dropTestSchema()
 
-        schema = App.container('db').schema();
+        schema = AppSingleton.container('db').schema();
     });
 
     afterAll(async () => {
-        await App.container('db').schema().dropTable('tests');
-        await App.container('db').schema().dropTable('migrations');
-    })  
+        await AppSingleton.container('db').schema().dropTable('tests');
+        await AppSingleton.container('db').schema().dropTable('migrations');
+    })
 
     test('test up migration', async () => {
 
-        await App.container('console').readerService(['migrate:up', '--group=testing']).handle();
+        await AppSingleton.container('console').readerService(['migrate:up', '--group=testing']).handle();
 
-        for(const table of tables) {
+        for (const table of tables) {
             const tableExists = await schema.tableExists(table);
             console.log('tableExists (expect: true)', table, tableExists)
             expect(tableExists).toBe(true);
@@ -68,14 +68,14 @@ describe('test migrations', () => {
 
     test('test down migration', async () => {
 
-        await App.container('console').readerService(['migrate:down', '--group=testing']).handle();
+        await AppSingleton.container('console').readerService(['migrate:down', '--group=testing']).handle();
 
-        for(const table of tables) {
+        for (const table of tables) {
             const tableExists = await schema.tableExists(table);
             console.log('tableExists (expect: false)', table, tableExists)
             expect(tableExists).toBe(false);
         }
 
     });
-    
+
 });

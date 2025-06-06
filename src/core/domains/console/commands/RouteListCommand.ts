@@ -1,5 +1,5 @@
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 
 export default class RouteListCommand extends BaseCommand {
 
@@ -14,7 +14,7 @@ export default class RouteListCommand extends BaseCommand {
      */
     async execute() {
         const showDetails = this.parsedArgumenets.find(arg => ['--details', '--d', '--detailed'].includes(arg.value));
-        const httpService = App.container('http')
+        const httpService = AppSingleton.container('http')
 
 
         this.input.clearScreen();

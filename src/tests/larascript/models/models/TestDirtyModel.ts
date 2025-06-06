@@ -1,6 +1,6 @@
 import Model from "@src/core/domains/models/base/Model";
 import { IModelAttributes } from "@src/core/domains/models/interfaces/IModel";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 import { forEveryConnection } from "@src/tests/testHelper";
 import { DataTypes } from "sequelize";
 
@@ -14,9 +14,9 @@ export const resetDirtyTable = async () => {
     const tableName = TestDirtyModel.getTable()
 
     await forEveryConnection(async connectionName => {
-        const schema = App.container('db').schema(connectionName);
+        const schema = AppSingleton.container('db').schema(connectionName);
 
-        if(await schema.tableExists(tableName)) {
+        if (await schema.tableExists(tableName)) {
             await schema.dropTable(tableName);
         }
 

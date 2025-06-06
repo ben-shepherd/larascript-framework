@@ -3,7 +3,7 @@ import { IBaseListener } from "@src/core/domains/events/interfaces/IBaseEvent";
 import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventListener } from "@src/core/domains/events/interfaces/IEventListener";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 
 class BaseEventListener<TPayload = unknown> extends BaseEvent<TPayload> implements IEventListener<TPayload>, IBaseListener<TPayload> {
 
@@ -20,7 +20,7 @@ class BaseEventListener<TPayload = unknown> extends BaseEvent<TPayload> implemen
     constructor(payload?: TPayload, driver?: TClassConstructor<IEventDriver>) {
         super(payload, driver);
 
-        if(!App.containerReady('events')) {
+        if (!AppSingleton.containerReady('events')) {
             return;
         }
     }

@@ -3,7 +3,7 @@ import CommandExecutionException from "@src/core/domains/console/exceptions/Comm
 import { ICommand } from "@src/core/domains/console/interfaces/ICommand";
 import { KeyPair, KeyPairArguementType, ParsedArguement, ParsedArgumentsArray, ValueOnly } from "@src/core/domains/console/parsers/CommandArgumentParser";
 import ConsoleInputService from "@src/core/domains/console/service/ConsoleInputService";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 
 /**
  * Base command class
@@ -83,13 +83,13 @@ export default abstract class BaseCommand extends BaseConfig implements ICommand
      * @returns
      */
     getArguementAtPos = (nth: number): ParsedArguement | null => {
-        if(nth === 0) {
+        if (nth === 0) {
             throw new CommandExecutionException('Unexpected 0 value. Did you mean 1?')
         }
 
         const arguementAtPos = this.parsedArgumenets[nth - 1] ?? null;
 
-        if(!arguementAtPos) {
+        if (!arguementAtPos) {
             return null;
         }
 
@@ -100,7 +100,7 @@ export default abstract class BaseCommand extends BaseConfig implements ICommand
      * Get an arguemenet by a given key
      */
     getArguementByKey = (key: string): ParsedArguement | null => {
-        if(this.overwriteArgs[key]) {
+        if (this.overwriteArgs[key]) {
             return {
                 type: KeyPair,
                 key,
@@ -109,18 +109,18 @@ export default abstract class BaseCommand extends BaseConfig implements ICommand
         }
 
         const foundAsOnlyArguement = this.parsedArgumenets.find((arguement) => {
-            if(arguement.type !== ValueOnly) {
+            if (arguement.type !== ValueOnly) {
                 return false;
             }
 
-            if(arguement.value.includes(key)) {
+            if (arguement.value.includes(key)) {
                 return true;
             }
 
             return false;
         })
 
-        if(foundAsOnlyArguement) {
+        if (foundAsOnlyArguement) {
             return {
                 ...foundAsOnlyArguement,
                 value: ''
@@ -129,7 +129,7 @@ export default abstract class BaseCommand extends BaseConfig implements ICommand
 
         const foundParsedArguement = this.parsedArgumenets.find((arguement) => {
 
-            if(arguement.type === ValueOnly) {
+            if (arguement.type === ValueOnly) {
                 return false
             }
 
@@ -150,8 +150,8 @@ export default abstract class BaseCommand extends BaseConfig implements ICommand
      * @returns {boolean} Whether the command should keep the process alive
      */
     shouldKeepProcessAlive(): boolean {
-        if(typeof this.getConfig<{keepProcessAlive : boolean}>()?.keepProcessAlive !== 'undefined') {
-            return this.getConfig<{keepProcessAlive : boolean}>()?.keepProcessAlive
+        if (typeof this.getConfig<{ keepProcessAlive: boolean }>()?.keepProcessAlive !== 'undefined') {
+            return this.getConfig<{ keepProcessAlive: boolean }>()?.keepProcessAlive
         }
 
         return this?.keepProcessAlive ?? false
@@ -162,10 +162,10 @@ export default abstract class BaseCommand extends BaseConfig implements ICommand
      */
     end(success: boolean = true): void {
         // Close the readline
-        App.container('readline').close();
+        AppSingleton.container('readline').close();
 
         // End the process
-        if(!this.shouldKeepProcessAlive()) {
+        if (!this.shouldKeepProcessAlive()) {
             process.exit(success ? 0 : 1);
         }
     }
