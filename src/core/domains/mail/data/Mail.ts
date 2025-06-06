@@ -6,22 +6,30 @@ import { IMail, IMailOptions } from "../interfaces/data";
  */
 class Mail<T extends IMailOptions = IMailOptions> implements IMail<T> {
 
-    options: T;
+    config: T;
 
     /**
      * Creates an instance of Mail.
-     * @param options - The mail options.
+     * @param config - The mail options.
      */
-    constructor(options: T = {} as T) {
-        this.options = options;
+    constructor(config: T = {} as T) {
+        this.config = config;
     }
 
     /**
-     * Gets the mail options.
-     * @returns The mail options.
+     * Gets the mail config.
+     * @returns The mail config.
      */
-    getOptions(): T {
-        return this.options
+    getConfig(): T {
+        return this.config
+    }
+
+    /**
+     * Gets the mail options
+     * @returns 
+     */
+    getOptions<Options extends Record<string, unknown> = Record<string, unknown>>(): Options {
+        return (this.config?.options ?? {}) as Options
     }
 
     /**
@@ -29,7 +37,7 @@ class Mail<T extends IMailOptions = IMailOptions> implements IMail<T> {
      * @returns The recipient(s) email address(es).
      */
     public getTo(): string | string[] {
-        return this.options.to;
+        return this.config.to;
     }
 
     /**
@@ -38,7 +46,7 @@ class Mail<T extends IMailOptions = IMailOptions> implements IMail<T> {
      * @returns The Mail instance for chaining.
      */
     public setTo(to: string | string[]): this {
-        this.options.to = to;
+        this.config.to = to;
         return this
     }
 
@@ -47,7 +55,7 @@ class Mail<T extends IMailOptions = IMailOptions> implements IMail<T> {
      * @returns The sender's email address.
      */
     public getFrom(): string {
-        return this.options.from;
+        return this.config.from;
     }
 
     /**
@@ -56,7 +64,7 @@ class Mail<T extends IMailOptions = IMailOptions> implements IMail<T> {
      * @returns The Mail instance for chaining.
      */
     public setFrom(from: string): this {
-        this.options.from = from;
+        this.config.from = from;
         return this;
     }
 
@@ -65,7 +73,7 @@ class Mail<T extends IMailOptions = IMailOptions> implements IMail<T> {
      * @returns The email subject.
      */
     public getSubject(): string {
-        return this.options.subject;
+        return this.config.subject;
     }
 
     /**
@@ -74,7 +82,7 @@ class Mail<T extends IMailOptions = IMailOptions> implements IMail<T> {
      * @returns The Mail instance for chaining.
      */
     public setSubject(subject: string): this {
-        this.options.subject = subject;
+        this.config.subject = subject;
         return this;
     }
 
@@ -83,7 +91,7 @@ class Mail<T extends IMailOptions = IMailOptions> implements IMail<T> {
      * @returns The email body.
      */
     public getBody(): string {
-        return this.options.body;
+        return this.config.body;
     }
 
     /**
@@ -92,7 +100,7 @@ class Mail<T extends IMailOptions = IMailOptions> implements IMail<T> {
      * @returns The Mail instance for chaining.
      */
     public setBody(body: string): this {
-        this.options.body = body;
+        this.config.body = body;
         return this;
     }
 
@@ -102,7 +110,7 @@ class Mail<T extends IMailOptions = IMailOptions> implements IMail<T> {
      * @returns An array of attachments or undefined.
      */
     public getAttachments<T>(): T[] | undefined {
-        return this.options.attachments as T[];
+        return this.config.attachments as T[];
     }
 
     /**
@@ -111,7 +119,7 @@ class Mail<T extends IMailOptions = IMailOptions> implements IMail<T> {
      * @returns The Mail instance for chaining.
      */
     public setAttachments(attachments: any[] | undefined): this {
-        this.options.attachments = attachments;
+        this.config.attachments = attachments;
         return this;
     }
 

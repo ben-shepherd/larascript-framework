@@ -5,10 +5,12 @@ export interface IMailOptions {
     subject: string;
     body: string;
     attachments?: any[];
+    options: Record<string, unknown>
 }
 
 export interface IMail<T extends IMailOptions = IMailOptions> {
-    getOptions(): T
+    getConfig(): T
+    getOptions<Options extends Record<string, unknown>>(): Options;
     getTo(): string | string[];
     setTo(to: string | string[]): void;
     getFrom(): string;
