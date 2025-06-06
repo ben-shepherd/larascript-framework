@@ -19,10 +19,10 @@ export interface ITestDepartmentModelData extends IModelAttributes {
 }
 
 export const resetTableDepartmentModel = async (connections: string[] = testHelper.getTestConnectionNames()) => {
-    for(const connectionName of connections) {
+    for (const connectionName of connections) {
         const schema = App.container('db').schema(connectionName);
 
-        if(await schema.tableExists(tableName)) {
+        if (await schema.tableExists(tableName)) {
             await schema.dropTable(tableName);
         }
 
@@ -37,12 +37,16 @@ export const resetTableDepartmentModel = async (connections: string[] = testHelp
 export default class TestDepartmentModel extends Model<ITestDepartmentModelData> {
 
     table = tableName
-    
+
     public fields: string[] = [
         'deptName',
         'createdAt',
         'updatedAt'
     ];
+
+    public relationships: string[] = [
+        'employees'
+    ]
 
     employees(): HasMany {
         return this.hasMany(TestEmployeeModel, { foreignKey: 'deptId', localKey: 'id' });

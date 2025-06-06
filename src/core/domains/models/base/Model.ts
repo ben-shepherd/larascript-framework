@@ -444,7 +444,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @throws {Error} If the attribute is not in the allowed fields or if a date field is set with a non-Date value.
      */
     async setAttribute<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Promise<void> {
-        if (!this.fields.includes(key as string)) {
+        if (!this.attributeIsSettable(key as string)) {
             return;
         }
         if (this.attributes === null) {
@@ -455,6 +455,16 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         }
 
         this.attributes = await this.observeProperty(key as string)
+    }
+
+    /**
+     * Determines if an attribute can be set
+     * @param key 
+     * @returns 
+     */
+    protected attributeIsSettable(key: string) {
+        return this.fields.includes(key) ||
+            this.relationships.includes(key)
     }
 
     /**
@@ -822,7 +832,9 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
 
         const dirty = Object.keys(this.getDirty() ?? {})
         return Object.keys(this.attributes).reduce((acc, curr) => {
-            if (dirty.includes(curr)) {
+            const isRelationship = this.relationships.includes(curr)
+
+            if (dirty.includes(curr) && this.attributeIsSettable(curr) && !isRelationship) {
                 acc[curr] = this.attributes?.[curr] ?? null
             }
             return acc

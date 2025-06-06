@@ -57,7 +57,7 @@ describe('test model casts', () => {
                 items: 'array',
                 settings: 'object'
             }
-        
+
         }
 
         const model = new CastTestModel({
@@ -104,7 +104,7 @@ describe('test model casts', () => {
                 joinDate: 'date',
                 items: 'array'
             }
-        
+
         }
 
         const model = new NullCastTestModel({
@@ -125,7 +125,7 @@ describe('test model casts', () => {
                 age: 'number',
                 joinDate: 'date'
             }
-        
+
         }
 
         const model = new InvalidCastTestModel({
@@ -146,7 +146,13 @@ describe('test model casts', () => {
                 enabled: 'boolean',
                 tags: 'array'
             }
-        
+
+            fields = [
+                'count',
+                'enabled',
+                'tags'
+            ]
+
         }
 
         const model = SetCastTestModel.create() as SetCastTestModel;
@@ -176,7 +182,7 @@ describe('test model casts', () => {
 
             // Add fields property to specify which attributes are valid
             public fields: string[] = ['age', 'name', 'title'];
-        
+
         }
 
         const model = new MixedCastTestModel({
@@ -200,7 +206,7 @@ describe('test model casts', () => {
             }
 
             public fields: string[] = ['age', 'isActive', 'name', 'metadata'];
-        
+
         }
 
         const model = new GetAttributesTestModel({
@@ -211,7 +217,7 @@ describe('test model casts', () => {
         });
 
         const attributes = await model.getAttributes();
-        
+
         expect(attributes).toEqual({
             age: 25,
             isActive: true,
@@ -230,7 +236,7 @@ describe('test model casts', () => {
             }
 
             public fields: string[] = ['age', 'isActive', 'metadata'];
-        
+
         }
 
         const model = new NullAttributesTestModel({
@@ -240,7 +246,7 @@ describe('test model casts', () => {
         });
 
         const attributes = await model.getAttributes();
-        
+
         expect(attributes).toEqual({
             age: null,
             isActive: null,
@@ -258,7 +264,7 @@ describe('test model casts', () => {
             }
 
             public fields: string[] = ['age', 'score', 'isActive', 'name'];
-        
+
         }
 
         const model = new SpecificAttributesTestModel({
@@ -269,7 +275,7 @@ describe('test model casts', () => {
         });
 
         const attributes = await model.getAttributes();
-        
+
         expect(attributes?.age).toEqual(25);
         expect(attributes?.name).toEqual('John');
     });
@@ -283,7 +289,7 @@ describe('test model casts', () => {
             }
 
             public fields: string[] = ['metadata', 'items'];
-        
+
         }
 
         const complexMetadata = {
@@ -302,7 +308,7 @@ describe('test model casts', () => {
         });
 
         const attributes = await model.getAttributes();
-        
+
         expect(attributes?.metadata).toEqual(complexMetadata);
         expect(attributes?.items).toEqual(['item1', 'item2']);
 
@@ -320,7 +326,7 @@ describe('test model casts', () => {
             }
 
             public fields: string[] = ['metadata', 'items'];
-        
+
         }
 
         const model = new InvalidJsonTestModel({
@@ -329,7 +335,7 @@ describe('test model casts', () => {
         });
 
         const attributes = await model.getAttributes();
-        
+
         // Should return null for invalid JSON
         expect(attributes?.metadata).toBeNull();
         expect(attributes?.items).toBeNull();
@@ -350,7 +356,7 @@ describe('test model casts', () => {
             public fields: string[] = ['age', 'isActive', 'metadata', 'items'];
 
             public table: string = 'test_casts';
-        
+
         }
 
         // Create and save a model with various types
@@ -371,10 +377,10 @@ describe('test model casts', () => {
         // Verify all attributes are properly cast
         expect(attributes?.age).toBe(25);
         expect(typeof attributes?.age).toBe('number');
-        
+
         expect(attributes?.isActive).toBe(true);
         expect(typeof attributes?.isActive).toBe('boolean');
-        
+
         expect(attributes?.metadata).toEqual({ key: 'value' });
         expect(Array.isArray(attributes?.items)).toBe(true);
         expect(attributes?.items).toEqual(['item1', 'item2']);

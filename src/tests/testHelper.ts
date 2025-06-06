@@ -53,7 +53,7 @@ const testBootApp = async () => {
  * This function creates the `users` and `api_tokens` tables in the database
  * @param connectionName The name of the database connection to use
  */
-export const createAuthTables = async(connectionName?: string) => {
+export const createAuthTables = async (connectionName?: string) => {
     const schema = App.container('db').schema(connectionName)
 
     const userTable = (new TestUser).table;
@@ -80,7 +80,11 @@ export const createAuthTables = async(connectionName?: string) => {
         userId: DataTypes.STRING,
         token: DataTypes.STRING,
         scopes: DataTypes.JSON,
-        revokedAt: DataTypes.DATE
+        options: DataTypes.JSON,
+        revokedAt: DataTypes.DATE,
+        expiresAt: DataTypes.DATE,
+        createdAt: DataTypes.DATE,
+        updatedAt: DataTypes.DATE,
     })
 }
 
@@ -90,7 +94,7 @@ export const createAuthTables = async(connectionName?: string) => {
  * This function removes the `users` and `api_tokens` tables from the database
  * @param connectionName The name of the database connection to use
  */
-export const dropAuthTables = async(connectionName?: string) => {
+export const dropAuthTables = async (connectionName?: string) => {
     const schema = App.container('db').schema(connectionName)
 
     const userTable = (new TestUser).table;
@@ -148,9 +152,9 @@ export type ForEveryConnectionOptions = {
 }
 export const forEveryConnection = async (fn: ForEveryConnectionFn, options: ForEveryConnectionOptions = {}) => {
     const connectionNames = getTestConnectionNames(options)
-    for(const connectionName of connectionNames) {
-        if(options.only && !options.only.includes(connectionName)) continue;
-        if(options.exclude && options.exclude.includes(connectionName)) continue;
+    for (const connectionName of connectionNames) {
+        if (options.only && !options.only.includes(connectionName)) continue;
+        if (options.exclude && options.exclude.includes(connectionName)) continue;
 
         console.log('[forEveryConnection]: ' + connectionName)
         await fn(connectionName)
