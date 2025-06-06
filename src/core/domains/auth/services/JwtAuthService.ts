@@ -10,10 +10,12 @@ import { ApiTokenModelOptions, IApiTokenModel } from "@src/core/domains/auth/int
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
 import { IApiTokenRepository } from "@src/core/domains/auth/interfaces/repository/IApiTokenRepository";
 import { IUserRepository } from "@src/core/domains/auth/interfaces/repository/IUserRepository";
+import { IOneTimeAuthenticationService } from "@src/core/domains/auth/interfaces/service/oneTimeService";
 import AuthorizeMiddleware from "@src/core/domains/auth/middleware/AuthorizeMiddleware";
 import ApiToken from "@src/core/domains/auth/models/ApiToken";
 import ApiTokenRepository from "@src/core/domains/auth/repository/ApiTokenRepitory";
 import UserRepository from "@src/core/domains/auth/repository/UserRepository";
+import OneTimeAuthenticationService from "@src/core/domains/auth/services/OneTimeAuthenticationService";
 import createJwt from "@src/core/domains/auth/utils/createJwt";
 import decodeJwt from "@src/core/domains/auth/utils/decodeJwt";
 import generateToken from "@src/core/domains/auth/utils/generateToken";
@@ -24,8 +26,6 @@ import Router from "@src/core/domains/http/router/Router";
 import { app } from "@src/core/services/App";
 import { JsonWebTokenError } from "jsonwebtoken";
 import { DataTypes } from "sequelize";
-import { IOneTimeAuthenticationService } from "@src/core/domains/auth/interfaces/service/oneTimeService";
-import OneTimeAuthenticationService from "@src/core/domains/auth/services/OneTimeAuthenticationService";
 
 /**
  * Short hand for app('auth.jwt')
@@ -118,8 +118,8 @@ class JwtAuthService extends BaseAuthAdapter<IJwtConfig> implements IJwtAuthServ
         // Generate the api token
         const apiToken = await this.buildApiTokenByUser(user, scopes, options ?? {})
 
-        if (options?.expiresAfterMinutes) {
-            const expiresAt = new Date(Date.now() + 15 * 60 * 1000)
+        if (typeof options?.expiresAfterMinutes === 'number') {
+            const expiresAt = new Date(Date.now() + options.expiresAfterMinutes * 60 * 1000)
             await apiToken.setAttribute(ApiToken.EXPIRES_AT, expiresAt)
         }
 
