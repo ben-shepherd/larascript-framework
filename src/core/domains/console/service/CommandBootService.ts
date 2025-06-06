@@ -1,6 +1,6 @@
 import ICommandBootService from "@src/core/domains/console/interfaces/ICommandBootService";
 import { KernelOptions } from "@src/core/Kernel";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 
 class CommandBootService implements ICommandBootService {
 
@@ -10,7 +10,7 @@ class CommandBootService implements ICommandBootService {
      * @throws CommandNotFoundException
      */
     async boot(args: string[]): Promise<void> {
-        await App.container('console').readerService(args).handle()
+        await AppSingleton.container('console').readerService(args).handle()
     }
 
     /**
@@ -23,14 +23,14 @@ class CommandBootService implements ICommandBootService {
     getKernelOptions = (args: string[], options: KernelOptions): KernelOptions => {
         options.withoutProvider = [...(options.withoutProvider ?? [])];
 
-        if(args.includes('--no-express')) {
+        if (args.includes('--no-express')) {
             options.withoutProvider.push('ExpressProvider')
             options.withoutProvider.push('RoutesProvider')
         }
-        if(args.includes('--no-auth')) {
+        if (args.includes('--no-auth')) {
             options.withoutProvider.push('AuthProvider');
         }
-        if(args.includes('--no-db')) {
+        if (args.includes('--no-db')) {
             options.withoutProvider?.push('MongoDBProvider');
         }
 

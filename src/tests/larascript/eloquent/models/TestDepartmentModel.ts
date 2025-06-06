@@ -2,7 +2,7 @@ import Collection from "@src/core/domains/collections/Collection";
 import HasMany from "@src/core/domains/eloquent/relational/HasMany";
 import Model from "@src/core/domains/models/base/Model";
 import { IModelAttributes } from "@src/core/domains/models/interfaces/IModel";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 import TestEmployeeModel from "@src/tests/larascript/eloquent/models/TestEmployeeModel";
 import testHelper from "@src/tests/testHelper";
 import { DataTypes } from "sequelize";
@@ -19,10 +19,10 @@ export interface ITestDepartmentModelData extends IModelAttributes {
 }
 
 export const resetTableDepartmentModel = async (connections: string[] = testHelper.getTestConnectionNames()) => {
-    for(const connectionName of connections) {
-        const schema = App.container('db').schema(connectionName);
+    for (const connectionName of connections) {
+        const schema = AppSingleton.container('db').schema(connectionName);
 
-        if(await schema.tableExists(tableName)) {
+        if (await schema.tableExists(tableName)) {
             await schema.dropTable(tableName);
         }
 
@@ -37,12 +37,16 @@ export const resetTableDepartmentModel = async (connections: string[] = testHelp
 export default class TestDepartmentModel extends Model<ITestDepartmentModelData> {
 
     table = tableName
-    
+
     public fields: string[] = [
         'deptName',
         'createdAt',
         'updatedAt'
     ];
+
+    public relationships: string[] = [
+        'employees'
+    ]
 
     employees(): HasMany {
         return this.hasMany(TestEmployeeModel, { foreignKey: 'deptId', localKey: 'id' });

@@ -1,6 +1,7 @@
 import Middleware from "@src/core/domains/http/base/Middleware";
-import HttpContext from "@src/core/domains/http/context/HttpContext";
 import { CustomValidatorConstructor } from "@src/core/domains/validator/interfaces/IValidator";
+
+import { IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
 
 /**
  * Validator middleware for validating the request body
@@ -14,7 +15,7 @@ class ValidatorMiddleware extends Middleware {
      * Executes the validator middleware
      * @param context - The HTTP context
      */
-    public async execute(context: HttpContext): Promise<void> {
+    public async execute(context: IHttpContext): Promise<void> {
         const validatorConstructors = this.getValidatorConstructors(context);
 
         // No validator constructor, skip validation
@@ -25,6 +26,8 @@ class ValidatorMiddleware extends Middleware {
 
         for (const validatorConstructor of validatorConstructors) {
             const validator = new validatorConstructor();
+            validator.setHttpContext(context)
+            
             const result = await validator.validate(context.getRequest().body);
 
             // Validation failed, return the errors
@@ -47,7 +50,7 @@ class ValidatorMiddleware extends Middleware {
      * @param context - The HTTP context
      * @returns The validator constructor
      */
-    protected getValidatorConstructors(context: HttpContext): CustomValidatorConstructor[] {
+    protected getValidatorConstructors(context: IHttpContext): CustomValidatorConstructor[] {
         const validatorConstructors = context.getRouteItem()?.validator ?? [];
         return Array.isArray(validatorConstructors) ? validatorConstructors : [validatorConstructors];
     }

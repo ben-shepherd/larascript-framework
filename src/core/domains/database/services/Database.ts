@@ -9,13 +9,13 @@ import DatabaseAdapter from "@src/core/domains/database/services/DatabaseAdapter
 import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 
 /**
  * Short alias for app('db')
  * @returns 
  */
-export const db = () => App.container('db')
+export const db = () => AppSingleton.container('db')
 
 /**
  * Short alias for db().schema(connectionName)
@@ -28,7 +28,7 @@ export const schema = (connectionName: string = db().getDefaultConnectionName())
  * Short alias for db().getAdapter<AdapterType>(connectionName)
  * @param connectionName 
  */
-export const databaseAdapter = <K extends keyof IConnectionTypeHelpers = 'default'>(connectionName?: K) => db().getAdapter(connectionName as keyof IConnectionTypeHelpers)  as IConnectionTypeHelpers[K]
+export const databaseAdapter = <K extends keyof IConnectionTypeHelpers = 'default'>(connectionName?: K) => db().getAdapter(connectionName as keyof IConnectionTypeHelpers) as IConnectionTypeHelpers[K]
 
 /**
  * Database Service
@@ -82,7 +82,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
      * @private
      */
     private log(message: string, ...args: any[]): void {
-        App.container('logger').info(`[Database] ${message}`, ...args)
+        AppSingleton.container('logger').info(`[Database] ${message}`, ...args)
     }
 
     /**
@@ -94,7 +94,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
      * @private
      */
     private shouldConnectOnBoot(): boolean {
-        if(this.config.onBootConnect !== undefined) {
+        if (this.config.onBootConnect !== undefined) {
             return this.config.onBootConnect
         }
 
@@ -109,7 +109,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
      * @returns {Promise<void>}
      */
     async boot(): Promise<void> {
-        if(!this.shouldConnectOnBoot()) {
+        if (!this.shouldConnectOnBoot()) {
             this.log('Database is not configured to connect on boot');
             return;
         }
@@ -117,7 +117,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
         await this.connectDefault()
         await this.connectKeepAlive()
     }
-    
+
     /**
      * Determines whether logging is enabled for the database operations.
      *
@@ -140,16 +140,16 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
      */
     protected async connectKeepAlive() {
         const connections = (this.config?.keepAliveConnections ?? '').split(',');
-    
+
         for (const connectionName of connections) {
-    
-            if(connectionName.length === 0) {
+
+            if (connectionName.length === 0) {
                 continue
             }
-            if(connectionName === this.config.defaultConnectionName) {
+            if (connectionName === this.config.defaultConnectionName) {
                 continue
             }
-    
+
             await this.connectAdapter(connectionName)
         }
     }
@@ -170,7 +170,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
 
         const adapterAlreadyDefined = this.srGetValue(connectionName, Database.REGISTERED_ADAPTERS_BY_CONNECTION)
 
-        if(adapterAlreadyDefined) {
+        if (adapterAlreadyDefined) {
             return;
         }
 
@@ -178,8 +178,8 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
 
         const adapter = new adapterCtor(connectionName, connectionConfig);
         await adapter.connectDefault()
-        
-        if(!this.srListExists(Database.REGISTERED_ADAPTERS_BY_CONNECTION)) {
+
+        if (!this.srListExists(Database.REGISTERED_ADAPTERS_BY_CONNECTION)) {
             this.srCreateList(Database.REGISTERED_ADAPTERS_BY_CONNECTION)
         }
 
@@ -191,8 +191,8 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
      */
     public registerAdapters(): void {
         this.srCreateList(Database.REGISTERED_ADAPTERS_CONFIG)
-        
-        for(const connectionConfig of this.config.connections) {
+
+        for (const connectionConfig of this.config.connections) {
             const adapterName = DatabaseAdapter.getName(connectionConfig.adapter)
 
             this.srSetValue(adapterName, connectionConfig, Database.REGISTERED_ADAPTERS_CONFIG)
@@ -205,7 +205,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
     public registerConnections(): void {
         this.srCreateList(Database.REGISTERED_CONNECTIONS_CONFIG)
 
-        for(const connectionConfig of this.config.connections) {
+        for (const connectionConfig of this.config.connections) {
             this.srSetValue(connectionConfig.connectionName, connectionConfig, Database.REGISTERED_CONNECTIONS_CONFIG)
             this.log(`Registered connection: ${connectionConfig.connectionName}`)
         }
@@ -220,13 +220,13 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
     isConnectionAdapter(adapter: TClassConstructor<IDatabaseAdapter>, connectionName: string = this.getDefaultConnectionName()): boolean {
         const connectionConfig = this.config.connections.find(connectionConfig => connectionConfig.connectionName === connectionName)
 
-        if(!connectionConfig) {
+        if (!connectionConfig) {
             throw new DatabaseConnectionException('Connection not found: ' + connectionName)
         }
 
         return DatabaseAdapter.getName(connectionConfig.adapter) === DatabaseAdapter.getName(adapter)
     }
-    
+
     /**
      * Get the default connection name
      * @returns 
@@ -255,7 +255,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
 
         const connectionConfig = this.srGetValue(connectionName, Database.REGISTERED_CONNECTIONS_CONFIG) as IDatabaseGenericConnectionConfig<T> | undefined;
 
-        if(!connectionConfig) {
+        if (!connectionConfig) {
             throw new Error('Connection not found: ' + connectionName)
         }
 
@@ -272,7 +272,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
     getAdapterConstructor<T extends TClassConstructor<IDatabaseAdapter> = TClassConstructor<IDatabaseAdapter>>(connectionName: string = this.getDefaultConnectionName()): T {
         const connectionConfig = this.config.connections.find(connectionConfig => connectionConfig.connectionName === connectionName)
 
-        if(!connectionConfig) {
+        if (!connectionConfig) {
             throw new Error('Connection not found: ' + connectionName)
         }
 
@@ -289,7 +289,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
     getAdapter<TAdapter extends IDatabaseAdapter = IDatabaseAdapter>(connectionName: string = this.getDefaultConnectionName()): TAdapter {
         const adapter = this.srGetValue(connectionName, Database.REGISTERED_ADAPTERS_BY_CONNECTION as string) as TAdapter | undefined
 
-        if(!adapter) {
+        if (!adapter) {
             throw new Error('Adapter not found: ' + connectionName)
         }
 
@@ -318,7 +318,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
         const adapter = new adapterCtor('', {})
         return adapter.getDefaultCredentials()
     }
-    
+
     /**
      * Get the schema service
      * 
@@ -346,11 +346,11 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
     postgres(connectionName: string = this.getDefaultConnectionName()): PostgresAdapter {
         const adapter = this.getAdapter<PostgresAdapter>(connectionName)
 
-        if(!adapter) {
+        if (!adapter) {
             throw new Error('Adapter not found: ' + connectionName)
         }
 
-        if(!(adapter instanceof PostgresAdapter)) {
+        if (!(adapter instanceof PostgresAdapter)) {
             throw new Error('Adapter is not a PostgresAdapter: ' + connectionName)
         }
 
@@ -364,11 +364,11 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
     mongodb(connectionName: string = this.getDefaultConnectionName()): MongoDbAdapter {
         const adapter = this.getAdapter<MongoDbAdapter>(connectionName)
 
-        if(!adapter) {
+        if (!adapter) {
             throw new Error('Adapter not found: ' + connectionName)
         }
 
-        if(!(adapter instanceof MongoDbAdapter)) {
+        if (!(adapter instanceof MongoDbAdapter)) {
             throw new Error('Adapter is not a MongoDbAdapter: ' + connectionName)
         }
 

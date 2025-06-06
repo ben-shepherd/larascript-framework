@@ -1,6 +1,8 @@
 import BaseProvider from "@src/core/base/Provider";
 import MakeCmdCommand from "@src/core/domains/make/commands/MakeCmdCommand";
 import MakeController from "@src/core/domains/make/commands/MakeControllerCommand";
+import MakeEventCommand from "@src/core/domains/make/commands/MakeEventCommand";
+import MakeFactoryCommand from "@src/core/domains/make/commands/MakeFactoryCommand";
 import MakeListenerCommand from "@src/core/domains/make/commands/MakeListenerCommand";
 import MakeMiddlewareCommand from "@src/core/domains/make/commands/MakeMiddlewareCommand";
 import MakeMigrationCommand from "@src/core/domains/make/commands/MakeMigrationCommand";
@@ -15,8 +17,7 @@ import MakeSingletonCommand from "@src/core/domains/make/commands/MakeSingletonC
 import MakeSubscriberCommand from "@src/core/domains/make/commands/MakeSubscriberCommand";
 import MakeValidatorCommand from "@src/core/domains/make/commands/MakeValidatorCommand";
 import { app } from "@src/core/services/App";
-import MakeEventCommand from "@src/core/domains/make/commands/MakeEventCommand";
-import MakeFactoryCommand from "@src/core/domains/make/commands/MakeFactoryCommand";
+import MakeRouteResourceCommand from "@src/core/domains/make/commands/MakeRouteResourceCommand";
 
 export default class MakeProvider extends BaseProvider {
 
@@ -36,6 +37,7 @@ export default class MakeProvider extends BaseProvider {
             MakeSubscriberCommand,
             MakeProviderCommand,
             MakeRoutesCommand,
+            MakeRouteResourceCommand,
             MakeMiddlewareCommand,
             MakeController,
             MakeValidatorCommand,

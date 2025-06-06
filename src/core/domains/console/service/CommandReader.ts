@@ -2,7 +2,7 @@ import CommandNotFoundException from "@src/core/domains/console/exceptions/Comma
 import CommandSignatureInvalid from "@src/core/domains/console/exceptions/CommandSignatureInvalid";
 import { ICommandReader } from "@src/core/domains/console/interfaces/ICommandReader";
 import CommandArguementParser, { ParsedArgumentsArray } from "@src/core/domains/console/parsers/CommandArgumentParser";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 
 export default class CommandReader implements ICommandReader {
 
@@ -21,7 +21,7 @@ export default class CommandReader implements ICommandReader {
             ["my:command", "--id=123", "--name=\"My Name\""]
      */
     constructor(argv: string[]) {
-        this.argv = argv;   
+        this.argv = argv;
     }
 
     /**
@@ -39,17 +39,17 @@ export default class CommandReader implements ICommandReader {
     async handle() {
         const signature = this.argv.length && this.argv[0];
 
-        if(!signature) {
+        if (!signature) {
             throw new CommandNotFoundException();
         }
 
-        const commandCtor = App.container('console').registerService().getBySignature(signature);
+        const commandCtor = AppSingleton.container('console').registerService().getBySignature(signature);
 
-        if(!commandCtor) {
+        if (!commandCtor) {
             throw new CommandSignatureInvalid()
         }
 
-        const cmdConfig = App.container('console').registerService().getCommandConfig(signature);
+        const cmdConfig = AppSingleton.container('console').registerService().getCommandConfig(signature);
 
         const cmd = new commandCtor()
         cmd.setConfig(cmdConfig);

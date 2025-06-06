@@ -2,7 +2,7 @@
 import { describe } from '@jest/globals';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
 import { events } from '@src/core/domains/events/services/EventService';
-import { App } from '@src/core/services/App';
+import { AppSingleton } from '@src/core/services/App';
 import TestEventQueueCalledFromWorkerEvent from '@src/tests/larascript/events/events/TestEventQueueCalledFromWorkerEvent';
 import TestEventQueueEvent from '@src/tests/larascript/events/events/TestEventQueueEvent';
 import resetWorkerTables from '@src/tests/larascript/events/helpers/createWorketTables';
@@ -30,7 +30,7 @@ describe('mock queable event', () => {
     test('test queued worker ', async () => {
 
         await resetWorkerTables()
-        
+
         events().mockEvent(TestEventQueueEvent)
         events().mockEvent(TestEventQueueCalledFromWorkerEvent);
 
@@ -49,10 +49,10 @@ describe('mock queable event', () => {
 
             return payload.hello === 'world' && payload.createdAt instanceof Date
         }
-        
+
         expect(events().assertDispatched<TPayload>(TestEventQueueEvent, validatePayload)).toBeTruthy()
 
-        await App.container('console').readerService(['worker', '--queue=testQueue']).handle();
+        await AppSingleton.container('console').readerService(['worker', '--queue=testQueue']).handle();
 
         expect(events().assertDispatched<TPayload>(TestEventQueueCalledFromWorkerEvent, validatePayload)).toBeTruthy()
 

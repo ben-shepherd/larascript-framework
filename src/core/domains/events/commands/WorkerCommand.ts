@@ -3,7 +3,7 @@ import BaseCommand from "@src/core/domains/console/base/BaseCommand";
 import { IEventDriversConfigOption } from "@src/core/domains/events/interfaces/config/IEventDriversConfig";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
 import { TEventWorkerOptions } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 import { z } from "zod";
 
 export default class WorkerCommand extends BaseCommand {
@@ -20,7 +20,7 @@ export default class WorkerCommand extends BaseCommand {
      */
     public keepProcessAlive = true;
 
-    protected eventService: IEventService = App.container('events');
+    protected eventService: IEventService = AppSingleton.container('events');
 
     /**
      * Execute the command
@@ -28,17 +28,17 @@ export default class WorkerCommand extends BaseCommand {
 
     async execute() {
         const options = this.getWorkerOptions();
-        
+
         await this.eventService.runWorker(options);
 
         const intervalId = setInterval(async () => {
             await this.eventService.runWorker(options);
-            App.container('logger').console('Running worker again in '+ options.runAfterSeconds +' seconds')
+            AppSingleton.container('logger').console('Running worker again in ' + options.runAfterSeconds + ' seconds')
         }, options.runAfterSeconds * 1000)
 
-        if(options.runOnce) {
+        if (options.runOnce) {
             clearInterval(intervalId);
-            App.container('logger').console('runOnce enabled. Quitting...');
+            AppSingleton.container('logger').console('runOnce enabled. Quitting...');
         }
     }
 
@@ -54,7 +54,7 @@ export default class WorkerCommand extends BaseCommand {
 
         this.validateOptions(driverName, options);
 
-        return {  ...options, queueName } as TEventWorkerOptions;
+        return { ...options, queueName } as TEventWorkerOptions;
     }
 
     /**
@@ -65,8 +65,8 @@ export default class WorkerCommand extends BaseCommand {
      * @private
      */
     private validateOptions(driverName: string, options: IEventDriversConfigOption['options'] | undefined) {
-        if(!options) {
-            throw new Error('Could not find options for driver: '+ driverName);
+        if (!options) {
+            throw new Error('Could not find options for driver: ' + driverName);
         }
 
         const schema = z.object({
@@ -79,8 +79,8 @@ export default class WorkerCommand extends BaseCommand {
 
         const parsedResult = schema.safeParse(options)
 
-        if(!parsedResult.success) {
-            throw new Error('Invalid worker options: '+ parsedResult.error.message);
+        if (!parsedResult.success) {
+            throw new Error('Invalid worker options: ' + parsedResult.error.message);
         }
     }
 

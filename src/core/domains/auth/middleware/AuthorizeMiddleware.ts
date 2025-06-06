@@ -26,13 +26,25 @@ import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
  * Used as middleware on routes requiring authentication. Can be configured with
  * required scopes that are validated against the API token's allowed scopes.
  */
-class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
+class AuthorizeMiddleware extends Middleware<{ allowedScopes: string[] }> {
 
+    /**
+     * Executes the authorization middleware.
+     * 
+     * This method:
+     * - Skips authorization for OPTIONS requests
+     * - Attempts to authorize the request using the Bearer token
+     * - Validates required scopes if specified
+     * - Handles various authentication/authorization errors with appropriate HTTP status codes
+     * 
+     * @param context - The HTTP context containing request and response objects
+     * @throws {UnauthorizedError} When authentication fails
+     * @throws {ForbiddenResourceError} When authorization fails due to insufficient scopes
+     */
     async execute(context: HttpContext): Promise<void> {
         try {
-
             // Skip authorization check for OPTIONS requests
-            if(context.getRequest().method === 'OPTIONS') {
+            if (context.getRequest().method === 'OPTIONS') {
                 this.next();
                 return;
             }
@@ -41,26 +53,21 @@ class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
             await this.attemptAuthorizeRequest(context.getRequest());
 
             // Validate the scopes of the request
-            if(!await this.validateScopes(context)) {
+            if (!await this.validateScopes(context)) {
                 throw new ForbiddenResourceError();
             }
 
-            // Continue to the next middleware
             this.next();
         }
         catch (error) {
-            if(error instanceof UnauthorizedError) {
+            if (error instanceof UnauthorizedError) {
                 responseError(context.getRequest(), context.getResponse(), error, 401)
-                return;
             }
-    
-            if(error instanceof ForbiddenResourceError) {
+            else if (error instanceof ForbiddenResourceError) {
                 responseError(context.getRequest(), context.getResponse(), error, 403)
             }
-    
-            if(error instanceof Error) {
+            else if (error instanceof Error) {
                 responseError(context.getRequest(), context.getResponse(), error)
-                return;
             }
         }
     }
@@ -76,36 +83,37 @@ class AuthorizeMiddleware extends Middleware<{ scopes: string[] }> {
      */
     public async attemptAuthorizeRequest(req: TBaseRequest): Promise<TBaseRequest> {
         const authorization = (req.headers.authorization ?? '').replace('Bearer ', '');
-    
+
         const apiToken = await auth().getJwtAdapter().attemptAuthenticateToken(authorization)
-    
+
         const user = await apiToken?.getUser()
-    
-        if(!user || !apiToken) {
+
+        if (!user || !apiToken) {
             throw new UnauthorizedError();
         }
-    
+
         // Set the user and apiToken in the request
         req.user = user;
         req.apiToken = apiToken
-        
+
         // Set the user id in the request context
         authJwt().authorizeUser(user)
-    
+
         return req;
     }
-    
+
     /**
-     * Validates the scopes of the request
-     * @param context - The HTTP context
-     * @param scopes - The scopes to validate
-     * @returns True if the scopes are valid, false otherwise
+     * Validates that the API token has all the required scopes for the request.
+     * 
+     * @param context - The HTTP context containing the request with the API token
+     * @returns {Promise<boolean>} True if the token has all required scopes, false otherwise
+     * @throws {ForbiddenResourceError} When the token lacks required scopes
      */
     async validateScopes(context: HttpContext): Promise<boolean> {
-        const scopes = this.config?.scopes ?? [];
+        const scopes = this.config?.allowedScopes ?? [];
         const apiToken = context.getRequest().apiToken;
 
-        if(!apiToken) {
+        if (!apiToken) {
             return false;
         }
 

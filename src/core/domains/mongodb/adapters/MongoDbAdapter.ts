@@ -13,10 +13,10 @@ import MongoRelationshipResolver from "@src/core/domains/mongodb/relationship/Mo
 import createMigrationSchemaMongo from "@src/core/domains/mongodb/schema/createMigrationSchemaMongo";
 import { extractDefaultMongoCredentials } from "@src/core/domains/mongodb/utils/extractDefaultMongoCredentials";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
 
-class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
+class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig> {
 
     /**
     * The MongoDB database instance
@@ -64,7 +64,7 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
     }
 
     getClient(): MongoClient {
-        if(!this.client) {
+        if (!this.client) {
             throw new Error('MongoDB client is not connected');
         }
         return this.client
@@ -75,7 +75,7 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
      * @returns {Db} The MongoDB database instance
      */
     getDb(): Db {
-        if(!this.client) {
+        if (!this.client) {
             throw new Error('MongoDB client is not connected');
         }
         return this.client.db();
@@ -89,20 +89,20 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
      *
      * @returns {Promise<void>} A promise that resolves when the connection is established
      */
-    
+
     async connectDefault(): Promise<void> {
         if (await this.isConnected()) {
             return;
         }
 
         await this.createDefaultDatabase()
-        
+
         const { uri, options } = this.config
 
         this.client = new MongoClient(uri, options as MongoClientOptions);
         this.db = this.client.db();
     }
-    
+
 
     /**
      * Connect to a specific PostgreSQL database.
@@ -111,7 +111,7 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
      * @returns {Promise<MongoClient>} A promise that resolves with a new instance of PostgreSQL client.
      */
     async getMongoClientWithDatabase(database: string = 'app', options: object = {}): Promise<MongoClient> {
-        const { host, port, username, password, options: mongoOptions } = ParseMongoDBConnectionString.parse(this.config.uri); 
+        const { host, port, username, password, options: mongoOptions } = ParseMongoDBConnectionString.parse(this.config.uri);
 
         const newCredentials = new ParseMongoDBConnectionString({
             host,
@@ -123,16 +123,16 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
         })
 
         const uri = newCredentials.toString();
-        
+
         const client = new MongoClient(uri, options)
 
         try {
             await client.connect();
         }
         catch (err) {
-            App.container('logger').error('Error connecting to database: ' + (err as Error).message);
+            AppSingleton.container('logger').error('Error connecting to database: ' + (err as Error).message);
 
-            if(err instanceof MongoServerError === false) {
+            if (err instanceof MongoServerError === false) {
                 throw err
             }
         }
@@ -150,17 +150,17 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig>  {
         try {
             const { database } = ParseMongoDBConnectionString.parse(this.config.uri);
 
-            if(!database) {
+            if (!database) {
                 throw new CreateDatabaseException('Database name not found in connection string');
             }
 
             await db().schema().createDatabase(database);
         }
         catch (err) {
-            App.container('logger').error(err);
+            AppSingleton.container('logger').error(err);
         }
     }
-        
+
     /**
      * Check if the database connection is established
      * @returns {boolean} True if connected, false otherwise

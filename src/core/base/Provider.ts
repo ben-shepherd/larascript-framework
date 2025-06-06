@@ -1,5 +1,5 @@
 import { IProvider } from "@src/core/interfaces/IProvider";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 
 /**
  * Base class for providers
@@ -30,7 +30,7 @@ export default abstract class BaseProvider implements IProvider {
      * @param {any} value - The value to bind to the key
      */
     protected bind(key: string, value: any): void {
-        App.setContainer(key, value);
+        AppSingleton.setContainer(key, value);
     }
 
     /**
@@ -62,7 +62,7 @@ export default abstract class BaseProvider implements IProvider {
      * @param {...any[]} args - Additional arguments to log
      */
     protected log(message: string, ...args: any[]): void {
-        App.container('logger').info(message, ...args);
+        AppSingleton.container('logger').info(message, ...args);
     }
 
 }

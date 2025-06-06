@@ -1,3 +1,4 @@
+import { UserAttributes } from "@src/app/models/auth/User";
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
 import { auth } from "@src/core/domains/auth/services/AuthService";
 import { authJwt } from "@src/core/domains/auth/services/JwtAuthService";
@@ -7,6 +8,10 @@ import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 import ValidatorResult from "@src/core/domains/validator/data/ValidatorResult";
 import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
 import { app } from "@src/core/services/App";
+
+import { IModelAttributes } from "@src/core/domains/models/interfaces/IModel";
+
+export type RegisterUseCaseResponse = ApiResponse<UserAttributes | { errors?: string[] | object }>
 
 /**
  * RegisterUseCase handles new user registration
@@ -25,24 +30,25 @@ class RegisterUseCase {
      * @param context The HTTP context
      * @returns The API response
      */
-    async handle(context: HttpContext): Promise<ApiResponse> {
+    async handle(context: HttpContext): Promise<RegisterUseCaseResponse> {
         const apiResponse = new ApiResponse();
         const validationResult = await this.validate(context);
 
         if(validationResult.fails()) {
             return apiResponse.setCode(422).setData({
+                
                 errors: validationResult.errors()
-            });
+            }) as RegisterUseCaseResponse;
         }
 
         if(this.validateUserAndPasswordPresent(context, apiResponse).getCode() !== 200) {
-            return apiResponse;
+            return apiResponse as RegisterUseCaseResponse;
         }
 
         const createdUser = await this.createUser(context);
         const userAttributes = await createdUser.toObject({ excludeGuarded: true });
 
-        return apiResponse.setData(userAttributes).setCode(201);
+        return apiResponse.setData(userAttributes).setCode(201) as RegisterUseCaseResponse;
     }
 
     /**
@@ -55,6 +61,7 @@ class RegisterUseCase {
         const basicAclService = app('acl.basic')
         const groups = [basicAclService.getDefaultGroup().name]
         const roles = basicAclService.getGroupRoles(basicAclService.getDefaultGroup()).map(role => role.name)
+        const allowedFields = auth().getUserRepository().create().getFields()
 
         const userAttributes = {
             email: context.getBody().email,
@@ -64,11 +71,29 @@ class RegisterUseCase {
             ...context.getBody()
         }
 
+        // Reduce attributes to only allowed fields
+        const userAttributesReduced = this.reduceAttributesOnlyAllowed(userAttributes, allowedFields)
+
         // Create and save the user
-        const user = authJwt().getUserRepository().create(userAttributes);
+        const user = authJwt().getUserRepository().create(userAttributesReduced as IUserModel);
         await user.save();
 
         return user;
+    }
+
+    /**
+     * Reduce attributes and keeps only allowed fields
+     */
+    protected reduceAttributesOnlyAllowed(data: IModelAttributes, allowedFields: string[]): IModelAttributes {
+        return Object.keys(data).reduce((acc, curr) => {
+            const attribute = curr as string
+
+            if(allowedFields.includes(attribute)) {
+                acc[attribute] = data[curr]
+            }
+            
+            return acc
+        }, {}) as IModelAttributes
     }
 
 

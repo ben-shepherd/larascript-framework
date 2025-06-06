@@ -1,3 +1,4 @@
+import AccessControlProvider from "@src/core/domains/accessControl/providers/AccessControlProvider";
 import AuthProvider from "@src/core/domains/auth/providers/AuthProvider";
 import ConsoleProvider from "@src/core/domains/console/providers/ConsoleProvider";
 import CryptoProvider from "@src/core/domains/crypto/providers/CryptoProvider";
@@ -8,12 +9,14 @@ import HttpProvider from "@src/core/domains/http/providers/HttpProvider";
 import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
 import MakeProvider from "@src/core/domains/make/providers/MakeProvider";
 import MigrationProvider from "@src/core/domains/migrations/providers/MigrationProvider";
-import SetupProvider from "@src/core/domains/setup/providers/SetupProvider";
-import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 import SessionProvider from "@src/core/domains/session/providers/SessionProvider";
+import SetupProvider from "@src/core/domains/setup/providers/SetupProvider";
+import StorageProvider from "@src/core/domains/storage/providers/StorageProvider";
+import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 import { ILarascriptProviders } from "@src/core/interfaces/ILarascriptProviders";
 import { IProvider } from "@src/core/interfaces/IProvider";
-import AccessControlProvider from "@src/core/domains/accessControl/providers/AccessControlProvider";
+
+import MailProvider from "@src/core/domains/mail/providers/MailProvider";
 
 
 /**
@@ -123,6 +126,20 @@ const LarascriptProviders: IProvider[] = [
      * Provides session services
      */
     new SessionProvider(),
+
+    /*
+     * Storage provider
+     *
+     * Provides storage services
+     */
+    new StorageProvider(),
+
+    /**
+     * Email provider
+     * 
+     * Provides email services
+     */
+    new MailProvider(),
 
 ];
 

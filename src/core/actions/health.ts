@@ -1,7 +1,7 @@
 import responseError from "@src/core/domains/http/handlers/responseError";
 import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 import { Request, Response } from "express";
 import { MongoClient } from "mongodb";
 import { Sequelize } from "sequelize";
@@ -17,7 +17,7 @@ import { Sequelize } from "sequelize";
 export default async (req: Request, res: Response) => {
 
     try {
-        const db = App.container('db');
+        const db = AppSingleton.container('db');
         const adapter = db.getAdapter();
 
         // Check if the provider is MongoDB
@@ -25,7 +25,7 @@ export default async (req: Request, res: Response) => {
             const mongoClient = (adapter as unknown as MongoDbAdapter).getClient();
             await (mongoClient as MongoClient).db().stats();
         }
-        
+
         // Check if the provider is Postgres
         else if (adapter as unknown instanceof PostgresAdapter) {
             const pool = (adapter as PostgresAdapter).getSequelize();

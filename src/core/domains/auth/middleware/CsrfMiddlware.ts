@@ -3,12 +3,11 @@ import HttpContext from '@src/core/domains/http/context/HttpContext';
 import { requestContext } from '@src/core/domains/http/context/RequestContext';
 import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
 import { IRouter } from '@src/core/domains/http/interfaces/IRouter';
+import ApiResponse from '@src/core/domains/http/response/ApiResponse';
 import Route from '@src/core/domains/http/router/Route';
 import { app } from '@src/core/services/App';
 import crypto from 'crypto';
 import { Request } from 'express';
-
-import ApiResponse from '../../http/response/ApiResponse';
 
 /**
  * Configuration options for CSRF protection
@@ -94,7 +93,7 @@ class CsrfMiddleware extends Middleware<CsrfConfig> {
                         .setData({
                             token: CsrfMiddleware.getCsrfToken(req)
                         })
-                        .toObject()
+                        .toResponseObject()
                 )
             })
         })

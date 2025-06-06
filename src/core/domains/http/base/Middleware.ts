@@ -6,6 +6,8 @@ import { IMiddleware, MiddlewareConstructor, TExpressMiddlewareFn } from "@src/c
 import { TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
 import { NextFunction, Request, Response } from "express";
 
+import { IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
+
 /**
  * Abstract base class that transforms Express middleware into a class-based format.
  * 
@@ -138,7 +140,7 @@ abstract class Middleware<Config extends unknown = unknown> implements IMiddlewa
      * @returns {Promise<void>}
      */
     // eslint-disable-next-line no-unused-vars
-    public abstract execute(context: HttpContext): Promise<void>;
+    public abstract execute(context: IHttpContext): Promise<void>;
 
 }
 

@@ -2,7 +2,11 @@
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
 import { IModel, ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 
-export interface ApiTokenConstructor<TApiToken extends IApiTokenModel = IApiTokenModel> extends ModelConstructor<TApiToken> {}
+export interface ApiTokenConstructor<TApiToken extends IApiTokenModel = IApiTokenModel> extends ModelConstructor<TApiToken> { }
+
+export type ApiTokenModelOptions = Record<string, unknown> & {
+    expiresAfterMinutes?: number
+}
 
 export interface IApiTokenModel extends IModel {
     getUserId(): string
@@ -15,6 +19,8 @@ export interface IApiTokenModel extends IModel {
     hasScope(scopes: string | string[], exactMatch?: boolean): boolean
     getRevokedAt(): Date | null
     setRevokedAt(revokedAt: Date | null): Promise<void>
-
+    setOptions(options: Record<string, unknown>): Promise<void>;
+    getOptions<T extends ApiTokenModelOptions>(): T | null
+    hasExpired(): boolean;
 
 }

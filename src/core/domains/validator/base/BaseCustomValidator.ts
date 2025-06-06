@@ -1,9 +1,11 @@
+import ValidatorResult from "@src/core/domains/validator/data/ValidatorResult";
 import ValidatorException from "@src/core/domains/validator/exceptions/ValidatorException";
 import { IRulesObject } from "@src/core/domains/validator/interfaces/IRule";
 import { IValidator, IValidatorAttributes, IValidatorMessages } from "@src/core/domains/validator/interfaces/IValidator";
 import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
 import Validator from "@src/core/domains/validator/service/Validator";
-import ValidatorResult from "@src/core/domains/validator/data/ValidatorResult";
+
+import { IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
 
 /**
  * Abstract base class for creating custom validators with type-safe validation rules and error messages.
@@ -12,12 +14,14 @@ import ValidatorResult from "@src/core/domains/validator/data/ValidatorResult";
  * @template Attributes - Interface describing the shape of validated data
  */
 abstract class BaseCustomValidator<Attributes extends IValidatorAttributes = IValidatorAttributes> implements IValidator {
-
+    
     protected abstract rules: IRulesObject
 
     protected messages: IValidatorMessages = {}
     
     protected result!: IValidatorResult<Attributes>
+
+    protected httpContext!: IHttpContext;
 
     /**
      * Validates the provided data against the defined rules.
@@ -32,6 +36,7 @@ abstract class BaseCustomValidator<Attributes extends IValidatorAttributes = IVa
 
         // Validate the data
         const validator = Validator.make(this.rules, this.messages) as Validator
+        validator.setHttpContext(this.httpContext)
         const validatorResult = await validator.validate(data) as IValidatorResult<Attributes>
 
         // Run the custom validation
@@ -128,6 +133,15 @@ abstract class BaseCustomValidator<Attributes extends IValidatorAttributes = IVa
      */
     public getMessages(): IValidatorMessages {
         return this.messages
+    }
+
+    public setHttpContext(context: IHttpContext) {
+        this.httpContext = context;
+        return this
+    }
+
+    public getHttpContext(): IHttpContext {
+        return this.httpContext
     }
 
 }

@@ -1,9 +1,10 @@
 import { EnvironmentTesting } from "@src/core/consts/Environment";
+import AccessControlProvider from "@src/core/domains/accessControl/providers/AccessControlProvider";
 import EloquentQueryProvider from "@src/core/domains/eloquent/providers/EloquentQueryProvider";
 import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 import Kernel, { KernelConfig } from "@src/core/Kernel";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 import TestApiTokenModel from "@src/tests/larascript/models/models/TestApiTokenModel";
 import TestUser from "@src/tests/larascript/models/models/TestUser";
 import TestAuthProvider from "@src/tests/larascript/providers/TestAuthProvider";
@@ -37,7 +38,8 @@ const testBootApp = async () => {
             new TestAuthProvider(),
             new TestMigrationProvider(),
             new ValidatorProvider(),
-            new TestCryptoProvider()
+            new TestCryptoProvider(),
+            new AccessControlProvider()
         ]
     }
 
@@ -51,8 +53,8 @@ const testBootApp = async () => {
  * This function creates the `users` and `api_tokens` tables in the database
  * @param connectionName The name of the database connection to use
  */
-export const createAuthTables = async(connectionName?: string) => {
-    const schema = App.container('db').schema(connectionName)
+export const createAuthTables = async (connectionName?: string) => {
+    const schema = AppSingleton.container('db').schema(connectionName)
 
     const userTable = (new TestUser).table;
     const apiTokenTable = (new TestApiTokenModel).table;
@@ -78,7 +80,11 @@ export const createAuthTables = async(connectionName?: string) => {
         userId: DataTypes.STRING,
         token: DataTypes.STRING,
         scopes: DataTypes.JSON,
-        revokedAt: DataTypes.DATE
+        options: DataTypes.JSON,
+        revokedAt: DataTypes.DATE,
+        expiresAt: DataTypes.DATE,
+        createdAt: DataTypes.DATE,
+        updatedAt: DataTypes.DATE,
     })
 }
 
@@ -88,8 +94,8 @@ export const createAuthTables = async(connectionName?: string) => {
  * This function removes the `users` and `api_tokens` tables from the database
  * @param connectionName The name of the database connection to use
  */
-export const dropAuthTables = async(connectionName?: string) => {
-    const schema = App.container('db').schema(connectionName)
+export const dropAuthTables = async (connectionName?: string) => {
+    const schema = AppSingleton.container('db').schema(connectionName)
 
     const userTable = (new TestUser).table;
     const apiTokenTable = (new TestApiTokenModel).table;
@@ -106,7 +112,7 @@ export const dropAuthTables = async(connectionName?: string) => {
      * await runFreshMigrations()
      */
 const runFreshMigrations = async () => {
-    await App.container('console').readerService(['migrate:fresh', '--group=testing', '--seed']).handle();
+    await AppSingleton.container('console').readerService(['migrate:fresh', '--group=testing', '--seed']).handle();
 }
 
 /**
@@ -118,7 +124,7 @@ const runFreshMigrations = async () => {
  * await clearMigrations()
  */
 const clearMigrations = async () => {
-    await App.container('console').readerService(['migrate:down', '--group=testing']).handle();
+    await AppSingleton.container('console').readerService(['migrate:down', '--group=testing']).handle();
 }
 
 /**
@@ -146,9 +152,9 @@ export type ForEveryConnectionOptions = {
 }
 export const forEveryConnection = async (fn: ForEveryConnectionFn, options: ForEveryConnectionOptions = {}) => {
     const connectionNames = getTestConnectionNames(options)
-    for(const connectionName of connectionNames) {
-        if(options.only && !options.only.includes(connectionName)) continue;
-        if(options.exclude && options.exclude.includes(connectionName)) continue;
+    for (const connectionName of connectionNames) {
+        if (options.only && !options.only.includes(connectionName)) continue;
+        if (options.exclude && options.exclude.includes(connectionName)) continue;
 
         console.log('[forEveryConnection]: ' + connectionName)
         await fn(connectionName)

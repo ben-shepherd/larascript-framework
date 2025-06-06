@@ -1,11 +1,11 @@
- 
+
 import { beforeAll, describe, expect, test } from '@jest/globals';
 import { db } from '@src/core/domains/database/services/Database';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
 import Model from '@src/core/domains/models/base/Model';
 import { IModelAttributes } from "@src/core/domains/models/interfaces/IModel";
 import PostgresSchema from '@src/core/domains/postgres/PostgresSchema';
-import { App } from '@src/core/services/App';
+import { AppSingleton } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
 import { DataTypes } from 'sequelize';
 
@@ -23,13 +23,13 @@ class TestSchemaModel extends Model<TestSchemaModelAttributes> {
 }
 
 const resetTable = async () => {
-    for(const connectionName of testHelper.getTestConnectionNames()) {
+    for (const connectionName of testHelper.getTestConnectionNames()) {
         try {
             const schema = db().schema(connectionName);
             await schema.dropTable(tableName);
         }
         // eslint-disable-next-line no-unused-vars
-        catch (err) {}
+        catch (err) { }
 
         const schema = db().schema(connectionName);
         await schema.createTable(tableName, {
@@ -51,8 +51,8 @@ describe('db schema', () => {
     test('insert test data', async () => {
 
         await resetTable()
-        
-        for(const connectionName of connections) {
+
+        for (const connectionName of connections) {
 
             const insertedDocument = (
                 await queryBuilder(TestSchemaModel, connectionName).insert({
@@ -69,14 +69,14 @@ describe('db schema', () => {
     test('insert test data with altered column', async () => {
 
         await resetTable()
-        
-        for(const connectionName of connections) {
+
+        for (const connectionName of connections) {
             const schema = db().schema(connectionName);
 
-            if(connectionName === 'mongodb') {
+            if (connectionName === 'mongodb') {
                 continue;
             }
-            
+
             await schema.alterTable(tableName, {
                 addColumn: {
                     key: 'age',
@@ -100,13 +100,13 @@ describe('db schema', () => {
     test('remove column', async () => {
         await resetTable()
 
-        for(const connectionName of connections) {
-            const schema = App.container('db').schema<PostgresSchema>(connectionName);
+        for (const connectionName of connections) {
+            const schema = AppSingleton.container('db').schema<PostgresSchema>(connectionName);
 
-            if(connectionName === 'mongodb') {
+            if (connectionName === 'mongodb') {
                 continue;
             }
-            
+
             await schema.alterTable(tableName, {
                 addColumn: {
                     key: 'age',
@@ -118,7 +118,7 @@ describe('db schema', () => {
                 name: 'test',
                 age: 20
             })
-            
+
             await schema.alterTable(tableName, {
                 removeColumn: {
                     attribute: 'age'

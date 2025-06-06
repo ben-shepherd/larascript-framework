@@ -1,4 +1,4 @@
-import { App } from '@src/core/services/App';
+import { AppSingleton } from '@src/core/services/App';
 import { Request, Response } from 'express';
 
 /**
@@ -11,18 +11,18 @@ import { Request, Response } from 'express';
  * @param err The error to log and send
  * @param code The HTTP status code to send (default: 500)
  */
-export default (req: Request , res: Response, err: Error, code: number = 500) => {
-    if(App.env() === 'production') {
+export default (req: Request, res: Response, err: Error, code: number = 500) => {
+    if (AppSingleton.env() === 'production') {
         res.status(code).send({ error: 'Something went wrong' })
         return;
     }
 
-    App.container('logger').error(err, err.stack)
-    
+    AppSingleton.container('logger').error(err, err.stack)
+
     // Format the stack trace by splitting it into an array of lines
     const stackLines = err.stack ? err.stack.split('\n').map(line => line.trim()) : [];
-    
-    res.status(code).send({ 
+
+    res.status(code).send({
         error: err.message,
         stack: stackLines
     })

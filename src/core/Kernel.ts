@@ -1,7 +1,7 @@
 import Singleton from "@src/core/base/Singleton";
 import { EnvironmentType } from "@src/core/consts/Environment";
 import { IProvider } from "@src/core/interfaces/IProvider";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 import 'dotenv/config';
 
 export type Containers = {
@@ -52,14 +52,14 @@ export default class Kernel extends Singleton<KernelConfig> {
             throw new Error('Kernel is already booted');
         }
 
-        if(!environment) {
+        if (!environment) {
             throw new Error('App environment is not set');
         }
 
-        App.getInstance().env = environment
+        AppSingleton.getInstance().env = environment
 
         for (const provider of providers) {
-            if(withoutProviders.includes(provider.constructor.name)) {
+            if (withoutProviders.includes(provider.constructor.name)) {
                 continue;
             }
 
@@ -67,7 +67,7 @@ export default class Kernel extends Singleton<KernelConfig> {
         }
 
         for (const provider of providers) {
-            if(withoutProviders.includes(provider.constructor.name)) {
+            if (withoutProviders.includes(provider.constructor.name)) {
                 continue;
             }
 
@@ -75,7 +75,7 @@ export default class Kernel extends Singleton<KernelConfig> {
             kernel.preparedProviders.push(provider.constructor.name);
         }
 
-        
+
         Kernel.getInstance().readyProviders = [...kernel.preparedProviders];
     }
 
@@ -86,7 +86,7 @@ export default class Kernel extends Singleton<KernelConfig> {
      * @returns Whether the provider is ready or not.
      */
     public static isProviderReady(providerName: string): boolean {
-        return this.getInstance().preparedProviders.includes(providerName) 
+        return this.getInstance().preparedProviders.includes(providerName)
             || this.getInstance().readyProviders.includes(providerName);
     }
 

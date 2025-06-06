@@ -3,7 +3,16 @@ import UnauthorizedError from "@src/core/domains/auth/exceptions/UnauthorizedErr
 import { authJwt } from "@src/core/domains/auth/services/JwtAuthService";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import ApiResponse from "@src/core/domains/http/response/ApiResponse";
+import minExecTime from "@src/core/util/minExecTime";
 
+import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
+
+export type LoginUseCaseResponse = ApiResponse<{
+    token: string;
+    user: IUserModel['attributes']
+} | {
+    message: string
+}>
 
 /**
  * LoginUseCase handles user authentication by validating credentials and generating JWT tokens
@@ -29,37 +38,38 @@ class LoginUseCase {
      * @param context The HTTP context
      * @returns The API response
      */
-    async handle(context: HttpContext): Promise<ApiResponse> {
-        const apiResponse = new ApiResponse();
+    async handle(context: HttpContext): Promise<LoginUseCaseResponse> {
+        return minExecTime<LoginUseCaseResponse>(500, async () => {
+            const apiResponse = new ApiResponse();
 
-        const { email = '', password = '' } = context.getBody();
+            const { email = '', password = '' } = context.getBody();
 
-        const user = await authJwt().getUserRepository().findByEmail(email);
+            const user = await authJwt().getUserRepository().findByEmail(email);
 
-        if(!user) {
-            return this.unauthorized('Email or password is incorrect');
-        }
-
-        let jwtToken!: string;
-
-        try {
-            jwtToken = await authJwt().attemptCredentials(email, password);
-        }
-
-        catch (error) {
-            if(error instanceof UnauthorizedError) {
-                return this.unauthorized('Email or password is incorrect');
+            if (!user) {
+                return this.unauthorized('Email or password is incorrect') as LoginUseCaseResponse;
             }
-            throw error;
-        }
 
-        const userAttributes = await user.toObject({ excludeGuarded: true });
+            let jwtToken!: string;
 
-        return apiResponse.setData({
-            token: jwtToken,
-            user: userAttributes
-        }).setCode(200);
+            try {
+                jwtToken = await authJwt().attemptCredentials(email, password);
+            }
 
+            catch (error) {
+                if (error instanceof UnauthorizedError) {
+                    return this.unauthorized('Email or password is incorrect') as LoginUseCaseResponse;
+                }
+                throw error;
+            }
+
+            const userAttributes = await user.toObject({ excludeGuarded: true });
+
+            return apiResponse.setData({
+                token: jwtToken,
+                user: userAttributes
+            }).setCode(200) as LoginUseCaseResponse; 
+        })
     }
 
     /**
@@ -78,5 +88,3 @@ class LoginUseCase {
 
 
 export default LoginUseCase;
-
-

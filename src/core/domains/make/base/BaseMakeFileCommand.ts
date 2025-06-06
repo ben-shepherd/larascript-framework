@@ -4,7 +4,7 @@ import { IMakeFileArguments } from "@src/core/domains/make/interfaces/IMakeFileA
 import { IMakeOptions } from "@src/core/domains/make/interfaces/IMakeOptions";
 import ArgumentObserver from "@src/core/domains/make/observers/ArgumentObserver";
 import MakeFileService from "@src/core/domains/make/services/MakeFileService";
-import { App } from "@src/core/services/App";
+import { AppSingleton } from "@src/core/services/App";
 import Str from "@src/core/util/str/Str";
 
 const DefaultOptions: Partial<IMakeOptions> = {
@@ -44,7 +44,7 @@ export default class BaseMakeFileCommand extends BaseCommand {
      */
     constructor(options: IMakeOptions) {
         super();
-        options = {...DefaultOptions, ...options};
+        options = { ...DefaultOptions, ...options };
         this.signature = options.signature;
         this.description = options.description;
         this.options = options;
@@ -57,7 +57,7 @@ export default class BaseMakeFileCommand extends BaseCommand {
      * 'collection' is optional and automatically set based on the 'name' arguement
      */
     protected prepareArguments(): void {
-        if(!this.getArguementByKey('name')?.value) {
+        if (!this.getArguementByKey('name')?.value) {
             throw new CommandExecutionException('--name argument not specified');
         }
 
@@ -71,13 +71,13 @@ export default class BaseMakeFileCommand extends BaseCommand {
 
         // Set name the name (lower or upper depending on options)
         this.argumentObserver.onCustom('setName', this.makeFileArguments, this.options).then(data => this.makeFileArguments = data);
-        
+
         // Ensure the file ends with the specified value
         this.argumentObserver.onCustom('setEndsWith', this.makeFileArguments, this.options).then(data => this.makeFileArguments = data);
 
         this.setOverwriteArg('name', this.makeFileArguments.name);
 
-        if(this.makeFileArguments.collection) {
+        if (this.makeFileArguments.collection) {
             this.setOverwriteArg('collection', this.makeFileArguments.collection);
         }
     }
@@ -100,18 +100,18 @@ export default class BaseMakeFileCommand extends BaseCommand {
         const template = await this.getTemplateWithInjectedArguments();
 
         // Assuming every make command has a name argument
-        const name = this.getArguementByKey('name')?.value as string;   
+        const name = this.getArguementByKey('name')?.value as string;
 
-        if(this.makeFileService.existsInTargetDirectory()) {
+        if (this.makeFileService.existsInTargetDirectory()) {
             throw new CommandExecutionException(`File already exists with name '${name}', full path: ${this.makeFileService.getTargetDirFullPath()}`);
         }
 
         // Write the new file
         this.makeFileService.writeContent(template);
 
-        App.container('logger').info(`Created ${this.options.makeType}: ` + this.makeFileService.getTargetDirFullPath());
+        AppSingleton.container('logger').info(`Created ${this.options.makeType}: ` + this.makeFileService.getTargetDirFullPath());
     }
-    
+
     /**
      * Get template contents with injected argument values
      */
@@ -125,12 +125,12 @@ export default class BaseMakeFileCommand extends BaseCommand {
         Object.keys(this.makeFileArguments).forEach(argumentKey => {
             let value = this.makeFileArguments[argumentKey];
 
-            if(!value && !argsOptional.includes(argumentKey)) {
+            if (!value && !argsOptional.includes(argumentKey)) {
                 throw new CommandExecutionException(`--${argumentKey} argument not specified`);
             }
 
             // Convert to safe method for class names and other places as code the name is used
-            if(argumentKey === 'name') {
+            if (argumentKey === 'name') {
                 value = Str.convertToSafeMethod(value)
             }
 
@@ -149,7 +149,7 @@ export default class BaseMakeFileCommand extends BaseCommand {
     ensureFileEndsWith(endsWith: string) {
         let name = this.getArguementByKey('name')?.value;
 
-        if(name && !name?.endsWith(endsWith)) {
+        if (name && !name?.endsWith(endsWith)) {
             name = `${name}${endsWith}`;
 
             this.setOverwriteArg('name', name)

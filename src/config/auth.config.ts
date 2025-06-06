@@ -48,8 +48,14 @@ export const authConfig = AuthConfig.define([
             updateUser: UpdateUserValidator
         },
         routes: {
-            enableAuthRoutes: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES, 'true'),
-            enableAuthRoutesAllowCreate: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES_ALLOW_CREATE, 'true'),
+            enabled: parseBooleanFromString(process.env.ENABLE_AUTH_ROUTES, 'true'),
+            endpoints: {
+                register: true,
+                login: true,
+                refresh: true,
+                update: true,
+                logout: true
+            }
         },
         settings: {
             secret: process.env.JWT_SECRET as string ?? '',

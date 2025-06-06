@@ -2,16 +2,16 @@ import Service from '@src/core/base/Service';
 import Middleware from '@src/core/domains/http/base/Middleware';
 import { default as IExpressConfig, default as IHttpConfig } from '@src/core/domains/http/interfaces/IHttpConfig';
 import IHttpService from '@src/core/domains/http/interfaces/IHttpService';
-import { MiddlewareConstructor, TExpressMiddlewareFn } from '@src/core/domains/http/interfaces/IMiddleware';
+import { MiddlewareConstructor, TExpressMiddlewareFn, TExpressMiddlewareFnOrClass } from '@src/core/domains/http/interfaces/IMiddleware';
 import { IRoute, IRouter, TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
+import EndRequestContextMiddleware from '@src/core/domains/http/middleware/EndRequestContextMiddleware';
+import RequestIdMiddleware from '@src/core/domains/http/middleware/RequestIdMiddleware';
+import StartSessionMiddleware from '@src/core/domains/http/middleware/StartSessionMiddleware';
 import Route from '@src/core/domains/http/router/Route';
 import RouterBindService from '@src/core/domains/http/router/RouterBindService';
 import { logger } from '@src/core/domains/logger/services/LoggerService';
 import { app } from '@src/core/services/App';
 import expressClient from 'express';
-import EndRequestContextMiddleware from '@src/core/domains/http/middleware/EndRequestContextMiddleware';
-import RequestIdMiddleware from '@src/core/domains/http/middleware/RequestIdMiddleware';
-import StartSessionMiddleware from '@src/core/domains/http/middleware/StartSessionMiddleware';
 
 
 
@@ -53,14 +53,16 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
             throw new Error('Config not provided');
         }
 
-        // 1. First add request ID middleware
-        this.app.use(RequestIdMiddleware.create())
+        this.extendExpress()        
+    }
 
-        // 2. Then start session using that request ID
-        this.app.use(StartSessionMiddleware.create())
-
-        // 3. Then end request context
-        this.app.use(EndRequestContextMiddleware.create())
+    /**
+     * Execute the extendExpress config option
+     */
+    protected extendExpress() {
+        if(typeof this.config?.extendExpress === 'function') {
+            this.config.extendExpress(this.app)
+        }
     }
 
     /**
@@ -111,12 +113,19 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
      * @param router - The router to bind
      */
     public bindRoutes(router: IRouter): void {
-        if (router.getRegisteredRoutes().length === 0) {
+        if (router.empty()) {
             return
         }
 
+        const additionalMiddlewares = [
+            RequestIdMiddleware.create(),
+            StartSessionMiddleware.create(),
+            EndRequestContextMiddleware.create(),
+            ...(this.config?.globalMiddlewares ?? []),
+        ] as (expressClient.RequestHandler | TExpressMiddlewareFnOrClass)[]
+
         this.routerBindService.setExpress(this.app, this.config)
-        this.routerBindService.setOptions({ additionalMiddlewares: this.config?.globalMiddlewares ?? [] })
+        this.routerBindService.setOptions({ additionalMiddlewares })
         this.routerBindService.bindRoutes(router)
         this.registeredRoutes.push(...router.getRegisteredRoutes())
     }

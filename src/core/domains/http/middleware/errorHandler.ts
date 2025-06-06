@@ -1,5 +1,5 @@
 import { EnvironmentProduction } from '@src/core/consts/Environment';
-import { App } from '@src/core/services/App';
+import { AppSingleton } from '@src/core/services/App';
 import { NextFunction, Request, Response } from 'express';
 
 /**
@@ -7,7 +7,7 @@ import { NextFunction, Request, Response } from 'express';
  */
 export const notFoundHandler = (req: Request, res: Response, next: NextFunction) => {
 
-    if(res.headersSent) {
+    if (res.headersSent) {
         return next();
     }
 
@@ -23,17 +23,17 @@ export const notFoundHandler = (req: Request, res: Response, next: NextFunction)
  * - Handles all errors passed to next()
  * - Returns appropriate error responses
  */
- 
+
 export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
 
-    if(res.headersSent) {
+    if (res.headersSent) {
         return next();
     }
 
     const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
     res.status(statusCode)
 
-    if(App.env() === EnvironmentProduction) {
+    if (AppSingleton.env() === EnvironmentProduction) {
         res.json({
             message: 'Whoops... something went wrong.',
         });

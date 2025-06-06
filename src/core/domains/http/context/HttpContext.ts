@@ -6,9 +6,15 @@ import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
 import { TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
 import { NextFunction, Response } from 'express';
 
+import { IStorageFile } from '@src/core/domains/storage/interfaces/IStorageFile';
+import { storage } from '@src/core/domains/storage/services/StorageService';
+import UploadedFile from '@src/core/domains/http/data/UploadedFile';
+import { IHttpContext } from '@src/core/domains/http/interfaces/IHttpContext';
+import { TUploadedFile, TUploadedFileData } from '@src/core/domains/http/interfaces/UploadedFile';
 
 
-class HttpContext {
+
+class HttpContext implements IHttpContext {
 
     constructor(
         // eslint-disable-next-line no-unused-vars
@@ -22,7 +28,7 @@ class HttpContext {
 
     ) {
     }
-    
+
     /**
      * Gets the route item of the request.
      * @returns {TRouteItem} The route item of the request.
@@ -81,7 +87,7 @@ class HttpContext {
 
 
     public getQueryParam(key: string) {
-        return this.req.query[key]
+        return this.req.query[key] as string | undefined
     }
 
     /**
@@ -89,7 +95,7 @@ class HttpContext {
      * @returns {Record<string, string>} The query parameters.
      */
     public getQueryParams() {
-        return this.req.query
+        return this.req.query as Record<string, string>
     }
 
     /**
@@ -141,7 +147,7 @@ class HttpContext {
      * @returns {string} The ID of the current request.
      */
     public getId(): string {
-        if(!this.req.id) {
+        if (!this.req.id) {
             throw new HttpContextException('Request ID not found');
         }
         return this.req.id;
@@ -169,6 +175,60 @@ class HttpContext {
      */
     public getNext(): NextFunction | undefined {
         return this.nextFn;
+    }
+
+    /**
+     * Gets the file from the request.
+     */
+    public getFile(key: string): TUploadedFile | undefined {
+        const files = this.req?.files?.[key];
+        let data: TUploadedFileData | undefined = undefined
+
+        if (!Array.isArray(files)) {
+            data = files as unknown as TUploadedFileData
+        }
+        if (Array.isArray(files) && typeof files?.[0] !== 'undefined') {
+            data = files?.[0] as unknown as TUploadedFileData
+        }
+
+        return data
+            ? this.createUploadedFile(data)
+            : undefined
+    }
+
+    /**
+     * Gets the files from the request.
+     */
+    public getFiles(key: string): TUploadedFile[] | undefined {
+        const files = this.req?.files?.[key];
+        const filesArray = Array.isArray(files) ? files : [files]
+
+        if (filesArray.length === 1 && typeof filesArray?.[0] === 'undefined') {
+            return undefined
+        }
+
+        return (filesArray as unknown as TUploadedFileData[]).map((file) => {
+            return this.createUploadedFile(file)
+        })
+    }
+
+    /**
+     * Create an UploadedFile data instance
+     * @param file
+     * @returns 
+     */
+    protected createUploadedFile(file: TUploadedFileData): TUploadedFile {
+        return new UploadedFile(file)
+    }
+
+    /**
+     * Moves an uploaded file from the request to the storage.
+     * @param {string} key - The key of the file to upload.
+     * @param {string} [destination] - Optional destination path in storage.
+     * @returns {Promise<import('../../storage/interfaces/IStorageFile').IStorageFile | undefined>} The stored file object or undefined if no file was found.
+     */
+    public async uploadFile(file: TUploadedFile): Promise<IStorageFile> {
+        return await storage().moveUploadedFile(file)
     }
 
 }

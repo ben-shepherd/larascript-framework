@@ -5,6 +5,8 @@ import { IValidator, IValidatorAttributes, IValidatorFn, IValidatorMessages } fr
 import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
 import DotNotationDataExtrator from "@src/core/util/data/DotNotation/DataExtractor/DotNotationDataExtrator";
 
+import { IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
+
 /**
  * Short hand for creating a new validator on the fly
  */
@@ -38,6 +40,11 @@ class Validator implements IValidator {
      * Data that has passed validation
      */
     protected validatedData: Record<string, unknown> = {};
+
+    /**
+     * Web http context
+     */
+    protected httpContext!: IHttpContext;
 
     constructor(
         rules: IRulesObject,
@@ -141,7 +148,10 @@ class Validator implements IValidator {
      */
     protected async validateRulesArray(path: string, rules: IRule[], data: unknown, attributes: unknown): Promise<IValidatorResult> {
         for(const key of Object.keys(rules)) {
-            const rule = rules[key] as IRule
+
+            let rule = rules[key] as IRule
+            rule = this.applyRuleContext(rule, path)
+            
             const otherRules = rules.filter(r => r.getName() !== rule.getName())
             const result = await this.validateRule(path, rule, data, attributes, otherRules);
 
@@ -156,6 +166,23 @@ class Validator implements IValidator {
         }
 
         return ValidatorResult.passes();
+    }
+
+    protected applyRuleContext(rule: IRule, path: string): IRule {
+        rule.setHttpContext(this.getHttpContext())
+        rule.setAttribute(this.extractAttributeFromPath(path))
+
+        return rule
+    }
+
+    protected extractAttributeFromPath(path: string): string {
+        const parts = path.split('.')
+
+        if(parts.length > 1) {
+            return parts[parts.length - 1]
+        }
+
+        return path
     }
 
     /**
@@ -301,6 +328,14 @@ class Validator implements IValidator {
      */
     getMessages(): IValidatorMessages {
         return this.messages;
+    }
+
+    setHttpContext(context: IHttpContext): void {
+        this.httpContext = context
+    }
+
+    getHttpContext(): IHttpContext {
+        return this.httpContext
     }
 
 }

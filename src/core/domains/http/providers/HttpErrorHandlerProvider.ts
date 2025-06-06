@@ -2,7 +2,7 @@ import httpConfig from '@src/config/http.config';
 import BaseProvider from "@src/core/base/Provider";
 import IHttpConfig from '@src/core/domains/http/interfaces/IHttpConfig';
 import errorHandler from '@src/core/domains/http/middleware/errorHandler';
-import { App, app } from "@src/core/services/App";
+import { AppSingleton, app } from "@src/core/services/App";
 
 
 export default class HttpErrorHandlerProvider extends BaseProvider {
@@ -25,7 +25,7 @@ export default class HttpErrorHandlerProvider extends BaseProvider {
         this.log('Registering HttpErrorHandlerProvider');
 
         // Check if the routes provider has been registered
-        if(!App.safeContainer('routes.provided')) {
+        if (!AppSingleton.safeContainer('routes.provided')) {
             throw new Error('HttpErrorHandlerProvider must be registered after RoutesProvider');
         }
     }

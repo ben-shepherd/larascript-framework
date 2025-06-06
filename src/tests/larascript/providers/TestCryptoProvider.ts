@@ -6,9 +6,10 @@ class TestCryptoProvider extends CryptoProvider {
 
     config: IAppConfig = {
         env: EnvironmentTesting,
-        appKey: 'test-app-key'
+        appKey: 'test-app-key',
+        appName: 'Larascript Framework'
     }
-    
+
 }
 
 export default TestCryptoProvider
