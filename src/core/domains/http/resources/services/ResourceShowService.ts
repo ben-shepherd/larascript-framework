@@ -1,5 +1,4 @@
 import ForbiddenResourceError from "@src/core/domains/auth/exceptions/ForbiddenResourceError";
-import { db } from "@src/core/domains/database/services/Database";
 import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryBuilderService";
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
@@ -62,7 +61,7 @@ class ResourceShowService extends AbastractBaseResourceService {
             .limit(1)
 
         // Normalize the primary key if required
-        const primaryKey = db().getAdapter().normalizePrimaryKey(modelConstructor.getPrimaryKey())
+        const primaryKey = this.getPrimaryKey(modelConstructor)
 
         // Attach the id to the query
         builder.where(primaryKey, context.getRequest().params?.id)
