@@ -62,4 +62,17 @@ describe('test after date validation rule', () => {
         });
         expect((await result).passes()).toBe(false);
     });
+
+    it('should pass when attribute is provided to check another date field', async () => {
+        const referenceDate = new Date('2024-01-01');
+        const validator = Validator.make({
+            field: [new AfterDateRule({ date: referenceDate, attribute: 'otherDate' })]
+        });
+
+        const result = validator.validate({
+            field: referenceDate,
+            otherDate: new Date('2024-02-01')
+        });
+        expect((await result).passes()).toBe(true);
+    });
 }); 
