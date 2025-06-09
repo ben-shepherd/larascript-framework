@@ -18,6 +18,8 @@ class AfterDateRule extends AbstractRule implements IRule {
 
     protected options!: Options & { date: Date }
 
+    protected beforeDate!: Date
+
     constructor(options: Options) {
         super()
         this.options = {
@@ -31,14 +33,14 @@ class AfterDateRule extends AbstractRule implements IRule {
         if (this.dataUndefinedOrNull()) return false
 
         try {
-            const beforeDate: Date = this.parseDataAsDate()
+            this.beforeDate = this.parseDataAsDate()
             let afterDate: Date = this.options.date
 
             if (typeof this.options.attribute === 'string') {
                 afterDate = this.parseOtherAttributeDate()
             }
 
-            return beforeDate > afterDate
+            return this.beforeDate > afterDate
         }
 
         catch (err) {
@@ -107,7 +109,7 @@ class AfterDateRule extends AbstractRule implements IRule {
         return {
             [this.getDotNotationPath()]: [
                 this.formatErrorMessage({
-                    date: this.options.date.toLocaleDateString('en-GB', {
+                    date: this.beforeDate.toLocaleDateString('en-GB', {
                         day: '2-digit',
                         month: '2-digit',
                         year: 'numeric'
