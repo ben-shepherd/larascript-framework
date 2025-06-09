@@ -4,9 +4,10 @@ import Validator from '@src/core/domains/validator/service/Validator';
 
 describe('test after date validation rule', () => {
     it('should pass when value is after the specified date', async () => {
-        const referenceDate = new Date('2024-01-01');
+        const beforeDate = new Date('2024-01-01');
+
         const validator = Validator.make({
-            field: [new AfterDateRule({ date: referenceDate })]
+            field: [new AfterDateRule({ date: beforeDate })]
         });
 
         const result = validator.validate({
@@ -16,9 +17,10 @@ describe('test after date validation rule', () => {
     });
 
     it('should fail when value is before the specified date', async () => {
-        const referenceDate = new Date('2024-01-01');
+        const beforeDate = new Date('2024-01-01');
+
         const validator = Validator.make({
-            field: [new AfterDateRule({ date: referenceDate })]
+            field: [new AfterDateRule({ date: beforeDate })]
         });
 
         const result = validator.validate({
@@ -28,9 +30,10 @@ describe('test after date validation rule', () => {
     });
 
     it('should pass when value is a well formatted date string', async () => {
-        const referenceDate = new Date('2024-01-01');
+        const beforeDate = new Date('2024-01-01');
+
         const validator = Validator.make({
-            field: [new AfterDateRule({ date: referenceDate })]
+            field: [new AfterDateRule({ date: beforeDate })]
         });
 
         const result = validator.validate({
@@ -40,9 +43,10 @@ describe('test after date validation rule', () => {
     });
 
     it('should fail when value is a poorly formatted date string', async () => {
-        const referenceDate = new Date('2024-01-01');
+        const beforeDate = new Date('2024-01-01');
+
         const validator = Validator.make({
-            field: [new AfterDateRule({ date: referenceDate })]
+            field: [new AfterDateRule({ date: beforeDate })]
         });
 
         const result = validator.validate({
@@ -52,9 +56,10 @@ describe('test after date validation rule', () => {
     });
 
     it('should fail when value is not a Date instance', async () => {
-        const referenceDate = new Date('2024-01-01');
+        const beforeDate = new Date('2024-01-01');
+
         const validator = Validator.make({
-            field: [new AfterDateRule({ date: referenceDate })]
+            field: [new AfterDateRule({ date: beforeDate })]
         });
 
         const result = validator.validate({
@@ -64,14 +69,15 @@ describe('test after date validation rule', () => {
     });
 
     it('should pass when attribute is provided to check another date field', async () => {
-        const referenceDate = new Date('2024-01-01');
+        const beforeDate = new Date('2024-01-01');
+
         const validator = Validator.make({
-            field: [new AfterDateRule({ date: referenceDate, attribute: 'otherDate' })]
+            endDate: [new AfterDateRule({ attribute: 'startDate' })]
         });
 
         const result = validator.validate({
-            field: referenceDate,
-            otherDate: new Date('2024-02-01')
+            startDate: beforeDate,
+            endDate: new Date('2024-02-01')
         });
         expect((await result).passes()).toBe(true);
     });

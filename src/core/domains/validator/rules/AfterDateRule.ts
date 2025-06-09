@@ -31,13 +31,14 @@ class AfterDateRule extends AbstractRule implements IRule {
         if (this.dataUndefinedOrNull()) return false
 
         try {
-            let inputDate: Date = this.parseDataAsDate()
+            const beforeDate: Date = this.parseDataAsDate()
+            let afterDate: Date = this.options.date
 
             if (typeof this.options.attribute === 'string') {
-                inputDate = this.parseOtherAttributeDate()
+                afterDate = this.parseOtherAttributeDate()
             }
 
-            return inputDate > (this.options.date as Date)
+            return beforeDate > afterDate
         }
 
         catch (err) {
