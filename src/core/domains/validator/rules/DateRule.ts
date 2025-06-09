@@ -8,6 +8,7 @@ class DateRule extends AbstractRule implements IRule {
     protected errorTemplate: string = 'The :attribute must be a valid date.';
 
     public async test(): Promise<boolean> {
+        if (this.nullableString()) return true
 
         if (typeof this.getData() !== 'string') {
             return false;
