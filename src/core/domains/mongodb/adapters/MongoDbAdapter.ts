@@ -39,6 +39,16 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig> {
     }
 
     /**
+     * Normalize the primary key to _id
+     */
+    normalizePrimaryKey(primaryKey: string): string {
+        if (primaryKey === 'id') {
+            return '_id'
+        }
+        return primaryKey
+    }
+
+    /**
      * Retrieves the name of the docker-compose file for MongoDB
      * @returns {string} The name of the docker-compose file
      */
