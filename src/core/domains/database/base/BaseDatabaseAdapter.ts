@@ -65,8 +65,8 @@ abstract class BaseDatabaseAdapter<TConfig extends object = object> extends Base
     /**
      * Nomralize the primary key
      */
-    normalizePrimaryKey(primaryKey: string) {
-        return primaryKey
+    normalizeColumn(col: string) {
+        return col
     }
 
     /**

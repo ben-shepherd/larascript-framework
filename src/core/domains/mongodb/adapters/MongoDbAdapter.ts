@@ -41,11 +41,11 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig> {
     /**
      * Normalize the primary key to _id
      */
-    normalizePrimaryKey(primaryKey: string): string {
-        if (primaryKey === 'id') {
+    normalizeColumn(col: string): string {
+        if (col === 'id') {
             return '_id'
         }
-        return primaryKey
+        return col
     }
 
     /**
