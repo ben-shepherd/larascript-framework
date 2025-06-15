@@ -1,8 +1,8 @@
 import AbstractRule from "@src/core/domains/validator/abstract/AbstractRule";
-import { IRule } from "@src/core/domains/validator/interfaces/IRule";
+import { IRule, IRuleError } from "@src/core/domains/validator/interfaces/IRule";
 
 type Options = {
-    values: string[];
+    values: (string | number)[];
     caseInsensitive?: boolean;
 }
 
@@ -10,7 +10,7 @@ class EnumRule extends AbstractRule implements IRule {
 
     protected name: string = 'enum'
 
-    protected errorTemplate: string = 'The :attribute format is invalid.';
+    protected errorTemplate: string = 'The :attribute contains an unexpected value. Must be one of :values';
 
     protected options: Options = {
         values: [],
@@ -31,16 +31,56 @@ class EnumRule extends AbstractRule implements IRule {
             caseInsensitive: false,
             ...this.options,
         }
+        const invalidType = typeof value !== 'string'
+            && typeof value !== 'number'
+            && !Array.isArray(value)
 
-        if (typeof value !== 'string' && typeof value !== 'number') {
-            return false;
+        if (invalidType) {
+            return false
         }
 
-        if (optionsWithDefaults.caseInsensitive && typeof value === 'string') {
-            return this.options.values.map((s) => s.toLowerCase()).includes(value.toLowerCase());
+        if (typeof value === 'string' || typeof value === 'number') {
+            return this.testStringOrNumber(value, optionsWithDefaults)
         }
 
-        return this.options.values.includes(value.toString());
+        if (typeof value === 'object' && Array.isArray(value)) {
+            return this.testArray(value, optionsWithDefaults)
+        }
+
+        return false
+    }
+
+    protected testStringOrNumber(value: string | number, optionsWithDefaults: Options): boolean {
+        if (optionsWithDefaults.caseInsensitive) {
+            const lowercaseValues = this.options.values.map(val => {
+                if (typeof val === 'string') {
+                    return val.toLowerCase()
+                }
+                return val
+            })
+            return lowercaseValues.some(val => {
+                if (typeof value === 'string') {
+                    return val === value.toLocaleLowerCase()
+                }
+                return val === value
+            })
+        }
+
+        return this.options.values.includes(value);
+    }
+
+    protected testArray(value: (string | number)[], optionsWithDefaults: Options): boolean {
+        return value.every(val => this.testStringOrNumber(val, optionsWithDefaults))
+    }
+
+    getError(): IRuleError {
+        return {
+            [this.getDotNotationPath()]: [
+                this.formatErrorMessage({
+                    values: this.options.values.join(', ')
+                })
+            ]
+        }
     }
 
 }

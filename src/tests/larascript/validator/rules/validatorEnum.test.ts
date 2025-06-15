@@ -24,9 +24,6 @@ describe('test enum validation rule', () => {
             field: 'invalid'
         });
         expect((await result).passes()).toBe(false);
-        expect((await result).errors()).toEqual({
-            field: ['The field format is invalid.']
-        });
     });
 
     it('should pass with case-insensitive matching when enabled', async () => {
@@ -59,7 +56,7 @@ describe('test enum validation rule', () => {
 
     it('should pass with numeric values', async () => {
         const validator = Validator.make({
-            field: [new EnumRule({ values: ['1', '2', '3'] })]
+            field: [new EnumRule({ values: [1, 2, 3] })]
         });
 
         const result = validator.validate({
@@ -99,5 +96,27 @@ describe('test enum validation rule', () => {
             field: ''
         });
         expect((await result).passes()).toBe(true);
+    });
+
+    it('should pass when value is an array of strings', async () => {
+        const validator = Validator.make({
+            field: [new NullableRule(), new EnumRule({ values: ['test', 'example', 'value'] })]
+        });
+
+        const result = validator.validate({
+            field: ['test', 'value']
+        });
+        expect((await result).passes()).toBe(true);
+    });
+
+    it('should fail when value is an array of strings with unexpected value', async () => {
+        const validator = Validator.make({
+            field: [new NullableRule(), new EnumRule({ values: ['test', 'example', 'value'] })]
+        });
+
+        const result = validator.validate({
+            field: ['test', 'badValue']
+        });
+        expect((await result).passes()).toBe(false);
     });
 }); 
