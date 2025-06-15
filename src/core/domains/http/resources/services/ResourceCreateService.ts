@@ -53,7 +53,7 @@ class ResourceCreateService extends AbastractBaseResourceService {
         const req = context.getRequest()
         const routeOptions = context.getRouteItem()
 
-        if(!routeOptions) {
+        if (!routeOptions) {
             throw new ResourceException('Route options are required')
         }
 
@@ -63,16 +63,16 @@ class ResourceCreateService extends AbastractBaseResourceService {
 
         // Check if the resource owner security applies to this route and it is valid
         // If it is valid, we add the owner's id to the filters
-        if(await this.validateResourceOwnerApplicable(context)) {
+        if (await this.validateResourceOwnerApplicable(context)) {
 
-            if(!await this.validateAuthorized()) {
+            if (!await this.validateAuthorized()) {
                 throw new UnauthorizedError()
             }
 
             const attribute = this.getResourceAttribute(routeOptions, 'userId');
             const user = await this.getUser()
-                
-            if(!user) {
+
+            if (!user) {
                 throw new ForbiddenResourceError()
             }
 
@@ -82,14 +82,14 @@ class ResourceCreateService extends AbastractBaseResourceService {
         // Validate the request body
         const validationErrors = await this.getValidationErrors(context)
 
-        if(validationErrors) {
+        if (validationErrors) {
             return this.apiResponse(context, {
                 errors: validationErrors
             }, 422)
         }
 
         // Fill the model instance with the request body
-        model.fill(req.body)
+        await model.fill(req.body)
         await model.save();
 
         // Strip the guarded properties from the model instance
