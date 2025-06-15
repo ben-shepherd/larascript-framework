@@ -42,39 +42,42 @@ class ResourceShowService extends AbastractBaseResourceService {
 
         const routeOptions = context.getRouteItem()
 
-        if(!routeOptions) {
+        if (!routeOptions) {
             throw new ResourceException('Route options are required')
         }
 
         const id = context.getRequest().params?.id
 
-        if(!this.validateId(id)) {
+        if (!this.validateId(id)) {
             return this.apiResponse<IModelAttributes>(context, {
                 message: 'Resource not found'
             }, 404)
         }
 
         const modelConstructor = this.getModelConstructor(context)
-        
+
         // Query builder
-        const builder = queryBuilder(modelConstructor) 
+        const builder = queryBuilder(modelConstructor)
             .limit(1)
 
+        // Normalize the primary key if required
+        const primaryKey = this.getPrimaryKey(modelConstructor)
+
         // Attach the id to the query
-        builder.where(modelConstructor.getPrimaryKey(), context.getRequest().params?.id)
+        builder.where(primaryKey, context.getRequest().params?.id)
 
         // Fetch the results
         const result = await builder.firstOrFail()
 
         // Check if the resource owner security applies to this route and it is valid
-        if(!await this.validateResourceAccess(context, result)) {
+        if (!await this.validateResourceAccess(context, result)) {
             throw new ForbiddenResourceError()
         }
 
         // Send the results
         return this.apiResponse<IModelAttributes>(context, (await stripGuardedResourceProperties(result))[0], 200)
     }
-      
+
     /**
      * Validates the id
      * @param id The id to validate

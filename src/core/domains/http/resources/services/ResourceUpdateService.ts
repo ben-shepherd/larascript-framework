@@ -42,47 +42,49 @@ class ResourceUpdateService extends AbastractBaseResourceService {
     async handler(context: HttpContext): Promise<ApiResponse<IModelAttributes | TResponseErrorMessages>> {
 
         // Check if the authorization security applies to this route and it is valid
-        if(!await this.validateAuthorized()) {
+        if (!await this.validateAuthorized()) {
             throw new UnauthorizedError()
         }
-        
+
         const routeOptions = context.getRouteItem()
 
-        if(!routeOptions) {
+        if (!routeOptions) {
             throw new ResourceException('Route options are required')
         }
 
         // Validate the request body
         const validationErrors = await this.getValidationErrors(context)
 
-        if(validationErrors) {
+        if (validationErrors) {
             return this.apiResponse(context, {
                 errors: validationErrors
             }, 422)
         }
 
-
         const modelConstructor = this.getModelConstructor(context)
 
+        // Normalize the primary key if required
+        const primaryKey = this.getPrimaryKey(modelConstructor)
+
         const builder = queryBuilder(modelConstructor)
-            .where(modelConstructor.getPrimaryKey(), context.getRequest().params?.id)
+            .where(primaryKey, context.getRequest().params?.id)
 
 
         const result = await builder.firstOrFail()
 
         // Check if the resource owner security applies to this route and it is valid
-        if(!await this.validateResourceAccess(context, result)) {
+        if (!await this.validateResourceAccess(context, result)) {
             throw new ForbiddenResourceError()
         }
 
         await result.fill(context.getRequest().body);
         await result.save();
-        
+
         // Send the results
         return this.apiResponse<IModelAttributes>(context, (await stripGuardedResourceProperties(result))[0], 200)
 
     }
-        
+
 
 }
 

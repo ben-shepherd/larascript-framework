@@ -2,6 +2,7 @@
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
 import { auth } from "@src/core/domains/auth/services/AuthService";
 import { authJwt } from "@src/core/domains/auth/services/JwtAuthService";
+import { db } from "@src/core/domains/database/services/Database";
 import ResourceException from "@src/core/domains/express/exceptions/ResourceException";
 import HttpContext from "@src/core/domains/http/context/HttpContext";
 import { SecurityEnum } from "@src/core/domains/http/enums/SecurityEnum";
@@ -47,6 +48,14 @@ abstract class AbastractBaseResourceService {
     // eslint-disable-next-line no-unused-vars
     abstract handler(context: HttpContext): Promise<IApiResponse>;
 
+    /**
+     * Gets the normalized database primary key
+     * @param modelConstructor 
+     * @returns 
+     */
+    getPrimaryKey(modelConstructor: ModelConstructor): string {
+        return db().getAdapter().normalizeColumn(modelConstructor.getPrimaryKey())
+    }
 
     /**
      * Gets the model constructor from the route options

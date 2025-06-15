@@ -1,7 +1,10 @@
+
 import { TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import AbstractDatabaseRule from "@src/core/domains/validator/abstract/AbstractDatabaseRule";
 import { IRule } from "@src/core/domains/validator/interfaces/IRule";
+
+import { db } from "../../database/services/Database";
 
 type ExistsRuleOptions = {
     modelConstructor: ModelConstructor;
@@ -19,13 +22,15 @@ class ExistsRule extends AbstractDatabaseRule<ExistsRuleOptions> implements IRul
     }
 
     public async test(): Promise<boolean> {
-        if(this.dataUndefinedOrNull()) {
+        if (this.dataUndefinedOrNull()) {
             this.errorMessage = 'The :attribute field is required.'
             return false;
         }
 
+        const column = db().getAdapter().normalizeColumn(this.options.column)
+
         return await this.query()
-            .where(this.options.column, this.getData() as TWhereClauseValue)
+            .where(column, this.getData() as TWhereClauseValue)
             .count() > 0;
     }
 

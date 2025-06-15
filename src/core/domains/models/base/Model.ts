@@ -450,6 +450,9 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         if (this.attributes === null) {
             this.attributes = {} as Attributes;
         }
+        if (this.casts?.[key as string]) {
+            value = this.castable.getCast(value, this.casts[key as string] as TCastableType) as Attributes[K] | null;
+        }
         if (this.attributes) {
             this.attributes[key] = value as Attributes[K];
         }

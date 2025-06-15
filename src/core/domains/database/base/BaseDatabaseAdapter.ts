@@ -42,14 +42,14 @@ abstract class BaseDatabaseAdapter<TConfig extends object = object> extends Base
     getConnectionName(): string {
         return this.connectionName
     }
-    
+
     /**
      * Retrieves the name of the Docker Compose file associated with the database.
      *
      * @returns {string} The Docker Compose file name.
      */
     getDockerComposeFileName(): string {
-        if(!this.dockerComposeFileName) {
+        if (!this.dockerComposeFileName) {
             throw new Error('Docker compose file name not set')
         }
         return this.dockerComposeFileName
@@ -60,6 +60,13 @@ abstract class BaseDatabaseAdapter<TConfig extends object = object> extends Base
      */
     getRelationshipResolver(): IRelationshipResolver {
         return new BaseRelationshipResolver(this.connectionName)
+    }
+
+    /**
+     * Nomralize the primary key
+     */
+    normalizeColumn(col: string) {
+        return col
     }
 
     /**
@@ -106,21 +113,21 @@ abstract class BaseDatabaseAdapter<TConfig extends object = object> extends Base
      * @template T - The type of the prepared document.
      */
     prepareDocument<T extends object = object>(document: T, prepareOptions?: IPrepareOptions): T {
-        const preparedDocument: T = {...document}
+        const preparedDocument: T = { ...document }
 
-        for(const key in preparedDocument) {
-            if(prepareOptions?.jsonStringify?.includes(key)) {
-                if(typeof preparedDocument[key as string] === 'object') {
+        for (const key in preparedDocument) {
+            if (prepareOptions?.jsonStringify?.includes(key)) {
+                if (typeof preparedDocument[key as string] === 'object') {
                     preparedDocument[key as string] = JSON.stringify(preparedDocument[key as string])
                 }
             }
-            if(prepareOptions?.jsonParse?.includes(key)) {
-                if(typeof preparedDocument[key as string] === 'string') {
+            if (prepareOptions?.jsonParse?.includes(key)) {
+                if (typeof preparedDocument[key as string] === 'string') {
                     preparedDocument[key as string] = JSON.parse(preparedDocument[key as string])
                 }
             }
         }
-        
+
         return preparedDocument
     }
 

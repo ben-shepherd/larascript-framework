@@ -61,10 +61,10 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      */
     getMongoCollection(collectionName?: string): MongoCollection {
         const modelCtor = this.getModelCtor()
-        if(!modelCtor) {
+        if (!modelCtor) {
             throw new Error('Model constructor is not set');
         }
-        if(!collectionName) {
+        if (!collectionName) {
             collectionName = modelCtor.getTable()
         }
         return this.getDatabaseAdapter().getDb().collection(collectionName)
@@ -77,16 +77,16 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      * @throws EloquentException if the id is invalid
      */
     normalizeId(id: unknown): ObjectId | string | number {
-        if(id instanceof ObjectId) {
+        if (id instanceof ObjectId) {
             return id
         }
-        if(typeof id === 'string') {    
+        if (typeof id === 'string') {
             return ObjectId.createFromHexString(id)
         }
-        if(typeof id === 'number') {
+        if (typeof id === 'number') {
             return ObjectId.createFromHexString(id.toString())
         }
-        
+
         throw new EloquentException('Invalid document id')
     }
 
@@ -97,16 +97,16 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      * @throws EloquentException if the id is invalid
      */
     denormalizeId(id: string | number | ObjectId): string {
-        if(id instanceof ObjectId) {
+        if (id instanceof ObjectId) {
             return id.toString()
         }
-        if(typeof id === 'string') {
+        if (typeof id === 'string') {
             return id
         }
-        if(typeof id === 'number') {
+        if (typeof id === 'number') {
             return id.toString()
         }
-        
+
         throw new EloquentException('Invalid document id')
     }
 
@@ -119,7 +119,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      * @param documents - Single document or array of documents to normalize
      * @returns Array of normalized documents with standard id fields
      */
-    denormalizeDocuments< T extends object = object>(documents: T | T[]): T[] {
+    denormalizeDocuments<T extends object = object>(documents: T | T[]): T[] {
 
         // Get the documents array  
         let documentsArray = Array.isArray(documents) ? documents : [documents]
@@ -128,14 +128,14 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
         documentsArray = documentsArray.map(document => {
             const typedDocument = document as { _id?: unknown, id?: unknown }
 
-            if(typedDocument._id) {
+            if (typedDocument._id) {
                 typedDocument.id = this.denormalizeId(typedDocument._id as string | number | ObjectId)
                 delete typedDocument._id
             }
 
             // Normalize ObjectId properties to string
             Object.keys(typedDocument).forEach(key => {
-                if(typedDocument[key] instanceof ObjectId) {
+                if (typedDocument[key] instanceof ObjectId) {
                     typedDocument[key] = typedDocument[key].toString()
                 }
             })
@@ -147,7 +147,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
         const columnsArray = this.expression.getColumns().map(option => option.column).filter(col => col) as string[]
         documentsArray.map((document) => {
             columnsArray.forEach(column => {
-                if(!document[column]) {
+                if (!document[column]) {
                     delete document[column]
                 }
             })
@@ -171,8 +171,8 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             const typedDocument = document as { _id?: unknown, id?: unknown }
 
             // Check if the id should be converted to an ObjectId
-            if(typedDocument.id) {
-                if(this.idGeneratorFn) {
+            if (typedDocument.id) {
+                if (this.idGeneratorFn) {
                     typedDocument._id = typedDocument.id
                 }
                 else {
@@ -182,17 +182,17 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             }
 
             // Check if the _id should be converted to an ObjectId
-            if(typedDocument._id && typeof typedDocument._id === 'string' && ObjectId.isValid(typedDocument._id)) {
+            if (typedDocument._id && typeof typedDocument._id === 'string' && ObjectId.isValid(typedDocument._id)) {
                 typedDocument._id = new ObjectId(typedDocument._id)
             }
 
             // Check each property if it should be converted to an ObjectId
             Object.keys(document).forEach(key => {
-                if(typeof document[key] === 'string' && ObjectId.isValid(document[key])) {
+                if (typeof document[key] === 'string' && ObjectId.isValid(document[key])) {
                     typedDocument[key] = new ObjectId(document[key])
                 }
             })
-        
+
 
             return typedDocument as T
         })
@@ -218,7 +218,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
                     "path": `$${path}`,
                     "preserveNullAndEmptyArrays": true
                 }
-            } 
+            }
         ])
     }
 
@@ -231,7 +231,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      */
     protected prepareJoin(related: ModelConstructor<IModel>, localColumn: string, relatedColumn: string, targetProperty: string): void {
 
-        if(typeof targetProperty !== 'string' || targetProperty.length === 0) {
+        if (typeof targetProperty !== 'string' || targetProperty.length === 0) {
             throw new EloquentException('Target property is required for join')
         }
 
@@ -246,7 +246,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
                     "path": `$${path}`,
                     "preserveNullAndEmptyArrays": true
                 }
-            } 
+            }
         ])
 
         // Add the column to the expression
@@ -278,7 +278,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
 
         // Add the join to the expression
         super.join(related, localColumn, relatedColumn)
-        
+
         // Prepare the join
         this.prepareJoin(related, localColumn, relatedColumn, targetProperty)
 
@@ -293,7 +293,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
 
         // Add the join to the expression
         super.leftJoin(related, localColumn, relatedColumn)
-        
+
         // Prepare the join
         this.prepareJoin(related, localColumn, relatedColumn, targetProperty)
 
@@ -307,7 +307,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
 
         // Add the join to the expression
         super.rightJoin(related, localColumn, relatedColumn)
-        
+
         // Prepare the join
         this.prepareJoin(related, localColumn, relatedColumn, targetProperty)
 
@@ -318,10 +318,10 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
         // Normalize the columns
         localColumn = this.normalizeIdProperty(localColumn)
         relatedColumn = this.normalizeIdProperty(relatedColumn)
-        
+
         // Add the join to the expression
         super.join(related, localColumn, relatedColumn)
-                
+
         // Prepare the join
         this.prepareJoin(related, localColumn, relatedColumn, targetProperty)
 
@@ -337,11 +337,11 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
         return captureError<T>(async () => {
 
             // Get the pipeline
-            if(!aggregationPipeline) {
+            if (!aggregationPipeline) {
                 aggregationPipeline = this.expression.build()
             }
 
-            if(db().showLogs()) {
+            if (db().showLogs()) {
                 logger().console('[MongoDbEloquent.raw] aggregation (Collection: ' + (this.modelCtor?.getTable() ?? 'Unknown') + ')', JSON.stringify(aggregationPipeline))
             }
 
@@ -398,8 +398,8 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
 
             const collection = this.getMongoCollection();
 
-            const results  = await collection.find(filter).toArray()
-            
+            const results = await collection.find(filter).toArray()
+
             return results as T
         })
     }
@@ -427,8 +427,8 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
 
             // Get the document
             const document = await collection.findOne({ _id: objectId } as object)
-            
-            if(!document) {
+
+            if (!document) {
                 return null
             }
 
@@ -445,8 +445,8 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      */
     async findOrFail(id: string | number): Promise<Model> {
         const document = await this.find(id)
-        
-        if(!document) {
+
+        if (!document) {
             throw new ModelNotFound('Document not found')
         }
 
@@ -473,7 +473,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             // Restore the previous expression
             this.setExpression(previousExpression)
 
-            if(documents.length === 0) {
+            if (documents.length === 0) {
                 return null
             }
 
@@ -488,8 +488,8 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      */
     async firstOrFail(): Promise<Model> {
         const document = await this.first()
-        
-        if(!document) {
+
+        if (!document) {
             throw new ModelNotFound('Document not found')
         }
 
@@ -515,7 +515,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             // Restore the previous expression
             this.setExpression(previousExpression)
 
-            if(documents.isEmpty()) {
+            if (documents.isEmpty()) {
                 return null
             }
 
@@ -530,8 +530,8 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      */
     async lastOrFail(): Promise<Model> {
         const document = await this.last()
-        
-        if(!document) {
+
+        if (!document) {
             throw new ModelNotFound('Document not found')
         }
 
@@ -583,10 +583,10 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
      * @returns The documents with the distinct filters applied
      */
     protected async applyDistinctFilters(documents: Document[]): Promise<Document[]> {
-        if(!this.expression.getGroupBy() || this.expression.getGroupBy()?.length === 0) {
+        if (!this.expression.getGroupBy() || this.expression.getGroupBy()?.length === 0) {
             return documents
         }
-        
+
         const results: Document[] = []
         const collection = this.getMongoCollection();
 
@@ -594,7 +594,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
         const distinctColumns = this.expression.getGroupBy()?.map(option => option.column) ?? []
 
         // Apply the distinct filters on each column
-        for(const column of distinctColumns) {
+        for (const column of distinctColumns) {
             const distinctValues: unknown[] = await collection.distinct(column, this.expression.buildMatchAsFilterObject() ?? {})
 
             // Add the documents that match the distinct values
@@ -607,7 +607,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
 
         return results
     }
- 
+
     /**
      * Retrieves all documents from the database using the query builder expression.
      * @returns A promise resolving to a collection of documents
@@ -713,7 +713,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             const preUpdateResultsDocumentIds = preUpdateResults.map(document => document._id)
 
             // Update each document
-            for(const document of normalizedDocumentsArray) {
+            for (const document of normalizedDocumentsArray) {
                 await collection.updateOne(matchFilter, { $set: document })
             }
 
@@ -757,7 +757,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             // Get the pre-update results for the match filter
             const preUpdateResults = await this.raw(preUpdateAggregation)
             const preUpdateResultsDocumentIds = preUpdateResults.map(document => document._id)
-            
+
             // Update each document
             collection.updateMany(matchFilter, { $set: normalizedDocument })
 
@@ -803,7 +803,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             // Restore the previous expression
             this.setExpression(previousExpression)
 
-        })   
+        })
 
         return this as unknown as IEloquent<Model, AggregateExpression>
     }
@@ -820,7 +820,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
 
             // Get the match filter for the current expression
             const filter = this.expression.buildMatchAsFilterObject() ?? {}
-            
+
             // Build the pipeline
             const pipeline = new AggregateExpression()
                 .addPipeline([{
@@ -829,10 +829,10 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
                         [column]: { $exists: true }
                     }
                 }])
-                .addPipeline([{  
+                .addPipeline([{
                     $facet: {
                         count: [
-                            { 
+                            {
                                 $group: {
                                     _id: null,
                                     count: { $sum: 1 }
@@ -849,7 +849,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             this.setExpression(previousExpression)
 
             return count
-        })   
+        })
     }
 
     /**
@@ -865,7 +865,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
 
             // Get the match filter for the current expression
             const filter = this.expression.buildMatchAsFilterObject() ?? {}
-            
+
             // Build the pipeline
             const pipeline = new AggregateExpression()
                 .addPipeline([{
@@ -874,10 +874,10 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
                         [column]: { $exists: true }
                     }
                 }])
-                .addPipeline([{  
+                .addPipeline([{
                     $facet: {
                         min: [
-                            { 
+                            {
                                 $group: {
                                     _id: null,
                                     min: { $min: `$${column}` }
@@ -894,7 +894,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             this.setExpression(previousExpression)
 
             return min
-        })   
+        })
     }
 
     /**
@@ -910,19 +910,19 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
 
             // Get the match filter for the current expression
             const filter = this.expression.buildMatchAsFilterObject() ?? {}
-            
+
             // Build the pipeline
             const pipeline = new AggregateExpression()
                 .addPipeline([{
                     $match: {
                         ...filter,
-                        [column]: { $exists: true  }
+                        [column]: { $exists: true }
                     }
                 }])
-                .addPipeline([{  
+                .addPipeline([{
                     $facet: {
                         max: [
-                            { 
+                            {
                                 $group: {
                                     _id: null,
                                     max: { $max: `$${column}` }
@@ -939,7 +939,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             this.setExpression(previousExpression)
 
             return max
-        })   
+        })
     }
 
     /**
@@ -955,7 +955,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
 
             // Get the match filter for the current expression
             const filter = this.expression.buildMatchAsFilterObject() ?? {}
-            
+
             // Build the pipeline
             const pipeline = new AggregateExpression()
                 .addPipeline([{
@@ -964,10 +964,10 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
                         [column]: { $exists: true }
                     }
                 }])
-                .addPipeline([{  
+                .addPipeline([{
                     $facet: {
                         sum: [
-                            { 
+                            {
                                 $group: {
                                     _id: null,
                                     sum: { $sum: `$${column}` }
@@ -984,7 +984,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             this.setExpression(previousExpression)
 
             return sum
-        })   
+        })
     }
 
     /**
@@ -1000,7 +1000,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
 
             // Get the match filter for the current expression
             const filter = this.expression.buildMatchAsFilterObject() ?? {}
-            
+
             // Build the pipeline
             const pipeline = new AggregateExpression()
                 .addPipeline([{
@@ -1009,10 +1009,10 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
                         [column]: { $exists: true }
                     }
                 }])
-                .addPipeline([{  
+                .addPipeline([{
                     $facet: {
                         avg: [
-                            { 
+                            {
                                 $group: {
                                     _id: null,
                                     avg: { $avg: `$${column}` }
@@ -1029,9 +1029,9 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             this.setExpression(previousExpression)
 
             return avg
-        })   
+        })
     }
-    
+
 
     /**
      * Fetches the result of an aggregation pipeline stage.
@@ -1046,19 +1046,19 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
             const results = await this.raw<{ [key: string]: number }>(aggregationPipeline)
 
             // If the count is an empty array, return 0
-            if(results?.[0]?.[targetProperty] && results[0][targetProperty].length === 0) {
+            if (results?.[0]?.[targetProperty] && results[0][targetProperty].length === 0) {
                 return 0
             }
 
             // Get the aggregate result
             const aggregateResult = results?.[0]?.[targetProperty]?.[0]?.[targetProperty]
 
-            if(typeof aggregateResult !== 'number') {
+            if (typeof aggregateResult !== 'number') {
                 throw new EloquentException(`Aggregate result for '${targetProperty}' could not be found`)
             }
 
             return aggregateResult
-        })   
+        })
     }
 
     /**
