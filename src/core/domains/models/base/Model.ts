@@ -902,8 +902,10 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     async delete(): Promise<void> {
         if (!this.attributes) return;
 
+        const preDeletedAttributes = { ...this.attributes }
+
         // Emit the deleting event
-        await this.emit('deleting', this.attributes);
+        await this.emit('deleting', preDeletedAttributes);
 
         // Observe the attributes
         this.attributes = await this.observeAttributes('deleting', this.attributes);
@@ -919,7 +921,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         await this.observeAttributes('deleted', this.attributes);
 
         // Emit the deleted event
-        await this.emit('deleted', this.attributes);
+        await this.emit('deleted', preDeletedAttributes);
     }
 
     /**
