@@ -321,8 +321,6 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     }
 
     /**
-     * Retrieves the factory instance for the model.
-    /**
      * Sets the observer for this model instance.
      * The observer is responsible for handling events broadcasted by the model.
      * @param {IObserver} observer - The observer to set.
@@ -764,14 +762,24 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {Promise<Attributes>} The encrypted attributes.
      */
     encryptAttributes(attributes: Attributes | null): Attributes | null {
-        if (typeof attributes !== 'object') {
+        const attributesCopy = (attributes ? { ...attributes } : null) as Record<string, unknown>;
+
+        if (typeof attributesCopy !== 'object') {
             return attributes;
         }
 
         this.encrypted.forEach(key => {
-            if (typeof attributes?.[key] !== 'undefined' && attributes?.[key] !== null) {
+            if (['object', 'array'].includes(this.casts?.[key] as string) && typeof attributesCopy?.[key] === 'object') {
                 try {
-                    (attributes as object)[key] = cryptoService().encrypt((attributes as object)[key]);
+                    attributesCopy[key] = JSON.stringify(attributesCopy?.[key])
+                }
+                // eslint-disable-next-line no-unused-vars
+                catch (err) { }
+            }
+
+            if (typeof attributesCopy?.[key] !== 'undefined' && attributesCopy?.[key] !== null) {
+                try {
+                    (attributesCopy as object)[key] = cryptoService().encrypt((attributesCopy as object)[key]);
                 }
                 catch (e) {
                     console.error(e)
@@ -779,7 +787,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
             }
         });
 
-        return attributes;
+        return attributesCopy as Attributes;
     }
 
     /**
@@ -789,14 +797,28 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {Promise<Attributes>} The decrypted attributes.
      */
     decryptAttributes(attributes: Attributes | null): Attributes | null {
+        const attributesCopy = (attributes ? { ...attributes } : null) as Record<string, unknown>;
+
         if (typeof this.attributes !== 'object') {
             return attributes;
         }
 
         this.encrypted.forEach(key => {
-            if (typeof attributes?.[key] !== 'undefined' && attributes?.[key] !== null) {
+
+            if (['object', 'array'].includes(this.casts?.[key] as string) && typeof attributesCopy?.[key] === 'string') {
                 try {
-                    (attributes as object)[key] = cryptoService().decrypt((attributes as object)[key]);
+                    attributesCopy[key] = JSON.parse(
+                        cryptoService().decrypt(attributesCopy?.[key] as string)
+                    )
+                    return;
+                }
+                // eslint-disable-next-line no-unused-vars
+                catch (err) { }
+            }
+
+            if (typeof attributesCopy?.[key] !== 'undefined' && attributesCopy?.[key] !== null) {
+                try {
+                    (attributesCopy as object)[key] = cryptoService().decrypt((attributesCopy as object)[key]);
                 }
 
                 catch (e) {
@@ -805,7 +827,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
             }
         });
 
-        return attributes;
+        return attributesCopy as Attributes;
     }
 
     /**
