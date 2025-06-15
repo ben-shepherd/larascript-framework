@@ -540,7 +540,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {IModelAttributes | null} The model's data as an object, or null if no data is set.
      */
     getAttributes(): Attributes | null {
-        return this.castAttributes(this.attributes);
+        return this.castAttributes({ ...this.attributes } as Attributes | null);
     }
 
     /**
@@ -670,13 +670,44 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * 
      * @param {Attributes | null} attributes - The attributes to cast.
      * @returns {Attributes | null} The casted attributes.
+     * 
+     * Note: Encrypted string values are not cast to avoid incorrect type casting.
+     * This is because encrypted values are stored as strings and attempting to cast them
+     * before decryption would result in incorrect types (e.g., null) since the encrypted
+     * string format is not compatible with the target type. Only encrypted objects and arrays
+     * are cast after they have been decrypted and parsed from JSON.
      */
     private castAttributes(attributes: Attributes | null): Attributes | null {
         if (!attributes) {
             return null;
         }
 
-        return this.castable.getCastFromObject(attributes as Record<string, unknown>, this.casts) as Attributes;
+        // Reduce attributes into a casted Attributes object
+        // Ignoring encrypted complex types (object, arrays)
+        return Object.keys(attributes).reduce((acc, curr) => {
+
+            const isEncryptedComplexType = this.encrypted.includes(curr)
+                && this.casts?.[curr]
+                && ['object', 'array'].includes(this.casts?.[curr])
+                && typeof this.casts?.[curr] === 'string';
+
+            if (isEncryptedComplexType) {
+                acc[curr] = attributes[curr]
+                return acc
+            }
+
+            // Looks OK, cast
+            if (this.casts?.[curr] && typeof this.casts[curr] === 'string') {
+                acc[curr] = this.castable.getCast(attributes[curr], this.casts?.[curr])
+                return acc
+            }
+
+            acc[curr] = attributes[curr]
+            return acc
+        }, {}) as Attributes | null
+
+
+        // return this.castable.getCastFromObject(attributesCopy as Record<string, unknown>, this.casts) as Attributes;
     }
 
     /**
@@ -746,7 +777,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         if (!id) return null;
 
         const result = await this.queryBuilder().find(id)
-        const attributes = result ? await result.toObject({ excludeGuarded: false }) : null;
+        const attributes = result ? await result.getAttributes() : null;
         const decryptedAttributes = await this.decryptAttributes(attributes as Attributes | null);
 
         this.attributes = decryptedAttributes ? { ...decryptedAttributes } as Attributes : null
