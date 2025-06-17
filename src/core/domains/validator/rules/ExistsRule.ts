@@ -5,10 +5,13 @@ import AbstractDatabaseRule from "@src/core/domains/validator/abstract/AbstractD
 import { IRule } from "@src/core/domains/validator/interfaces/IRule";
 
 import { db } from "../../database/services/Database";
+import { IHttpContext } from "../../http/interfaces/IHttpContext";
 
 type ExistsRuleOptions = {
     modelConstructor: ModelConstructor;
     column: string;
+    // eslint-disable-next-line no-unused-vars
+    where?: (context: IHttpContext) => object | null;
 }
 
 class ExistsRule extends AbstractDatabaseRule<ExistsRuleOptions> implements IRule {
@@ -17,8 +20,8 @@ class ExistsRule extends AbstractDatabaseRule<ExistsRuleOptions> implements IRul
 
     protected errorTemplate: string = 'The :attribute field must exist.';
 
-    constructor(modelConstructor: ModelConstructor, column: string) {
-        super(modelConstructor, { column });
+    constructor(modelConstructor: ModelConstructor, column: string, where?: ExistsRuleOptions['where']) {
+        super(modelConstructor, { column, where });
     }
 
     public async test(): Promise<boolean> {
@@ -28,10 +31,18 @@ class ExistsRule extends AbstractDatabaseRule<ExistsRuleOptions> implements IRul
         }
 
         const column = db().getAdapter().normalizeColumn(this.options.column)
-
-        return await this.query()
+        const builder = this.query()
             .where(column, this.getData() as TWhereClauseValue)
-            .count() > 0;
+
+        if (typeof this.options.where === 'function') {
+            const where = this.options.where(this.getHttpContext())
+
+            if (where) {
+                builder.where(this.getHttpContext())
+            }
+        }
+
+        return await builder.count() > 0;
     }
 
 }
