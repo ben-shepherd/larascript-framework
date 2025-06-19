@@ -106,14 +106,20 @@ class AfterDateRule extends AbstractRule implements IRule {
     }
 
     getError(): IRuleError {
+        let dateStr: string = '(unexpected date value)'
+
+        if(this.beforeDate instanceof Date)  {
+            dateStr = this.beforeDate.toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            })
+        }
+
         return {
             [this.getDotNotationPath()]: [
                 this.formatErrorMessage({
-                    date: this.beforeDate.toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric'
-                    })
+                    date: dateStr
                 })
             ]
         }
