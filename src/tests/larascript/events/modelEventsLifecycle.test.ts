@@ -94,7 +94,7 @@ class TestModelDeletedEvent extends BaseEvent<TestModelAttributes> {
     protected namespace: string = 'testing';
 
     async execute() {
-        expect(this.getPayload()).toBeNull();
+        expect(this.getPayload().name).toEqual('to delete');
     }
 
 }
@@ -108,7 +108,7 @@ class TestModelModifyCreatingEvent extends BaseEvent<TestModelAttributes> {
         attributes.name = 'modified during creating';
         this.setPayload(attributes);
     }
-
+ 
 }
 
 class TestModelModifyUpdatingEvent extends BaseEvent<TestModelAttributes> {
