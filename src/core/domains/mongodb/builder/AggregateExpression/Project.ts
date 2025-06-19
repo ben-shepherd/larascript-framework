@@ -1,5 +1,7 @@
 import { TColumnOption } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
+import { normalizeColumn } from "../../utils/normalizeColumn";
+
 class Project {
 
     /**
@@ -8,22 +10,25 @@ class Project {
      * @returns The $project pipeline stage or null if no columns are specified
      */
     static getPipeline(columns: TColumnOption[] | null): object | null {
-        if(!columns?.length) return null;
+        if (!columns?.length) return null;
 
-        if(columns.length === 1 && columns[0].column === '*') {
+        if (columns.length === 1 && columns[0].column === '*') {
             return null
         }
-        
+
         const project = {};
 
-        columns.forEach(column => {
-            if(column.column) {
-                project[column.column] = 1
+        columns.forEach(columnObject => {
+            if (columnObject.column) {
+                columnObject.column = normalizeColumn(columnObject.column)
+                project[columnObject.column] = 1
             }
         })
 
         return { $project: project };
     }
+
+    static
 
 }
 

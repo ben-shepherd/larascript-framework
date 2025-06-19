@@ -1,8 +1,10 @@
 import ExpressionException from "@src/core/domains/eloquent/exceptions/ExpressionException";
 import { LogicalOperators, TLogicalOperator, TWhereClause, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { MongoRaw } from "@src/core/domains/mongodb/builder/AggregateExpression";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
-import { MongoRaw } from "@src/core/domains/mongodb/builder/AggregateExpression";
+
+import { normalizeColumn } from "../../utils/normalizeColumn";
 
 /**
  * Match class handles building MongoDB $match pipeline stages from SQL-style where clauses.
@@ -51,9 +53,9 @@ class Match {
      */
     static getPipeline(whereClauses: TWhereClause[] | null, whereRaw: MongoRaw | null): object | null {
 
-        if(!whereClauses && !whereRaw) return null;
+        if (!whereClauses && !whereRaw) return null;
 
-        if(whereRaw) {
+        if (whereRaw) {
             return { $match: whereRaw };
         }
 
@@ -93,12 +95,12 @@ class Match {
         const andConditions: object[] = []
 
         // Loop through the where clauses
-        for(const whereClause of whereClauses) {
+        for (const whereClause of whereClauses) {
             const currentWhereFilterObject = this.buildWhereFilterObject(whereClause);
             const currentLogicalOperator = whereClause.logicalOperator ?? LogicalOperators.AND;
 
             // Add where clause to the correct array
-            if(currentLogicalOperator === LogicalOperators.AND) {
+            if (currentLogicalOperator === LogicalOperators.AND) {
                 andConditions.push(currentWhereFilterObject)
             }
             else {
@@ -108,22 +110,22 @@ class Match {
         }
 
         // If there are no where clauses, return an empty match
-        if(whereClauses.length === 0) {
+        if (whereClauses.length === 0) {
             return {}
         }
 
         // If there are zero OR conditions, and only AND conditions, return the AND conditions
-        if(orConditions.length === 0 && andConditions.length > 0) {
+        if (orConditions.length === 0 && andConditions.length > 0) {
             return { $and: andConditions }
         }
 
         // If there are zero AND conditions, and only OR conditions, return the OR conditions
-        if(andConditions.length === 0 && orConditions.length > 0) {
+        if (andConditions.length === 0 && orConditions.length > 0) {
             return { $or: orConditions }
         }
 
         // If there are AND conditions, add them to the OR conditions array
-        if(andConditions.length > 0) {
+        if (andConditions.length > 0) {
             orConditions.push({ $and: andConditions })
         }
 
@@ -153,47 +155,48 @@ class Match {
      * ```
      */
     protected static buildWhereFilterObject(whereClause: TWhereClause): object {
-        const { column, operator, raw } = whereClause
+        const { operator, raw } = whereClause
+        let { column } = whereClause
         let value: unknown = whereClause.value
 
-        if(raw) {
+        if (raw) {
             return this.raw(raw)
         }
 
         value = this.normalizeValue(value)
+        column = normalizeColumn(column)
 
-        switch(operator) {
-
-        case "=":
-            return { [column]: { $eq: value } }
-        case "!=":
-            return { [column]: { $ne: value } }
-        case "<>":
-            return { [column]: { $ne: value } }
-        case ">":
-            return { [column]: { $gt: value } }
-        case "<":
-            return { [column]: { $lt: value } }
-        case ">=":
-            return { [column]: { $gte: value } }
-        case "<=":
-            return { [column]: { $lte: value } }
-        case "like":
-            return this.regex(column, value as TWhereClauseValue)
-        case "not like":
-            return this.notRegex(column, value as TWhereClauseValue)
-        case "in":
-            return { [column]: { $in: value } }
-        case "not in":
-            return { [column]: { $not: { $in: value } } }
-        case "is null":
-            return { [column]: { $eq: null } }
-        case "is not null":
-            return { [column]: { $ne: null } }
-        case "between":
-            return this.between(column, value as TWhereClauseValue)
-        case "not between":
-            return this.notBetween(column, value as TWhereClauseValue)
+        switch (operator) {
+            case "=":
+                return { [column]: { $eq: value } }
+            case "!=":
+                return { [column]: { $ne: value } }
+            case "<>":
+                return { [column]: { $ne: value } }
+            case ">":
+                return { [column]: { $gt: value } }
+            case "<":
+                return { [column]: { $lt: value } }
+            case ">=":
+                return { [column]: { $gte: value } }
+            case "<=":
+                return { [column]: { $lte: value } }
+            case "like":
+                return this.regex(column, value as TWhereClauseValue)
+            case "not like":
+                return this.notRegex(column, value as TWhereClauseValue)
+            case "in":
+                return { [column]: { $in: value } }
+            case "not in":
+                return { [column]: { $not: { $in: value } } }
+            case "is null":
+                return { [column]: { $eq: null } }
+            case "is not null":
+                return { [column]: { $ne: null } }
+            case "between":
+                return this.between(column, value as TWhereClauseValue)
+            case "not between":
+                return this.notBetween(column, value as TWhereClauseValue)
         }
 
     }
@@ -205,7 +208,7 @@ class Match {
      * @returns The normalized value
      */
     protected static normalizeValue(value: unknown): unknown {
-        if(typeof value === 'string' && ObjectId.isValid(value)) {
+        if (typeof value === 'string' && ObjectId.isValid(value)) {
             return new ObjectId(value)
         }
         return value
@@ -221,7 +224,7 @@ class Match {
         const schema = z.object({})
         const result = schema.safeParse(raw)
 
-        if(!result.success) {
+        if (!result.success) {
             throw new ExpressionException('Raw value must be an object')
         }
 
@@ -271,7 +274,7 @@ class Match {
      * @throws {ExpressionException} When value is not a string
      */
     protected static validateRegexValue(value: unknown): void {
-        if(typeof value !== 'string') {
+        if (typeof value !== 'string') {
             throw new ExpressionException('Regex value must be a string')
         }
     }
@@ -283,10 +286,10 @@ class Match {
      * @returns The normalized regex pattern
      */
     protected static normalizeRegexValue(value: string): string {
-        if(value.startsWith('%')) {
+        if (value.startsWith('%')) {
             value = `.+${value.slice(1)}`
         }
-        if(value.endsWith('%')) {
+        if (value.endsWith('%')) {
             value = `${value.slice(0, -1)}.+`
         }
         return value
@@ -342,15 +345,15 @@ class Match {
      * @throws {ExpressionException} When validation fails
      */
     protected static validateBetweenValue(value: TWhereClause['value']) {
-        
+
         const schema = z.array(z.union([z.date(), z.number()]))
         const result = schema.safeParse(value)
 
-        if(!result.success) {
+        if (!result.success) {
             throw new ExpressionException('Between value must be a date or number')
         }
 
-        if((value as any[]).length !== 2) {
+        if ((value as any[]).length !== 2) {
             throw new ExpressionException('Between value expected 2 values')
         }
 

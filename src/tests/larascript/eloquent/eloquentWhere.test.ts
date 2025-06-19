@@ -56,7 +56,7 @@ const resetAndPopulate = async () => {
                 updatedAt: dateOneYearInPast
             }
         ])
-    })  
+    })
 }
 
 const getTestPeopleModelQuery = (connection: string) => {
@@ -74,7 +74,7 @@ describe('eloquent', () => {
         await resetAndPopulate();
 
         await forEveryConnection(async connection => {
-            if(connection !== 'postgres') return
+            if (connection !== 'postgres') return
 
             const query = getTestPeopleModelQuery(connection)
             const inserted = await query.clone().orderBy('name', 'asc').get()
@@ -83,7 +83,7 @@ describe('eloquent', () => {
 
             const resultsOnlyJohn = await query.clone()
                 .whereRaw('"name" = $1', ['John']).first()
-                
+
             expect(resultsOnlyJohn?.id).toBe(insertedJohn?.id);
             expect(resultsOnlyJohn?.name).toBe('John');
         })
@@ -141,8 +141,8 @@ describe('eloquent', () => {
 
             expect(resultsOnlyJohnOrJane.count()).toBe(2);
             expect(resultsOnlyJohnOrJane[0].name).toBe('Jane');
-            expect(resultsOnlyJohnOrJane[1].name).toBe('John');    
-            
+            expect(resultsOnlyJohnOrJane[1].name).toBe('John');
+
             const resultsYoungerThan30OrOlderThan40 = await query.clone()
                 .where('age', '<', 30)
                 .orWhere('age', '>', 40)
@@ -187,7 +187,7 @@ describe('eloquent', () => {
             expect(resultsGreaterThanOrEqual35YearsOld.count()).toBe(2);
             expect(resultsGreaterThanOrEqual35YearsOld[0].name).toBe('Jane');
             expect(resultsGreaterThanOrEqual35YearsOld[1].name).toBe('John');
-    
+
         })
 
     })
@@ -245,7 +245,7 @@ describe('eloquent', () => {
             expect(resultsNotBetween31And39[0].name).toBe('Alice');
             expect(resultsNotBetween31And39[1].name).toBe('Bob');
             expect(resultsNotBetween31And39[2].name).toBe('Jane')
-        
+
             const date2020 = getYearsDate(2020);
             const date2026 = getYearsDate(2026);
             const resultsBetween2006And2029 = await query.clone().whereBetween('born', [date2020, date2026]).get();
@@ -262,5 +262,28 @@ describe('eloquent', () => {
             expect(resultsNotBetween2024And2027[2].name).toBe('John');
         })
 
+    })
+
+    test('test mongodb where using id property', async () => {
+        await resetAndPopulate()
+
+        await forEveryConnection(async connection => {
+            if (connection === 'postgres') {
+                return;
+            }
+
+            const query = getTestPeopleModelQuery(connection)
+            const inserted = await query.insert({
+                name: 'George',
+                age: 25,
+                born: getYearsInPastSince2050(25), // 2025
+                createdAt: new Date(),
+                updatedAt: new Date()
+            })
+            const george = await query.clone().where('id', inserted[0].getAttributeSync('id')).first()
+
+            expect(george).toBeInstanceOf(TestPeopleModel)
+            expect(george?.attrSync('id')).toEqual(inserted[0].attrSync('id'))
+        })
     })
 });
