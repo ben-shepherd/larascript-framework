@@ -1,5 +1,5 @@
 
-import { TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { IEloquent, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import AbstractDatabaseRule from "@src/core/domains/validator/abstract/AbstractDatabaseRule";
 import { IRule } from "@src/core/domains/validator/interfaces/IRule";
@@ -11,7 +11,7 @@ type ExistsRuleOptions = {
     modelConstructor: ModelConstructor;
     column: string;
     // eslint-disable-next-line no-unused-vars
-    where?: (context: IHttpContext) => object | null;
+    callback?: (builder: IEloquent, context: IHttpContext) => IEloquent | null;
 }
 
 class ExistsRule extends AbstractDatabaseRule<ExistsRuleOptions> implements IRule {
@@ -20,8 +20,8 @@ class ExistsRule extends AbstractDatabaseRule<ExistsRuleOptions> implements IRul
 
     protected errorTemplate: string = 'The :attribute field must exist.';
 
-    constructor(modelConstructor: ModelConstructor, column: string, where?: ExistsRuleOptions['where']) {
-        super(modelConstructor, { column, where });
+    constructor(modelConstructor: ModelConstructor, column: string, callback?: ExistsRuleOptions['callback']) {
+        super(modelConstructor, { column, callback });
     }
 
     public async test(): Promise<boolean> {
@@ -31,14 +31,14 @@ class ExistsRule extends AbstractDatabaseRule<ExistsRuleOptions> implements IRul
         }
 
         const column = db().getAdapter().normalizeColumn(this.options.column)
-        const builder = this.query()
+        let builder = this.query()
             .where(column, this.getData() as TWhereClauseValue)
 
-        if (typeof this.options.where === 'function') {
-            const where = this.options.where(this.getHttpContext())
+        if (typeof this.options.callback === 'function') {
+            const builderCustom = this.options.callback(builder.clone(), this.getHttpContext())
 
-            if (where) {
-                builder.where(this.getHttpContext())
+            if (builderCustom) {
+                builder = builderCustom.clone()
             }
         }
 
