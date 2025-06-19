@@ -540,6 +540,9 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {IModelAttributes | null} The model's data as an object, or null if no data is set.
      */
     getAttributes(): Attributes | null {
+        if(this.attributes === null) {
+            return null
+        }
         return this.castAttributes({ ...this.attributes } as Attributes | null);
     }
 
