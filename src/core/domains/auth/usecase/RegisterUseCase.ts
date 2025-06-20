@@ -8,7 +8,6 @@ import ApiResponse from "@src/core/domains/http/response/ApiResponse";
 import ValidatorResult from "@src/core/domains/validator/data/ValidatorResult";
 import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
 import { app } from "@src/core/services/App";
-
 import { IModelAttributes } from "@src/core/domains/models/interfaces/IModel";
 
 export type RegisterUseCaseResponse = ApiResponse<UserAttributes | { errors?: string[] | object }>

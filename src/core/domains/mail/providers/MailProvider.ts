@@ -1,7 +1,6 @@
 import { mailConfig } from "@src/config/mail.config";
 import BaseProvider from "@src/core/base/Provider";
 import { app } from "@src/core/services/App";
-
 import { IMailConfig } from "@src/core/domains/mail/interfaces/config";
 import MailService from "@src/core/domains/mail/services/MailService";
 

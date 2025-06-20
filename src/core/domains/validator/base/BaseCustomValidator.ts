@@ -4,7 +4,6 @@ import { IRulesObject } from "@src/core/domains/validator/interfaces/IRule";
 import { IValidator, IValidatorAttributes, IValidatorMessages } from "@src/core/domains/validator/interfaces/IValidator";
 import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
 import Validator from "@src/core/domains/validator/service/Validator";
-
 import { IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
 
 /**

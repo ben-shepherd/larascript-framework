@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { IRule, IRulesObject } from "@src/core/domains/validator/interfaces/IRule"
 import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult"
-
 import { IHasHttpContext } from "@src/core/domains/http/interfaces/IHttpContext"
 
 

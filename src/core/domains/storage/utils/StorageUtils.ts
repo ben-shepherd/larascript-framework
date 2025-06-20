@@ -1,5 +1,4 @@
 import path from 'path';
-
 import StorageFile from '@src/core/domains/storage/data/StorageFile';
 import { StorageTypes } from '@src/core/domains/storage/enums/StorageTypes';
 import { FileSystemMeta } from '@src/core/domains/storage/interfaces/meta';

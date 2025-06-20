@@ -4,7 +4,6 @@ import { IRule, IRulesObject } from "@src/core/domains/validator/interfaces/IRul
 import { IValidator, IValidatorAttributes, IValidatorFn, IValidatorMessages } from "@src/core/domains/validator/interfaces/IValidator";
 import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
 import DotNotationDataExtrator from "@src/core/util/data/DotNotation/DataExtractor/DotNotationDataExtrator";
-
 import { IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
 
 /**

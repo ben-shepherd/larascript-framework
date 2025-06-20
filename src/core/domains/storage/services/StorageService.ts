@@ -4,7 +4,6 @@ import { StorageTypes } from "@src/core/domains/storage/enums/StorageTypes";
 import { IStorageService } from "@src/core/domains/storage/interfaces/IStorageService";
 import { app } from "@src/core/services/App";
 import path from "path";
-
 import { TUploadedFile } from "@src/core/domains/http/interfaces/UploadedFile";
 import { IGenericStorage } from "@src/core/domains/storage/interfaces/IGenericStorage";
 import { IStorageFile } from "@src/core/domains/storage/interfaces/IStorageFile";

@@ -13,7 +13,6 @@ import { ISessionService } from '@src/core/domains/session/interfaces/ISessionSe
 import { IStorageService } from '@src/core/domains/storage/interfaces/IStorageService';
 import { IValidatorFn } from '@src/core/domains/validator/interfaces/IValidator';
 import readline from 'node:readline';
-
 import { IMailService } from '@src/core/domains/mail/interfaces/services';
 
 export interface ILarascriptProviders {
