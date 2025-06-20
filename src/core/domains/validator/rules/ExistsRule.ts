@@ -4,8 +4,8 @@ import { ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import AbstractDatabaseRule from "@src/core/domains/validator/abstract/AbstractDatabaseRule";
 import { IRule } from "@src/core/domains/validator/interfaces/IRule";
 
-import { db } from "../../database/services/Database";
-import { IHttpContext } from "../../http/interfaces/IHttpContext";
+import { db } from "@src/core/domains/database/services/Database";
+import { IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
 
 type ExistsRuleOptions = {
     modelConstructor: ModelConstructor;

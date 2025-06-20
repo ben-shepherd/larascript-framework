@@ -4,7 +4,7 @@ import { MongoRaw } from "@src/core/domains/mongodb/builder/AggregateExpression"
 import { ObjectId } from "mongodb";
 import { z } from "zod";
 
-import { normalizeColumn } from "../../utils/normalizeColumn";
+import { normalizeColumn } from "@src/core/domains/mongodb/utils/normalizeColumn";
 
 /**
  * Match class handles building MongoDB $match pipeline stages from SQL-style where clauses.

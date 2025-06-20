@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import EnumRule from '@src/core/domains/validator/rules/EnumRole';
+import EnumRule from '@src/core/domains/validator/rules/EnumRule';
 import NullableRule from '@src/core/domains/validator/rules/NullableRule';
 import Validator from '@src/core/domains/validator/service/Validator';
 

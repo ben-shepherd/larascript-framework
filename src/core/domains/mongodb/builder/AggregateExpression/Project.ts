@@ -1,6 +1,6 @@
 import { TColumnOption } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
-import { normalizeColumn } from "../../utils/normalizeColumn";
+import { normalizeColumn } from "@src/core/domains/mongodb/utils/normalizeColumn";
 
 class Project {
 
