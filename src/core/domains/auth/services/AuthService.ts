@@ -7,7 +7,6 @@ import { IBaseAuthConfig } from "@src/core/domains/auth/interfaces/config/IAuth"
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
 import { IAuthService } from "@src/core/domains/auth/interfaces/service/IAuthService";
 import { app } from "@src/core/services/App";
-
 import { IUserRepository } from "@src/core/domains/auth/interfaces/repository/IUserRepository";
 
 /**

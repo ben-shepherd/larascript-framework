@@ -1,5 +1,4 @@
 import fs from 'fs';
-
 import { TUploadedFile, TUploadedFileData } from "@src/core/domains/http/interfaces/UploadedFile";
 
 class UploadedFile implements TUploadedFile {

@@ -1,7 +1,6 @@
 import AWS from 'aws-sdk';
 import fs from 'fs';
 import path from 'path';
-
 import StorageFile from "@src/core/domains/storage/data/StorageFile";
 import { StorageTypes } from '@src/core/domains/storage/enums/StorageTypes';
 import FileNotFoundException from "@src/core/domains/storage/Exceptions/FileNotFoundException";

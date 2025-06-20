@@ -3,7 +3,6 @@ import { LogicalOperators, TLogicalOperator, TWhereClause, TWhereClauseValue } f
 import { MongoRaw } from "@src/core/domains/mongodb/builder/AggregateExpression";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
-
 import { normalizeColumn } from "@src/core/domains/mongodb/utils/normalizeColumn";
 
 /**
@@ -167,36 +166,36 @@ class Match {
         column = normalizeColumn(column)
 
         switch (operator) {
-            case "=":
-                return { [column]: { $eq: value } }
-            case "!=":
-                return { [column]: { $ne: value } }
-            case "<>":
-                return { [column]: { $ne: value } }
-            case ">":
-                return { [column]: { $gt: value } }
-            case "<":
-                return { [column]: { $lt: value } }
-            case ">=":
-                return { [column]: { $gte: value } }
-            case "<=":
-                return { [column]: { $lte: value } }
-            case "like":
-                return this.regex(column, value as TWhereClauseValue)
-            case "not like":
-                return this.notRegex(column, value as TWhereClauseValue)
-            case "in":
-                return { [column]: { $in: value } }
-            case "not in":
-                return { [column]: { $not: { $in: value } } }
-            case "is null":
-                return { [column]: { $eq: null } }
-            case "is not null":
-                return { [column]: { $ne: null } }
-            case "between":
-                return this.between(column, value as TWhereClauseValue)
-            case "not between":
-                return this.notBetween(column, value as TWhereClauseValue)
+        case "=":
+            return { [column]: { $eq: value } }
+        case "!=":
+            return { [column]: { $ne: value } }
+        case "<>":
+            return { [column]: { $ne: value } }
+        case ">":
+            return { [column]: { $gt: value } }
+        case "<":
+            return { [column]: { $lt: value } }
+        case ">=":
+            return { [column]: { $gte: value } }
+        case "<=":
+            return { [column]: { $lte: value } }
+        case "like":
+            return this.regex(column, value as TWhereClauseValue)
+        case "not like":
+            return this.notRegex(column, value as TWhereClauseValue)
+        case "in":
+            return { [column]: { $in: value } }
+        case "not in":
+            return { [column]: { $not: { $in: value } } }
+        case "is null":
+            return { [column]: { $eq: null } }
+        case "is not null":
+            return { [column]: { $ne: null } }
+        case "between":
+            return this.between(column, value as TWhereClauseValue)
+        case "not between":
+            return this.notBetween(column, value as TWhereClauseValue)
         }
 
     }

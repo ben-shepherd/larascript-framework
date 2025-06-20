@@ -1,7 +1,6 @@
 
 import AbstractRule from "@src/core/domains/validator/abstract/AbstractRule";
 import { IRule, IRuleError } from "@src/core/domains/validator/interfaces/IRule";
-
 import { TUploadedFile } from "@src/core/domains/http/interfaces/UploadedFile";
 
 type Options = {

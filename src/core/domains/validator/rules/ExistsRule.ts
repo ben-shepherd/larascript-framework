@@ -3,7 +3,6 @@ import { IEloquent, TWhereClauseValue } from "@src/core/domains/eloquent/interfa
 import { ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import AbstractDatabaseRule from "@src/core/domains/validator/abstract/AbstractDatabaseRule";
 import { IRule } from "@src/core/domains/validator/interfaces/IRule";
-
 import { db } from "@src/core/domains/database/services/Database";
 import { IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
 

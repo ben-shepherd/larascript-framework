@@ -5,7 +5,6 @@ import { IExpressable } from "@src/core/domains/http/interfaces/IExpressable";
 import { IMiddleware, MiddlewareConstructor, TExpressMiddlewareFn } from "@src/core/domains/http/interfaces/IMiddleware";
 import { TRouteItem } from "@src/core/domains/http/interfaces/IRouter";
 import { NextFunction, Request, Response } from "express";
-
 import { IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
 
 /**
