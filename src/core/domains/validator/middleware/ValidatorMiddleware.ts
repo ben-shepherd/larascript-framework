@@ -1,7 +1,6 @@
 import Middleware from "@src/core/domains/http/base/Middleware";
-import { CustomValidatorConstructor } from "@src/core/domains/validator/interfaces/IValidator";
-
 import { IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
+import { CustomValidatorConstructor } from "@src/core/domains/validator/interfaces/IValidator";
 
 /**
  * Validator middleware for validating the request body
@@ -27,8 +26,13 @@ class ValidatorMiddleware extends Middleware {
         for (const validatorConstructor of validatorConstructors) {
             const validator = new validatorConstructor();
             validator.setHttpContext(context)
-            
-            const result = await validator.validate(context.getRequest().body);
+
+            const data = {
+                ...(context.getParams()),
+                ...(context.getRequest().body),
+            }
+
+            const result = await validator.validate(data);
 
             // Validation failed, return the errors
             if (result.fails()) {

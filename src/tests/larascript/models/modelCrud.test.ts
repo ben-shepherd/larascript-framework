@@ -63,7 +63,7 @@ describe('test model crud', () => {
              */
             await createdModel.delete();
             expect(createdModel.getId()).toBeFalsy();
-            expect(await createdModel.toObject()).toBeFalsy();
+            expect(await createdModel.getAttributes()).toBeFalsy();
 
             /**
              * Check if the model is deleted

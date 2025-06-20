@@ -15,7 +15,9 @@ export type TAdapterComposerFileName = {
     shortName: string
 }
 
-export interface  IDatabaseAdapter {
+export interface IDatabaseAdapter {
+
+    normalizeColumn(col: string): string
 
     setConnectionName(...args: any[]): void;
 

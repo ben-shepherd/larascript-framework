@@ -2,7 +2,7 @@ import { IHasHttpContext } from "@src/core/domains/http/interfaces/IHttpContext"
 
 /* eslint-disable no-unused-vars */
 export interface IRuleConstructor {
-    new (...args: any[]): IRule
+    new(...args: any[]): IRule
 }
 
 export interface IRulesObject {
@@ -21,6 +21,7 @@ export interface IRule extends IHasHttpContext {
     setAttributes(attributes: unknown): this
     setAttribute(attribute: string): this
     getAttribute(): string;
+    getAttributes(): unknown;
     setMessages(messages: Record<string, string>): this
     setOtherRuleNames(names: string[]): this
     validate(): Promise<boolean>

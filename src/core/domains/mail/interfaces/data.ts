@@ -5,7 +5,7 @@ export interface IMailOptions {
     subject: string;
     body: string;
     attachments?: any[];
-    options: Record<string, unknown>
+    options?: Record<string, unknown>
 }
 
 export interface IMail<T extends IMailOptions = IMailOptions> {

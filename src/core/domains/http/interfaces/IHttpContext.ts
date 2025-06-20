@@ -3,10 +3,9 @@ import { IApiTokenModel } from '@src/core/domains/auth/interfaces/models/IApiTok
 import { IUserModel } from '@src/core/domains/auth/interfaces/models/IUserModel';
 import { TBaseRequest } from '@src/core/domains/http/interfaces/BaseRequest';
 import { TRouteItem } from '@src/core/domains/http/interfaces/IRouter';
-import { NextFunction, Response } from 'express';
-
-import { IStorageFile } from '@src/core/domains/storage/interfaces/IStorageFile';
 import { TUploadedFile } from '@src/core/domains/http/interfaces/UploadedFile';
+import { IStorageFile } from '@src/core/domains/storage/interfaces/IStorageFile';
+import { NextFunction, Response } from 'express';
 
 export interface IHttpContext {
     getRouteItem(): TRouteItem | undefined;

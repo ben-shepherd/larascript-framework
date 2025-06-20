@@ -321,8 +321,6 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     }
 
     /**
-     * Retrieves the factory instance for the model.
-    /**
      * Sets the observer for this model instance.
      * The observer is responsible for handling events broadcasted by the model.
      * @param {IObserver} observer - The observer to set.
@@ -450,6 +448,9 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         if (this.attributes === null) {
             this.attributes = {} as Attributes;
         }
+        if (this.casts?.[key as string]) {
+            value = this.castable.getCast(value, this.casts[key as string] as TCastableType) as Attributes[K] | null;
+        }
         if (this.attributes) {
             this.attributes[key] = value as Attributes[K];
         }
@@ -539,7 +540,10 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {IModelAttributes | null} The model's data as an object, or null if no data is set.
      */
     getAttributes(): Attributes | null {
-        return this.castAttributes(this.attributes);
+        if(this.attributes === null) {
+            return null
+        }
+        return this.castAttributes({ ...this.attributes } as Attributes | null);
     }
 
     /**
@@ -669,13 +673,44 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * 
      * @param {Attributes | null} attributes - The attributes to cast.
      * @returns {Attributes | null} The casted attributes.
+     * 
+     * Note: Encrypted string values are not cast to avoid incorrect type casting.
+     * This is because encrypted values are stored as strings and attempting to cast them
+     * before decryption would result in incorrect types (e.g., null) since the encrypted
+     * string format is not compatible with the target type. Only encrypted objects and arrays
+     * are cast after they have been decrypted and parsed from JSON.
      */
     private castAttributes(attributes: Attributes | null): Attributes | null {
         if (!attributes) {
             return null;
         }
 
-        return this.castable.getCastFromObject(attributes as Record<string, unknown>, this.casts) as Attributes;
+        // Reduce attributes into a casted Attributes object
+        // Ignoring encrypted complex types (object, arrays)
+        return Object.keys(attributes).reduce((acc, curr) => {
+
+            const isEncryptedComplexType = this.encrypted.includes(curr)
+                && this.casts?.[curr]
+                && ['object', 'array'].includes(this.casts?.[curr])
+                && typeof this.casts?.[curr] === 'string';
+
+            if (isEncryptedComplexType) {
+                acc[curr] = attributes[curr]
+                return acc
+            }
+
+            // Looks OK, cast
+            if (this.casts?.[curr] && typeof this.casts[curr] === 'string') {
+                acc[curr] = this.castable.getCast(attributes[curr], this.casts?.[curr])
+                return acc
+            }
+
+            acc[curr] = attributes[curr]
+            return acc
+        }, {}) as Attributes | null
+
+
+        // return this.castable.getCastFromObject(attributesCopy as Record<string, unknown>, this.casts) as Attributes;
     }
 
     /**
@@ -745,7 +780,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         if (!id) return null;
 
         const result = await this.queryBuilder().find(id)
-        const attributes = result ? await result.toObject({ excludeGuarded: false }) : null;
+        const attributes = result ? await result.getAttributes() : null;
         const decryptedAttributes = await this.decryptAttributes(attributes as Attributes | null);
 
         this.attributes = decryptedAttributes ? { ...decryptedAttributes } as Attributes : null
@@ -761,14 +796,24 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {Promise<Attributes>} The encrypted attributes.
      */
     encryptAttributes(attributes: Attributes | null): Attributes | null {
-        if (typeof attributes !== 'object') {
+        const attributesCopy = (attributes ? { ...attributes } : null) as Record<string, unknown>;
+
+        if (typeof attributesCopy !== 'object') {
             return attributes;
         }
 
         this.encrypted.forEach(key => {
-            if (typeof attributes?.[key] !== 'undefined' && attributes?.[key] !== null) {
+            if (['object', 'array'].includes(this.casts?.[key] as string) && typeof attributesCopy?.[key] === 'object') {
                 try {
-                    (attributes as object)[key] = cryptoService().encrypt((attributes as object)[key]);
+                    attributesCopy[key] = JSON.stringify(attributesCopy?.[key])
+                }
+                // eslint-disable-next-line no-unused-vars
+                catch (err) { }
+            }
+
+            if (typeof attributesCopy?.[key] !== 'undefined' && attributesCopy?.[key] !== null) {
+                try {
+                    (attributesCopy as object)[key] = cryptoService().encrypt((attributesCopy as object)[key]);
                 }
                 catch (e) {
                     console.error(e)
@@ -776,7 +821,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
             }
         });
 
-        return attributes;
+        return attributesCopy as Attributes;
     }
 
     /**
@@ -786,14 +831,28 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns {Promise<Attributes>} The decrypted attributes.
      */
     decryptAttributes(attributes: Attributes | null): Attributes | null {
+        const attributesCopy = (attributes ? { ...attributes } : null) as Record<string, unknown>;
+
         if (typeof this.attributes !== 'object') {
             return attributes;
         }
 
         this.encrypted.forEach(key => {
-            if (typeof attributes?.[key] !== 'undefined' && attributes?.[key] !== null) {
+
+            if (['object', 'array'].includes(this.casts?.[key] as string) && typeof attributesCopy?.[key] === 'string') {
                 try {
-                    (attributes as object)[key] = cryptoService().decrypt((attributes as object)[key]);
+                    attributesCopy[key] = JSON.parse(
+                        cryptoService().decrypt(attributesCopy?.[key] as string)
+                    )
+                    return;
+                }
+                // eslint-disable-next-line no-unused-vars
+                catch (err) { }
+            }
+
+            if (typeof attributesCopy?.[key] !== 'undefined' && attributesCopy?.[key] !== null) {
+                try {
+                    (attributesCopy as object)[key] = cryptoService().decrypt((attributesCopy as object)[key]);
                 }
 
                 catch (e) {
@@ -802,7 +861,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
             }
         });
 
-        return attributes;
+        return attributesCopy as Attributes;
     }
 
     /**
@@ -899,8 +958,10 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     async delete(): Promise<void> {
         if (!this.attributes) return;
 
+        const preDeletedAttributes = { ...this.attributes }
+
         // Emit the deleting event
-        await this.emit('deleting', this.attributes);
+        await this.emit('deleting', preDeletedAttributes);
 
         // Observe the attributes
         this.attributes = await this.observeAttributes('deleting', this.attributes);
@@ -916,7 +977,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         await this.observeAttributes('deleted', this.attributes);
 
         // Emit the deleted event
-        await this.emit('deleted', this.attributes);
+        await this.emit('deleted', preDeletedAttributes);
     }
 
     /**

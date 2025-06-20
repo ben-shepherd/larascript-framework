@@ -1,21 +1,24 @@
 import { TOrderBy } from "@src/core/domains/eloquent/interfaces/IEloquent";
 
+import { normalizeColumn } from "@src/core/domains/mongodb/utils/normalizeColumn";
+
 class Order {
 
     /**
      * Builds the $sort stage of the aggregation pipeline
      * @returns {object|null} The $sort pipeline stage or null if no sorting is specified
      */
-    static getPipeline(order: TOrderBy[] | null): { $sort: object } | null{
+    static getPipeline(order: TOrderBy[] | null): { $sort: object } | null {
 
-        if(!order) {
+        if (!order) {
             return null;
         }
 
         const orderByArray = Array.isArray(order) ? order : [order]
         const result: object = {};
 
-        for(const order of orderByArray) {
+        for (const order of orderByArray) {
+            order.column = normalizeColumn(order.column)
             result[order.column] = this.normalizeOrderDirection(order)
         }
 
@@ -31,7 +34,7 @@ class Order {
         return order.direction === 'asc' ? 1 : -1
     }
 
-    
+
 }
 
 export default Order
