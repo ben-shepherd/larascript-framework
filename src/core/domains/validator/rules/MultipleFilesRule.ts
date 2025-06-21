@@ -5,7 +5,7 @@ import { IRule } from "@src/core/domains/validator/interfaces/IRule";
 
 class MultipleFilesRule extends AbstractRule implements IRule {
 
-    protected name: string = 'required'
+    protected name: string = 'multipleFiles'
 
     protected errorTemplate: string = 'The :attribute field expects multiple files.';
 

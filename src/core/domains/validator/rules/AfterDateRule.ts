@@ -12,7 +12,7 @@ type Options = {
 
 class AfterDateRule extends AbstractRule implements IRule {
 
-    protected name: string = 'enum'
+    protected name: string = 'afterDate'
 
     protected errorTemplate: string = 'The :attribute must be after :date.';
 

@@ -5,7 +5,7 @@ import { IRule, IRuleError } from "@src/core/domains/validator/interfaces/IRule"
 
 class SingleFileRule extends AbstractRule implements IRule {
 
-    protected name: string = 'required'
+    protected name: string = 'singleFile'
 
     protected errorTemplate: string = 'The :attribute field expects a single file but :amount were provided.';
 

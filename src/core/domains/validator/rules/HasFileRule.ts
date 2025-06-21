@@ -4,7 +4,7 @@ import { IRule } from "@src/core/domains/validator/interfaces/IRule";
 
 class HasFileRule extends AbstractRule implements IRule {
 
-    protected name: string = 'required'
+    protected name: string = 'hasFile'
 
     protected errorTemplate: string = 'The :attribute field must be a file.';
 

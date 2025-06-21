@@ -1,8 +1,8 @@
 
+import { TUploadedFile } from "@src/core/domains/http/interfaces/UploadedFile";
 import AbstractRule from "@src/core/domains/validator/abstract/AbstractRule";
 import { IRule, IRuleError } from "@src/core/domains/validator/interfaces/IRule";
 import path from "path";
-import { TUploadedFile } from "@src/core/domains/http/interfaces/UploadedFile";
 
 type Options = {
     ext: string | string[]
@@ -10,7 +10,7 @@ type Options = {
 
 class FileExtensionRule extends AbstractRule<Options> implements IRule {
 
-    protected name: string = 'required'
+    protected name: string = 'fileExtension'
 
     protected errorTemplate: string = 'The :attribute field must use the :ext extension.';
 

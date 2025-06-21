@@ -11,7 +11,7 @@ type AcceptedIfOptions = {
 
 class AcceptedIfRule extends AbstractRule<AcceptedIfOptions> implements IRule {
 
-    protected name: string = 'accepted_if'
+    protected name: string = 'acceptedIf'
 
     protected errorTemplate: string = 'The :attribute field must be accepted when :another is :value.';
 

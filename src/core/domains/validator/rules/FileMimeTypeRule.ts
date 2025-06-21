@@ -1,7 +1,7 @@
 
+import { TUploadedFile } from "@src/core/domains/http/interfaces/UploadedFile";
 import AbstractRule from "@src/core/domains/validator/abstract/AbstractRule";
 import { IRule, IRuleError } from "@src/core/domains/validator/interfaces/IRule";
-import { TUploadedFile } from "@src/core/domains/http/interfaces/UploadedFile";
 
 type Options = {
     startsWith?: string;
@@ -10,7 +10,7 @@ type Options = {
 
 class FileMimeType extends AbstractRule<Options> implements IRule {
 
-    protected name: string = 'required'
+    protected name: string = 'fileMimeType'
 
     protected errorTemplate: string = 'The :attribute field must have a mime type of :mimeType.';
 
