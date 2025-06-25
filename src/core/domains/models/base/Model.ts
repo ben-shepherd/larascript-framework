@@ -19,6 +19,9 @@ import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
 import { app } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
 
+import Collection from '../../collections/Collection';
+
+
 
 
 /**
@@ -500,7 +503,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         const relationsip = BaseRelationshipResolver.tryGetRelationshipInterface(this, key as string);
 
         if (relationsip) {
-            return await this.getAttributeRelationship(key, relationsip);
+            return await this.getRelationshipData(key, relationsip);
         }
 
         return this.getAttributeSync(key);
@@ -514,7 +517,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @param {K} key - The key of the attribute to retrieve.
      * @returns {Attributes[K] | null} The value of the attribute or null if not found.
      */
-    protected async getAttributeRelationship<K extends keyof Attributes = keyof Attributes>(key: K, relationship?: IRelationship): Promise<Attributes[K] | null> {
+    protected async getRelationshipData<K extends keyof Attributes = keyof Attributes>(key: K, relationship?: IRelationship): Promise<Attributes[K] | null> {
 
         if (this.attributes?.[key]) {
             return this.attributes[key]
@@ -529,9 +532,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         const resolver = db().getAdapter(this.connection).getRelationshipResolver()
 
         // Set the attribute
-        this.setAttribute(key, await resolver.resolveData<Attributes, K>(this, relationship, this.connection));
-
-        return this.getAttributeSync(key);
+        return await resolver.resolveData<Attributes, K>(this, relationship, this.connection) as Attributes[K]
     }
 
     /**
@@ -543,7 +544,17 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         if(this.attributes === null) {
             return null
         }
-        return this.castAttributes({ ...this.attributes } as Attributes | null);
+
+        let fetchedAttributes =   { ...this.attributes } as Record<string, unknown>
+        
+        // Add relationship data
+        this.relationships.forEach(async(relationshipAttribute) => {
+            fetchedAttributes[relationshipAttribute] = await this.getRelationshipData(relationshipAttribute)
+        })
+
+        fetchedAttributes = this.decryptAttributes({...fetchedAttributes} as Attributes | null) as Record<string, unknown>
+
+        return this.castAttributes({ ...fetchedAttributes } as Attributes | null);
     }
 
     /**
@@ -1046,14 +1057,26 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * 
      * @returns {Promise<void>}
      */
-    async loadRelationships(): Promise<void> {
+    async loadRelationships({ loadAsAttributes = false }: { loadAsAttributes?: boolean }): Promise<IModel<IModelAttributes>> {
         if (!this.attributes) {
-            return;
+            return this;
         }
 
-        this.relationships.forEach(async relationship => {
-            await this.setAttribute(relationship as keyof Attributes, await this.getAttributeRelationship(relationship as keyof Attributes))
-        });
+        for(const attr of this.relationships) {
+            let data = await this.getRelationshipData(attr as keyof Attributes)
+
+            if(loadAsAttributes && data instanceof Collection)  {
+                data = data.toArray().map(m => m.getAttributes()) as Awaited<Attributes[keyof Attributes]>
+            }
+
+            if(loadAsAttributes && data instanceof Model) {
+                data = data.getAttributes()
+            }
+
+            await this.setAttribute(attr as keyof Attributes, data)
+        }
+
+        return this
     }
 
 }

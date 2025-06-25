@@ -146,14 +146,14 @@ class BaseRelationshipResolver implements IRelationshipResolver {
 
         // Check if the relationship exists
         if(typeof model[relationshipName] !== 'function') {
-            throw new EloquentRelationshipException('Invalid relationship \'' + relationshipName + '\'');
+            throw new EloquentRelationshipException('Invalid relationship \'' + relationshipName + '\'. Did you forget to add the method to the model?');
         }
 
         // Check if the relationship is valid
         const relationship = model[relationshipName]() as IRelationship;
 
         if(relationship?._relationshipInterface !== true) {
-            throw new EloquentRelationshipException('Invalid relationship \'' + relationshipName + '\'');
+            throw new EloquentRelationshipException('Invalid relationship \'' + relationshipName + '\'. Did you forget to add the method to the model?');
         }
 
         return relationship

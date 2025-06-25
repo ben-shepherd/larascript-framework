@@ -71,7 +71,7 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes> 
     save(): Promise<void>;
     delete(): Promise<void>;
     getRelationships(): string[];
-    loadRelationships(): Promise<void>;
+    loadRelationships(options: { loadAsAttributes?: boolean }): Promise<IModel<IModelAttributes>>;
 
     // Events
     on(event: IModelLifeCycleEvent, eventConstructor: EventConstructor): void;
