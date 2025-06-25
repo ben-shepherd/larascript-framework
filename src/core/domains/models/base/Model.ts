@@ -540,7 +540,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * 
      * @returns {IModelAttributes | null} The model's data as an object, or null if no data is set.
      */
-    getAttributes(): Attributes | null {
+    getAttributes(options: { excludeGuarded?: boolean } = {}): Attributes | null {
         if(this.attributes === null) {
             return null
         }
@@ -554,7 +554,15 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
 
         fetchedAttributes = this.decryptAttributes({...fetchedAttributes} as Attributes | null) as Record<string, unknown>
 
-        return this.castAttributes({ ...fetchedAttributes } as Attributes | null);
+        fetchedAttributes =  this.castAttributes({ ...fetchedAttributes } as Attributes | null)  as Record<string, unknown>;
+
+        if (fetchedAttributes && options.excludeGuarded) {
+            fetchedAttributes = Object.fromEntries(
+                Object.entries(fetchedAttributes).filter(([key]) => !this.guarded.includes(key))
+            ) as Attributes;
+        }
+
+        return fetchedAttributes as Attributes
     }
 
     /**
@@ -1057,20 +1065,25 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * 
      * @returns {Promise<void>}
      */
-    async loadRelationships({ loadAsAttributes = false }: { loadAsAttributes?: boolean }): Promise<IModel<IModelAttributes>> {
+    async loadRelationships({ only = [], loadAsAttributes = false, excludeGuarded  = false }: { only?: string[], loadAsAttributes?: boolean, excludeGuarded?: boolean }): Promise<IModel<IModelAttributes>> {
         if (!this.attributes) {
             return this;
         }
 
-        for(const attr of this.relationships) {
+        const relationshipsArray = only.length === 0 
+            ? this.relationships 
+            : this.relationships.filter(r => only.includes(r))
+
+        for(const attr of relationshipsArray) {
+
             let data = await this.getRelationshipData(attr as keyof Attributes)
 
             if(loadAsAttributes && data instanceof Collection)  {
-                data = data.toArray().map(m => m.getAttributes()) as Awaited<Attributes[keyof Attributes]>
+                data = data.toArray().map(m => m.getAttributes({ excludeGuarded })) as Awaited<Attributes[keyof Attributes]>
             }
 
             if(loadAsAttributes && data instanceof Model) {
-                data = data.getAttributes()
+                data = data.getAttributes({ excludeGuarded })
             }
 
             await this.setAttribute(attr as keyof Attributes, data)
