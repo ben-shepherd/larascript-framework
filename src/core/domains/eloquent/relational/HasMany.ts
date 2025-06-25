@@ -7,6 +7,8 @@ import { Collection } from "collect.js";
 
 class HasMany extends GenericRelationship {
 
+    protected _isArray: boolean = true
+
     /**
      * Fetches data for a "has many" relationship.
      * @param model - The source model.

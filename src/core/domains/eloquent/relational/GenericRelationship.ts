@@ -5,6 +5,8 @@ class GenericRelationship implements IRelationship {
 
     _relationshipInterface = true;
 
+    protected _isArray: boolean = false;
+
     constructor(
         // eslint-disable-next-line no-unused-vars
         protected localModel: ModelConstructor<IModel>,
@@ -68,6 +70,14 @@ class GenericRelationship implements IRelationship {
      */
     getForeignKey(): string {
         return (this.options.foreignKey ?? 'id') as string
+    }
+
+    /**
+     * Checks if this relationship should be an array
+     * @returns 
+     */
+    isArray(): boolean {
+        return this._isArray;
     }
 
 }

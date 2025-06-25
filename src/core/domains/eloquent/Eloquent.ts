@@ -13,10 +13,12 @@ import { IEloquent, IdGeneratorFn, LogicalOperators, OperatorArray, SetModelColu
 import IEloquentExpression from "@src/core/domains/eloquent/interfaces/IEloquentExpression";
 import { TDirection } from "@src/core/domains/eloquent/interfaces/TEnums";
 import With from "@src/core/domains/eloquent/relational/With";
-import { IModel, ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
+import { IModel, IModelAttributes, ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { AppSingleton } from "@src/core/services/App";
 import { deepClone } from "@src/core/util/deepClone";
+
+import BaseRelationshipResolver from "./base/BaseRelationshipResolver";
 
 
 /**
@@ -111,10 +113,40 @@ abstract class Eloquent<
 
         return results.map(result => {
             const modelConstructor = this.modelCtor as ModelConstructor<IModel>;
-            const model = modelConstructor.create(result as Model['attributes'])
+            let model = modelConstructor.create(result as Model['attributes'])
             model.setConnectionName(this.connectionName)
+            model = this.formatModelRelationshipAttribtuesAsModels(model) as Model
             return model
         })
+    }
+
+    protected formatModelRelationshipAttribtuesAsModels(model: IModel): IModel {
+        model.getRelationships().forEach(relaitonship => {
+            const relationshipInterface = BaseRelationshipResolver.tryGetRelationshipInterface(model, relaitonship)
+            const foreignModelCtor = relationshipInterface?.getForeignModelCtor()
+
+            if(!foreignModelCtor) {
+                return;
+            }
+
+            if(typeof model.attributes?.[relaitonship] === 'undefined') {
+                return;
+            }
+
+            if(typeof model?.attributes[relaitonship] === 'object' && Array.isArray(model?.attributes[relaitonship])) {
+                model.attributes[relaitonship] = model.attributes[relaitonship].map(attributes => foreignModelCtor.create(attributes))
+            }
+
+            if(typeof model?.attributes[relaitonship] === 'object') {
+                model.attributes[relaitonship] = foreignModelCtor.create(model.attributes[relaitonship] as IModelAttributes)
+            }
+
+            if(relationshipInterface?.isArray() && !Array.isArray(model?.attributes?.[relaitonship]))  {
+                model.attributes[relaitonship] = [model?.attributes[relaitonship]]
+            }
+        })
+
+        return model
     }
 
     /**

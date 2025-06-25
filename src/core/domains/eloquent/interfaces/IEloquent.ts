@@ -89,6 +89,7 @@ export interface IRelationship {
     getOptions<T extends object = object>(): T
     getLocalKey(): string;
     getForeignKey(): string;
+    isArray(): boolean;
 }
 
 export interface IBelongsToOptions {

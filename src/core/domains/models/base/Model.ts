@@ -308,7 +308,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @returns The relationships for the model.
      */
     getRelationships(): string[] {
-        return this.relationships
+        return this.relationships ?? []
     }
 
     /**
@@ -517,7 +517,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @param {K} key - The key of the attribute to retrieve.
      * @returns {Attributes[K] | null} The value of the attribute or null if not found.
      */
-    protected async getRelationshipData<K extends keyof Attributes = keyof Attributes>(key: K, relationship?: IRelationship): Promise<Attributes[K] | null> {
+    async getRelationshipData<K extends keyof Attributes = keyof Attributes>(key: K, relationship?: IRelationship): Promise<Attributes[K] | null> {
 
         if (this.attributes?.[key]) {
             return this.attributes[key]
@@ -550,6 +550,17 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         // Add relationship data
         this.relationships.forEach(async(relationshipAttribute) => {
             fetchedAttributes[relationshipAttribute] = await this.getRelationshipData(relationshipAttribute)
+        })
+
+        // Get attributes on relationship data
+        this.relationships.forEach((relationship) => {
+            if(typeof fetchedAttributes?.[relationship]?.['getAttributes'] === 'function') {
+                fetchedAttributes[relationship] = fetchedAttributes?.[relationship]?.['getAttributes']()
+            }
+
+            if(fetchedAttributes?.[relationship] instanceof Collection) { 
+                fetchedAttributes[relationship] = fetchedAttributes[relationship].map(m => m.getAttributes())
+            }
         })
 
         fetchedAttributes = this.decryptAttributes({...fetchedAttributes} as Attributes | null) as Record<string, unknown>

@@ -173,6 +173,9 @@ class BaseRelationshipResolver implements IRelationshipResolver {
         if(relationship instanceof BelongsTo) {
             eloquent.join(foreignModelCtor, localKey, foreignKey, relationshipName)
         }
+        if(relationship instanceof HasMany) {
+            eloquent.join(foreignModelCtor, localKey, foreignKey, relationshipName)
+        }
 
         // Note/Todo: Has many relationship is not implemented yet (is it needed?)
     
