@@ -227,6 +227,7 @@ abstract class AbastractBaseResourceService {
         }
 
         const validator = new validatorConstructor()
+        validator.setHttpContext(context)
         const body = context.getRequest().body
         const result = await validator.validate(body)
 
