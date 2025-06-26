@@ -16,6 +16,7 @@ type ExecuteFn = (context: HttpContext) => Promise<void>;
 
 type IRouteServiceOptions = {
     additionalMiddlewares?: (express.RequestHandler | TExpressMiddlewareFnOrClass)[]
+    afterAllMiddlewares?: (express.RequestHandler | TExpressMiddlewareFnOrClass)[]
 }
 
 /**
@@ -121,11 +122,13 @@ class RouterBindService {
         // Middlewares from route item
         const routeItemMiddlewares = (routeItem.middlewares ?? []) as TExpressMiddlewareFnOrClass[]
         const additionalMiddlewares = this.options.additionalMiddlewares ?? [] as TExpressMiddlewareFnOrClass[]
+        const afterAllMiddlewares = this.options.afterAllMiddlewares ?? [] as TExpressMiddlewareFnOrClass[]
 
         // Get middlewares
         const middlewares: TExpressMiddlewareFn[] = [
             ...MiddlewareUtil.convertToExpressMiddlewares(additionalMiddlewares, routeItem),
             ...MiddlewareUtil.convertToExpressMiddlewares(routeItemMiddlewares, routeItem),
+            ...MiddlewareUtil.convertToExpressMiddlewares(afterAllMiddlewares, routeItem),
         ]
 
         // Get action

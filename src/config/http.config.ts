@@ -40,6 +40,13 @@ const config: IHttpConfig = {
     ],
 
     /**
+     * Global middleware to run after every other middleware
+     */
+    afterAllMiddlewares: [
+        ValidatorMiddleware,
+    ],
+
+    /**
      * Extend the express app
      */
     extendExpress: (app) => {
