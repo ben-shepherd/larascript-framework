@@ -15,7 +15,7 @@ import { default as express, default as expressClient } from 'express';
 type ExecuteFn = (context: HttpContext) => Promise<void>;
 
 type IRouteServiceOptions = {
-    additionalMiddlewares?: (express.RequestHandler | TExpressMiddlewareFnOrClass)[]
+    beforeAllMiddlewares?: (express.RequestHandler | TExpressMiddlewareFnOrClass)[]
     afterAllMiddlewares?: (express.RequestHandler | TExpressMiddlewareFnOrClass)[]
 }
 
@@ -74,7 +74,7 @@ class RouterBindService {
      * @param middlewares The middlewares to set
      */
     public setAdditionalMiddlewares(middlewares: TExpressMiddlewareFnOrClass[]): void {
-        this.options.additionalMiddlewares = middlewares
+        this.options.beforeAllMiddlewares = middlewares
     }
 
     /**
@@ -121,15 +121,19 @@ class RouterBindService {
 
         // Middlewares from route item
         const routeItemMiddlewares = (routeItem.middlewares ?? []) as TExpressMiddlewareFnOrClass[]
-        const additionalMiddlewares = this.options.additionalMiddlewares ?? [] as TExpressMiddlewareFnOrClass[]
+        const beforeAllMiddlewares = this.options.beforeAllMiddlewares ?? [] as TExpressMiddlewareFnOrClass[]
         const afterAllMiddlewares = this.options.afterAllMiddlewares ?? [] as TExpressMiddlewareFnOrClass[]
 
         // Get middlewares
         const middlewares: TExpressMiddlewareFn[] = [
-            ...MiddlewareUtil.convertToExpressMiddlewares(additionalMiddlewares, routeItem),
+            ...MiddlewareUtil.convertToExpressMiddlewares(beforeAllMiddlewares, routeItem),
             ...MiddlewareUtil.convertToExpressMiddlewares(routeItemMiddlewares, routeItem),
             ...MiddlewareUtil.convertToExpressMiddlewares(afterAllMiddlewares, routeItem),
         ]
+
+        if(routeItem.path.includes('portfolio')) {
+            console.log(1)
+        }
 
         // Get action
         const actionHandler = this.getActionHandler(routeItem)

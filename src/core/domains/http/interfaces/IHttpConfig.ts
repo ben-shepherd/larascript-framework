@@ -7,7 +7,7 @@ export type ExtendExpressFn = (app: express.Application) => void
 export default interface IHttpConfig {
     enabled: boolean;
     port: number;
-    globalMiddlewares?: (express.RequestHandler | TExpressMiddlewareFnOrClass)[];
+    beforeAllMiddlewares?: (express.RequestHandler | TExpressMiddlewareFnOrClass)[];
     afterAllMiddlewares?: (express.RequestHandler | TExpressMiddlewareFnOrClass)[];
     currentRequestCleanupDelay?: number;
     extendExpress?: ExtendExpressFn

@@ -117,18 +117,19 @@ export default class HttpService extends Service<IHttpConfig> implements IHttpSe
             return
         }
 
-        const additionalMiddlewares = [
+        const beforeAllMiddlewares = [
             RequestIdMiddleware.create(),
             StartSessionMiddleware.create(),
             EndRequestContextMiddleware.create(),
-            ...(this.config?.globalMiddlewares ?? []),
+            ...(this.config?.beforeAllMiddlewares ?? []),
         ] as (expressClient.RequestHandler | TExpressMiddlewareFnOrClass)[]
+
         const afterAllMiddlewares = [
             ...(this.config?.afterAllMiddlewares ?? []),
         ]
 
         this.routerBindService.setExpress(this.app, this.config)
-        this.routerBindService.setOptions({ additionalMiddlewares, afterAllMiddlewares })
+        this.routerBindService.setOptions({ beforeAllMiddlewares, afterAllMiddlewares })
         this.routerBindService.bindRoutes(router)
         this.registeredRoutes.push(...router.getRegisteredRoutes())
     }
