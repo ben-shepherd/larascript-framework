@@ -10,11 +10,11 @@ class StringRule extends AbstractRule implements IRule {
 
     public async test(): Promise<boolean> {
 
-        if(Array.isArray(this.getData())) {
-            return (this.getData() as unknown[]).every(item => typeof item === 'string')
+        if(Array.isArray(this.getAttributeData())) {
+            return (this.getAttributeData() as unknown[]).every(item => typeof item === 'string')
         }
 
-        return typeof this.getData() === 'string'
+        return typeof this.getAttributeData() === 'string'
 
     }
 

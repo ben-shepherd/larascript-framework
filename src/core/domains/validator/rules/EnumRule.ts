@@ -26,7 +26,7 @@ class EnumRule extends AbstractRule implements IRule {
         if (this.nullableString()) return true
         if (this.dataUndefinedOrNull()) return false
 
-        const value = this.getData()
+        const value = this.getAttributeData()
         const optionsWithDefaults: Options = {
             caseInsensitive: false,
             ...this.options,

@@ -11,16 +11,16 @@ class RequiredRule extends AbstractRule implements IRule {
     public async test(): Promise<boolean> {
         if(this.dataUndefinedOrNull()) return false
 
-        if(typeof this.getData() === 'string') {
-            return this.getData() !== ''
+        if(typeof this.getAttributeData() === 'string') {
+            return this.getAttributeData() !== ''
         }
 
-        if(Array.isArray(this.getData())) {
-            return (this.getData() as unknown[]).length > 0
+        if(Array.isArray(this.getAttributeData())) {
+            return (this.getAttributeData() as unknown[]).length > 0
         }
         
-        if(typeof this.getData() === 'object') {
-            return Object.keys(this.getData() as Record<string, unknown>).length > 0
+        if(typeof this.getAttributeData() === 'object') {
+            return Object.keys(this.getAttributeData() as Record<string, unknown>).length > 0
         }
 
         return true

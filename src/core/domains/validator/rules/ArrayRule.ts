@@ -9,7 +9,7 @@ class ArrayRule extends AbstractRule implements IRule {
     protected errorTemplate: string = 'The :attribute field must be an array.';
 
     public async test(): Promise<boolean> {
-        return Array.isArray(this.getData())
+        return Array.isArray(this.getAttributeData())
     }
 
 }

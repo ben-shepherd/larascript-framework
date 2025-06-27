@@ -33,8 +33,8 @@ class MaxRule extends AbstractRule<TMaxOptions> implements IRule {
     }
 
     protected testNumber(): boolean {
-        if(typeof this.getData() === 'number') {
-            if(this.getData() as number > this.options.max) {
+        if(typeof this.getAttributeData() === 'number') {
+            if(this.getAttributeData() as number > this.options.max) {
                 this.errorTemplate = this.errorTemplateNumber
                 return false
             }
@@ -43,8 +43,8 @@ class MaxRule extends AbstractRule<TMaxOptions> implements IRule {
     }
 
     protected testString(): boolean {
-        if(typeof this.getData() === 'string') {
-            if((this.getData() as string).length > this.options.max) {
+        if(typeof this.getAttributeData() === 'string') {
+            if((this.getAttributeData() as string).length > this.options.max) {
                 this.errorTemplate = this.errorTemplateString
                 return false
             }
@@ -53,8 +53,8 @@ class MaxRule extends AbstractRule<TMaxOptions> implements IRule {
     }
 
     protected testArray(): boolean {
-        if(Array.isArray(this.getData())) {
-            if((this.getData() as any[]).length > this.options.max) {
+        if(Array.isArray(this.getAttributeData())) {
+            if((this.getAttributeData() as any[]).length > this.options.max) {
                 this.errorTemplate = this.errorTemplateArray
                 return false
             }

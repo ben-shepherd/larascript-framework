@@ -17,7 +17,7 @@ class EqualsRule extends AbstractRule<TEqualsOptions> implements IRule {
     }
 
     public async test(): Promise<boolean> {
-        return this.getData() === this.options.matches
+        return this.getAttributeData() === this.options.matches
     }
 
     getError(): IRuleError {

@@ -36,13 +36,13 @@ class MinRule extends AbstractRule<TMinOptions> implements IRule {
     }
 
     protected nullableAndEmptyString() {
-        const data = (typeof this.getData() === 'string' ? this.getData() : '') as string
+        const data = (typeof this.getAttributeData() === 'string' ? this.getAttributeData() : '') as string
         return (this.otherRuleNames.includes('nullable') && data.length === 0)
     }
 
     protected testNumber(): boolean {
-        if(typeof this.getData() === 'number') {
-            if(this.getData() as number < this.options.min) {
+        if(typeof this.getAttributeData() === 'number') {
+            if(this.getAttributeData() as number < this.options.min) {
                 this.errorTemplate = this.errorTemplateNumber
                 return false
             }
@@ -51,8 +51,8 @@ class MinRule extends AbstractRule<TMinOptions> implements IRule {
     }
 
     protected testString(): boolean {
-        if(typeof this.getData() === 'string') {
-            if((this.getData() as string).length < this.options.min) {
+        if(typeof this.getAttributeData() === 'string') {
+            if((this.getAttributeData() as string).length < this.options.min) {
                 this.errorTemplate = this.errorTemplateString
                 return false
             }
@@ -61,8 +61,8 @@ class MinRule extends AbstractRule<TMinOptions> implements IRule {
     }
 
     protected testArray(): boolean {
-        if(Array.isArray(this.getData())) {
-            if((this.getData() as any[]).length < this.options.min) {
+        if(Array.isArray(this.getAttributeData())) {
+            if((this.getAttributeData() as any[]).length < this.options.min) {
                 this.errorTemplate = this.errorTemplateArray
                 return false
             }

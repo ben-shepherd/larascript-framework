@@ -1,5 +1,5 @@
 import { IHasHttpContext, IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
-import { IRuleError } from "@src/core/domains/validator/interfaces/IRule";
+import { IRule, IRuleError } from "@src/core/domains/validator/interfaces/IRule";
 import forceString from "@src/core/util/str/forceString";
 
 /**
@@ -8,7 +8,7 @@ import forceString from "@src/core/util/str/forceString";
  * 
  * @template TOptions - Type of options object that can be passed to configure the rule
  */
-abstract class AbstractRule<TOptions extends object = object> implements IHasHttpContext {
+abstract class AbstractRule<TOptions extends object = object> implements IHasHttpContext, IRule {
 
     /** Name of the validation rule */
     protected abstract name: string;
@@ -98,7 +98,7 @@ abstract class AbstractRule<TOptions extends object = object> implements IHasHtt
      * @param data - The value to validate
      * @returns this - For method chaining
      */
-    public setData(data: unknown): this {
+    public setAttributeData(data: unknown): this {
         this.data = data
         return this
     }
@@ -118,7 +118,7 @@ abstract class AbstractRule<TOptions extends object = object> implements IHasHtt
      * Gets the current value being validated
      * @returns The value being validated
      */
-    public getData<T = unknown>(): T {
+    public getAttributeData<T = unknown>(): T {
         return this.data as T
     }
 
@@ -249,7 +249,7 @@ abstract class AbstractRule<TOptions extends object = object> implements IHasHtt
      * @returns True if the data is undefined or null, false otherwise
      */
     protected dataUndefinedOrNull(): boolean {
-        return typeof this.getData() === 'undefined' || this.getData() === null
+        return typeof this.getAttributeData() === 'undefined' || this.getAttributeData() === null
     }
 
     /**
@@ -267,7 +267,7 @@ abstract class AbstractRule<TOptions extends object = object> implements IHasHtt
      */
     protected nullableString(): boolean {
         const allowNullable = this.otherRuleNames.includes('nullable')
-        const stringEmpty = typeof this.getData() === 'string' && (this.getData() as string).length === 0
+        const stringEmpty = typeof this.getAttributeData() === 'string' && (this.getAttributeData() as string).length === 0
         return allowNullable && (this.dataUndefinedOrNull() || stringEmpty)
     }
 

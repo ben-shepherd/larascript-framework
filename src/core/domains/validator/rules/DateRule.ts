@@ -10,11 +10,11 @@ class DateRule extends AbstractRule implements IRule {
     public async test(): Promise<boolean> {
         if (this.nullableString()) return true
 
-        if (typeof this.getData() !== 'string') {
+        if (typeof this.getAttributeData() !== 'string') {
             return false;
         }
 
-        const date = new Date(this.getData() as string);
+        const date = new Date(this.getAttributeData() as string);
         return date instanceof Date && !isNaN(date.getTime());
     }
 

@@ -8,12 +8,12 @@ class JsonRule extends AbstractRule implements IRule {
     protected errorTemplate: string = 'The :attribute must be a valid JSON string.';
 
     public async test(): Promise<boolean> {
-        if (typeof this.getData() !== 'string') {
+        if (typeof this.getAttributeData() !== 'string') {
             return false;
         }
 
         try {
-            JSON.parse(this.getData() as string);
+            JSON.parse(this.getAttributeData() as string);
         }
         // eslint-disable-next-line no-unused-vars
         catch (e) {
