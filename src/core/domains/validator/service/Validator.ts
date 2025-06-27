@@ -1,10 +1,10 @@
+import { IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
 import ValidatorResult from "@src/core/domains/validator/data/ValidatorResult";
 import ValidatorException from "@src/core/domains/validator/exceptions/ValidatorException";
 import { IRule, IRulesObject } from "@src/core/domains/validator/interfaces/IRule";
 import { IValidator, IValidatorAttributes, IValidatorFn, IValidatorMessages } from "@src/core/domains/validator/interfaces/IValidator";
 import { IValidatorResult } from "@src/core/domains/validator/interfaces/IValidatorResult";
 import DotNotationDataExtrator from "@src/core/util/data/DotNotation/DataExtractor/DotNotationDataExtrator";
-import { IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
 
 /**
  * Short hand for creating a new validator on the fly
@@ -200,7 +200,7 @@ class Validator implements IValidator {
     protected async validateRule(key: string, rule: IRule, data: unknown, attributes: unknown, otherRules: IRule[]): Promise<IValidatorResult> {
 
         rule.setDotNotationPath(key)
-        rule.setData(data)
+        rule.setAttributeData(data)
         rule.setAttributes(attributes)
         rule.setMessages(this.messages)
         rule.setOtherRuleNames(otherRules.map(r => r.getName()))

@@ -1,6 +1,6 @@
+import { IHasHttpContext, IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
 import { IRuleError } from "@src/core/domains/validator/interfaces/IRule";
 import forceString from "@src/core/util/str/forceString";
-import { IHasHttpContext, IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
 
 /**
  * Abstract base class for validation rules.
@@ -25,7 +25,7 @@ abstract class AbstractRule<TOptions extends object = object> implements IHasHtt
     /** The value to validate */
     protected data: unknown = undefined
 
-    /** Custom messages for the rule */ 
+    /** Custom messages for the rule */
     protected messages: Record<string, string> = {};
 
     /** All attributes/fields being validated */
@@ -71,10 +71,10 @@ abstract class AbstractRule<TOptions extends object = object> implements IHasHtt
      */
     public async validate(): Promise<boolean> {
         try {
-            if(this.nullable()) {
+            if (this.nullable()) {
                 return true
             }
-            
+
             return await this.test()
         }
         catch (error) {
@@ -102,7 +102,7 @@ abstract class AbstractRule<TOptions extends object = object> implements IHasHtt
         this.data = data
         return this
     }
-    
+
     /**
      * Sets the custom messages for the rule
      * @param messages - Object containing custom messages
@@ -118,8 +118,8 @@ abstract class AbstractRule<TOptions extends object = object> implements IHasHtt
      * Gets the current value being validated
      * @returns The value being validated
      */
-    public getData(): unknown {
-        return this.data
+    public getData<T = unknown>(): T {
+        return this.data as T
     }
 
     /**
@@ -136,8 +136,8 @@ abstract class AbstractRule<TOptions extends object = object> implements IHasHtt
      * Gets all attributes/fields being validated
      * @returns Object containing all fields being validated
      */
-    public getAttributes(): unknown {
-        return this.attributes
+    public getAttributes<T = unknown>(): T {
+        return this.attributes as T
     }
 
     /**
@@ -189,8 +189,8 @@ abstract class AbstractRule<TOptions extends object = object> implements IHasHtt
      */
     public getCustomError(): IRuleError | undefined {
         const key = `${this.getDotNotationPath()}.${this.getName()}`
-        
-        if(this.messages[key]) {
+
+        if (this.messages[key]) {
             return {
                 [this.getDotNotationPath()]: [this.messages[key]]
             }
@@ -198,13 +198,13 @@ abstract class AbstractRule<TOptions extends object = object> implements IHasHtt
 
         return undefined
     }
-    
+
     /**
      * Gets the error message for the rule
      * @returns The error message
      */
     public getError(): IRuleError {
-        
+
         // Get the error message
         // If an error message is set, use it (overrides the error template)
         const message = this.errorMessage ? this.formatErrorMessage({}, this.errorMessage) : this.formatErrorMessage()
@@ -223,7 +223,7 @@ abstract class AbstractRule<TOptions extends object = object> implements IHasHtt
      */
     protected formatErrorMessage(replacer: Record<string, unknown> = {}, error: string = this.errorTemplate): string {
         // Add attributes to replacer if it doesn't exist
-        if(!replacer['attribute']) {
+        if (!replacer['attribute']) {
             replacer.attribute = this.getDotNotationPath()
         }
 
@@ -260,7 +260,7 @@ abstract class AbstractRule<TOptions extends object = object> implements IHasHtt
         const allowNullable = this.otherRuleNames.includes('nullable')
         return allowNullable && this.dataUndefinedOrNull()
     }
-    
+
     /**
      * Checks if the rule allows null values for strings
      * @returns True if the rule allows null values, false otherwise
@@ -281,11 +281,11 @@ abstract class AbstractRule<TOptions extends object = object> implements IHasHtt
         return this
     }
 
-    
+
     setHttpContext(context: IHttpContext): void {
         this.httpContext = context
     }
-    
+
     getHttpContext(): IHttpContext {
         return this.httpContext
     }
@@ -298,7 +298,7 @@ abstract class AbstractRule<TOptions extends object = object> implements IHasHtt
     getAttribute(): string {
         return this.attribute
     }
-    
+
 }
 
 export default AbstractRule;

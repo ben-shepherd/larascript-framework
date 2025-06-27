@@ -27,11 +27,7 @@ class ValidatorMiddleware extends Middleware {
             const validator = new validatorConstructor();
             validator.setHttpContext(context)
 
-            const data = {
-                ...(context.getParams()),
-                ...(context.getRequest().body),
-            }
-
+            const data = context.getValidatorBody()
             const result = await validator.validate(data);
 
             // Validation failed, return the errors

@@ -17,11 +17,12 @@ export interface IRuleError {
 export interface IRule extends IHasHttpContext {
     setDotNotationPath(field: string): this
     getDotNotationPath(): string
-    setData(data: unknown): this
+    setAttributeData(data: unknown): this
+    getAttributeData<T = unknown>(): T;
     setAttributes(attributes: unknown): this
     setAttribute(attribute: string): this
     getAttribute(): string;
-    getAttributes(): unknown;
+    getAttributes<T = unknown>(): T;
     setMessages(messages: Record<string, string>): this
     setOtherRuleNames(names: string[]): this
     validate(): Promise<boolean>
