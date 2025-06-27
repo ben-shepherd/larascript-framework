@@ -131,10 +131,6 @@ class RouterBindService {
             ...MiddlewareUtil.convertToExpressMiddlewares(afterAllMiddlewares, routeItem),
         ]
 
-        if(routeItem.path.includes('portfolio')) {
-            console.log(1)
-        }
-
         // Get action
         const actionHandler = this.getActionHandler(routeItem)
 

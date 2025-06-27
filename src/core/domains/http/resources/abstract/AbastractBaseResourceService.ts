@@ -228,8 +228,9 @@ abstract class AbastractBaseResourceService {
 
         const validator = new validatorConstructor()
         validator.setHttpContext(context)
-        const body = context.getRequest().body
-        const result = await validator.validate(body)
+        
+        const data = context.getValidatorBody()
+        const result = await validator.validate(data)
 
         if (result.fails()) {
             return result.errors()

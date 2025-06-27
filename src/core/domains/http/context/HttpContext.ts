@@ -224,10 +224,21 @@ class HttpContext implements IHttpContext {
      * Moves an uploaded file from the request to the storage.
      * @param {string} key - The key of the file to upload.
      * @param {string} [destination] - Optional destination path in storage.
-     * @returns {Promise<import('../../storage/interfaces/IStorageFile').IStorageFile | undefined>} The stored file object or undefined if no file was found.
+     * @returns {Promise<IStorageFile | undefined>} The stored file object or undefined if no file was found.
      */
     public async uploadFile(file: TUploadedFile): Promise<IStorageFile> {
         return await storage().moveUploadedFile(file)
+    }
+
+    /**
+     * Gets the body for validation (url params, with request body overwriting conflicts)
+     * @returns 
+     */
+    public getValidatorBody(): Record<string, unknown> {
+        return {
+            ...(this.getParams()),
+            ...(this.getRequest().body),
+        }
     }
 
 }
