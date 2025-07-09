@@ -2,12 +2,12 @@ import User from '@src/app/models/auth/User';
 import { ApiTokenModelOptions, IApiTokenModel } from '@src/core/domains/auth/interfaces/models/IApiTokenModel';
 import { IUserModel } from '@src/core/domains/auth/interfaces/models/IUserModel';
 import ApiTokenObserver from '@src/core/domains/auth/observers/ApiTokenObserver';
+import { auth } from '@src/core/domains/auth/services/AuthService';
 import ScopeMatcher from '@src/core/domains/auth/utils/ScopeMatcher';
+import { TCastableType } from '@src/core/domains/cast/interfaces/IHasCastableConcern';
 import BelongsTo from '@src/core/domains/eloquent/relational/BelongsTo';
 import Model from '@src/core/domains/models/base/Model';
 import { IModelAttributes, ModelConstructor } from '@src/core/domains/models/interfaces/IModel';
-import { TCastableType } from '@src/core/domains/cast/interfaces/IHasCastableConcern';
-import { auth } from '@src/core/domains/auth/services/AuthService';
 
 export interface ApiTokenAttributes extends IModelAttributes {
     userId: string;
@@ -202,6 +202,7 @@ class ApiToken extends Model<ApiTokenAttributes> implements IApiTokenModel {
      */
     hasScope(scopes: string | string[], exactMatch: boolean = true): boolean {
         const currentScopes = this.getAttributeSync('scopes') ?? [];
+        scopes = Array.isArray(scopes) ? scopes : [scopes]
 
         if (exactMatch && currentScopes.length !== scopes.length) {
             return false
