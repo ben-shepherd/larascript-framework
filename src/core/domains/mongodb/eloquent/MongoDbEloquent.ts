@@ -147,7 +147,7 @@ class MongoDbEloquent<Model extends IModel> extends Eloquent<Model, AggregateExp
         const columnsArray = this.expression.getColumns().map(option => option.column).filter(col => col) as string[]
         documentsArray.map((document) => {
             columnsArray.forEach(column => {
-                if (!document[column]) {
+                if (typeof document[column] === 'undefined') {
                     delete document[column]
                 }
             })
