@@ -10,6 +10,7 @@ import Mail from './core/domains/mail/data/Mail';
 
 
 
+
 (async () => {
 
     // Boot the application
