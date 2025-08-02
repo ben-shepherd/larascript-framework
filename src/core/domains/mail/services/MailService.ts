@@ -1,12 +1,14 @@
 import { MailAdapters } from "@src/config/mail.config";
 import BaseAdapter from "@src/core/base/BaseAdapter";
-import { app } from "@src/core/services/App";
 import LocalMailDriver from "@src/core/domains/mail/adapters/LocalMailDriver";
 import NodeMailDriver from "@src/core/domains/mail/adapters/NodeMailerDriver";
 import { MailAdapter } from "@src/core/domains/mail/interfaces/adapter";
 import { IMailConfig } from "@src/core/domains/mail/interfaces/config";
 import { IMail } from "@src/core/domains/mail/interfaces/data";
 import { IMailService } from "@src/core/domains/mail/interfaces/services";
+import { app } from "@src/core/services/App";
+
+import ResendMailDriver from "../adapters/ResendMailDriver";
 
 /**
  * Short hand for app('mail')
@@ -73,6 +75,10 @@ class MailService extends BaseAdapter<MailAdapters> implements IMailService {
 
     nodeMailer(): NodeMailDriver {
         return this.getAdapter('nodemailer') as NodeMailDriver
+    }
+
+    resend(): ResendMailDriver {
+        return this.getAdapter('resend') as ResendMailDriver
     }
 
 }

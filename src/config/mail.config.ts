@@ -1,5 +1,6 @@
 import LocalMailDriver from "@src/core/domains/mail/adapters/LocalMailDriver";
 import NodeMailDriver from "@src/core/domains/mail/adapters/NodeMailerDriver";
+import ResendMailDriver from "@src/core/domains/mail/adapters/ResendMailDriver";
 import { BaseMailAdapters } from "@src/core/domains/mail/interfaces/adapter";
 import { IMailConfig } from "@src/core/domains/mail/interfaces/config";
 import MailConfig from "@src/core/domains/mail/services/MailConfig";
@@ -45,6 +46,13 @@ export const mailConfig: IMailConfig = {
                     user: process.env.NODEMAILER_AUTH_USER ?? '',
                     pass: process.env.NODEMAILER_AUTH_PASS ?? '',
                 },
+            }
+        }),
+        MailConfig.define({
+            name: 'resend',
+            driver: ResendMailDriver,
+            options: {
+                apiKey: process.env.RESEND_API_KEY
             }
         })
     ])
