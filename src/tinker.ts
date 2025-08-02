@@ -8,6 +8,7 @@ import { app } from '@src/core/services/App';
 
 
 
+
 (async () => {
 
     // Boot the application
