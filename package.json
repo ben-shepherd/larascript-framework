@@ -4,7 +4,7 @@
   "description": "A powerful Node.js framework with built-in ORM, type safety, and developer-friendly APIs",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --color",
+    "build": "tsc --noEmit && webpack --color --bail",
     "fix-imports": "node fix-imports.js",
     "fix-eslint": "npx eslint --fix src",
     "fix": "yarn run fix-imports && yarn run fix-eslint",
