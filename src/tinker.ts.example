@@ -25,5 +25,5 @@ import { app } from '@src/core/services/App';
     const validator = app('validatorFn');
     
     // Add your code here
-    
+    test
 })(); 
