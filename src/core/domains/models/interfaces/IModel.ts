@@ -56,11 +56,12 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes> 
     getAttributeSync<K extends keyof Attributes = keyof Attributes>(key: K): Attributes[K] | null
     getAttribute(key: keyof Attributes): Promise<Attributes[keyof Attributes] | null>
     getAttributes(options?: { excludeGuarded?: boolean }): Attributes | null;
+    encryptAttributes(attributes: Attributes | null): Attributes | null;
     getOriginal(key: keyof Attributes): Attributes[keyof Attributes] | null
     getDirty(): Record<keyof Attributes, any> | null
     getJsonProperties(): string[];
     isDirty(): boolean;
-    getFields(): string[];
+getFields(): string[];
     useTableName(): string;
     getId(): string | undefined;
     setTimestamp(dateTimeField: string, value: Date): Promise<void>;

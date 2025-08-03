@@ -207,6 +207,21 @@ abstract class Eloquent<
     }
 
     /**
+     * Prepares value for querying
+     * @param attribute 
+     * @param value 
+     * @returns 
+     */
+    prepareValue(attribute: string, value: unknown): unknown {
+        const m = this.modelCtor?.create() as IModel
+        if(Object.keys(m.encrypted ?? {}).includes(attribute)) {
+            const result = m?.encryptAttributes({ attribute: value })
+            return result?.[attribute]
+        }
+        return value
+    } 
+
+    /**
      * Clones the query builder instance.
      *
      * The cloned instance will have the same model constructor associated with it.

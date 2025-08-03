@@ -30,8 +30,10 @@ class ExistsRule extends AbstractDatabaseRule<ExistsRuleOptions> implements IRul
         }
 
         const column = db().getAdapter().normalizeColumn(this.options.column)
-        let builder = this.query()
-            .where(column, this.getAttributeData() as TWhereClauseValue)
+        let builder = this.query();
+
+        const preparedValue = builder.prepareValue(column, this.getAttributeData()) as TWhereClauseValue
+        builder.where(column, preparedValue)
 
         if (typeof this.options.callback === 'function') {
             const builderCustom = this.options.callback(builder.clone(), this.getHttpContext())
