@@ -1,6 +1,6 @@
 
 import { db } from "@src/core/domains/database/services/Database";
-import { IEloquent, TWhereClauseValue } from "@src/core/domains/eloquent/interfaces/IEloquent";
+import { IEloquent } from "@src/core/domains/eloquent/interfaces/IEloquent";
 import { IHttpContext } from "@src/core/domains/http/interfaces/IHttpContext";
 import { ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import AbstractDatabaseRule from "@src/core/domains/validator/abstract/AbstractDatabaseRule";
@@ -31,9 +31,7 @@ class ExistsRule extends AbstractDatabaseRule<ExistsRuleOptions> implements IRul
 
         const column = db().getAdapter().normalizeColumn(this.options.column)
         let builder = this.query();
-
-        const preparedValue = builder.prepareValue(column, this.getAttributeData()) as TWhereClauseValue
-        builder.where(column, preparedValue)
+        builder.where(column, this.getAttributeData())
 
         if (typeof this.options.callback === 'function') {
             const builderCustom = this.options.callback(builder.clone(), this.getHttpContext())
