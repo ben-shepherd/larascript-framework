@@ -10,6 +10,7 @@ export type GetAttributesOptions = {excludeGuarded: boolean}
 export type ModelConstructor<M extends IModel = IModel> = {
     new (...args: any[]): M;
     create<T extends M>(data?: T['attributes'] | null): T;
+    createWithoutProxy<T extends M>(data?: T['attributes'] | null): T;
     getTable(): string;
     getPrimaryKey(): string;
     getConnectionName(): string;
@@ -17,6 +18,7 @@ export type ModelConstructor<M extends IModel = IModel> = {
     getFields(): string[];
     factory(): IFactory<IModel>;
     getRelationships(): string[];
+    isAttributeEncrypted(attribute: string): boolean;
 }
 
 export type ModelInstance<MCtor extends ModelConstructor<any>> = InstanceType<MCtor>
@@ -61,7 +63,7 @@ export interface IModel<Attributes extends IModelAttributes = IModelAttributes> 
     getDirty(): Record<keyof Attributes, any> | null
     getJsonProperties(): string[];
     isDirty(): boolean;
-getFields(): string[];
+    getFields(): string[];
     useTableName(): string;
     getId(): string | undefined;
     setTimestamp(dateTimeField: string, value: Date): Promise<void>;

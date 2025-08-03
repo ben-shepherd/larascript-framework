@@ -213,9 +213,8 @@ abstract class Eloquent<
      * @returns 
      */
     prepareValue(attribute: string, value: unknown): unknown {
-        const m = this.modelCtor?.create() as IModel
-        if(Object.keys(m.encrypted ?? {}).includes(attribute)) {
-            const result = m?.encryptAttributes({ attribute: value })
+        if(this.modelCtor?.isAttributeEncrypted(attribute)) {
+            const result = this.modelCtor.create().encryptAttributes({ [attribute]: value })
             return result?.[attribute]
         }
         return value

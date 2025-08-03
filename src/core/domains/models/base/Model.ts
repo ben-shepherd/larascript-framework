@@ -224,6 +224,20 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     }
 
     /**
+     * Creates a new instance of the model without wrapping it in a Proxy.
+     * 
+     * This method instantiates the model directly, bypassing the Proxy pattern.
+     * Useful for internal operations or when proxy behavior is not needed.
+     * 
+     * @template Model Extends IModel, representing the type of the model to create.
+     * @param {Model['attributes'] | null} data - The initial data to populate the model.
+     * @returns {Model} A new instance of the model.
+     */
+    static createWithoutProxy<Model extends IModel>(data: Partial<Model['attributes']> | null = null): ModelWithAttributes<Model> {
+        return new (this as unknown as TClassConstructor<Model>)(data)
+    }
+
+    /**
      * Retrieves the table name associated with the model.
      * 
      * @returns {string} The table name associated with the model.
@@ -806,6 +820,16 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         this.original = { ...(this.attributes ?? {}) } as Attributes
 
         return this.attributes as Attributes;
+    }
+
+    /**
+     * Checks if an attribute should be encrypted
+     * @param attribute 
+     * @returns 
+     */
+    static isAttributeEncrypted(attribute: string): boolean {
+        const encryptedArray = (this.createWithoutProxy()?.encrypted ?? []) as string[]
+        return encryptedArray.includes(attribute)
     }
 
     /**
