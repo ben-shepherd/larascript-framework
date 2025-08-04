@@ -68,7 +68,7 @@ export default class HttpProvider extends BaseProvider {
         http.getExpress().set('view engine', 'ejs')
         http.getExpress().set('views', require('path').join(process.cwd(), 'src', 'app', 'resources', 'views'))
         http.getExpress().use(expressLayouts);
-        http.getExpress().set('layout', require('path').join(process.cwd(), 'src', 'app', 'resources', 'layouts', 'base.ejs'));
+        http.getExpress().set('layout', require('path').join(process.cwd(), 'src', 'app', 'resources', 'layouts', 'base-view.ejs'));
 
         /**
          * Start listening for connections
