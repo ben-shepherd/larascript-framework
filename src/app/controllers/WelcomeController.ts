@@ -4,8 +4,9 @@ import HttpContext from "@src/core/domains/http/context/HttpContext";
 class WelcomeController extends Controller {
 
     async invoke(context: HttpContext) {
-        context.getResponse().render('welcome.ejs', {
-            title: 'Welcome to Larascript Framework'
+        this.render('welcome', {
+            title: 'Welcome to Larascript Framework',
+            requestId: context.getRequest().id,
         })
     }
 
