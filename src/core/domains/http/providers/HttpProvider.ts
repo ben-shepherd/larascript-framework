@@ -5,7 +5,7 @@ import RequestContextCleaner from '@src/core/domains/http/context/RequestContext
 import IHttpConfig from '@src/core/domains/http/interfaces/IHttpConfig';
 import HttpService from '@src/core/domains/http/services/HttpService';
 import { app } from "@src/core/services/App";
-
+import expressLayouts from 'express-ejs-layouts';
 
 export default class HttpProvider extends BaseProvider {
 
@@ -61,6 +61,14 @@ export default class HttpProvider extends BaseProvider {
          */
         const http = app('http');
         http.init();
+
+        /**
+         * Setup view engine, views, layouts directories
+         */
+        http.getExpress().set('view engine', 'ejs')
+        http.getExpress().set('views', require('path').join(process.cwd(), 'src', 'app', 'resources', 'views'))
+        http.getExpress().use(expressLayouts);
+        http.getExpress().set('layout', require('path').join(process.cwd(), 'src', 'app', 'resources', 'layouts', 'base.ejs'));
 
         /**
          * Start listening for connections
