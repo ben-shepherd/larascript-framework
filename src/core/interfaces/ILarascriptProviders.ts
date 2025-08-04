@@ -9,11 +9,13 @@ import { IEventService } from '@src/core/domains/events/interfaces/IEventService
 import IHttpService from '@src/core/domains/http/interfaces/IHttpService';
 import { IRequestContext } from '@src/core/domains/http/interfaces/IRequestContext';
 import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerService';
+import { IMailService } from '@src/core/domains/mail/interfaces/services';
 import { ISessionService } from '@src/core/domains/session/interfaces/ISessionService';
 import { IStorageService } from '@src/core/domains/storage/interfaces/IStorageService';
 import { IValidatorFn } from '@src/core/domains/validator/interfaces/IValidator';
 import readline from 'node:readline';
-import { IMailService } from '@src/core/domains/mail/interfaces/services';
+
+import { IViewRenderService, IViewService } from '../domains/view/interfaces/services';
 
 export interface ILarascriptProviders {
 
@@ -118,4 +120,11 @@ export interface ILarascriptProviders {
      * Provided by '@src/core/domains/email/providers/EmailProvider'
      */
     mail: IMailService;
+
+    /**
+     * View service
+     * Provided by '@src/core/domains/view/providers/ViewProvider'
+     */
+    "view": IViewService;
+    "view:ejs": IViewRenderService;
 }
