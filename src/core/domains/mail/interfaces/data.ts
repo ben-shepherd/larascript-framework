@@ -23,7 +23,7 @@ export interface IMail<T extends IMailOptions = IMailOptions> {
     getSubject(): string;
     setSubject(subject: string): void;
     getBody(): string | IMailViewData;
-    setBody(body: string): void;
+    setBody(body: string | IMailViewData): void;
     getAttachments<T>(): T[] | undefined;
     setAttachments(attachments: any[] | undefined): void;
 
