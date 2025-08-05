@@ -1,15 +1,15 @@
+import { IAppConfig } from "@src/config/app.config";
 import { EnvironmentTesting } from "@src/core/consts/Environment";
 import CryptoProvider from "@src/core/domains/crypto/providers/CryptoProvider";
 
-import { TestAppConfig } from "../config/testConfig";
 
 class TestCryptoProvider extends CryptoProvider {
 
-    config: TestAppConfig = {
+    config: IAppConfig = {
         env: EnvironmentTesting,
         appKey: 'test-app-key',
         appName: 'Larascript Framework'
-    }
+    } as IAppConfig
 
 }
 
