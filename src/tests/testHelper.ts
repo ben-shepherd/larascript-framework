@@ -15,6 +15,8 @@ import TestEventProvider from "@src/tests/larascript/providers/TestEventProvider
 import TestMigrationProvider from "@src/tests/larascript/providers/TestMigrationProvider";
 import { DataTypes } from "sequelize";
 
+import TestViewProvider from "./larascript/providers/TestViewProvider";
+
 export const getTestDbName = () => testDbName
 
 /**
@@ -39,7 +41,8 @@ const testBootApp = async () => {
             new TestMigrationProvider(),
             new ValidatorProvider(),
             new TestCryptoProvider(),
-            new AccessControlProvider()
+            new AccessControlProvider(),
+            new TestViewProvider(),
         ]
     }
 
