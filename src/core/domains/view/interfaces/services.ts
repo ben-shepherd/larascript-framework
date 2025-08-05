@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { RenderData } from "./data";
 
-export interface IViewService {
+export interface IViewService extends IViewRenderService {
     ejs(): IViewRenderService;
 }
 

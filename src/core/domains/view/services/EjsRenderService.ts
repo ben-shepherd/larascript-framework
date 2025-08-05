@@ -9,7 +9,7 @@ class EjsRenderService implements IViewRenderService {
     // eslint-disable-next-line no-unused-vars
     constructor(protected readonly config: IViewServiceConfig) {}
     
-    async render({ view, data, layout }: RenderData): Promise<string> {
+    async render({ view, data }: RenderData): Promise<string> {
         return new Promise((resolve, reject) => {
 
             if(!view.endsWith('.ejs')) {
@@ -26,7 +26,7 @@ class EjsRenderService implements IViewRenderService {
                 resolve(str)
             }
 
-            ejs.renderFile(viewPath, { layout, ...data }, cb)
+            ejs.renderFile(viewPath, { ...data }, cb)
         })
     }
 
