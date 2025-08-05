@@ -10,7 +10,7 @@ export interface IMailOptions {
 
 export interface IMailViewData {
     view: string;
-    data: Record<string, unknown>;
+    data?: Record<string, unknown>;
 }
 
 export interface IMail<T extends IMailOptions = IMailOptions> {

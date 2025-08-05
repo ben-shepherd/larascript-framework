@@ -11,7 +11,7 @@ abstract class BaseMailAdapter {
             return body
         }
 
-        const { view, data } = body
+        const { view, data = {} } = body
 
         return await app('view').render({
             view,
