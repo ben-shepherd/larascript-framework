@@ -1,6 +1,8 @@
-import nodemailer from 'nodemailer';
 import Mail from "@src/core/domains/mail/data/Mail";
 import { MailAdapter } from "@src/core/domains/mail/interfaces/adapter";
+import nodemailer from 'nodemailer';
+
+import BaseMailAdapter from '../base/BaseMailAdapter';
 
 
 type NodeMailerOptions = {
@@ -17,7 +19,7 @@ type NodeMailerOptions = {
  * Nodemailer driver for sending emails.
  * Implements the MailAdapter interface.
  */
-class NodeMailDriver implements MailAdapter {
+class NodeMailDriver extends BaseMailAdapter implements MailAdapter {
 
     protected options!: NodeMailerOptions
 
@@ -26,6 +28,7 @@ class NodeMailDriver implements MailAdapter {
      * @param options The Nodemailer options for transport configuration.
      */
     constructor(options: NodeMailerOptions = {} as NodeMailerOptions) {
+        super()
         this.options = options
     }
 
@@ -47,7 +50,7 @@ class NodeMailDriver implements MailAdapter {
             from: mail.getFrom(),
             to: mail.getTo(),
             subject: mail.getSubject(),
-            html: mail.getBody(), // HTML body
+            html: await this.generateBodyString(mail),
         });
     }
 

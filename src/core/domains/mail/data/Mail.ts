@@ -1,4 +1,4 @@
-import { IMail, IMailBody, IMailOptions } from "@src/core/domains/mail/interfaces/data";
+import { IMail, IMailOptions, IMailViewData } from "@src/core/domains/mail/interfaces/data";
 
 /**
 * Represents a mail message.
@@ -7,8 +7,6 @@ import { IMail, IMailBody, IMailOptions } from "@src/core/domains/mail/interface
 class Mail<T extends IMailOptions = IMailOptions> implements IMail<T> {
 
     config: T;
-	
-    protected template?: IMailBody;
 
     /**
 	    * Creates an instance of Mail.
@@ -16,22 +14,6 @@ class Mail<T extends IMailOptions = IMailOptions> implements IMail<T> {
 	    */
     constructor(config: T = {} as T) {
         this.config = config;
-    }
-
-    /**
-	 * Get the mail template
-	 * @returns 
-	 */
-    getTemplate(): IMailBody | undefined {
-        return this.template
-    }
-
-    /**
-	 * Set the mail template
-	 * @param template 
-	 */
-    setTemplate(template?: IMailBody): void {
-        this.template = template
     }
 
     /**
@@ -108,14 +90,8 @@ class Mail<T extends IMailOptions = IMailOptions> implements IMail<T> {
 	    * Gets the body of the email.
 	    * @returns The email body.
 	    */
-    public getBody(): string {
-        
-        if(typeof this.config.body === 'string') {
-            return this.config.body
-        }
-
-        // Todo render ejs te mplate
-        return ''
+    public getBody(): string | IMailViewData {
+        return this.config.body;
     }
 
     /**
@@ -123,7 +99,7 @@ class Mail<T extends IMailOptions = IMailOptions> implements IMail<T> {
 	    * @param body - The email body.
 	    * @returns The Mail instance for chaining.
 	    */
-    public setBody(body: string | IMailBody): this {
+    public setBody(body: string | IMailViewData): this {
         this.config.body = body;
         return this;
     }

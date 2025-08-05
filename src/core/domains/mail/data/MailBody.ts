@@ -1,9 +1,9 @@
-import { IMailBody, IMailBodyData } from "../interfaces/data";
+import { IMailBody, IMailViewData } from "../interfaces/data";
 
 class MailBody implements IMailBody {
 
     // eslint-disable-next-line no-unused-vars
-    constructor(protected readonly options: IMailBodyData) {}
+    constructor(protected readonly options: IMailViewData) {}
 
     static create(view: string, data: Record<string, unknown> = {}, layout: string = 'base-email') {
         return new MailBody({

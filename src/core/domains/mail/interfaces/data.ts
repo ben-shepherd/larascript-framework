@@ -3,15 +3,14 @@ export interface IMailOptions {
     to: string | string[];
     from: string;
     subject: string;
-    body: string | IMailBody;
+    body: string | IMailViewData;
     attachments?: any[];
     options?: Record<string, unknown>
 }
 
-export interface IMailBodyData {
+export interface IMailViewData {
     view: string;
     data: Record<string, unknown>;
-    layout: string;
 }
 
 export interface IMail<T extends IMailOptions = IMailOptions> {
@@ -23,16 +22,9 @@ export interface IMail<T extends IMailOptions = IMailOptions> {
     setFrom(from: string): void;
     getSubject(): string;
     setSubject(subject: string): void;
-    getBody(): string;
+    getBody(): string | IMailViewData;
     setBody(body: string): void;
     getAttachments<T>(): T[] | undefined;
     setAttachments(attachments: any[] | undefined): void;
-    getTemplate(): IMailBody | undefined;
-    setTemplate(template?: IMailBody): void;
-}
 
-export interface IMailBody {
-    getView(): string;
-    getData(): Record<string, unknown>;
-    getLayout(): string;
 }

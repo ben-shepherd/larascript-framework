@@ -17,7 +17,7 @@ class EjsRenderService implements IViewRenderService {
             }
 
             const viewPath = require('path')
-                .join(process.cwd(), 'src', this.config.resourcesDir, 'views', view)
+                .join(process.cwd(), 'src', this.config.resourcesDir, view)
 
             const cb = (err, str) => {
                 if(err) {

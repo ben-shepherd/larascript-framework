@@ -1,6 +1,8 @@
 import Mail from "@src/core/domains/mail/data/Mail";
 import { MailAdapter } from "@src/core/domains/mail/interfaces/adapter";
 import { Resend } from 'resend';
+
+import BaseMailAdapter from "../base/BaseMailAdapter";
 ;
 
 type ResendMailOptions = {
@@ -11,7 +13,7 @@ type ResendMailOptions = {
  * Nodemailer driver for sending emails.
  * Implements the MailAdapter interface.
  */
-class ResendMailDriver implements MailAdapter {
+class ResendMailDriver extends BaseMailAdapter implements MailAdapter {
 
     protected options!: ResendMailOptions
 
@@ -22,6 +24,7 @@ class ResendMailDriver implements MailAdapter {
      * @param options The Nodemailer options for transport configuration.
      */
     constructor(options: ResendMailOptions = {} as ResendMailOptions) {
+        super()
         this.options = options
         this.resend = new Resend(options.apiKey)
     }
@@ -45,9 +48,7 @@ class ResendMailDriver implements MailAdapter {
             to: mail.getTo(),
             replyTo: mail.getOptions()?.['replyTo'] as string | string[] | undefined,
             subject: mail.getSubject(),
-            html: mail.getBody()
-        }, {
-            
+            html: await this.generateBodyString(mail),
         })
     }
 

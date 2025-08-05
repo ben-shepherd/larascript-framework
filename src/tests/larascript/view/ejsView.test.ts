@@ -20,8 +20,7 @@ describe('can generate ejs view', () => {
         // Act - Render the view using the same pattern as tinker.ts
         const renderedHtml = await AppSingleton.container('view').ejs().render({
             view: 'welcome',
-            data: testData,
-            layout: 'base-view'
+            data: testData
         });
 
         // Assert - Verify the rendered HTML contains expected content
@@ -49,8 +48,7 @@ describe('can generate ejs view', () => {
         // Act - Render with minimal data
         const renderedHtml = await AppSingleton.container('view').ejs().render({
             view: 'welcome',
-            data: {},
-            layout: 'base-view'
+            data: {}
         });
 
         // Assert
@@ -70,8 +68,7 @@ describe('can generate ejs view', () => {
         await expect(
             AppSingleton.container('view').ejs().render({
                 view: 'non-existent-view',
-                data: {},
-                layout: 'base-view'
+                data: {}
             })
         ).rejects.toThrow();
     });
