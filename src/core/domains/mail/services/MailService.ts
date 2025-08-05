@@ -44,7 +44,13 @@ class MailService extends BaseAdapter<MailAdapters> implements IMailService {
      * @returns A promise that resolves when the email is sent.
      */
     async send(mail: IMail): Promise<void> {
-        return await this.getDefaultDriver().send(mail)
+        try {
+            return await this.getDefaultDriver().send(mail)
+        }
+        catch (err) {
+            app('logger').error(err)
+            throw err
+        }
     }
 
     /**
