@@ -98,15 +98,17 @@ describe('eloquent', () => {
         await forEveryConnection(async connection => {
 
             const alice = await queryBuilder(TestEmployeeModel, connection).where('name', 'Alice').firstOrFail();
+            const hr = await queryBuilder(TestDepartmentModel, connection).where('deptName', 'HR').firstOrFail()
             const department = await alice.attr('department');
-
+            
             expect(department).toBeTruthy();
-            expect(department?.id).toBe(alice?.attrSync('department')?.id);
+            expect(department?.id).toBe(hr.attrSync('id'));
             expect(department?.deptName).toBe('HR');
         })
     })
 
     test('belongs to no relationship', async() => {
+        
         await forEveryConnection(async connection => {
             const noRelationship = await queryBuilder(TestEmployeeModel, connection).where('name', 'NoRelationship').firstOrFail();
             const department = await noRelationship.attr('department');
