@@ -1,7 +1,7 @@
 import BaseProvider from "@src/core/base/Provider";
 
-import { IViewServiceConfig } from "../interfaces/config";
-import ViewService from "../services/ViewService";
+import { IViewServiceConfig } from "@src/core/domains/view/interfaces/config";
+import ViewService from "@src/core/domains/view/services/ViewService";
 
 class ViewProvider extends BaseProvider {
 

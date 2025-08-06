@@ -1,8 +1,8 @@
 
-import { IViewServiceConfig } from "../interfaces/config";
-import { RenderData } from "../interfaces/data";
-import { IViewRenderService, IViewService } from "../interfaces/services";
-import EjsRenderService from './EjsRenderService';
+import { IViewServiceConfig } from "@src/core/domains/view/interfaces/config";
+import { RenderData } from "@src/core/domains/view/interfaces/data";
+import { IViewRenderService, IViewService } from "@src/core/domains/view/interfaces/services";
+import EjsRenderService from '@src/core/domains/view/services/EjsRenderService';
 
 class ViewService implements IViewService {
 

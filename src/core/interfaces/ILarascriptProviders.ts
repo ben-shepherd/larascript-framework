@@ -15,7 +15,7 @@ import { IStorageService } from '@src/core/domains/storage/interfaces/IStorageSe
 import { IValidatorFn } from '@src/core/domains/validator/interfaces/IValidator';
 import readline from 'node:readline';
 
-import { IViewRenderService, IViewService } from '../domains/view/interfaces/services';
+import { IViewRenderService, IViewService } from '@src/core/domains/view/interfaces/services';
 
 export interface ILarascriptProviders {
 

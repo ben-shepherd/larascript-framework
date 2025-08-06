@@ -1,8 +1,8 @@
 import ejs from 'ejs';
 
-import { IViewServiceConfig } from '../interfaces/config';
-import { RenderData } from "../interfaces/data";
-import { IViewRenderService } from "../interfaces/services";
+import { IViewServiceConfig } from '@src/core/domains/view/interfaces/config';
+import { RenderData } from "@src/core/domains/view/interfaces/data";
+import { IViewRenderService } from "@src/core/domains/view/interfaces/services";
 
 class EjsRenderService implements IViewRenderService {
 

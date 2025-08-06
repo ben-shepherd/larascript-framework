@@ -4,8 +4,8 @@ import { IModel, ModelConstructor } from "@src/core/domains/models/interfaces/IM
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { IRepository } from "@src/core/interfaces/IRepository";
 
-import Collection, { collect } from "../domains/collections/Collection";
-import { ICollection } from "../domains/collections/interfaces/ICollection";
+import Collection, { collect } from "@src/core/domains/collections/Collection";
+import { ICollection } from "@src/core/domains/collections/interfaces/ICollection";
 
 /**
  * Base class for repositories
