@@ -3,7 +3,6 @@ import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryB
 import { IModel, ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { IRepository } from "@src/core/interfaces/IRepository";
-
 import Collection, { collect } from "@src/core/domains/collections/Collection";
 import { ICollection } from "@src/core/domains/collections/interfaces/ICollection";
 

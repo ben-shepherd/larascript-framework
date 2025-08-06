@@ -14,7 +14,6 @@ import TestDatabaseProvider, { testDbName } from "@src/tests/larascript/provider
 import TestEventProvider from "@src/tests/larascript/providers/TestEventProvider";
 import TestMigrationProvider from "@src/tests/larascript/providers/TestMigrationProvider";
 import { DataTypes } from "sequelize";
-
 import TestViewProvider from "@src/tests/larascript/providers/TestViewProvider";
 
 export const getTestDbName = () => testDbName

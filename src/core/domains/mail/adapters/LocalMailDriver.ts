@@ -1,7 +1,6 @@
 import Mail from "@src/core/domains/mail/data/Mail";
 import { MailAdapter } from "@src/core/domains/mail/interfaces/adapter";
 import { app } from "@src/core/services/App";
-
 import BaseMailAdapter from "@src/core/domains/mail/base/BaseMailAdapter";
 
 class LocalMailDriver extends BaseMailAdapter implements MailAdapter {

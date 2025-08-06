@@ -1,7 +1,6 @@
 import Mail from "@src/core/domains/mail/data/Mail";
 import { MailAdapter } from "@src/core/domains/mail/interfaces/adapter";
 import { Resend } from 'resend';
-
 import BaseMailAdapter from "@src/core/domains/mail/base/BaseMailAdapter";
 ;
 

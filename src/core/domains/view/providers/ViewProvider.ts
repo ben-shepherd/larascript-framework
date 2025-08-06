@@ -1,5 +1,4 @@
 import BaseProvider from "@src/core/base/Provider";
-
 import { IViewServiceConfig } from "@src/core/domains/view/interfaces/config";
 import ViewService from "@src/core/domains/view/services/ViewService";
 

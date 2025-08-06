@@ -1,5 +1,4 @@
 import ejs from 'ejs';
-
 import { IViewServiceConfig } from '@src/core/domains/view/interfaces/config';
 import { RenderData } from "@src/core/domains/view/interfaces/data";
 import { IViewRenderService } from "@src/core/domains/view/interfaces/services";

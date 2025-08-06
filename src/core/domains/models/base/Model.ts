@@ -18,7 +18,6 @@ import IFactory, { FactoryConstructor } from '@src/core/interfaces/IFactory';
 import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
 import { app } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
-
 import Collection from '@src/core/domains/collections/Collection';
 
 

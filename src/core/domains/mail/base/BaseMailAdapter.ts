@@ -1,5 +1,4 @@
 import { app } from "@src/core/services/App";
-
 import { IMail } from "@src/core/domains/mail/interfaces/data";
 
 abstract class BaseMailAdapter {
