@@ -20,7 +20,7 @@ class ObjectRule extends AbstractRule<TObjectOptions> implements IRule {
 
 
     public async test(): Promise<boolean> {
-        if(typeof this.getData() !== 'object') {
+        if(typeof this.getAttributeData() !== 'object') {
             return false
         }
 
@@ -39,7 +39,7 @@ class ObjectRule extends AbstractRule<TObjectOptions> implements IRule {
     }
 
     protected validateRequiredProperties(): boolean {
-        const data = this.getData() as unknown[]
+        const data = this.getAttributeData() as unknown[]
         const requiredProperties = this.options.requiredProperties
 
         for(const property of requiredProperties) {

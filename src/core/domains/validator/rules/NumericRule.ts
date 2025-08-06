@@ -11,13 +11,13 @@ class NumericRule extends AbstractRule<{}> implements IRule {
         if(this.dataUndefinedOrNull()) return false
 
         // Allow both numbers and numeric strings
-        if (typeof this.getData() === 'number') {
-            return !isNaN(this.getData() as number);
+        if (typeof this.getAttributeData() === 'number') {
+            return !isNaN(this.getAttributeData() as number);
         }
 
-        if (typeof this.getData() === 'string') {
+        if (typeof this.getAttributeData() === 'string') {
             // Check if string is numeric (including decimals and negative numbers)
-            return /^-?\d*\.?\d+$/.test(this.getData() as string);
+            return /^-?\d*\.?\d+$/.test(this.getAttributeData() as string);
         }
 
         return false;

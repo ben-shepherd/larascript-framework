@@ -5,9 +5,7 @@ import { IMail } from "@src/core/domains/mail/interfaces/data";
 
 export interface IMailService {
     boot(): void;
-    send(mail: IMail): Promise<void>;
+    send(mail: IMail, driver?: keyof MailAdapters): Promise<void>;
     getDefaultDriver(): MailAdapter;
     getDriver<T extends MailAdapter = MailAdapter>(name: keyof MailAdapters): T;
-    local(): MailAdapter;
-    nodeMailer(): MailAdapter;
 }

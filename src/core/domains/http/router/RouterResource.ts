@@ -1,9 +1,9 @@
 
 import { TPartialRouteItemOptions, TResourceType, TRouteResourceOptions } from "@src/core/domains/http/interfaces/IRouter";
-import ResourceController from "@src/core/domains/http/resources/controller/ResourceController";
-import Router from "@src/core/domains/http/router/Router";
 import { ISecurityRule } from "@src/core/domains/http/interfaces/ISecurity";
+import ResourceController from "@src/core/domains/http/resources/controller/ResourceController";
 import Route from "@src/core/domains/http/router/Route";
+import Router from "@src/core/domains/http/router/Router";
 
 /**
  * Resource types that can be utilized when adding Security to a route
@@ -138,7 +138,8 @@ class ResourceRouter {
                     resource: {
                         type: RouteResourceTypes.DELETE,
                         modelConstructor: resource,
-                        searching: searching ?? {}
+                        searching: searching ?? {},
+                        validation: validation ?? {}
                     },
                     security: this.mergeScopesSecurityRules(RouteResourceTypes.DELETE, scopes, security ?? [])
                 });

@@ -10,7 +10,7 @@ class AcceptedRule extends AbstractRule implements IRule {
     protected errorTemplate: string = 'The :attribute field must be accepted.';
 
     public async test(): Promise<boolean> {
-        return isTruthy(this.getData())
+        return isTruthy(this.getAttributeData())
     }
 
 }

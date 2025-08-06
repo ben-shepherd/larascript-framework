@@ -26,7 +26,7 @@ class UniqueRule extends AbstractDatabaseRule<UniqueRuleOptions> implements IRul
         }
         
         return await this.query()
-            .where(this.options.column, this.getData() as TWhereClauseValue)
+            .where(this.options.column, this.getAttributeData() as TWhereClauseValue)
             .count() === 0;
     }
 

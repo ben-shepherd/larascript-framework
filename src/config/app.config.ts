@@ -1,22 +1,23 @@
 import { EnvironmentDevelopment, EnvironmentType } from '@src/core/consts/Environment';
 
+const APP_URL = (process.env.APP_URL ?? 'http://localhost:5000') as string
+
 // App configuration type definition
 export type IAppConfig = {
-    appKey: string;
     env: EnvironmentType;
-    appName: string;
+    appKey: string;
+    appLogoUrl?: string;
+    appUrl?: string;
+    appName?: string;
 }
 
 // App configuration
 const appConfig: IAppConfig = {
-
-    appName: 'Larascript Framework',
-
-    // App key
-    appKey: process.env.APP_KEY ?? '',
-
-    // Environment
     env: (process.env.APP_ENV as EnvironmentType) ?? EnvironmentDevelopment,
+    appName: 'Larascript Framework',
+    appKey: process.env.APP_KEY ?? '',
+    appLogoUrl: undefined,
+    appUrl: APP_URL,
 
 };
 

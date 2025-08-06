@@ -12,11 +12,11 @@ class EmailRule extends AbstractRule<{}> implements IRule {
 
     public async test(): Promise<boolean> {
 
-        if (typeof this.getData() !== 'string') {
+        if (typeof this.getAttributeData() !== 'string') {
             return false;
         }
 
-        return this.emailRegex.test(this.getData() as string);
+        return this.emailRegex.test(this.getAttributeData() as string);
     }
 
     getError(): IRuleError {

@@ -12,7 +12,7 @@ type Options = {
 
 class AfterDateRule extends AbstractRule implements IRule {
 
-    protected name: string = 'enum'
+    protected name: string = 'afterDate'
 
     protected errorTemplate: string = 'The :attribute must be after :date.';
 
@@ -55,7 +55,7 @@ class AfterDateRule extends AbstractRule implements IRule {
      */
     protected parseDataAsDate(): Date {
         try {
-            let value = this.getData() as string | Date | unknown;
+            let value = this.getAttributeData() as string | Date | unknown;
 
             if (typeof value === 'string') {
                 value = this.fromString(value)

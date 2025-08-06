@@ -7,6 +7,7 @@ import EloquentQueryProvider from "@src/core/domains/eloquent/providers/Eloquent
 import EventProvider from "@src/core/domains/events/providers/EventProvider";
 import HttpProvider from "@src/core/domains/http/providers/HttpProvider";
 import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
+import MailProvider from "@src/core/domains/mail/providers/MailProvider";
 import MakeProvider from "@src/core/domains/make/providers/MakeProvider";
 import MigrationProvider from "@src/core/domains/migrations/providers/MigrationProvider";
 import SessionProvider from "@src/core/domains/session/providers/SessionProvider";
@@ -15,7 +16,7 @@ import StorageProvider from "@src/core/domains/storage/providers/StorageProvider
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
 import { ILarascriptProviders } from "@src/core/interfaces/ILarascriptProviders";
 import { IProvider } from "@src/core/interfaces/IProvider";
-import MailProvider from "@src/core/domains/mail/providers/MailProvider";
+import ViewProvider from "@src/core/domains/view/providers/ViewProvider";
 
 
 /**
@@ -139,6 +140,13 @@ const LarascriptProviders: IProvider[] = [
      * Provides email services
      */
     new MailProvider(),
+
+    /**
+     * View provider
+     * 
+     * Provides view rendering services
+     */
+    new ViewProvider(),
 
 ];
 

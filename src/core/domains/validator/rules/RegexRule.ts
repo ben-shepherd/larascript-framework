@@ -19,7 +19,7 @@ class RegexRule extends AbstractRule<TRegexOptions> implements IRule {
         if (this.dataUndefinedOrNull()) return false
         if (this.nullableString()) return true
 
-        const value = String(this.getData());
+        const value = String(this.getAttributeData());
         return this.options.pattern.test(value);
     }
 

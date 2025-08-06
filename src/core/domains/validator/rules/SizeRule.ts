@@ -35,8 +35,8 @@ class SizeRule extends AbstractRule<TSizeOptions> implements IRule {
 
 
     protected testNumber(): boolean {
-        if(typeof this.getData() === 'number') {
-            if(this.getData() as number !== this.options.size) {
+        if(typeof this.getAttributeData() === 'number') {
+            if(this.getAttributeData() as number !== this.options.size) {
                 this.errorTemplate = this.errorTemplateNumber
                 return false
             }
@@ -45,8 +45,8 @@ class SizeRule extends AbstractRule<TSizeOptions> implements IRule {
     }
 
     protected testString(): boolean {
-        if(typeof this.getData() === 'string') {
-            if((this.getData() as string).length !== this.options.size) {
+        if(typeof this.getAttributeData() === 'string') {
+            if((this.getAttributeData() as string).length !== this.options.size) {
                 this.errorTemplate = this.errorTemplateString
                 return false
             }
@@ -55,8 +55,8 @@ class SizeRule extends AbstractRule<TSizeOptions> implements IRule {
     }
 
     protected testArray(): boolean {
-        if(Array.isArray(this.getData())) {
-            if((this.getData() as any[]).length !== this.options.size) {
+        if(Array.isArray(this.getAttributeData())) {
+            if((this.getAttributeData() as any[]).length !== this.options.size) {
                 this.errorTemplate = this.errorTemplateArray
                 return false
             }

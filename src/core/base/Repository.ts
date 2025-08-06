@@ -3,6 +3,8 @@ import { queryBuilder } from "@src/core/domains/eloquent/services/EloquentQueryB
 import { IModel, ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import ModelNotFound from "@src/core/exceptions/ModelNotFound";
 import { IRepository } from "@src/core/interfaces/IRepository";
+import Collection, { collect } from "@src/core/domains/collections/Collection";
+import { ICollection } from "@src/core/domains/collections/interfaces/ICollection";
 
 /**
  * Base class for repositories
@@ -43,6 +45,22 @@ export default class Repository<Model extends IModel> implements IRepository<Mod
      */
     protected setModelCtor(modelCtor: ModelConstructor<Model>) {
         this.modelConstructor = modelCtor;
+    }
+
+    /**
+     * Adds relationships to the model/collection
+     * @param results 
+     * @param args 
+     * @returns 
+     */
+    protected async withRelationships(results: IModel | ICollection, args: Parameters<IModel['loadRelationships']>[0]): Promise<ICollection<IModel>> {
+        const resultsAsCollection = results instanceof Collection ? results : collect([results])
+
+        for(const k in resultsAsCollection.toArray()) {
+            await results[k].loadRelationships(args)
+        }
+
+        return results as ICollection<IModel>
     }
     
     /**

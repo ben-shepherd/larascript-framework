@@ -14,7 +14,7 @@ class UuidRule extends AbstractRule<{}> implements IRule {
     }
 
     public async test(): Promise<boolean> {
-        return isUuid(this.getData());
+        return isUuid(this.getAttributeData());
     }
 
     getError(): IRuleError {

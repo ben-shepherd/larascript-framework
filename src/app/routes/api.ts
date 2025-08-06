@@ -1,8 +1,8 @@
-import ExampleController from "@src/app/controllers/ExampleController"
+import WelcomeController from "@src/app/controllers/WelcomeController"
 import Route from "@src/core/domains/http/router/Route"
 
 export default Route.group(router => {
 
-    router.get('/example', [ExampleController, 'example'])
+    router.get('/', WelcomeController)
     
 })

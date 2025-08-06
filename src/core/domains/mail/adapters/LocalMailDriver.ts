@@ -1,11 +1,14 @@
-import { app } from "@src/core/services/App";
 import Mail from "@src/core/domains/mail/data/Mail";
 import { MailAdapter } from "@src/core/domains/mail/interfaces/adapter";
+import { app } from "@src/core/services/App";
+import BaseMailAdapter from "@src/core/domains/mail/base/BaseMailAdapter";
 
-class LocalMailDriver implements MailAdapter {
+class LocalMailDriver extends BaseMailAdapter implements MailAdapter {
 
     // eslint-disable-next-line no-unused-vars
-    constructor(options: object = {}) { }
+    constructor(options: object = {}) { 
+        super()
+    }
 
     getOptions<T>(): T {
         return {} as T
@@ -16,7 +19,7 @@ class LocalMailDriver implements MailAdapter {
             to: mail.getTo(),
             from: mail.getFrom(),
             subject: mail.getSubject(),
-            body: mail.getBody(),
+            body: await this.generateBodyString(mail),
             attachments: mail.getAttachments()
         }))
     }

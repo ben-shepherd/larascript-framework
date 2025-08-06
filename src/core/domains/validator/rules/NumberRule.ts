@@ -9,7 +9,7 @@ class IsNumber extends AbstractRule implements IRule {
     protected errorTemplate: string = 'The :attribute field must be a number.';
 
     public async test(): Promise<boolean> {
-        return typeof this.getData() === 'number'
+        return typeof this.getAttributeData() === 'number'
     }
 
 }

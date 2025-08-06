@@ -11,7 +11,7 @@ type AcceptedIfOptions = {
 
 class AcceptedIfRule extends AbstractRule<AcceptedIfOptions> implements IRule {
 
-    protected name: string = 'accepted_if'
+    protected name: string = 'acceptedIf'
 
     protected errorTemplate: string = 'The :attribute field must be accepted when :another is :value.';
 
@@ -26,7 +26,7 @@ class AcceptedIfRule extends AbstractRule<AcceptedIfOptions> implements IRule {
 
         } = this.options
 
-        const mainFieldValue = this.getData()
+        const mainFieldValue = this.getAttributeData()
         const otherFieldValue = this.getAttributes()?.[anotherField]
 
         if (otherFieldValue !== expectedValue) {

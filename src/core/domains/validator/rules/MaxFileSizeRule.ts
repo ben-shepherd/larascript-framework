@@ -1,7 +1,7 @@
 
+import { TUploadedFile } from "@src/core/domains/http/interfaces/UploadedFile";
 import AbstractRule from "@src/core/domains/validator/abstract/AbstractRule";
 import { IRule, IRuleError } from "@src/core/domains/validator/interfaces/IRule";
-import { TUploadedFile } from "@src/core/domains/http/interfaces/UploadedFile";
 
 type Options = {
     maxKB: number;
@@ -10,7 +10,7 @@ type Options = {
 
 class MaxFileSizeRule extends AbstractRule<Options> implements IRule {
 
-    protected name: string = 'required'
+    protected name: string = 'maxFileSize'
 
     protected errorTemplate: string = 'The :attribute field must not be greater than :mb MB.';
 

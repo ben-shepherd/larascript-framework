@@ -56,6 +56,15 @@ class ResourceDeleteService extends AbastractBaseResourceService {
             throw new ResourceException('Route options are required')
         }
 
+        // Validate the request body
+        const validationErrors = await this.getValidationErrors(context)
+
+        if (validationErrors) {
+            return this.apiResponse(context, {
+                errors: validationErrors
+            }, 422)
+        }
+
         const modelConstructor = this.getModelConstructor(context)
 
         // Normalize the primary key if required

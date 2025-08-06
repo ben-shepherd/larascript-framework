@@ -18,6 +18,8 @@ import IFactory, { FactoryConstructor } from '@src/core/interfaces/IFactory';
 import ProxyModelHandler from '@src/core/models/utils/ProxyModelHandler';
 import { app } from '@src/core/services/App';
 import Str from '@src/core/util/str/Str';
+import Collection from '@src/core/domains/collections/Collection';
+
 
 
 
@@ -221,6 +223,20 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
     }
 
     /**
+     * Creates a new instance of the model without wrapping it in a Proxy.
+     * 
+     * This method instantiates the model directly, bypassing the Proxy pattern.
+     * Useful for internal operations or when proxy behavior is not needed.
+     * 
+     * @template Model Extends IModel, representing the type of the model to create.
+     * @param {Model['attributes'] | null} data - The initial data to populate the model.
+     * @returns {Model} A new instance of the model.
+     */
+    static createWithoutProxy<Model extends IModel>(data: Partial<Model['attributes']> | null = null): ModelWithAttributes<Model> {
+        return new (this as unknown as TClassConstructor<Model>)(data)
+    }
+
+    /**
      * Retrieves the table name associated with the model.
      * 
      * @returns {string} The table name associated with the model.
@@ -404,7 +420,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      */
     async attr<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Promise<Attributes[K] | null | undefined> {
         if (value === undefined) {
-            return this.getAttribute(key) as Attributes[K] ?? null;
+            return await this.getAttribute(key) as Attributes[K] ?? null;
         }
 
         await this.setAttribute(key, value);
@@ -500,7 +516,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         const relationsip = BaseRelationshipResolver.tryGetRelationshipInterface(this, key as string);
 
         if (relationsip) {
-            return await this.getAttributeRelationship(key, relationsip);
+            return await this.getRelationshipData(key, relationsip);
         }
 
         return this.getAttributeSync(key);
@@ -514,7 +530,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * @param {K} key - The key of the attribute to retrieve.
      * @returns {Attributes[K] | null} The value of the attribute or null if not found.
      */
-    protected async getAttributeRelationship<K extends keyof Attributes = keyof Attributes>(key: K, relationship?: IRelationship): Promise<Attributes[K] | null> {
+    protected async getRelationshipData<K extends keyof Attributes = keyof Attributes>(key: K, relationship?: IRelationship): Promise<Attributes[K] | null> {
 
         if (this.attributes?.[key]) {
             return this.attributes[key]
@@ -529,9 +545,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         const resolver = db().getAdapter(this.connection).getRelationshipResolver()
 
         // Set the attribute
-        this.setAttribute(key, await resolver.resolveData<Attributes, K>(this, relationship, this.connection));
-
-        return this.getAttributeSync(key);
+        return await resolver.resolveData<Attributes, K>(this, relationship, this.connection) as Attributes[K]
     }
 
     /**
@@ -539,11 +553,29 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * 
      * @returns {IModelAttributes | null} The model's data as an object, or null if no data is set.
      */
-    getAttributes(): Attributes | null {
+    getAttributes(options: { excludeGuarded?: boolean } = {}): Attributes | null {
         if(this.attributes === null) {
             return null
         }
-        return this.castAttributes({ ...this.attributes } as Attributes | null);
+
+        let fetchedAttributes =   { ...this.attributes } as Record<string, unknown>
+        
+        // Add relationship data
+        this.relationships.forEach(async(relationshipAttribute) => {
+            fetchedAttributes[relationshipAttribute] = await this.getRelationshipData(relationshipAttribute)
+        })
+
+        fetchedAttributes = this.decryptAttributes({...fetchedAttributes} as Attributes | null) as Record<string, unknown>
+
+        fetchedAttributes =  this.castAttributes({ ...fetchedAttributes } as Attributes | null)  as Record<string, unknown>;
+
+        if (fetchedAttributes && options.excludeGuarded) {
+            fetchedAttributes = Object.fromEntries(
+                Object.entries(fetchedAttributes).filter(([key]) => !this.guarded.includes(key))
+            ) as Attributes;
+        }
+
+        return fetchedAttributes as Attributes
     }
 
     /**
@@ -787,6 +819,16 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
         this.original = { ...(this.attributes ?? {}) } as Attributes
 
         return this.attributes as Attributes;
+    }
+
+    /**
+     * Checks if an attribute should be encrypted
+     * @param attribute 
+     * @returns 
+     */
+    static isAttributeEncrypted(attribute: string): boolean {
+        const encryptedArray = (this.createWithoutProxy()?.encrypted ?? []) as string[]
+        return encryptedArray.includes(attribute)
     }
 
     /**
@@ -1046,14 +1088,31 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      * 
      * @returns {Promise<void>}
      */
-    async loadRelationships(): Promise<void> {
+    async loadRelationships({ only = [], loadAsAttributes = false, excludeGuarded  = false }: { only?: string[], loadAsAttributes?: boolean, excludeGuarded?: boolean }): Promise<IModel<IModelAttributes>> {
         if (!this.attributes) {
-            return;
+            return this;
         }
 
-        this.relationships.forEach(async relationship => {
-            await this.setAttribute(relationship as keyof Attributes, await this.getAttributeRelationship(relationship as keyof Attributes))
-        });
+        const relationshipsArray = only.length === 0 
+            ? this.relationships 
+            : this.relationships.filter(r => only.includes(r))
+
+        for(const attr of relationshipsArray) {
+
+            let data = await this.getRelationshipData(attr as keyof Attributes)
+
+            if(loadAsAttributes && data instanceof Collection)  {
+                data = data.toArray().map(m => m.getAttributes({ excludeGuarded })) as Awaited<Attributes[keyof Attributes]>
+            }
+
+            if(loadAsAttributes && data instanceof Model) {
+                data = data.getAttributes({ excludeGuarded })
+            }
+
+            await this.setAttribute(attr as keyof Attributes, data)
+        }
+
+        return this
     }
 
 }

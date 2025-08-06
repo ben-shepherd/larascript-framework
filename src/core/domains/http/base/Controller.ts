@@ -64,6 +64,15 @@ class Controller implements IController {
     }
 
     /**
+     * Sends a view response.
+     * @param view 
+     * @param data 
+     */
+    protected render(view: string, data: Record<string, unknown>) {
+        this.context.getResponse().render(view, data)
+    }
+
+    /**
      * Sends a JSON response.
      * @param message The message to send.
      */

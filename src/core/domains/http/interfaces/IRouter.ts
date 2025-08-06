@@ -95,6 +95,7 @@ export type TRouteItem = {
         validation?: {
             create?: CustomValidatorConstructor;
             update?: CustomValidatorConstructor;
+            delete?: CustomValidatorConstructor;
         }
     }
 }
@@ -131,6 +132,7 @@ export type TRouteResourceOptions = {
     validation?: {
         create?: CustomValidatorConstructor;
         update?: CustomValidatorConstructor;
+        delete?: CustomValidatorConstructor;
     },
     only?: TResourceType[]
 }

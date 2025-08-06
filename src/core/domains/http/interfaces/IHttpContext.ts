@@ -28,6 +28,7 @@ export interface IHttpContext {
     getFile(key: string): TUploadedFile | undefined;
     getFiles(key: string): TUploadedFile[] | undefined;
     uploadFile(file: TUploadedFile): Promise<IStorageFile>;
+    getValidatorBody(): Record<string, unknown>;
 }
 
 export interface IHasHttpContext {
