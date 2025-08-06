@@ -421,7 +421,7 @@ export default abstract class Model<Attributes extends IModelAttributes> impleme
      */
     async attr<K extends keyof Attributes = keyof Attributes>(key: K, value?: unknown): Promise<Attributes[K] | null | undefined> {
         if (value === undefined) {
-            return this.getAttribute(key) as Attributes[K] ?? null;
+            return await this.getAttribute(key) as Attributes[K] ?? null;
         }
 
         await this.setAttribute(key, value);
