@@ -1,0 +1,15 @@
+/* eslint-disable no-undef */
+import { describe } from '@jest/globals';
+import testHelper from '@src/tests/testHelper';
+
+describe('describe your test', () => {
+
+    beforeAll(async () => {
+        await testHelper.testBootApp();
+    })
+
+    test('can test xyz', async () => {
+
+    })
+
+})

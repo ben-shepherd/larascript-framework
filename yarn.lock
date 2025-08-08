@@ -275,8 +275,8 @@
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
 "@ben-shepherd/larascript-core-bundle@github:ben-shepherd/larascript-core-bundle":
-  version "1.0.10"
-  resolved "git+ssh://git@github.com/ben-shepherd/larascript-core-bundle.git#d8efa8d6635b2e39235ca377cbb8fc35a260fbf0"
+  version "1.0.14"
+  resolved "git+ssh://git@github.com/ben-shepherd/larascript-core-bundle.git#a285f071dbb81ef58e9b8948af3db188a5339954"
 
 "@colors/colors@^1.6.0", "@colors/colors@1.6.0":
   version "1.6.0"

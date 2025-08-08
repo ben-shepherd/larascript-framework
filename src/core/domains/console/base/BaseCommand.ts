@@ -1,4 +1,5 @@
-import BaseConfig from "@src/core/base/BaseConfig";
+
+import { BaseConfig } from "@ben-shepherd/larascript-core-bundle";
 import CommandExecutionException from "@src/core/domains/console/exceptions/CommandExecutionException";
 import { ICommand } from "@src/core/domains/console/interfaces/ICommand";
 import { KeyPair, KeyPairArguementType, ParsedArguement, ParsedArgumentsArray, ValueOnly } from "@src/core/domains/console/parsers/CommandArgumentParser";
