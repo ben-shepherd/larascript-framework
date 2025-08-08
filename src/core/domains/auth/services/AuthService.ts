@@ -1,13 +1,13 @@
+import { BaseAdapter } from "@ben-shepherd/larascript-core-bundle";
 import { AuthAdapters } from "@src/config/auth.config";
-import BaseAdapter from "@src/core/base/BaseAdapter";
 import { IBasicACLService } from "@src/core/domains/accessControl/interfaces/IACLService";
 import BasicACLService from "@src/core/domains/accessControl/services/BasicACLService";
 import { IAclConfig } from "@src/core/domains/auth/interfaces/acl/IAclConfig";
 import { IBaseAuthConfig } from "@src/core/domains/auth/interfaces/config/IAuth";
 import { IUserModel } from "@src/core/domains/auth/interfaces/models/IUserModel";
+import { IUserRepository } from "@src/core/domains/auth/interfaces/repository/IUserRepository";
 import { IAuthService } from "@src/core/domains/auth/interfaces/service/IAuthService";
 import { app } from "@src/core/services/App";
-import { IUserRepository } from "@src/core/domains/auth/interfaces/repository/IUserRepository";
 
 /**
  * Short hand for app('auth')
