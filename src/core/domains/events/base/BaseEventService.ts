@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import { compose } from "@ben-shepherd/larascript-core-bundle";
 import HasSimpleRegisterConcern from "@src/core/concerns/HasSimpleRegisterConcern";
 import EventMockableConcern from "@src/core/domains/events/concerns/EventMockableConcern";
 import EventWorkerConcern from "@src/core/domains/events/concerns/EventWorkerConcern";
@@ -8,7 +9,6 @@ import { TEventWorkerOptions } from "@src/core/domains/events/interfaces/IEventW
 import { TMockableEventCallback } from "@src/core/domains/events/interfaces/IMockableConcern";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
 import { ICommandOptionArguement, IOptionTypes } from "@src/core/interfaces/concerns/ISimpleRegister";
-import compose from "@src/core/util/compose";
 
 
 class BaseEventService extends compose(class {}, HasSimpleRegisterConcern, EventWorkerConcern, EventMockableConcern) {
