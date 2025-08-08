@@ -1,4 +1,4 @@
-import { BaseAdapterTypes } from "@src/core/base/BaseAdapter";
+import { BaseAdapterTypes } from "@ben-shepherd/larascript-core-bundle";
 
 export interface StorageAdapters extends BaseAdapterTypes {
     fileSystem: unknown;

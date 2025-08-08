@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { BaseAdapterTypes } from "@src/core/base/BaseAdapter";
+import { BaseAdapterTypes } from "@ben-shepherd/larascript-core-bundle";
 import { IMail } from "@src/core/domains/mail/interfaces/data";
 
 export type BaseMailAdapters = BaseAdapterTypes<MailAdapter> & {

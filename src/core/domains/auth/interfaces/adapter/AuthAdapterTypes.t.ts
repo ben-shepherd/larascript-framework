@@ -1,6 +1,6 @@
-import { BaseAdapterTypes } from "@src/core/base/BaseAdapter";
-import { IJwtAuthService } from "@src/core/domains/auth/interfaces/jwt/IJwtAuthService";
+import { BaseAdapterTypes } from "@ben-shepherd/larascript-core-bundle";
 import { IAuthAdapter } from "@src/core/domains/auth/interfaces/adapter/IAuthAdapter";
+import { IJwtAuthService } from "@src/core/domains/auth/interfaces/jwt/IJwtAuthService";
 
 export type BaseAuthAdapterTypes =  BaseAdapterTypes<IAuthAdapter> & {
     default: IJwtAuthService

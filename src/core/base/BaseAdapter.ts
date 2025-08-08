@@ -2,6 +2,7 @@ import AdapterException from "@src/core/exceptions/AdapterException";
 
 /**
  * @template T type of the adapter
+ * @deprecated use @ben-shepherd/larascript-core-bundle instead
  */
 export type BaseAdapterTypes<T = unknown> = {
     [key: string]: T;
@@ -27,6 +28,8 @@ export type BaseAdapterTypes<T = unknown> = {
  * class AuthService extends BaseAdapter<AuthAdapters> {
  *   // Implements specific auth service functionality while inheriting adapter management
  * }
+ * 
+ * @deprecated use @ben-shepherd/larascript-core-bundle instead
  */
 abstract class BaseAdapter<AdapterTypes extends BaseAdapterTypes> {
 
