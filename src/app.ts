@@ -5,7 +5,7 @@ import appConfig from '@src/config/app.config';
 import providers from '@src/config/providers.config';
 import CommandNotFoundException from '@src/core/domains/console/exceptions/CommandNotFoundException';
 import CommandBootService from '@src/core/domains/console/service/CommandBootService';
-import { loggerLegacy } from '@src/core/domains/logger/services/LoggerService';
+import { logger } from '@src/core/domains/logger/services/LoggerService';
 
 (async () => {
     try {
@@ -18,7 +18,7 @@ import { loggerLegacy } from '@src/core/domains/logger/services/LoggerService';
          * Boot the kernel
          */
         await Kernel.boot({ environment, providers }, options);
-        loggerLegacy().info('[App]: Started');
+        logger().info('[App]: Started');
 
         /**
          * Execute commands
@@ -33,7 +33,7 @@ import { loggerLegacy } from '@src/core/domains/logger/services/LoggerService';
             return;
         }
 
-        loggerLegacy().error('[App]: Failed to start', err);
+        logger().error('[App]: Failed to start', err);
         throw err;
     }
 })();

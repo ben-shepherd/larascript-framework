@@ -1,7 +1,6 @@
 import { AppSingleton } from '@ben-shepherd/larascript-core-bundle';
 import { Providers } from '@src/config/providers.config';
 
-
 /**
  * The App service allows you to access kernel containers and configure the app environment
  */
