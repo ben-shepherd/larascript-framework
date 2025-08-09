@@ -1,7 +1,7 @@
+import { BaseProvider } from "@ben-shepherd/larascript-core-bundle";
 import { aclConfig } from "@src/config/acl.config";
-import BaseProvider from "@src/core/base/Provider";
-import { IAclConfig } from "@src/core/domains/auth/interfaces/acl/IAclConfig";
 import BasicACLService from "@src/core/domains/accessControl/services/BasicACLService";
+import { IAclConfig } from "@src/core/domains/auth/interfaces/acl/IAclConfig";
 
 class AccessControlProvider extends BaseProvider {
 

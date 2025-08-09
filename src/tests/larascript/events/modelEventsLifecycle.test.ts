@@ -14,8 +14,8 @@ import LoggerProvider from '@src/core/domains/logger/providers/LoggerProvider';
 import Model from '@src/core/domains/models/base/Model';
 import { IModelAttributes } from '@src/core/domains/models/interfaces/IModel';
 import ValidatorProvider from '@src/core/domains/validator/providers/ValidatorProvider';
-import Kernel, { KernelConfig } from '@src/core/Kernel';
-import { AppSingleton } from '@src/core/services/App';
+import KernelLegacy, { KernelConfig } from '@src/core/Kernel';
+import { app } from '@src/core/services/App';
 import TestAuthProvider from '@src/tests/larascript/providers/TestAuthProvider';
 import TestConsoleProvider from '@src/tests/larascript/providers/TestConsoleProvider';
 import TestCryptoProvider from '@src/tests/larascript/providers/TestCryptoProvider';
@@ -163,12 +163,12 @@ describe('model lifecycle events', () => {
                 new TestCryptoProvider()
             ]
         }
-        await Kernel.boot(config, {});
+        await KernelLegacy.boot(config, {});
     });
 
     beforeEach(async () => {
         // Create test table
-        const schema = AppSingleton.container('db').schema();
+        const schema = app('db').schema();
         await schema.createTable('test_models', {
             name: DataTypes.STRING,
             createdAt: DataTypes.DATE,
@@ -176,19 +176,19 @@ describe('model lifecycle events', () => {
         });
 
         // Reset mock events
-        AppSingleton.container('events').resetMockEvents();
+        app('events').resetMockEvents();
     });
 
     afterEach(async () => {
         // Drop test table
-        await AppSingleton.container('db').schema().dropTable('test_models');
+        await app('db').schema().dropTable('test_models');
 
         // Reset mock events
-        AppSingleton.container('events').resetMockEvents();
+        app('events').resetMockEvents();
     });
 
     test('creating and created events are emitted when saving new model', async () => {
-        const eventService = AppSingleton.container('events');
+        const eventService = app('events');
         const model = TestModel.create({ name: 'test' });
 
         // Mock the events
@@ -205,7 +205,7 @@ describe('model lifecycle events', () => {
     });
 
     test('updating and updated events are emitted when updating model', async () => {
-        const eventService = AppSingleton.container('events');
+        const eventService = app('events');
         const model = TestModel.create({ name: 'original' });
         await model.save();
 
@@ -224,7 +224,7 @@ describe('model lifecycle events', () => {
     });
 
     test('deleting and deleted events are emitted when deleting model', async () => {
-        const eventService = AppSingleton.container('events');
+        const eventService = app('events');
         const model = TestModel.create({ name: 'to delete' });
         await model.save();
 
@@ -242,7 +242,7 @@ describe('model lifecycle events', () => {
     });
 
     test('events can modify attributes during lifecycle', async () => {
-        const eventService = AppSingleton.container('events');
+        const eventService = app('events');
         const model = TestModel.create({ name: 'original' });
 
         // Mock the events
@@ -261,7 +261,7 @@ describe('model lifecycle events', () => {
     });
 
     test('events can be removed using off()', async () => {
-        const eventService = AppSingleton.container('events');
+        const eventService = app('events');
         const model = TestModel.create({ name: 'test' });
 
         // Mock the event

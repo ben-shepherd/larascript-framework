@@ -1,5 +1,5 @@
+import { appEnv } from '@ben-shepherd/larascript-core-bundle';
 import { EnvironmentProduction } from '@src/core/consts/Environment';
-import { AppSingleton } from '@src/core/services/App';
 import { NextFunction, Request, Response } from 'express';
 
 /**
@@ -33,7 +33,7 @@ export const errorHandler = (err: Error, req: Request, res: Response, next: Next
     const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
     res.status(statusCode)
 
-    if (AppSingleton.env() === EnvironmentProduction) {
+    if (appEnv() === EnvironmentProduction) {
         res.json({
             message: 'Whoops... something went wrong.',
         });

@@ -13,7 +13,7 @@ import MongoRelationshipResolver from "@src/core/domains/mongodb/relationship/Mo
 import createMigrationSchemaMongo from "@src/core/domains/mongodb/schema/createMigrationSchemaMongo";
 import { extractDefaultMongoCredentials } from "@src/core/domains/mongodb/utils/extractDefaultMongoCredentials";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
-import { AppSingleton } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 import { Db, MongoClient, MongoClientOptions, MongoServerError } from "mongodb";
 
 class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig> {
@@ -140,7 +140,7 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig> {
             await client.connect();
         }
         catch (err) {
-            AppSingleton.container('logger').error('Error connecting to database: ' + (err as Error).message);
+            app('logger').error('Error connecting to database: ' + (err as Error).message);
 
             if (err instanceof MongoServerError === false) {
                 throw err
@@ -167,7 +167,7 @@ class MongoDbAdapter extends BaseDatabaseAdapter<IMongoConfig> {
             await db().schema().createDatabase(database);
         }
         catch (err) {
-            AppSingleton.container('logger').error(err);
+            app('logger').error(err);
         }
     }
 

@@ -6,13 +6,13 @@ import CryptoProvider from '@src/core/domains/crypto/providers/CryptoProvider';
 import DatabaseSetupProvider from '@src/core/domains/database/providers/DatabaseSetupProvider';
 import LoggerProvider from '@src/core/domains/logger/providers/LoggerProvider';
 import SetupProvider from '@src/core/domains/setup/providers/SetupProvider';
-import Kernel from "@src/core/Kernel";
-import { AppSingleton } from '@src/core/services/App';
+import KernelLegacy from "@src/core/Kernel";
+import { app } from '@src/core/services/App';
 
 (async () => {
     require('dotenv').config();
 
-    await Kernel.boot({
+    await KernelLegacy.boot({
         ...appConfig,
         environment: 'testing',
         providers: [
@@ -24,5 +24,5 @@ import { AppSingleton } from '@src/core/services/App';
         ]
     }, {})
 
-    await AppSingleton.container('console').readerService(['app:setup']).handle();
+    app('console').readerService(['app:setup']).handle();
 })();

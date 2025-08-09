@@ -1,5 +1,5 @@
 import { IPackageJson, IPackageJsonService } from "@src/core/interfaces/IPackageJsonService";
-import { AppSingleton } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 import { exec } from "child_process";
 import fs from "fs";
 import path from "path";
@@ -28,7 +28,7 @@ export default class PackageJsonService implements IPackageJsonService {
      */
     async installPackage(name: string) {
         const cmd = `yarn add ${name}`
-        AppSingleton.container('logger').info('Running command: ', cmd)
+        app('logger').info('Running command: ', cmd)
         await execPromise(cmd);
     }
 
@@ -46,7 +46,7 @@ export default class PackageJsonService implements IPackageJsonService {
         }
 
         const cmd = `yarn remove ${name}`
-        AppSingleton.container('logger').info('Running command: ', cmd)
+        app('logger').info('Running command: ', cmd)
         await execPromise(cmd);
     }
 

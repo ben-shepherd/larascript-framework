@@ -1,6 +1,6 @@
 import Model from "@src/core/domains/models/base/Model";
 import { IModelAttributes } from "@src/core/domains/models/interfaces/IModel";
-import { AppSingleton } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 import testHelper from "@src/tests/testHelper";
 import { DataTypes } from "sequelize";
 
@@ -17,7 +17,7 @@ export interface ITestsBlogPostsData extends IModelAttributes {
 
 export const resetTable = async (connections: string[] = testHelper.getTestConnectionNames()) => {
     for (const connectionName of connections) {
-        const schema = AppSingleton.container('db').schema(connectionName);
+        const schema = app('schema').schema(connectionName);
         if (await schema.tableExists(tableName)) {
             await schema.dropTable(tableName);
         }

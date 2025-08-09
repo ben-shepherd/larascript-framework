@@ -1,6 +1,6 @@
  
 import { beforeAll, describe, expect, test } from '@jest/globals';
-import { AppSingleton } from '@src/core/services/App';
+import { app } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
 
 describe('can generate ejs view', () => {
@@ -18,7 +18,7 @@ describe('can generate ejs view', () => {
         };
 
         // Act - Render the view using the same pattern as tinker.ts
-        const renderedHtml = await AppSingleton.container('view').ejs().render({
+        const renderedHtml = await app('view').ejs().render({
             view: 'views/welcome',
             data: testData
         });
@@ -46,7 +46,7 @@ describe('can generate ejs view', () => {
 
     test('can generate a view with empty data', async () => {
         // Act - Render with minimal data
-        const renderedHtml = await AppSingleton.container('view').ejs().render({
+        const renderedHtml = await app('view').ejs().render({
             view: 'views/welcome',
             data: {}
         });
@@ -66,7 +66,7 @@ describe('can generate ejs view', () => {
     test('throws error for non-existent view', async () => {
         // Act & Assert - Should throw an error for non-existent view
         await expect(
-            AppSingleton.container('view').ejs().render({
+            app('view').ejs().render({
                 view: 'non-existent-view',
                 data: {}
             })

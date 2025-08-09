@@ -1,11 +1,11 @@
-import BaseProvider from "@src/core/base/Provider";
+import { BaseProvider } from "@ben-shepherd/larascript-core-bundle";
 import MigrateDownCommand from "@src/core/domains/migrations/commands/MigrateDownCommand";
 import MigrateFreshCommand from "@src/core/domains/migrations/commands/MigrateFreshCommand";
 import MigrateUpCommand from "@src/core/domains/migrations/commands/MigrateUpCommand";
+import SeedDownCommand from "@src/core/domains/migrations/commands/SeedDownCommand";
 import SeedUpCommand from "@src/core/domains/migrations/commands/SeedUpCommand";
 import { IMigrationConfig } from "@src/core/domains/migrations/interfaces/IMigrationConfig";
 import { app } from "@src/core/services/App";
-import SeedDownCommand from "@src/core/domains/migrations/commands/SeedDownCommand";
 
 /**
  * MigrationProvider class handles all migration related tasks

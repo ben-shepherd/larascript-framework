@@ -15,7 +15,7 @@ import { TDirection } from "@src/core/domains/eloquent/interfaces/TEnums";
 import With from "@src/core/domains/eloquent/relational/With";
 import { IModel, ModelConstructor } from "@src/core/domains/models/interfaces/IModel";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
-import { AppSingleton } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 import { deepClone } from "@src/core/util/deepClone";
 
 
@@ -123,7 +123,7 @@ abstract class Eloquent<
      * @param {string} message The message to log
      */
     protected log(message: string, ...args: any[]) {
-        AppSingleton.container('logger').error(`[Eloquent] (Connection: ${this.connectionName}): ${message}`, ...args);
+        app('logger').error(`[Eloquent] (Connection: ${this.connectionName}): ${message}`, ...args);
     }
 
     /**

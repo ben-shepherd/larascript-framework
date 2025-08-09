@@ -1,7 +1,7 @@
 import responseError from "@src/core/domains/http/handlers/responseError";
 import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
-import { AppSingleton } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 import { Request, Response } from "express";
 import { MongoClient } from "mongodb";
 import { Sequelize } from "sequelize";
@@ -17,7 +17,7 @@ import { Sequelize } from "sequelize";
 export default async (req: Request, res: Response) => {
 
     try {
-        const db = AppSingleton.container('db');
+        const db = app('db');
         const adapter = db.getAdapter();
 
         // Check if the provider is MongoDB

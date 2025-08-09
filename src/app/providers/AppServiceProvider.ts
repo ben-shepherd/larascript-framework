@@ -1,5 +1,5 @@
+import { BaseProvider } from "@ben-shepherd/larascript-core-bundle";
 import AppService from "@src/app/services/AppService";
-import BaseProvider from "@src/core/base/Provider";
 import { app } from "@src/core/services/App";
 
 class AppServiceProvider extends BaseProvider {

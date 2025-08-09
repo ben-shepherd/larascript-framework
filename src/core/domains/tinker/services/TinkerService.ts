@@ -1,9 +1,7 @@
-import { BaseSingleton } from "@ben-shepherd/larascript-core-bundle";
+import { AppSingleton, BaseSingleton, EnvironmentProduction, Kernel } from "@ben-shepherd/larascript-core-bundle";
 import appConfig from "@src/config/app.config";
 import providers from "@src/config/providers.config";
-import { EnvironmentProduction } from "@src/core/consts/Environment";
-import Kernel from "@src/core/Kernel";
-import { AppSingleton, app } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 import testHelper from "@src/tests/testHelper";
 
 export type TinkerServiceConfig = {

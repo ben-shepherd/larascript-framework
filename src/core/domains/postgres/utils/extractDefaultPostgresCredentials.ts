@@ -1,4 +1,4 @@
-import { AppSingleton } from "@src/core/services/App"
+import { app } from "@src/core/services/App"
 import fs from "fs"
 import path from "path"
 
@@ -15,7 +15,7 @@ export const extractDefaultPostgresCredentials = () => {
         }
     }
     catch (err) {
-        AppSingleton.container('logger').error(err)
+        app('logger').error(err)
     }
 
     return null;

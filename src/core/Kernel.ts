@@ -1,7 +1,7 @@
 import { BaseSingleton } from "@ben-shepherd/larascript-core-bundle";
 import { EnvironmentType } from "@src/core/consts/Environment";
 import { IProvider } from "@src/core/interfaces/IProvider";
-import { AppSingleton } from "@src/core/services/App";
+import { AppSingletonLegacy } from "@src/core/services/App";
 import 'dotenv/config';
 
 export type Containers = {
@@ -15,7 +15,10 @@ export type KernelConfig = {
     providers: IProvider[];
 }
 
-export default class Kernel extends BaseSingleton<KernelConfig> {
+/**
+ * @deprecated
+ */
+export default class KernelLegacy extends BaseSingleton<KernelConfig> {
 
     public containers: Map<keyof Containers, Containers[keyof Containers]> = new Map();
 
@@ -43,7 +46,7 @@ export default class Kernel extends BaseSingleton<KernelConfig> {
      * @throws {Error} If the app environment is not set
      */
     public static async boot(config: KernelConfig, options: KernelOptions): Promise<void> {
-        const kernel = Kernel.getInstance(config);
+        const kernel = KernelLegacy.getInstance(config);
         const environment = kernel.config?.environment ?? null
         const providers = kernel.config?.providers ?? [] as IProvider[];
         const withoutProviders = options.withoutProvider ?? [];
@@ -56,7 +59,7 @@ export default class Kernel extends BaseSingleton<KernelConfig> {
             throw new Error('App environment is not set');
         }
 
-        AppSingleton.getInstance().env = environment
+        AppSingletonLegacy.getInstance().env = environment
 
         for (const provider of providers) {
             if (withoutProviders.includes(provider.constructor.name)) {
@@ -76,7 +79,7 @@ export default class Kernel extends BaseSingleton<KernelConfig> {
         }
 
 
-        Kernel.getInstance().readyProviders = [...kernel.preparedProviders];
+        KernelLegacy.getInstance().readyProviders = [...kernel.preparedProviders];
     }
 
     /**

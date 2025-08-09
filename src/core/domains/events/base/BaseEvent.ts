@@ -1,3 +1,4 @@
+import { AppSingleton } from "@ben-shepherd/larascript-core-bundle";
 import BaseCastable from "@src/core/domains/cast/base/BaseCastable";
 import { TCastableType, TCasts } from "@src/core/domains/cast/interfaces/IHasCastableConcern";
 import EventInvalidPayloadException from "@src/core/domains/events/exceptions/EventInvalidPayloadException";
@@ -6,7 +7,7 @@ import IEventDriver from "@src/core/domains/events/interfaces/IEventDriver";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
 import EventRegistry from "@src/core/domains/events/registry/EventRegistry";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
-import { AppSingleton } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 
 abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBaseEvent<TPayload> {
 
@@ -84,7 +85,7 @@ abstract class BaseEvent<TPayload = unknown> extends BaseCastable implements IBa
      * @returns The event service.
      */
     getEventService(): IEventService {
-        return AppSingleton.container('events');
+        return app('events');
     }
 
     /**

@@ -1,10 +1,10 @@
-import BaseProvider from "@src/core/base/Provider";
+import { BaseProvider } from "@ben-shepherd/larascript-core-bundle";
 import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
-import { app } from "@src/core/services/App";
-import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
-import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import Database from "@src/core/domains/database/services/Database";
 import DatabaseConfig from "@src/core/domains/database/services/DatabaseConfig";
+import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
+import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
+import { app } from "@src/core/services/App";
 
 /**
  * DatabaseRegisterOnlyProvider class

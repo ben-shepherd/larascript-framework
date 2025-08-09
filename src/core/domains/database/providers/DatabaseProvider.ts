@@ -1,5 +1,5 @@
+import { BaseProvider } from "@ben-shepherd/larascript-core-bundle";
 import databaseConfig from "@src/config/database.config";
-import BaseProvider from "@src/core/base/Provider";
 import { IDatabaseConfig } from "@src/core/domains/database/interfaces/IDatabaseConfig";
 import Database from "@src/core/domains/database/services/Database";
 import { app } from "@src/core/services/App";
@@ -11,9 +11,6 @@ import { app } from "@src/core/services/App";
  * This provider is responsible for setting up the database configuration and
  * booting the database service. It registers the database service in the App
  * container and ensures that the service is booted when the provider is booted.
- * 
- * @extends BaseProvider
- * @see BaseProvider
  */
 export default class DatabaseProvider extends BaseProvider {
 

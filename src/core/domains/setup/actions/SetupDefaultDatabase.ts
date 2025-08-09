@@ -2,7 +2,7 @@ import QuestionDTO from '@src/core/domains/setup/DTOs/QuestionDTO';
 import InvalidDefaultCredentialsError from '@src/core/domains/setup/exceptions/InvalidDefaultCredentialsError';
 import { IAction } from '@src/core/domains/setup/interfaces/IAction';
 import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand';
-import { AppSingleton } from '@src/core/services/App';
+import { app } from '@src/core/services/App';
 
 class SetupDefaultDatabase implements IAction {
 
@@ -31,7 +31,7 @@ class SetupDefaultDatabase implements IAction {
     async updateEnv(adapterName: string, ref: ISetupCommand) {
         ref.env.copyFileFromEnvExample();
 
-        const credentials = AppSingleton.container('db').getDefaultCredentials(adapterName);
+        const credentials = app('db').getDefaultCredentials(adapterName);
 
         if (!credentials) {
             throw new InvalidDefaultCredentialsError(`The default credentials are invalid or could not be found for adapter '${adapterName}'`);

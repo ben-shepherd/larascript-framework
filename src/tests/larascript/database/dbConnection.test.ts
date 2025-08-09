@@ -2,7 +2,7 @@
 import { describe, expect } from '@jest/globals';
 import MongoDbAdapter from '@src/core/domains/mongodb/adapters/MongoDbAdapter';
 import PostgresAdapter from '@src/core/domains/postgres/adapters/PostgresAdapter';
-import { AppSingleton } from '@src/core/services/App';
+import { app } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
 
 describe('attempt to connect to MongoDB database', () => {
@@ -18,7 +18,7 @@ describe('attempt to connect to MongoDB database', () => {
    * Test the MongoDB connection
    */
     test('test db connection', async () => {
-        const db = AppSingleton.container('db');
+        const db = app('db');
         expect(db.getAdapter('mongodb') instanceof MongoDbAdapter).toBeTruthy();
         expect(db.getAdapter('postgres') instanceof PostgresAdapter).toBeTruthy();
 

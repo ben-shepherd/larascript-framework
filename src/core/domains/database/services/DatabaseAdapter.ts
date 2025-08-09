@@ -1,6 +1,6 @@
 import { IDatabaseAdapter, TAdapterComposerFileName } from "@src/core/domains/database/interfaces/IDatabaseAdapter";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
-import { AppSingleton } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 
 class DatabaseAdapter {
 
@@ -23,7 +23,7 @@ class DatabaseAdapter {
      *  - shortName: The shortened composer file name without the extension (e.g., 'mongodb').
      */
     public static getComposerFileNames(): TAdapterComposerFileName[] {
-        const db = AppSingleton.container('db');
+        const db = app('db');
         const adapterCtors = db.getAllAdapterConstructors();
         const adapters = adapterCtors.map((adapterCtor: TClassConstructor<IDatabaseAdapter>) => new adapterCtor('', {}));
         const composerFileNames = adapters.map((adapter: IDatabaseAdapter) => adapter.getDockerComposeFileName());

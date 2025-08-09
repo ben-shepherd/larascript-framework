@@ -1,6 +1,6 @@
 
 import BaseMigrationCommand from "@src/core/domains/migrations/base/BaseMigrationCommand";
-import { AppSingleton } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 
 /**
  * MigrateFresh class handles running fresh migrations
@@ -27,13 +27,13 @@ class MigrateFreshCommand extends BaseMigrationCommand {
         const seed: boolean = typeof this.getArguementByKey('seed')?.value === 'string';
 
         // Get the db schema helper
-        const schema = AppSingleton.container('db').schema();
+        const schema = app('db').schema();
 
         // Drop all tables
         await schema.dropAllTables();
 
         // Handle migrate:up
-        const console = AppSingleton.container('console');
+        const console = app('console');
         await console.readerService(['migrate:up', '--keep-alive']).handle();
 
         if (seed) {

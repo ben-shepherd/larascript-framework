@@ -5,7 +5,7 @@ import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryB
 import Model from '@src/core/domains/models/base/Model';
 import { IModelAttributes } from "@src/core/domains/models/interfaces/IModel";
 import PostgresSchema from '@src/core/domains/postgres/PostgresSchema';
-import { AppSingleton } from '@src/core/services/App';
+import { app } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
 import { DataTypes } from 'sequelize';
 
@@ -101,7 +101,7 @@ describe('db schema', () => {
         await resetTable()
 
         for (const connectionName of connections) {
-            const schema = AppSingleton.container('db').schema<PostgresSchema>(connectionName);
+            const schema = app('db').schema<PostgresSchema>(connectionName);
 
             if (connectionName === 'mongodb') {
                 continue;

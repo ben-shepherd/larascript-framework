@@ -4,7 +4,7 @@ import CommandExecutionException from "@src/core/domains/console/exceptions/Comm
 import { ICommand } from "@src/core/domains/console/interfaces/ICommand";
 import { KeyPair, KeyPairArguementType, ParsedArguement, ParsedArgumentsArray, ValueOnly } from "@src/core/domains/console/parsers/CommandArgumentParser";
 import ConsoleInputService from "@src/core/domains/console/service/ConsoleInputService";
-import { AppSingleton } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 
 /**
  * Base command class
@@ -162,8 +162,9 @@ export default abstract class BaseCommand extends BaseConfig implements ICommand
      * End the process
      */
     end(success: boolean = true): void {
+        
         // Close the readline
-        AppSingleton.container('readline').close();
+        app('readline').close();
 
         // End the process
         if (!this.shouldKeepProcessAlive()) {

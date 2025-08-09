@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { describe } from '@jest/globals';
-import { AppSingleton } from '@src/core/services/App';
+import { app } from '@src/core/services/App';
 import TestEventSyncBadPayloadEvent from '@src/tests/larascript/events/events/TestEventSyncBadPayloadEvent';
 import TestEventSyncEvent from '@src/tests/larascript/events/events/TestEventSyncEvent';
 import testHelper from '@src/tests/testHelper';
@@ -19,7 +19,7 @@ describe('mock event service', () => {
    */
     test('test dispatch event sync with valid payload', async () => {
 
-        const eventService = AppSingleton.container('events');
+        const eventService = app('events');
 
         eventService.mockEvent(TestEventSyncEvent)
 
@@ -37,7 +37,7 @@ describe('mock event service', () => {
    */
     test('test dispatch event sync with invalid payload', async () => {
 
-        const eventService = AppSingleton.container('events');
+        const eventService = app('events');
 
         eventService.mockEvent(TestEventSyncBadPayloadEvent)
 

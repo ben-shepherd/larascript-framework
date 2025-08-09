@@ -3,8 +3,8 @@ import AccessControlProvider from "@src/core/domains/accessControl/providers/Acc
 import EloquentQueryProvider from "@src/core/domains/eloquent/providers/EloquentQueryProvider";
 import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
-import Kernel, { KernelConfig } from "@src/core/Kernel";
-import { AppSingleton } from "@src/core/services/App";
+import KernelLegacy, { KernelConfig } from "@src/core/Kernel";
+import { app } from "@src/core/services/App";
 import TestApiTokenModel from "@src/tests/larascript/models/models/TestApiTokenModel";
 import TestUser from "@src/tests/larascript/models/models/TestUser";
 import TestAuthProvider from "@src/tests/larascript/providers/TestAuthProvider";
@@ -13,8 +13,8 @@ import TestCryptoProvider from "@src/tests/larascript/providers/TestCryptoProvid
 import TestDatabaseProvider, { testDbName } from "@src/tests/larascript/providers/TestDatabaseProvider";
 import TestEventProvider from "@src/tests/larascript/providers/TestEventProvider";
 import TestMigrationProvider from "@src/tests/larascript/providers/TestMigrationProvider";
-import { DataTypes } from "sequelize";
 import TestViewProvider from "@src/tests/larascript/providers/TestViewProvider";
+import { DataTypes } from "sequelize";
 
 export const getTestDbName = () => testDbName
 
@@ -45,7 +45,7 @@ const testBootApp = async () => {
         ]
     }
 
-    await Kernel.boot(config, {});
+    await KernelLegacy.boot(config, {});
 }
 
 
@@ -56,7 +56,7 @@ const testBootApp = async () => {
  * @param connectionName The name of the database connection to use
  */
 export const createAuthTables = async (connectionName?: string) => {
-    const schema = AppSingleton.container('db').schema(connectionName)
+    const schema = app('db').schema(connectionName)
 
     const userTable = (new TestUser).table;
     const apiTokenTable = (new TestApiTokenModel).table;
@@ -97,7 +97,7 @@ export const createAuthTables = async (connectionName?: string) => {
  * @param connectionName The name of the database connection to use
  */
 export const dropAuthTables = async (connectionName?: string) => {
-    const schema = AppSingleton.container('db').schema(connectionName)
+    const schema = app('db').schema(connectionName)
 
     const userTable = (new TestUser).table;
     const apiTokenTable = (new TestApiTokenModel).table;
@@ -114,7 +114,7 @@ export const dropAuthTables = async (connectionName?: string) => {
      * await runFreshMigrations()
      */
 const runFreshMigrations = async () => {
-    await AppSingleton.container('console').readerService(['migrate:fresh', '--group=testing', '--seed']).handle();
+    await app('console').readerService(['migrate:fresh', '--group=testing', '--seed']).handle();
 }
 
 /**
@@ -126,7 +126,7 @@ const runFreshMigrations = async () => {
  * await clearMigrations()
  */
 const clearMigrations = async () => {
-    await AppSingleton.container('console').readerService(['migrate:down', '--group=testing']).handle();
+    await app('console').readerService(['migrate:down', '--group=testing']).handle();
 }
 
 /**

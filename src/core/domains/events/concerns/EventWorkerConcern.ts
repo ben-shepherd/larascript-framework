@@ -3,7 +3,7 @@ import EventWorkerException from "@src/core/domains/events/exceptions/EventWorke
 import { TISerializablePayload } from "@src/core/domains/events/interfaces/IEventPayload";
 import { IEventWorkerConcern, IWorkerModel, TEventWorkerOptions } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
-import { AppSingleton } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 
 const EventWorkerConcern = (Base: TClassConstructor) => {
     return class EventWorkerConcern extends Base implements IEventWorkerConcern {
@@ -23,10 +23,10 @@ const EventWorkerConcern = (Base: TClassConstructor) => {
 
             const workerModels = await this.fetchWorkerModelDocuments(options)
 
-            AppSingleton.container('logger').console('Queued items: ', workerModels.length)
+            app('logger').console('Queued items: ', workerModels.length)
 
             if (workerModels.length === 0) {
-                AppSingleton.container('logger').console("No queued items");
+                app('logger').console("No queued items");
                 return;
             }
 
@@ -49,7 +49,7 @@ const EventWorkerConcern = (Base: TClassConstructor) => {
                     throw new EventWorkerException('Event name must be a string');
                 }
 
-                const eventCtor = AppSingleton.container('events').getEventCtorByName(eventName)
+                const eventCtor = app('events').getEventCtorByName(eventName)
 
                 if (!eventCtor) {
                     throw new EventWorkerException(`Event '${eventName}' not found`);
@@ -63,7 +63,7 @@ const EventWorkerConcern = (Base: TClassConstructor) => {
                 await workerModel.delete();
             }
             catch (err) {
-                AppSingleton.container('logger').error(err)
+                app('logger').error(err)
                 await this.handleUpdateWorkerModelAttempts(workerModel, options)
             }
         }

@@ -1,11 +1,11 @@
 /* eslint-disable no-undef */
 import { describe, expect, test } from '@jest/globals';
-import { AppSingleton } from '@src/core/services/App';
+import { app } from '@src/core/services/App';
 import testHelper, { forEveryConnection } from '@src/tests/testHelper';
 import { DataTypes } from 'sequelize';
 
 const createTable = async (connectionName: string) => {
-    const schema = AppSingleton.container('db').schema(connectionName)
+    const schema = app('db').schema(connectionName)
 
     schema.createTable('tests', {
         name: DataTypes.STRING,
@@ -15,7 +15,7 @@ const createTable = async (connectionName: string) => {
 }
 
 const dropTable = async (connectionName: string) => {
-    const schema = AppSingleton.container('db').schema(connectionName)
+    const schema = app('db').schema(connectionName)
 
     if (await schema.tableExists('tests')) {
         await schema.dropTable('tests');
@@ -39,7 +39,7 @@ describe('test dropping all tables', () => {
         await forEveryConnection(async connectionName => {
             if (connectionName !== 'mongodb') return;
 
-            const schema = AppSingleton.container('db').schema(connectionName)
+            const schema = app('db').schema(connectionName)
 
             await createTable(connectionName);
 

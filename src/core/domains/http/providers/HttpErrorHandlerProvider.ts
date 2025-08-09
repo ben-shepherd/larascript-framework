@@ -1,8 +1,8 @@
+import { AppSingleton, BaseProvider } from '@ben-shepherd/larascript-core-bundle';
 import httpConfig from '@src/config/http.config';
-import BaseProvider from "@src/core/base/Provider";
 import IHttpConfig from '@src/core/domains/http/interfaces/IHttpConfig';
 import errorHandler from '@src/core/domains/http/middleware/errorHandler';
-import { AppSingleton, app } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 
 
 export default class HttpErrorHandlerProvider extends BaseProvider {

@@ -2,7 +2,7 @@
 import { describe } from '@jest/globals';
 import { queryBuilder } from '@src/core/domains/eloquent/services/EloquentQueryBuilderService';
 import { events } from '@src/core/domains/events/services/EventService';
-import { AppSingleton } from '@src/core/services/App';
+import { app } from '@src/core/services/App';
 import TestEventQueueCalledFromWorkerEvent from '@src/tests/larascript/events/events/TestEventQueueCalledFromWorkerEvent';
 import TestEventQueueEvent from '@src/tests/larascript/events/events/TestEventQueueEvent';
 import resetWorkerTables from '@src/tests/larascript/events/helpers/createWorketTables';
@@ -52,7 +52,7 @@ describe('mock queable event', () => {
 
         expect(events().assertDispatched<TPayload>(TestEventQueueEvent, validatePayload)).toBeTruthy()
 
-        await AppSingleton.container('console').readerService(['worker', '--queue=testQueue']).handle();
+        await app('console').readerService(['worker', '--queue=testQueue']).handle();
 
         expect(events().assertDispatched<TPayload>(TestEventQueueCalledFromWorkerEvent, validatePayload)).toBeTruthy()
 

@@ -1,4 +1,4 @@
-import { AppSingleton } from "@src/core/services/App"
+import { app } from "@src/core/services/App"
 
 const captureError = async <T>(callbackFn: () => Promise<T>): Promise<T> => {
     try {
@@ -6,7 +6,7 @@ const captureError = async <T>(callbackFn: () => Promise<T>): Promise<T> => {
     }
     catch (err) {
         if (err instanceof Error && err?.message) {
-            AppSingleton.container('logger').error(`): `, err.message, err.stack)
+            app('logger').error(`): `, err.message, err.stack)
         }
         throw err
     }

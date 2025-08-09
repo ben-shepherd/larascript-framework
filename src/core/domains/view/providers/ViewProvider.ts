@@ -1,4 +1,4 @@
-import BaseProvider from "@src/core/base/Provider";
+import { BaseProvider } from "@ben-shepherd/larascript-core-bundle";
 import { IViewServiceConfig } from "@src/core/domains/view/interfaces/config";
 import ViewService from "@src/core/domains/view/services/ViewService";
 

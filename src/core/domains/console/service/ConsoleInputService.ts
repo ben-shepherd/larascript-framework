@@ -1,5 +1,5 @@
 import { IConsoleInputService } from '@src/core/domains/console/interfaces/IConsoleInputService';
-import { AppSingleton } from '@src/core/services/App';
+import { app } from '@src/core/services/App';
 import readline from 'node:readline';
 
 class ConsoleInputService implements IConsoleInputService {
@@ -7,7 +7,7 @@ class ConsoleInputService implements IConsoleInputService {
     rl: readline.Interface;
 
     constructor() {
-        this.rl = AppSingleton.container('readline');
+        this.rl = app('readline');
     }
 
     /**

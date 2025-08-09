@@ -4,8 +4,8 @@ import JwtAuthService from '@src/core/domains/auth/services/JwtAuthService';
 import ConsoleService from '@src/core/domains/console/service/ConsoleService';
 import Database from '@src/core/domains/database/services/Database';
 import EventService from '@src/core/domains/events/services/EventService';
-import Kernel from '@src/core/Kernel';
-import { AppSingleton } from '@src/core/services/App';
+import KernelLegacy from '@src/core/Kernel';
+import { app } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
 
 describe('attempt to run app with normal appConfig', () => {
@@ -16,11 +16,11 @@ describe('attempt to run app with normal appConfig', () => {
    */
     test.concurrent('kernel boot', async () => {
         await testHelper.testBootApp()
-        expect(AppSingleton.container('events')).toBeInstanceOf(EventService);
-        expect(AppSingleton.container('db')).toBeInstanceOf(Database);
-        expect(AppSingleton.container('console')).toBeInstanceOf(ConsoleService);
-        expect(AppSingleton.container('auth')).toBeInstanceOf(AuthService);
-        expect(AppSingleton.container('auth.jwt')).toBeInstanceOf(JwtAuthService);
-        expect(Kernel.getInstance().booted()).toBe(true);
+        expect(app('events')).toBeInstanceOf(EventService);
+        expect(app('db')).toBeInstanceOf(Database);
+        expect(app('console')).toBeInstanceOf(ConsoleService);
+        expect(app('auth')).toBeInstanceOf(AuthService);
+        expect(app('auth.jwt')).toBeInstanceOf(JwtAuthService);
+        expect(KernelLegacy.getInstance().booted()).toBe(true);
     }, 10000)
 });

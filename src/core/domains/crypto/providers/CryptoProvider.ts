@@ -1,5 +1,5 @@
+import { BaseProvider } from "@ben-shepherd/larascript-core-bundle";
 import appConfig, { IAppConfig } from "@src/config/app.config";
-import BaseProvider from "@src/core/base/Provider";
 import GenerateAppKey from "@src/core/domains/crypto/commands/GenerateAppKey";
 import CryptoService from "@src/core/domains/crypto/service/CryptoService";
 import { app } from "@src/core/services/App";

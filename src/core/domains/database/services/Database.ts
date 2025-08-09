@@ -9,13 +9,13 @@ import DatabaseAdapter from "@src/core/domains/database/services/DatabaseAdapter
 import MongoDbAdapter from "@src/core/domains/mongodb/adapters/MongoDbAdapter";
 import PostgresAdapter from "@src/core/domains/postgres/adapters/PostgresAdapter";
 import { TClassConstructor } from "@src/core/interfaces/ClassConstructor.t";
-import { AppSingleton } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 
 /**
  * Short alias for app('db')
  * @returns 
  */
-export const db = () => AppSingleton.container('db')
+export const db = () => app('db')
 
 /**
  * Short alias for db().schema(connectionName)
@@ -82,7 +82,7 @@ class Database extends BaseSimpleRegister implements IDatabaseService {
      * @private
      */
     private log(message: string, ...args: any[]): void {
-        AppSingleton.container('logger').info(`[Database] ${message}`, ...args)
+        app('logger').info(`[Database] ${message}`, ...args)
     }
 
     /**

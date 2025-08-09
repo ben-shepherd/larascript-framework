@@ -1,13 +1,13 @@
 
 
+import { BaseProvider } from "@ben-shepherd/larascript-core-bundle";
 import { aclConfig } from "@src/config/acl.config";
 import { authConfig } from "@src/config/auth.config";
-import BaseProvider from "@src/core/base/Provider";
 import GenerateJwtSecret from "@src/core/domains/auth/commands/GenerateJwtSecret";
 import Auth from "@src/core/domains/auth/services/AuthService";
 import { app } from "@src/core/services/App";
 
-class AuthProvider extends BaseProvider{
+class AuthProvider extends BaseProvider {
 
     protected config = authConfig
 

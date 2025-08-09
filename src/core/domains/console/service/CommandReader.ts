@@ -2,7 +2,7 @@ import CommandNotFoundException from "@src/core/domains/console/exceptions/Comma
 import CommandSignatureInvalid from "@src/core/domains/console/exceptions/CommandSignatureInvalid";
 import { ICommandReader } from "@src/core/domains/console/interfaces/ICommandReader";
 import CommandArguementParser, { ParsedArgumentsArray } from "@src/core/domains/console/parsers/CommandArgumentParser";
-import { AppSingleton } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 
 export default class CommandReader implements ICommandReader {
 
@@ -43,13 +43,13 @@ export default class CommandReader implements ICommandReader {
             throw new CommandNotFoundException();
         }
 
-        const commandCtor = AppSingleton.container('console').registerService().getBySignature(signature);
+        const commandCtor = app('console').registerService().getBySignature(signature);
 
         if (!commandCtor) {
             throw new CommandSignatureInvalid()
         }
 
-        const cmdConfig = AppSingleton.container('console').registerService().getCommandConfig(signature);
+        const cmdConfig = app('console').registerService().getCommandConfig(signature);
 
         const cmd = new commandCtor()
         cmd.setConfig(cmdConfig);

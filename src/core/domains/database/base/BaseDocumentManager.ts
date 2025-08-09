@@ -5,7 +5,7 @@ import { IDatabaseDocument, IDocumentManager } from "@src/core/domains/database/
 import { IDocumentValidator } from "@src/core/domains/database/interfaces/IDocumentValidator";
 import { IPrepareOptions } from "@src/core/domains/database/interfaces/IPrepareOptions";
 import DocumentValidator from "@src/core/domains/database/validator/DocumentValidator";
-import { AppSingleton } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 
 /**
  * Abstract base class for document management operations
@@ -107,7 +107,7 @@ abstract class BaseDocumentManager<TDocMan extends IDocumentManager = IDocumentM
         }
         catch (err) {
             if (err instanceof Error && err?.message) {
-                AppSingleton.container('logger').error(`Database error(${this.adapter.getConnectionName()}): `, err.message, err.stack)
+                app('logger').error(`Database error(${this.adapter.getConnectionName()}): `, err.message, err.stack)
             }
             throw err
         }

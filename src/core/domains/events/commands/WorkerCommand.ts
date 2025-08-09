@@ -3,7 +3,7 @@ import BaseCommand from "@src/core/domains/console/base/BaseCommand";
 import { IEventDriversConfigOption } from "@src/core/domains/events/interfaces/config/IEventDriversConfig";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
 import { TEventWorkerOptions } from "@src/core/domains/events/interfaces/IEventWorkerConcern";
-import { AppSingleton } from "@src/core/services/App";
+import { app } from "@src/core/services/App";
 import { z } from "zod";
 
 export default class WorkerCommand extends BaseCommand {
@@ -20,7 +20,7 @@ export default class WorkerCommand extends BaseCommand {
      */
     public keepProcessAlive = true;
 
-    protected eventService: IEventService = AppSingleton.container('events');
+    protected eventService: IEventService = app('events');
 
     /**
      * Execute the command
@@ -33,12 +33,12 @@ export default class WorkerCommand extends BaseCommand {
 
         const intervalId = setInterval(async () => {
             await this.eventService.runWorker(options);
-            AppSingleton.container('logger').console('Running worker again in ' + options.runAfterSeconds + ' seconds')
+            app('logger').console('Running worker again in ' + options.runAfterSeconds + ' seconds')
         }, options.runAfterSeconds * 1000)
 
         if (options.runOnce) {
             clearInterval(intervalId);
-            AppSingleton.container('logger').console('runOnce enabled. Quitting...');
+            app('logger').console('runOnce enabled. Quitting...');
         }
     }
 

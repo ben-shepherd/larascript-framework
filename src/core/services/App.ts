@@ -1,7 +1,7 @@
-import { BaseSingleton } from '@ben-shepherd/larascript-core-bundle';
+import { AppSingleton, BaseSingleton } from '@ben-shepherd/larascript-core-bundle';
 import { Providers } from '@src/config/providers.config';
 import UninitializedContainerError from '@src/core/exceptions/UninitializedContainerError';
-import Kernel from '@src/core/Kernel';
+import KernelLegacy from '@src/core/Kernel';
 
 
 /**
@@ -21,9 +21,9 @@ export const appEnv = (): string | undefined => AppSingleton.env();
  * App service
  * Allows you to access kernel containers
  * and configure the app environment
+ * @deprecated
  */
-
-export class AppSingleton extends BaseSingleton {
+export class AppSingletonLegacy extends BaseSingleton {
 
     /**
      * Environment
@@ -59,7 +59,7 @@ export class AppSingleton extends BaseSingleton {
      * @param container The container to set
      */
     public static setContainer<Name extends keyof Providers & string>(name: Name, container: Providers[Name]) {
-        const kernel = Kernel.getInstance();
+        const kernel = KernelLegacy.getInstance();
 
         if (kernel.booted()) {
             throw new Error('Kernel is already booted');
@@ -80,7 +80,7 @@ export class AppSingleton extends BaseSingleton {
      * @returns The container if it exists, or throws an UninitializedContainerError if not
      */
     public static container<K extends keyof Providers = keyof Providers>(name: K): Providers[K] {
-        const kernel = Kernel.getInstance();
+        const kernel = KernelLegacy.getInstance();
 
         if (!kernel.containers.has(name)) {
             throw new UninitializedContainerError(name as string)

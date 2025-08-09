@@ -1,11 +1,11 @@
+import { BaseProvider } from "@ben-shepherd/larascript-core-bundle";
 import { eventConfig } from "@src/config/events.config";
-import BaseProvider from "@src/core/base/Provider";
 import WorkerCommand from "@src/core/domains/events/commands/WorkerCommand";
 import { IEventConfig } from "@src/core/domains/events/interfaces/config/IEventConfig";
 import { IEventService } from "@src/core/domains/events/interfaces/IEventService";
+import EventRegistry from "@src/core/domains/events/registry/EventRegistry";
 import EventService from "@src/core/domains/events/services/EventService";
 import { app } from "@src/core/services/App";
-import EventRegistry from "@src/core/domains/events/registry/EventRegistry";
 
 class EventProvider extends BaseProvider {
 
