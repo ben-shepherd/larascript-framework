@@ -1,14 +1,12 @@
-import EnvService from "@src/core/services/EnvService";
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
 import { cryptoService } from "@src/core/domains/crypto/service/CryptoService";
+import { app } from "@src/core/services/App";
 
 class GenerateAppKey extends BaseCommand {
 
     signature = 'app:generate-key'
 
     description = 'Generate a new app key'
-
-    envService = new EnvService();
 
     async execute() {
 
@@ -23,7 +21,7 @@ class GenerateAppKey extends BaseCommand {
 
         const appKey = cryptoService().generateAppKey()
 
-        await this.envService.updateValues({
+        await app('envService').updateValues({
             APP_KEY: appKey
         })
 

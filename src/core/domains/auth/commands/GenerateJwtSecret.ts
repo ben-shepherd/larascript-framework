@@ -1,12 +1,9 @@
 import BaseCommand from "@src/core/domains/console/base/BaseCommand";
-import { IEnvService } from "@src/core/interfaces/IEnvService";
-import EnvService from "@src/core/services/EnvService";
+import { app } from "@src/core/services/App";
 
 class GenerateJwtSecret extends BaseCommand {
 
     signature = 'auth:generate-jwt-secret';
-
-    private envService: IEnvService = new EnvService();
 
     async execute() {
 
@@ -20,7 +17,7 @@ class GenerateJwtSecret extends BaseCommand {
 
         const secret = require('crypto').randomBytes(64).toString('hex');
 
-        await this.envService.updateValues({ JWT_SECRET: secret });
+        await app('envService').updateValues({ JWT_SECRET: secret });
 
         this.input.writeLine('Successfully generated jwt secret!');
     }

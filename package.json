@@ -27,7 +27,9 @@
     "db:mongodb:down": "cd ./docker && docker-compose -f docker-compose.mongodb.yml down",
     "api:up": "yarn network:up && cd ./docker && docker-compose -f docker-compose.api.yml up --build -d api",
     "api:down": "cd ./docker && docker-compose -f docker-compose.api.yml down && docker-compose -f docker-compose.network.yml down",
-    "api:sh": "docker exec -it larascript-api /bin/bash"
+    "api:sh": "docker exec -it larascript-api /bin/bash",
+    "link:core": "npm link @ben-shepherd/larascript-core-bundle",
+    "unlink:core": "npm unlink @ben-shepherd/larascript-core-bundle"
   },
   "dependencies": {
     "@ben-shepherd/larascript-core-bundle": "github:ben-shepherd/larascript-core-bundle",

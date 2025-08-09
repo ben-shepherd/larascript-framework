@@ -1,3 +1,4 @@
+import { IEnvService } from '@ben-shepherd/larascript-core-bundle';
 import { ILoggerService } from '@ben-shepherd/larascript-logger-bundle';
 import { IBasicACLService } from '@src/core/domains/accessControl/interfaces/IACLService';
 import { IJwtAuthService } from '@src/core/domains/auth/interfaces/jwt/IJwtAuthService';
@@ -19,6 +20,12 @@ import readline from 'node:readline';
 export interface ILarascriptProviders {
 
     [key: string]: unknown;
+
+    /**
+     * Services
+     * TODO: place all services  here
+     */
+    envService: IEnvService,
 
     /**
      * Event Dispatcher Service

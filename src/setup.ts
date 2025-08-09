@@ -9,6 +9,8 @@ import LoggerProvider from '@src/core/domains/logger/providers/LoggerProvider';
 import SetupProvider from '@src/core/domains/setup/providers/SetupProvider';
 import { app } from '@src/core/services/App';
 
+import EnvServiceProvider from './core/providers/EnvServiceProvider';
+
 (async () => {
     require('dotenv').config();
 
@@ -16,6 +18,7 @@ import { app } from '@src/core/services/App';
         ...appConfig,
         environment: 'testing',
         providers: [
+            new EnvServiceProvider(),
             new LoggerProvider(),
             new ConsoleProvider(),
             new DatabaseSetupProvider(),

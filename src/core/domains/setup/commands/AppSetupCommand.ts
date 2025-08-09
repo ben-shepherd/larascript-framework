@@ -5,7 +5,7 @@ import QuestionDTO from '@src/core/domains/setup/DTOs/QuestionDTO';
 import { ISetupCommand } from '@src/core/domains/setup/interfaces/ISetupCommand';
 import buildQuestionDTOs from '@src/core/domains/setup/utils/buildQuestionDTOs';
 import { IEnvService } from '@src/core/interfaces/IEnvService';
-import EnvService from "@src/core/services/EnvService";
+import { app } from "@src/core/services/App";
 
 /**
  * Command to run the setup process
@@ -25,7 +25,7 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
     /**
      * The environment service
      */
-    env: IEnvService = new EnvService();
+    env!: IEnvService;
 
     /**
      * The console input service
@@ -36,6 +36,11 @@ class AppSetupCommand extends BaseCommand implements ISetupCommand {
      * The questions to ask the user
      */
     protected questions!: QuestionDTO[];
+
+    constructor() {
+        super()
+        this.env = app('envService')
+    }
 
     /**
      * Writes a line to the console
