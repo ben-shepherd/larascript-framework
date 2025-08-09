@@ -1,5 +1,5 @@
+import { BaseSingleton } from '@ben-shepherd/larascript-core-bundle';
 import { Providers } from '@src/config/providers.config';
-import Singleton from '@src/core/base/Singleton';
 import UninitializedContainerError from '@src/core/exceptions/UninitializedContainerError';
 import Kernel from '@src/core/Kernel';
 
@@ -23,7 +23,7 @@ export const appEnv = (): string | undefined => AppSingleton.env();
  * and configure the app environment
  */
 
-export class AppSingleton extends Singleton {
+export class AppSingleton extends BaseSingleton {
 
     /**
      * Environment

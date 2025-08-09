@@ -1,4 +1,4 @@
-import Singleton from "@src/core/base/Singleton";
+import { BaseSingleton } from "@ben-shepherd/larascript-core-bundle";
 import { IPContextData, IPDatesArrayTTL } from "@src/core/domains/http/interfaces/IRequestContext";
 import { IRequestContextCleanUpConfig } from "@src/core/domains/http/interfaces/IRequestContextCleanUpConfig";
 import { AppSingleton } from "@src/core/services/App";
@@ -6,7 +6,7 @@ import { AppSingleton } from "@src/core/services/App";
 /**
  * A class that handles cleaning up expired items from the current IP context.
  */
-class RequestContextCleaner extends Singleton {
+class RequestContextCleaner extends BaseSingleton {
 
     /**
      * Starts the cleanup process. This will run an interval every N seconds specified in the config.

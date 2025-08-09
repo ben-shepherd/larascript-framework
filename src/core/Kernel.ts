@@ -1,4 +1,4 @@
-import Singleton from "@src/core/base/Singleton";
+import { BaseSingleton } from "@ben-shepherd/larascript-core-bundle";
 import { EnvironmentType } from "@src/core/consts/Environment";
 import { IProvider } from "@src/core/interfaces/IProvider";
 import { AppSingleton } from "@src/core/services/App";
@@ -15,7 +15,7 @@ export type KernelConfig = {
     providers: IProvider[];
 }
 
-export default class Kernel extends Singleton<KernelConfig> {
+export default class Kernel extends BaseSingleton<KernelConfig> {
 
     public containers: Map<keyof Containers, Containers[keyof Containers]> = new Map();
 

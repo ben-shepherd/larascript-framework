@@ -5,6 +5,7 @@ import IService from "@src/core/interfaces/IService";
  * Singleton pattern implementation for services.
  *
  * @template Config - Type of the configuration object passed to the service.
+ * @deprecated
  */
 export default abstract class Singleton<Config extends Record<any,any> | null = null> implements IService {
 

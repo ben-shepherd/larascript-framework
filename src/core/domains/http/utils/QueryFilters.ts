@@ -1,4 +1,4 @@
-import Singleton from "@src/core/base/Singleton";
+import { BaseSingleton } from "@ben-shepherd/larascript-core-bundle";
 import { logger } from "@src/core/domains/logger/services/LoggerService";
 import { Request } from "express";
 
@@ -25,7 +25,7 @@ type Options = {
  * The class will decode and parse these filters, ensuring only allowed fields
  * are included in the final filters object.
  */
-class QueryFilters extends Singleton {
+class QueryFilters extends BaseSingleton {
 
     protected filters: object | undefined = undefined
 

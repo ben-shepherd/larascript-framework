@@ -1,6 +1,6 @@
+import { BaseSingleton } from "@ben-shepherd/larascript-core-bundle";
 import appConfig from "@src/config/app.config";
 import providers from "@src/config/providers.config";
-import Singleton from "@src/core/base/Singleton";
 import { EnvironmentProduction } from "@src/core/consts/Environment";
 import Kernel from "@src/core/Kernel";
 import { AppSingleton, app } from "@src/core/services/App";
@@ -17,7 +17,7 @@ export type TinkerServiceConfig = {
  * This service can initialize either a regular database connection or a test database
  * connection based on the configuration provided.
  */
-class TinkerService extends Singleton<TinkerServiceConfig> {
+class TinkerService extends BaseSingleton<TinkerServiceConfig> {
 
     /**
      * Boots the TinkerService

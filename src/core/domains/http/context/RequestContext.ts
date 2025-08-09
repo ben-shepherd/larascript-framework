@@ -1,4 +1,4 @@
-import Singleton from "@src/core/base/Singleton";
+import { BaseSingleton } from "@ben-shepherd/larascript-core-bundle";
 import { TBaseRequest } from "@src/core/domains/http/interfaces/BaseRequest";
 import { IPContextData, IRequestContext, IRequestContextData } from "@src/core/domains/http/interfaces/IRequestContext";
 import getIpAddress from "@src/core/domains/http/utils/getIpAddress";
@@ -16,7 +16,7 @@ export const requestContext = () => app('requestContext');
  * - Stores the current request context
  * - Store the current IP context
  */
-class RequestContext extends Singleton implements IRequestContext {
+class RequestContext extends BaseSingleton implements IRequestContext {
 
     /**
      * Request context

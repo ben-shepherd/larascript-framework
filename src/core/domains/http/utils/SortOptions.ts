@@ -1,4 +1,4 @@
-import Singleton from "@src/core/base/Singleton";
+import { BaseSingleton } from "@ben-shepherd/larascript-core-bundle";
 import { Request } from "express";
 
 export type TSortDirection = 'asc' | 'desc'
@@ -45,7 +45,7 @@ const DEFAULT_SORT_OPTIONS: TSortOptions = {
  * The class implements the Singleton pattern to ensure a single instance
  * and provides a static parseRequest method for convenient usage.
  */
-class SortOptions extends Singleton {
+class SortOptions extends BaseSingleton {
 
     field: string = '';
 

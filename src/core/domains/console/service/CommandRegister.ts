@@ -1,9 +1,9 @@
-import Singleton from "@src/core/base/Singleton";
+import { BaseSingleton } from "@ben-shepherd/larascript-core-bundle";
 import CommandRegisterException from "@src/core/domains/console/exceptions/CommandRegisterException";
 import { ICommandConstructor } from "@src/core/domains/console/interfaces/ICommand";
 import { ICommandRegister, Registered } from "@src/core/domains/console/interfaces/ICommandRegister";
 
-export default class CommandRegister extends Singleton implements ICommandRegister {
+export default class CommandRegister extends BaseSingleton implements ICommandRegister {
 
     /**
      * Registered commands
