@@ -1,4 +1,4 @@
-import Service from '@src/core/base/Service';
+import { BaseService } from '@ben-shepherd/larascript-core-bundle';
 import Middleware from '@src/core/domains/http/base/Middleware';
 import { default as IExpressConfig, default as IHttpConfig } from '@src/core/domains/http/interfaces/IHttpConfig';
 import IHttpService from '@src/core/domains/http/interfaces/IHttpService';
@@ -27,7 +27,7 @@ export const http = () => app('http');
  * Responsible for initializing and configuring ExpressJS
  * @implements IHttpService
  */
-export default class HttpService extends Service<IHttpConfig> implements IHttpService {
+export default class HttpService extends BaseService<IHttpConfig> implements IHttpService {
 
 
     protected config!: IExpressConfig | null;

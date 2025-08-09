@@ -1,7 +1,7 @@
+import { BaseService } from "@ben-shepherd/larascript-core-bundle";
 import { IAppService } from "@src/app/interfaces/IAppService";
-import Service from "@src/core/base/Service";
 
-class AppService extends Service implements IAppService {
+class AppService extends BaseService implements IAppService {
 
     public async boot(): Promise<void> {
         console.log('[AppService] Booting...');
