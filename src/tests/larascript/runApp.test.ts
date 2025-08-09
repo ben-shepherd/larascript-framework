@@ -1,10 +1,10 @@
+import { Kernel } from '@ben-shepherd/larascript-core-bundle';
 import { describe, expect, test } from '@jest/globals';
 import AuthService from '@src/core/domains/auth/services/AuthService';
 import JwtAuthService from '@src/core/domains/auth/services/JwtAuthService';
 import ConsoleService from '@src/core/domains/console/service/ConsoleService';
 import Database from '@src/core/domains/database/services/Database';
 import EventService from '@src/core/domains/events/services/EventService';
-import KernelLegacy from '@src/core/Kernel';
 import { app } from '@src/core/services/App';
 import testHelper from '@src/tests/testHelper';
 
@@ -21,6 +21,6 @@ describe('attempt to run app with normal appConfig', () => {
         expect(app('console')).toBeInstanceOf(ConsoleService);
         expect(app('auth')).toBeInstanceOf(AuthService);
         expect(app('auth.jwt')).toBeInstanceOf(JwtAuthService);
-        expect(KernelLegacy.getInstance().booted()).toBe(true);
+        expect(Kernel.getInstance().booted()).toBe(true);
     }, 10000)
 });

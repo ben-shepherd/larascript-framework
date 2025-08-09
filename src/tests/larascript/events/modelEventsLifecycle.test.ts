@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+import { Kernel, KernelConfig } from '@ben-shepherd/larascript-core-bundle';
 import { describe } from '@jest/globals';
 import { EVENT_DRIVERS } from '@src/config/events.config';
 import { EnvironmentTesting } from '@src/core/consts/Environment';
@@ -14,7 +15,6 @@ import LoggerProvider from '@src/core/domains/logger/providers/LoggerProvider';
 import Model from '@src/core/domains/models/base/Model';
 import { IModelAttributes } from '@src/core/domains/models/interfaces/IModel';
 import ValidatorProvider from '@src/core/domains/validator/providers/ValidatorProvider';
-import KernelLegacy, { KernelConfig } from '@src/core/Kernel';
 import { app } from '@src/core/services/App';
 import TestAuthProvider from '@src/tests/larascript/providers/TestAuthProvider';
 import TestConsoleProvider from '@src/tests/larascript/providers/TestConsoleProvider';
@@ -163,7 +163,7 @@ describe('model lifecycle events', () => {
                 new TestCryptoProvider()
             ]
         }
-        await KernelLegacy.boot(config, {});
+        await Kernel.boot(config, {});
     });
 
     beforeEach(async () => {

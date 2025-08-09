@@ -1,9 +1,9 @@
+import { Kernel, KernelConfig } from "@ben-shepherd/larascript-core-bundle";
 import { EnvironmentTesting } from "@src/core/consts/Environment";
 import AccessControlProvider from "@src/core/domains/accessControl/providers/AccessControlProvider";
 import EloquentQueryProvider from "@src/core/domains/eloquent/providers/EloquentQueryProvider";
 import LoggerProvider from "@src/core/domains/logger/providers/LoggerProvider";
 import ValidatorProvider from "@src/core/domains/validator/providers/ValidatorProvider";
-import KernelLegacy, { KernelConfig } from "@src/core/Kernel";
 import { app } from "@src/core/services/App";
 import TestApiTokenModel from "@src/tests/larascript/models/models/TestApiTokenModel";
 import TestUser from "@src/tests/larascript/models/models/TestUser";
@@ -45,7 +45,7 @@ const testBootApp = async () => {
         ]
     }
 
-    await KernelLegacy.boot(config, {});
+    await Kernel.boot(config, {});
 }
 
 
