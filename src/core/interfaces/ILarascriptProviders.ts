@@ -1,3 +1,4 @@
+import { ILoggerService } from '@ben-shepherd/larascript-logger-bundle';
 import { IBasicACLService } from '@src/core/domains/accessControl/interfaces/IACLService';
 import { IJwtAuthService } from '@src/core/domains/auth/interfaces/jwt/IJwtAuthService';
 import { IAuthService } from '@src/core/domains/auth/interfaces/service/IAuthService';
@@ -8,13 +9,12 @@ import { IEloquentQueryBuilderService } from '@src/core/domains/eloquent/interfa
 import { IEventService } from '@src/core/domains/events/interfaces/IEventService';
 import IHttpService from '@src/core/domains/http/interfaces/IHttpService';
 import { IRequestContext } from '@src/core/domains/http/interfaces/IRequestContext';
-import { ILoggerService } from '@src/core/domains/logger/interfaces/ILoggerService';
 import { IMailService } from '@src/core/domains/mail/interfaces/services';
 import { ISessionService } from '@src/core/domains/session/interfaces/ISessionService';
 import { IStorageService } from '@src/core/domains/storage/interfaces/IStorageService';
 import { IValidatorFn } from '@src/core/domains/validator/interfaces/IValidator';
-import readline from 'node:readline';
 import { IViewRenderService, IViewService } from '@src/core/domains/view/interfaces/services';
+import readline from 'node:readline';
 
 export interface ILarascriptProviders {
 
